@@ -1,43 +1,38 @@
 import { router } from 'expo-router';
+import { ChevronLeft, ListFilter, Search } from 'lucide-react-native';
 import {
-  Blend,
-  ChevronLeft,
-  FileText,
-  House,
-  Landmark,
-  ListFilter,
-  MessageSquare,
-  PenLine,
-  Search,
-  ShieldCheck,
-  UserCheck,
-  type LucideIcon,
-} from 'lucide-react-native';
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import ServiceTile from '../components/ServiceTile';
+import { serviceIcon } from '../components/serviceIcons';
 import { colors, font, homeControlShadow, services } from '../constants/theme';
+import { allServices } from '../data/services';
 
-const SERVICES: { icon: LucideIcon; title: string; description: string }[] = [
-  { icon: FileText, title: 'Legal Notice', description: 'Prepare and send a professional legal notice' },
-  { icon: House, title: 'Property Search', description: 'Get property records reviewed and obtain report' },
-  { icon: PenLine, title: 'FIR Draft', description: 'Get assistance with preparing an FIR draft' },
-  { icon: Blend, title: 'Court Marriage', description: 'Assistance with court marriage procedures' },
-  { icon: ShieldCheck, title: 'Document Forensic', description: 'Examine authenticity and inconsistencies' },
-  { icon: Landmark, title: 'High Court Rep.', description: 'Connect for High Court legal representation' },
-  { icon: UserCheck, title: 'District Court Rep.', description: 'Advocates for District Court representation' },
-  { icon: MessageSquare, title: 'Legal Advice', description: 'Guidance from a qualified advocate' },
-];
+const SERVICES = allServices();
 
-const ROWS = [0, 2, 4, 6].map((i) => SERVICES.slice(i, i + 2));
+// Rows of two, so screen readers follow the visual order. Tiles get an explicit width
+// rather than flex: on web a tile's text sets a minimum width that beats an even flex
+// split, which would stretch a lone last card past half the grid.
+const ROWS = Array.from({ length: Math.ceil(SERVICES.length / 2) }, (_, r) =>
+  SERVICES.slice(r * 2, r * 2 + 2)
+);
 
 export default function ServicesScreen() {
   const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
+  const tileWidth = (width - services.padX * 2 - services.gridGap) / 2;
 
   const goBack = () => {
     if (router.canGoBack()) router.back();
-    else router.replace('/home');
+    else router.replace('/(tabs)/home');
   };
 
   return (
@@ -75,14 +70,14 @@ export default function ServicesScreen() {
         showsVerticalScrollIndicator={false}
       >
         {ROWS.map((row) => (
-          <View key={row[0].title} style={styles.gridRow}>
+          <View key={row[0].id} style={styles.gridRow}>
             {row.map((s) => (
               <ServiceTile
-                key={s.title}
-                icon={s.icon}
-                title={s.title}
+                key={s.id}
+                icon={serviceIcon(s.icon)}
+                title={s.shortTitle}
                 description={s.description}
-                style={styles.gridItem}
+                style={{ width: tileWidth }}
               />
             ))}
           </View>
@@ -154,8 +149,5 @@ const styles = StyleSheet.create({
   gridRow: {
     flexDirection: 'row',
     gap: services.gridGap,
-  },
-  gridItem: {
-    flex: 1,
   },
 });

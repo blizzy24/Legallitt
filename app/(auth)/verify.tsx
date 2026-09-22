@@ -11,8 +11,8 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import PrimaryButton from '../components/PrimaryButton';
-import { colors, control, fieldShadow, font, ink, space, verify } from '../constants/theme';
+import PrimaryButton from '../../components/PrimaryButton';
+import { colors, control, fieldShadow, font, ink, space, verify } from '../../constants/theme';
 
 const CODE_LENGTH = 4;
 
@@ -76,7 +76,7 @@ export default function VerifyScreen() {
 
         <View style={styles.flex} />
 
-        <PrimaryButton label="Next" onPress={() => router.push('/role')} />
+        <PrimaryButton label="Next" onPress={() => router.push('/(auth)/role')} />
       </View>
     </KeyboardAvoidingView>
   );

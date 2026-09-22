@@ -10,6 +10,7 @@ import { SplashScreen, Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 
+import { SessionProvider } from '../context/session';
 import { colors } from '../constants/theme';
 
 SplashScreen.preventAutoHideAsync();
@@ -34,7 +35,7 @@ export default function RootLayout() {
   if (!ready) return null;
 
   return (
-    <>
+    <SessionProvider>
       <StatusBar style="dark" />
       <Stack
         screenOptions={{
@@ -42,6 +43,6 @@ export default function RootLayout() {
           contentStyle: { backgroundColor: colors.screenBg },
         }}
       />
-    </>
+    </SessionProvider>
   );
 }

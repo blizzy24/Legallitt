@@ -42,6 +42,8 @@ export const ink = {
   shadow:  '#000000',
   hint:    '#A7A7A7',  // placeholder + divider grey, measured from design PNGs
   accent:  '#8F7A60',  // home icons, links, active tab — measured from design/09
+  popularBorder: '#DFD7CD',  // 2pt border on Popular cards (design/11 + 12)
+  badgeBg: '#E8E2DA',        // "TOP" badge fill (design/11 + 12)
 };
 
 export const control = {
@@ -124,10 +126,31 @@ export const role = {
   sublineMinScale: 0.85,
 };
 
-// Home screen metrics, measured from design/09 (390pt wide @2x, 620pt tall frame).
+// Home screen metrics, measured from design/11 (guest) + design/12 (logged in),
+// both 390pt wide @2x. These supersede design/09.
 export const home = {
-  top: 16,
-  hairline: 0.5,
+  topGuest: 20,
+  topMember: 25,
+  hairline: 1,
+
+  // Guest banner
+  bannerHeight: 62,
+  bannerRadius: 13,
+  bannerPadX: 15.5,
+  bannerTextSize: 12,
+  signupWidth: 80,
+  signupHeight: 45,
+  signupRadius: 11,
+  signupTextSize: 12,
+  eyebrowGap: 23,
+  eyebrowSize: 10.2,
+  eyebrowSpacing: 1.1,
+  welcomeGap: 8,
+  welcomeSize: 24.8,
+  guestSubtitleGap: 7,
+  guestSubtitleSize: 15,
+
+  // Logged-in header (unchanged from design/09 apart from its offset)
   greetingSize: 21.5,
   subtitleSize: 13,
   subtitleGap: 6,
@@ -138,35 +161,55 @@ export const home = {
   dotSize: 10.5,
   dotOffset: 8.5,
   initialsSize: 13,
-  searchGap: 20,
-  searchHeight: 45.5,
-  searchPadX: 13.5,
+
+  // Search
+  searchGap: 18.5,
+  searchHeight: 46,
+  searchRadius: 14,
+  searchPadX: 15,
   searchIcon: 16,
-  searchTextGap: 12,
-  placeholderSize: 13,
-  sectionGap: 18,
-  sectionTitleSize: 15,
-  viewAllSize: 12.5,
-  gridTop: 14,
-  gridGap: 10.5,
-  cardHeight: 109,
-  cardRadius: 12.5,
-  cardPad: 13,
-  chipSize: 28,
-  chipRadius: 8,
-  chipIcon: 14,
-  cardTitleGap: 6.5,
-  cardTitleSize: 12,
-  descGap: 4.5,
-  descSize: 10,
-  descLineHeight: 13,
-  tabHeight: 61.5,
+  searchTextGap: 9,
+  placeholderSize: 14,
+
+  // Section rows
+  sectionGap: 17.5,
+  sectionTitleSize: 15.8,
+  badgeGap: 9,
+  badgeHeight: 19,
+  badgePadX: 9,
+  badgeTextSize: 9.5,
+  badgeSpacing: 0.6,
+  viewAllSize: 12,
+  popularGap: 24.5,
+  ourServicesGap: 16,
+  gridGap: 25.5,
+
+  // Cards (popular + grid share internals)
+  cardRadius: 16.5,
+  cardBorder: 1,
+  cardBorderPopular: 2,
+  cardPad: 15,
+  cardPadBottom: 14,
+  chipSize: 36,
+  chipRadius: 12,
+  chipIcon: 14.5,
+  dotSize2: 8,
+  dotInset: 12,
+  cardTitleGap: 9.5,
+  cardTitleSize: 14,
+  cardDescGap: 5,
+  cardDescSize: 12,
+  cardDescLineHeight: 20,
+  colGap: 12,
+  rowGap: 13,
+
+  // Floating tab bar (4 items)
+  tabHeight: 68,
   tabBottom: 20.5,
-  tabPadLeft: 13,
-  tabPadRight: -3.5,
-  tabActiveWidth: 52,
-  tabActiveHeight: 36,
-  tabIcon: 20,
+  tabPadX: 18,
+  tabActiveWidth: 74,
+  tabActiveHeight: 47,
+  tabIcon: 32,
 };
 
 // All Services screen metrics, measured from design/10 (390×944pt @2x, includes status-bar space).

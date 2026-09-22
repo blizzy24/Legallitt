@@ -13,15 +13,22 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 
-import PrimaryButton from '../components/PrimaryButton';
-import { LawyerGlyph, UserGlyph } from '../components/RoleGlyphs';
-import { colors, font, ink, role, space, verify } from '../constants/theme';
+import PrimaryButton from '../../components/PrimaryButton';
+import { LawyerGlyph, UserGlyph } from '../../components/RoleGlyphs';
+import { useSession } from '../../context/session';
+import { colors, font, ink, role, space, verify } from '../../constants/theme';
 
 type Role = 'user' | 'lawyer';
 
 export default function RoleScreen() {
   const insets = useSafeAreaInsets();
+  const { setLoggedIn } = useSession();
   const [selected, setSelected] = useState<Role | null>(null);
+
+  const onNext = () => {
+    setLoggedIn(true);
+    router.replace('/(tabs)/home');
+  };
 
   return (
     <View
@@ -63,7 +70,7 @@ export default function RoleScreen() {
 
       <View style={styles.spaceBelow} />
 
-      <PrimaryButton label="Next" onPress={() => router.push('/home')} />
+      <PrimaryButton label="Next" onPress={onNext} />
     </View>
   );
 }
