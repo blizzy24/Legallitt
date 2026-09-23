@@ -265,6 +265,87 @@ export const cases = {
   tabTopGap: 27,
 };
 
+// Case Details metrics, measured from design/18 (390×1199pt frame at 510px wide,
+// ≈1.31px/pt).
+export const caseDetail = {
+  top: 15,
+  headerButton: 39,
+  headerIcon: 18,
+  titleSize: 17.5,
+  headerGap: 11.8,
+
+  cardRadius: 18,
+  cardPad: 16.5,
+  cardGap: 14,
+  cardsTopGap: 18.5,
+
+  // Hero
+  heroPillGap: 13,
+  heroTitleSize: 17.5,
+  heroTitleGap: 12,
+  courtGap: 7,
+  courtSize: 12.5,
+  courtIcon: 14,
+  courtIconGap: 7,
+  blockGap: 12.5,
+  blockRadius: 13,
+  blockPad: 12,
+  avatar: 40,
+  avatarInitials: 13,
+  advocateNameSize: 14.5,
+  advocateRoleSize: 11,
+  advocateRoleGap: 4,
+  calTile: 44,
+  calTileRadius: 10,
+  calMonthSize: 8.5,
+  calDaySize: 15,
+  hearingLabelSize: 8.5,
+  hearingLabelGap: 5,
+  hearingValueSize: 14.5,
+  hearingRoomSize: 11.5,
+  hearingRoomGap: 4,
+  contactGap: 14,
+  contactHeight: 43.6,
+  contactRadius: 12,
+  contactTextSize: 14.5,
+  contactIconGap: 8,
+
+  // Chip row
+  chipRowGap: 19,
+  chipHeight: 34.4,
+  chipPadX: 16,
+  chipGap: 10,
+  chipTextSize: 13,
+
+  // Info rows
+  sectionTitleSize: 15,
+  sectionIconGap: 8,
+  sectionTitleGap: 13,
+  infoRowPadV: 12.6,
+  infoLabelSize: 12.5,
+  infoValueSize: 12.5,
+
+  // Update / action blocks
+  datePillHeight: 22,
+  datePillPadX: 9,
+  datePillText: 10.5,
+  noteSize: 12.5,
+  noteLineHeight: 18,
+  checkCircle: 20,
+  checkIcon: 12,
+  checkGap: 10,
+
+  // Documents row
+  docIcon: 36,
+  docIconRadius: 11,
+  docTitleSize: 14.5,
+  docSubSize: 11.5,
+  docButtonHeight: 33,
+  docButtonRadius: 10,
+  docButtonPadX: 12,
+  docButtonText: 12.5,
+};
+
 // Home screen metrics, measured from design/11 (guest) + design/12 (logged in),
 // both 390pt wide @2x. These supersede design/09.
 export const home = {
