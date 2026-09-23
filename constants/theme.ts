@@ -346,6 +346,65 @@ export const caseDetail = {
   docButtonText: 12.5,
 };
 
+// All Active Cases metrics, measured from design/21 (390×1031pt frame at 593px wide,
+// ≈1.52px/pt).
+export const allCases = {
+  top: 17,
+  headerButton: 39,
+  headerIcon: 18,
+  titleSize: 20.5,
+
+  searchGap: 17,
+  searchHeight: 41.4,
+  searchRadius: 14,
+  searchPadX: 15,
+  searchIcon: 16,
+  searchTextGap: 11,
+  searchTextSize: 13.5,
+
+  chipGap: 15.2,
+  chipHeight: 30.2,
+  chipPadX: 14,
+  chipGapX: 8,
+  chipText: 12.5,
+
+  headingGap: 24.3,
+  headingSize: 15,
+  countHeight: 21,
+  countPadX: 10,
+  countText: 11,
+
+  cardsGap: 20.2,
+  cardGap: 13.4,
+  cardRadius: 16,
+  cardPad: 16.5,
+  cardPadBottom: 26.8,
+  cardPillGap: 13,
+  cardTitleSize: 15.5,
+  cardTitleGap: 14.2,
+  courtGap: 9.4,
+  courtSize: 12.5,
+  courtIcon: 14,
+  courtIconGap: 7,
+  rowGap: 14.7,
+  rowRadius: 12,
+  rowPad: 6.75,
+  avatar: 28,
+  avatarText: 11.5,
+  advocateGap: 10,
+  advocateName: 13.5,
+  roleSize: 11.5,
+  dividerTop: 11.1,
+  dividerBottom: 7.2,
+  footerLabelSize: 8.5,
+  footerLabelGap: 1,
+  footerDateSize: 13.5,
+  buttonHeight: 29,
+  buttonRadius: 9,
+  buttonPadX: 12,
+  buttonText: 12.5,
+};
+
 // Home screen metrics, measured from design/11 (guest) + design/12 (logged in),
 // both 390pt wide @2x. These supersede design/09.
 export const home = {
