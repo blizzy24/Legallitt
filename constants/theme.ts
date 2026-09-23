@@ -169,6 +169,102 @@ export const tabs = {
   },
 };
 
+// My Cases metrics, measured from design/14 (390×1442pt frame exported at 424px wide,
+// ≈1.09px/pt — so these are good to about ±1pt).
+export const cases = {
+  hairline: 1,
+  top: 22.7,
+  titleSize: 21.3,
+  subtitleGap: 6.9,
+  subtitleSize: 12,
+  bellButton: 40,
+  bellIcon: 18,
+  bellDot: 7.5,
+  bellDotInset: 8,
+
+  // Segmented control
+  segGap: 14.2,
+  segHeight: 42.3,
+  segRadius: 13,
+  segPad: 5,
+  segLabel: 13,
+  segTrack: '#F4EFE8',
+
+  // Stat cards
+  statGap: 27,
+  statHeight: 62.5,
+  statColGap: 13,
+  statRadius: 14,
+  statPadX: 10,
+  statLabelSize: 10,
+  statLabelGap: 13,
+  statNumberSize: 16.5,
+  statNumberGap: 6,
+  statDot: 7,
+  statDotGap: 7,
+
+  // Section headings
+  sectionGap: 19.7,
+  sectionDot: 7.5,
+  sectionDotGap: 8,
+  sectionTitleSize: 15.5,
+  viewAllSize: 12.5,
+  headingGap: 10.1,
+
+  // Cards
+  cardRadius: 16,
+  cardPad: 16.5,
+  cardGap: 11.6,
+  accentWidth: 4,
+  cardTitleSize: 14.75,
+  cardTitleGap: 9.5,
+  metaSize: 12.3,
+  metaGap: 3.3,
+  innerRadius: 12,
+  innerPad: 12,
+  innerGap: 14,
+  dividerGap: 11.6,
+  footerSize: 12.5,
+  footerDot: 7,
+  footerDotGap: 8,
+  linkSize: 12.5,
+
+  // Pills
+  pillHeight: 22,
+  pillPadX: 8,
+  pillText: 9.7,
+  pillDot: 5.5,
+  pillDotGap: 5,
+  capsSpacing: 0.5,
+
+  // Case ID chip
+  chipHeight: 21,
+  chipPadX: 8,
+  chipRadius: 7,
+  chipText: 10.5,
+
+  // "View Case" button
+  buttonHeight: 30.4,
+  buttonPadX: 14,
+  buttonRadius: 9,
+  buttonText: 12.5,
+  buttonIconGap: 6,
+
+  // Inner label/value block
+  innerLabelSize: 8.5,
+  innerValueSize: 12,
+  innerValueGap: 5,
+
+  // Pending request
+  clockButton: 32,
+  clockIcon: 16,
+  clockInset: 14.8,
+  requestTextSize: 11,
+  requestGap: 6,
+  // Gap above the first section heading when a tab starts with one (design/17).
+  tabTopGap: 27,
+};
+
 // Home screen metrics, measured from design/11 (guest) + design/12 (logged in),
 // both 390pt wide @2x. These supersede design/09.
 export const home = {
