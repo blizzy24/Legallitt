@@ -11,10 +11,10 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import ServiceTile from '../components/ServiceTile';
-import { serviceIcon } from '../components/serviceIcons';
-import { colors, font, homeControlShadow, services } from '../constants/theme';
-import { allServices } from '../data/services';
+import ServiceTile from '../../components/ServiceTile';
+import { serviceIcon } from '../../components/serviceIcons';
+import { colors, font, homeControlShadow, services, tabs } from '../../constants/theme';
+import { allServices } from '../../data/services';
 
 const SERVICES = allServices();
 
@@ -66,7 +66,11 @@ export default function ServicesScreen() {
 
       <ScrollView
         style={styles.scroll}
-        contentContainerStyle={[styles.grid, { paddingBottom: services.gridBottom + insets.bottom }]}
+        contentContainerStyle={[
+          styles.grid,
+          // Clear the floating tab bar now that this screen lives inside the tabs.
+          { paddingBottom: services.gridBottom + tabs.bottom + tabs.labelled.height + insets.bottom },
+        ]}
         showsVerticalScrollIndicator={false}
       >
         {ROWS.map((row) => (

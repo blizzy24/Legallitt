@@ -1,45 +1,101 @@
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { router, usePathname } from 'expo-router';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { router, usePathname, type Href } from 'expo-router';
+import {
+  FileText,
+  House,
+  LayoutGrid,
+  MessageSquareText,
+  UserRound,
+  type LucideIcon,
+} from 'lucide-react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { colors, home, ink, space, tabBarShadow } from '../constants/theme';
+import { colors, font, ink, tabBarShadow, tabs } from '../constants/theme';
 
-type IconName = keyof typeof MaterialCommunityIcons.glyphMap;
-type Tab = { name: string; label: string; icon: IconName };
+export type TabConfig = {
+  key: string;
+  label: string;
+  icon: LucideIcon;
+  route: Href;
+};
 
-// Four filled icons, per design/11 + 12.
-// TODO: "Cases" and "Lawyers" are placeholder names the client has not confirmed. They
-// are accessibility labels only — no visible UI text uses them — so renaming is safe.
-const TABS: Tab[] = [
-  { name: 'home', label: 'Home', icon: 'home' },
-  { name: 'tab2', label: 'Cases', icon: 'scale-balance' },
-  { name: 'tab3', label: 'Lawyers', icon: 'account-group' },
-  { name: 'profile', label: 'Profile', icon: 'account' },
+export type TabBarVariant = 'labelled' | 'iconOnly';
+
+// Five-tab bar from design/14 (labelled) and design/21 (icon only). Outline icons; the
+// active tab sits in a filled brand pill with a white icon (and label, when labelled).
+// TODO: labels are the design's wording — "Cases" and "Messages" not yet client-confirmed.
+export const TABS: TabConfig[] = [
+  { key: 'home', label: 'Home', icon: House, route: '/(tabs)/home' },
+  { key: 'services', label: 'Services', icon: LayoutGrid, route: '/(tabs)/services' },
+  { key: 'cases', label: 'Cases', icon: FileText, route: '/(tabs)/cases' },
+  { key: 'messages', label: 'Messages', icon: MessageSquareText, route: '/(tabs)/messages' },
+  { key: 'profile', label: 'Profile', icon: UserRound, route: '/(tabs)/profile' },
 ];
 
-export default function TabBar() {
+// Earlier four-tab bar from design/11 + 12, kept in case the client prefers it. It used
+// FILLED MaterialCommunityIcons glyphs (import MaterialCommunityIcons from
+// '@expo/vector-icons/MaterialCommunityIcons') at 32pt, with the `iconOnly` layout but the
+// larger `home.tab*` metrics of that design (68 tall, 74×47 pill, ink.accent fill):
+//
+// const LEGACY_TABS = [
+//   { key: 'home',    label: 'Home',    icon: 'home',          route: '/(tabs)/home' },
+//   { key: 'tab2',    label: 'Cases',   icon: 'scale-balance', route: '/(tabs)/tab2' },
+//   { key: 'tab3',    label: 'Lawyers', icon: 'account-group', route: '/(tabs)/tab3' },
+//   { key: 'profile', label: 'Profile', icon: 'account',       route: '/(tabs)/profile' },
+// ];
+
+type Props = {
+  variant?: TabBarVariant;
+  items?: TabConfig[];
+};
+
+export default function TabBar({ variant = 'labelled', items = TABS }: Props) {
   const pathname = usePathname();
+  const labelled = variant === 'labelled';
+  const m = labelled ? tabs.labelled : tabs.iconOnly;
 
   return (
-    <View style={styles.tabBar}>
-      <View style={styles.tabRow}>
-        {TABS.map((tab) => {
-          const active = pathname === `/${tab.name}`;
+    <View
+      style={[
+        styles.bar,
+        {
+          left: m.inset,
+          right: m.inset,
+          height: m.height,
+          borderRadius: m.height / 2,
+        },
+      ]}
+    >
+      <View style={[styles.row, { paddingHorizontal: m.padX }]}>
+        {items.map((tab) => {
+          const active = pathname === `/${tab.key}`;
+          const Icon = tab.icon;
+          const tint = active ? ink.onBrand : ink.accent;
           return (
             <Pressable
-              key={tab.name}
+              key={tab.key}
               role="tab"
               aria-selected={active}
               accessibilityLabel={tab.label}
-              onPress={() => router.navigate(`/${tab.name}` as never)}
-              style={styles.tabSlot}
+              onPress={() => router.navigate(tab.route)}
+              style={styles.slot}
             >
-              <View style={[styles.tabItem, active && styles.tabItemActive]}>
-                <MaterialCommunityIcons
-                  name={tab.icon}
-                  size={home.tabIcon}
-                  color={active ? ink.onBrand : ink.accent}
-                />
+              <View
+                style={[
+                  styles.item,
+                  {
+                    width: m.pillWidth,
+                    height: m.pillHeight,
+                    borderRadius: m.pillHeight / 2,
+                  },
+                  active && styles.itemActive,
+                ]}
+              >
+                <Icon size={m.icon} color={tint} />
+                {labelled && (
+                  <Text style={[styles.label, { color: tint }]} numberOfLines={1}>
+                    {tab.label}
+                  </Text>
+                )}
               </View>
             </Pressable>
           );
@@ -50,34 +106,31 @@ export default function TabBar() {
 }
 
 const styles = StyleSheet.create({
-  tabBar: {
+  bar: {
     position: 'absolute',
-    left: space.screenX,
-    right: space.screenX,
-    bottom: home.tabBottom,
-    height: home.tabHeight,
-    borderRadius: home.tabHeight / 2,
+    bottom: tabs.bottom,
     backgroundColor: colors.card,
     justifyContent: 'center',
     ...tabBarShadow,
   },
-  tabRow: {
+  row: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: home.tabPadX,
   },
-  tabSlot: {
+  slot: {
     flex: 1,
     alignItems: 'center',
   },
-  tabItem: {
-    width: home.tabActiveWidth,
-    height: home.tabActiveHeight,
+  item: {
     alignItems: 'center',
     justifyContent: 'center',
   },
-  tabItemActive: {
-    borderRadius: home.tabActiveHeight / 2,
-    backgroundColor: ink.accent,
+  itemActive: {
+    backgroundColor: colors.brand,
+  },
+  label: {
+    marginTop: tabs.labelled.labelGap,
+    fontFamily: font.appBody,
+    fontSize: tabs.labelled.labelSize,
   },
 });

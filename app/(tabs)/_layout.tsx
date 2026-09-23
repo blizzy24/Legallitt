@@ -6,15 +6,16 @@ import { colors } from '../../constants/theme';
 export default function TabsLayout() {
   return (
     <Tabs
-      tabBar={() => <TabBar />}
+      tabBar={() => <TabBar variant="labelled" />}
       screenOptions={{
         headerShown: false,
         sceneStyle: { backgroundColor: colors.screenBg },
       }}
     >
       <Tabs.Screen name="home" />
-      <Tabs.Screen name="tab2" />
-      <Tabs.Screen name="tab3" />
+      <Tabs.Screen name="services" />
+      <Tabs.Screen name="cases" />
+      <Tabs.Screen name="messages" />
       <Tabs.Screen name="profile" />
     </Tabs>
   );

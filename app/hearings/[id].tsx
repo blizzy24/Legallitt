@@ -1,12 +1,15 @@
+import { useLocalSearchParams } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { colors, font, home } from '../../constants/theme';
 
 // Placeholder — screen UI to come.
-export default function Tab2Screen() {
+export default function HearingDetailsScreen() {
+  const { id } = useLocalSearchParams<{ id: string }>();
   return (
     <View style={styles.screen}>
-      <Text style={styles.label}>Tab 2</Text>
+      <Text style={styles.label}>Hearing Details</Text>
+      <Text style={styles.sub}>{id}</Text>
     </View>
   );
 }
@@ -22,5 +25,11 @@ const styles = StyleSheet.create({
     fontFamily: font.appSemi,
     fontSize: home.sectionTitleSize,
     color: colors.textPrimary,
+  },
+  sub: {
+    marginTop: home.subtitleGap,
+    fontFamily: font.mono,
+    fontSize: home.subtitleSize,
+    color: colors.textBody,
   },
 });

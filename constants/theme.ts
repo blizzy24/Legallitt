@@ -1,3 +1,5 @@
+import { Platform } from 'react-native';
+
 export const colors = {
   brand:        '#B09C82',
   brandDark:    '#967645',
@@ -27,6 +29,9 @@ export const font = {
   appHeading:   'PublicSans_700Bold',
   appSemi:      'PublicSans_600SemiBold',
   appBody:      'PublicSans_400Regular',
+  // Case IDs (design/14, 16, 19, 20). System monospace until the client supplies the
+  // real face — replace this one value and every ID updates.
+  mono:         Platform.select({ ios: 'Menlo', android: 'monospace', default: 'monospace' }) as string,
 };
 
 export const size = {
@@ -124,6 +129,44 @@ export const role = {
   sublineGap: 6,
   sublineSize: 12,
   sublineMinScale: 0.85,
+};
+
+// Status colours, sampled from design/14–21 (lossy webp exports, so ±2–3 per channel).
+export const status = {
+  active:        '#21B474',  // green dot, "Active"/"Upcoming"/"Ongoing" text, verified tick
+  activeBg:      '#E9FAF2',  // green pill fill
+  activeBorder:  '#D6F3E6',  // green pill edge
+  pending:       '#F7A108',  // amber dot (stat card, "Awaiting Review")
+  pendingText:   '#9E6028',  // amber text ("Awaiting Review", "Est. Advocate match", "5 days remaining")
+  pendingBg:     '#FFFAE9',  // amber pill fill
+  pendingBorder: '#F7E7BA',  // amber pill edge
+  notification:  '#D7524B',  // red unread dot on the bell
+  // "days remaining" uses the amber pill above on design/14 + 15. design/20 draws it as a
+  // tan pill (#F5EDE5 fill, #786E64 text) instead — variant, not tokenised until confirmed.
+};
+
+// Floating tab bar. `labelled` is measured from design/14 (390×1442 frame, ≈1.09px/pt);
+// `iconOnly` from design/21. Both sit 21pt above the bottom edge.
+export const tabs = {
+  bottom: 21,
+  labelled: {
+    inset: 44.5,      // side margin — the labelled bar is narrower than the screen grid
+    height: 60,
+    padX: 8,
+    pillWidth: 52,
+    pillHeight: 43,
+    icon: 21,
+    labelSize: 10,
+    labelGap: 6,
+  },
+  iconOnly: {
+    inset: 20,
+    height: 56,
+    padX: 0,
+    pillWidth: 51,
+    pillHeight: 36,
+    icon: 22,
+  },
 };
 
 // Home screen metrics, measured from design/11 (guest) + design/12 (logged in),

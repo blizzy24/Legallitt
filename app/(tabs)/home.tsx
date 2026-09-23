@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import ServiceCard from '../../components/ServiceCard';
 import { serviceIcon } from '../../components/serviceIcons';
-import { colors, font, home, ink, space } from '../../constants/theme';
+import { colors, font, home, ink, space, tabs } from '../../constants/theme';
 import { useSession } from '../../context/session';
 import { homeServices, popularServices, type ResolvedService } from '../../data/services';
 
@@ -28,7 +28,7 @@ export default function HomeScreen() {
           styles.content,
           {
             paddingTop: insets.top + (isLoggedIn ? home.topMember : home.topGuest),
-            paddingBottom: home.tabBottom + home.tabHeight + home.gridGap + insets.bottom,
+            paddingBottom: tabs.bottom + tabs.labelled.height + home.gridGap + insets.bottom,
           },
         ]}
         showsVerticalScrollIndicator={false}
@@ -100,7 +100,7 @@ function SectionRow({ title, badge, style }: { title: string; badge?: boolean; s
         </View>
       )}
       <View style={styles.sectionSpacer} />
-      <Pressable accessibilityRole="link" onPress={() => router.push('/services')}>
+      <Pressable accessibilityRole="link" onPress={() => router.navigate('/(tabs)/services')}>
         <Text style={styles.viewAll}>View All</Text>
       </Pressable>
     </View>
