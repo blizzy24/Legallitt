@@ -206,6 +206,9 @@ function RequestCard({ request }: { request: PendingRequest }) {
         {request.categoryLabel} • {request.note}
       </Text>
 
+      {/* design/17 fits both halves on one line, but only just: at 360pt they would wrap
+          or truncate. Stacked here so the row holds at 360, 390 and 412 without setting
+          the type smaller than the design's. */}
       <View style={styles.requestInner}>
         <Text style={styles.requestLabel} numberOfLines={1}>
           Requested: <Text style={styles.requestValue}>{formatDate(request.requestedDate)}</Text>
@@ -401,12 +404,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.appBg,
     paddingHorizontal: t.innerPad,
     paddingVertical: t.innerPad - 2,
-    flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     gap: t.requestGap,
   },
   requestLabel: {
-    flexShrink: 0,
     fontFamily: font.appBody,
     fontSize: t.requestTextSize,
     color: colors.textBody,
@@ -416,7 +417,6 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
   },
   requestMatch: {
-    flexShrink: 1,
     fontFamily: font.appSemi,
     fontSize: t.requestTextSize,
     color: status.pendingText,

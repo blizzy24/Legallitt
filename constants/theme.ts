@@ -259,8 +259,10 @@ export const cases = {
   clockButton: 32,
   clockIcon: 16,
   clockInset: 14.8,
-  requestTextSize: 11,
-  requestGap: 6,
+  // design/17 sets this row in ~11.2pt. It only fits on one line at 390pt, so the two
+  // halves stack instead — see the note in app/(tabs)/cases.tsx.
+  requestTextSize: 11.2,
+  requestGap: 4,
   // Gap above the first section heading when a tab starts with one (design/17).
   tabTopGap: 27,
 };

@@ -108,6 +108,22 @@ export const ADVOCATES: Advocate[] = [
     role: 'Commercial Counsel', // design/21
     verified: true,
   },
+  // INVENTED — added so the Civil and Criminal filter chips on All Active Cases have
+  // something to match. No design shows these.
+  {
+    id: 'adv-kavita-rao',
+    name: 'Adv. Kavita Rao',
+    initials: 'KR',
+    role: 'Civil Counsel',
+    verified: true,
+  },
+  {
+    id: 'adv-arjun-nair',
+    name: 'Adv. Arjun Nair',
+    initials: 'AN',
+    role: 'Criminal Counsel',
+    verified: true,
+  },
 ];
 
 export const CASES: Case[] = [
@@ -176,6 +192,42 @@ export const CASES: Case[] = [
     nextHearingId: 'hrg-0932-2026-10-15',
     documentsCount: 1,
   },
+  // INVENTED — the All Active Cases filter chips (design/21) include Civil and Criminal,
+  // but no design shows a case in either category. These two exist so those filters
+  // return something; every field follows the pattern of the cases above and none of it
+  // is client copy.
+  {
+    id: 'LGL-2026-IND-0356',
+    shortRef: 'CAS-1102',
+    title: 'Sunita Rao vs. Kiran Deshmukh',
+    category: 'civil',
+    categoryLabel: 'Civil Suit',
+    court: 'District Court, Indore',
+    city: 'Indore',
+    state: 'Madhya Pradesh',
+    status: 'active',
+    statusLabel: 'Ongoing',
+    filedDate: '2026-09-02',
+    advocateId: 'adv-kavita-rao',
+    nextHearingId: 'hrg-0356-2026-10-22',
+    documentsCount: 2,
+  },
+  {
+    id: 'LGL-2026-BHP-1043',
+    shortRef: 'CAS-1155',
+    title: 'State vs. Manoj Kulkarni',
+    category: 'criminal',
+    categoryLabel: 'Criminal Matter',
+    court: 'Sessions Court, Bhopal',
+    city: 'Bhopal',
+    state: 'Madhya Pradesh',
+    status: 'active',
+    statusLabel: 'Ongoing',
+    filedDate: '2026-09-11',
+    advocateId: 'adv-arjun-nair',
+    nextHearingId: 'hrg-1043-2026-10-29',
+    documentsCount: 4,
+  },
 ];
 
 export const HEARINGS: Hearing[] = [
@@ -217,6 +269,29 @@ export const HEARINGS: Hearing[] = [
     time: '10:30 AM',
     courtroom: 'Courtroom 1',
     bench: 'Bench 1',
+    status: 'upcoming',
+    attendance: 'Advocate attending in person',
+  },
+  // INVENTED — hearings for the two invented cases above.
+  {
+    id: 'hrg-0356-2026-10-22',
+    caseId: 'LGL-2026-IND-0356',
+    type: 'Court Hearing',
+    date: '2026-10-22',
+    time: '11:00 AM',
+    courtroom: 'Courtroom 3',
+    bench: 'Bench 1',
+    status: 'upcoming',
+    attendance: 'Advocate attending in person',
+  },
+  {
+    id: 'hrg-1043-2026-10-29',
+    caseId: 'LGL-2026-BHP-1043',
+    type: 'Court Hearing',
+    date: '2026-10-29',
+    time: '02:30 PM',
+    courtroom: 'Courtroom 6',
+    bench: 'Main Bench',
     status: 'upcoming',
     attendance: 'Advocate attending in person',
   },

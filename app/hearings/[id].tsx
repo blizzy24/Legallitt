@@ -89,14 +89,10 @@ export default function HearingDetailsScreen() {
             <View style={styles.schedText}>
               <Text style={styles.schedLabel}>Hearing Schedule</Text>
               <View style={styles.schedValueRow}>
-                <Text style={styles.schedValue} numberOfLines={1}>
-                  {hearing.time}
-                </Text>
+                <Text style={styles.schedValue}>{hearing.time}</Text>
                 {/* The PNG drops this dot below the text baseline; centred here. */}
                 <View style={styles.schedDot} />
-                <Text style={styles.schedValue} numberOfLines={1}>
-                  {hearing.courtroom}
-                </Text>
+                <Text style={styles.schedValue}>{hearing.courtroom}</Text>
               </View>
             </View>
             <View style={styles.bench}>
@@ -161,13 +157,23 @@ export default function HearingDetailsScreen() {
           <View style={styles.refBoxes}>
             <View style={styles.refBox}>
               <Text style={styles.refLabel}>CASE NUMBER</Text>
-              <Text style={styles.refValueMono} numberOfLines={1}>
+              <Text
+                style={styles.refValueMono}
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                minimumFontScale={0.85}
+              >
                 {c.id}
               </Text>
             </View>
             <View style={styles.refBox}>
               <Text style={styles.refLabel}>FILING COURT</Text>
-              <Text style={styles.refValue} numberOfLines={1}>
+              <Text
+                style={styles.refValue}
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                minimumFontScale={0.85}
+              >
                 {c.city} Civil Court
               </Text>
             </View>
@@ -333,6 +339,8 @@ const styles = StyleSheet.create({
     marginTop: h.advocateLabelGap,
     flexDirection: 'row',
     alignItems: 'center',
+    // Wraps rather than truncating when the bench label is long or the screen narrow.
+    flexWrap: 'wrap',
     gap: h.schedDotGap,
   },
   schedValue: {
