@@ -538,6 +538,146 @@ export const wizard = {
   lineTodo: '#D4C5B1',
 };
 
+// Legal Notice wizard content, measured from design/24–27 + 39 (390pt wide).
+// The chat-style bubble on steps 1, 2 and 5 (fixed width; heights differ per file so
+// it is content-sized here).
+export const wizardBubble = {
+  width: 249,
+  radius: 10,          // step 5's file rounds to ~15; steps 1/2 measure 10
+  padX: 22,
+  padTop: 17,
+  padBottom: 9,
+  timeInset: 9,
+  titleSize: 14.2,
+  lineHeight: 20,
+  timeSize: 8.5,
+  timeGap: 2,
+  timeLineHeight: 12,
+  bg: '#F4ECE3',
+  text: '#433C30',
+  time: '#7B736A',
+  fieldsGap: 24,       // bubble → first field (steps 1/2)
+  noteGap: 9,          // bubble → "Note:" line, and note → first field (step 2)
+  noteSize: 10.5,
+  cardGap: 9,          // bubble → summary card (step 5)
+};
+
+// Flat beige fields (steps 1 and 2) — no elevation, brand-coloured leading icon.
+export const wizardField = {
+  height: 41,
+  radius: 10,
+  gap: 8,
+  padLeft: 15,
+  icon: 20,
+  iconGap: 10,
+  text: 14.5,
+  hintSize: 11,
+  starLift: -5,
+  multiPadTop: 9,
+  addressHeight: 128,      // step 1
+  addressHeightShort: 90,  // step 2 (five fields above it)
+  bg: '#FAF6F1',
+  hint: '#9C9892',
+};
+
+// Step 3 quick-action pills.
+export const quickActions = {
+  titleGap: 24,
+  titleSize: 14.5,
+  pillsGap: 14,
+  pillHeight: 43,
+  padLeft: 15,
+  chip: 26,
+  chipIcon: 14,
+  chipGap: 6,
+  padRight: 12,
+  colGap: 10,
+  rowGap: 13,
+  textSize: 12.5,
+  selectedBorder: 1.5,
+};
+
+// Step 4 review-documents list. The file's outer margins are 16pt and its background
+// off-white; both normalised to the shell (22pt, white) and reported.
+export const reviewDocs = {
+  titleSize: 24.5,
+  subtitleGap: 10,
+  subtitleSize: 14,
+  subtitleLineHeight: 22,
+  bannerGap: 26,
+  bannerHeight: 68,
+  bannerRadius: 16,
+  bannerPad: 16,
+  disc: 32,
+  discIcon: 16,
+  bannerTextGap: 9,
+  bannerTitleSize: 13,
+  bannerSubSize: 11.5,
+  bannerLineGap: 3,
+  listGap: 42,
+  cardHeight: 62,
+  cardGap: 9,
+  cardRadius: 14,
+  cardPadLeft: 12,
+  icon: 28,
+  iconGap: 8,
+  titleTextSize: 14.5,
+  subTextSize: 14.5,
+  actionIcon: 18,
+  actionGap: 18,
+  cardPadRight: 20,
+  addGap: 16,
+  addHeight: 51,
+  addIcon: 18,
+  addIconGap: 6,
+  addTextSize: 14,
+  chipGap: 10,
+  chipHeight: 22,
+  chipPadX: 10,
+  chipTextSize: 11.5,
+  bannerBg: '#F8F4F0',
+  checkDisc: '#6B583F',
+  docText: '#A19F9D',
+  addText: '#5F4F3A',
+  chipBg: '#F0EFEB',
+  chipText: '#393832',
+};
+
+// Step 5 summary card.
+export const caseSummary = {
+  radius: 16,
+  padTop: 18,
+  padBottom: 18,
+  padLeft: 26,
+  padRight: 18,
+  labelWidth: 124,
+  labelSize: 14.5,
+  valueSize: 14.5,
+  valueLineHeight: 20,
+  paraSize: 12.5,
+  paraLineHeight: 18,
+  paraMaxWidth: 162,   // the file wraps the summary well short of the card edge
+  rowGap: 20,
+  boxGap: 14,
+  boxHeight: 54,
+  boxRadius: 12,
+  boxPadX: 9,
+  boxTitleSize: 15,
+  boxSubSize: 13,
+  boxLineGap: 4,
+  chevron: 20,
+  bg: '#FAF6F1',
+  value: '#9F9C96',
+};
+
+export const wizardCardShadow = {
+  shadowColor: ink.shadow,
+  shadowOpacity: 0.08,
+  shadowRadius: 4,
+  shadowOffset: { width: 0, height: 2 },
+  elevation: 2,
+};
+
 // Home screen metrics, measured from design/11 (guest) + design/12 (logged in),
 // both 390pt wide @2x. These supersede design/09.
 export const home = {
