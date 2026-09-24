@@ -18,8 +18,8 @@ const SAMPLE_DOCS: Doc[] = [
   { title: 'Screenshots', subtitle: 'WhatsApp, Email, etc', icon: Crop },
 ];
 
-// Step 4 — review documents (design/39). Content fills from the top; the file's
-// off-white background and 16pt margins are normalised to the shell. View / replace /
+// Step 4 — review documents (design/39). Content fills from the top on the off-white
+// background; the file's 16pt margins are normalised to the shell. View / replace /
 // delete are non-functional.
 export default function Step4Screen() {
   const { form, update } = useLegalNotice();
@@ -33,7 +33,7 @@ export default function Step4Screen() {
   const count = form.documents.length || SAMPLE_DOCS.length;
 
   return (
-    <WizardShell step={4} align="top" buttonLabel="Continue" onContinue={() => router.push('/legal-notice/step5')}>
+    <WizardShell step={4} align="top" background="tinted" buttonLabel="Continue" onContinue={() => router.push('/legal-notice/step5')}>
       <Text style={styles.title}>Review Your Documents</Text>
       <Text style={styles.subtitle}>Your documents have been uploaded successfully. Review them before continuing.</Text>
 

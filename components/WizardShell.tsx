@@ -1,10 +1,11 @@
 import { router } from 'expo-router';
-import { ArrowLeft, ChevronLeft, Lock } from 'lucide-react-native';
+import { ChevronLeft, Lock } from 'lucide-react-native';
 import type { ReactNode } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { colors, font, ink, space, wizard as w } from '../constants/theme';
+import { colors, font, ink, payHeader as ph, wizard as w } from '../constants/theme';
+import PayHeader from './PayHeader';
 import PrimaryButton from './PrimaryButton';
 
 export const WIZARD_STEPS = 6;
@@ -31,6 +32,8 @@ type Props = {
   hideButton?: boolean;
   /** Extra bottom clearance, e.g. for a fixed bar supplied by the step. */
   bottomInset?: number;
+  /** Steps 4 and 6 are drawn on the off-white app background; chat steps on white. */
+  background?: 'white' | 'tinted';
 };
 
 export default function WizardShell({
@@ -44,6 +47,7 @@ export default function WizardShell({
   subtitle = 'Secure & Confidence',
   hideButton = false,
   bottomInset = 0,
+  background = 'white',
 }: Props) {
   const insets = useSafeAreaInsets();
 
@@ -52,10 +56,12 @@ export default function WizardShell({
     else router.replace('/(tabs)/home');
   };
 
+  const bg = background === 'tinted' ? colors.appBg : colors.screenBg;
+
   return (
-    <View style={styles.screen}>
-      <View style={[styles.header, { paddingTop: insets.top + w.top }]}>
-        {header === 'centred' ? (
+    <View style={[styles.screen, { backgroundColor: bg }]}>
+      {header === 'centred' ? (
+        <View style={[styles.header, { paddingTop: insets.top + w.top }]}>
           <View style={styles.centredHeader}>
             <Pressable accessibilityRole="button" accessibilityLabel="Back" onPress={goBack} hitSlop={12} style={styles.chevron}>
               <ChevronLeft size={w.chevronSize} color={colors.textPrimary} />
@@ -63,23 +69,22 @@ export default function WizardShell({
             <Text style={styles.title}>{title}</Text>
             <Text style={styles.subtitle}>{subtitle}</Text>
           </View>
-        ) : (
-          <View style={styles.leadingHeader}>
-            <Pressable accessibilityRole="button" accessibilityLabel="Back" onPress={goBack} style={styles.leadButton}>
-              <ArrowLeft size={w.chevronSize - 2} color={colors.textPrimary} />
-            </Pressable>
-            <View style={styles.leadText}>
-              <Text style={styles.leadTitle}>{title}</Text>
-              <Text style={styles.leadSubtitle}>{subtitle}</Text>
-            </View>
+          <Stepper step={step} />
+          <Text style={styles.stepLabel}>
+            Step {step} of {WIZARD_STEPS}
+          </Text>
+        </View>
+      ) : (
+        <View>
+          <PayHeader title={title} subtitle={subtitle} onBack={goBack} />
+          <View style={[styles.header, styles.headerLeading]}>
+            <Stepper step={step} />
+            <Text style={styles.stepLabel}>
+              Step {step} of {WIZARD_STEPS}
+            </Text>
           </View>
-        )}
-
-        <Stepper step={step} />
-        <Text style={styles.stepLabel}>
-          Step {step} of {WIZARD_STEPS}
-        </Text>
-      </View>
+        </View>
+      )}
 
       <ScrollView
         style={styles.scroll}
@@ -95,7 +100,7 @@ export default function WizardShell({
       </ScrollView>
 
       {!hideButton && (
-        <View style={[styles.footer, { paddingBottom: insets.bottom + w.bottom }]}>
+        <View style={[styles.footer, { paddingBottom: insets.bottom + w.bottom, backgroundColor: bg }]}>
           <PrimaryButton label={buttonLabel} onPress={onContinue} />
           <View style={styles.safeRow}>
             <Lock size={w.footerIcon} color={colors.textPrimary} />
@@ -134,10 +139,14 @@ function Stepper({ step }: { step: number }) {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: colors.screenBg,
   },
   header: {
     paddingHorizontal: w.padX,
+  },
+  headerLeading: {
+    // design/28: the stepper sits 17pt under the header divider (marginTop below
+    // is the stepper's own gap).
+    paddingTop: ph.stepperGap - w.stepperGap,
   },
   centredHeader: {
     alignItems: 'center',
@@ -159,36 +168,6 @@ const styles = StyleSheet.create({
     fontFamily: font.appBody,
     fontSize: w.subtitleSize,
     color: colors.textPrimary,
-  },
-  leadingHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  leadButton: {
-    width: w.leadHeaderButton,
-    height: w.leadHeaderButton,
-    borderRadius: w.leadHeaderButton / 2,
-    backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: colors.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: space.gap,
-  },
-  leadText: {
-    flex: 1,
-    minWidth: 0,
-  },
-  leadTitle: {
-    fontFamily: font.appHeading,
-    fontSize: w.leadTitleSize,
-    color: colors.textPrimary,
-  },
-  leadSubtitle: {
-    marginTop: 3,
-    fontFamily: font.appBody,
-    fontSize: w.leadSubtitleSize,
-    color: colors.textBody,
   },
   stepper: {
     marginTop: w.stepperGap,
@@ -238,7 +217,6 @@ const styles = StyleSheet.create({
   footer: {
     paddingHorizontal: w.padX,
     paddingTop: w.contentGap,
-    backgroundColor: colors.screenBg,
   },
   safeRow: {
     marginTop: w.buttonGap,
