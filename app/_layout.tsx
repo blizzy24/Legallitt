@@ -10,6 +10,7 @@ import { SplashScreen, Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 
+import { LegalNoticeProvider } from '../context/legalNotice';
 import { SessionProvider } from '../context/session';
 import { colors } from '../constants/theme';
 
@@ -36,13 +37,15 @@ export default function RootLayout() {
 
   return (
     <SessionProvider>
-      <StatusBar style="dark" />
-      <Stack
-        screenOptions={{
-          headerShown: false,
-          contentStyle: { backgroundColor: colors.screenBg },
-        }}
-      />
+      <LegalNoticeProvider>
+        <StatusBar style="dark" />
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            contentStyle: { backgroundColor: colors.screenBg },
+          }}
+        />
+      </LegalNoticeProvider>
     </SessionProvider>
   );
 }

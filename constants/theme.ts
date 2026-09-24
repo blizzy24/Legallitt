@@ -504,6 +504,40 @@ export const hearings = {
   barGap: 11,
 };
 
+// Legal Notice wizard shell, measured from design/24 (step 1) and design/27 (step 5),
+// both 714px exports of a 390×856pt frame (1.83px/pt). The stepper drifts by 3–4pt
+// between files, so the values below are the mean.
+export const wizard = {
+  padX: 22,
+  top: 41,
+  titleSize: 16.2,
+  subtitleGap: 3.5,
+  subtitleSize: 13.3,
+  chevronSize: 22,
+  chevronInset: -7.5,
+  stepperGap: 14,
+  circle: 24,
+  circleText: 13,
+  line: 2.5,
+  labelGap: 11.5,
+  labelSize: 13,
+  contentGap: 24,
+  buttonGap: 14,
+  footerIcon: 16,
+  footerIconGap: 8,
+  footerSize: 13.5,
+  bottom: 24,
+  // Leading header variant used by step 6 (design/28): circular back button, left title.
+  leadHeaderButton: 40,
+  leadTitleSize: 18,
+  leadSubtitleSize: 13.5,
+  // Colours
+  circleDone: '#4C453A',   // completed + current step
+  circleTodo: '#DFC4A3',   // upcoming step
+  lineDone: '#71604F',
+  lineTodo: '#D4C5B1',
+};
+
 // Home screen metrics, measured from design/11 (guest) + design/12 (logged in),
 // both 390pt wide @2x. These supersede design/09.
 export const home = {
