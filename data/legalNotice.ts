@@ -13,7 +13,8 @@ export const LEGAL_NOTICE_PRICES = {
 export const INVOICE = {
   service: 'Legal Notice',
   refId: 'LGT-849204',
-  requestId: 'PSR739482',
+  // design/30 shows PSR739482; design/31–32 show LN12345678. One ID everywhere.
+  requestId: 'LN12345678',
   lines: [
     { label: 'Service Fee', amount: LEGAL_NOTICE_PRICES.standard },
     // design/28 shows ₹179 for 18% GST (18% of ₹999 is ₹179.82) — kept as drawn.
@@ -31,3 +32,43 @@ export function invoiceTotal(lines: InvoiceLine[] = INVOICE.lines) {
 export function rupees(n: number, grouped = true) {
   return '₹' + (grouped ? n.toLocaleString('en-IN') : String(n));
 }
+
+// Tracking screen (design/31, 32). Dates are September 2026 to sit with
+// data/cases.ts (the files say 23 / 25 May 2026).
+export type TrackingState = 'drafting' | 'approval';
+
+export const TRACKING = {
+  // design/31 reads "Ref: LN-2026/05" while the invoice's Ref ID is #LGT-849204.
+  ref: 'LN-2026/05',
+  tier: 'Urgent Tier',
+  serviceSpeed: 'Within 5 Days',
+  submittedOn: '2026-09-19',
+  submittedAt: '10:30 AM',
+  estimate: { date: '2026-09-21', time: '6 PM' },
+  // Near-duplicate of data/cases.ts's "Adv. Arjun Nair" — the file names Sharma.
+  advocate: {
+    name: 'Adv. Arjun Sharma',
+    initials: 'AS',
+    experience: '8+ Years Experience',
+    practice: 'Property Law',
+    barReg: 'D/1842/2016',
+    rating: 4.9,
+    reviews: 142,
+  },
+  draftFile: 'Legal_Notice_Draft_v1.pdf',
+};
+
+export type TrackingStep = { title: string; description: string };
+
+export const TRACKING_STEPS: TrackingStep[] = [
+  { title: 'Request Submitted', description: 'Your legal notice request has been received.' },
+  { title: 'Payment Confirmed', description: 'Payment successfully received.' },
+  { title: 'Advocate Assigned', description: 'A verified advocate has been assigned.' },
+  { title: 'Drafting in Progress', description: 'Your legal notice is currently being prepared.' },
+  { title: 'Awaiting Your Approval', description: 'Review and approve the draft before dispatch.' },
+  { title: 'Notice Dispatched', description: 'Your approved notice will be sent to the recipient.' },
+  { title: 'Delivery Confirmed', description: 'Delivery status will appear here.' },
+];
+
+/** 1-based index of the current step for each state. */
+export const TRACKING_CURRENT: Record<TrackingState, number> = { drafting: 4, approval: 5 };
