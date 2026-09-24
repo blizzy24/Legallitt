@@ -28,7 +28,9 @@ export default function ServiceHeader({ title }: { title: string }) {
 
 const styles = StyleSheet.create({
   header: {
-    height: h.height,
+    minHeight: h.height,
+    paddingBottom: h.bottom,
+    backgroundColor: colors.appBg,
     paddingLeft: h.padLeft,
     paddingRight: h.padX,
     flexDirection: 'row',

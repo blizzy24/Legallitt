@@ -37,11 +37,11 @@ export default function CaseListCard({ item, onPress }: Props) {
           <View style={styles.avatar}>
             <Text style={styles.avatarText}>{advocate.initials}</Text>
           </View>
-          <Text style={styles.advocateName} numberOfLines={1}>
+          <Text style={styles.advocateName} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85}>
             {advocate.name}
           </Text>
           <View style={styles.spacer} />
-          <Text style={styles.role} numberOfLines={1}>
+          <Text style={styles.role} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85}>
             {advocate.role}
           </Text>
         </View>

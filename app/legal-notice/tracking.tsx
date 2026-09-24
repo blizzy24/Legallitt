@@ -311,7 +311,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.appBg,
   },
   header: {
-    height: t.headerHeight,
+    minHeight: t.headerHeight,
+    paddingBottom: t.headerBottom,
+    backgroundColor: colors.appBg,
     paddingHorizontal: t.headerPadX,
     flexDirection: 'row',
     alignItems: 'center',

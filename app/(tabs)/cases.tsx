@@ -145,7 +145,7 @@ function StatCard({
     tone === 'active' ? status.active : tone === 'pending' ? status.pending : colors.brand;
   return (
     <View style={styles.statCard}>
-      <Text style={styles.statLabel} numberOfLines={1}>
+      <Text style={styles.statLabel} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.9}>
         {label}
       </Text>
       <View style={styles.statRow}>

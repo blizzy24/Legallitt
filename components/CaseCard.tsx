@@ -33,7 +33,7 @@ export default function CaseCard({ item, onPress }: Props) {
       <View style={styles.inner}>
         <View style={styles.innerCol}>
           <Text style={styles.innerLabel}>JURISDICTION</Text>
-          <Text style={styles.innerValue} numberOfLines={1}>
+          <Text style={styles.innerValue} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85}>
             {item.court}
           </Text>
         </View>
@@ -41,7 +41,7 @@ export default function CaseCard({ item, onPress }: Props) {
           <Text style={styles.innerLabel}>ASSIGNED ADVOCATE</Text>
           <View style={styles.advocateRow}>
             <View style={styles.advocateDot} />
-            <Text style={styles.innerValue} numberOfLines={1}>
+            <Text style={styles.innerValue} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85}>
               {advocate?.name}
             </Text>
           </View>

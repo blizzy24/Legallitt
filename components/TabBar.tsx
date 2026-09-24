@@ -8,6 +8,7 @@ import {
   type LucideIcon,
 } from 'lucide-react-native';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { colors, font, ink, tabBarShadow, tabs } from '../constants/theme';
 
@@ -50,6 +51,9 @@ type Props = {
 
 export default function TabBar({ variant = 'labelled', items = TABS }: Props) {
   const pathname = usePathname();
+  // The scrolling tab screens reserve `tabs.bottom + height + insets.bottom`, so the
+  // bar has to float above the gesture bar too or the two disagree on a device.
+  const insets = useSafeAreaInsets();
   const labelled = variant === 'labelled';
   const m = labelled ? tabs.labelled : tabs.iconOnly;
 
@@ -58,6 +62,7 @@ export default function TabBar({ variant = 'labelled', items = TABS }: Props) {
       style={[
         styles.bar,
         {
+          bottom: tabs.bottom + insets.bottom,
           left: m.inset,
           right: m.inset,
           height: m.height,
@@ -108,7 +113,6 @@ export default function TabBar({ variant = 'labelled', items = TABS }: Props) {
 const styles = StyleSheet.create({
   bar: {
     position: 'absolute',
-    bottom: tabs.bottom,
     backgroundColor: colors.card,
     justifyContent: 'center',
     ...tabBarShadow,

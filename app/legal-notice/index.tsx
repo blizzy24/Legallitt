@@ -160,8 +160,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.appBg,
   },
   header: {
-    height: i.headerHeight,
+    // minHeight, not height: the safe-area inset is added as padding on top of it.
+    minHeight: i.headerHeight,
+    paddingBottom: i.headerBottom,
     paddingHorizontal: i.padX,
+    backgroundColor: colors.appBg,
     flexDirection: 'row',
     alignItems: 'center',
     borderBottomWidth: 1,
