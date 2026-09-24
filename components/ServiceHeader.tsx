@@ -1,0 +1,56 @@
+import { router } from 'expo-router';
+import { ArrowLeft, Share2, User } from 'lucide-react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import { colors, font, ink, serviceHeader as h } from '../constants/theme';
+
+// Header shared by the Legal Notice detail and identity screens (design/22, 37, 38).
+export default function ServiceHeader({ title }: { title: string }) {
+  const insets = useSafeAreaInsets();
+  return (
+    <View style={[styles.header, { paddingTop: insets.top + h.top }]}>
+      <Pressable accessibilityRole="button" accessibilityLabel="Back" hitSlop={10} onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)/home'))}>
+        <ArrowLeft size={h.backIcon} color={colors.textPrimary} />
+      </Pressable>
+      <Text style={styles.title} numberOfLines={1}>
+        {title}
+      </Text>
+      <Pressable accessibilityRole="button" accessibilityLabel="Share" hitSlop={10} style={styles.share}>
+        <Share2 size={h.shareIcon} color={colors.textPrimary} />
+      </Pressable>
+      <View style={styles.avatar}>
+        <User size={h.avatarIcon} color={ink.onBrand} />
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  header: {
+    height: h.height,
+    paddingLeft: h.padLeft,
+    paddingRight: h.padX,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  title: {
+    flex: 1,
+    minWidth: 0,
+    marginLeft: h.backGap,
+    fontFamily: font.appHeading,
+    fontSize: h.titleSize,
+    color: colors.textPrimary,
+  },
+  share: {
+    marginRight: h.shareGap,
+  },
+  avatar: {
+    width: h.avatar,
+    height: h.avatar,
+    borderRadius: h.avatar / 2,
+    backgroundColor: colors.brand,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});

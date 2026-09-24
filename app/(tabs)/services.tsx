@@ -81,6 +81,7 @@ export default function ServicesScreen() {
                 icon={serviceIcon(s.icon)}
                 title={s.shortTitle}
                 description={s.description}
+                onPress={s.id === 'legal-notice' ? () => router.push('/legal-notice') : undefined}
                 style={{ width: tileWidth }}
               />
             ))}

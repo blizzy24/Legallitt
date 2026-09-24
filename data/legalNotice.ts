@@ -72,3 +72,34 @@ export const TRACKING_STEPS: TrackingStep[] = [
 
 /** 1-based index of the current step for each state. */
 export const TRACKING_CURRENT: Record<TrackingState, number> = { drafting: 4, approval: 5 };
+
+// Service tiers shown on the detail screen (design/22). `standard` is the fee the
+// payment screen charges, so the two can't drift.
+export type ServiceTier = {
+  id: 'urgent' | 'ordinary';
+  label: string;
+  price: number;
+  speed: string;
+  note: string;
+  /** Wording used by the selected-summary bar. */
+  summary: string;
+};
+
+export const SERVICE_TIERS: ServiceTier[] = [
+  {
+    id: 'urgent',
+    label: 'URGENT',
+    price: LEGAL_NOTICE_PRICES.standard,
+    speed: 'Within 5 days',
+    note: 'Priority advocate assign',
+    summary: 'Urgent Assignment (5 Days)',
+  },
+  {
+    id: 'ordinary',
+    label: 'ORDINARY',
+    price: LEGAL_NOTICE_PRICES.express,
+    speed: 'Within 10 days',
+    note: 'Standard advocate assign',
+    summary: 'Ordinary Assignment (10 Days)',
+  },
+];

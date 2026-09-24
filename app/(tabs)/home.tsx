@@ -85,6 +85,7 @@ function Card({
       title={service.title}
       description={service.description}
       variant={variant}
+      onPress={service.id === 'legal-notice' ? () => router.push('/legal-notice') : undefined}
       style={style}
     />
   );
