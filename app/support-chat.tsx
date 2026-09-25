@@ -4,6 +4,7 @@ import { useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { shrinkToFit } from '../constants/textFit';
 import { colors, font, ink, supportChat as c } from '../constants/theme';
 
 type Message = { id: string; from: 'support' | 'user'; text: string; sender?: boolean };
@@ -67,7 +68,7 @@ export default function SupportChatScreen() {
 
       <View style={styles.bar}>
         <Clock size={c.barIcon} color={ink.accent} />
-        <Text style={styles.barText} numberOfLines={1}>
+        <Text style={styles.barText} numberOfLines={1} {...shrinkToFit()}>
           Regarding: <Text style={styles.barStrong}>Legal Notice Service</Text>
         </Text>
         <View style={styles.barChip}>

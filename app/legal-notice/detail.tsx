@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ServiceHeader from '../../components/ServiceHeader';
 import { colors, font, ink, lnDetail as d } from '../../constants/theme';
 import { useLegalNotice } from '../../context/legalNotice';
+import { shrinkToFit } from '../../constants/textFit';
 import { rupees, SERVICE_TIERS, tierFor } from '../../data/legalNotice';
 
 const BULLETS = [
@@ -123,7 +124,9 @@ export default function LegalNoticeDetailScreen() {
                   <Clock size={d.speedIcon} color={colors.textBody} />
                   <Text style={styles.speed}>{t.speed}</Text>
                 </View>
-                <Text style={styles.tierNote}>{t.note}</Text>
+                <Text style={styles.tierNote}>
+                  {t.note}
+                </Text>
               </Pressable>
             );
           })}
@@ -131,7 +134,7 @@ export default function LegalNoticeDetailScreen() {
 
         <View style={styles.summary}>
           <Zap size={d.summaryIcon} color={colors.textPrimary} fill={colors.textPrimary} />
-          <Text style={styles.summaryText} numberOfLines={1}>
+          <Text style={styles.summaryText} numberOfLines={1} {...shrinkToFit()}>
             Selected: {tier.summary}
           </Text>
           <View style={styles.spacer} />
@@ -210,11 +213,14 @@ const styles = StyleSheet.create({
     color: colors.textBody,
   },
   heroArt: {
-    width: d.heroArt,
-    height: d.heroArt,
+    // Placeholder for the document/paper-plane illustration, sized and positioned to
+    // design/22's artwork box so the real asset drops in without a layout change.
+    width: d.heroArtW,
+    height: d.heroArtH,
     borderRadius: 12,
     backgroundColor: d.artBg,
     marginLeft: 8,
+    marginRight: -d.cardPad,
   },
   titleRow: {
     flexDirection: 'row',
@@ -426,6 +432,7 @@ const styles = StyleSheet.create({
     marginTop: d.pickNoteGap,
     fontFamily: font.appBody,
     fontSize: d.pickNoteSize,
+    lineHeight: d.pickNoteLineHeight,
     color: colors.textBody,
   },
   summary: {
