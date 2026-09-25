@@ -4,11 +4,15 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import PayHeader from '../../components/PayHeader';
 import { colors, font, ink, paySuccess as s, scanPay, status } from '../../constants/theme';
-import { INVOICE, invoiceTotal, rupees } from '../../data/legalNotice';
+import { useLegalNotice } from '../../context/legalNotice';
+import { INVOICE, invoiceLines, invoiceTotal, rupees } from '../../data/legalNotice';
 
 // Payment success (design/30). The file reads "Your forensic analysis request has
 // been submitted" — wrong service; this says legal notice. Copy is non-functional.
 export default function PaymentSuccessScreen() {
+  const { form } = useLegalNotice();
+  const total = invoiceTotal(invoiceLines(form.tier));
+
   return (
     <View style={styles.screen}>
       <PayHeader
@@ -37,7 +41,7 @@ export default function PaymentSuccessScreen() {
             </View>
             <View style={styles.headText}>
               <Text style={styles.title}>Payment Successful</Text>
-              <Text style={styles.sub}>Your payment of {rupees(invoiceTotal(), false)} has been received.</Text>
+              <Text style={styles.sub}>Your payment of {rupees(total, false)} has been received.</Text>
             </View>
           </View>
           <Text style={styles.note}>Your legal notice request has been submitted.</Text>

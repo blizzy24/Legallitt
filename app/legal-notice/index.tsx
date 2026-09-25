@@ -111,7 +111,7 @@ export default function LegalNoticeInfoScreen() {
 
         <Pressable
           accessibilityRole="button"
-          onPress={() => router.push('/legal-notice/step1')}
+          onPress={() => router.push('/legal-notice/detail')}
           style={({ pressed }) => [styles.button, pressed && styles.pressed]}
         >
           <Text style={styles.buttonText}>Send a Legal Notice</Text>

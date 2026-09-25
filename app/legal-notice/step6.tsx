@@ -6,7 +6,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import WizardShell from '../../components/WizardShell';
 import { buttonShadow, colors, font, ink, payment as p, wizard as w } from '../../constants/theme';
-import { INVOICE, invoiceTotal, rupees } from '../../data/legalNotice';
+import { useLegalNotice } from '../../context/legalNotice';
+import { INVOICE, invoiceLines, invoiceTotal, rupees } from '../../data/legalNotice';
 
 type Method = 'upi' | 'cards' | 'netbanking';
 type UpiMode = 'app' | 'qr';
@@ -21,7 +22,9 @@ export default function Step6Screen() {
   const insets = useSafeAreaInsets();
   const [method, setMethod] = useState<Method>('upi');
   const [upiMode, setUpiMode] = useState<UpiMode>('qr');
-  const total = invoiceTotal();
+  const { form } = useLegalNotice();
+  const lines = invoiceLines(form.tier);
+  const total = invoiceTotal(lines);
 
   return (
     <View style={styles.screen}>
@@ -50,7 +53,7 @@ export default function Step6Screen() {
           </Text>
           <View style={styles.divider} />
           <View style={styles.rows}>
-            {INVOICE.lines.map((l) => (
+            {lines.map((l) => (
               <View key={l.label} style={styles.row}>
                 <Text style={styles.rowLabel}>{l.label}</Text>
                 <Text style={styles.rowValue}>{rupees(l.amount)}</Text>

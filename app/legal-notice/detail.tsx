@@ -1,12 +1,12 @@
 import { router } from 'expo-router';
 import { ArrowRight, Check, ChevronRight, Clock, FileSearch, Lock, MapPin, MessageCircle, ShieldCheck, Zap, type LucideIcon } from 'lucide-react-native';
-import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import ServiceHeader from '../../components/ServiceHeader';
 import { colors, font, ink, lnDetail as d } from '../../constants/theme';
-import { rupees, SERVICE_TIERS, type ServiceTier } from '../../data/legalNotice';
+import { useLegalNotice } from '../../context/legalNotice';
+import { rupees, SERVICE_TIERS, tierFor } from '../../data/legalNotice';
 
 const BULLETS = [
   'Acts as evidence in court',
@@ -25,8 +25,9 @@ const REASONS: { icon: LucideIcon; title: string; caption: string; tint: string 
 // they match the payment screen's Service Fee.
 export default function LegalNoticeDetailScreen() {
   const insets = useSafeAreaInsets();
-  const [tierId, setTierId] = useState<ServiceTier['id']>('urgent');
-  const tier = SERVICE_TIERS.find((t) => t.id === tierId) ?? SERVICE_TIERS[0];
+  const { form, update } = useLegalNotice();
+  const tierId = form.tier;
+  const tier = tierFor(tierId);
 
   return (
     <View style={styles.screen}>
@@ -105,7 +106,7 @@ export default function LegalNoticeDetailScreen() {
                 key={t.id}
                 accessibilityRole="radio"
                 accessibilityState={{ checked: selected }}
-                onPress={() => setTierId(t.id)}
+                onPress={() => update({ tier: t.id })}
                 style={[styles.tier, selected && styles.tierSelected]}
               >
                 <View style={styles.tierTop}>

@@ -8,7 +8,8 @@ import PayHeader from '../../components/PayHeader';
 import QrGlyph from '../../components/QrGlyph';
 import Spinner from '../../components/Spinner';
 import { colors, font, ink, scanPay as s } from '../../constants/theme';
-import { INVOICE, invoiceTotal, rupees } from '../../data/legalNotice';
+import { useLegalNotice } from '../../context/legalNotice';
+import { INVOICE, invoiceLines, invoiceTotal, rupees } from '../../data/legalNotice';
 
 const UPI_APPS = ['Google Pay', 'PhonePe', 'Paytm', 'BHIM'];
 
@@ -24,6 +25,8 @@ function mmss(total: number) {
 export default function ScanPayScreen() {
   const insets = useSafeAreaInsets();
   const [left, setLeft] = useState(s.validSeconds);
+  const { form } = useLegalNotice();
+  const total = invoiceTotal(invoiceLines(form.tier));
 
   useEffect(() => {
     const tick = setInterval(() => setLeft((t) => Math.max(0, t - 1)), 1000);
@@ -56,7 +59,7 @@ export default function ScanPayScreen() {
             <QrGlyph />
           </View>
 
-          <Text style={styles.amount}>{rupees(invoiceTotal())}</Text>
+          <Text style={styles.amount}>{rupees(total)}</Text>
           <Text style={styles.service}>{INVOICE.service}</Text>
           <Text style={styles.instr}>Open your UPI app and scan the QR code to complete the payment.</Text>
 

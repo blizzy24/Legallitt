@@ -1,5 +1,7 @@
 import { createContext, useContext, useMemo, useState, type ReactNode } from 'react';
 
+import type { ServiceTier } from '../data/legalNotice';
+
 // Form state for the Legal Notice wizard. Plain object, in memory only: nothing is
 // validated and nothing survives a reload.
 
@@ -27,6 +29,8 @@ export type LegalNoticeForm = {
   client: ClientDetails;
   noticee: NoticeeDetails;
   issueType: IssueType | null;
+  /** Chosen on the detail screen; drives the Service Fee on step 6. */
+  tier: ServiceTier['id'];
   /** Document names the user has "uploaded" — placeholders until real uploads exist. */
   documents: string[];
 };
@@ -37,6 +41,8 @@ export const EMPTY_FORM: LegalNoticeForm = {
   client: EMPTY_CLIENT,
   noticee: { ...EMPTY_CLIENT, relationship: '' },
   issueType: null,
+  // design/22 shows URGENT pre-selected.
+  tier: 'urgent',
   documents: [],
 };
 

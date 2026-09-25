@@ -15,16 +15,29 @@ export const INVOICE = {
   refId: 'LGT-849204',
   // design/30 shows PSR739482; design/31–32 show LN12345678. One ID everywhere.
   requestId: 'LN12345678',
-  lines: [
-    { label: 'Service Fee', amount: LEGAL_NOTICE_PRICES.standard },
-    // design/28 shows ₹179 for 18% GST (18% of ₹999 is ₹179.82) — kept as drawn.
-    { label: 'Goods & Services Tax (GST 18%)', amount: 179 },
-    // design/28 reads "Plat form fees"; rendered as "Platform fees".
-    { label: 'Platform fees', amount: 199 },
-  ] as InvoiceLine[],
 };
 
-export function invoiceTotal(lines: InvoiceLine[] = INVOICE.lines) {
+export const GST_RATE = 0.18;
+/** design/28 draws a flat ₹199 with no percentage, so it does not scale with the fee. */
+export const PLATFORM_FEE = 199;
+
+/**
+ * The invoice for a given service tier. The Service Fee is the tier's price, so
+ * picking ORDINARY on the detail screen lowers the whole bill.
+ */
+export function invoiceLines(tierId: ServiceTier['id']): InvoiceLine[] {
+  const fee = tierFor(tierId).price;
+  return [
+    { label: 'Service Fee', amount: fee },
+    // design/28 prints ₹179 against a ₹999 fee. 18% of 999 is 179.82, so the file
+    // truncates rather than rounds; Math.floor reproduces the drawn figure exactly.
+    { label: 'Goods & Services Tax (GST 18%)', amount: Math.floor(fee * GST_RATE) },
+    // design/28 reads "Plat form fees"; rendered as "Platform fees".
+    { label: 'Platform fees', amount: PLATFORM_FEE },
+  ];
+}
+
+export function invoiceTotal(lines: InvoiceLine[]) {
   return lines.reduce((sum, l) => sum + l.amount, 0);
 }
 
@@ -40,8 +53,6 @@ export type TrackingState = 'drafting' | 'approval';
 export const TRACKING = {
   // design/31 reads "Ref: LN-2026/05" while the invoice's Ref ID is #LGT-849204.
   ref: 'LN-2026/05',
-  tier: 'Urgent Tier',
-  serviceSpeed: 'Within 5 Days',
   submittedOn: '2026-09-19',
   submittedAt: '10:30 AM',
   estimate: { date: '2026-09-21', time: '6 PM' },
@@ -78,27 +89,40 @@ export const TRACKING_CURRENT: Record<TrackingState, number> = { drafting: 4, ap
 export type ServiceTier = {
   id: 'urgent' | 'ordinary';
   label: string;
+  /** "Urgent Tier" — the status-card wording on design/31. */
+  tierLabel: string;
   price: number;
+  /** design/22's casing, used on the detail screen. */
   speed: string;
+  /** design/31 capitalises "Days" in the tracking table; kept per screen. */
+  trackingSpeed: string;
   note: string;
   /** Wording used by the selected-summary bar. */
   summary: string;
 };
 
+export function tierFor(id: ServiceTier['id']): ServiceTier {
+  return SERVICE_TIERS.find((t) => t.id === id) ?? SERVICE_TIERS[0];
+}
+
 export const SERVICE_TIERS: ServiceTier[] = [
   {
     id: 'urgent',
     label: 'URGENT',
+    tierLabel: 'Urgent Tier',
     price: LEGAL_NOTICE_PRICES.standard,
     speed: 'Within 5 days',
+    trackingSpeed: 'Within 5 Days',
     note: 'Priority advocate assign',
     summary: 'Urgent Assignment (5 Days)',
   },
   {
     id: 'ordinary',
     label: 'ORDINARY',
+    tierLabel: 'Ordinary Tier',
     price: LEGAL_NOTICE_PRICES.express,
     speed: 'Within 10 days',
+    trackingSpeed: 'Within 10 Days',
     note: 'Standard advocate assign',
     summary: 'Ordinary Assignment (10 Days)',
   },

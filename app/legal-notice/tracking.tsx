@@ -11,7 +11,8 @@ import SegmentedControl from '../../components/SegmentedControl';
 import { DEV_PREVIEW_TOGGLES } from '../../constants/dev';
 import { colors, font, ink, tracking as t } from '../../constants/theme';
 import { formatDate } from '../../data/cases';
-import { INVOICE, invoiceTotal, rupees, TRACKING, TRACKING_CURRENT, TRACKING_STEPS, type TrackingState } from '../../data/legalNotice';
+import { useLegalNotice } from '../../context/legalNotice';
+import { INVOICE, invoiceLines, invoiceTotal, rupees, tierFor, TRACKING, TRACKING_CURRENT, TRACKING_STEPS, type TrackingState } from '../../data/legalNotice';
 
 const STATE_SEGMENTS: { key: TrackingState; label: string }[] = [
   { key: 'drafting', label: 'Drafting' },
@@ -30,6 +31,9 @@ export default function TrackingScreen() {
   const params = useLocalSearchParams<{ state?: string }>();
   const [state, setState] = useState<TrackingState>(params.state === 'approval' ? 'approval' : 'drafting');
   const insets = useSafeAreaInsets();
+  const { form } = useLegalNotice();
+  const tier = tierFor(form.tier);
+  const paid = invoiceTotal(invoiceLines(form.tier));
   const approval = state === 'approval';
   const current = TRACKING_CURRENT[state];
   const statusLabel = TRACKING_STEPS[current - 1].title;
@@ -69,7 +73,7 @@ export default function TrackingScreen() {
               <View style={styles.pillDot} />
               <Text style={styles.pillText}>{statusLabel}</Text>
             </View>
-            <Text style={styles.tier}>{TRACKING.tier}</Text>
+            <Text style={styles.tier}>{tier.tierLabel}</Text>
           </View>
           <Text style={styles.title}>{approval ? 'Your Legal Notice Draft is Ready' : 'Legal Notice Request Submitted'}</Text>
           <Text style={styles.desc}>
@@ -97,9 +101,9 @@ export default function TrackingScreen() {
           </TableRow>
           <TableRow label="Service">
             <View style={styles.urgent}>
-              <Text style={styles.urgentText}>URGENT</Text>
+              <Text style={styles.urgentText}>{tier.label}</Text>
             </View>
-            <Text style={styles.rowValue}>{TRACKING.serviceSpeed}</Text>
+            <Text style={styles.rowValue}>{tier.trackingSpeed}</Text>
           </TableRow>
           <TableRow label="Submitted On">
             <Text style={styles.rowValue}>{formatDate(TRACKING.submittedOn)}</Text>
@@ -175,7 +179,7 @@ export default function TrackingScreen() {
         ) : (
           <View style={[styles.card, styles.timeline]}>
             {TRACKING_STEPS.map((step, i) => (
-              <TimelineStep key={step.title} index={i + 1} step={step} current={current} last={i === TRACKING_STEPS.length - 1} />
+              <TimelineStep key={step.title} index={i + 1} step={step} current={current} paid={paid} last={i === TRACKING_STEPS.length - 1} />
             ))}
           </View>
         )}
@@ -263,13 +267,13 @@ function TableRow({ label, children }: { label: string; children: ReactNode }) {
   );
 }
 
-function TimelineStep({ index, step, current, last }: { index: number; step: { title: string; description: string }; current: number; last: boolean }) {
+function TimelineStep({ index, step, current, paid, last }: { index: number; step: { title: string; description: string }; current: number; paid: number; last: boolean }) {
   const done = index < current;
   const active = index === current;
   const pending = index > current;
   const meta =
     index === 1 ? `${shortDate(TRACKING.submittedOn)}, ${TRACKING.submittedAt}`
-    : index === 2 ? `${rupees(invoiceTotal())} via UPI`
+    : index === 2 ? `${rupees(paid)} via UPI`
     : index === 3 ? TRACKING.advocate.name
     : pending ? 'Pending' : '';
 
