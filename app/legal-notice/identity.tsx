@@ -5,6 +5,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import SegmentedControl from '../../components/SegmentedControl';
+import { DEV_PREVIEW_TOGGLES } from '../../constants/dev';
 import ServiceHeader from '../../components/ServiceHeader';
 import { colors, font, ink, lnIdentity as v } from '../../constants/theme';
 
@@ -107,11 +108,13 @@ export default function IdentityScreen() {
           <Text style={styles.footerText}>256-BIT ENCRYPTED · BAR COUNCIL COMPLIANT FLOW</Text>
         </View>
 
-        {/* Prototype-only: both designed states until real uploads exist. */}
+        {/* Development only — hidden by DEV_PREVIEW_TOGGLES in constants/dev.ts. */}
+        {DEV_PREVIEW_TOGGLES && (
         <View style={styles.toggle}>
           <Text style={styles.toggleLabel}>Preview state</Text>
           <SegmentedControl segments={STATE_SEGMENTS} value={state} onChange={setState} style={styles.toggleControl} />
         </View>
+        )}
       </ScrollView>
     </View>
   );

@@ -8,6 +8,7 @@ import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import SegmentedControl from '../../components/SegmentedControl';
+import { DEV_PREVIEW_TOGGLES } from '../../constants/dev';
 import { colors, font, ink, tracking as t } from '../../constants/theme';
 import { formatDate } from '../../data/cases';
 import { INVOICE, invoiceTotal, rupees, TRACKING, TRACKING_CURRENT, TRACKING_STEPS, type TrackingState } from '../../data/legalNotice';
@@ -215,11 +216,13 @@ export default function TrackingScreen() {
           </Pressable>
         )}
 
-        {/* Prototype-only: both designed states, switchable until real status arrives. */}
+        {/* Development only — hidden by DEV_PREVIEW_TOGGLES in constants/dev.ts. */}
+        {DEV_PREVIEW_TOGGLES && (
         <View style={styles.toggle}>
           <Text style={styles.toggleLabel}>Preview state</Text>
           <SegmentedControl segments={STATE_SEGMENTS} value={state} onChange={setState} style={styles.toggleControl} />
         </View>
+        )}
       </ScrollView>
 
       {approval && (

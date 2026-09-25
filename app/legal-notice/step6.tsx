@@ -192,7 +192,7 @@ function SubOption({ icon, title, subtitle, selected, onPress }: OptionProps) {
             </View>
           )}
         </View>
-        <Text style={styles.subSub} numberOfLines={1}>
+        <Text style={styles.subSub} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85}>
           {subtitle}
         </Text>
       </View>
@@ -364,7 +364,7 @@ const styles = StyleSheet.create({
   },
   upiMark: {
     fontFamily: font.appHeading,
-    fontSize: p.subSubSize,
+    fontSize: p.upiMarkSize,
     color: ink.accent,
   },
   optionText: {

@@ -592,6 +592,10 @@ export const quickActions = {
   rowGap: 13,
   textSize: 12.5,
   selectedBorder: 1.5,
+  // design/26's two-column pairing is fixed, so narrow screens scale the pill
+  // chrome and label down instead of re-wrapping or ellipsizing.
+  compactBelow: 380,
+  compactScale: 0.9,
 };
 
 // Step 4 review-documents list. The file's outer margins are 16pt and its background
@@ -754,7 +758,8 @@ export const payment = {
   subTileIcon: 14,
   subTextGap: 10,
   subTitleSize: 12.5,
-  subSubSize: 12,
+  upiMarkSize: 12,
+  subSubSize: 11,
   subGap: 8,
   selChipH: 16,
   selChipPadX: 7,

@@ -11,6 +11,8 @@ type Doc = { title: string; subtitle: string; icon: LucideIcon };
 
 // Sample documents from design/39 — there is no upload step, so these stand in for
 // the user's files and are written to the flow so step 5 can count them.
+// design/39 prints "Any agreement documen": the word is cut off in the file itself,
+// so the full "document" is rendered here.
 const SAMPLE_DOCS: Doc[] = [
   { title: 'Aadhaar Card', subtitle: 'Upload Aadhaar', icon: FingerprintPattern },
   { title: 'Property Papers', subtitle: 'Sales Deed, Khata, etc', icon: File },
@@ -71,7 +73,7 @@ function DocRow({ doc }: { doc: Doc }) {
       <Icon size={r.icon} color={colors.brand} strokeWidth={1.5} />
       <View style={styles.cardText}>
         <Text style={styles.cardTitle}>{doc.title}</Text>
-        <Text style={styles.cardSub} numberOfLines={1}>
+        <Text style={styles.cardSub} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85}>
           {doc.subtitle}
         </Text>
       </View>
