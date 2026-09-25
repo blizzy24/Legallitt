@@ -1374,6 +1374,15 @@ export const lnDetail = {
   speedIcon: 12,
   speedIconGap: 5,
   speedSize: 10,
+  // Hairline between the price row and the note (design/22). It sits centred in the
+  // gap, and the file tints it differently on each card: warmer on the selected
+  // beige card, neutral grey on the white one. Above+line+below equals the old
+  // pickNoteGap, so both cards keep their 91pt height.
+  pickDividerGapAbove: 4,
+  pickDivider: 1,
+  pickDividerGapBelow: 4,
+  pickDividerSelected: '#E9E5DF',
+  pickDividerIdle: '#F3F3F3',
   pickNoteGap: 9,
   pickNoteSize: 9.5,
   // design/22 puts both notes on one line. numberOfLines is deliberately NOT used:

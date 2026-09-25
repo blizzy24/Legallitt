@@ -124,6 +124,7 @@ export default function LegalNoticeDetailScreen() {
                   <Clock size={d.speedIcon} color={colors.textBody} />
                   <Text style={styles.speed}>{t.speed}</Text>
                 </View>
+                <View style={[styles.tierDivider, selected && styles.tierDividerSelected]} />
                 <Text style={styles.tierNote}>
                   {t.note}
                 </Text>
@@ -428,8 +429,16 @@ const styles = StyleSheet.create({
     fontSize: d.speedSize,
     color: colors.textBody,
   },
+  tierDivider: {
+    marginTop: d.pickDividerGapAbove,
+    height: d.pickDivider,
+    backgroundColor: d.pickDividerIdle,
+  },
+  tierDividerSelected: {
+    backgroundColor: d.pickDividerSelected,
+  },
   tierNote: {
-    marginTop: d.pickNoteGap,
+    marginTop: d.pickDividerGapBelow,
     fontFamily: font.appBody,
     fontSize: d.pickNoteSize,
     lineHeight: d.pickNoteLineHeight,
