@@ -1,36 +1,535 @@
 import { router } from 'expo-router';
-import { StyleSheet, Text, View } from 'react-native';
+import {
+  ArrowRight,
+  Camera,
+  CircleCheck,
+  Eye,
+  FileText,
+  FileUp,
+  FolderOpen,
+  ImagePlus,
+  Images,
+  Lock,
+  MessageSquare,
+  Plus,
+  Scale,
+  Trash2,
+  type LucideIcon,
+} from 'lucide-react-native';
+import type { ReactNode } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import FirShell from '../../components/FirShell';
-import PrimaryButton from '../../components/PrimaryButton';
-import { colors, firShell as f, font } from '../../constants/theme';
+import { shrinkToFit } from '../../constants/textFit';
+import { colors, firStep4 as t, font, ink } from '../../constants/theme';
+import { CUSTODY_STATS, EVIDENCE_SECTIONS, PER_PAGE_NOTE, STAGED_FILES } from '../../data/fir';
 
-// Placeholder — step content to come. The shell, header and progress bar are built.
+// FIR step 4 — Documents & Evidence (design/45).
+//
+// The header reads "Fir Draft" here while every other FIR screen titles itself after
+// the step ("Incident Details", "Review & Submit", …). Rendered as drawn — see the
+// summary note; it is a one-word change if the client wants it consistent.
+//
+// design/45 also drops the "N% Completed" label that design/42 puts to the right of
+// "STEP n OF 5". FirShell keeps it, because four of the five steps carry it and the
+// bar would otherwise be unlabelled.
+
+const SECTION_ICONS: LucideIcon[] = [FileText, Camera, MessageSquare, FolderOpen];
+
 export default function FirStep4Screen() {
   return (
-    <FirShell step={4} title="Supporting Documents">
-      <View style={styles.placeholder}>
-        <Text style={styles.text}>Step 4 — Supporting Documents</Text>
+    <FirShell step={4} title="Fir Draft">
+      <Text style={styles.heading}>Documents &amp; Evidence</Text>
+      <Text style={styles.subtitle}>
+        Upload supporting materials, verified receipts, or media records that substantiate the
+        incident draft.
+      </Text>
+
+      {EVIDENCE_SECTIONS.map((s, i) => (
+        <Section key={s.n} icon={SECTION_ICONS[i]} section={s} first={i === 0}>
+          {s.n === 1 && (
+            <FileRow
+              icon={Images}
+              name={STAGED_FILES.primary.name}
+              meta={`${STAGED_FILES.primary.size} • ${STAGED_FILES.primary.validation}`}
+              chip="VERIFIED"
+            />
+          )}
+          {s.n === 2 && <DropArea />}
+          {s.n === 3 && (
+            <FileRow
+              icon={ImagePlus}
+              name={STAGED_FILES.digital.name}
+              meta={`${STAGED_FILES.digital.size} • ${STAGED_FILES.digital.validation}`}
+              tick
+            />
+          )}
+          {s.n === 4 && (
+            <Pressable accessibilityRole="button" style={styles.attach}>
+              <FileUp size={t.attachIcon} color={colors.textPrimary} />
+              <Text style={styles.attachLabel} {...shrinkToFit(0.8)}>
+                Attach Additional Documentation
+              </Text>
+            </Pressable>
+          )}
+        </Section>
+      ))}
+
+      {/* REPORTED — no invoice in this batch carries a per-page charge, and FIR
+          pricing is unconfirmed. Drawn here because design/45 draws it. */}
+      <Text style={styles.perPage}>{PER_PAGE_NOTE}</Text>
+
+      <Pressable accessibilityRole="button" style={styles.slot}>
+        <Plus size={t.slotIcon} color={colors.textPrimary} />
+        <Text style={styles.slotLabel} {...shrinkToFit(0.8)}>
+          Add Custom Category Slot
+        </Text>
+      </Pressable>
+
+      <View style={styles.custody}>
+        <View style={styles.custodyRow}>
+          <Scale size={t.custodyIcon} color={t.custodyStateColour} />
+          <Text style={styles.custodyLabel} {...shrinkToFit(0.8)}>
+            EVIDENTIARY CHAIN OF CUSTODY
+          </Text>
+          <Text style={styles.custodyState}>Compliant</Text>
+        </View>
+        <View style={styles.stats}>
+          {CUSTODY_STATS.map((s) => (
+            <View key={s.label} style={styles.stat}>
+              <Text style={styles.statValue} {...shrinkToFit(0.75)}>
+                {s.value}
+              </Text>
+              <Text style={styles.statLabel} {...shrinkToFit(0.75)}>
+                {s.label}
+              </Text>
+            </View>
+          ))}
+        </View>
       </View>
+
+      <Pressable
+        accessibilityRole="button"
+        onPress={() => router.push('/fir/step5')}
+        style={({ pressed }) => [styles.button, pressed && styles.pressed]}
+      >
+        <Text style={styles.buttonLabel}>Continue Draft</Text>
+        <ArrowRight size={t.buttonIcon} color={ink.onBrand} style={styles.buttonIcon} />
+      </Pressable>
+
       <View style={styles.footer}>
-        <PrimaryButton label="Continue" onPress={() => router.push('/fir/step5')} />
+        <Lock size={t.footerIcon} color={colors.textBody} />
+        <Text style={styles.footerText} {...shrinkToFit(0.8)}>
+          256-bit Encrypted Legal Draft Session
+        </Text>
       </View>
     </FirShell>
   );
 }
 
+function Section({
+  icon: Icon,
+  section,
+  first,
+  children,
+}: {
+  icon: LucideIcon;
+  section: (typeof EVIDENCE_SECTIONS)[number];
+  first: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <View style={[styles.card, first && styles.firstCard]}>
+      <View style={styles.head}>
+        <View style={styles.headIcon}>
+          <Icon size={t.headIconGlyph} color={colors.textPrimary} />
+        </View>
+        <View style={styles.headText}>
+          <Text style={styles.headTitle} {...shrinkToFit(0.8)}>
+            {section.n}. {section.title}
+          </Text>
+          <Text style={styles.headDesc}>{section.description}</Text>
+        </View>
+        {/* design/45 pills "Required" and "1 File" but leaves "0 / 5 Attached" and
+            "Optional" as bare text. Rendered as drawn. */}
+        <View style={section.pill ? styles.statePill : styles.statePlain}>
+          <Text style={styles.stateText}>{section.state}</Text>
+        </View>
+      </View>
+      {children}
+    </View>
+  );
+}
+
+function FileRow({
+  icon: Icon,
+  name,
+  meta,
+  chip,
+  tick,
+}: {
+  icon: LucideIcon;
+  name: string;
+  meta: string;
+  chip?: string;
+  tick?: boolean;
+}) {
+  return (
+    <View style={styles.file}>
+      <View style={styles.fileIcon}>
+        <Icon size={t.fileIconGlyph} color={colors.textBody} />
+      </View>
+      <View style={styles.fileText}>
+        <View style={styles.fileNameRow}>
+          {/* design/45 clips this name behind the VERIFIED chip. Shown in full and
+              allowed to shrink instead. */}
+          <Text style={styles.fileName} {...shrinkToFit(0.7)}>
+            {name}
+          </Text>
+          {chip && (
+            <View style={styles.fileChip}>
+              <Text style={styles.fileChipText}>{chip}</Text>
+            </View>
+          )}
+          {tick && <CircleCheck size={t.fileTickSize} color={colors.textBody} style={styles.fileTick} />}
+        </View>
+        <Text style={styles.fileMeta} {...shrinkToFit(0.8)}>
+          {meta}
+        </Text>
+      </View>
+      <Pressable accessibilityRole="button" accessibilityLabel="Preview file" style={styles.fileAction}>
+        <Eye size={t.fileActionIcon} color={colors.textPrimary} />
+      </Pressable>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel="Remove file"
+        style={[styles.fileAction, styles.fileActionLast]}
+      >
+        <Trash2 size={t.fileActionIcon} color={colors.danger} />
+      </Pressable>
+    </View>
+  );
+}
+
+function DropArea() {
+  return (
+    <Pressable accessibilityRole="button" style={styles.drop}>
+      <View style={styles.dropCircle}>
+        <ImagePlus size={t.dropCircleIcon} color={colors.textBody} />
+      </View>
+      <Text style={styles.dropTitle} {...shrinkToFit(0.8)}>
+        Tap to Add Photo or Incident Media
+      </Text>
+      <Text style={styles.dropHint} {...shrinkToFit(0.8)}>
+        JPEG, PNG, MP4 up to 50MB
+      </Text>
+    </Pressable>
+  );
+}
+
 const styles = StyleSheet.create({
-  placeholder: {
-    alignItems: 'center',
-    paddingVertical: f.contentGap,
+  heading: {
+    marginTop: t.headingTop,
+    fontFamily: font.appHeading,
+    fontSize: t.headingSize,
+    lineHeight: t.headingLineHeight,
+    color: colors.textPrimary,
   },
-  text: {
-    fontFamily: font.appSemi,
-    fontSize: f.titleSize,
+  subtitle: {
+    marginTop: t.subtitleGap,
+    fontFamily: font.appBody,
+    fontSize: t.subtitleSize,
+    lineHeight: t.subtitleLineHeight,
     color: colors.textBody,
   },
+  card: {
+    marginTop: t.cardGap,
+    borderRadius: t.cardRadius,
+    backgroundColor: colors.card,
+    paddingHorizontal: t.cardPad,
+    paddingTop: t.cardPadTop,
+    paddingBottom: t.cardPadBottom,
+  },
+  firstCard: {
+    marginTop: t.cardGap,
+  },
+  head: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  headIcon: {
+    width: t.headIcon,
+    height: t.headIcon,
+    borderRadius: t.headIconRadius,
+    backgroundColor: colors.iconChipBg,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headText: {
+    flex: 1,
+    minWidth: 0,
+    marginLeft: t.headIconGap,
+  },
+  headTitle: {
+    fontFamily: font.appHeading,
+    fontSize: t.headTitleSize,
+    color: colors.textPrimary,
+  },
+  headDesc: {
+    marginTop: t.headDescGap,
+    fontFamily: font.appBody,
+    fontSize: t.headDescSize,
+    lineHeight: t.headDescLineHeight,
+    color: colors.textBody,
+  },
+  statePill: {
+    marginLeft: t.headStateGap,
+    width: t.stateWidth,
+    minHeight: t.stateChipHeight,
+    borderRadius: t.stateChipRadius,
+    paddingHorizontal: t.stateChipPadX,
+    paddingVertical: 3,
+    backgroundColor: t.stateBg,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  statePlain: {
+    marginLeft: t.headStateGap,
+    width: t.stateWidth,
+    alignItems: 'center',
+  },
+  stateText: {
+    fontFamily: font.appSemi,
+    fontSize: t.stateSize,
+    lineHeight: t.stateLineHeight,
+    textAlign: 'center',
+    color: colors.textBody,
+  },
+  file: {
+    marginTop: t.fileGap,
+    borderRadius: t.fileRadius,
+    backgroundColor: t.fileBg,
+    padding: t.filePad,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  fileIcon: {
+    width: t.fileIcon,
+    height: t.fileIcon,
+    borderRadius: t.fileIconRadius,
+    backgroundColor: t.fileIconBg,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  fileText: {
+    flex: 1,
+    minWidth: 0,
+    marginLeft: t.fileIconGap,
+  },
+  fileNameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    // design/45 runs the file name under the VERIFIED chip because the row cannot
+    // hold both at 390pt. Wrapping keeps the whole name and drops the chip to the
+    // next line instead of clipping it — see the note on the name itself.
+    flexWrap: 'wrap',
+  },
+  fileName: {
+    flexShrink: 1,
+    fontFamily: font.appSemi,
+    fontSize: t.fileNameSize,
+    color: colors.textPrimary,
+  },
+  fileChip: {
+    marginLeft: t.fileChipGap,
+    height: t.fileChipHeight,
+    borderRadius: t.fileChipRadius,
+    paddingHorizontal: t.fileChipPadX,
+    backgroundColor: t.fileChipBg,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  fileChipText: {
+    fontFamily: font.appSemi,
+    fontSize: t.fileChipSize,
+    letterSpacing: t.fileChipSpacing,
+    color: colors.textBody,
+  },
+  fileTick: {
+    marginLeft: t.fileChipGap,
+  },
+  fileMeta: {
+    marginTop: t.fileMetaGap,
+    fontFamily: font.appBody,
+    fontSize: t.fileMetaSize,
+    color: colors.textBody,
+  },
+  fileAction: {
+    marginLeft: t.fileActionGap,
+    width: t.fileAction,
+    height: t.fileAction,
+    borderRadius: t.fileActionRadius,
+    backgroundColor: colors.card,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  fileActionLast: {
+    marginLeft: 6,
+  },
+  drop: {
+    marginTop: t.dropGap,
+    minHeight: t.dropHeight,
+    borderRadius: t.dropRadius,
+    backgroundColor: t.dropBg,
+    borderWidth: 1,
+    borderStyle: 'dashed',
+    borderColor: t.dropBorder,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: t.cardPad,
+    paddingVertical: t.cardPad,
+  },
+  dropCircle: {
+    width: t.dropCircle,
+    height: t.dropCircle,
+    borderRadius: t.dropCircle / 2,
+    backgroundColor: t.dropCircleBg,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  dropTitle: {
+    marginTop: t.dropTitleGap,
+    fontFamily: font.appHeading,
+    fontSize: t.dropTitleSize,
+    color: colors.textPrimary,
+  },
+  dropHint: {
+    marginTop: t.dropHintGap,
+    fontFamily: font.appBody,
+    fontSize: t.dropHintSize,
+    color: colors.textBody,
+  },
+  attach: {
+    marginTop: t.attachGap,
+    minHeight: t.attachHeight,
+    borderRadius: t.attachRadius,
+    backgroundColor: t.attachBg,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: t.cardPad,
+  },
+  attachLabel: {
+    marginLeft: t.attachIconGap,
+    fontFamily: font.appSemi,
+    fontSize: t.attachSize,
+    color: colors.textPrimary,
+  },
+  perPage: {
+    marginTop: t.noteGap,
+    fontFamily: font.appBody,
+    fontSize: t.noteSize,
+    lineHeight: t.noteLineHeight,
+    color: t.noteColour,
+  },
+  slot: {
+    marginTop: t.slotGap,
+    alignSelf: 'center',
+    minHeight: t.slotHeight,
+    borderRadius: t.slotRadius,
+    paddingHorizontal: t.slotPadX,
+    backgroundColor: t.slotBg,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  slotLabel: {
+    marginLeft: t.slotIconGap,
+    fontFamily: font.appSemi,
+    fontSize: t.slotSize,
+    color: colors.textPrimary,
+  },
+  custody: {
+    marginTop: t.custodyGap,
+    borderRadius: t.custodyRadius,
+    backgroundColor: t.custodyBg,
+    padding: t.custodyPad,
+  },
+  custodyRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  custodyLabel: {
+    flex: 1,
+    minWidth: 0,
+    marginLeft: t.custodyIconGap,
+    fontFamily: font.appSemi,
+    fontSize: t.custodyLabelSize,
+    letterSpacing: t.custodyLabelSpacing,
+    color: colors.textBody,
+  },
+  custodyState: {
+    marginLeft: 8,
+    fontFamily: font.appHeading,
+    fontSize: t.custodyStateSize,
+    color: t.custodyStateColour,
+  },
+  stats: {
+    marginTop: t.statGap,
+    flexDirection: 'row',
+    gap: t.statColGap,
+  },
+  stat: {
+    flex: 1,
+    minWidth: 0,
+    minHeight: t.statHeight,
+    borderRadius: t.statRadius,
+    backgroundColor: colors.card,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 4,
+    paddingVertical: 8,
+  },
+  statValue: {
+    fontFamily: font.appHeading,
+    fontSize: t.statValueSize,
+    color: colors.textPrimary,
+  },
+  statLabel: {
+    marginTop: t.statLabelGap,
+    fontFamily: font.appBody,
+    fontSize: t.statLabelSize,
+    color: colors.textBody,
+  },
+  button: {
+    marginTop: t.buttonGap,
+    minHeight: t.buttonHeight,
+    borderRadius: t.buttonRadius,
+    backgroundColor: colors.brand,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  pressed: {
+    opacity: 0.85,
+  },
+  buttonLabel: {
+    fontFamily: font.appSemi,
+    fontSize: t.buttonSize,
+    color: ink.onBrand,
+  },
+  buttonIcon: {
+    marginLeft: t.buttonIconGap,
+  },
   footer: {
-    marginTop: 'auto',
-    paddingTop: f.contentGap,
+    marginTop: t.footerGap,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  footerText: {
+    marginLeft: t.footerIconGap,
+    fontFamily: font.appBody,
+    fontSize: t.footerSize,
+    color: colors.textBody,
   },
 });

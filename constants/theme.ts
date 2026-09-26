@@ -1884,6 +1884,267 @@ export const firStep3 = {
   primaryText: '#0B7A4B',
 };
 
+// ─────────────────────────────────────────────────────────────────────────────
+// FIR steps 4 and 5 (design/45, design/46).
+//
+// MEASUREMENT CAVEAT: unlike design/42–44 (780px = exactly 2× at 390pt), these two
+// files shipped as thumbnails — design/45 is 348px wide (0.89px per point) and
+// design/46 is 256px (0.66px per point). Neither can be measured: a 1pt hairline is
+// under one pixel and glyph extents are unreadable. Structure, copy and ordering
+// below are read from the artwork; every size, gap and radius is carried over from
+// the measured sibling steps (firStep2 / firStep3) so the five steps stay a set.
+// Re-measure if the client supplies 2× exports of 45 and 46.
+// ─────────────────────────────────────────────────────────────────────────────
+export const firStep4 = {
+  headingTop: firStep2.headingTop,
+  headingSize: firStep2.headingSize,
+  headingLineHeight: firStep2.headingLineHeight,
+  subtitleGap: firStep2.subtitleGap,
+  subtitleSize: firStep2.subtitleSize,
+  subtitleLineHeight: firStep2.subtitleLineHeight,
+
+  cardGap: firStep3.cardGap,
+  cardRadius: firStep2.cardRadius,
+  cardPad: firStep2.cardPad,
+  cardPadTop: firStep3.cardPadTop,
+  cardPadBottom: firStep2.cardPadBottom,
+
+  headIcon: firStep2.headIcon,
+  headIconRadius: firStep3.headIconRadius,
+  headIconGlyph: firStep2.headIconGlyph,
+  headIconGap: firStep2.headIconGap,
+  headTitleSize: firStep2.headTitleSize,
+  headDescGap: 3,
+  headDescSize: 13,
+  headDescLineHeight: 18,
+  headStateGap: 8,
+  // "Required" and "1 File" are drawn as pills; "0 / 5 Attached" and "Optional" are
+  // drawn as bare right-aligned text. Rendered as drawn — see the note in step4.tsx.
+  stateChipHeight: 22,
+  stateChipRadius: 11,
+  stateChipPadX: 9,
+  stateSize: 11.5,
+  stateLineHeight: 15,
+  stateWidth: 58,
+  stateBg: '#F1EDE8',
+
+  // Attached-file row (sections 1 and 3).
+  fileGap: 12,
+  fileRadius: 10,
+  filePad: 9,
+  fileBg: '#F2EDE7',
+  fileIcon: 32,
+  fileIconRadius: 8,
+  fileIconGlyph: 16,
+  fileIconBg: '#E6DED4',
+  fileIconGap: 9,
+  fileNameSize: 12,
+  fileMetaGap: 3,
+  fileMetaSize: 11.5,
+  fileChipGap: 7,
+  fileChipHeight: 17,
+  fileChipRadius: 4,
+  fileChipPadX: 6,
+  fileChipSize: 9.5,
+  fileChipSpacing: 0.4,
+  fileChipBg: '#E2DBD1',
+  fileTickSize: 13,
+  fileActionGap: 6,
+  fileAction: 28,
+  fileActionRadius: 7,
+  fileActionIcon: 14,
+
+  // Dashed drop area (section 2). The dash is below one pixel in the export, so its
+  // stroke is unverifiable; drawn at 1pt to match the brief.
+  dropGap: 12,
+  dropHeight: 132,
+  dropRadius: 10,
+  dropBg: '#F2EDE7',
+  dropBorder: '#DFD5C8',
+  dropCircle: 44,
+  dropCircleBg: '#E6DED4',
+  dropCircleIcon: 20,
+  dropTitleGap: 12,
+  dropTitleSize: 13.5,
+  dropHintGap: 4,
+  dropHintSize: 11.5,
+
+  // "Attach Additional Documentation" (section 4).
+  attachGap: 12,
+  attachHeight: 44,
+  attachRadius: 10,
+  attachBg: '#F2EDE7',
+  attachIcon: 16,
+  attachIconGap: 9,
+  attachSize: 13.5,
+
+  // ₹25 note + Add Custom Category Slot.
+  noteGap: 12,
+  noteSize: 12.5,
+  noteLineHeight: 17,
+  noteColour: '#8A6A3A',
+  slotGap: 10,
+  slotHeight: 38,
+  slotRadius: 9,
+  slotPadX: 16,
+  slotBg: '#EDE9E3',
+  slotIcon: 15,
+  slotIconGap: 8,
+  slotSize: 13.5,
+
+  // Evidentiary chain-of-custody strip.
+  custodyGap: 18,
+  custodyRadius: 12,
+  custodyPad: 13,
+  custodyBg: '#F4EFE8',
+  custodyIcon: 15,
+  custodyIconGap: 8,
+  custodyLabelSize: 11,
+  custodyLabelSpacing: 0.5,
+  custodyStateSize: 12,
+  custodyStateColour: '#6C5C45',
+  statGap: 11,
+  statColGap: 8,
+  statHeight: 52,
+  statRadius: 9,
+  statValueSize: 13.5,
+  statLabelGap: 2,
+  statLabelSize: 11.5,
+
+  buttonGap: 24,
+  buttonHeight: firStep2.buttonHeight,
+  buttonRadius: firStep2.buttonRadius,
+  buttonSize: firStep2.buttonSize,
+  buttonIcon: firStep2.buttonIcon,
+  buttonIconGap: firStep2.buttonIconGap,
+  footerGap: 12,
+  footerIcon: 13,
+  footerIconGap: 7,
+  footerSize: 12,
+};
+
+export const firStep5 = {
+  headingTop: firStep2.headingTop,
+  headingSize: firStep2.headingSize,
+  headingLineHeight: firStep2.headingLineHeight,
+  subtitleGap: firStep2.subtitleGap,
+  subtitleSize: firStep2.subtitleSize,
+  subtitleLineHeight: firStep2.subtitleLineHeight,
+
+  cardGap: 16,
+  cardRadius: firStep2.cardRadius,
+  cardPad: firStep2.cardPad,
+  cardPadTop: firStep2.cardPadTop,
+  cardPadBottom: firStep2.cardPadBottom,
+
+  headIcon: firStep2.headIcon,
+  headIconRadius: firStep3.headIconRadius,
+  headIconGlyph: firStep2.headIconGlyph,
+  headIconGap: firStep2.headIconGap,
+  headTitleSize: firStep2.headTitleSize,
+  linkSize: 13,
+
+  panelGap: 13,
+  panelRadius: firStep3.panelRadius,
+  panelPad: firStep3.panelPad,
+  panelBg: firStep3.panelBg,
+
+  labelSize: 11,
+  labelSpacing: 0.5,
+  valueGap: 4,
+  /** The complainant name, the largest value on the screen. */
+  nameSize: 15,
+  valueSize: 13,
+  rowGap: 14,
+  colGap: 12,
+  /** design/46 gives the right column (email, location) the longer values. */
+  colNarrow: 0.85,
+  colWide: 1.15,
+
+  kycHeight: 21,
+  kycRadius: 10.5,
+  kycPadX: 8,
+  kycIcon: 11,
+  kycIconGap: 5,
+  kycSize: 10.5,
+  kycBg: '#B09C82',
+
+  summaryGap: 4,
+  summarySize: 13.5,
+  summaryLineHeight: 20,
+  moreGap: 8,
+  moreSize: 12.5,
+  moreIcon: 14,
+  moreIconGap: 3,
+
+  countChipHeight: 21,
+  countChipRadius: 10.5,
+  countChipPadX: 9,
+  countChipSize: 11,
+
+  pillGap: 9,
+  pillHeight: 30,
+  pillRadius: 8,
+  pillPadX: 11,
+  pillDot: 7,
+  pillDotGap: 8,
+  pillSize: 13,
+  pillBg: '#FFFFFF',
+  noteGap: 11,
+  noteSize: 12.5,
+  noteLineHeight: 18,
+
+  dossierGap: 9,
+  dossierIcon: 13,
+  dossierIconGap: 6,
+  dossierSize: 12,
+  fileGap: 8,
+  fileHeight: 38,
+  fileRadius: 8,
+  filePadX: 10,
+  fileBg: '#FFFFFF',
+  tagWidth: 38,
+  tagHeight: 20,
+  tagRadius: 5,
+  tagSize: 10,
+  tagSpacing: 0.4,
+  tagGap: 11,
+  fileNameSize: 13,
+  fileSizeSize: 11.5,
+  validGap: 10,
+  validIcon: 13,
+  validIconGap: 7,
+  validSize: 11.5,
+
+  privilegeGap: 14,
+  privilegeRadius: 12,
+  privilegePad: 14,
+  privilegeBg: '#F3EFE9',
+  privilegeIcon: 13,
+  privilegeIconGap: 6,
+  privilegeLabelSize: 11,
+  privilegeLabelSpacing: 0.6,
+  privilegeLabelColour: '#6C5C45',
+  privilegeBodyGap: 7,
+  privilegeBodySize: 12.5,
+  privilegeBodyLineHeight: 18,
+
+  buttonGap: 26,
+  buttonHeight: firStep2.buttonHeight,
+  buttonRadius: firStep2.buttonRadius,
+  buttonSize: firStep2.buttonSize,
+  buttonIcon: firStep2.buttonIcon,
+  buttonIconGap: firStep2.buttonIconGap,
+
+  // Type tags on the dossier list.
+  pdfBg: '#FCE4E4',
+  pdfText: '#C0392B',
+  imgBg: '#F1EDE6',
+  imgText: '#8A7A66',
+  docBg: '#EAE7E2',
+  docText: '#5C5C5C',
+};
+
 // Home screen metrics, measured from design/11 (guest) + design/12 (logged in),
 // both 390pt wide @2x. These supersede design/09.
 export const home = {
