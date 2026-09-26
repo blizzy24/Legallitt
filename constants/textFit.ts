@@ -10,3 +10,13 @@ import { Platform } from 'react-native';
  */
 export const shrinkToFit = (minimumFontScale = 0.85) =>
   Platform.OS === 'web' ? {} : { adjustsFontSizeToFit: true as const, minimumFontScale };
+
+/**
+ * As shrinkToFit, but also pins the text to a single line. numberOfLines is applied
+ * on native only for the same reason: on web the clamp collapses the Text's box.
+ * Web instead relies on the declared size fitting, which call sites size for.
+ */
+export const shrinkToOneLine = (minimumFontScale = 0.85) =>
+  Platform.OS === 'web'
+    ? {}
+    : { numberOfLines: 1, adjustsFontSizeToFit: true as const, minimumFontScale };

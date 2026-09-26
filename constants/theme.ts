@@ -1374,6 +1374,11 @@ export const lnDetail = {
   speedIcon: 12,
   speedIconGap: 5,
   speedSize: 10,
+  // design/22 keeps the speed on one line. At 390 it has ~12% room, but the card is
+  // 15pt narrower at 360 and the line wraps, which stole the card's bottom padding.
+  // 390 and wider keep the drawn 10pt; only narrower screens scale.
+  speedCompactBelow: 380,
+  speedCompactScale: 0.85,
   // Hairline between the price row and the note (design/22). It sits centred in the
   // gap, and the file tints it differently on each card: warmer on the selected
   // beige card, neutral grey on the white one. Above+line+below equals the old

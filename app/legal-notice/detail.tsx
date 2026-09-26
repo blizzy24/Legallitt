@@ -1,12 +1,12 @@
 import { router } from 'expo-router';
 import { ArrowRight, Check, ChevronRight, Clock, FileSearch, Lock, MapPin, MessageCircle, ShieldCheck, Zap, type LucideIcon } from 'lucide-react-native';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import ServiceHeader from '../../components/ServiceHeader';
 import { colors, font, ink, lnDetail as d } from '../../constants/theme';
 import { useLegalNotice } from '../../context/legalNotice';
-import { shrinkToFit } from '../../constants/textFit';
+import { shrinkToFit, shrinkToOneLine } from '../../constants/textFit';
 import { rupees, SERVICE_TIERS, tierFor } from '../../data/legalNotice';
 
 const BULLETS = [
@@ -26,6 +26,10 @@ const REASONS: { icon: LucideIcon; title: string; caption: string; tint: string 
 // they match the payment screen's Service Fee.
 export default function LegalNoticeDetailScreen() {
   const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
+  // The tier cards are half the screen, so the speed line runs out of room before
+  // anything else does. Scale it down only where it would otherwise wrap.
+  const speedSize = d.speedSize * (width < d.speedCompactBelow ? d.speedCompactScale : 1);
   const { form, update } = useLegalNotice();
   const tierId = form.tier;
   const tier = tierFor(tierId);
@@ -122,7 +126,9 @@ export default function LegalNoticeDetailScreen() {
                 <View style={styles.priceRow}>
                   <Text style={styles.price}>{rupees(t.price)}</Text>
                   <Clock size={d.speedIcon} color={colors.textBody} />
-                  <Text style={styles.speed}>{t.speed}</Text>
+                  <Text style={[styles.speed, { fontSize: speedSize }]} {...shrinkToOneLine()}>
+                    {t.speed}
+                  </Text>
                 </View>
                 <View style={[styles.tierDivider, selected && styles.tierDividerSelected]} />
                 <Text style={styles.tierNote}>
@@ -426,7 +432,6 @@ const styles = StyleSheet.create({
   speed: {
     flexShrink: 1,
     fontFamily: font.appBody,
-    fontSize: d.speedSize,
     color: colors.textBody,
   },
   tierDivider: {
