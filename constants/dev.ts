@@ -12,6 +12,11 @@
  *
  *   - app/legal-notice/tracking.tsx   Drafting in Progress / Awaiting Your Approval
  *   - app/legal-notice/identity.tsx   Not uploaded / Uploaded
+ *   - app/fir/status.tsx + app/fir/ready.tsx   Under Review / Draft Ready
+ *
+ * The FIR pair is one control shared by two routes (components/FirJourneyToggle.tsx):
+ * status and ready are two states of the same journey, and nothing in the prototype
+ * advances between them, so the toggle navigates rather than setting local state.
  *
  * Set to false to hide both. The screens still accept `?state=` in the URL, so the
  * states stay reachable for review without the on-screen control.
