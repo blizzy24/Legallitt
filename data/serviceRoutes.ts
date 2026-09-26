@@ -1,0 +1,12 @@
+import type { Href } from 'expo-router';
+
+import type { ServiceId } from './services';
+
+/**
+ * Where each service tile goes. Services with no landing page yet are absent, and
+ * their tiles stay inert rather than navigating somewhere wrong.
+ */
+export const SERVICE_ROUTES: Partial<Record<ServiceId, Href>> = {
+  'legal-notice': '/legal-notice',
+  'fir-draft': '/fir',
+};

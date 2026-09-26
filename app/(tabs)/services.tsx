@@ -14,6 +14,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ServiceTile from '../../components/ServiceTile';
 import { serviceIcon } from '../../components/serviceIcons';
 import { colors, font, homeControlShadow, services, tabs } from '../../constants/theme';
+import { SERVICE_ROUTES } from '../../data/serviceRoutes';
 import { allServices } from '../../data/services';
 
 const SERVICES = allServices();
@@ -81,7 +82,7 @@ export default function ServicesScreen() {
                 icon={serviceIcon(s.icon)}
                 title={s.shortTitle}
                 description={s.description}
-                onPress={s.id === 'legal-notice' ? () => router.push('/legal-notice') : undefined}
+                onPress={SERVICE_ROUTES[s.id] ? () => router.push(SERVICE_ROUTES[s.id]!) : undefined}
                 style={{ width: tileWidth }}
               />
             ))}

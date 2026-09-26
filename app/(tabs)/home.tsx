@@ -7,6 +7,7 @@ import ServiceCard from '../../components/ServiceCard';
 import { serviceIcon } from '../../components/serviceIcons';
 import { colors, font, home, ink, space, tabs } from '../../constants/theme';
 import { useSession } from '../../context/session';
+import { SERVICE_ROUTES } from '../../data/serviceRoutes';
 import { homeServices, popularServices, type ResolvedService } from '../../data/services';
 
 const POPULAR = popularServices();
@@ -85,7 +86,7 @@ function Card({
       title={service.title}
       description={service.description}
       variant={variant}
-      onPress={service.id === 'legal-notice' ? () => router.push('/legal-notice') : undefined}
+      onPress={SERVICE_ROUTES[service.id] ? () => router.push(SERVICE_ROUTES[service.id]!) : undefined}
       style={style}
     />
   );
