@@ -1,36 +1,406 @@
 import { router } from 'expo-router';
-import { StyleSheet, Text, View } from 'react-native';
+import { ArrowRight, Calendar, ChevronsUpDown, Clock, List, MapPin, Mic, ShieldCheck, SquarePen } from 'lucide-react-native';
+import type { ReactNode } from 'react';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import FirShell from '../../components/FirShell';
-import PrimaryButton from '../../components/PrimaryButton';
-import { colors, firShell as f, font } from '../../constants/theme';
+import { shrinkToOneLine } from '../../constants/textFit';
+import { colors, firStep2 as t, font, ink } from '../../constants/theme';
+import { useFir } from '../../context/fir';
 
-// Placeholder — step content to come. The shell, header and progress bar are built.
+const POLICE_STATION_PREFILL = 'Sector 20 Police Station, Gautam Buddha Nagar';
+
+// Step 2 — Incident Details (design/43). Date, time and the police station are
+// pre-filled sample values as drawn; the two textareas are live and the character
+// counter tracks the narrative.
 export default function FirStep2Screen() {
+  const { form, updateIncident } = useFir();
+  const { incident } = form;
+  const narrative = incident.description;
+
   return (
     <FirShell step={2} title="Incident Details" showHelp>
-      <View style={styles.placeholder}>
-        <Text style={styles.text}>Step 2 — Incident Details</Text>
+      <Text style={styles.heading}>Tell Us What Happened</Text>
+      <Text style={styles.subtitle}>Provide the incident details as accurately as possible for statutory assessment.</Text>
+
+      <Card icon={MapPin} title="Date, Time & Location">
+        <View style={styles.row}>
+          <View style={styles.col}>
+            <Label text="Incident Date" required />
+            <Field icon={Calendar} value={incident.date} placeholder="18 / 10 / 2026" onChangeText={(v) => updateIncident({ date: v })} />
+          </View>
+          <View style={styles.col}>
+            <Label text="Incident Time" required />
+            <Field icon={Clock} value={incident.time} placeholder="04:30 PM" onChangeText={(v) => updateIncident({ time: v })} />
+          </View>
+        </View>
+
+        <Label text="Incident Location" required style={styles.labelSpaced} />
+        <Field
+          icon={MapPin}
+          value={incident.location}
+          placeholder="e.g., Sector 18 Market, Near Metro Gate 2, Noida"
+          onChangeText={(v) => updateIncident({ location: v })}
+        />
+
+        <Label text="Competent Police Station" required style={styles.labelSpaced} />
+        <Pressable accessibilityRole="button" accessibilityLabel="Competent Police Station" style={styles.select}>
+          <ShieldCheck size={t.fieldIcon} color={ink.accent} />
+          {/* design/43 clips this pre-filled value at the chevron too; on device it
+              shrinks rather than ellipsising. */}
+          <Text style={styles.selectText} numberOfLines={1} {...shrinkToOneLine(0.8)}>
+            {POLICE_STATION_PREFILL}
+          </Text>
+          <ChevronsUpDown size={t.fieldIcon} color={colors.textBody} />
+        </Pressable>
+        <Text style={styles.note}>Pre-filled from basic details jurisdiction. You can edit if different.</Text>
+      </Card>
+
+      <Card icon={SquarePen} title="What Happened?" required chip="Core Narrative">
+        <Text style={styles.desc}>
+          Include important facts such as what happened, when it happened, where it happened, and how it happened.
+        </Text>
+        <TextInput
+          multiline
+          textAlignVertical="top"
+          value={narrative}
+          onChangeText={(v) => updateIncident({ description: v.slice(0, t.maxChars) })}
+          maxLength={t.maxChars}
+          placeholder={'Describe what happened in your own words...\n(e.g., I received an unsolicited phone call pretending to be my bank manager on 18 Oct...)'}
+          placeholderTextColor={colors.textMuted}
+          accessibilityLabel="What happened"
+          style={[styles.area, { height: t.areaHeight }]}
+        />
+        <View style={styles.counterRow}>
+          <Text style={styles.counter}>
+            {narrative.length} / {t.maxChars.toLocaleString('en-IN')} characters
+          </Text>
+          <Pressable accessibilityRole="button" style={styles.dictate}>
+            <Mic size={t.dictateIcon} color={ink.accent} />
+            <Text style={styles.dictateText}>Dictate statement</Text>
+          </Pressable>
+        </View>
+      </Card>
+
+      <Card icon={List} title="Additional Details" chip="Optional">
+        <Text style={styles.desc}>Add any names of witnesses, vehicle numbers, transaction IDs, or specific demands made.</Text>
+        <TextInput
+          multiline
+          textAlignVertical="top"
+          placeholder={'e.g., UPI Transaction Ref: 4291880912, Caller spoke fluent Hindi and claimed to be from Noida branch...'}
+          placeholderTextColor={colors.textMuted}
+          accessibilityLabel="Additional details"
+          style={[styles.area, { height: t.areaSmallHeight }]}
+        />
+      </Card>
+
+      <View style={styles.legal}>
+        <ShieldCheck size={t.legalIcon} color={ink.accent} />
+        <Text style={styles.legalText}>
+          Your statement will be structured into formal statutory FIR paragraphs by your assigned legal drafting
+          advocate under relevant Bharatiya Nyaya Sanhita (BNS) sections.
+        </Text>
       </View>
-      <View style={styles.footer}>
-        <PrimaryButton label="Continue" onPress={() => router.push('/fir/step3')} />
-      </View>
+
+      <Pressable
+        accessibilityRole="button"
+        onPress={() => router.push('/fir/step3')}
+        style={({ pressed }) => [styles.button, pressed && styles.pressed]}
+      >
+        <Text style={styles.buttonText}>Continue to Evidence &amp; Documents</Text>
+        <ArrowRight size={t.buttonIcon} color={ink.onBrand} />
+      </Pressable>
+
+      <Pressable accessibilityRole="button" onPress={() => router.back()} style={styles.back}>
+        <Text style={styles.backText}>Back</Text>
+      </Pressable>
     </FirShell>
   );
 }
 
+function Card({
+  icon: Icon,
+  title,
+  chip,
+  required = false,
+  children,
+}: {
+  icon: typeof MapPin;
+  title: string;
+  chip?: string;
+  required?: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <View style={styles.card}>
+      <View style={styles.headRow}>
+        <View style={styles.headIcon}>
+          <Icon size={t.headIconGlyph} color={ink.accent} />
+        </View>
+        <Text style={styles.headTitle}>
+          {title}
+          {required && <Text style={styles.star}> *</Text>}
+        </Text>
+        {chip && (
+          <View style={styles.headChip}>
+            <Text style={styles.headChipText}>{chip}</Text>
+          </View>
+        )}
+      </View>
+      <View style={styles.divider} />
+      {children}
+    </View>
+  );
+}
+
+function Label({ text, required, style }: { text: string; required?: boolean; style?: object }) {
+  return (
+    <Text style={[styles.label, style]}>
+      {text}
+      {required && <Text style={styles.star}> *</Text>}
+    </Text>
+  );
+}
+
+function Field({
+  icon: Icon,
+  value,
+  placeholder,
+  onChangeText,
+}: {
+  icon: typeof MapPin;
+  value: string;
+  placeholder: string;
+  onChangeText: (v: string) => void;
+}) {
+  return (
+    <View style={styles.field}>
+      <Icon size={t.fieldIcon} color={ink.accent} />
+      <TextInput
+        value={value}
+        onChangeText={onChangeText}
+        placeholder={placeholder}
+        placeholderTextColor={colors.textMuted}
+        accessibilityLabel={placeholder}
+        style={styles.fieldInput}
+      />
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
-  placeholder: {
-    alignItems: 'center',
-    paddingVertical: f.contentGap,
+  heading: {
+    marginTop: t.headingTop,
+    textAlign: 'center',
+    fontFamily: font.appHeading,
+    fontSize: t.headingSize,
+    lineHeight: t.headingLineHeight,
+    color: colors.textPrimary,
   },
-  text: {
-    fontFamily: font.appSemi,
-    fontSize: f.titleSize,
+  subtitle: {
+    marginTop: t.subtitleGap,
+    textAlign: 'center',
+    fontFamily: font.appBody,
+    fontSize: t.subtitleSize,
+    lineHeight: t.subtitleLineHeight,
     color: colors.textBody,
   },
-  footer: {
-    marginTop: 'auto',
-    paddingTop: f.contentGap,
+  card: {
+    marginTop: t.cardGap,
+    borderRadius: t.cardRadius,
+    backgroundColor: colors.card,
+    borderWidth: 1,
+    borderColor: colors.border,
+    paddingHorizontal: t.cardPad,
+    paddingTop: t.cardPadTop,
+    paddingBottom: t.cardPadBottom,
+  },
+  headRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  headIcon: {
+    width: t.headIcon,
+    height: t.headIcon,
+    borderRadius: t.headIconRadius,
+    backgroundColor: colors.iconChipBg,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: t.headIconGap,
+  },
+  headTitle: {
+    flex: 1,
+    minWidth: 0,
+    fontFamily: font.appHeading,
+    fontSize: t.headTitleSize,
+    color: colors.textPrimary,
+  },
+  star: {
+    color: '#C0392B',
+  },
+  headChip: {
+    height: t.headChipHeight,
+    borderRadius: t.headChipRadius,
+    paddingHorizontal: t.headChipPadX,
+    backgroundColor: colors.iconChipBg,
+    justifyContent: 'center',
+  },
+  headChipText: {
+    fontFamily: font.appSemi,
+    fontSize: t.headChipSize,
+    color: colors.textBody,
+  },
+  divider: {
+    marginTop: t.dividerGap,
+    height: 1,
+    backgroundColor: t.dividerColour,
+  },
+  row: {
+    flexDirection: 'row',
+    gap: t.colGap,
+  },
+  col: {
+    flex: 1,
+    minWidth: 0,
+  },
+  label: {
+    marginTop: t.labelGap,
+    fontFamily: font.appSemi,
+    fontSize: t.labelSize,
+    color: colors.textPrimary,
+  },
+  labelSpaced: {
+    marginTop: t.labelGap,
+  },
+  field: {
+    marginTop: t.fieldGap,
+    height: t.fieldHeight,
+    borderRadius: t.fieldRadius,
+    backgroundColor: t.fieldBg,
+    borderWidth: 1,
+    borderColor: t.fieldBorder,
+    paddingHorizontal: t.fieldPadX,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: t.fieldIconGap,
+  },
+  fieldInput: {
+    flex: 1,
+    minWidth: 0,
+    fontFamily: font.appBody,
+    fontSize: t.fieldTextSize,
+    color: colors.textPrimary,
+    outlineWidth: 0,
+  },
+  select: {
+    marginTop: t.fieldGap,
+    height: t.selectHeight,
+    borderRadius: t.fieldRadius,
+    backgroundColor: t.selectBg,
+    borderWidth: 1,
+    borderColor: t.selectBorder,
+    paddingHorizontal: t.fieldPadX,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: t.fieldIconGap,
+  },
+  selectText: {
+    flex: 1,
+    minWidth: 0,
+    fontFamily: font.appBody,
+    fontSize: t.fieldTextSize,
+    color: colors.textPrimary,
+  },
+  note: {
+    marginTop: t.noteGap,
+    fontFamily: font.appBody,
+    fontSize: t.noteSize,
+    lineHeight: t.noteLineHeight,
+    color: colors.textMuted,
+  },
+  desc: {
+    marginTop: t.descGap,
+    fontFamily: font.appBody,
+    fontSize: t.descSize,
+    lineHeight: t.descLineHeight,
+    color: colors.textPrimary,
+  },
+  area: {
+    marginTop: t.areaGap,
+    borderRadius: t.fieldRadius,
+    backgroundColor: t.fieldBg,
+    borderWidth: 1,
+    borderColor: t.fieldBorder,
+    padding: t.areaPad,
+    fontFamily: font.appBody,
+    fontSize: t.areaTextSize,
+    lineHeight: t.areaLineHeight,
+    color: colors.textPrimary,
+    outlineWidth: 0,
+  },
+  counterRow: {
+    marginTop: t.counterGap,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  counter: {
+    fontFamily: font.appBody,
+    fontSize: t.counterSize,
+    color: colors.textBody,
+  },
+  dictate: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: t.dictateIconGap,
+  },
+  dictateText: {
+    fontFamily: font.appSemi,
+    fontSize: t.counterSize,
+    color: ink.accent,
+  },
+  legal: {
+    marginTop: t.legalGap,
+    borderRadius: t.legalRadius,
+    backgroundColor: t.legalBg,
+    padding: t.legalPad,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: t.legalIconGap,
+  },
+  legalText: {
+    flex: 1,
+    minWidth: 0,
+    fontFamily: font.appBody,
+    fontSize: t.legalSize,
+    lineHeight: t.legalLineHeight,
+    color: colors.textPrimary,
+  },
+  button: {
+    marginTop: t.buttonGap,
+    height: t.buttonHeight,
+    borderRadius: t.buttonRadius,
+    backgroundColor: colors.brand,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: t.buttonIconGap,
+  },
+  pressed: {
+    opacity: 0.85,
+  },
+  buttonText: {
+    fontFamily: font.appSemi,
+    fontSize: t.buttonSize,
+    color: ink.onBrand,
+  },
+  back: {
+    marginTop: t.backGap,
+    alignSelf: 'center',
+  },
+  backText: {
+    fontFamily: font.appSemi,
+    fontSize: t.backSize,
+    color: colors.textPrimary,
   },
 });
