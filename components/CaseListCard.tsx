@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { allCases as a, colors, font, ink } from '../constants/theme';
 import { formatDate, getAdvocate, getHearing, type Case } from '../data/cases';
+import RecordCard from './RecordCard';
 import StatusPill from './StatusPill';
 
 type Props = {
@@ -18,71 +19,62 @@ export default function CaseListCard({ item, onPress }: Props) {
   const hearing = item.nextHearingId ? getHearing(item.nextHearingId) : undefined;
 
   return (
-    <View style={styles.card}>
-      <View style={styles.pills}>
-        <StatusPill label={item.categoryLabel.toUpperCase()} caps />
-        <StatusPill label="Active" tone="active" dot />
-      </View>
-
-      <Text style={styles.title}>{item.title}</Text>
-      <View style={styles.courtRow}>
-        <Building2 size={a.courtIcon} color={ink.accent} />
-        <Text style={styles.courtText} numberOfLines={1}>
-          {item.court}
-        </Text>
-      </View>
-
-      {advocate && (
-        <View style={styles.advocateRow}>
-          <View style={styles.avatar}>
-            <Text style={styles.avatarText}>{advocate.initials}</Text>
+    <RecordCard
+      radius={a.cardRadius}
+      pad={a.cardPad}
+      padBottom={a.cardPadBottom}
+      titleGap={a.cardTitleGap}
+      titleSize={a.cardTitleSize}
+      dividerGap={a.dividerTop}
+      footerGap={a.dividerBottom}
+      pills={
+        <>
+          <StatusPill label={item.categoryLabel.toUpperCase()} caps />
+          <StatusPill label="Active" tone="active" dot />
+        </>
+      }
+      title={item.title}
+      meta={
+        <View style={styles.courtRow}>
+          <Building2 size={a.courtIcon} color={ink.accent} />
+          <Text style={styles.courtText} numberOfLines={1}>
+            {item.court}
+          </Text>
+        </View>
+      }
+      inner={
+        advocate && (
+          <View style={styles.advocateRow}>
+            <View style={styles.avatar}>
+              <Text style={styles.avatarText}>{advocate.initials}</Text>
+            </View>
+            <Text style={styles.advocateName} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85}>
+              {advocate.name}
+            </Text>
+            <View style={styles.spacer} />
+            <Text style={styles.role} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85}>
+              {advocate.role}
+            </Text>
           </View>
-          <Text style={styles.advocateName} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85}>
-            {advocate.name}
-          </Text>
-          <View style={styles.spacer} />
-          <Text style={styles.role} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85}>
-            {advocate.role}
-          </Text>
-        </View>
-      )}
-
-      <View style={styles.divider} />
-
-      <View style={styles.footer}>
-        <View style={styles.footerText}>
-          <Text style={styles.footerLabel}>NEXT HEARING</Text>
-          <Text style={styles.footerDate}>{hearing ? formatDate(hearing.date) : '—'}</Text>
-        </View>
-        <Pressable accessibilityRole="button" onPress={onPress} style={styles.button}>
-          <Text style={styles.buttonText}>View Case</Text>
-          <ChevronRight size={a.buttonText} color={colors.textBody} />
-        </Pressable>
-      </View>
-    </View>
+        )
+      }
+      footer={
+        <>
+          <View style={styles.footerText}>
+            <Text style={styles.footerLabel}>NEXT HEARING</Text>
+            <Text style={styles.footerDate}>{hearing ? formatDate(hearing.date) : '—'}</Text>
+          </View>
+          <Pressable accessibilityRole="button" onPress={onPress} style={styles.button}>
+            <Text style={styles.buttonText}>View Case</Text>
+            <ChevronRight size={a.buttonText} color={colors.textBody} />
+          </Pressable>
+        </>
+      }
+    />
   );
 }
 
 const styles = StyleSheet.create({
-  card: {
-    borderRadius: a.cardRadius,
-    backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: colors.border,
-    padding: a.cardPad,
-    paddingBottom: a.cardPadBottom,
-  },
-  pills: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  title: {
-    marginTop: a.cardTitleGap,
-    fontFamily: font.appSemi,
-    fontSize: a.cardTitleSize,
-    color: colors.textPrimary,
-  },
   courtRow: {
     marginTop: a.courtGap,
     flexDirection: 'row',
@@ -132,16 +124,6 @@ const styles = StyleSheet.create({
     fontFamily: font.appBody,
     fontSize: a.roleSize,
     color: colors.textBody,
-  },
-  divider: {
-    marginTop: a.dividerTop,
-    height: 1,
-    backgroundColor: colors.border,
-  },
-  footer: {
-    marginTop: a.dividerBottom,
-    flexDirection: 'row',
-    alignItems: 'center',
   },
   footerText: {
     flex: 1,

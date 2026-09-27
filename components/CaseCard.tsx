@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { cases, colors, font, ink, status } from '../constants/theme';
 import { formatDate, getAdvocate, getHearing, type Case } from '../data/cases';
+import RecordCard from './RecordCard';
 import StatusPill from './StatusPill';
 
 type Props = {
@@ -17,65 +18,62 @@ export default function CaseCard({ item, onPress }: Props) {
   const hearing = item.nextHearingId ? getHearing(item.nextHearingId) : undefined;
 
   return (
-    <View style={styles.card}>
-      <View style={styles.topRow}>
-        <StatusPill label="Active" tone="active" dot />
-        <View style={styles.chip}>
-          <Text style={styles.chipText}>#{item.shortRef}</Text>
-        </View>
-      </View>
-
-      <Text style={styles.title}>{item.title}</Text>
-      <Text style={styles.meta}>
-        {item.categoryLabel} • {item.city}
-      </Text>
-
-      <View style={styles.inner}>
-        <View style={styles.innerCol}>
-          <Text style={styles.innerLabel}>JURISDICTION</Text>
-          <Text style={styles.innerValue} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85}>
-            {item.court}
-          </Text>
-        </View>
-        <View style={styles.innerCol}>
-          <Text style={styles.innerLabel}>ASSIGNED ADVOCATE</Text>
-          <View style={styles.advocateRow}>
-            <View style={styles.advocateDot} />
+    <RecordCard
+      radius={cases.cardRadius}
+      pad={cases.cardPad}
+      titleGap={cases.cardTitleGap}
+      titleSize={cases.cardTitleSize}
+      dividerGap={cases.dividerGap}
+      footerGap={cases.dividerGap}
+      pills={
+        <>
+          <StatusPill label="Active" tone="active" dot />
+          <View style={styles.chip}>
+            <Text style={styles.chipText}>#{item.shortRef}</Text>
+          </View>
+        </>
+      }
+      title={item.title}
+      meta={
+        <Text style={styles.meta}>
+          {item.categoryLabel} • {item.city}
+        </Text>
+      }
+      inner={
+        <View style={styles.inner}>
+          <View style={styles.innerCol}>
+            <Text style={styles.innerLabel}>JURISDICTION</Text>
             <Text style={styles.innerValue} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85}>
-              {advocate?.name}
+              {item.court}
             </Text>
           </View>
+          <View style={styles.innerCol}>
+            <Text style={styles.innerLabel}>ASSIGNED ADVOCATE</Text>
+            <View style={styles.advocateRow}>
+              <View style={styles.advocateDot} />
+              <Text style={styles.innerValue} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85}>
+                {advocate?.name}
+              </Text>
+            </View>
+          </View>
         </View>
-      </View>
-
-      <View style={styles.divider} />
-
-      <View style={styles.footer}>
-        <Text style={styles.footerLabel}>Next Hearing: </Text>
-        <Text style={styles.footerValue}>{hearing ? formatDate(hearing.date) : '—'}</Text>
-        <View style={styles.spacer} />
-        <Pressable accessibilityRole="button" onPress={onPress} style={styles.button}>
-          <Text style={styles.buttonText}>View Case</Text>
-          <ChevronRight size={cases.buttonText} color={ink.onBrand} />
-        </Pressable>
-      </View>
-    </View>
+      }
+      footer={
+        <>
+          <Text style={styles.footerLabel}>Next Hearing: </Text>
+          <Text style={styles.footerValue}>{hearing ? formatDate(hearing.date) : '—'}</Text>
+          <View style={styles.spacer} />
+          <Pressable accessibilityRole="button" onPress={onPress} style={styles.button}>
+            <Text style={styles.buttonText}>View Case</Text>
+            <ChevronRight size={cases.buttonText} color={ink.onBrand} />
+          </Pressable>
+        </>
+      }
+    />
   );
 }
 
 const styles = StyleSheet.create({
-  card: {
-    borderRadius: cases.cardRadius,
-    backgroundColor: colors.card,
-    borderWidth: cases.hairline,
-    borderColor: colors.border,
-    padding: cases.cardPad,
-  },
-  topRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
   chip: {
     height: cases.chipHeight,
     borderRadius: cases.chipRadius,
@@ -90,12 +88,6 @@ const styles = StyleSheet.create({
     fontFamily: font.mono,
     fontSize: cases.chipText,
     color: colors.textBody,
-  },
-  title: {
-    marginTop: cases.cardTitleGap,
-    fontFamily: font.appSemi,
-    fontSize: cases.cardTitleSize,
-    color: colors.textPrimary,
   },
   meta: {
     marginTop: cases.metaGap,
@@ -137,16 +129,6 @@ const styles = StyleSheet.create({
     backgroundColor: status.active,
     marginRight: cases.footerDotGap - 2,
     marginTop: cases.innerValueGap,
-  },
-  divider: {
-    marginTop: cases.dividerGap,
-    height: cases.hairline,
-    backgroundColor: colors.border,
-  },
-  footer: {
-    marginTop: cases.dividerGap,
-    flexDirection: 'row',
-    alignItems: 'center',
   },
   footerLabel: {
     fontFamily: font.appBody,

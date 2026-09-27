@@ -8,6 +8,7 @@ import {
   getCase,
   type Hearing,
 } from '../data/cases';
+import RecordCard from './RecordCard';
 import StatusPill from './StatusPill';
 
 type Props = {
@@ -22,19 +23,27 @@ export default function HearingCard({ hearing, onPress }: Props) {
   const days = daysUntil(hearing.date);
 
   return (
-    <View style={styles.card}>
-      <View style={styles.accent} />
-      <View style={styles.body}>
-        <View style={styles.pills}>
+    <RecordCard
+      radius={cases.cardRadius}
+      pad={cases.cardPad}
+      accentWidth={cases.accentWidth}
+      titleGap={cases.cardTitleGap}
+      titleSize={cases.cardTitleSize}
+      dividerGap={cases.dividerGap}
+      footerGap={cases.dividerGap}
+      pills={
+        <>
           <StatusPill label={hearing.type} />
           {days > 0 && <StatusPill label={`${days} days remaining`} tone="pending" />}
-        </View>
-
-        <Text style={styles.title}>{c?.title}</Text>
+        </>
+      }
+      title={c?.title}
+      meta={
         <Text style={styles.meta}>
           {c?.categoryLabel} • Case #{c?.shortRef}
         </Text>
-
+      }
+      inner={
         <View style={styles.inner}>
           <View style={styles.innerIcon}>
             <Building2 size={cases.innerValueSize + 3} color={ink.accent} />
@@ -51,10 +60,9 @@ export default function HearingCard({ hearing, onPress }: Props) {
             <Text style={styles.innerSub}>{hearing.time}</Text>
           </View>
         </View>
-
-        <View style={styles.divider} />
-
-        <View style={styles.footer}>
+      }
+      footer={
+        <>
           <View style={styles.footerDot} />
           <Text style={styles.footerText} numberOfLines={1}>
             {hearing.attendance}
@@ -64,43 +72,13 @@ export default function HearingCard({ hearing, onPress }: Props) {
             <Text style={styles.linkText}>View Details</Text>
             <ArrowRight size={cases.linkSize} color={ink.accent} />
           </Pressable>
-        </View>
-      </View>
-    </View>
+        </>
+      }
+    />
   );
 }
 
 const styles = StyleSheet.create({
-  card: {
-    borderRadius: cases.cardRadius,
-    backgroundColor: colors.card,
-    borderWidth: cases.hairline,
-    borderColor: colors.border,
-    flexDirection: 'row',
-    overflow: 'hidden',
-  },
-  accent: {
-    width: cases.accentWidth,
-    backgroundColor: colors.brand,
-  },
-  body: {
-    flex: 1,
-    minWidth: 0,
-    padding: cases.cardPad,
-    // The accent bar overlaps the padding, so text lines up with the other cards.
-    paddingLeft: cases.cardPad - cases.accentWidth,
-  },
-  pills: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  title: {
-    marginTop: cases.cardTitleGap,
-    fontFamily: font.appSemi,
-    fontSize: cases.cardTitleSize,
-    color: colors.textPrimary,
-  },
   meta: {
     marginTop: cases.metaGap,
     fontFamily: font.appBody,
@@ -141,16 +119,6 @@ const styles = StyleSheet.create({
     fontFamily: font.appBody,
     fontSize: cases.metaSize - 1,
     color: colors.textBody,
-  },
-  divider: {
-    marginTop: cases.dividerGap,
-    height: cases.hairline,
-    backgroundColor: colors.border,
-  },
-  footer: {
-    marginTop: cases.dividerGap,
-    flexDirection: 'row',
-    alignItems: 'center',
   },
   footerDot: {
     width: cases.footerDot,

@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { colors, font, hearings as h, ink } from '../constants/theme';
 import { formatDate, getAdvocate, getCase, type Hearing } from '../data/cases';
+import RecordCard from './RecordCard';
 import StatusPill from './StatusPill';
 
 type Props = {
@@ -24,60 +25,71 @@ export default function HearingListCard({ hearing, onPress }: Props) {
   const advocate = c ? getAdvocate(c.advocateId) : undefined;
 
   return (
-    <View style={styles.card}>
-      <View style={styles.pills}>
-        <StatusPill label={(c?.categoryLabel ?? '').toUpperCase()} caps />
-        <StatusPill
-          label={STATUS_LABEL[hearing.status]}
-          tone={hearing.status === 'upcoming' ? 'active' : 'neutral'}
-          dot={hearing.status === 'upcoming'}
-        />
-      </View>
-
-      <Text style={styles.title}>{c?.title}</Text>
-      <View style={styles.courtRow}>
-        <Building2 size={h.courtIcon} color={ink.accent} />
-        <Text style={styles.courtText} numberOfLines={1}>
-          {c?.court} • {c?.state}
-        </Text>
-      </View>
-
-      <View style={styles.colBlock}>
-        <Column label="HEARING DATE" value={formatDate(hearing.date)} />
-        <View style={styles.colDivider} />
-        <Column label="TIME" value={hearing.time} />
-        <View style={styles.colDivider} />
-        <Column label="COURTROOM" value={hearing.courtroom.replace('Courtroom', 'Room')} />
-      </View>
-
-      {advocate && (
-        <View style={styles.advocateRow}>
-          <View style={styles.avatar}>
-            <Text style={styles.avatarText}>{advocate.initials}</Text>
-          </View>
-          <View style={styles.advocateText}>
-            <Text style={styles.advocateLabel}>Assigned Advocate</Text>
-            <Text style={styles.advocateName} numberOfLines={1}>
-              {advocate.name}
-            </Text>
-          </View>
-          <View style={styles.bench}>
-            <Text style={styles.benchText}>{hearing.bench}</Text>
-          </View>
+    <RecordCard
+      radius={h.cardRadius}
+      pad={h.cardPad}
+      titleGap={h.cardTitleGap}
+      titleSize={h.cardTitleSize}
+      dividerGap={h.dividerTop}
+      footerGap={h.dividerBottom}
+      pills={
+        <>
+          <StatusPill label={(c?.categoryLabel ?? '').toUpperCase()} caps />
+          <StatusPill
+            label={STATUS_LABEL[hearing.status]}
+            tone={hearing.status === 'upcoming' ? 'active' : 'neutral'}
+            dot={hearing.status === 'upcoming'}
+          />
+        </>
+      }
+      title={c?.title}
+      meta={
+        <View style={styles.courtRow}>
+          <Building2 size={h.courtIcon} color={ink.accent} />
+          <Text style={styles.courtText} numberOfLines={1}>
+            {c?.court} • {c?.state}
+          </Text>
         </View>
-      )}
+      }
+      inner={
+        <>
+          <View style={styles.colBlock}>
+            <Column label="HEARING DATE" value={formatDate(hearing.date)} />
+            <View style={styles.colDivider} />
+            <Column label="TIME" value={hearing.time} />
+            <View style={styles.colDivider} />
+            <Column label="COURTROOM" value={hearing.courtroom.replace('Courtroom', 'Room')} />
+          </View>
 
-      <View style={styles.divider} />
-
-      <View style={styles.footer}>
-        <Text style={styles.mono}>{hearing.caseId}</Text>
-        <View style={styles.spacer} />
-        <Pressable accessibilityRole="link" onPress={onPress} style={styles.link}>
-          <Text style={styles.linkText}>View Details</Text>
-          <ChevronRight size={h.linkSize} color={ink.accent} />
-        </Pressable>
-      </View>
-    </View>
+          {advocate && (
+            <View style={styles.advocateRow}>
+              <View style={styles.avatar}>
+                <Text style={styles.avatarText}>{advocate.initials}</Text>
+              </View>
+              <View style={styles.advocateText}>
+                <Text style={styles.advocateLabel}>Assigned Advocate</Text>
+                <Text style={styles.advocateName} numberOfLines={1}>
+                  {advocate.name}
+                </Text>
+              </View>
+              <View style={styles.bench}>
+                <Text style={styles.benchText}>{hearing.bench}</Text>
+              </View>
+            </View>
+          )}
+        </>
+      }
+      footer={
+        <>
+          <Text style={styles.mono}>{hearing.caseId}</Text>
+          <View style={styles.spacer} />
+          <Pressable accessibilityRole="link" onPress={onPress} style={styles.link}>
+            <Text style={styles.linkText}>View Details</Text>
+            <ChevronRight size={h.linkSize} color={ink.accent} />
+          </Pressable>
+        </>
+      }
+    />
   );
 }
 
@@ -95,24 +107,6 @@ function Column({ label, value }: { label: string; value: string }) {
 }
 
 const styles = StyleSheet.create({
-  card: {
-    borderRadius: h.cardRadius,
-    backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: colors.border,
-    padding: h.cardPad,
-  },
-  pills: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  title: {
-    marginTop: h.cardTitleGap,
-    fontFamily: font.appSemi,
-    fontSize: h.cardTitleSize,
-    color: colors.textPrimary,
-  },
   courtRow: {
     marginTop: h.courtGap,
     flexDirection: 'row',
@@ -205,16 +199,6 @@ const styles = StyleSheet.create({
     fontFamily: font.appBody,
     fontSize: h.benchText,
     color: colors.textBody,
-  },
-  divider: {
-    marginTop: h.dividerTop,
-    height: 1,
-    backgroundColor: colors.border,
-  },
-  footer: {
-    marginTop: h.dividerBottom,
-    flexDirection: 'row',
-    alignItems: 'center',
   },
   mono: {
     fontFamily: font.mono,
