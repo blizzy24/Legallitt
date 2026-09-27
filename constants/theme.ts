@@ -52,10 +52,6 @@ export const font = {
   mono:         Platform.select({ ios: 'Menlo', android: 'monospace', default: 'monospace' }) as string,
 };
 
-export const size = {
-  h1: 34, h2: 28, h3: 20, body: 17, small: 15, tiny: 13,
-};
-
 export const radius = { input: 28, button: 28, card: 16, chip: 12, box: 14 };
 
 export const space = {
@@ -151,6 +147,13 @@ export const wizardCardShadow = {
   elevation: 2,
 };
 
+/**
+ * NO CALL SITE. Written for ServiceCard, which applies no shadow at all.
+ * design/11 and design/12 cannot settle it either way: at shadowOpacity 0.025 a real
+ * shadow would be below the quantisation of the export, and sampling below the card
+ * edges finds no gradient. Kept rather than deleted until someone can check the
+ * source file — deleting it would lose the only record that a shadow was intended.
+ */
 export const homeCardShadow = {
   shadowColor: ink.shadow,
   shadowOpacity: 0.025,

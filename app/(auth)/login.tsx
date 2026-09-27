@@ -6,7 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import PrimaryButton from '../../components/PrimaryButton';
 import { AppStoreMark, FacebookMark, GoogleMark } from '../../components/SocialMarks';
-import TextField from '../../components/TextField';
+import AuthField from '../../components/AuthField';
 import { colors, font, ink, login, marks, shadow, space } from '../../constants/theme';
 
 export default function LoginScreen() {
@@ -39,7 +39,7 @@ export default function LoginScreen() {
       <Text style={styles.title}>Login/Register</Text>
       <Text style={styles.subtitle}>Login/Register in Your Account</Text>
 
-      <TextField
+      <AuthField
         placeholder="E-mail/Mobile No"
         keyboardType="email-address"
         autoCapitalize="none"

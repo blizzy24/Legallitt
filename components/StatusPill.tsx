@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-na
 
 import { cases, colors, font, status } from '../constants/theme';
 
-export type PillTone = 'active' | 'pending' | 'neutral';
+type PillTone = 'active' | 'pending' | 'neutral';
 
 type Props = {
   label: string;

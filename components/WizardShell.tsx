@@ -8,7 +8,7 @@ import { colors, font, ink, payHeader as ph, wizard as w } from '../constants/th
 import PayHeader from './PayHeader';
 import PrimaryButton from './PrimaryButton';
 
-export const WIZARD_STEPS = 6;
+const WIZARD_STEPS = 6;
 
 type Props = {
   /** 1-based step, of WIZARD_STEPS. */

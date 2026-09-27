@@ -12,19 +12,19 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { colors, font, ink, tabBarShadow, tabs } from '../constants/theme';
 
-export type TabConfig = {
+type TabConfig = {
   key: string;
   label: string;
   icon: LucideIcon;
   route: Href;
 };
 
-export type TabBarVariant = 'labelled' | 'iconOnly';
+type TabBarVariant = 'labelled' | 'iconOnly';
 
 // Five-tab bar from design/14 (labelled) and design/21 (icon only). Outline icons; the
 // active tab sits in a filled brand pill with a white icon (and label, when labelled).
 // TODO: labels are the design's wording — "Cases" and "Messages" not yet client-confirmed.
-export const TABS: TabConfig[] = [
+const TABS: TabConfig[] = [
   { key: 'home', label: 'Home', icon: House, route: '/(tabs)/home' },
   { key: 'services', label: 'Services', icon: LayoutGrid, route: '/(tabs)/services' },
   { key: 'cases', label: 'Cases', icon: FileText, route: '/(tabs)/cases' },

@@ -18,6 +18,10 @@ const GRID = homeServices();
 const LEFT = GRID.filter((_, i) => i % 2 === 0);
 const RIGHT = GRID.filter((_, i) => i % 2 === 1);
 
+/** Services without a built route are inert until that section is built. */
+const pressFor = (s: ResolvedService) =>
+  SERVICE_ROUTES[s.id] ? () => router.push(SERVICE_ROUTES[s.id]!) : undefined;
+
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const { isLoggedIn } = useSession();
@@ -49,7 +53,15 @@ export default function HomeScreen() {
         <SectionRow title="Popular Services" badge />
         <View style={styles.popularRow}>
           {POPULAR.map((s) => (
-            <Card key={s.id} service={s} variant="popular" style={styles.popularItem} />
+            <ServiceCard
+              key={s.id}
+              icon={serviceIcon(s.icon)}
+              title={s.title}
+              description={s.description}
+              variant="popular"
+              onPress={pressFor(s)}
+              style={styles.popularItem}
+            />
           ))}
         </View>
 
@@ -57,38 +69,29 @@ export default function HomeScreen() {
         <View style={styles.grid}>
           <View style={styles.column}>
             {LEFT.map((s) => (
-              <Card key={s.id} service={s} />
+              <ServiceCard
+                key={s.id}
+                icon={serviceIcon(s.icon)}
+                title={s.title}
+                description={s.description}
+                onPress={pressFor(s)}
+              />
             ))}
           </View>
           <View style={styles.column}>
             {RIGHT.map((s) => (
-              <Card key={s.id} service={s} />
+              <ServiceCard
+                key={s.id}
+                icon={serviceIcon(s.icon)}
+                title={s.title}
+                description={s.description}
+                onPress={pressFor(s)}
+              />
             ))}
           </View>
         </View>
       </ScrollView>
     </View>
-  );
-}
-
-function Card({
-  service,
-  variant,
-  style,
-}: {
-  service: ResolvedService;
-  variant?: 'grid' | 'popular';
-  style?: object;
-}) {
-  return (
-    <ServiceCard
-      icon={serviceIcon(service.icon)}
-      title={service.title}
-      description={service.description}
-      variant={variant}
-      onPress={SERVICE_ROUTES[service.id] ? () => router.push(SERVICE_ROUTES[service.id]!) : undefined}
-      style={style}
-    />
   );
 }
 

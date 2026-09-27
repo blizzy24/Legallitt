@@ -18,7 +18,7 @@ type Props = Omit<TextInputProps, 'placeholder' | 'style'> & {
 // The Legal Notice wizard's beige flat field (design/24, 25): no elevation, a brand
 // leading icon, and a label that stands in for the placeholder so the required
 // asterisk can sit raised like the design. Different from the auth screens' white
-// elevated TextField.
+// elevated AuthField.
 export default function FlatField({
   icon: Icon,
   label,

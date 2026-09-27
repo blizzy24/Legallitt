@@ -87,6 +87,13 @@ export const home = {
   cardRadius: 16.5,
   cardBorder: 1,
   cardBorderPopular: 2,
+  // RE-MEASURED against design/12. The chip sits 14.0pt inside the card's border on
+  // all three cards there (the 2pt-bordered popular card and both 1pt grid cards),
+  // and 14.0pt inside it on design/13 too — so this 15 does not match the file and
+  // is not, as suspected, a value swapped with services.cardPad.
+  // Left at 15 because changing it moves the home grid: the card also renders 2pt
+  // taller than design/12 draws it (138pt outer there, 140 here) and only 1pt of
+  // that is this padding, so the other 1pt needs finding before touching either.
   cardPad: 15,
   cardPadBottom: 14,
   chipSize: 36,
@@ -132,6 +139,9 @@ export const services = {
   gridBottom: 24,
   cardHeight: 150,
   cardRadius: 16.5,
+  // Confirmed against design/13: the chip sits 14.0pt inside the card border, and
+  // every card top/bottom in the rendered grid lands within 0.5pt of the file. These
+  // two are correct as drawn — it is home.cardPad that disagrees with its design.
   cardPad: 14,
   cardPadBottom: 15,
   chipSize: 32,

@@ -5,7 +5,7 @@ import { DEV_PREVIEW_TOGGLES } from '../constants/dev';
 import { colors, firResult as t, font } from '../constants/theme';
 import SegmentedControl, { type Segment } from './SegmentedControl';
 
-export type FirJourneyState = 'status' | 'ready';
+type FirJourneyState = 'status' | 'ready';
 
 const SEGMENTS: Segment<FirJourneyState>[] = [
   { key: 'status', label: 'Under Review' },

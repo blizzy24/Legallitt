@@ -18,7 +18,7 @@ import type { ServiceIconKey } from '../data/services';
 
 // Service chips use lucide outline icons. The filled tab bar icons come from
 // @expo/vector-icons (MaterialCommunityIcons) — see components/TabBar.tsx.
-export const SERVICE_ICONS: Record<ServiceIconKey, LucideIcon> = {
+const SERVICE_ICONS: Record<ServiceIconKey, LucideIcon> = {
   'message-circle': MessageCircle,
   'message-square': MessageSquare,
   'file-text': FileText,

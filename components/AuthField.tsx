@@ -2,11 +2,17 @@ import { StyleSheet, TextInput, View, type StyleProp, type TextInputProps, type 
 
 import { colors, control, fieldShadow, font, ink, radius } from '../constants/theme';
 
+// The auth screens' field: a pill-shaped, elevated input with no label (design/01-05).
+//
+// One of three field styles in the app, each named for where it belongs:
+//   AuthField      this one — rounded, shadowed, placeholder-only
+//   FlatField      flat and bordered, for the wizard steps
+//   LabelledField  label above, Required/Optional chip beside it, for the FIR steps
 type Props = TextInputProps & {
   containerStyle?: StyleProp<ViewStyle>;
 };
 
-export default function TextField({ containerStyle, style, ...inputProps }: Props) {
+export default function AuthField({ containerStyle, style, ...inputProps }: Props) {
   return (
     <View style={[styles.container, containerStyle]}>
       <TextInput
