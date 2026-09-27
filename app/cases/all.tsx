@@ -1,10 +1,11 @@
 import { router } from 'expo-router';
-import { ChevronLeft, Funnel, Search } from 'lucide-react-native';
+import { Funnel, Search } from 'lucide-react-native';
 import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import CaseListCard from '../../components/CaseListCard';
+import ListHeader from '../../components/ListHeader';
 import { allCases as a, colors, font, ink, space } from '../../constants/theme';
 import { activeCases, type CaseCategory } from '../../data/cases';
 
@@ -41,16 +42,18 @@ export default function AllActiveCasesScreen() {
 
   return (
     <View style={styles.screen}>
-      <View style={[styles.header, { paddingTop: insets.top + a.top }]}>
-        <Pressable accessibilityRole="button" accessibilityLabel="Back" onPress={goBack} style={styles.circleButton}>
-          <ChevronLeft size={a.headerIcon} color={colors.textPrimary} />
-        </Pressable>
-        <Text style={styles.headerTitle}>All Active Cases</Text>
-        {/* Filter button has no panel yet. */}
-        <Pressable accessibilityRole="button" accessibilityLabel="Filter" style={styles.circleButton}>
-          <Funnel size={a.headerIcon} color={colors.textPrimary} />
-        </Pressable>
-      </View>
+      {/* Filter button has no panel yet. */}
+      <ListHeader
+        title="All Active Cases"
+        rightIcon={Funnel}
+        rightLabel="Filter"
+        onBack={goBack}
+        paddingTop={a.top}
+        // Was `a.searchGap`, which is the gap below the search field, not below the
+        // header. Same 17pt, stated explicitly — derived, not measured.
+        paddingBottom={17}
+        titleSize={a.titleSize}
+      />
 
       <ScrollView
         contentContainerStyle={[styles.content, { paddingBottom: a.cardGap + insets.bottom }]}
@@ -122,29 +125,6 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: colors.appBg,
-  },
-  header: {
-    paddingHorizontal: space.screenX - 1.5,
-    paddingBottom: a.searchGap,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  circleButton: {
-    width: a.headerButton,
-    height: a.headerButton,
-    borderRadius: a.headerButton / 2,
-    backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: colors.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerTitle: {
-    flex: 1,
-    textAlign: 'center',
-    fontFamily: font.appHeading,
-    fontSize: a.titleSize,
-    color: colors.textPrimary,
   },
   content: {
     paddingHorizontal: space.screenX,

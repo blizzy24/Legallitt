@@ -58,7 +58,22 @@ export const size = {
 
 export const radius = { input: 28, button: 28, card: 16, chip: 12, box: 14 };
 
-export const space  = { screenX: 20, gap: 16, section: 24 };
+export const space = {
+  screenX: 20,
+  gap: 16,
+  section: 24,
+  /**
+   * Side inset used by the four ListHeader screens (All Active Cases, All Hearings,
+   * Hearing Details, Case Details) instead of screenX.
+   *
+   * UNEXPLAINED AND INHERITED: all four wrote `space.screenX - 1.5` with no comment,
+   * so why the header sits 1.5pt inside the content grid was never recorded. It is
+   * consistent across all four, so it is kept as drawn. Do not round it to 20
+   * without re-measuring design/18, 19, 20 and 21 — that would move every one of
+   * those headers.
+   */
+  headerX: 18.5,
+};
 
 // Additions: values from the shared-component spec that the tokens above don't cover.
 export const ink = {

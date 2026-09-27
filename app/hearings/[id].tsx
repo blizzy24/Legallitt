@@ -2,7 +2,6 @@ import { router, useLocalSearchParams } from 'expo-router';
 import {
   Building2,
   Check,
-  ChevronLeft,
   ChevronRight,
   MessageSquare,
   MoreVertical,
@@ -10,6 +9,7 @@ import {
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import ListHeader from '../../components/ListHeader';
 import StatusPill from '../../components/StatusPill';
 import { colors, font, hearings as h, ink, space, status } from '../../constants/theme';
 import {
@@ -48,16 +48,18 @@ export default function HearingDetailsScreen() {
 
   return (
     <View style={styles.screen}>
-      <View style={[styles.header, { paddingTop: insets.top + h.top }]}>
-        <Pressable accessibilityRole="button" accessibilityLabel="Back" onPress={goBack} style={styles.circleButton}>
-          <ChevronLeft size={h.headerIcon} color={colors.textPrimary} />
-        </Pressable>
-        <Text style={styles.headerTitle}>Hearing Details</Text>
-        {/* Kebab has no menu yet. */}
-        <Pressable accessibilityRole="button" accessibilityLabel="More options" style={styles.circleButton}>
-          <MoreVertical size={h.headerIcon} color={colors.textPrimary} />
-        </Pressable>
-      </View>
+      {/* Kebab has no menu yet. */}
+      <ListHeader
+        title="Hearing Details"
+        rightIcon={MoreVertical}
+        rightLabel="More options"
+        onBack={goBack}
+        paddingTop={h.top}
+        // Was `h.subtitleGap + 7`, arithmetic on a card's subtitle gap. Same 20pt,
+        // stated explicitly — derived, not measured.
+        paddingBottom={20}
+        titleSize={h.detailTitleSize}
+      />
 
       <ScrollView
         contentContainerStyle={[
@@ -232,29 +234,6 @@ const styles = StyleSheet.create({
   centre: {
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  header: {
-    paddingHorizontal: space.screenX - 1.5,
-    paddingBottom: h.subtitleGap + 7,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  circleButton: {
-    width: h.headerButton,
-    height: h.headerButton,
-    borderRadius: h.headerButton / 2,
-    backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: colors.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerTitle: {
-    flex: 1,
-    textAlign: 'center',
-    fontFamily: font.appHeading,
-    fontSize: h.detailTitleSize,
-    color: colors.textPrimary,
   },
   content: {
     paddingHorizontal: space.screenX,

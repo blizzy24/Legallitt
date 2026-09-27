@@ -1,10 +1,11 @@
 import { router } from 'expo-router';
-import { CalendarDays, ChevronLeft } from 'lucide-react-native';
+import { CalendarDays } from 'lucide-react-native';
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import HearingListCard from '../../components/HearingListCard';
+import ListHeader from '../../components/ListHeader';
 import SegmentedControl, { type Segment } from '../../components/SegmentedControl';
 import { colors, font, hearings as h, space } from '../../constants/theme';
 import { HEARINGS, type HearingStatus } from '../../data/cases';
@@ -34,16 +35,17 @@ export default function AllHearingsScreen() {
 
   return (
     <View style={styles.screen}>
-      <View style={[styles.header, { paddingTop: insets.top + h.top }]}>
-        <Pressable accessibilityRole="button" accessibilityLabel="Back" onPress={goBack} style={styles.circleButton}>
-          <ChevronLeft size={h.headerIcon} color={colors.textPrimary} />
-        </Pressable>
-        <Text style={styles.headerTitle}>All Hearings</Text>
-        {/* Calendar view is not designed yet. */}
-        <Pressable accessibilityRole="button" accessibilityLabel="Calendar" style={styles.circleButton}>
-          <CalendarDays size={h.headerIcon} color={colors.textPrimary} />
-        </Pressable>
-      </View>
+      {/* Calendar view is not designed yet. */}
+      <ListHeader
+        title="All Hearings"
+        rightIcon={CalendarDays}
+        rightLabel="Calendar"
+        onBack={goBack}
+        paddingTop={h.top}
+        // This screen never set one; the content's own top padding carries the gap.
+        paddingBottom={0}
+        titleSize={h.titleSize}
+      />
 
       <ScrollView
         contentContainerStyle={[styles.content, { paddingBottom: h.cardGap + insets.bottom }]}
@@ -96,28 +98,6 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: colors.appBg,
-  },
-  header: {
-    paddingHorizontal: space.screenX - 1.5,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  circleButton: {
-    width: h.headerButton,
-    height: h.headerButton,
-    borderRadius: h.headerButton / 2,
-    backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: colors.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerTitle: {
-    flex: 1,
-    textAlign: 'center',
-    fontFamily: font.appHeading,
-    fontSize: h.titleSize,
-    color: colors.textPrimary,
   },
   content: {
     paddingHorizontal: space.screenX,

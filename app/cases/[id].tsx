@@ -3,7 +3,6 @@ import {
   Building2,
   Check,
   CheckCircle2,
-  ChevronLeft,
   ChevronRight,
   ClipboardList,
   Clock,
@@ -15,6 +14,7 @@ import { useState, type ReactNode } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import ListHeader from '../../components/ListHeader';
 import StatusPill from '../../components/StatusPill';
 import { caseDetail as d, colors, font, ink, space, status } from '../../constants/theme';
 import {
@@ -61,16 +61,17 @@ export default function CaseDetailsScreen() {
 
   return (
     <View style={styles.screen}>
-      <View style={[styles.header, { paddingTop: insets.top + d.top }]}>
-        <Pressable accessibilityRole="button" accessibilityLabel="Back" onPress={goBack} style={styles.circleButton}>
-          <ChevronLeft size={d.headerIcon} color={colors.textPrimary} />
-        </Pressable>
-        <Text style={styles.headerTitle}>Case Details</Text>
-        {/* Kebab has no menu yet. */}
-        <Pressable accessibilityRole="button" accessibilityLabel="More options" style={styles.circleButton}>
-          <MoreVertical size={d.headerIcon} color={colors.textPrimary} />
-        </Pressable>
-      </View>
+      {/* Kebab has no menu yet. */}
+      <ListHeader
+        title="Case Details"
+        rightIcon={MoreVertical}
+        rightLabel="More options"
+        onBack={goBack}
+        paddingTop={d.top}
+        // d.headerGap — this one is the screen's own measured header gap.
+        paddingBottom={d.headerGap}
+        titleSize={d.titleSize}
+      />
 
       <ScrollView
         contentContainerStyle={[styles.content, { paddingBottom: d.cardGap + insets.bottom }]}
@@ -287,29 +288,6 @@ const styles = StyleSheet.create({
   centre: {
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  header: {
-    paddingHorizontal: space.screenX - 1.5,
-    paddingBottom: d.headerGap,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  circleButton: {
-    width: d.headerButton,
-    height: d.headerButton,
-    borderRadius: d.headerButton / 2,
-    backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: colors.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerTitle: {
-    flex: 1,
-    textAlign: 'center',
-    fontFamily: font.appHeading,
-    fontSize: d.titleSize,
-    color: colors.textPrimary,
   },
   content: {
     paddingHorizontal: space.screenX,
