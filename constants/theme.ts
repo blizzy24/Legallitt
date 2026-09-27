@@ -1494,7 +1494,10 @@ export const lnIdentity = {
 // see the notes on each token; design/42 is the authority because it is the only one
 // that draws the pattern complete.
 export const firShell = {
-  padX: 16,              // design/43 uses 20
+  // design/42 draws 16, but designs 43 and 44 both draw 20 and 20 is the app-wide
+  // margin (space.screenX). design/42 is the outlier, so all five steps use 20 and
+  // step 1 sits 4pt narrower than its own file. See the note in app/fir/step1.tsx.
+  padX: 20,
   top: 19,
   headerHeight: 63,
   backIcon: 18,          // design/42 draws a 16pt arrow, design/43 a 10pt chevron
@@ -1724,9 +1727,8 @@ export const firStep = {
   label: '#1D1B19',
 };
 
-// FIR step 2 — Incident Details (design/43). Its cards sit at x20 where design/42's
-// sit at x16; FirShell keeps design/42's 16pt margin, so these are 8pt wider than
-// drawn. See the margin note on firShell.
+// FIR step 2 — Incident Details (design/43). Its cards sit at x20, which FirShell
+// now matches. See the margin note on firShell.
 export const firStep2 = {
   headingTop: 8,
   headingSize: 20,
@@ -1800,8 +1802,8 @@ export const firStep2 = {
   maxChars: 2000,
 };
 
-// FIR step 3 — People Involved (design/44). Like design/43 its cards sit at x20;
-// FirShell keeps design/42's 16pt margin. See the margin note on firShell.
+// FIR step 3 — People Involved (design/44). Like design/43 its cards sit at x20,
+// which FirShell now matches. See the margin note on firShell.
 export const firStep3 = {
   cardGap: 18,
   cardRadius: 14,

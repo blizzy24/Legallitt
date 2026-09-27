@@ -10,6 +10,10 @@ import { INCIDENT_TYPES, JURISDICTION_PLACEHOLDERS, incidentLabel } from '../../
 
 // Step 1 — Quick Submission (design/42). Selects are inert pressables: there is no
 // picker in the designs, only the closed state.
+//
+// design/42 draws 16pt side margins, but designs 43 and 44 both draw 20 and 20 is
+// the app-wide margin, so FirShell uses 20 for all five steps. This screen is the
+// one that pays for it: its cards are 8pt narrower than its own file draws them.
 export default function FirStep1Screen() {
   const { form, updateContact, updateJurisdiction, updateIncident } = useFir();
   const { contact, jurisdiction, incident } = form;
