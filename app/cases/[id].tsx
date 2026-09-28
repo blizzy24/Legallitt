@@ -203,11 +203,14 @@ export default function CaseDetailsScreen() {
                 <Text style={styles.docTitle}>Documents</Text>
                 <Text style={styles.docSub}>{item.documentsCount} documents available</Text>
               </View>
-              {/* View Documents has no destination yet. */}
-              <View style={styles.docButton}>
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => router.push('/documents/case')}
+                style={({ pressed }) => [styles.docButton, pressed && styles.docButtonPressed]}
+              >
                 <Text style={styles.docButtonText}>View Documents</Text>
                 <ChevronRight size={d.docButtonText} color={colors.textBody} />
-              </View>
+              </Pressable>
             </View>
           </>
         ) : (
@@ -606,6 +609,9 @@ const styles = StyleSheet.create({
     fontFamily: font.appBody,
     fontSize: d.docSubSize,
     color: colors.textBody,
+  },
+  docButtonPressed: {
+    opacity: 0.85,
   },
   docButton: {
     height: d.docButtonHeight,
