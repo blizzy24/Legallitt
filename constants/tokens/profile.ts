@@ -644,20 +644,22 @@ export const documents = {
   storeSize: 12,
 };
 
+// design/57 clips the file name in its header; shown in full here, so the name and
+// its sub-line are sized to fit the row beside the three action buttons at 390pt.
 export const viewer = {
   headerTop: 16,
   headerPadBottom: 12,
   backButton: 34,
   backIcon: 18,
-  backGap: 12,
-  nameSize: 15.5,
+  backGap: 10,
+  nameSize: 13,
   subGap: 4,
   subDot: 7,
   subDotGap: 6,
-  subSize: 11.5,
-  actionButton: 34,
+  subSize: 11,
+  actionButton: 32,
   actionIcon: 16,
-  actionGap: 8,
+  actionGap: 6,
 
   barGap: 0,
   barPad: 12,
@@ -729,7 +731,7 @@ export const viewer = {
   infoRowGap: 16,
   infoLabelSize: 11.5,
   infoValueGap: 4,
-  infoValueSize: 14,
+  infoValueSize: 13,
 
   relatedIcon: 30,
   relatedIconRadius: 8,
@@ -749,7 +751,7 @@ export const viewer = {
   relatedLabelSize: 10.5,
   relatedLabelSpacing: 0.7,
   relatedNameGap: 4,
-  relatedNameSize: 14,
+  relatedNameSize: 12,
   relatedCounselGap: 3,
   relatedCounselSize: 12,
   relatedChevron: 28,
