@@ -12,6 +12,7 @@ import { useEffect } from 'react';
 
 import { FirProvider } from '../context/fir';
 import { LegalNoticeProvider } from '../context/legalNotice';
+import { ProfileProvider } from '../context/profile';
 import { SessionProvider } from '../context/session';
 import { colors } from '../constants/theme';
 
@@ -38,17 +39,19 @@ export default function RootLayout() {
 
   return (
     <SessionProvider>
-      <LegalNoticeProvider>
-        <FirProvider>
-          <StatusBar style="dark" />
-          <Stack
-            screenOptions={{
-              headerShown: false,
-              contentStyle: { backgroundColor: colors.screenBg },
-            }}
-          />
-        </FirProvider>
-      </LegalNoticeProvider>
+      <ProfileProvider>
+        <LegalNoticeProvider>
+          <FirProvider>
+            <StatusBar style="dark" />
+            <Stack
+              screenOptions={{
+                headerShown: false,
+                contentStyle: { backgroundColor: colors.screenBg },
+              }}
+            />
+          </FirProvider>
+        </LegalNoticeProvider>
+      </ProfileProvider>
     </SessionProvider>
   );
 }
