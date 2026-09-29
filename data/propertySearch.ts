@@ -102,8 +102,9 @@ export const RECOMMENDED_DURATION: SearchDuration = '30';
 export const JURISDICTION_PLACEHOLDERS = {
   state: 'Select state',
   district: 'Select district',
-  ward: 'Select ward number',
-  tehsil: 'Select tehsil / village',
+  // Kept short so the paired pickers stay one line at 390pt, as design/74 draws them.
+  ward: 'Select ward',
+  tehsil: 'Select tehsil',
   colony: 'Select colony',
   propertyType: 'Select property type',
 };
