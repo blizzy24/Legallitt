@@ -1,20 +1,20 @@
 // Property Search Report service data.
 //
 // ─────────────────────────────────────────────────────────────────────────────
-// PRICING CONFLICT — UNRESOLVED, FLAGGED FOR THE CLIENT.
+// PRICING — FLAGGED FOR THE CLIENT.
 //
-// design/72 draws two tiers: Ordinary ₹499 and Urgent ₹999.
+// design/72 draws two tiers: Ordinary ₹499 and Urgent ₹999, with Ordinary selected.
 // design/77's payment screen draws a total of ₹1,377.
 //
-// ₹1,377 is neither tier, and it is not either tier plus tax: it is the LEGAL
-// NOTICE total (₹999 fee + ₹179 GST + ₹199 platform fee — see data/legalNotice.ts,
-// which produces exactly that figure). design/77 appears to be the Legal Notice
-// payment screen with the heading changed, the same way the FIR batch shipped Legal
-// Notice payment screens verbatim.
+// Applying the Legal Notice formula (fee + 18% GST truncated + ₹199 platform fee)
+// gives ₹787 for Ordinary and ₹1,377 for Urgent. So design/77's figure is NOT
+// arbitrary — it is the URGENT total. It is also, exactly, the Legal Notice total,
+// because both services price their top tier at ₹999 and share the same formula.
 //
-// Nothing here invents a property-search invoice. The tiers below are structured
-// the way data/legalNotice.ts structures its own so they CAN drive an invoice once
-// the client confirms the real figures — see tierFor() and the note on each tier.
+// The conflict that remains: design/77 shows the URGENT total on a flow whose
+// landing screen pre-selects ORDINARY, so the two screens disagree about which tier
+// the user is paying for. The payment screen therefore computes the invoice from the
+// tier actually chosen rather than hardcoding either figure.
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type PropertyTierId = 'ordinary' | 'urgent';
@@ -111,19 +111,58 @@ export const JURISDICTION_PLACEHOLDERS = {
 
 export const SURVEY_PLACEHOLDER = 'e.g. Survey No. 122/4B';
 
-/** Sample values for the review screen (design/76). */
+/**
+ * Sample values for the review screen (design/76), used where the flow has nothing
+ * entered. These are the file's own values.
+ *
+ * REPORTED — design/76 shows a "Purpose of Report" row ("Buying a New Property")
+ * that the request form on design/74 never collects. It is rendered as drawn and
+ * always falls back to this sample, because nothing upstream can set it.
+ */
 export const PROPERTY_REVIEW_SAMPLE = {
-  fullName: 'Rahul Sharma',
-  mobile: '+91 98765 43210',
-  email: 'rahul.sharma@example.com',
-  state: 'Madhya Pradesh',
-  district: 'Indore',
-  ward: 'Ward 42',
-  tehsil: 'Kanadiya',
-  colony: 'Vijay Nagar',
+  fullName: 'Abhishek Saho',
+  mobile: '+91 99898987898',
+  email: 'abhishek@gmail.com',
+  locationLine1: '123, Vijay Nagar Indore',
+  locationLine2: 'Indore 452001',
   propertyType: 'Residential',
-  surveyNo: 'Survey No. 122/4B',
-  duration: '30 Years',
+  purpose: 'Buying a New Property',
+  deliveryLabel: 'Estimate Delivery Time',
+  delivery: '3 - 5 Working Days',
 };
 
 export const PS_SERVICE = 'Property Search Report';
+
+/**
+ * Request reference. design/77 and design/78 both use #PSR739482.
+ *
+ * REPORTED — design/80 instead prints "DF-2026-000245", which appears nowhere else
+ * in the flow. PSR739482 is used throughout; see app/property-search/completed.tsx.
+ */
+export const PS_REQUEST_ID = '#PSR739482';
+
+/**
+ * Invoice, computed the same way data/legalNotice.ts computes its own: the tier fee,
+ * 18% GST truncated (not rounded), and a flat platform fee.
+ *
+ * design/77 prints ₹1,377, which this formula produces for the URGENT tier — but
+ * design/72 pre-selects ORDINARY (₹787). The figure is not hardcoded; the invoice is
+ * computed from whichever tier the user actually picked. See the header note.
+ */
+export const PS_GST_RATE = 0.18;
+export const PS_PLATFORM_FEE = 199;
+
+export type PsInvoiceLine = { label: string; amount: number };
+
+export function psInvoiceLines(tierId: PropertyTierId): PsInvoiceLine[] {
+  const fee = tierFor(tierId).price;
+  return [
+    { label: 'Service Fee', amount: fee },
+    { label: 'Goods & Services Tax (GST 18%)', amount: Math.floor(fee * PS_GST_RATE) },
+    { label: 'Platform fees', amount: PS_PLATFORM_FEE },
+  ];
+}
+
+export function psInvoiceTotal(tierId: PropertyTierId) {
+  return psInvoiceLines(tierId).reduce((sum, l) => sum + l.amount, 0);
+}
