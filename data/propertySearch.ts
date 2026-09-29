@@ -166,3 +166,55 @@ export function psInvoiceLines(tierId: PropertyTierId): PsInvoiceLine[] {
 export function psInvoiceTotal(tierId: PropertyTierId) {
   return psInvoiceLines(tierId).reduce((sum, l) => sum + l.amount, 0);
 }
+
+// ── Track (design/78) ──
+//
+// REPORTED — design/78's timestamps read 22–23 May 2026. Every other dated screen in
+// the app uses September 2026 (data/cases.ts, data/legalNotice.ts, data/fir.ts), so
+// these are moved to September to stay consistent. The times and the day-apart
+// spacing the file draws are kept.
+
+export type PsStageState = 'done' | 'active' | 'pending';
+
+export type PsStage = {
+  title: string;
+  /** Timestamp for the reached stages; the pending ones read "Pending" instead. */
+  detail: string;
+  state: PsStageState;
+};
+
+export const PS_STAGES: PsStage[] = [
+  { title: 'Request Submitted', detail: '22 Sep 2026, 10:30 AM', state: 'done' },
+  { title: 'Payment Received', detail: '23 Sep 2026, 10:30 AM', state: 'done' },
+  { title: 'Verification in Progress', detail: '23 Sep 2026, 10:30 AM', state: 'active' },
+  { title: 'Assign Advocate', detail: 'Pending', state: 'pending' },
+  { title: 'Report Preparation', detail: 'Pending', state: 'pending' },
+  { title: 'Report Delivered', detail: 'Pending', state: 'pending' },
+];
+
+export const PS_TRACK_STATUS = 'In Progress';
+
+// ── Checking (design/79) ──
+//
+// REPORTED — this list mixes two different things. "Ownership Verification" is a
+// check being performed; the other four are the tracking timeline's own stages
+// (design/78 lists Payment Received, Verification in Progress, Report Preparation
+// and Report Delivered as progress steps, not as things being checked). Drawn as the
+// file has it, under the heading "What We Are Checking".
+export const PS_CHECKING = [
+  'Ownership Verification',
+  'Payment Received',
+  'Verification in Progress',
+  'Report Preparation',
+  'Report Delivered',
+];
+
+export const PS_CHECKING_NOTE =
+  'This may take 3 - 5 working days depending on the property and record';
+
+// ── Completed (design/80) ──
+export const PS_COMPLETED = {
+  title: 'Analysis Completed Successfully',
+  body: 'Your Property Search Report analysis report is ready and has been delivered securely.',
+  status: 'Completed',
+};
