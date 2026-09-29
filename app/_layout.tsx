@@ -13,6 +13,7 @@ import { useEffect } from 'react';
 import { FirProvider } from '../context/fir';
 import { LegalNoticeProvider } from '../context/legalNotice';
 import { ProfileProvider } from '../context/profile';
+import { PropertySearchProvider } from '../context/propertySearch';
 import { SessionProvider } from '../context/session';
 import { colors } from '../constants/theme';
 
@@ -42,6 +43,7 @@ export default function RootLayout() {
       <ProfileProvider>
         <LegalNoticeProvider>
           <FirProvider>
+            <PropertySearchProvider>
             <StatusBar style="dark" />
             <Stack
               screenOptions={{
@@ -49,6 +51,7 @@ export default function RootLayout() {
                 contentStyle: { backgroundColor: colors.screenBg },
               }}
             />
+            </PropertySearchProvider>
           </FirProvider>
         </LegalNoticeProvider>
       </ProfileProvider>
