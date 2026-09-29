@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { router, type Href } from 'expo-router';
 import { Check, ChevronLeft, Heart, MapPin, Search, Star } from 'lucide-react-native';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -15,8 +15,8 @@ import { ADVOCATES_EMPTY, ADVOCATES_HEADER, SAVED_ADVOCATES, type SavedAdvocate 
 // not UI, so it is not rendered — the empty state simply shows once both hearts are
 // un-filled.
 //
-// View Profile and Book Consultation are inert: no advocate-profile screen and no
-// booking flow exist in any design delivered so far. Reported.
+// View Profile routes to app/advocates/[id].tsx (design/81). Book Consultation is
+// still inert: no booking flow exists in any design delivered so far. Reported.
 
 export default function AdvocatesScreen() {
   const insets = useSafeAreaInsets();
@@ -183,9 +183,13 @@ function AdvocateCard({
         </View>
       </View>
 
-      {/* Both inert — no advocate profile and no booking flow are designed. */}
+      {/* Book Consultation stays inert — no booking flow is designed anywhere. */}
       <View style={styles.actions}>
-        <Pressable accessibilityRole="button" style={[styles.action, styles.outline]}>
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => router.push(`/advocates/${item.id}` as Href)}
+          style={({ pressed }) => [styles.action, styles.outline, pressed && styles.pressed]}
+        >
           <Text style={styles.outlineLabel} {...shrinkToFit(0.8)}>
             View Profile
           </Text>

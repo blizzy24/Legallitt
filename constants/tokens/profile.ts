@@ -767,3 +767,150 @@ export const viewer = {
   actionBorder: '#E7E1DA',
   closeBg: '#F1ECE6',
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Advocate profile (design/81).
+//
+// ⚠ OFF-PALETTE. This screen uses a LAVENDER-GREY surface (#F0F3FA) for its chips,
+// cards and review blocks, where every other screen in the app uses the warm beige
+// family (colors.iconChipBg #F4EEE6, colors.appBg #FAF8F5). It is the only cool-
+// toned screen in the batch, and it also swaps the app's initials avatars for a
+// photograph and uses a different card treatment (flat tinted blocks, no borders).
+//
+// Built exactly as drawn and NOT restyled — the client decides whether this screen
+// gets pulled into the main palette or the palette gets extended. These values are
+// deliberately kept in their own block rather than added to `colors`, so nothing
+// else can pick them up by accident.
+//
+// #F0F3FA was sampled from the file: it is 13.8% of all pixels, the dominant
+// non-white colour. The one warm holdover is the "Verified Advocate" chip, which
+// stays in the beige family.
+//
+// MEASUREMENT CAVEAT: design/81 shipped as a 281px thumbnail (0.72px per point), so
+// nothing on it could be measured. Sizes and spacing are carried from design/55's
+// advocate card and the profile section; only the colours are taken from the file.
+// ─────────────────────────────────────────────────────────────────────────────
+export const advocateProfile = {
+  /** Off-palette lavender-grey. See the warning above. */
+  surface: '#F0F3FA',
+  surfaceEdge: '#E6EAF4',
+  /** The one warm chip the file keeps from the main palette. */
+  verifiedBg: '#FBF5EE',
+  star: '#C2A05F',
+  online: '#12B76A',
+
+  padX: 20,
+  headerTop: 16,
+  headerHeight: 56,
+  backIcon: 20,
+  titleSize: 17,
+  avatar: 32,
+  avatarIcon: 16,
+
+  heroTop: 18,
+  heroRadius: 16,
+  heroPad: 20,
+  photo: 104,
+  photoText: 32,
+  badge: 30,
+  badgeGlyph: 15,
+  nameGap: 16,
+  nameSize: 21,
+  verifiedGap: 11,
+  verifiedHeight: 28,
+  verifiedRadius: 14,
+  verifiedPadX: 12,
+  verifiedIcon: 13,
+  verifiedIconGap: 7,
+  verifiedSize: 12.5,
+  metaGap: 13,
+  metaIcon: 14,
+  metaIconGap: 6,
+  metaSize: 13,
+  metaDotGap: 10,
+  ratingGap: 13,
+  ratingHeight: 34,
+  ratingRadius: 10,
+  ratingPadX: 16,
+  ratingIcon: 15,
+  ratingIconGap: 8,
+  ratingSize: 15,
+  ratingCountGap: 6,
+  ratingCountSize: 12.5,
+
+  cardGap: 18,
+  cardRadius: 12,
+  cardPad: 14,
+  enrolIcon: 36,
+  enrolIconRadius: 10,
+  enrolIconGlyph: 17,
+  enrolIconGap: 12,
+  enrolLabelSize: 10.5,
+  enrolLabelSpacing: 0.9,
+  enrolValueGap: 3,
+  enrolValueSize: 16,
+  enrolShield: 17,
+
+  sectionGap: 22,
+  sectionSize: 11,
+  sectionSpacing: 0.9,
+  sectionNoteSize: 11,
+  chipGap: 12,
+  chipRowGap: 10,
+  chipColGap: 10,
+  chipHeight: 36,
+  chipRadius: 18,
+  chipPadX: 15,
+  chipDot: 6,
+  chipDotGap: 9,
+  chipSize: 13,
+
+  aboutGap: 12,
+  aboutSize: 13.5,
+  aboutLineHeight: 21,
+  aboutLines: 4,
+  readMoreGap: 10,
+  readMoreSize: 12.5,
+
+  gridGap: 12,
+  gridColGap: 11,
+  gridRowGap: 11,
+  gridRadius: 12,
+  gridPad: 13,
+  gridLabelSize: 10,
+  gridLabelSpacing: 0.8,
+  gridValueGap: 8,
+  gridIcon: 16,
+  gridIconGap: 8,
+  gridValueSize: 14.5,
+
+  availGap: 12,
+  availRadius: 12,
+  availPad: 14,
+  availDot: 10,
+  availDotGap: 10,
+  availLabelSize: 14,
+  availChipHeight: 24,
+  availChipRadius: 6,
+  availChipPadX: 9,
+  availChipSize: 11,
+  availRowGap: 12,
+  availIcon: 14,
+  availIconGap: 8,
+  availTextSize: 12.5,
+
+  reviewHeadGap: 12,
+  reviewCardGap: 11,
+  reviewRadius: 12,
+  reviewPad: 14,
+  reviewAvatar: 34,
+  reviewAvatarText: 12,
+  reviewAvatarBg: '#E3E7F2',
+  reviewAvatarGap: 11,
+  reviewNameSize: 14,
+  reviewStar: 13,
+  reviewStarGap: 2,
+  reviewQuoteGap: 10,
+  reviewQuoteSize: 13,
+  reviewQuoteLineHeight: 20,
+};
