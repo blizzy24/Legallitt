@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { router, useLocalSearchParams, type Href } from 'expo-router';
 import { Clock, QrCode, Smartphone } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -22,15 +22,36 @@ function mmss(total: number) {
 // Scan & Pay (design/29). The QR is a stylised drawing, not a payable code. The
 // countdown is real; the "payment" arrives on its own after 5s and moves to the
 // success screen.
+//
+// SHARED BY TWO SERVICES. design/77's Property Search flow reuses this screen and
+// the success screen verbatim, so rather than duplicate them both take their service
+// name, amount, reference and onward route from search params. With no params they
+// behave exactly as the Legal Notice flow always did.
 export default function ScanPayScreen() {
   const insets = useSafeAreaInsets();
   const [left, setLeft] = useState(s.validSeconds);
   const { form } = useLegalNotice();
-  const total = invoiceTotal(invoiceLines(form.tier));
+  const params = useLocalSearchParams<{
+    service?: string;
+    amount?: string;
+    ref?: string;
+    success?: string;
+    next?: string;
+  }>();
+  const total = params.amount ? Number(params.amount) : invoiceTotal(invoiceLines(form.tier));
+  const service = params.service ?? INVOICE.service;
+  const successHref = (params.success ?? '/legal-notice/success') as Href;
+  // Forward everything on, so the success screen shows the same figures.
+  const query = new URLSearchParams();
+  if (params.service) query.set('service', params.service);
+  if (params.amount) query.set('amount', params.amount);
+  if (params.ref) query.set('ref', params.ref);
+  if (params.next) query.set('next', params.next);
+  const successTarget = (query.toString() ? `${successHref}?${query}` : successHref) as Href;
 
   useEffect(() => {
     const tick = setInterval(() => setLeft((t) => Math.max(0, t - 1)), 1000);
-    const done = setTimeout(() => router.replace('/legal-notice/success'), s.autoAdvanceMs);
+    const done = setTimeout(() => router.replace(successTarget), s.autoAdvanceMs);
     return () => {
       clearInterval(tick);
       clearTimeout(done);
@@ -60,7 +81,7 @@ export default function ScanPayScreen() {
           </View>
 
           <Text style={styles.amount}>{rupees(total)}</Text>
-          <Text style={styles.service}>{INVOICE.service}</Text>
+          <Text style={styles.service}>{service}</Text>
           <Text style={styles.instr}>Open your UPI app and scan the QR code to complete the payment.</Text>
 
           <View style={styles.wait}>

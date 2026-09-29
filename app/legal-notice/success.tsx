@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { router, useLocalSearchParams, type Href } from 'expo-router';
 import { Check, ChevronRight, Copy, FileText } from 'lucide-react-native';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -9,9 +9,22 @@ import { INVOICE, invoiceLines, invoiceTotal, rupees } from '../../data/legalNot
 
 // Payment success (design/30). The file reads "Your forensic analysis request has
 // been submitted" — wrong service; this says legal notice. Copy is non-functional.
+//
+// SHARED BY TWO SERVICES — see the note in scan-pay.tsx. Service name, amount,
+// reference and the onward route all come from search params; with none it behaves
+// exactly as the Legal Notice flow always did.
 export default function PaymentSuccessScreen() {
   const { form } = useLegalNotice();
-  const total = invoiceTotal(invoiceLines(form.tier));
+  const params = useLocalSearchParams<{
+    service?: string;
+    amount?: string;
+    ref?: string;
+    next?: string;
+  }>();
+  const total = params.amount ? Number(params.amount) : invoiceTotal(invoiceLines(form.tier));
+  const requestId = params.ref ?? `#${INVOICE.requestId}`;
+  const service = params.service ?? 'legal notice';
+  const nextHref = (params.next ?? '/legal-notice/tracking') as Href;
 
   return (
     <View style={styles.screen}>
@@ -27,7 +40,7 @@ export default function PaymentSuccessScreen() {
           <FileText size={s.idIcon} color={colors.brand} strokeWidth={1.5} />
           <View style={styles.idText}>
             <Text style={styles.idLabel}>Request ID</Text>
-            <Text style={styles.idValue}>#{INVOICE.requestId}</Text>
+            <Text style={styles.idValue}>{requestId}</Text>
           </View>
           <Pressable accessibilityRole="button" accessibilityLabel="Copy request ID" hitSlop={10}>
             <Copy size={s.copyIcon} color={colors.brand} />
@@ -44,10 +57,10 @@ export default function PaymentSuccessScreen() {
               <Text style={styles.sub}>Your payment of {rupees(total, false)} has been received.</Text>
             </View>
           </View>
-          <Text style={styles.note}>Your legal notice request has been submitted.</Text>
+          <Text style={styles.note}>Your {service} request has been submitted.</Text>
           <Pressable
             accessibilityRole="button"
-            onPress={() => router.replace('/legal-notice/tracking')}
+            onPress={() => router.replace(nextHref)}
             style={({ pressed }) => [styles.button, pressed && styles.pressed]}
           >
             <Text style={styles.buttonText}>Start Tracking</Text>
