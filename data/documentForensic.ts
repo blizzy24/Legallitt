@@ -129,6 +129,18 @@ export const DF_DELIVERABLES = [
   'Access via secure portal',
 ];
 
+/**
+ * Request reference.
+ *
+ * REPORTED — TWO CONFLICTS ON ONE VALUE.
+ *  1. design/86's invoice carries "Ref ID: #LGT-849204" — the LEGAL NOTICE
+ *     reference, not this service's. A DF-prefixed reference is used instead.
+ *  2. designs 88 and 89 print DF-2026-00245 (five digits) while design/90 prints
+ *     DF-2026-000245 (six). One value is used everywhere; the six-digit form is
+ *     taken because it matches the zero-padding of every other reference in the app.
+ */
+export const DF_REQUEST_ID = 'DF-2026-000245';
+
 /** Sample values for the review (design/85) and report (design/90) screens. */
 export const DF_SAMPLE = {
   documentName: 'Questioned_Contract_Page3.pdf',
@@ -141,7 +153,65 @@ export const DF_SAMPLE = {
   referenceState: 'Reference Verified',
   instructions:
     'Compare signature on page 3 clause 12 against known signature in reference agreement.',
-  requestId: '#DF-2026-000245',
+  requestId: DF_REQUEST_ID,
 };
 
 export const DF_SERVICE = 'Online Document Forensic';
+
+// ── Submitted (design/88) ──
+//
+// REPORTED — two typos in the file's copy, rendered corrected here:
+//   "You wil receive then report via email & app"  ->  "will" / "the"
+export const DF_SUBMITTED = {
+  title: 'Request Submitted Successfully!',
+  body: 'Your document has been submitted for forensic analysis',
+  delivery: '24-48 Hours',
+  next: [
+    'Our experts will start the forensic analysis once forensic expert assigned',
+    'We will thoroughly examine your document',
+    'You will receive the report via email & app',
+  ],
+};
+
+// ── Track (design/89) ──
+//
+// REPORTED — design/89's timestamps read 23 May 2026; every other dated screen in
+// the app uses September 2026, so these are moved to September. Times kept.
+//
+// REPORTED — "Assigned by Admin" is a stage in this timeline, which means the
+// service assumes an ADMIN ROLE with a work queue. No admin screen exists anywhere
+// in the batch, and no other service's timeline names an internal actor this way.
+
+export type DfStageState = 'done' | 'active' | 'pending';
+export type DfStage = { title: string; detail: string; state: DfStageState };
+
+export const DF_STAGES: DfStage[] = [
+  { title: 'Payment Received', detail: '23 Sep 2026, 10:30 AM', state: 'done' },
+  { title: 'Document Uploaded', detail: '23 Sep 2026, 10:30 AM', state: 'done' },
+  { title: 'Forensic Analysis', detail: 'In Progress', state: 'active' },
+  { title: 'Assigned by Admin', detail: 'Pending', state: 'pending' },
+  { title: 'Expert Review', detail: 'Pending', state: 'pending' },
+  { title: 'Report Ready', detail: 'Pending', state: 'pending' },
+];
+
+export const DF_TRACK = {
+  status: 'In Progress',
+  stageChip: 'Stage 3 of 6',
+  noteTitle: '100% Confidential & Secure',
+  noteBody: 'Your documents are encrypted and accessible only to authorized experts.',
+};
+
+// ── Report (design/90) ──
+export const DF_REPORT = {
+  title: 'Analysis Completed',
+  body: 'Your document forensic analysis is complete and the certified report is ready.',
+  status: 'Completed',
+  verifiedBy: 'Verified by Forensic AI & Counsel',
+  rows: [
+    { label: 'Document Status', value: 'Likely Genuine', chip: true },
+    { label: 'Authenticity Check', value: 'No Issues Found' },
+    { label: 'Risk Level', value: 'Low', dot: '#8A6A3A' },
+    { label: 'Review Date', value: '24 Sep 2026' },
+    { label: 'Report Pages', value: '18 Pages' },
+  ] as { label: string; value: string; chip?: boolean; dot?: string }[],
+};
