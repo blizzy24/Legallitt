@@ -10,6 +10,7 @@ import { SplashScreen, Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 
+import { DocumentForensicProvider } from '../context/documentForensic';
 import { FirProvider } from '../context/fir';
 import { LegalNoticeProvider } from '../context/legalNotice';
 import { ProfileProvider } from '../context/profile';
@@ -44,6 +45,7 @@ export default function RootLayout() {
         <LegalNoticeProvider>
           <FirProvider>
             <PropertySearchProvider>
+              <DocumentForensicProvider>
             <StatusBar style="dark" />
             <Stack
               screenOptions={{
@@ -51,6 +53,7 @@ export default function RootLayout() {
                 contentStyle: { backgroundColor: colors.screenBg },
               }}
             />
+              </DocumentForensicProvider>
             </PropertySearchProvider>
           </FirProvider>
         </LegalNoticeProvider>

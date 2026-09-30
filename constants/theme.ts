@@ -19,6 +19,7 @@ export * from './tokens/legalNotice';
 export * from './tokens/fir';
 export * from './tokens/profile';
 export * from './tokens/propertySearch';
+export * from './tokens/documentForensic';
 
 export const colors = {
   brand:        '#B09C82',

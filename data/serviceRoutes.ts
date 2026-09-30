@@ -10,4 +10,5 @@ export const SERVICE_ROUTES: Partial<Record<ServiceId, Href>> = {
   'legal-notice': '/legal-notice',
   'fir-draft': '/fir',
   'property-search': '/property-search',
+  'document-forensic': '/document-forensic',
 };
