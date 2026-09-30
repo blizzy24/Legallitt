@@ -579,7 +579,7 @@ export const dfReport = {
   summaryRadius: 14,
   summaryPad: 16,
   summaryTitleSize: 17,
-  verifiedSize: 11.5,
+  verifiedSize: 10.5,
   rowGap: 14,
   rowDivider: '#F1EDE8',
   rowLabelSize: 13,
