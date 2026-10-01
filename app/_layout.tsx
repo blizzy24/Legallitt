@@ -12,6 +12,7 @@ import { useEffect } from 'react';
 
 import { DocumentForensicProvider } from '../context/documentForensic';
 import { FirProvider } from '../context/fir';
+import { KycProvider } from '../context/kyc';
 import { LegalNoticeProvider } from '../context/legalNotice';
 import { ProfileProvider } from '../context/profile';
 import { PropertySearchProvider } from '../context/propertySearch';
@@ -46,6 +47,7 @@ export default function RootLayout() {
           <FirProvider>
             <PropertySearchProvider>
               <DocumentForensicProvider>
+                <KycProvider>
             <StatusBar style="dark" />
             <Stack
               screenOptions={{
@@ -53,6 +55,7 @@ export default function RootLayout() {
                 contentStyle: { backgroundColor: colors.screenBg },
               }}
             />
+                </KycProvider>
               </DocumentForensicProvider>
             </PropertySearchProvider>
           </FirProvider>
