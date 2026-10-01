@@ -1,209 +1,309 @@
 import { router } from 'expo-router';
-import { BookText, Check, CirclePlus, Crop, Eye, File, FingerprintPattern, RefreshCw, Trash, type LucideIcon } from 'lucide-react-native';
-import { useEffect } from 'react';
+import {
+  ArrowRight,
+  BookText,
+  CirclePlus,
+  Crop,
+  File,
+  ShieldCheck,
+  UploadCloud,
+  type LucideIcon,
+} from 'lucide-react-native';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import WizardShell from '../../components/WizardShell';
-import { colors, font, ink, reviewDocs as r, wizardCardShadow } from '../../constants/theme';
-import { useLegalNotice } from '../../context/legalNotice';
+import { shrinkToFit } from '../../constants/textFit';
+import { colors, font, ink, lnUpload as t } from '../../constants/theme';
 
-type Doc = { title: string; subtitle: string; icon: LucideIcon };
+// Step 4, first screen — upload supporting documents (design/91).
+//
+// FLOW — design/91 is the upload screen that was missing from the original batch: it
+// produces the state design/39 reviews. The chain is therefore
+//   step3 -> step4 (upload) -> step4-review -> step5 -> step6
+// and both step 4 screens draw the stepper on 4 of 6, so the wizard's six steps are
+// unchanged. The designs do not state this directly; it is inferred from design/39
+// showing files already present with no screen that could have added them.
+//
+// REPORTED — design/91 REMOVED design/39's Aadhaar Card upload row and replaced it
+// with the Identity Verification card below, which routes to KYC. Identity now goes
+// through DigiLocker or a video check rather than a document the user uploads, which
+// changes what the app would hold — a verification result rather than a copy of an
+// ID. design/39 still lists an Aadhaar Card document, so the two screens disagree.
+//
+// REPORTED — the brief describes a LEFT ACCENT BAR on the identity card. Measured,
+// design/91 draws a uniform 1pt border in #F8DEC4 on all four edges (left 16.0-16.5,
+// top 222.0-222.5, bottom 343.0-343.5, right 373.0-373.5), not a left bar. Rendered
+// as a border.
+//
+// REPORTED — design/91 draws the identity card at x16 while the upload rows below sit
+// at x22, the wizard's own margin. The card is normalised to the shell rather than
+// rendered 6pt wider on each side than everything around it.
+//
+// Upload controls are inert; no upload mechanism is designed anywhere in the app.
 
-// Sample documents from design/39 — there is no upload step, so these stand in for
-// the user's files and are written to the flow so step 5 can count them.
-// design/39 prints "Any agreement documen": the word is cut off in the file itself,
-// so the full "document" is rendered here.
-const SAMPLE_DOCS: Doc[] = [
-  { title: 'Aadhaar Card', subtitle: 'Upload Aadhaar', icon: FingerprintPattern },
-  { title: 'Property Papers', subtitle: 'Sales Deed, Khata, etc', icon: File },
-  { title: 'Agreement', subtitle: 'Any agreement document', icon: BookText },
-  { title: 'Screenshots', subtitle: 'WhatsApp, Email, etc', icon: Crop },
+const ROWS: { icon: LucideIcon; title: string; subtitle: string }[] = [
+  { icon: File, title: 'Property Papers', subtitle: 'Sales Deed, Khata, etc' },
+  // design/91 clips this to "Any agreement documen", as design/39 does. Full word.
+  { icon: BookText, title: 'Agreement', subtitle: 'Any agreement document' },
+  { icon: Crop, title: 'Screenshots', subtitle: 'WhatsApp, Email, etc' },
 ];
 
-// Step 4 — review documents (design/39). Content fills from the top on the off-white
-// background; the file's 16pt margins are normalised to the shell. View / replace /
-// delete are non-functional.
 export default function Step4Screen() {
-  const { form, update } = useLegalNotice();
-
-  useEffect(() => {
-    if (form.documents.length === 0) update({ documents: SAMPLE_DOCS.map((d) => d.title) });
-    // Seed once; the flow has no real upload step.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const count = form.documents.length || SAMPLE_DOCS.length;
-
   return (
-    <WizardShell step={4} align="top" background="tinted" buttonLabel="Continue" onContinue={() => router.push('/legal-notice/step5')}>
-      <Text style={styles.title}>Review Your Documents</Text>
-      <Text style={styles.subtitle}>Your documents have been uploaded successfully. Review them before continuing.</Text>
+    <WizardShell
+      step={4}
+      align="top"
+      background="tinted"
+      buttonLabel="Continue"
+      onContinue={() => router.push('/legal-notice/step4-review')}
+    >
+      <Text style={styles.heading}>Upload Supporting Documents</Text>
 
-      <View style={styles.banner}>
-        <View style={styles.disc}>
-          <Check size={r.discIcon} color={ink.onBrand} strokeWidth={3} />
+      <View style={styles.identity}>
+        <View style={styles.identityHead}>
+          <View style={styles.identityIcon}>
+            <ShieldCheck size={t.identityIconGlyph} color={ink.accent} />
+          </View>
+          <Text style={styles.identityTitle} {...shrinkToFit(0.8)}>
+            Identity Verification
+          </Text>
+          <View style={styles.kycChip}>
+            <Text style={styles.kycChipText} {...shrinkToFit(0.8)}>
+              KYC REQUIRED
+            </Text>
+          </View>
         </View>
-        <View style={styles.bannerText}>
-          <Text style={styles.bannerTitle}>Documents uploaded successfully</Text>
-          <Text style={styles.bannerSub}>{count} documents added</Text>
+
+        <Text style={styles.identityBody}>
+          Complete your KYC to securely verify your identity and proceed with your legal notice.
+        </Text>
+
+        <View style={styles.identityDivider} />
+
+        <View style={styles.identityRow}>
+          <View style={styles.identityRowText}>
+            <Text style={styles.identityRowTitle} {...shrinkToFit(0.8)}>
+              Primary Aadhaar / PAN
+            </Text>
+            <Text style={styles.identityRowSub} {...shrinkToFit(0.8)}>
+              Required before notice attestation
+            </Text>
+          </View>
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => router.push('/kyc/choose')}
+            style={({ pressed }) => [styles.kycButton, pressed && styles.pressed]}
+          >
+            <Text style={styles.kycButtonLabel} {...shrinkToFit(0.75)}>
+              Complete KYC
+            </Text>
+            <ArrowRight size={t.kycButtonIcon} color={ink.onBrand} style={styles.kycButtonIcon} />
+          </Pressable>
         </View>
       </View>
 
-      <View style={styles.list}>
-        {SAMPLE_DOCS.map((d) => (
-          <DocRow key={d.title} doc={d} />
+      <View style={styles.rows}>
+        {ROWS.map((r, i) => (
+          <Pressable
+            key={r.title}
+            accessibilityRole="button"
+            accessibilityLabel={`Upload ${r.title}`}
+            style={({ pressed }) => [styles.row, i > 0 && styles.rowSpaced, pressed && styles.pressed]}
+          >
+            <r.icon size={t.rowIcon} color={colors.textBody} strokeWidth={1.5} />
+            <View style={styles.rowText}>
+              <Text style={styles.rowTitle} {...shrinkToFit(0.8)}>
+                {r.title}
+              </Text>
+              <Text style={styles.rowSub} {...shrinkToFit(0.8)}>
+                {r.subtitle}
+              </Text>
+            </View>
+            <UploadCloud size={t.rowUpload} color={colors.textPrimary} strokeWidth={1.5} />
+          </Pressable>
         ))}
       </View>
 
-      <Pressable accessibilityRole="button" style={styles.add}>
-        <CirclePlus size={r.addIcon} color={r.addText} />
-        <Text style={styles.addText}>Add More Documents</Text>
-        <View style={styles.chip}>
-          <Text style={styles.chipText}>Optional</Text>
+      <Pressable
+        accessibilityRole="button"
+        style={({ pressed }) => [styles.add, pressed && styles.pressed]}
+      >
+        <CirclePlus size={t.addIcon} color={ink.accent} strokeWidth={1.5} />
+        <Text style={styles.addLabel} {...shrinkToFit(0.8)}>
+          Add More Documents
+        </Text>
+        <View style={styles.addChip}>
+          <Text style={styles.addChipText} {...shrinkToFit(0.8)}>
+            Optional
+          </Text>
         </View>
       </Pressable>
     </WizardShell>
   );
 }
 
-function DocRow({ doc }: { doc: Doc }) {
-  const Icon = doc.icon;
-  return (
-    <View style={styles.card}>
-      <Icon size={r.icon} color={colors.brand} strokeWidth={1.5} />
-      <View style={styles.cardText}>
-        <Text style={styles.cardTitle}>{doc.title}</Text>
-        <Text style={styles.cardSub} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85}>
-          {doc.subtitle}
-        </Text>
-      </View>
-      <View style={styles.actions}>
-        <Pressable accessibilityRole="button" accessibilityLabel={`View ${doc.title}`} hitSlop={8}>
-          <Eye size={r.actionIcon + 2} color={colors.textPrimary} />
-        </Pressable>
-        <Pressable accessibilityRole="button" accessibilityLabel={`Replace ${doc.title}`} hitSlop={8}>
-          <RefreshCw size={r.actionIcon} color={colors.textPrimary} />
-        </Pressable>
-        <Pressable accessibilityRole="button" accessibilityLabel={`Delete ${doc.title}`} hitSlop={8}>
-          <Trash size={r.actionIcon} color={colors.textPrimary} />
-        </Pressable>
-      </View>
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
-  title: {
+  heading: {
+    marginTop: t.headingTop,
     fontFamily: font.appHeading,
-    fontSize: r.titleSize,
+    fontSize: t.headingSize,
+    lineHeight: t.headingLineHeight,
     color: colors.textPrimary,
   },
-  subtitle: {
-    marginTop: r.subtitleGap,
-    fontFamily: font.appBody,
-    fontSize: r.subtitleSize,
-    lineHeight: r.subtitleLineHeight,
-    color: colors.textBody,
-  },
-  banner: {
-    marginTop: r.bannerGap,
-    height: r.bannerHeight,
-    borderRadius: r.bannerRadius,
-    backgroundColor: r.bannerBg,
-    paddingHorizontal: r.bannerPad,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  disc: {
-    width: r.disc,
-    height: r.disc,
-    borderRadius: r.disc / 2,
-    backgroundColor: r.checkDisc,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: r.bannerTextGap,
-  },
-  bannerText: {
-    flex: 1,
-    minWidth: 0,
-  },
-  bannerTitle: {
-    fontFamily: font.appSemi,
-    fontSize: r.bannerTitleSize,
-    color: colors.textPrimary,
-  },
-  bannerSub: {
-    marginTop: r.bannerLineGap,
-    fontFamily: font.appBody,
-    fontSize: r.bannerSubSize,
-    color: colors.textBody,
-  },
-  list: {
-    marginTop: r.listGap,
-    gap: r.cardGap,
-  },
-  card: {
-    height: r.cardHeight,
-    borderRadius: r.cardRadius,
+  identity: {
+    marginTop: t.identityGap,
+    borderRadius: t.identityRadius,
     backgroundColor: colors.card,
     borderWidth: 1,
-    borderColor: colors.border,
-    paddingLeft: r.cardPadLeft,
-    paddingRight: r.cardPadRight,
+    borderColor: t.identityBorder,
+    padding: t.identityPad,
+  },
+  identityHead: {
     flexDirection: 'row',
     alignItems: 'center',
-    ...wizardCardShadow,
   },
-  cardText: {
+  identityIcon: {
+    width: t.identityIcon,
+    height: t.identityIcon,
+    borderRadius: t.identityIconRadius,
+    backgroundColor: colors.iconChipBg,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  identityTitle: {
     flex: 1,
     minWidth: 0,
-    marginLeft: r.iconGap,
+    marginLeft: t.identityIconGap,
+    fontFamily: font.appHeading,
+    fontSize: t.identityTitleSize,
+    color: colors.textPrimary,
   },
-  cardTitle: {
+  kycChip: {
+    marginLeft: 8,
+    minHeight: t.kycChipHeight,
+    borderRadius: t.kycChipRadius,
+    paddingHorizontal: t.kycChipPadX,
+    backgroundColor: t.kycChipBg,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  kycChipText: {
     fontFamily: font.appSemi,
-    fontSize: r.titleTextSize,
-    color: r.docText,
+    fontSize: t.kycChipSize,
+    letterSpacing: t.kycChipSpacing,
+    color: t.kycChipText,
   },
-  cardSub: {
-    marginTop: 2,
+  identityBody: {
+    marginTop: t.identityBodyGap,
     fontFamily: font.appBody,
-    fontSize: r.subTextSize,
-    color: r.docText,
+    fontSize: t.identityBodySize,
+    lineHeight: t.identityBodyLineHeight,
+    color: colors.textBody,
   },
-  actions: {
+  identityDivider: {
+    marginTop: t.identityDividerGap,
+    height: 1,
+    backgroundColor: colors.border,
+  },
+  identityRow: {
+    marginTop: t.identityRowGap,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: r.actionGap,
+  },
+  identityRowText: {
+    flex: 1,
+    minWidth: 0,
+    marginRight: 10,
+  },
+  identityRowTitle: {
+    fontFamily: font.appHeading,
+    fontSize: t.identityRowTitleSize,
+    color: colors.textPrimary,
+  },
+  identityRowSub: {
+    marginTop: t.identityRowSubGap,
+    fontFamily: font.appBody,
+    fontSize: t.identityRowSubSize,
+    color: colors.textBody,
+  },
+  kycButton: {
+    minHeight: t.kycButtonHeight,
+    borderRadius: t.kycButtonRadius,
+    paddingHorizontal: t.kycButtonPadX,
+    backgroundColor: t.kycButtonBg,
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexShrink: 1,
+  },
+  kycButtonLabel: {
+    flexShrink: 1,
+    fontFamily: font.appSemi,
+    fontSize: t.kycButtonSize,
+    color: ink.onBrand,
+  },
+  kycButtonIcon: {
+    marginLeft: t.kycButtonIconGap,
+  },
+  rows: {
+    marginTop: t.rowsGap,
+  },
+  row: {
+    borderRadius: t.rowRadius,
+    backgroundColor: colors.card,
+    padding: t.rowPad,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  rowSpaced: {
+    marginTop: t.rowGap,
+  },
+  rowText: {
+    flex: 1,
+    minWidth: 0,
+    marginLeft: t.rowIconGap,
+  },
+  rowTitle: {
+    fontFamily: font.appHeading,
+    fontSize: t.rowTitleSize,
+    color: colors.textPrimary,
+  },
+  rowSub: {
+    marginTop: t.rowSubGap,
+    fontFamily: font.appBody,
+    fontSize: t.rowSubSize,
+    color: colors.textBody,
   },
   add: {
-    marginTop: r.addGap,
-    height: r.addHeight,
-    borderRadius: r.cardRadius,
+    marginTop: t.addGap,
+    borderRadius: t.addRadius,
     backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: colors.border,
+    padding: t.addPad,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    ...wizardCardShadow,
   },
-  addText: {
-    marginLeft: r.addIconGap,
-    fontFamily: font.appSemi,
-    fontSize: r.addTextSize,
-    color: r.addText,
+  addLabel: {
+    marginLeft: t.addIconGap,
+    flexShrink: 1,
+    fontFamily: font.appHeading,
+    fontSize: t.addSize,
+    color: colors.textPrimary,
   },
-  chip: {
-    marginLeft: r.chipGap,
-    height: r.chipHeight,
-    borderRadius: r.chipHeight / 2,
-    paddingHorizontal: r.chipPadX,
-    backgroundColor: r.chipBg,
+  addChip: {
+    marginLeft: t.addChipGap,
+    minHeight: t.addChipHeight,
+    borderRadius: t.addChipRadius,
+    paddingHorizontal: t.addChipPadX,
+    backgroundColor: t.addChipBg,
+    alignItems: 'center',
     justifyContent: 'center',
   },
-  chipText: {
-    fontFamily: font.appSemi,
-    fontSize: r.chipTextSize,
-    color: r.chipText,
+  addChipText: {
+    fontFamily: font.appBody,
+    fontSize: t.addChipSize,
+    color: colors.textPrimary,
+  },
+  pressed: {
+    opacity: 0.85,
   },
 });

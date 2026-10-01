@@ -964,3 +964,155 @@ export const lnIdentity = {
   meta: '#BFBEB8',
   divider: '#ECE8E3',
 };
+
+// Legal Notice step 4 — upload supporting documents (design/91), the screen that was
+// missing from the original batch. design/39 (now step4-review) shows the state this
+// one produces.
+// design/91 fits "Identity Verification" and "Primary Aadhaar / PAN" on one line each
+// beside their chip and button. These sizes are the largest that hold that at 390pt
+// inside the wizard's 22pt margin.
+export const lnUpload = {
+  headingTop: 6,
+  headingSize: 26,
+  headingLineHeight: 33,
+
+  // design/91 draws this card 6pt wider on each side than the upload rows below it
+  // (x16 against the wizard's x22). Normalised to the shell's margin — see the note
+  // in the screen.
+  identityGap: 20,
+  identityRadius: 14,
+  identityPad: 16,
+  // MEASURED: a uniform 1pt border in this tan, NOT a left accent bar.
+  identityBorder: '#F8DEC4',
+  identityIcon: 38,
+  identityIconRadius: 19,
+  identityIconGlyph: 18,
+  identityIconGap: 12,
+  identityTitleSize: 15.5,
+  kycChipHeight: 26,
+  kycChipRadius: 7,
+  kycChipPadX: 9,
+  kycChipSize: 10,
+  kycChipSpacing: 0.6,
+  kycChipBg: '#F6E7CE',
+  kycChipText: '#8A6A3A',
+  identityBodyGap: 12,
+  identityBodySize: 13,
+  identityBodyLineHeight: 20,
+  identityDividerGap: 13,
+  identityRowGap: 13,
+  identityRowTitleSize: 14.5,
+  identityRowSubGap: 3,
+  identityRowSubSize: 12,
+  kycButtonHeight: 42,
+  kycButtonRadius: 10,
+  kycButtonPadX: 14,
+  kycButtonSize: 13.5,
+  kycButtonIcon: 15,
+  kycButtonIconGap: 7,
+  kycButtonBg: '#6B5942',
+
+  rowsGap: 22,
+  rowGap: 11,
+  rowRadius: 14,
+  rowPad: 16,
+  rowIcon: 24,
+  rowIconGap: 15,
+  rowTitleSize: 16,
+  rowSubGap: 3,
+  rowSubSize: 13,
+  rowUpload: 24,
+
+  addGap: 11,
+  addRadius: 14,
+  addPad: 16,
+  addIcon: 20,
+  addIconGap: 10,
+  addSize: 16,
+  addChipHeight: 26,
+  addChipRadius: 13,
+  addChipPadX: 11,
+  addChipSize: 12,
+  addChipGap: 11,
+  addChipBg: '#F1ECE5',
+
+  buttonGap: 28,
+};
+
+// KYC sub-flow (design/92-99).
+//
+// REPORTED — THREE NESTED STEP COUNTERS. design/92 reads "STEP 1 OF 3 · IDENTITY
+// VERIFICATION" while sitting inside the Legal Notice wizard's "Step 4 of 6", and the
+// DigiLocker and Video branches then run their own counters. A user in this flow is
+// simultaneously on step 4 of 6, step 1 of 3, and step 1 of whatever the branch says.
+export const kycChoose = {
+  padX: 20,
+  headerTop: 16,
+  headerHeight: 56,
+  backIcon: 20,
+  titleSize: 17,
+  avatar: 34,
+  avatarIcon: 17,
+
+  pillTop: 18,
+  pillHeight: 28,
+  pillRadius: 14,
+  pillPadX: 14,
+  pillSize: 11,
+  pillSpacing: 0.8,
+  pillBg: '#F1ECE5',
+
+  subtitleGap: 14,
+  subtitleSize: 14,
+
+  cardGap: 14,
+  cardRadius: 14,
+  cardPad: 16,
+  cardBorder: '#E8E1D8',
+  // design/92 draws the selected card with a brown TOP border only.
+  cardOnTopBorder: '#8C7A61',
+  cardOnTopWidth: 3,
+  cardTitleSize: 18,
+  recChipHeight: 24,
+  recChipRadius: 6,
+  recChipPadX: 10,
+  recChipSize: 11,
+  recChipBg: '#F6E7CE',
+  recChipText: '#8A6A3A',
+  check: 24,
+  checkGlyph: 13,
+  cardBodyGap: 9,
+  cardBodySize: 13,
+  cardBodyLineHeight: 20,
+  featureGap: 13,
+  featureHeight: 30,
+  featureRadius: 8,
+  featurePadX: 12,
+  featureSize: 12,
+  featureBg: '#F5F1EB',
+
+  beforeGap: 20,
+  beforeRadius: 14,
+  beforePad: 16,
+  beforeTitleSize: 15,
+  beforeListGap: 12,
+  beforeRowGap: 10,
+  beforeIcon: 16,
+  beforeIconGap: 11,
+  beforeSize: 12.5,
+  beforeLineHeight: 18.5,
+
+  footGap: 14,
+  footIcon: 14,
+  footIconGap: 8,
+  footSize: 11.5,
+
+  buttonGap: 22,
+  buttonHeight: 50,
+  buttonRadius: 12,
+  buttonSize: 15.5,
+  buttonIcon: 17,
+  buttonIconGap: 9,
+  captionGap: 10,
+  captionSize: 11.5,
+};
