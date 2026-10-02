@@ -28,6 +28,13 @@ export const vkycDark = {
   accentDim: 'rgba(34,197,94,0.18)',
   chipBg: 'rgba(255,255,255,0.10)',
   chipText: '#F0EBE3',
+  /** The dashed outer ring of design/98's face guide. */
+  ovalGuide: 'rgba(240,235,227,0.55)',
+  /** The scrim behind the "Fit face inside the oval" chip, over the feed. */
+  hintBg: 'rgba(14,12,9,0.78)',
+  /** design/98 draws the 65% figure and the "Step 2 of 3" dot in amber, not green. */
+  amber: '#C9A227',
+  stepDot: '#B08C5A',
 };
 
 export const vkycIntro = {
@@ -288,6 +295,9 @@ export const vkycCapture = {
   cellLabelSpacing: 0.9,
   cellValueGap: 7,
   cellValueSize: 15,
+  cellPercentSize: 12,
+  cellTick: 17,
+  cellTickGlyph: 11,
   cellSubGap: 3,
   cellSubSize: 11.5,
   cellBarGap: 9,
