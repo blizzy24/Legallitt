@@ -276,3 +276,101 @@ export const laInfo = {
   footSize: 11.5,
   footSpacing: 0.7,
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Legal Advice "choose how you want to consult" screen
+// (design/104-la-your-details.png — the file name is wrong; the batch's numbering
+// is shifted by one).
+//
+// OUTSIDE THE MAIN PALETTE. This screen is drawn in a GREEN / LAVENDER / PEACH
+// scheme with dark-green headings, not the app's beige and brown. It is the third
+// such divergence, after the advocate profile (design/81) and the legal-matter
+// picker (design/106). Quarantined here so it cannot leak into the main palette;
+// the client decides whether it gets restyled.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const laChooseAccent = {
+  /** Shared dark-green heading colour across all three cards. */
+  title: '#17543F',
+  chat: { disc: '#E4EDE8', glyph: '#214C40', block: '#F3F7F4' },
+  audio: { disc: '#F2ECF7', glyph: '#5B2A86', block: '#F7F3F9' },
+  video: { disc: '#FBE7DA', glyph: '#A53D03', block: '#FBEFE6' },
+  popularBg: '#17543F',
+  rule: '#E6E2DA',
+};
+
+export const laChoose = {
+  padX: 20,
+
+  backTop: 10,
+  backIcon: 22,
+  titleGap: 16,
+  titleSize: 27,
+  titleLineHeight: 34,
+  bodyGap: 10,
+  bodySize: 13,
+  bodyLineHeight: 20,
+
+  flourishGap: 22,
+  flourishSize: 14.5,
+  flourishLine: 1,
+  flourishDot: 7,
+  flourishGapX: 10,
+  subGap: 7,
+  subSize: 12,
+
+  cardGap: 14,
+  cardRadius: 18,
+  cardPad: 10,
+  disc: 48,
+  discGlyph: 22,
+  discGap: 9,
+  cardTitleSize: 14,
+  cardBodyGap: 5,
+  cardBodySize: 10.5,
+  cardBodyLineHeight: 15.5,
+  ruleGap: 11,
+  stripGap: 10,
+  stripSize: 9.5,
+  stripDivider: 1,
+  stripDividerHeight: 16,
+  stripGapX: 6,
+
+  popularHeight: 22,
+  popularRadius: 12,
+  popularPadX: 11,
+  popularSize: 10.5,
+
+  blockGap: 12,
+  // design/104 draws this block 100pt wide; widened to 114 so the upload note sits
+  // on the two lines it is drawn with. Public Sans is wider than the design's face.
+  blockWidth: 114,
+  blockRadius: 12,
+  blockPad: 7,
+  blockLabelSize: 10.5,
+  blockPriceGap: 2,
+  blockPriceSize: 24,
+  blockNoteGap: 6,
+  blockNoteSize: 6.5,
+  blockNoteLineHeight: 10,
+  blockCaptionGap: 8,
+  blockCaptionSize: 9,
+
+  whyGap: 26,
+  whyColGap: 0,
+  whyIcon: 30,
+  whyIconGlyph: 14,
+  whyTitleGap: 9,
+  whyTitleSize: 10.5,
+  whyTitleLineHeight: 13.5,
+  whyBodyGap: 6,
+  whyBodySize: 8.5,
+  whyBodyLineHeight: 11.5,
+  whyDivider: 1,
+
+  buttonGap: 22,
+  buttonHeight: 60,
+  buttonRadius: 12,
+  buttonSize: 17,
+  buttonBg: '#A89177',
+};

@@ -66,10 +66,13 @@ export type LaConsultType = {
   /** Choose-screen description. */
   chooseDescription: string;
   duration: string;
-  /** Choose-screen upload allowance note. */
-  uploadNote: string;
-  /** Choose-screen bottom strip: duration / privacy / speed. */
-  strip: [string, string, string];
+  /** Choose-screen upload allowance note — two lines, as drawn. */
+  uploadNote: [string, string];
+  /**
+   * Choose-screen bottom strip. The brief describes three labels; design/104 draws
+   * TWO (duration, privacy). Built as drawn.
+   */
+  strip: [string, string];
   popular: boolean;
 };
 
@@ -83,10 +86,12 @@ export const LA_CONSULT_TYPES: LaConsultType[] = [
     // design/101's inset renders this as "Quick legal guidancethrough secure chat" —
     // a missing space where two text runs were joined. Rendered with the space.
     description: 'Quick legal guidance through secure chat',
-    chooseDescription: 'Get quick answers to your legal queries through secure chat.',
+    chooseDescription: 'Get quick answer to your legal queries through secure chat',
     duration: '30 Mins Session',
-    uploadNote: 'Upload up to 5 documents',
-    strip: ['Up to 30 mins', 'Secure & Private', 'Instant start'],
+    uploadNote: ['Up to 25 pages — FREE Upload', 'Additional pages: ₹25 per page'],
+    // design/104 gives chat SEVEN DAYS where the landing's detail card says a 30-minute
+    // session. Two different units for the same product; both rendered as drawn.
+    strip: ['Up to 7 days', 'Private & Secure'],
     popular: true,
   },
   {
@@ -96,10 +101,10 @@ export const LA_CONSULT_TYPES: LaConsultType[] = [
     landingPrice: 699,
     choosePrice: 999,
     description: 'Discuss your legal matter directly with an advocate over a secure audio call.',
-    chooseDescription: 'Speak directly with an advocate over a secure audio call.',
+    chooseDescription: 'Speak directly with a legal expert and get legal solution',
     duration: '30 Mins Session',
-    uploadNote: 'Upload up to 5 documents',
-    strip: ['Up to 30 mins', 'Secure & Private', 'Same day'],
+    uploadNote: ['Up to 25 pages — FREE Upload', 'Additional pages: ₹25 per page'],
+    strip: ['Up to 30 mins', 'Private & Secure'],
     popular: false,
   },
   {
@@ -109,10 +114,10 @@ export const LA_CONSULT_TYPES: LaConsultType[] = [
     landingPrice: 999,
     choosePrice: 1499,
     description: 'Discuss your matter directly with an advocate',
-    chooseDescription: 'Face-to-face legal guidance over a secure video call.',
+    chooseDescription: 'Face-to-face consultation with our legal experts from anywhere',
     duration: '30 Mins Session',
-    uploadNote: 'Upload up to 5 documents',
-    strip: ['Up to 30 mins', 'Secure & Private', 'Scheduled'],
+    uploadNote: ['Up to 25 pages — FREE Upload', 'Additional pages: ₹25 per page'],
+    strip: ['Up to 30 mins', 'Secure & Confidential'],
     popular: false,
   },
 ];
@@ -127,6 +132,12 @@ export const LA_CHOOSE_POPULAR: LaConsultTypeId = 'chat';
  * Display order on the landing (design/102): Chat, Video, Audio — not the order the
  * array is declared in, and not the choose screen's order either.
  */
+/**
+ * design/104's order: Chat, Audio, Video — different again from the landing's
+ * Chat, Video, Audio.
+ */
+export const LA_CHOOSE_ORDER: LaConsultTypeId[] = ['chat', 'audio', 'video'];
+
 export const LA_LANDING_ORDER: LaConsultTypeId[] = ['chat', 'video', 'audio'];
 
 export function laConsultType(id: LaConsultTypeId): LaConsultType {
@@ -208,6 +219,12 @@ export type LaMatter = {
   title: string;
   description: string;
 };
+
+/**
+ * The ₹25-per-page overage above 25 pages is the SAME rule the Document Forensic and
+ * FIR batches carry, so it reads as platform-wide rather than service-specific.
+ */
+export const LA_PAGE_OVERAGE = 25;
 
 export const LA_MATTERS: LaMatter[] = [
   {
