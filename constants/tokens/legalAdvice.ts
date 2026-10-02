@@ -465,3 +465,66 @@ export const laDetails = {
   buttonSize: 17,
   buttonBg: '#A89177',
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Legal Advice legal-matter picker (design/106-la-review.png — the file name is
+// wrong; the batch's numbering is shifted by one).
+//
+// OUTSIDE THE MAIN PALETTE, like the choose screen: lavender-blue icon discs with
+// blue glyphs and dark-teal titles on a WHITE page, not the app's beige and brown.
+// Quarantined here. Fourth divergence in the app, after the advocate profile, the
+// choose screen and this section's white form background.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const laMatterAccent = {
+  title: '#13493B',
+  disc: '#E4EEFF',
+  glyph: '#4A8DF6',
+  /** Two categories are drawn in their own tones rather than the shared blue. */
+  familyDisc: '#FBE9EC',
+  familyGlyph: '#B4616F',
+  propertyDisc: '#FDEFDC',
+  propertyGlyph: '#E0924A',
+  selected: '#A89177',
+  /** The page is white here, so unselected cards need an edge to read at all. */
+  edge: '#ECE9E3',
+};
+
+export const laMatter = {
+  padX: 22,
+  bg: '#FFFFFF',
+
+  backTop: 10,
+  backIcon: 22,
+  titleGap: 18,
+  titleSize: 27,
+  titleLineHeight: 34,
+  subGap: 9,
+  subSize: 12.5,
+  subLineHeight: 18,
+
+  gridGap: 16,
+  colGap: 15,
+  rowGap: 10,
+  cardRadius: 14,
+  cardPad: 9,
+  cardBorder: 1.5,
+  disc: 36,
+  discGlyph: 18,
+  discGap: 7,
+  cardTitleSize: 11,
+  cardTitleLineHeight: 14,
+  cardBodyGap: 4,
+  cardBodySize: 8,
+  cardBodyLineHeight: 11,
+  chevron: 14,
+  chevronGap: 2,
+
+  buttonGap: 20,
+  buttonHeight: 48,
+  buttonRadius: 12,
+  buttonSize: 17,
+  buttonBg: '#A89177',
+  skipGap: 10,
+  skipBorder: '#C3B295',
+};
