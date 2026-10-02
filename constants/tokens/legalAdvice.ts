@@ -374,3 +374,94 @@ export const laChoose = {
   buttonSize: 17,
   buttonBg: '#A89177',
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// The five-step stepper shared by the Legal Advice booking screens
+// (design/105 onwards). THIS IS THE FIFTH STEPPER IDIOM IN THE APP — see the
+// note at the top of components/StepIndicator5.tsx.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const stepper5 = {
+  top: 16,
+  circle: 36,
+  glyph: 17,
+  circleOn: '#5A4A37',
+  circleOff: '#F1ECE5',
+  glyphOn: '#FFFFFF',
+  glyphOff: '#A89177',
+  connector: 1,
+  connectorColour: '#DED7CC',
+  labelGap: 5,
+  labelSize: 10,
+  labelLineHeight: 13.5,
+  labelOn: '#3A322A',
+  labelOff: '#8C8275',
+};
+
+// Legal Advice "Your details" form (design/105-la-select-matter.png — the file name
+// is wrong; the batch's numbering is shifted by one).
+//
+// NOTE: this screen's page background is WHITE, not the app's beige. Measured from
+// the file.
+export const laDetails = {
+  padX: 21,
+  bg: '#FFFFFF',
+
+  backTop: 10,
+  backIcon: 22,
+  stepperGap: 18,
+
+  introGap: 10,
+  introRadius: 14,
+  introPad: 14,
+  introBg: '#F5F0E9',
+  introTitleSize: 18,
+  introBodyGap: 6,
+  introBodySize: 10.5,
+  introBodyLineHeight: 15,
+
+  fieldGap: 9,
+  fieldHeight: 38,
+  fieldRadius: 12,
+  fieldPadX: 12,
+  fieldBorder: '#E8E3DA',
+  fieldIcon: 26,
+  fieldIconGlyph: 20,
+  fieldIconGap: 11,
+  fieldLabelSize: 14,
+  fieldStarSize: 10,
+  fieldStarColour: '#C0392B',
+  fieldHintGap: 1,
+  fieldHintSize: 11,
+  fieldCalendar: 22,
+
+  areaHeight: 81,
+  areaPadY: 11,
+  counterSize: 11,
+
+  uploadGap: 9,
+  uploadRadius: 12,
+  uploadPad: 13,
+  uploadTitleSize: 15,
+  uploadNoteGap: 3,
+  uploadNoteSize: 10.5,
+  uploadDescGap: 2,
+  uploadDescSize: 11,
+  dashGap: 11,
+  dashRadius: 10,
+  dashPad: 9,
+  dashBorder: '#D8CFC1',
+  tileColGap: 7,
+  tileHeight: 56,
+  tileRadius: 9,
+  tileBg: '#F7F2EB',
+  tileGlyph: 20,
+  tileLabelGap: 5,
+  tileLabelSize: 10.5,
+
+  buttonGap: 17,
+  buttonHeight: 48,
+  buttonRadius: 12,
+  buttonSize: 17,
+  buttonBg: '#A89177',
+};
