@@ -417,13 +417,18 @@ export const vkycError = {
   encIconGap: 7,
 
   iconTop: 20,
+  /** design/100's failure mark is a WHITE disc with a tan inner disc — not a red
+      error treatment. Sampled from the file; left as drawn. */
   icon: 104,
-  iconGlyph: 44,
-  iconBg: '#FDECEA',
-  iconColour: '#D9534F',
-  retryBadge: 34,
-  retryGlyph: 17,
-  retryBg: '#6B5942',
+  iconInner: 74,
+  iconGlyph: 34,
+  iconRing: '#FFFFFF',
+  iconBg: '#F6DCBB',
+  iconColour: '#8A6F52',
+  retryBadge: 30,
+  retryGlyph: 15,
+  retryBg: '#FFFFFF',
+  retryColour: '#8A6F52',
 
   headingGap: 20,
   headingSize: 22,
@@ -485,16 +490,9 @@ export const vkycError = {
   frameKeepSize: 11.5,
 
   supportGap: 18,
-  supportRadius: 14,
-  supportPad: 14,
-  supportBg: '#F6F2ED',
-  supportIcon: 36,
-  supportIconRadius: 18,
   supportIconGlyph: 17,
-  supportIconGap: 12,
-  supportTitleSize: 14,
-  supportSubGap: 3,
-  supportSubSize: 12,
+  supportIconGap: 10,
+  supportTitleSize: 13,
   supportLinkSize: 13,
 
   buttonGap: 20,
@@ -506,4 +504,6 @@ export const vkycError = {
   buttonBg: '#6B5942',
   altGap: 11,
   altBg: '#F1ECE6',
+  altIcon: 17,
+  altIconGap: 9,
 };
