@@ -373,6 +373,8 @@ export const vkycVerified = {
   nextPad: 16,
   nextIcon: 36,
   nextIconRadius: 10,
+  /** design/99 tints the Next Step icon amber rather than the usual beige. */
+  nextIconBg: '#F8E3C4',
   nextIconGlyph: 17,
   nextIconGap: 12,
   nextTitleSize: 15.5,
