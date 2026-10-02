@@ -20,6 +20,7 @@ export * from './tokens/fir';
 export * from './tokens/profile';
 export * from './tokens/propertySearch';
 export * from './tokens/documentForensic';
+export * from './tokens/legalAdvice';
 export * from './tokens/videoKyc';
 
 export const colors = {

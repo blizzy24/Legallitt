@@ -6,7 +6,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, font, ink, serviceHeader as h } from '../constants/theme';
 
 // Header shared by the Legal Notice detail and identity screens (design/22, 37, 38).
-export default function ServiceHeader({ title }: { title: string }) {
+//
+// design/102 (Legal Advice landing) uses the same header WITHOUT the share icon, so
+// `share` turns that one control off rather than forking a twelfth header style.
+export default function ServiceHeader({ title, share = true }: { title: string; share?: boolean }) {
   const insets = useSafeAreaInsets();
   return (
     <View style={[styles.header, { paddingTop: insets.top + h.top }]}>
@@ -16,9 +19,11 @@ export default function ServiceHeader({ title }: { title: string }) {
       <Text style={styles.title} numberOfLines={1}>
         {title}
       </Text>
-      <Pressable accessibilityRole="button" accessibilityLabel="Share" hitSlop={10} style={styles.share}>
-        <Share2 size={h.shareIcon} color={colors.textPrimary} />
-      </Pressable>
+      {share && (
+        <Pressable accessibilityRole="button" accessibilityLabel="Share" hitSlop={10} style={styles.share}>
+          <Share2 size={h.shareIcon} color={colors.textPrimary} />
+        </Pressable>
+      )}
       <View style={styles.avatar}>
         <User size={h.avatarIcon} color={ink.onBrand} />
       </View>

@@ -123,6 +123,12 @@ export const LA_INCLUSION = 'Court Admissible Summary Included';
 export const LA_LANDING_POPULAR: LaConsultTypeId = 'video';
 export const LA_CHOOSE_POPULAR: LaConsultTypeId = 'chat';
 
+/**
+ * Display order on the landing (design/102): Chat, Video, Audio — not the order the
+ * array is declared in, and not the choose screen's order either.
+ */
+export const LA_LANDING_ORDER: LaConsultTypeId[] = ['chat', 'video', 'audio'];
+
 export function laConsultType(id: LaConsultTypeId): LaConsultType {
   return LA_CONSULT_TYPES.find((t) => t.id === id) ?? LA_CONSULT_TYPES[0];
 }
