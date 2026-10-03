@@ -1112,3 +1112,61 @@ export const laCompleted = {
   footSize: 12,
   footColour: '#8A6F3C',
 };
+
+// Rate & review modal (design/119-la-review-empty.png and
+// design/120-la-completed-b.png — both file names are wrong; the batch's numbering
+// is shifted by one).
+export const laRate = {
+  padX: 20,
+  backdrop: 'rgba(0,0,0,0.55)',
+  behindTitleTop: 26,
+  behindTitleSize: 24,
+  behindBodyGap: 8,
+  behindBodySize: 11.5,
+  behindBodyLineHeight: 17,
+
+  cardTop: 24,
+  cardRadius: 14,
+  cardPad: 16,
+  titleSize: 15,
+
+  rowGap: 13,
+  rowRadius: 12,
+  rowPad: 11,
+  rowBorder: '#E8E3DA',
+  photo: 44,
+  photoGap: 11,
+  nameSize: 12.5,
+  lineGap: 2,
+  lineSize: 10.5,
+  profileHeight: 28,
+  profileRadius: 7,
+  profilePadX: 10,
+  profileBorder: '#D9CBB4',
+  profileSize: 11,
+
+  ratingGap: 16,
+  ratingSize: 17,
+  starsGap: 11,
+  star: 42,
+  starGap: 7,
+  starOn: '#B9793F',
+  starOff: '#D9D4CC',
+
+  reviewGap: 18,
+  reviewLabelSize: 14,
+  inputGap: 9,
+  inputHeight: 150,
+  inputRadius: 10,
+  inputPad: 12,
+  inputBorder: '#C9B896',
+  inputSize: 13,
+
+  buttonsGap: 14,
+  buttonColGap: 12,
+  buttonHeight: 46,
+  buttonRadius: 8,
+  buttonSize: 15,
+  cancelBorder: '#C9B896',
+  postBg: '#A89177',
+};
