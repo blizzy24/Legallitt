@@ -975,3 +975,58 @@ export const laChat = {
   sendGap: 14,
   pageBg: '#F2F4F6',
 };
+
+export const laSession = {
+  padX: 20,
+  backTop: 12,
+  backButton: 44,
+  backIcon: 24,
+  backBg: 'rgba(255,255,255,0.88)',
+
+  /** Self-view thumbnail on the video screen. */
+  selfW: 86,
+  selfH: 112,
+  selfRadius: 12,
+  selfTop: 12,
+
+  infoGap: 12,
+  infoHeight: 54,
+  infoRadius: 27,
+  infoPadX: 16,
+  infoBg: 'rgba(255,255,255,0.92)',
+  infoSize: 13,
+  recDot: 11,
+  recColour: '#FF3B30',
+  recGap: 9,
+  timeSize: 13,
+  infoChevron: 20,
+
+  controlsGap: 11,
+  controlsHeight: 94,
+  controlsRadius: 47,
+  controlsPadX: 14,
+  control: 60,
+  controlGlyph: 26,
+  controlBg: '#D9C9B3',
+  controlGlyphColour: '#5A4A37',
+  endCall: 72,
+  endGlyph: 30,
+  endBg: '#FF3B30',
+
+  /** The audio screen's warm ground and big portrait. */
+  voiceBg: '#F6EFE6',
+  photo: 160,
+  photoTop: 70,
+  photoText: 46,
+  nameGap: 26,
+  nameSize: 27,
+  labelGap: 7,
+  labelSize: 15,
+  statusGap: 22,
+  statusDot: 11,
+  statusDotGap: 9,
+  statusSize: 15,
+  statusColour: '#1E8B4D',
+  timerGap: 11,
+  timerSize: 21,
+};
