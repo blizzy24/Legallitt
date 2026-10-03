@@ -1,4 +1,13 @@
-import { CircleCheck, Clock, FilePen, Mail, UserPlus, type LucideIcon } from 'lucide-react-native';
+import {
+  CircleAlert,
+  CircleCheck,
+  Clock,
+  CreditCard,
+  FilePen,
+  Mail,
+  UserPlus,
+  type LucideIcon,
+} from 'lucide-react-native';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { font, stepper5 as t } from '../constants/theme';
@@ -23,6 +32,8 @@ import { font, stepper5 as t } from '../constants/theme';
 // ─────────────────────────────────────────────────────────────────────────────
 
 const ICONS: LucideIcon[] = [FilePen, Mail, Clock, UserPlus, CircleCheck];
+/** design/107's six-step variant splits "Pending for Payment" into two stages. */
+const ICONS6: LucideIcon[] = [FilePen, Mail, CircleAlert, CreditCard, UserPlus, CircleCheck];
 
 export const STEP5_LABELS = [
   'Your detail',
@@ -32,13 +43,37 @@ export const STEP5_LABELS = [
   'Confirmation',
 ];
 
-/** `active` is 1-based: 1 = "Your detail". */
-export default function StepIndicator5({ active }: { active: number }) {
+/**
+ * REPORTED — design/107 draws SIX steps where design/105 and design/111 draw five.
+ * It splits "Pending for Payment" into a "Pending" stage and a "Payment" stage, so
+ * the same journey is numbered two different ways on consecutive screens. Both are
+ * rendered as drawn; this list is what design/107 shows.
+ */
+export const STEP6_LABELS = [
+  'Your detail',
+  'Review detail',
+  'Pending',
+  'Payment',
+  'Assign advocate',
+  'Confirmation',
+];
+
+type Props = {
+  /** 1-based: 1 = "Your detail". */
+  active: number;
+  /** Pass STEP6_LABELS for design/107's six-step variant. */
+  labels?: string[];
+  /** design/111 shows every circle filled, not just the active one. */
+  allComplete?: boolean;
+};
+
+export default function StepIndicator5({ active, labels = STEP5_LABELS, allComplete }: Props) {
+  const icons = labels.length === 6 ? ICONS6 : ICONS;
   return (
     <View style={styles.row}>
-      {STEP5_LABELS.map((label, i) => {
-        const Icon = ICONS[i];
-        const on = i + 1 === active;
+      {labels.map((label, i) => {
+        const Icon = icons[i];
+        const on = allComplete || i + 1 === active;
         return (
           <View key={label} style={styles.cell}>
             {i > 0 && <View style={styles.connector} />}
