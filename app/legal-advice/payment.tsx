@@ -18,9 +18,18 @@ import { colors, font, profile as t, space } from '../../constants/theme';
 //    are priced "Starting at" ₹999 / ₹799 / ₹599 / ₹499. No screen says whether
 //    experience replaces the consultation-type price, adds to it, or sets a floor.
 //
+// 3. A BARE "STANDARD FEE ₹999" in design/124's bottom bar, which does not say what
+//    it is the fee for. ₹999 is video on the landing and audio on the choose screen,
+//    so the bar either contradicts one of them or quotes a third, flat price.
+//
 // Two more figures that no tier produces: design/117's follow-up fee of ₹1,500 with
 // a ₹99 platform fee (every other service charges ₹199), and design/116's ₹100
 // "Written Legal Advice & Action Plan" upsell.
+//
+// And one more axis nobody has reconciled: chat is sold as a "30 Mins Session" on
+// the landing, "Up to 7 days" on the choose screen and "Up to 30 mins" on the
+// experience screen. If chat is a seven-day thread rather than a half-hour call,
+// it is not the same product as the other two and may not be priced like one.
 //
 // Every figure is recorded in data/legalAdvice.ts. Nothing computes a total, here
 // or anywhere else in this flow.
@@ -29,7 +38,9 @@ import { colors, font, profile as t, space } from '../../constants/theme';
 const BLOCKERS = [
   'Which price table is correct — the landing’s or the choose screen’s?',
   'How do consultation type and advocate experience combine into one amount?',
+  'What is the bare “Standard Fee ₹999” on the date screen the fee for?',
   'Is the follow-up platform fee ₹99 or ₹199, as everywhere else?',
+  'Is chat a 30-minute call or a 7-day thread? The designs say both.',
 ];
 
 export default function LegalAdvicePaymentScreen() {
