@@ -309,18 +309,62 @@ export const LA_STEPS = [
   'Confirmation',
 ];
 
+/** As drawn on design/111 and design/112. */
 export const LA_ADVOCATE = {
-  initials: 'RM',
-  name: 'Adv. Rajesh Mehta',
+  initials: 'AS',
+  name: 'Adv. Arjun Sharma',
   practice: 'Property & Civil Law',
-  experience: '12 Years Experience',
+  experience: '8+ Years Experience',
   rating: '4.8',
   reviews: '214 reviews',
 };
 
+/**
+ * design/111 and design/112 both label the request "#LG12345678" — a placeholder
+ * rather than a reference, and a different shape from every other service's id.
+ * LA_REQUEST_ID is used instead.
+ */
+export const LA_PLACEHOLDER_REQUEST_ID = '#LG12345678';
+
+/**
+ * design/111 dates everything 23 May 2026 with a meeting on 25 May 2026, and
+ * design/112 additionally reads "Placed on 23 May 2025" — a third year. Normalised
+ * to September 2026, consistent with the rest of the app.
+ */
+export const LA_TIMELINE = [
+  {
+    title: 'Request Submitted',
+    body: 'Your consultation request has been received',
+    date: '23 Sep 2026',
+    time: '10:30 AM',
+  },
+  {
+    title: 'Consultation Scheduled',
+    body: 'Your consultation has been scheduled.',
+    date: '23 Sep 2026',
+    time: '10:32 AM',
+  },
+  {
+    title: 'Assigned by Admin',
+    body: 'Assigned Advocate',
+    date: '23 Sep 2026',
+    time: '10:32 AM',
+  },
+  {
+    // REPORTED: design/111 ticks this as complete while its own body says the
+    // consultation is still upcoming. Rendered as drawn.
+    title: 'Consultation Completed',
+    body: 'Stay tuned! Your consultation is upcoming',
+    date: '23 Sep 2026',
+    time: '10:32 AM',
+  },
+];
+
 export const LA_SESSION = {
-  /** Consistent with the rest of the app's September 2026 dates. */
-  date: 'Sat, 26 Sep 2026',
-  time: '4:30 PM',
-  duration: '30 mins',
+  /** design/111 reads "25 May 2026, 4:00 PM"; moved to September 2026. */
+  date: '25 Sep 2026',
+  time: '4:00 PM',
+  dateTime: '25 Sep 2026, 4:00 PM',
+  placedOn: '23 Sep 2026',
+  duration: '30 Mins',
 };
