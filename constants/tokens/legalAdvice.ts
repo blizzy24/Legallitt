@@ -295,13 +295,18 @@ export const laChooseAccent = {
   /**
    * `border` is the selected-card outline on the advocate-experience screen, which
    * tracks the consultation type rather than using one app-wide accent. The chat and
-   * audio values are sampled from design/122 and design/123; the VIDEO value is
-   * DERIVED from that card's own glyph tone, because the video state of the
-   * experience screen was never exported. If it turns up later, check this one.
+   * audio values are sampled from design/122 and design/123.
+   *
+   * The VIDEO value is NOT in any file — the video state of the experience screen
+   * was never exported. It is a dark peach chosen to match the weight of the other
+   * two: chat and audio are both near-black members of their own hue, and the glyph
+   * tone (#A53D03) is a mid-tone that made the selected video card far louder than
+   * the equivalent chat or audio one. If the video state is exported later, check
+   * this against it.
    */
   chat: { disc: '#E4EDE8', glyph: '#214C40', block: '#F3F7F4', border: '#154B3A' },
   audio: { disc: '#F2ECF7', glyph: '#5B2A86', block: '#F7F3F9', border: '#3A2B6B' },
-  video: { disc: '#FBE7DA', glyph: '#A53D03', block: '#FBEFE6', border: '#A53D03' },
+  video: { disc: '#FBE7DA', glyph: '#A53D03', block: '#FBEFE6', border: '#6E2A02' },
   popularBg: '#17543F',
   rule: '#E6E2DA',
 };
