@@ -313,10 +313,10 @@ export const LA_STEPS = [
 export const LA_ADVOCATE = {
   initials: 'AS',
   name: 'Adv. Arjun Sharma',
-  practice: 'Property & Civil Law',
+  practice: 'Property Law',
   experience: '8+ Years Experience',
   rating: '4.8',
-  reviews: '214 reviews',
+  reviews: '120+ Reviews',
 };
 
 /**
