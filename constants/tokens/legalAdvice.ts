@@ -292,9 +292,16 @@ export const laInfo = {
 export const laChooseAccent = {
   /** Shared dark-green heading colour across all three cards. */
   title: '#17543F',
-  chat: { disc: '#E4EDE8', glyph: '#214C40', block: '#F3F7F4' },
-  audio: { disc: '#F2ECF7', glyph: '#5B2A86', block: '#F7F3F9' },
-  video: { disc: '#FBE7DA', glyph: '#A53D03', block: '#FBEFE6' },
+  /**
+   * `border` is the selected-card outline on the advocate-experience screen, which
+   * tracks the consultation type rather than using one app-wide accent. The chat and
+   * audio values are sampled from design/122 and design/123; the VIDEO value is
+   * DERIVED from that card's own glyph tone, because the video state of the
+   * experience screen was never exported. If it turns up later, check this one.
+   */
+  chat: { disc: '#E4EDE8', glyph: '#214C40', block: '#F3F7F4', border: '#154B3A' },
+  audio: { disc: '#F2ECF7', glyph: '#5B2A86', block: '#F7F3F9', border: '#3A2B6B' },
+  video: { disc: '#FBE7DA', glyph: '#A53D03', block: '#FBEFE6', border: '#A53D03' },
   popularBg: '#17543F',
   rule: '#E6E2DA',
 };

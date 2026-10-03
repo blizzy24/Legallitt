@@ -461,7 +461,7 @@ const styles = StyleSheet.create({
     color: colors.textBody,
   },
   soloLabel: {
-    marginTop: t.sectionGap,
+    marginTop: t.soloLabelGap,
   },
   sectionNote: {
     marginLeft: 10,

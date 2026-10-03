@@ -44,13 +44,13 @@ import { useLegalAdvice } from '../../context/legalAdvice';
 // drawn it. (design/124-la-datetime.png is correctly named, so the batch's one-off
 // numbering shift ends at 123.)
 //
-// REPORTED — THE SELECTED-BORDER COLOUR IS NOT ARBITRARY. design/122 draws it dark
-// GREEN and design/123 dark INDIGO, which are exactly the chat and audio accents
-// from the choose screen (design/104) — the tier tint tracks the consultation type
-// rather than varying at random. Per instruction the border is drawn in the BRAND
-// colour instead, since the app has no blue or red accent; but the premise that the
-// two files disagree about one state does not hold, and reverting to per-type
-// accents is a one-line change because `laChooseAccent` already holds those tones.
+// THE SELECTED-BORDER COLOUR TRACKS THE CONSULTATION TYPE, as the files draw it:
+// dark green on design/122 (chat) and dark indigo on design/123 (audio), sampled and
+// kept in laChooseAccent. The video tone is derived from that card's glyph, since
+// the video state of this screen was never exported.
+//
+// (An earlier revision drew this border in the brand colour, on the reading that the
+// two files disagreed about one state. They do not — they draw two different states.)
 //
 // REPORTED — chat's duration is given as "Up to 30 mins" here and "Up to 7 days" on
 // the choose screen. That is a THIRD unit for the same product, after the landing's
@@ -169,7 +169,7 @@ export default function LegalAdviceExperienceScreen() {
               accessibilityRole="radio"
               accessibilityState={{ selected: on }}
               onPress={() => update({ experience: tier.id })}
-              style={[styles.card, on && styles.cardOn]}
+              style={[styles.card, on && { borderColor: chosenTone.border }]}
             >
               <View style={styles.cardRow}>
                 <View style={[styles.disc, { backgroundColor: chosenTone.disc }]}>
@@ -284,9 +284,8 @@ const styles = StyleSheet.create({
     borderColor: 'transparent',
     padding: c.cardPad,
   },
-  // design/122 and 123 tint this border to match the consultation type; the brand
-  // colour is used instead, per instruction. See the note at the top of the file.
-  cardOn: { borderColor: colors.brand },
+  // Set per consultation type at the call site — see the note at the top of the file.
+  cardOn: {},
   popular: {
     alignSelf: 'flex-start',
     minHeight: c.popularHeight,
