@@ -298,6 +298,27 @@ export const LA_MATTERS: LaMatter[] = [
 // A service-specific prefix is used here, as in the other services.
 // ─────────────────────────────────────────────────────────────────────────────
 
+/**
+ * Follow-up booking (design/117).
+ *
+ * REPORTED — the platform fee here is ₹99 where every other service in the app
+ * charges ₹199 (Legal Notice, FIR, Property Search, Document Forensic all use 199).
+ * Drawn as ₹99 and totalled as ₹1,599, exactly as the file shows; nothing computes
+ * it. If ₹199 is the platform rule, this total is wrong by ₹100.
+ */
+export const LA_FOLLOWUP = {
+  fee: 1500,
+  platformFee: 99,
+  total: 1599,
+  durations: ['30 min', '45 min', '60 min'],
+  recommended: '45 min',
+  timeSlot: '5:30 PM – 6:15 PM',
+  date: '24 Sep 2026',
+  duration: '45 minutes',
+  previousTopic: 'Property Dispute (Advice)',
+  upi: { handle: 'arjun@upi', bank: 'HDFC Bank', tail: '9821' },
+};
+
 export const LA_REQUEST_ID = '#LA-738201';
 
 /** The five steps drawn across the top of design/105 and the screens after it. */
