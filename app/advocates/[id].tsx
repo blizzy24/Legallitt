@@ -39,6 +39,27 @@ import { SAVED_ADVOCATES, advocateById, type AdvocateReview } from '../../data/a
 //
 // Book Consultation is not here because design/81 does not draw it — and no booking
 // flow exists anywhere in the batch. Still the outstanding gap.
+//
+// ─────────────────────────────────────────────────────────────────────────────
+// A SECOND COPY OF THIS SCREEN EXISTS: design/118-la-review-empty.png (the file
+// name is wrong; the Legal Advice batch's numbering is shifted by one). It was
+// compared against design/81 rather than built, and the two are the SAME SCREEN.
+//
+// Identical in both: the name "Adv. Rahul Sharma", "Verified Advocate",
+// "8+ Years Exp. • Indore, MP", "4.8 (126 Reviews)", enrollment MP/1234/2018, the
+// four practice areas, the ABOUT copy, all four Professional Details tiles, the
+// availability block, and both client reviews down to their quotes. Neither draws a
+// Book Consultation button. The lavender-grey palette is the same family in both.
+//
+// What actually differs is the EXPORT, not the design: design/81 is a 281x1024 JPEG
+// (about 0.72 px/pt, visibly compressed) and design/118 is a 780x2958 PNG at a clean
+// 2x. design/118 is a higher-fidelity re-export of design/81, so it is the better
+// measuring reference — this screen was built from the low-resolution one.
+//
+// The brief's expectation that the second file is "named differently" does not hold:
+// both say Rahul Sharma. The open question is only which file is current, and the
+// off-palette decision above is unchanged by it.
+// ─────────────────────────────────────────────────────────────────────────────
 
 export default function AdvocateProfileScreen() {
   const insets = useSafeAreaInsets();
