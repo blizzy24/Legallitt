@@ -220,7 +220,7 @@ export default function LegalAdviceChooseScreen() {
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.appBg },
+  screen: { flex: 1, backgroundColor: t.bg },
   content: { paddingHorizontal: t.padX },
 
   title: {

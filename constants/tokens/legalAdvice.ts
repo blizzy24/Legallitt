@@ -301,6 +301,12 @@ export const laChooseAccent = {
 
 export const laChoose = {
   padX: 20,
+  /**
+   * design/104, 122 and 123 all sit on a WHITE page, as do design/105 and 106.
+   * The whole middle of the Legal Advice flow abandons the app's beige ground and
+   * design/124 returns to it. Measured from the files.
+   */
+  bg: '#FFFFFF',
 
   backTop: 10,
   backIcon: 22,
@@ -527,4 +533,24 @@ export const laMatter = {
   buttonBg: '#A89177',
   skipGap: 10,
   skipBorder: '#C3B295',
+};
+
+// Legal Advice advocate-experience picker (design/122 and design/123 — see the
+// reporting note in app/legal-advice/experience.tsx; the file names are wrong and
+// the video state was never exported).
+//
+// The cards share the choose screen's geometry, so this block only carries what is
+// new: the small-caps years line above each tier title.
+export const laExperience = {
+  flourishGap: 24,
+  subGap: 7,
+  subSize: 12,
+
+  yearsIcon: 15,
+  yearsIconGap: 7,
+  yearsSize: 12,
+  yearsColour: '#B9793F',
+  yearsGap: 4,
+  titleSize: 15,
+  titleColour: '#1D1A16',
 };
