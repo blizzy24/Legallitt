@@ -904,3 +904,74 @@ export const laTrack = {
   actionBorder: '#D9A441',
   actionTitleColour: '#8A6F3C',
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Live consultation sessions (design/113, 114, 115 — the file names are wrong;
+// the batch's numbering is shifted by one).
+//
+// THESE ARE STATIC MOCK-UPS. No calling SDK, no camera, no microphone. The video
+// and voice screens draw neutral placeholder blocks where the designs show
+// photographs, and every control is inert.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const laChat = {
+  headerHeight: 100,
+  headerBg: '#A89177',
+  padX: 20,
+  backIcon: 26,
+  backGap: 12,
+  avatar: 60,
+  avatarRadius: 30,
+  avatarText: 20,
+  dot: 16,
+  nameGap: 14,
+  nameSize: 19,
+  verified: 21,
+  verifiedGap: 9,
+
+  stripGap: 10,
+  stripHeight: 36,
+  stripRadius: 12,
+  stripPadX: 10,
+  stripBg: '#DDF0E2',
+  stripIcon: 22,
+  stripIconGap: 10,
+  stripSize: 14,
+  stripColour: '#1C6B4A',
+  stripTimeSize: 14,
+
+  listGap: 14,
+  rowGap: 16,
+  bubbleAvatar: 40,
+  bubbleAvatarGap: 11,
+  bubbleAvatarText: 14,
+  bubbleRadius: 16,
+  bubblePadX: 14,
+  bubblePadY: 12,
+  bubbleTheirs: '#E4E4E4',
+  bubbleMine: '#E8E8E8',
+  bubbleMaxWidth: 0.78,
+  bubbleSize: 14.5,
+  bubbleLineHeight: 21,
+
+  typingGap: 18,
+  typingDot: 11,
+  typingDotGap: 7,
+  typingColour: '#D5D5D5',
+
+  composerGap: 10,
+  composerHeight: 60,
+  composerRadius: 30,
+  composerPad: 8,
+  plus: 44,
+  plusGlyph: 22,
+  plusBg: '#A89177',
+  divider: 1,
+  dividerHeight: 26,
+  dividerGap: 11,
+  inputSize: 15,
+  micSize: 25,
+  sendSize: 28,
+  sendGap: 14,
+  pageBg: '#F2F4F6',
+};
