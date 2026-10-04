@@ -135,11 +135,11 @@ export const authSignup = {
   subGap: 9,
   subSize: 15.5,
 
-  firstLabelGap: 55,
-  labelGap: 20,
+  firstLabelGap: 12,
+  labelGap: 12,
   labelSize: 14,
-  fieldGap: 10,
-  fieldHeight: 56,
+  fieldGap: 7,
+  fieldHeight: 47,
   fieldRadius: 14,
   /** Filled lavender fields here, where the login screen's are white and bordered. */
   fieldBg: '#F0F4FA',
