@@ -141,8 +141,9 @@ export default function OtpScreen({ title, next, changeTo }: Props) {
           </Text>
         </View>
         <Text style={styles.terms} {...shrinkToFit(0.75)}>
-          By continuing, you agree to our <Text style={styles.termsLink}>Terms</Text> &amp;{' '}
-          <Text style={styles.termsLink}>Privacy Policy</Text>
+          By continuing, you agree to Legalitt&rsquo;s{' '}
+          <Text style={styles.termsLink}>Terms of Service</Text> &amp;{' '}
+          <Text style={styles.termsLink}>Privacy Policy</Text>.
         </Text>
       </ScrollView>
     </View>
