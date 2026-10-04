@@ -67,8 +67,10 @@ const styles = StyleSheet.create({
     color: t.markColour,
   },
 
-  body: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  // Anchored rather than centred: design/138 places the badge at a fixed height.
+  body: { flex: 1, alignItems: 'center' },
   glow: {
+    marginTop: t.glowTop,
     width: t.glow,
     height: t.glow,
     borderRadius: t.glow / 2,
