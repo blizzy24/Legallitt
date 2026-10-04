@@ -1,51 +1,54 @@
-import Svg, { Circle, Line, Path, Rect } from 'react-native-svg';
+import Svg, { Path } from 'react-native-svg';
 
-import { login, marks } from '../constants/theme';
+// Brand marks for the three social buttons, drawn as paths so no image assets are
+// needed. Used ONLY on the prototype's mock sign-in buttons — see the warning at the
+// top of app/(auth)/login.tsx about shipping these flows.
 
-const s = login.socialIcon;
-
-export function GoogleMark() {
+export function GoogleMark({ size }: { size: number }) {
   return (
-    <Svg width={s} height={s} viewBox="0 0 48 48">
+    <Svg width={size} height={size} viewBox="0 0 48 48">
       <Path
-        fill={marks.googleRed}
+        fill="#EA4335"
         d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"
       />
       <Path
-        fill={marks.googleBlue}
+        fill="#4285F4"
         d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"
       />
       <Path
-        fill={marks.googleYellow}
+        fill="#FBBC05"
         d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"
       />
       <Path
-        fill={marks.googleGreen}
+        fill="#34A853"
         d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"
       />
     </Svg>
   );
 }
 
-export function FacebookMark() {
+export function FacebookMark({ size }: { size: number }) {
   return (
-    <Svg width={s} height={s} viewBox="0 0 24 24">
-      <Circle cx={12} cy={12} r={12} fill={marks.facebook} />
+    <Svg width={size} height={size} viewBox="0 0 48 48">
       <Path
-        fill={marks.onMark}
-        d="M16.671 15.469 17.203 12h-3.328V9.749c0-.949.465-1.874 1.956-1.874h1.513V4.922s-1.374-.235-2.686-.235c-2.741 0-4.533 1.662-4.533 4.669V12H7.078v3.469h3.047v8.385a12.09 12.09 0 0 0 3.75 0v-8.385h2.796z"
+        fill="#1877F2"
+        d="M24 0C10.75 0 0 10.75 0 24c0 11.98 8.78 21.91 20.25 23.71V30.94h-6.1V24h6.1v-5.29c0-6.02 3.58-9.34 9.07-9.34 2.63 0 5.38.47 5.38.47v5.91h-3.03c-2.98 0-3.92 1.85-3.92 3.75V24h6.67l-1.07 6.94h-5.6v16.77C39.22 45.91 48 35.98 48 24 48 10.75 37.25 0 24 0z"
+      />
+      <Path
+        fill="#FFFFFF"
+        d="M33.35 30.94 34.42 24h-6.67v-4.5c0-1.9.94-3.75 3.92-3.75h3.03V9.84s-2.75-.47-5.38-.47c-5.49 0-9.07 3.32-9.07 9.34V24h-6.1v6.94h6.1v16.77a24.3 24.3 0 0 0 7.5 0V30.94h5.6z"
       />
     </Svg>
   );
 }
 
-export function AppStoreMark() {
+export function AppleMark({ size, color = '#000000' }: { size: number; color?: string }) {
   return (
-    <Svg width={s} height={s} viewBox="0 0 24 24">
-      <Rect width={24} height={24} rx={5} fill={marks.appStore} />
-      <Line x1={12.9} y1={5} x2={7.2} y2={17} stroke={marks.onMark} strokeWidth={1.7} strokeLinecap="round" />
-      <Line x1={10.4} y1={5} x2={16.8} y2={17.6} stroke={marks.onMark} strokeWidth={1.7} strokeLinecap="round" />
-      <Line x1={5.4} y1={14.2} x2={18.6} y2={14.2} stroke={marks.onMark} strokeWidth={1.7} strokeLinecap="round" />
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Path
+        fill={color}
+        d="M17.05 12.54c-.03-2.75 2.25-4.07 2.35-4.13-1.28-1.87-3.27-2.13-3.98-2.16-1.69-.17-3.3 1-4.16 1-.86 0-2.18-.98-3.59-.95-1.84.03-3.54 1.07-4.49 2.72-1.91 3.32-.49 8.23 1.37 10.92.91 1.32 2 2.8 3.42 2.75 1.37-.06 1.89-.89 3.55-.89 1.65 0 2.13.89 3.58.86 1.48-.03 2.41-1.34 3.31-2.67 1.04-1.53 1.47-3.01 1.5-3.09-.03-.01-2.88-1.1-2.91-4.36zM14.5 4.5c.75-.92 1.26-2.19 1.12-3.46-1.08.04-2.4.72-3.18 1.63-.7.81-1.31 2.11-1.15 3.35 1.21.09 2.45-.61 3.21-1.52z"
+      />
     </Svg>
   );
 }
