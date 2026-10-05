@@ -1596,3 +1596,44 @@ export const ADV_CHAT = {
     ],
   },
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Legalitt AI (designs 170, 171).
+//
+// ⚠ NOTHING HERE IS GENERATED. The response below is a static string copied from
+// design/170. Typing appends the advocate's own message and no reply is produced —
+// there is no model provider, no document ingestion and no retrieval. See the AI
+// scope note above ADV_AI_REFRESH.
+//
+// ⚠ The header sub-line reads "Legal Intelligence Engineered for an Advocates"
+// (sic) — "an Advocates" is ungrammatical; it wants "Advocates" or "an Advocate".
+// Kept as drawn.
+//
+// ⚠ The greeting addresses "Adv. Rahul", but the signed-in advocate is Abhishek
+// Chouhan (design/148, ADVOCATE_SELF). Kept as drawn and flagged.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const ADV_AI_CHAT = {
+  title: 'Legalitt AI',
+  subtitle: 'Legal Intelligence Engineered for an Advocates',
+  greeting: 'Good evening, Adv. Rahul',
+  greetingSub: 'How can Legalitt AI help you today?',
+  upload: {
+    title: 'Explain this document',
+    sub: 'Tap to upload PDF, contract, or notice',
+  },
+  question: {
+    sender: 'Ananya Deshmukh',
+    initials: 'AD',
+    text: 'Good afternoon. Regarding Clause 14.2 of the master agreement, our board is concerned about the unlimited indemnity carveout for indirect damages. How does this conflict with Section 73 of the Indian Contract Act?',
+    time: '16:08',
+  },
+  answer: {
+    label: 'Legalitt AI:',
+    text: 'Section 73 generally allows compensation for loss that naturally arises from a breach of contract or that the parties could reasonably have expected when entering the contract. It also excludes remote or indirect losses.',
+    copy: 'Copy',
+  },
+  placeholder: 'Ask Legalitt AI...',
+  disclaimer:
+    'Legalitt AI provides general information and does not replace advice from a qualified advocate.',
+};
