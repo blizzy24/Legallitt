@@ -1700,3 +1700,73 @@ export const ADV_COPILOT = {
   placeholder: 'Ask Legal AI...',
   disclaimer: 'AI-generated information. Verify important details before relying on it.',
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Consultation paused (design/175).
+//
+// ⚠ This screen states a billing rule the prototype cannot enforce: the
+// consultation timer is HELD at 18:42 while a separate phone-call timer runs at
+// 03:17, "Excluded from consultation". Honouring that needs a server-side session
+// clock that can be paused, a record of what caused each pause, and a disbursement
+// rule that reads it. None of that is UI.
+//
+// The waiting room it describes is likewise a vendor capability.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const ADV_PAUSED = {
+  chip: 'Consultation Paused',
+  sessionId: 'Session ID: ADV-2026-8841',
+  title: 'Consultation Paused',
+  body: 'Your previous consultation is held in a protected state and is ready to continue.',
+  client: {
+    initials: 'AD',
+    name: 'Ananya Deshmukh',
+    roleChip: 'Client',
+    statusChip: 'Paused',
+    service: 'Legal Advice • Video Consultation',
+  },
+  matterLabel: 'MATTER REFERENCE',
+  matter: 'Cross-Border IP Licensing & Software Contract',
+  cells: [
+    {
+      icon: 'clock' as const,
+      label: 'Consultation Time',
+      value: '18:42',
+      state: 'PAUSED',
+      note: 'Preserved exact elapsed duration',
+      excluded: false,
+    },
+    {
+      icon: 'phone' as const,
+      label: 'Phone Call Taken',
+      value: '03:17',
+      state: 'ELAPSED',
+      note: 'Excluded from consultation',
+      excluded: true,
+    },
+  ],
+  waiting: {
+    title: 'Client is in the Waiting Room',
+    body: 'Ananya Deshmukh was notified that you were temporarily disconnected. Your consultation time is paused during your external phone call.',
+  },
+  prompt: 'WHAT WOULD YOU LIKE TO DO?',
+  options: [
+    {
+      id: 'resume',
+      title: 'Resume Consultation',
+      meta: 'Resumes at 18:42',
+      body: 'Continue the consultation immediately from where you stopped. Client camera and audio will reconnect.',
+      action: 'Resume Consultation',
+      tone: 'brand' as const,
+    },
+    {
+      id: 'reschedule',
+      title: 'Reschedule Consultation',
+      meta: 'Propose New Slot',
+      body: 'Choose a new date and time with the client via the existing Alternative Time proposal chamber.',
+      action: 'Reschedule Consultation',
+      tone: 'light' as const,
+    },
+  ],
+  footnote: 'Timer does not count phone call duration.',
+};
