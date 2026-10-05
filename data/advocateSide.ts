@@ -1770,3 +1770,17 @@ export const ADV_PAUSED = {
   ],
   footnote: 'Timer does not count phone call duration.',
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Reschedule the call (design/176).
+//
+// design/176 is design/165 with three changes, and nothing else differs.
+//
+// ⚠ design/176 clips its third suggestion chip to "+ Earliest openin…". The full
+// label is drawn nowhere, so the entry below is an INFERENCE.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const ADV_RESCHEDULE = {
+  title: 'Reschedule the call',
+  messageChips: ['+ Court commitment', '+ Reviewing filings', '+ Earliest opening'],
+};

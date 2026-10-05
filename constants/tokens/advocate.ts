@@ -1585,6 +1585,13 @@ export const advPropose = {
   msgBoxMinHeight: 108,
   msgBoxBg: '#FBF8F4',
   msgBoxBorder: '#E6E0D6',
+  msgChipGap: 14,
+  msgChipGapX: 9,
+  msgChipHeight: 36,
+  msgChipRadius: 18,
+  msgChipPadX: 14,
+  msgChipSize: 13,
+  msgChipBorder: '#E6E0D6',
   msgSize: 13,
   msgLineHeight: 20,
 
