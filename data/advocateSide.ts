@@ -1957,3 +1957,126 @@ export const ADV_COMPLETED = {
   netNote: 'NEFT/RTGS Direct Deposit Initiated',
   back: 'Back To Home',
 };
+
+// ═════════════════════════════════════════════════════════════════════════════
+// ADVOCATE-SIDE LEGAL NOTICE RESPONSE (designs 183-203).
+//
+// ⚠ SEVENTH AI SURFACE. designs 186, 187 and 188 add AI document summarisation,
+// AI draft generation and an AI edit assistant. All static, as always. With the
+// five from the Legal Advice batch and the in-call copilot, that is SEVEN AI
+// surfaces in the product, every one of them mock content. The scope question is
+// unchanged: model provider, document ingestion and OCR, citation grounding, and a
+// position on accuracy and liability — now across seven places.
+//
+// ⚠ PHYSICAL LOGISTICS. designs 193-202 describe courier booking, waybills, pickup
+// scheduling and delivery tracking, naming BLUE DART on one screen and DHL EXPRESS
+// on another (design/200, waybill DHL-8942-0194). That is a shipping-vendor
+// integration — a fourth external dependency alongside the AI provider, the calling
+// vendor and the server-side billing clock. Nothing of it is built beyond the
+// screens.
+//
+// ⚠ PAYOUT CONTRADICTION. design/185 computes ₹3,500 − ₹350 − ₹63 = ₹3,087 net.
+// design/203 then states "Advocate Payout ₹3,500" — the gross, on the same journey.
+// ₹413 apart. Both are recorded below; the UI computes from the breakdown.
+//
+// ⚠ design/196 charges ₹250 service fee + ₹40 labelled "Goods & Services Tax
+// (GST 18%)" = ₹290. 18% of 250 is ₹45, not ₹40. Either the figure or the label is
+// wrong. It also misspells "Represantative". Built as drawn when that screen lands.
+//
+// ⚠ UNFINISHED DESIGNS. designs 195, 199, 201 and 202 contain literal bracketed
+// placeholders ([Client Name], [Document Name], [Courier Name], [Waybill Number],
+// [Amount], [Pickup Address], [Receiver Name], [Receiver Address],
+// [Document Count]). They will be rendered WITH the brackets intact so the gaps
+// stay visible, and every one listed in that batch's report.
+// ═════════════════════════════════════════════════════════════════════════════
+
+/**
+ * design/185's breakdown, derived rather than hardcoded.
+ *
+ * ⚠ The ₹63 "Applicable Charges (GST & Gateway)" is not a rate design/185 states.
+ * It is exactly 18% of the ₹350 platform fee (350 × 0.18 = 63), so that is the
+ * derivation used here. The alternative reading — 1.8% of the client fee — gives the
+ * same ₹63 on this one figure but diverges on any other. INFERENCE, flagged.
+ */
+export const ADV_NOTICE_GST_ON_PLATFORM_FEE = 0.18;
+
+export function advNoticeFee(clientFee: number) {
+  const platformFee = Math.round(clientFee * ADV_COMMISSION_10.platformRate);
+  const charges = Math.round(platformFee * ADV_NOTICE_GST_ON_PLATFORM_FEE);
+  return { clientFee, platformFee, charges, net: clientFee - platformFee - charges };
+}
+
+export const ADV_NOTICE = {
+  id: 'ln-2026-1048',
+  ref: 'LN-2026-1048',
+  refLabel: 'Ref: LN-2026-1048',
+  docket: 'DOCKET LN-2026-1048',
+  typeChip: 'LEGAL NOTICE',
+  verifiedChip: 'Client Verified',
+  client: { name: 'Rahul Sharma', initials: 'RS' },
+  matter: 'Matter: Payment Dispute',
+  /** design/190. */
+  against: 'Verma Enterprises',
+  filingType: 'Statutory Demand',
+  slot: { label: 'Consultation Slot', date: '24 Sep 2026', time: '5:30 PM' },
+  clientFee: 3500,
+  escrowNote: 'paid in escrow',
+  payout: {
+    chip: 'Pending Acceptance',
+    method: { label: 'Payout Method', value: 'Bank ••••4821' },
+    window: { label: 'Disbursement Window', value: 'Released after settlement' },
+    notes: [
+      'Client payment is securely pre-authorized in Legalitt Escrow. Transfer occurs automatically upon matter completion.',
+      'Platform fees and applicable charges are deducted before your net earnings are paid out. Breakdown percentages are configured according to your advocate chamber agreement.',
+    ],
+  },
+  /** design/203 states this gross figure against design/185's ₹3,087 net. */
+  reportedPayout: 3500,
+};
+
+export const ADV_NOTICE_DOCS = {
+  summaryTitle: '4 Documents • 24 Pages',
+  summarySub: 'AI has reviewed all uploaded pages.',
+  statusChip: 'Completed',
+  aiTitle: 'AI Document Summary',
+  aiChip: 'All Pages (24/24)',
+  aiSub: 'Important information from all uploaded documents.',
+  aiFindings: [
+    'Payment Agreement (Clause 4.2): Terms specify payment within 15 days of invoice date. 18% p.a. interest applies on default.',
+    'Invoice #VE-2026-89: Issued 15 Aug 2026 for ₹2,85,000 for deliverables across milestones 1 through 4.',
+  ],
+  viewFull: 'View Full Summary',
+  viewSource: 'View Source',
+  filesLabel: 'UPLOADED FILES',
+  /**
+   * ⚠ design/186 prints "4 Files Attached" and its header reads "4 Documents",
+   * but it draws FIVE file rows. Both the count and the rows are kept as drawn.
+   */
+  filesCountLabel: '4 Files Attached',
+  files: [
+    { id: 'agreement', name: 'Payment_Agreement.pdf', meta: '12 pages • 1.8 MB' },
+    { id: 'invoice', name: 'Invoice_Record.pdf', meta: '8 pages • 920 KB' },
+    { id: 'previous', name: 'Previous_Notice.pdf', meta: '4 pages • 640 KB' },
+    { id: 'proof', name: 'Payment_Proof.pdf', meta: '2 pages • 320 KB' },
+    { id: 'noticee', name: 'Noticee Detail', meta: '1 pages • 320 KB' },
+  ],
+  additionalLabel: 'Additional Documents ?',
+  additionalPlaceholder: 'Type.....',
+  send: 'Send',
+};
+
+/**
+ * Records for designs 187-203 land with the screens that draw them, so that nothing
+ * here is invented ahead of being read off an export. Verified so far:
+ *   design/187  drafting methods — "AI Generate Draft" (Instant, RECOMMENDED)
+ *   design/190  review progress — Draft Prepared → Draft Sent to Client → Client Review
+ *   design/193  dispatch — Legal_Notice_Final.pdf, 4 pages, signed by client;
+ *               notice to Amit Verma, Flat 402, Green Park Apartments, Sector 18,
+ *               Rohini, New Delhi 110085
+ *   design/200  courier DHL Express, waybill DHL-8942-0194, to Advocate Sarah Jenkins
+ *
+ * ⚠ design/190 names the opposing party "Verma Enterprises" (a company) while
+ * design/193 addresses the notice to "Amit Verma" (a person). Related but not the
+ * same entity; neither screen reconciles them.
+ */
+export const ADV_NOTICE_PENDING_RECORDS = true;
