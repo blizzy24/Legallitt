@@ -1420,3 +1420,63 @@ export const ADV_CONFIRMED = {
 
   enter: 'Enter Consultation',
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Consultation room (design/167).
+//
+// ⚠ design/167 introduces a THIRD reference format for the same matter:
+// "Matter #2024-CH-882" here, against "Ref #2024-88C" (design/163) and
+// "Docket #2024-88C" (design/166). Kept as drawn.
+//
+// ⚠ design/167 also overflows its own time row — "IST" and "min" each wrap to a
+// second line inside cells that are wide enough for neither. Laid out to fit here.
+//
+// The countdown runs. Everything else is static; View All, both Review chips,
+// Edit and Save are inert.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const ADV_ROOM = {
+  title: 'Consultation Room',
+  client: {
+    initials: 'AD',
+    name: 'Ananya Deshmukh',
+    company: 'Managing Director, Finova Tech India Pvt. Ltd.',
+    modeChip: 'Video Call',
+  },
+  when: 'Today, 4:00 PM – 4:45 PM IST',
+  duration: '45 min',
+
+  readyLabel: 'SESSION READY',
+  /** 05:41 in design/167; counts down. */
+  countdownSeconds: 5 * 60 + 41,
+  countdownNote: 'until admittance window',
+  encrypted: 'End-to-End Encrypted Room Active',
+  cleared: '2/2 Pre-Cleared',
+
+  summaryLabel: 'CASE SUMMARY',
+  matterRef: 'Matter #2024-CH-882',
+  matter: 'Cross-Border IP Licensing & Exclusive Jurisdiction Structuring',
+  summary:
+    'Advisory review of cross-border software IP assignment and licensing agreement between Finova Tech India and international counterpart. Focus on Bombay High Court / Indian jurisdiction clauses and indemnification exposure.',
+  tags: [
+    { label: 'Corporate & Commercial IP', tone: 'plain' as const },
+    { label: 'Indian Contract Act, 1872', tone: 'plain' as const },
+    { label: 'High Priority', tone: 'priority' as const },
+  ],
+
+  documentsLink: 'View All',
+  documents: [
+    { id: 'ip', name: 'IP_Licensing_Draft_v3.2.pdf', meta: 'PDF • 1.8 MB • Client Added' },
+    {
+      id: 'juris',
+      name: 'Jurisdiction_Summary_Addendum.pdf',
+      meta: 'PDF • 640 KB • Counsel Memo',
+    },
+  ],
+
+  notesLabel: 'PRIVATE NOTES',
+  notesPrivacy: 'Visible only to you',
+  note:
+    'Prioritize review of clause 14.2 liability cap compatibility with Indian Contract Act (Sections 23 & 73). Verify indemnity carveouts regarding third-party claims.',
+  start: 'Start Consultation Now',
+};
