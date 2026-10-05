@@ -353,3 +353,132 @@ export const ADV_NOTIFICATIONS: AdvNotification[] = [
     section: 'earlier',
   },
 ];
+
+// ── Client search (design/159) ───────────────────────────────────────────────
+//
+// design/159 draws a search for "Rahul" returning three clients. Two of them —
+// Rahul Mehta and Rahul Verma — appear nowhere else in the advocate data; they exist
+// only to populate this screen's results. Kept here as search-only records rather
+// than added to ADV_CLIENTS, which is the list design/151 draws.
+
+export type AdvSearchResult = {
+  id: string;
+  initials: string;
+  name: string;
+  ref: string;
+  activity: string;
+  status: string;
+  statusKind: 'active' | 'previous';
+  matters: string[];
+  online: boolean;
+};
+
+export const ADV_SEARCH_RESULTS: AdvSearchResult[] = [
+  {
+    id: 'rahul-sharma',
+    initials: 'RS',
+    name: 'Rahul Sharma',
+    ref: 'CLI-2026-0148',
+    activity: 'Active 2h ago',
+    status: '2 Active Matters',
+    statusKind: 'active',
+    matters: ['High Court • Special Writ #4102', 'District Court • Injunction Motion'],
+    online: true,
+  },
+  {
+    id: 'rahul-mehta',
+    initials: 'RM',
+    name: 'Rahul Mehta',
+    ref: 'CLI-2026-0219',
+    activity: 'Active 3d ago',
+    status: '1 Active Matter',
+    statusKind: 'active',
+    matters: ['Legal Consultation • Corporate Advisory'],
+    online: true,
+  },
+  {
+    id: 'rahul-verma',
+    initials: 'RV',
+    name: 'Rahul Verma',
+    ref: 'CLI-2025-0892',
+    activity: 'Concluded Aug 2025',
+    status: 'Previous Client',
+    statusKind: 'previous',
+    matters: ['Matter Disposed • Full Closure Certificate'],
+    online: false,
+  },
+];
+
+export const ADV_SEARCH_DEFAULT_QUERY = 'Rahul';
+
+// ── Client profile (design/152) ──────────────────────────────────────────────
+//
+// NOTE — design/152 adds a FOURTH earnings figure to the pile: "Retainer escrow of
+// ₹45,000 received for High Court matter". With design/148's ₹8,500, design/156's
+// ₹65,000 and design/157's ₹32,900 net, no two advocate screens agree on what money
+// has moved. See the earnings note at the top of this file.
+
+export const ADV_CLIENT_PROFILE = {
+  id: 'rahul-sharma',
+  initials: 'RS',
+  name: 'Rahul Sharma',
+  chip: 'Active Client',
+  type: 'Individual Petitioner • Commercial & Civil',
+  since: 'Client Since June 2026',
+  phone: '+91 98260 41209',
+  email: 'rahul.sharma@example.com',
+  clientId: 'CLI-2026-0148',
+  documents: { count: '12 Documents', chip: 'Verified', body: 'Pleadings, certified orders, leases' },
+};
+
+export type AdvMatter = {
+  id: string;
+  service: string;
+  status: string;
+  title: string;
+  detail: string;
+};
+
+export const ADV_CLIENT_MATTERS: AdvMatter[] = [
+  {
+    id: 'hc-2026-1048',
+    service: 'High Court Representation',
+    status: 'Active',
+    title: 'Rahul Sharma vs. ABC Enterprises',
+    detail: 'Special Writ Appeal • HC-2026-1048 • Next Hearing: 24 Sep',
+  },
+  {
+    id: 'dc-2026-0814',
+    service: 'District Court Representation',
+    status: 'Active',
+    title: 'Property Matter (Injunction Suit)',
+    detail: 'Civil Suit No. 814 • DC-2026-0814 • Next Stage: Reply Due',
+  },
+];
+
+export const ADV_CLIENT_ACTIVITY = [
+  {
+    id: 'a1',
+    title: 'Message received',
+    body: 'Client confirmed receipt of court cause list position.',
+    when: 'Today, 11:42 AM',
+    tone: 'dark' as const,
+  },
+  {
+    id: 'a2',
+    title: 'Document uploaded',
+    body: 'Registered Commercial Lease Agreement (PDF) added to docket.',
+    when: '18 Sep 2026',
+    tone: 'light' as const,
+  },
+  {
+    id: 'a3',
+    title: 'Payment received',
+    body: 'Retainer escrow of ₹45,000 received for High Court matter.',
+    when: '16 Sep 2026',
+    tone: 'dark' as const,
+  },
+];
+
+export const ADV_CLIENT_FOOTER =
+  'All consultations & docket files privileged under BCI rules.';
