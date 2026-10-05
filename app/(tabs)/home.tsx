@@ -4,6 +4,7 @@ import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import ServiceCard from '../../components/ServiceCard';
+import VideoCarousel from '../../components/VideoCarousel';
 import { serviceIcon } from '../../components/serviceIcons';
 import { colors, font, home, ink, space, tabs } from '../../constants/theme';
 import { useSession } from '../../context/session';
@@ -49,6 +50,9 @@ export default function HomeScreen() {
             style={styles.searchInput}
           />
         </View>
+
+        {/* design/144's guest home draws NO video banner, so it is member-only. */}
+        {isLoggedIn && <VideoCarousel />}
 
         <SectionRow title="Popular Services" badge />
         <View style={styles.popularRow}>

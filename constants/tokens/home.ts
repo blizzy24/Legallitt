@@ -159,3 +159,28 @@ export const services = {
   descGap: 4.5,
   descMaxLines: 3,
 };
+
+// Home video carousel (design/145, design/146): sits between the search field and
+// the Popular Services row, on the member home only.
+export const homeVideo = {
+  gap: 16,
+  width: 350,
+  height: 165,
+  radius: 14,
+  /**
+   * Darker than a neutral placeholder would otherwise be: the pager dots are white,
+   * as the design draws them over a dark thumbnail, and they vanish on a pale block.
+   * A real thumbnail replaces this entirely.
+   */
+  bg: '#D5CCC1',
+  border: '#E4DCD0',
+  play: 42,
+  playRadius: 10,
+  playBg: '#FF0000',
+  playGlyph: 20,
+  dotsBottom: 10,
+  dot: 5,
+  dotGap: 5,
+  dotOn: '#FFFFFF',
+  dotOff: 'rgba(255,255,255,0.55)',
+};
