@@ -1637,3 +1637,66 @@ export const ADV_AI_CHAT = {
   disclaimer:
     'Legalitt AI provides general information and does not replace advice from a qualified advocate.',
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Video consultation (designs 173, 174, 177, 178, 182).
+//
+// ⚠ STATIC MOCK-UP. There is no calling SDK, no camera and no media of any kind.
+// Every "feed" is a neutral block drawn at the size of the frame in the design,
+// using vkycDark.feed.
+//
+// ⚠ This flow is MORE DEMANDING than the client-side sessions. Beyond a calling
+// vendor it needs: a waiting room, pause/resume with phone-call time EXCLUDED from
+// the billed duration, identity-verification overlays, in-call note taking, and an
+// in-call AI copilot. Each of those is a vendor capability or a state machine, not
+// a layout. See the scope note above ADV_AI_REFRESH for the AI side.
+//
+// ⚠ design/173 clips two strings behind the controls that overlap them: the client's
+// location line ("Finova Tech India • Nariman P…") and the matter name
+// ("Cross-Border IP Lic…"). The third suggestion chip in the copilot panel is also
+// clipped ("What should I as…"); ADV_COPILOT.suggestions infers it.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const ADV_VIDEO = {
+  encrypted: 'ENCRYPTED',
+  /** 28:13 in design/173; counts down. */
+  remainingSeconds: 28 * 60 + 13,
+  remainingSuffix: 'rem.',
+  client: {
+    initials: 'AD',
+    name: 'Ananya Deshmukh',
+    company: 'Finova Tech India',
+    location: 'Nariman Point, Mumbai',
+  },
+  modes: ['Video', 'Voice'],
+  matterLabel: 'Matter #',
+  matter: 'Cross-Border IP Licensing',
+  noteChip: 'Note',
+  attachmentCount: 2,
+  connection: 'HD 1080p • 24ms',
+  selfLabel: 'You (Advocate)',
+  verified: 'Identity Verified',
+  speaking: 'Ananya Deshmukh • Speaking',
+  note:
+    'Prioritize review of clause 14.2 liability cap compatibility with Indian Contract Act (Sections 23 & 73). Verify indemnity carveouts regarding third-party claims.',
+  notesEdit: 'Edit',
+};
+
+/** designs 178 and 182 — the in-call Legal AI copilot. Static; nothing is generated. */
+export const ADV_COPILOT = {
+  title: 'Legal AI',
+  chip: 'CONSULTATION COPILOT',
+  sub: 'Help during this consultation',
+  /** design/182 clips the third chip to "What should I as…". Inferred. */
+  suggestions: ['Summarize this case', 'Main legal issues', 'What should I ask next?'],
+  greeting: 'How can I help with this consultation?',
+  question: 'How does Section 73 apply to this issue?',
+  answer:
+    'Section 73 generally deals with compensation for loss caused by breach of contract. Review the exact contract wording and the nature of the claimed loss before reaching a conclusion.',
+  source: 'Source: Contract.pdf • Page 12',
+  viewSource: 'View Source',
+  copy: 'Copy',
+  saveToMemo: 'Save to Memo',
+  placeholder: 'Ask Legal AI...',
+  disclaimer: 'AI-generated information. Verify important details before relying on it.',
+};
