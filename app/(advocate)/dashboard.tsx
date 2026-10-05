@@ -78,7 +78,12 @@ export default function AdvocateDashboardScreen() {
               {ADVOCATE_SELF.standing}
             </Text>
           </View>
-          <Pressable accessibilityRole="button" accessibilityLabel="Notifications" style={styles.bell}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Notifications"
+            onPress={() => router.push('/advocate/notifications')}
+            style={styles.bell}
+          >
             <Bell size={t.bellIcon} color={colors.textPrimary} />
             <View style={styles.bellDot} />
           </Pressable>
