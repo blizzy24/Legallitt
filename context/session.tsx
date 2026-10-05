@@ -20,7 +20,11 @@ type Session = {
    */
   hasSeenOnboarding: boolean;
   setHasSeenOnboarding: (value: boolean) => void;
-  /** Clears the session and lands on the guest home. The app's only way out. */
+  /**
+   * Clears the session and the role, and returns to the login screen. The app's only
+   * way out, and the only exit shared by both sides — it previously landed on the
+   * CLIENT guest home, which dropped a signed-out advocate into the wrong app.
+   */
   signOut: () => void;
 };
 
@@ -44,7 +48,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       signOut: () => {
         setLoggedIn(false);
         setRole(null);
-        router.replace('/(tabs)/home');
+        router.replace('/(auth)/login');
       },
     }),
     [isLoggedIn, role, hasSeenOnboarding]
