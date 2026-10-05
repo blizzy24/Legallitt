@@ -1480,3 +1480,119 @@ export const ADV_ROOM = {
     'Prioritize review of clause 14.2 liability cap compatibility with Indian Contract Act (Sections 23 & 73). Verify indemnity carveouts regarding third-party claims.',
   start: 'Start Consultation Now',
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Consultation chat (designs 168, 169, 172).
+//
+// ⚠ design/168 clips the matter chip to a single letter — the folder chip reads
+// "M" because the Private Notes chip overlaps it. The full label is not drawn
+// anywhere, so ADV_CHAT.matterChip below is an INFERENCE from the matter name.
+//
+// ⚠ design/168 also wraps the client's company onto two lines inside a header cell
+// that is too narrow for it ("Finova Tech / India").
+//
+// ⚠ design/172's three note cards are the SAME note repeated three times, with the
+// same timestamp (10 Sep 2026 11:15 AM) and the same body, and the body misspells
+// "Indian" as "indian". Kept as drawn.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type AdvChatMessage =
+  | {
+      id: string;
+      from: 'client';
+      sender?: string;
+      text: string;
+      time: string;
+      file?: { name: string; meta: string };
+    }
+  | {
+      id: string;
+      from: 'advocate';
+      /** Paragraphs; a {term} span renders as an emphasised legal term. */
+      paragraphs: string[];
+      time: string;
+    };
+
+export const ADV_CHAT = {
+  client: {
+    initials: 'AD',
+    name: 'Ananya Deshmukh',
+    company: 'Finova Tech India',
+  },
+  encrypted: 'Encrypted',
+  timer: '18:40',
+  /** Inferred — design/168 clips this chip to "M". */
+  matterChip: 'Matter',
+  notesChip: 'Private Notes',
+  notesCount: 2,
+  aiChip: 'Chat with AI',
+  context: 'Privileged Legal Consultation • Mumbai, MH',
+
+  messages: [
+    {
+      id: 'm1',
+      from: 'client' as const,
+      sender: 'Ananya Deshmukh',
+      text: 'Good afternoon. Regarding Clause 14.2 of the master agreement, our board is concerned about the unlimited indemnity carveout for indirect damages. How does this conflict with Section 73 of the Indian Contract Act?',
+      time: '16:08',
+    },
+    {
+      id: 'm2',
+      from: 'advocate' as const,
+      paragraphs: [
+        'Good afternoon Ananya. Under {Section 73 of the Indian Contract Act, 1872,} compensation is not granted for remote or indirect loss. Any clause attempting to contract out of willful breach or statutory tort is strictly scrutinized.',
+        'We can cap consequential damages effectively if structured with clear liquidated damages under Section 74.',
+      ],
+      time: '16:09',
+    },
+    {
+      id: 'm3',
+      from: 'client' as const,
+      text: 'Understood. If we cap gross negligence liability at 2x annual contract value, would Bombay High Court Commercial Division uphold that?',
+      time: '16:11',
+    },
+    {
+      id: 'm4',
+      from: 'advocate' as const,
+      paragraphs: [
+        'Under Indian commercial jurisprudence, caps on gross negligence are unenforceable.',
+        'Instead, we can structure a {liquidated damages schedule} with DIAC or MCIA arbitration seated in Mumbai. I have noted this directly into your active memorandum.',
+      ],
+      time: '16:13',
+    },
+    {
+      id: 'm5',
+      from: 'client' as const,
+      text: 'Attached the revised markup from opposing counsel for quick verification:',
+      file: { name: 'Clause_14_Markup_v4.pdf', meta: '420 KB • Redlined Draft' },
+      time: '16:14',
+    },
+  ] as AdvChatMessage[],
+
+  typing: 'Ananya is reviewing draft notes',
+  placeholder: 'Type legal advice or cite section...',
+
+  notesPanel: {
+    title: 'Private Note',
+    privacy: 'Only visible to you',
+    add: 'Add Note',
+    /** design/172 repeats one note three times, misspelling "Indian". Kept as drawn. */
+    entries: [
+      {
+        id: 'n1',
+        at: '10 Sep 2026 11:15 AM',
+        body: 'Prioritize review of clause 14.2 liability cap compatibility with indian Contract Act (Section 23 & 73).',
+      },
+      {
+        id: 'n2',
+        at: '10 Sep 2026 11:15 AM',
+        body: 'Prioritize review of clause 14.2 liability cap compatibility with indian Contract Act (Section 23 & 73).',
+      },
+      {
+        id: 'n3',
+        at: '10 Sep 2026 11:15 AM',
+        body: 'Prioritize review of clause 14.2 liability cap compatibility with indian Contract Act (Section 23 & 73).',
+      },
+    ],
+  },
+};
