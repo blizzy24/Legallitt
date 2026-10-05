@@ -872,3 +872,336 @@ export const ADV_PAYMENT_DETAIL = {
  * and filed at "22 Sep 2026, 11:30 AM". Same payment, two dates two days apart.
  */
 export const ADV_PAYMENT_DATE_CONFLICT = { list: '24 Sep', detail: '22 Sep' };
+
+// ═════════════════════════════════════════════════════════════════════════════
+// ADVOCATE LEGAL ADVICE FLOW (designs 160-182)
+//
+// ─────────────────────────────────────────────────────────────────────────────
+// ⚠ EVERY "AI" FIELD BELOW IS A STATIC STRING COPIED FROM THE DESIGN.
+//
+// Nothing is generated. There is no model provider, no document ingestion, no OCR,
+// no retrieval and no citation grounding. The page numbers in the action plan
+// ("IP_Licensing_Draft_v3.2.pdf • Page 92") are drawn text, not references into a
+// real document.
+//
+// A real version of these five surfaces — AI Refresh, AI Document Review, AI
+// Recommended Action Plan, Legalitt AI chat, Legal AI Copilot — needs:
+//   - a model provider, and a decision about whether client documents may leave the
+//     jurisdiction to reach it;
+//   - document ingestion and OCR, since the drawn flow reads 160 pages of PDFs;
+//   - citation grounding, because the action plan cites specific pages and an
+//     ungrounded citation to a page that does not say what is claimed is worse than
+//     no citation;
+//   - and a position on accuracy and liability. This is a legal product: an advocate
+//     acting on "Section 27 Restraint of Trade" because a model surfaced it is
+//     professionally accountable for that advice. "AI generated · Review before use"
+//     is drawn on the screens, but who carries the risk is not a UI question.
+// That is a scope decision, not a build task.
+// ─────────────────────────────────────────────────────────────────────────────
+//
+// ─────────────────────────────────────────────────────────────────────────────
+// ⚠ COMMISSION CONFLICT — TWO DIFFERENT PLATFORM CUTS, THREE DIFFERENT NAMES.
+//
+//   design/157   Platform Facilitation Fee      5%   + Escrow Tech & Regulatory 1%
+//                                                    = 6% total
+//   design/164   Platform Service Charge       10%
+//   design/181   Advocate Guild Platform Retainer  10%
+//
+// The arithmetic inside each screen is self-consistent, so these are not rounding
+// errors — they are two different commercial models drawn in the same batch. 10% is
+// what these screens draw, so ADV_COMMISSION_10 is what this flow computes from;
+// design/157's 6% stays in ADV_COMMISSION for the screen that draws it. Both are
+// recorded so the client can pick one. On a ₹28,500 retainer the difference is
+// ₹1,140 to the advocate on a single consultation.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const ADV_COMMISSION_10 = {
+  /** design/164 "Platform Service Charge" / design/181 "Advocate Guild Platform Retainer". */
+  platformRate: 0.1,
+  labels: {
+    schedule: 'Platform Service Charge',
+    completed: 'Advocate Guild Platform Retainer',
+  },
+};
+
+/** Net to the advocate under the 10% model these screens draw. */
+export function advNetAt10(grossFee: number) {
+  const platform = Math.round(grossFee * ADV_COMMISSION_10.platformRate);
+  return { grossFee, platformFee: platform, net: grossFee - platform };
+}
+
+// ── Responses / cases list (design/162) ──────────────────────────────────────
+//
+// REPORTED — TWO CLIPPED FILTER LABELS, as on design/151 and design/155. The first
+// row ends "Co…" and the second "Property Sea…". Inferred as "Completed (12)" — the
+// stat cells above read REVIEW 3, PROGRESS 5, RESOLVED 12, and 3 + 5 + 12 = 20,
+// which is the All count — and "Property Search Report", the service name used
+// everywhere else. Both are inferences.
+
+export type AdvCaseStatus =
+  | 'draft-in-progress'
+  | 'changes-requested'
+  | 'needs-review'
+  | 'completed';
+
+export type AdvResponseCase = {
+  id: string;
+  service: string;
+  serviceIcon: 'notice' | 'fir' | 'property' | 'advice';
+  status: AdvCaseStatus;
+  statusLabel: string;
+  client: string;
+  when: string;
+  matter: string;
+  note: string;
+  noteQuote?: string;
+  noteIcon: 'draft' | 'message' | 'docs' | 'done';
+};
+
+export const ADV_RESPONSE_STATS = [
+  { label: 'REVIEW', value: '3', chip: 'Action', tone: 'brand' as const },
+  { label: 'PROGRESS', value: '5', chip: 'Active', tone: 'brand' as const },
+  { label: 'RESOLVED', value: '12', chip: 'Done', tone: 'green' as const },
+];
+
+export const ADV_RESPONSE_FILTERS = ['All (20)', 'Needs Review (3)', 'In Progress (5)', 'Completed (12)'];
+export const ADV_SERVICE_FILTERS = ['All Services', 'Legal Notice', 'FIR Draft', 'Property Search Report'];
+
+export const ADV_RESPONSE_CASES: AdvResponseCase[] = [
+  {
+    id: 'ananya-deshmukh',
+    service: 'Legal Notice',
+    serviceIcon: 'notice',
+    status: 'draft-in-progress',
+    statusLabel: 'Draft in Progress',
+    client: 'Ananya Deshmukh',
+    when: 'Today • 10:42 AM',
+    matter: 'Legal Notice',
+    note: 'Notice draft is ready for review.',
+    noteIcon: 'draft',
+  },
+  {
+    id: 'ananya-singh',
+    service: 'FIR Draft',
+    serviceIcon: 'fir',
+    status: 'changes-requested',
+    statusLabel: 'Changes Requested',
+    client: 'Ananya Singh',
+    when: 'Yesterday • 4:18 PM',
+    matter: 'Payment Fraud (Cybercell)',
+    note: 'Client requested changes:',
+    noteQuote: '"Please correct incident date to 14th Sept."',
+    noteIcon: 'message',
+  },
+  {
+    id: 'rohan-mehta',
+    service: 'Property Search Report',
+    serviceIcon: 'property',
+    status: 'needs-review',
+    statusLabel: 'Needs Review',
+    client: 'Rohan Mehta',
+    when: '18 Sep 2026',
+    matter: 'Property Title Search (Survey No. 412)',
+    note: '2 documents still need review before title certification.',
+    noteIcon: 'docs',
+  },
+  {
+    id: 'vivek-jain',
+    service: 'Legal Advice',
+    serviceIcon: 'advice',
+    status: 'completed',
+    statusLabel: 'Completed',
+    client: 'Vivek Jain',
+    when: '16 Sep 2026',
+    matter: 'Commercial Contract Dispute',
+    note: 'Consultation completed. Advice memo sent to client.',
+    noteIcon: 'done',
+  },
+];
+
+// ── Incoming request detail (design/163, with 160 and 161 as shorter cuts) ────
+//
+// REPORTED — design/163's requested window reads "Today, Oct 24", two months adrift
+// of the app's September 2026. Same stale October date as design/95 and design/99.
+// Normalised to September below.
+//
+// REPORTED — the brief describes the AI stat cells as PARTIES 4; design/163 draws
+// PARTIES 3. The drawn value is used.
+
+export const ADV_REQUEST = {
+  id: '2024-88C',
+  ref: 'Ref #2024-88C',
+  expirySeconds: 17 * 3600 + 42 * 60,
+  retainer: {
+    label: 'Advisory Retainer',
+    fee: 28500,
+    duration: '45 min',
+    chip: 'Priority Review',
+    deadline: 'Court/Board Deadline',
+  },
+  client: {
+    initials: 'AD',
+    name: 'Ananya Deshmukh',
+    title: 'Managing Director at Finova Tech India Pvt. Ltd.',
+    tier: 'Enterprise Tier',
+    priorCases: '4 Prior Cases',
+    jurisdiction: 'BKC, Mumbai (IST)',
+    language: 'English, Hindi, Marathi',
+    verified: 'ID Verified',
+  },
+  briefing: {
+    practice: 'Corporate & Commercial',
+    mode: 'Video • 45m',
+    // design/163 draws "Today, Oct 24"; moved to September to match the app.
+    window: 'Today, Sep 24 • 4:00 PM – 4:45 PM (GMT+1)',
+  },
+  summary:
+    'We require immediate legal advisory regarding an IP assignment and software licensing agreement with an international counterpart. Seeking review of strict Indian Contract Act & Bombay High Court exclusive jurisdiction clauses, liability caps, and indemnification exposure prior to final board execution tomorrow morning.',
+};
+
+/** AI Refresh (design/163). Static text; nothing synthesises it. */
+export const ADV_AI_REFRESH = {
+  chip: 'Executive',
+  subtitle: 'Clear summary for quick review',
+  explanation: 'Original description has been simplified and organized for easier reading.',
+  blockLabel: 'AI REFRESHED SUMMARY',
+  blockChip: 'Synthesized Brief',
+  bullets: [
+    {
+      label: 'Issue:',
+      body: 'Pre-execution review of international IP assignment & software licensing agreement.',
+    },
+    {
+      label: 'Background:',
+      body: 'Cross-border contract with counterparty; strict review needed for Indian Contract Act compliance, Bombay High Court exclusive jurisdiction, liability caps, and indemnification risks.',
+    },
+    {
+      label: 'What client needs:',
+      body: 'Urgent advisory and risk mitigation before final board execution tomorrow morning.',
+    },
+    { label: 'Legal View:', body: 'Related laws, rules, and important cases.' },
+  ],
+  footer: 'AI generated • Review before use',
+  original: 'View Original',
+};
+
+export const ADV_REQUEST_FILINGS = [
+  {
+    id: 'ip-licensing',
+    kind: 'pdf' as const,
+    name: 'IP_Licensing_Draft_v3.2.pdf',
+    chip: 'AI Reviewed',
+    meta: '148 pages • 1.8 MB • Uploaded 2h ago',
+  },
+  {
+    id: 'jurisdiction',
+    kind: 'doc' as const,
+    name: 'Jurisdiction_Summary_Addendum.pdf',
+    chip: 'AI Reviewed',
+    meta: '12 pages • 640 KB • Uploaded 2h ago',
+  },
+];
+
+/** AI Document Review (design/163). Static. */
+export const ADV_AI_DOCS = {
+  title: 'AI Document Review',
+  chip: 'CONSOLIDATED',
+  toggleLabel: 'AI Review On',
+  description: 'Let AI read your uploaded documents and create one clear case summary.',
+  processing:
+    'AI reads all pages across all uploaded documents (2 documents • 160 pages) and prepares one consolidated summary.',
+  completeTitle: 'Document review complete',
+  completeSub: '160 of 160 pages reviewed',
+  completeChip: 'Summary ready',
+  stats: [
+    { label: 'DOCS', value: '2', risk: false },
+    { label: 'PAGES', value: '160', risk: false },
+    { label: 'DATES', value: '4', risk: false },
+    { label: 'PARTIES', value: '3', risk: false },
+    { label: 'RISKS', value: '2', risk: true },
+  ],
+  summaryTitle: 'AI Document Summary',
+  summarySub: 'Key information synthesized from all uploaded filings',
+  sections: [
+    {
+      label: 'CASE OVERVIEW',
+      body: 'Cross-border intellectual property assignment and master software licensing transaction between Finova Tech India Pvt. Ltd. and Apex Global Technologies Inc.',
+    },
+    {
+      label: 'PARTIES INVOLVED',
+      cite: 'IP_Licensing… • Pg 1',
+      body: 'Finova Tech India Pvt. Ltd. (Assignor/Licensor) & Apex Global Technologies Inc., Delaware (Assignee/Licensee).',
+    },
+    {
+      label: 'KEY FACTS',
+      cite: 'IP_Licensing… • Pg 14',
+      body: 'Multi-jurisdictional transfer of core algorithmic IP with ongoing SaaS co-development and reciprocal licence-back provisions.',
+    },
+  ],
+  disclaimer: 'AI-generated summary. Please verify important details against the original documents.',
+};
+
+export type AdvActionState = 'in-progress' | 'not-started';
+export type AdvActionButton = 'view-source' | 'add-note' | 'mark-done';
+
+/** AI Recommended Action Plan (design/163). Static; every button is inert. */
+export const ADV_AI_ACTIONS: {
+  n: string;
+  state: AdvActionState;
+  stateLabel: string;
+  title: string;
+  body: string;
+  source?: string;
+  button: AdvActionButton;
+}[] = [
+  {
+    n: '01',
+    state: 'in-progress',
+    stateLabel: 'IN PROGRESS',
+    title: 'Verify Jurisdiction and Cross-Border Defensibility',
+    body: 'Confirm the correct jurisdiction and review whether the matter can be addressed under the applicable legal framework.',
+    source: 'IP_Licensing_Draft_v3.2.pdf • Page 92',
+    button: 'view-source',
+  },
+  {
+    n: '02',
+    state: 'not-started',
+    stateLabel: 'NOT STARTED',
+    title: 'Check Section 27 Restraint of Trade Concerns',
+    body: 'Review the relevant contract terms and assess whether the restraint-of-trade clause requires further legal review.',
+    source: 'Jurisdiction_Summary_Addendum.pdf • Page 9',
+    button: 'view-source',
+  },
+  {
+    n: '03',
+    state: 'not-started',
+    stateLabel: 'NOT STARTED',
+    title: 'Clarify Minimum Escrow & Execution Terms',
+    body: 'Confirm the payment, escrow and execution conditions that apply to the proposed arrangement.',
+    source: 'IP_Licensing_Draft_v3.2.pdf • Page 54',
+    button: 'add-note',
+  },
+  {
+    n: '04',
+    state: 'not-started',
+    stateLabel: 'NOT STARTED',
+    title: 'Prepare Pre-Execution Risk Advisory',
+    body: "Review the identified risks and prepare the advocate's proposed safeguards before execution.",
+    button: 'add-note',
+  },
+  {
+    n: '05',
+    state: 'not-started',
+    stateLabel: 'NOT STARTED',
+    title: 'Discuss Action Plan in Scheduled Video Consultation',
+    body: 'Discuss the identified issues, required documents and proposed next steps with the client.',
+    button: 'mark-done',
+  },
+];
+
+export const ADV_INFO_NEEDED = {
+  title: 'Information Needed',
+  chip: '2 PENDING',
+  items: ['Schedule B (Patent & Trademark List)', 'Prior Counterparty Board Resolution'],
+  disclaimer: 'AI-generated suggestions. Verify important facts before taking action.',
+};
