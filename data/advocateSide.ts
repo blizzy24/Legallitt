@@ -482,3 +482,82 @@ export const ADV_CLIENT_ACTIVITY = [
 
 export const ADV_CLIENT_FOOTER =
   'All consultations & docket files privileged under BCI rules.';
+
+// ── Client cases (design/153) ────────────────────────────────────────────────
+//
+// design/153 is a 284x1024 device mock-up, roughly 0.73 px/pt, so its geometry is
+// derived rather than measured to the usual tolerance.
+//
+// Drawn as-is: "Special Writ Appeal" is the file's spelling of "Appeal".
+
+export type AdvCase = {
+  id: string;
+  court: string;
+  status: 'active' | 'completed';
+  statusLabel: string;
+  title: string;
+  type: string;
+  courtLine: string;
+  leftLabel: string;
+  leftValue: string;
+  rightLabel: string;
+  rightValue: string;
+  /** Active cases show a hearing bar; the completed one shows a settlement line. */
+  hearing?: { date: string; cause: string };
+  settlement?: string;
+  action: string;
+};
+
+export const ADV_CLIENT_CASES: AdvCase[] = [
+  {
+    id: 'hc-2026-1048',
+    court: 'HIGH COURT • INDORE BENCH',
+    status: 'active',
+    statusLabel: 'Active',
+    title: 'Rahul Sharma vs. ABC Enterprises',
+    type: 'Civil Matter • Special Writ Appeal',
+    courtLine: 'Madhya Pradesh High Court',
+    leftLabel: 'CASE ID',
+    leftValue: 'HC-2026-1048',
+    rightLabel: 'CNR / FILING NO',
+    rightValue: 'WP/2026/8492',
+    hearing: { date: '24 Sep 2026 • 10:30 AM', cause: 'Cause List #14' },
+    action: 'View Case',
+  },
+  {
+    id: 'dc-2026-1042',
+    court: 'DISTRICT & SESSIONS COURT',
+    status: 'active',
+    statusLabel: 'Active',
+    title: 'Rahul Sharma vs. Verma Enterprises',
+    type: 'Property Matter • Injunction Suit',
+    courtLine: 'District Court, Indore',
+    leftLabel: 'CASE ID',
+    leftValue: 'DC-2026-I042',
+    rightLabel: 'SUIT IDENTIFIER',
+    rightValue: 'Civil Suit No. 814/2026',
+    hearing: { date: '28 Sep 2026 • 02:00 PM', cause: '' },
+    action: 'View Case',
+  },
+  {
+    id: 'ln-2026-0182',
+    court: 'LEGAL NOTICE & RECOVERY',
+    status: 'completed',
+    statusLabel: 'Completed',
+    title: 'Payment Dispute • Notice & Settlement',
+    type: 'Commercial Recovery Notice',
+    courtLine: 'Opposing Party: Apex Logistics Ltd.',
+    leftLabel: 'NOTICE REF',
+    leftValue: 'LN-2026-0182',
+    rightLabel: 'STATUS DATE',
+    rightValue: '12 Aug 2026',
+    settlement: 'Settled via amicable reply & full bank discharge',
+    action: 'View Archived Docket',
+  },
+];
+
+export const ADV_CASE_STATS = [
+  { label: 'Active', value: '2 Matters', tone: 'green' as const },
+  { label: 'Closed', value: '1 Matter', tone: 'muted' as const },
+  { label: 'Total Pool', value: '3 Cases', tone: 'muted' as const },
+];
