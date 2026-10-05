@@ -114,6 +114,43 @@ export const SAVED_ADVOCATES: SavedAdvocate[] = [
       { initials: 'SM', name: 'Sanjay M.', stars: 5, quote: 'Explained every option before we decided.' },
     ],
   },
+  {
+    // Introduced by design/142's conversation list; added here rather than defined
+    // as a parallel record in data/messages.ts.
+    id: 'adv-rohan-mehta',
+    initials: 'RM',
+    name: 'Adv. Rohan Mehta',
+    verified: true,
+    practice: 'Commercial & Contract Disputes',
+    location: 'Indore, Madhya Pradesh',
+    rating: '4.7',
+    fee: '\u20B91,200',
+    feeUnit: '/ session',
+    availability: 'Available today',
+    availableNow: true,
+    barCouncil: 'MP/2291/2016',
+    experience: '10+ Years',
+    education: 'B.A. LL.B.',
+    courts: 'District & High Court',
+    languages: 'Hindi, English',
+    practiceAreas: ['Commercial Law', 'Contract Law', 'Arbitration', 'Recovery'],
+    about:
+      'Adv. Rohan Mehta advises on commercial and contract disputes, with a focus on recovery matters and arbitration. He represents businesses before the District and High Courts.',
+    reviewCount: 98,
+    availabilityLabel: 'Available for Consultation',
+    availabilityChip: 'Slots open',
+    days: 'Mon \u2013 Sat',
+    hours: '10:00 AM \u2013 7:00 PM',
+    reviews: [
+      {
+        initials: 'VJ',
+        name: 'Vivek J.',
+        stars: 5,
+        quote: 'Clear advice on a difficult commercial matter.',
+      },
+      { initials: 'SM', name: 'Sunil M.', stars: 4, quote: 'Responsive and thorough.' },
+    ],
+  },
 ];
 
 export const ADVOCATES_HEADER = {
