@@ -1275,3 +1275,84 @@ export const ADV_SCHEDULE = {
 /** 8,000 + 17,650 against the computed net. Used to assert the split in the UI. */
 export const ADV_SCHEDULE_SPLIT_MATCHES_NET =
   ADV_SCHEDULE.hold + ADV_SCHEDULE.advance === advNetAt10(ADV_SCHEDULE.grossFee).net;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Propose an alternate time (design/165).
+//
+// ⚠ design/165 draws the slot grid with two collisions rather than layouts:
+// the "Court" label sits ON TOP of the struck-through 12:00 PM slot text, and the
+// trailing availability dot abuts the slot text with no gap. Both are rebuilt as
+// proper layout here — see the notes in the screen.
+//
+// ⚠ The message card is titled "Message to Legalitt (Optional)" AND carries a
+// right-hand "Optional" label. The word appears twice; both are drawn.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type AdvSlotState = 'available' | 'blocked' | 'original' | 'selected';
+
+export const ADV_PROPOSE = {
+  title: 'Propose Alternate Time',
+  subtitle: 'Suggest a different time that works for you.',
+  sessionChip: 'Alternative Requested',
+  client: 'Ananya Deshmukh',
+  mode: 'Video Chamber',
+  matter: 'Cross-Border IP Licensing & Software Contract',
+  originalLabel: 'Original Requested Time:',
+  original: '24 Oct 2024, 4:00 PM – 4:45 PM',
+
+  /** The month design/165 draws. 1 Oct 2024 is a Tuesday, which the grid matches. */
+  month: { year: 2024, month: 9 },
+  selectedDate: 24,
+  /** Dates drawn with an availability dot. */
+  datesWithSlots: [25, 28, 29, 30, 31],
+  legend: [
+    { label: 'Available Slots', tone: 'available' as const },
+    { label: 'Selected Date', tone: 'selected' as const },
+    { label: 'Unavailable', tone: 'blocked' as const },
+  ],
+
+  durationChip: '45 Min Session',
+  slots: [
+    { id: '10:00', label: '10:00 AM – 10:45 AM', state: 'available' as AdvSlotState },
+    { id: '10:30', label: '10:30 AM – 11:15 AM', state: 'available' as AdvSlotState },
+    { id: '11:00', label: '11:00 AM – 11:45 AM', state: 'available' as AdvSlotState },
+    { id: '11:30', label: '11:30 AM – 12:15 PM', state: 'available' as AdvSlotState },
+    { id: '12:00', label: '12:00 PM – 12:45 PM', state: 'blocked' as AdvSlotState, note: 'Court' },
+    { id: '16:00', label: '04:00 PM – 04:45 PM', state: 'original' as AdvSlotState, note: 'Original' },
+    { id: '17:00', label: '05:00 PM – 05:45 PM', state: 'available' as AdvSlotState },
+    { id: '17:30', label: '05:30 PM – 06:15 PM', state: 'selected' as AdvSlotState },
+    { id: '18:00', label: '06:00 PM – 06:45 PM', state: 'available' as AdvSlotState },
+    { id: '18:30', label: '06:30 PM – 07:15 PM', state: 'available' as AdvSlotState },
+  ],
+  customTime: { label: 'Custom Time', hint: 'Choose a time manually' },
+
+  customConfig: {
+    title: 'Custom Slot Configuration',
+    chip: 'IST (UTC+05:30)',
+    startLabel: 'Start Time',
+    startValue: '05:15 PM',
+    durationLabel: 'Session Duration',
+    durationValue: '45 minutes',
+  },
+
+  proposed: {
+    label: 'YOUR PROPOSED TIME',
+    chip: 'Slot Selected',
+    date: '24 Oct 2024',
+    time: '5:30 PM – 6:15 PM IST',
+    mode: 'Video Chamber',
+  },
+
+  message: {
+    title: 'Message to Legalitt (Optional)',
+    rightLabel: 'Optional',
+    sub: 'Provide a brief note explaining the suggested rescheduling.',
+    placeholder:
+      'Example: I have an urgent High Court listing at the original time. Please confirm this new slot so we can proceed.',
+  },
+
+  submit: 'Propose New Time',
+  decline: 'Decline Consultation',
+  caption:
+    'The proposed alternative schedule will be communicated to the client for their review and explicit confirmation under Legalitt chamber terms.',
+};
