@@ -1784,3 +1784,34 @@ export const ADV_RESCHEDULE = {
   title: 'Reschedule the call',
   messageChips: ['+ Court commitment', '+ Reviewing filings', '+ Earliest opening'],
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// End Consultation confirmation (design/179).
+//
+// ⚠ The figures are static. "16m 48s of 45:00 scheduled" and the pro-rata
+// disbursement imply a billed session clock and an escrow release rule that the
+// prototype has neither of — see the pause/exclusion note above ADV_PAUSED.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const ADV_END = {
+  sessionChip: 'Session #88C',
+  title: 'End Consultation?',
+  body: [
+    'Are you sure you want to end this consultation?',
+    'Your consultation summary, encrypted transcript, and billable docket notes will be automatically saved to your vault.',
+  ],
+  summary: {
+    clientLabel: 'Client',
+    client: 'Ananya Deshmukh',
+    matterLabel: 'Legal Matter',
+    matter: 'Cross-Border IP Licensing & Mumbai Jurisdiction Structuring',
+    matterRef: 'Matter #2024-88C',
+    cells: [
+      { label: 'Time', value: '16m 48s', note: 'of 45:00 scheduled' },
+      { label: 'Disbursement', value: 'Pro-Rata', note: 'Via Chamber Escrow' },
+    ],
+    footnote: 'Escrow payout calculated pro-rata per Legalitt Chamber protocol in ₹ (INR).',
+  },
+  confirm: 'End Consultation',
+  cancel: 'Continue Consultation',
+};
