@@ -720,3 +720,134 @@ export const ADV_MESSAGE_STATS = [
   { label: 'Unread', value: '2', unit: 'New', sub: 'Action req.', dot: true },
   { label: 'Avg SLA', value: '<15', unit: 'm', sub: 'Pristine', dot: false },
 ];
+
+// ── Client payments (design/156) and payment detail (design/157) ─────────────
+//
+// MEASUREMENT CAVEAT — design/156 is a 239x1024 device mock-up, about 0.61 px/pt.
+// Several transaction references sit at the edge of legibility at that size; the
+// values below are the best reading of the file and should be checked against a
+// clean export before they are trusted as data.
+
+export type AdvPaymentStatus = 'received' | 'pending' | 'refunded';
+
+export type AdvPayment = {
+  id: string;
+  service: string;
+  amount: number;
+  status: AdvPaymentStatus;
+  matter: string;
+  transaction: string;
+  counterparty: string;
+  action: string;
+};
+
+export const ADV_PAYMENTS: AdvPayment[] = [
+  {
+    id: 'hc-2026-1048',
+    service: 'High Court Representation',
+    amount: 35000,
+    status: 'received',
+    matter: 'Special Writ Appeal • HC-2026-1048',
+    transaction: 'NEFT Bank Transfer • Ref: TXN-3424  24 Sep, 11:30 AM',
+    counterparty: 'ABC Enterprises Settlement Escrow',
+    action: 'View Docket Receipt',
+  },
+  {
+    id: 'dc-2026-1042',
+    service: 'District Court Representation',
+    amount: 20000,
+    status: 'pending',
+    matter: 'Injunction Suit • DC-2026-1042',
+    transaction: 'Escrow Invoice Raised • Due in 2 d  16 Sep, 03:15 PM',
+    counterparty: 'Verma Enterprises Counter-Claim',
+    action: 'Send Reminder',
+  },
+  {
+    id: 'cs-2026-0312',
+    service: 'Legal Consultation Strategy',
+    amount: 5000,
+    status: 'received',
+    matter: 'Chamber Strategy Session • CS-2026-0312',
+    transaction: 'UPI / QR Settlement • Instant Verif  12 Sep, 05:00 PM',
+    counterparty: 'Retainer Chamber Advisory',
+    action: 'Receipt Generated',
+  },
+  {
+    id: 'df-2026-0199',
+    service: 'Document Forensic & Verification',
+    amount: 15000,
+    status: 'received',
+    matter: 'Signature Sampling • DF-2026-0199',
+    transaction: 'Online Card Escrow • Certified  28 Aug, 02:40 PM',
+    counterparty: 'Expert Forensic Witness Deposit',
+    action: 'View Invoice',
+  },
+  {
+    id: 'ps-2026-0082',
+    service: 'Property Title Search Advance',
+    amount: 10000,
+    status: 'received',
+    matter: 'Cadastral Verification • PS-2026-0082',
+    transaction: 'Net Banking Settlement • Sub-Sep  15 Aug, 10:15 AM',
+    counterparty: 'Search Registry Search No. 4410',
+    action: 'View Clearance',
+  },
+  {
+    id: 'ln-2026-0182',
+    service: 'Pre-litigation Mediation Fee',
+    amount: 2500,
+    status: 'refunded',
+    matter: 'Amicable Settlement • LN-2026-0182',
+    transaction: 'Reversal to Client Escrow Account  02 Aug, 04:00 PM',
+    counterparty: 'Mediation Closed with Compromise',
+    action: 'Audit Voucher',
+  },
+];
+
+export const ADV_PAYMENT_SUMMARY = {
+  totalReceived: 65000,
+  totalChip: 'Settled',
+  escrowLine: 'Escrow Released • Settled',
+  pending: 20000,
+  pendingChip: '1 Due',
+  records: '8',
+};
+
+/**
+ * The fee breakdown, COMPUTED from ADV_COMMISSION rather than hardcoded, so the
+ * percentages live in one place. design/157's drawn figures are in
+ * ADV_COMMISSION.example for comparison.
+ */
+export function advFeeBreakdown(grossFee: number) {
+  const platform = Math.round(grossFee * ADV_COMMISSION.platformFacilitationRate);
+  const escrow = Math.round(grossFee * ADV_COMMISSION.escrowRegulatoryRate);
+  return {
+    grossFee,
+    platformFacilitationFee: platform,
+    escrowRegulatoryFee: escrow,
+    netEarnings: grossFee - platform - escrow,
+  };
+}
+
+export const ADV_PAYMENT_DETAIL = {
+  id: 'hc-2026-1048',
+  ref: 'TXN-3424',
+  chip: 'PAYMENT RECEIVED',
+  verified: 'Escrow Verified',
+  totalLabel: 'TOTAL CLIENT PAYMENT',
+  depositLine: 'Deposited to Legalitt escrow on 24 Sep 2026',
+  matter: 'Rahul Sharma vs. ABC Enterprises',
+  matterRef: 'Special Writ Appeal • HC-2026-1048',
+  client: 'Rahul Sharma',
+  service: 'High Court Representation',
+  filed: '24 Sep 2026, 11:30 AM',
+  protection: 'Funds are held in escrow and released on milestone certification.',
+  payoutDate: '27 Sep 2026',
+  payoutNote:
+    'Net earnings are disbursed to your primary account within 3 working days of escrow release.',
+  bank: { chip: 'PRIMARY', masked: 'HDFC •••• 8821', ifsc: 'HDFC0001234', beneficiary: 'Adv. Abhishek Chouhan' },
+  receipts: [
+    { id: 'tds', name: 'TDS Certificate (Form 16A)', meta: 'PDF • 182 KB' },
+    { id: 'invoice', name: 'Tax Invoice & GST Summary', meta: 'PDF • 240 KB' },
+  ],
+};
