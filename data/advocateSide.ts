@@ -831,23 +831,44 @@ export function advFeeBreakdown(grossFee: number) {
 
 export const ADV_PAYMENT_DETAIL = {
   id: 'hc-2026-1048',
-  ref: 'TXN-3424',
+  ref: 'PAY-HC-2026-1048',
   chip: 'PAYMENT RECEIVED',
   verified: 'Escrow Verified',
   totalLabel: 'TOTAL CLIENT PAYMENT',
-  depositLine: 'Deposited to Legalitt escrow on 24 Sep 2026',
+  grossFee: 35000,
+  depositLine: 'Deposited via NEFT on 22 September 2026',
   matter: 'Rahul Sharma vs. ABC Enterprises',
-  matterRef: 'Special Writ Appeal • HC-2026-1048',
+  matterRef: 'HC-2026-1048 • Madhya Pradesh High Court',
   client: 'Rahul Sharma',
-  service: 'High Court Representation',
-  filed: '24 Sep 2026, 11:30 AM',
-  protection: 'Funds are held in escrow and released on milestone certification.',
-  payoutDate: '27 Sep 2026',
+  clientRef: 'CLI-2026-0148',
+  service: 'High Court Writ',
+  filed: '22 Sep 2026, 11:30 AM',
+  protection: 'Protected under Advocate Client Escrow Protocol',
+  payoutDate: 'Payout Scheduled for 25 Sep 2026',
   payoutNote:
-    'Net earnings are disbursed to your primary account within 3 working days of escrow release.',
-  bank: { chip: 'PRIMARY', masked: 'HDFC •••• 8821', ifsc: 'HDFC0001234', beneficiary: 'Adv. Abhishek Chouhan' },
+    'Escrow clearance holds funds for 72 hours per High Court mediation window rules. Disbursement will trigger via direct RTGS.',
+  bank: {
+    name: 'HDFC Bank Ltd',
+    type: 'Advocate Current Account',
+    chip: 'PRIMARY',
+    masked: '••••  ••••  4821',
+    ifsc: 'IFSC: HDFC0001048',
+    // REPORTED — THE BENEFICIARY IS THE WRONG ADVOCATE. design/157 pays out to
+    // "Adv. Priya Sharma Chambers", but this is Adv. Abhishek Chouhan's app
+    // (design/148 greets "Abhishek", design/151 shows the AB avatar). Priya Sharma
+    // is a saved advocate on the CLIENT side, and the client on this very payment is
+    // Rahul Sharma. Drawn as-is; money is going to the wrong name.
+    beneficiary: 'Adv. Priya Sharma Chambers',
+  },
   receipts: [
-    { id: 'tds', name: 'TDS Certificate (Form 16A)', meta: 'PDF • 182 KB' },
-    { id: 'invoice', name: 'Tax Invoice & GST Summary', meta: 'PDF • 240 KB' },
+    { id: 'escrow', name: 'Official Escrow Receipt', meta: 'RCT-2026-8819.pdf • 340 KB' },
+    { id: 'gst', name: 'GST Tax Invoice', meta: 'INV-2026-1048.pdf • 420 KB' },
   ],
 };
+
+/**
+ * REPORTED — THE LIST AND THE DETAIL DISAGREE ON THE DATE. design/156's row for this
+ * payment reads "24 Sep, 11:30 AM"; design/157 says it was deposited on 22 September
+ * and filed at "22 Sep 2026, 11:30 AM". Same payment, two dates two days apart.
+ */
+export const ADV_PAYMENT_DATE_CONFLICT = { list: '24 Sep', detail: '22 Sep' };
