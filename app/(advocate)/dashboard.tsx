@@ -158,7 +158,7 @@ export default function AdvocateDashboardScreen() {
 
           <Pressable
             accessibilityRole="button"
-            onPress={() => router.push('/(advocate)/availability')}
+            onPress={() => router.push('/advocate/availability')}
             style={styles.manage}
           >
             <View style={styles.manageIcon}>

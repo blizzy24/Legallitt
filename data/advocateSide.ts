@@ -224,3 +224,132 @@ export const ADV_CLIENTS: AdvClient[] = [
 
 /** design/156's figure. See the earnings note at the top of this file. */
 export const ADV_CLIENT_TOTAL_RECEIVED = 65000;
+
+// ── Availability (design/149) ────────────────────────────────────────────────
+//
+// REPORTED — THE LEGEND'S COLOURS ARE NOT THE ONES THE BRIEF DESCRIBED. design/149
+// draws Available as GREEN, Not Available as GREY and Blocked as RED (sampled from
+// the file). The brief had brown / red / grey. Built as drawn.
+//
+// REPORTED — the design answers its own interaction question in its sub-line: "Tap a
+// date to inspect or update slots". So a tap SELECTS a date and shows its slots
+// below; it does not cycle the date's state. Changing a state would need an editor
+// that is not drawn.
+
+export type DateState = 'available' | 'unavailable' | 'blocked';
+
+/** design/149 draws September 2026, with the 10th selected. */
+export const ADV_AVAILABILITY_MONTH = { year: 2026, month: 8 }; // month is 0-based
+export const ADV_AVAILABILITY_SELECTED = 10;
+
+/**
+ * Day-of-month to state for the drawn month. Anything not listed is 'available'.
+ * Sundays are 'unavailable' and the 12th is 'blocked', as drawn.
+ */
+export const ADV_DATE_STATES: Record<number, DateState> = {
+  6: 'unavailable',
+  12: 'blocked',
+  13: 'unavailable',
+  20: 'unavailable',
+  27: 'unavailable',
+};
+
+export const ADV_SELECTED_DATE = {
+  label: '10 Sep 2026',
+  sub: 'Specific date consultation schedule',
+  chip: 'Available',
+  hoursActive: '4 Hours Active',
+  start: '5:00 PM',
+  end: '9:00 PM',
+  slotLabel: 'Evening Slot',
+};
+
+export type WeeklyRow = { day: string; ranges: string[]; on: boolean };
+
+/** design/149's weekly schedule. Sunday is off. */
+export const ADV_WEEKLY: WeeklyRow[] = [
+  { day: 'Monday', ranges: ['10:00 AM – 1:00 PM', '4:00 PM – 8:00 PM'], on: true },
+  { day: 'Tuesday', ranges: ['10:00 AM – 1:00 PM', '4:00 PM – 8:00 PM'], on: true },
+  { day: 'Wednesday', ranges: ['10:00 AM – 1:00 PM', '4:00 PM – 8:00 PM'], on: true },
+  { day: 'Thursday', ranges: ['10:00 AM – 1:00 PM', '4:00 PM – 8:00 PM'], on: true },
+  { day: 'Friday', ranges: ['10:00 AM – 1:00 PM', '4:00 PM – 8:00 PM'], on: true },
+  { day: 'Saturday', ranges: ['10:00 AM – 2:00 PM'], on: true },
+  { day: 'Sunday', ranges: [], on: false },
+];
+
+// ── Notifications (design/150) ───────────────────────────────────────────────
+//
+// REPORTED — NONE OF THE SIX ROWS HAS A DESIGNED DESTINATION. Every row draws a
+// chevron, but no file in the batch shows where any of them leads. They are inert.
+//
+// Drawn as-is, with the file's errors intact: "New cases Request" (casing), "Rahul
+// sharma has request a constitution regarding of divorce metter" — which should
+// almost certainly read "has requested a consultation regarding a divorce matter" —
+// and two body lines that start lower-case.
+
+export type AdvNotification = {
+  id: string;
+  icon: 'calendar' | 'wallet' | 'message' | 'document' | 'consult' | 'case';
+  title: string;
+  body: string;
+  when: string;
+  unread: boolean;
+  section: 'today' | 'earlier';
+};
+
+export const ADV_NOTIFICATIONS: AdvNotification[] = [
+  {
+    id: 'n1',
+    icon: 'calendar',
+    title: 'New cases Request',
+    body: 'Rahul sharma has request a constitution regarding of divorce metter',
+    when: '1 hour ago',
+    unread: true,
+    section: 'today',
+  },
+  {
+    id: 'n2',
+    icon: 'wallet',
+    title: 'Payment Received',
+    body: 'Payment has been added to your wallet',
+    when: '1 hour ago',
+    unread: true,
+    section: 'today',
+  },
+  {
+    id: 'n3',
+    icon: 'message',
+    title: 'New message from Akash',
+    body: 'you have a new message from akash',
+    when: '1 hour ago',
+    unread: true,
+    section: 'today',
+  },
+  {
+    id: 'n4',
+    icon: 'document',
+    title: 'New Legal notice request',
+    body: 'you have a new legal notice request',
+    when: '1 hour ago',
+    unread: true,
+    section: 'today',
+  },
+  {
+    id: 'n5',
+    icon: 'consult',
+    title: 'Consultation Confirmed',
+    body: 'Your consultation with Priya Mehta is confirmed for today at 4 : 00 PM',
+    when: 'Yesterday',
+    unread: false,
+    section: 'earlier',
+  },
+  {
+    id: 'n6',
+    icon: 'case',
+    title: 'Case Updated',
+    body: 'The status of your assigned case has been updated',
+    when: 'Yesterday',
+    unread: false,
+    section: 'earlier',
+  },
+];
