@@ -1,6 +1,7 @@
 import { router } from 'expo-router';
 import {
   ArrowRight,
+  BookOpen,
   Inbox,
   Lock,
   Search,
@@ -41,17 +42,17 @@ const FEATURES = [
   {
     icon: Inbox,
     title: 'Incoming Requests',
-    body: 'New client requests appear here for your review and acceptance.',
-  },
-  {
-    icon: UsersRound,
-    title: 'Direct Engagement',
-    body: 'Clients who engage you directly are added to your chamber.',
+    body: 'Accept client representation briefs or advisory consultation requests.',
   },
   {
     icon: ShieldCheck,
+    title: 'Direct Engagement',
+    body: 'Clients automatically sync once digital vakalatnama or escrow is verified.',
+  },
+  {
+    icon: BookOpen,
     title: 'Privileged Ledger',
-    body: 'Every matter is recorded under lawyer-client privilege.',
+    body: 'Case proceedings, filings, hearing notices & invoices cleanly linked.',
   },
 ];
 
@@ -91,7 +92,7 @@ export default function AdvocateClientsEmptyScreen() {
           <Lock size={t.searchIcon} color={colors.textBody} />
           <TextInput
             style={styles.searchInput}
-            placeholder="Search by name, case ID, contact..."
+            placeholder="Search clients, dossiers, or CNRs..."
             placeholderTextColor={colors.textMuted}
             editable={false}
           />
@@ -104,7 +105,7 @@ export default function AdvocateClientsEmptyScreen() {
 
         <Text style={styles.emptyTitle}>No Clients Yet</Text>
         <Text style={styles.emptyBody}>
-          Your chamber ledger is empty. Client requests and direct engagements will appear here.
+          Clients connected to your legal matters and dockets will appear here.
         </Text>
 
         <View style={styles.features}>
@@ -242,7 +243,16 @@ const styles = StyleSheet.create({
   },
 
   features: { marginTop: t.featureGap },
-  feature: { marginTop: t.featureRowGap, flexDirection: 'row' },
+  feature: {
+    marginTop: t.featureRowGap,
+    borderRadius: 12,
+    backgroundColor: colors.card,
+    borderWidth: 1,
+    borderColor: '#EFEAE2',
+    padding: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   featureIcon: {
     width: t.featureIcon,
     height: t.featureIcon,
