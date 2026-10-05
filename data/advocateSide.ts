@@ -1356,3 +1356,67 @@ export const ADV_PROPOSE = {
   caption:
     'The proposed alternative schedule will be communicated to the client for their review and explicit confirmation under Legalitt chamber terms.',
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Consultation confirmed (design/166).
+//
+// ⚠ design/166 clips two strings behind overlapping elements rather than laying
+// them out: the client's title runs under the ₹25,650 column, and the second
+// document name runs under the Review chip. Both WRAP here, per the project's
+// "shrink or wrap, never ellipsize" rule.
+//
+// ⚠ The notes are static. "+ Add AI Action Plan and brief in Notes" would pull the
+// action plan from design/163, which is itself static mock content — see the AI
+// scope note above ADV_AI_REFRESH. Edit and Review are inert.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const ADV_CONFIRMED = {
+  title: 'Consultation Confirmed',
+  docket: 'Docket #2024-88C • Escrow Secured',
+  /** The chip counts down from here. */
+  countdownSeconds: 18 * 60,
+  client: {
+    initials: 'AD',
+    name: 'Ananya Deshmukh',
+    title: 'Managing Director, Finova Technologies',
+  },
+  escrowAmount: 25650,
+  escrowLabel: 'Escrow Funded',
+  matterLabel: 'MATTER',
+  practice: 'Corporate & Commercial IP',
+  matter: 'Cross-Border IP Licensing & Exclusive Jurisdiction Structuring',
+  chips: ['End-to-End Encrypted', '45 Minutes'],
+  date: { label: 'Date', value: 'Today, 24 Oct 2024' },
+  time: { label: 'Scheduled Time', value: '4:00 PM – 4:45 PM IST' },
+
+  summaryLabel: 'EXECUTIVE CASE SUMMARY',
+  summary:
+    'Advisory review of cross-border software IP assignment and licensing agreement between Finova Tech India Pvt. Ltd. and global counterpart. Focus on Bombay High Court jurisdiction clauses, liability caps under Indian Contract Act, and indemnification exposure prior to board signing tomorrow morning.',
+  references: [
+    'Governing Law: Indian Contract Act, 1872',
+    'Arbitration: MCIA Mumbai / DIAC Delhi',
+  ],
+
+  documents: [
+    { id: 'ip', name: 'IP_Licensing_Draft_v3.2.pdf', meta: 'PDF • 1.8 MB • Client Upload' },
+    {
+      id: 'juris',
+      name: 'Jurisdiction_Summary_Addendum.pdf',
+      meta: 'PDF • 640 KB • Client Upload',
+    },
+  ],
+
+  notes: {
+    label: 'MAKE YOUR NOTES FOR CONSULTATION',
+    edit: 'Edit',
+    warning: '* THIS NOTE WILL APPEAR IN CALL & CHAT IN NOTES BUTTON',
+    privacy: 'Visible only to you',
+    entries: [
+      'Check Section 14.2 regarding indemnification carve-outs for gross negligence under Sections 23 & 73 Indian Contract Act. Prepare clause comparison sheet for Bombay High Court jurisdiction compatibility.',
+      'Confirm signatory authorization threshold per Ministry of Corporate Affairs (MCA21) registry lookup.',
+    ],
+    add: 'Add AI Action Plan and brief in Notes',
+  },
+
+  enter: 'Enter Consultation',
+};
