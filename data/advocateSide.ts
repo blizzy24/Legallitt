@@ -1224,6 +1224,23 @@ export const ADV_INFO_NEEDED = {
 // Ltd." / "BKC, Mumbai" there. Both are drawn text and both are kept as drawn.
 // ─────────────────────────────────────────────────────────────────────────────
 
+// ─────────────────────────────────────────────────────────────────────────────
+// ⚠ DATE NORMALISATION.
+//
+// designs 164, 165, 166, 167, 176, 180 and 181 all read OCTOBER 2024, while
+// design/172's private notes read 10 Sep 2026 and the whole client side is anchored
+// to MOCK_TODAY = '2026-09-19' (data/cases.ts). The advocate flow is therefore two
+// years and one month adrift of the rest of the app.
+//
+// All of them are normalised to SEPTEMBER 2026, keeping the drawn day numbers:
+// "24 Oct 2024" → "24 Sep 2026", "Today, Oct 24" → "Today, Sep 24", and the
+// calendar month October 2024 → September 2026.
+//
+// 1 Oct 2024 and 1 Sep 2026 are both Tuesdays, so design/165's calendar grid keeps
+// its exact drawn shape. The one casualty is that September has 30 days, so the
+// availability dot design/165 draws on the 31st has nowhere to go and is dropped.
+// ─────────────────────────────────────────────────────────────────────────────
+
 export const ADV_SCHEDULE = {
   mode: 'Video Chamber',
   client: {
@@ -1239,7 +1256,7 @@ export const ADV_SCHEDULE = {
     {
       icon: 'calendar' as const,
       label: 'Date & Window',
-      value: 'Today, Oct 24, 2024 • 4:00 PM – 4:45 PM',
+      value: 'Today, Sep 24, 2026 • 4:00 PM – 4:45 PM',
     },
     {
       icon: 'clock' as const,
@@ -1298,13 +1315,18 @@ export const ADV_PROPOSE = {
   mode: 'Video Chamber',
   matter: 'Cross-Border IP Licensing & Software Contract',
   originalLabel: 'Original Requested Time:',
-  original: '24 Oct 2024, 4:00 PM – 4:45 PM',
+  original: '24 Sep 2026, 4:00 PM – 4:45 PM',
 
-  /** The month design/165 draws. 1 Oct 2024 is a Tuesday, which the grid matches. */
-  month: { year: 2024, month: 9 },
+  /**
+   * design/165 draws October 2024; normalised to September 2026 (MOCK_TODAY).
+   * Both months begin on a Tuesday, so the grid keeps the drawn shape exactly —
+   * except that September has no 31st, so the dot design/165 draws on the 31st is
+   * dropped from datesWithSlots below.
+   */
+  month: { year: 2026, month: 8 },
   selectedDate: 24,
   /** Dates drawn with an availability dot. */
-  datesWithSlots: [25, 28, 29, 30, 31],
+  datesWithSlots: [25, 28, 29, 30],
   legend: [
     { label: 'Available Slots', tone: 'available' as const },
     { label: 'Selected Date', tone: 'selected' as const },
@@ -1338,7 +1360,7 @@ export const ADV_PROPOSE = {
   proposed: {
     label: 'YOUR PROPOSED TIME',
     chip: 'Slot Selected',
-    date: '24 Oct 2024',
+    date: '24 Sep 2026',
     time: '5:30 PM – 6:15 PM IST',
     mode: 'Video Chamber',
   },
@@ -1386,7 +1408,7 @@ export const ADV_CONFIRMED = {
   practice: 'Corporate & Commercial IP',
   matter: 'Cross-Border IP Licensing & Exclusive Jurisdiction Structuring',
   chips: ['End-to-End Encrypted', '45 Minutes'],
-  date: { label: 'Date', value: 'Today, 24 Oct 2024' },
+  date: { label: 'Date', value: 'Today, 24 Sep 2026' },
   time: { label: 'Scheduled Time', value: '4:00 PM – 4:45 PM IST' },
 
   summaryLabel: 'EXECUTIVE CASE SUMMARY',
