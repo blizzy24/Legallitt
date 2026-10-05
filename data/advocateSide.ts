@@ -561,3 +561,72 @@ export const ADV_CASE_STATS = [
   { label: 'Closed', value: '1 Matter', tone: 'muted' as const },
   { label: 'Total Pool', value: '3 Cases', tone: 'muted' as const },
 ];
+
+// ── Client documents (design/154) ────────────────────────────────────────────
+//
+// REPORTED — THE DOCUMENT COUNT CONTRADICTS THE PROFILE. design/152's profile card
+// says "12 Documents"; design/154 says "TOTAL FILES 4 Docs" and lists four. Four is
+// what this screen actually draws, so four is what is built; the profile keeps its
+// drawn 12. One of the two is wrong.
+
+export type AdvDocument = {
+  id: string;
+  kind: 'pdf' | 'agreement' | 'identity' | 'order';
+  name: string;
+  meta: string;
+  pages: string;
+  caseRef: string;
+  uploaded: string;
+  status?: string;
+  category: 'case' | 'identity' | 'other';
+};
+
+export const ADV_CLIENT_DOCUMENTS: AdvDocument[] = [
+  {
+    id: 'petition',
+    kind: 'pdf',
+    name: 'Petition.pdf',
+    meta: '14.2 MB • Scanned & OCR Indexed',
+    pages: '24 Pages',
+    caseRef: 'HC-2026-1048 • Special Writ',
+    uploaded: '18 Sep 2026',
+    category: 'case',
+  },
+  {
+    id: 'agreement',
+    kind: 'agreement',
+    name: 'Property Agreement.pdf',
+    meta: '8.6 MB • Registered Commercial Lease',
+    pages: '18 Pages',
+    caseRef: 'DC-2026-1042 • Injunction Suit',
+    uploaded: '16 Sep 2026',
+    category: 'case',
+  },
+  {
+    id: 'identity',
+    kind: 'identity',
+    name: 'Identity Document.pdf',
+    meta: '1.4 MB • Masked ID (•••• •••• 4129)',
+    pages: '2 Pages',
+    caseRef: 'Client Profile',
+    uploaded: '10 Sep 2026',
+    status: 'KYC Verified',
+    category: 'identity',
+  },
+  {
+    id: 'order',
+    kind: 'order',
+    name: 'Previous Order.pdf',
+    meta: '4.1 MB • Certified Lower Court Order',
+    pages: '8 Pages',
+    caseRef: 'HC-2026-1048 • Trial Order',
+    uploaded: '08 Sep 2026',
+    category: 'case',
+  },
+];
+
+export const ADV_DOC_STATS = [
+  { label: 'TOTAL FILES', value: '4 Docs', sub: '28.3 MB Total' },
+  { label: 'INTEGRITY', value: '4 / 4', sub: 'OCR Indexed' },
+  { label: 'VAULT TIER', value: 'AES-256', sub: 'Privileged' },
+];

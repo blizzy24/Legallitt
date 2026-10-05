@@ -115,7 +115,7 @@ export default function AdvocateClientsScreen() {
 
         <Pressable
           accessibilityRole="button"
-          onPress={() => router.push('/(advocate)/clients/search')}
+          onPress={() => router.push('/advocate/clients/search')}
           style={styles.search}
         >
           <Search size={t.searchIcon} color={colors.textBody} />
@@ -218,7 +218,7 @@ export default function AdvocateClientsScreen() {
               </Text>
               <Pressable
                 accessibilityRole="button"
-                onPress={() => router.push(`/(advocate)/clients/${c.id}` as Href)}
+                onPress={() => router.push(`/advocate/clients/${c.id}` as Href)}
                 style={({ pressed }) => [styles.view, pressed && styles.pressed]}
               >
                 <Text style={styles.viewText} {...shrinkToFit(0.8)}>
@@ -235,7 +235,7 @@ export default function AdvocateClientsScreen() {
         {DEV_PREVIEW_TOGGLES && (
           <Pressable
             accessibilityRole="button"
-            onPress={() => router.push('/(advocate)/clients/empty')}
+            onPress={() => router.push('/advocate/clients/empty')}
             style={styles.devLink}
           >
             <Text style={styles.devLinkText}>Preview state: no clients yet</Text>

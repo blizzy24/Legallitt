@@ -168,7 +168,7 @@ export default function AdvocateClientSearchScreen() {
           <Pressable
             key={r.id}
             accessibilityRole="button"
-            onPress={() => router.push('/(advocate)/clients/rahul-sharma')}
+            onPress={() => router.push('/advocate/clients/rahul-sharma')}
             style={styles.result}
           >
             <View style={styles.rAvatarWrap}>

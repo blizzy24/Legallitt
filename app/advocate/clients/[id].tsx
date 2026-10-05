@@ -132,7 +132,7 @@ export default function AdvocateClientProfileScreen() {
           <View style={styles.actions}>
             <Pressable
               accessibilityRole="button"
-              onPress={() => router.push(`/(advocate)/clients/${id}/messages` as Href)}
+              onPress={() => router.push(`/advocate/clients/${id}/messages` as Href)}
               style={({ pressed }) => [styles.action, styles.actionPrimary, pressed && styles.pressed]}
             >
               <MessageSquareText size={t.actionIcon} color={ink.onBrand} />
@@ -153,7 +153,7 @@ export default function AdvocateClientProfileScreen() {
             <Pressable
               key={tile.key}
               accessibilityRole="button"
-              onPress={() => router.push(`/(advocate)/clients/${id}/${tile.key}` as Href)}
+              onPress={() => router.push(`/advocate/clients/${id}/${tile.key}` as Href)}
               style={styles.tile}
             >
               <View style={styles.tileIcon}>
@@ -179,7 +179,7 @@ export default function AdvocateClientProfileScreen() {
           <Pressable
             key={m.id}
             accessibilityRole="button"
-            onPress={() => router.push(`/(advocate)/clients/${id}/cases` as Href)}
+            onPress={() => router.push(`/advocate/clients/${id}/cases` as Href)}
             style={styles.matter}
           >
             <View style={styles.matterHead}>
@@ -207,7 +207,7 @@ export default function AdvocateClientProfileScreen() {
 
         <Pressable
           accessibilityRole="button"
-          onPress={() => router.push(`/(advocate)/clients/${id}/cases` as Href)}
+          onPress={() => router.push(`/advocate/clients/${id}/cases` as Href)}
           style={({ pressed }) => [styles.viewAll, pressed && styles.pressed]}
         >
           <Text style={styles.viewAllText}>View All Cases</Text>
@@ -215,7 +215,7 @@ export default function AdvocateClientProfileScreen() {
 
         <Pressable
           accessibilityRole="button"
-          onPress={() => router.push(`/(advocate)/clients/${id}/documents` as Href)}
+          onPress={() => router.push(`/advocate/clients/${id}/documents` as Href)}
           style={styles.doc}
         >
           <View style={styles.docIcon}>
