@@ -630,3 +630,93 @@ export const ADV_DOC_STATS = [
   { label: 'INTEGRITY', value: '4 / 4', sub: 'OCR Indexed' },
   { label: 'VAULT TIER', value: 'AES-256', sub: 'Privileged' },
 ];
+
+// ── Client messages (design/155) ─────────────────────────────────────────────
+//
+// REPORTED — THIS IS A FOURTH MESSAGES-LIST DESIGN. design/142 is the client-side
+// list: initials avatar, name, a green "Verified" chip, a timestamp, a "Matter:"
+// line, a preview, and an unread badge or chevron. This one is the advocate's, and
+// differs structurally: three stat cells above the list, a search field with a MIC,
+// four filter chips, a matter chip paired with a monospaced case reference, and a
+// double-tick read receipt where the client list uses a chevron. Neither is a
+// variant of the other; they are two lists of the same thing drawn independently.
+//
+// The fourth filter chip is clipped as "Notices &…" — inferred as "Notices & Orders"
+// from the matter types, but it is a guess, like design/151's "Cor…" chip.
+
+export type AdvClientThread = {
+  id: string;
+  initials: string;
+  name: string;
+  verified: boolean;
+  online: boolean;
+  when: string;
+  matter: string;
+  caseRef: string;
+  preview: string;
+  attachment?: boolean;
+  unread: number;
+  avatarTone: 'peach' | 'grey';
+};
+
+export const ADV_CLIENT_THREADS: AdvClientThread[] = [
+  {
+    id: 'rahul-sharma',
+    initials: 'RS',
+    name: 'Rahul Sharma',
+    verified: true,
+    online: true,
+    when: '10:42 AM',
+    matter: 'HC Representation',
+    caseRef: 'HC-2026-1048',
+    preview: 'Please check the latest order.',
+    unread: 2,
+    avatarTone: 'peach',
+  },
+  {
+    id: 'ananya-singh',
+    initials: 'AS',
+    name: 'Ananya Singh',
+    verified: true,
+    online: true,
+    when: 'Yesterday',
+    matter: 'District Court Rep.',
+    caseRef: 'DC-2026-0814',
+    preview: 'Thank you, Advocate. We will be there.',
+    unread: 0,
+    avatarTone: 'grey',
+  },
+  {
+    id: 'amit-verma',
+    initials: 'AV',
+    name: 'Amit Verma',
+    verified: false,
+    online: false,
+    when: '18 Sep',
+    matter: 'Legal Notice',
+    caseRef: 'LN-2026-0182',
+    preview: 'Can we discuss the notice draft?',
+    unread: 0,
+    avatarTone: 'grey',
+  },
+  {
+    id: 'pooja-kulkarni',
+    initials: 'PK',
+    name: 'Pooja Kulkarni',
+    verified: true,
+    online: false,
+    when: '15 Sep',
+    matter: 'Document Forensic',
+    caseRef: 'DF-2026-0199',
+    preview: 'Uploaded genuine signature',
+    attachment: true,
+    unread: 0,
+    avatarTone: 'peach',
+  },
+];
+
+export const ADV_MESSAGE_STATS = [
+  { label: 'Active', value: '3', unit: 'Chats', sub: 'Live', dot: true },
+  { label: 'Unread', value: '2', unit: 'New', sub: 'Action req.', dot: true },
+  { label: 'Avg SLA', value: '<15', unit: 'm', sub: 'Pristine', dot: false },
+];
