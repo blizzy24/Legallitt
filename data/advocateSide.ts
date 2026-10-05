@@ -1205,3 +1205,73 @@ export const ADV_INFO_NEEDED = {
   items: ['Schedule B (Patent & Trademark List)', 'Prior Counterparty Board Resolution'],
   disclaimer: 'AI-generated suggestions. Verify important facts before taking action.',
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Schedule & payout (design/164).
+//
+// ⚠ The platform charge is COMPUTED from ADV_COMMISSION_10, not hardcoded, so the
+// rate lives in one place. design/164 draws 10%; design/157 draws 5% + 1% = 6%.
+// See the note above ADV_COMMISSION_10.
+//
+// ⚠ "Amount on Hold" and "Advance Payment" do NOT reconcile as deductions.
+// 8,000 + 17,650 = 25,650, which is exactly the NET payout after the 10% charge.
+// They are a SPLIT OF THE NET, not further subtractions, but design/164 lists them
+// in the same unsigned column as the fee and the charge, so the column reads as if
+// 28,500 − 2,850 − 8,000 − 17,650 = 0. Drawn as designed; flagged here.
+//
+// ⚠ design/164 renames the client's employer and office against design/163:
+// "Finova Technologies" / "Nariman Point, Mumbai" here vs "Finova Tech India Pvt.
+// Ltd." / "BKC, Mumbai" there. Both are drawn text and both are kept as drawn.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const ADV_SCHEDULE = {
+  mode: 'Video Chamber',
+  client: {
+    initials: 'AD',
+    name: 'Ananya Deshmukh',
+    verified: 'Verified',
+    title: 'Managing Director, Finova Technologies',
+    location: 'Nariman Point, Mumbai (IST)',
+  },
+  practice: 'Corporate & Commercial IP',
+  matter: 'Cross-Border IP Licensing & Bombay High Court Jurisdiction Structuring',
+  rows: [
+    {
+      icon: 'calendar' as const,
+      label: 'Date & Window',
+      value: 'Today, Oct 24, 2024 • 4:00 PM – 4:45 PM',
+    },
+    {
+      icon: 'clock' as const,
+      label: 'Allocated Session',
+      value: '45 Minutes (Confidential Encrypted Line)',
+    },
+    {
+      icon: 'shield' as const,
+      label: 'Compliance & Terms',
+      value:
+        'By accepting this request, the Advocate agrees to the Client’s Terms & Conditions, NDA, and liability terms.',
+      link: 'view more',
+    },
+  ],
+  escrowChip: 'Escrow Guaranteed',
+  grossFee: 28500,
+  grossSub: '45 min session billing',
+  /** Drawn as two further rows in the same column; see the reconciliation note above. */
+  hold: 8000,
+  advance: 17650,
+  netLabel: 'NET ADVOCATE PAYOUT',
+  netSub: 'Automated release post consultation',
+  netNote: 'Net amount after applicable deductions',
+  briefs: {
+    title: '2 Reference Briefs Attached',
+    sub: 'Managing Director, Finova Technologies Pvt. Ltd.',
+    link: 'Preview',
+  },
+  accept: 'Accept & Confirm Consultation',
+  propose: 'Propose Alternate Time or Decline',
+};
+
+/** 8,000 + 17,650 against the computed net. Used to assert the split in the UI. */
+export const ADV_SCHEDULE_SPLIT_MATCHES_NET =
+  ADV_SCHEDULE.hold + ADV_SCHEDULE.advance === advNetAt10(ADV_SCHEDULE.grossFee).net;
