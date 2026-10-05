@@ -18,6 +18,8 @@ export default function AdvocateLayout() {
       <Tabs.Screen name="matters" />
       <Tabs.Screen name="clients" />
       <Tabs.Screen name="earnings" />
+      {/* Reachable from the dashboard, not a tab. */}
+      <Tabs.Screen name="availability" options={{ href: null }} />
     </Tabs>
   );
 }

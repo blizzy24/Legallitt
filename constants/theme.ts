@@ -21,6 +21,7 @@ export * from './tokens/profile';
 export * from './tokens/propertySearch';
 export * from './tokens/documentForensic';
 export * from './tokens/legalAdvice';
+export * from './tokens/advocate';
 export * from './tokens/authV2';
 export * from './tokens/onboarding';
 export * from './tokens/videoKyc';
