@@ -1815,3 +1815,123 @@ export const ADV_END = {
   confirm: 'End Consultation',
   cancel: 'Continue Consultation',
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Docket record (design/180).
+//
+// ⚠ design/180 is a 333×1024 JPEG screenshot — 0.823 px/pt, LESS THAN ONE PIXEL
+// PER POINT. Every metric on this screen is read from a frame smaller than the
+// layout it describes, so the sizing is the loosest in the project. Shared values
+// are reused from neighbouring screens wherever the design does not contradict them.
+//
+// ⚠ THREE DISBURSEMENT FIGURES FOR ONE JOURNEY:
+//     design/164  net ₹25,650  (28,500 gross − 10%)
+//     design/180  "DISBURSEMENT ₹26,000"
+//     design/181  net ₹28,800  (32,000 gross − 10%)
+// None of the three agrees with either other, and only 164 and 181 are internally
+// derivable from a rate. ₹26,000 is a bare figure with no fee behind it, so it is
+// stored as drawn and NOT computed.
+//
+// ⚠ The notes box claims "382 chars" but the drawn text is 175 characters and stops
+// mid-sentence ("…limit liability for gross"). The rest of the note is not in the
+// design, so the box scrolls over exactly what is drawn and the counter reports the
+// real length. Both figures are surfaced below.
+//
+// ⚠ "AI RECOMMENDED NEXT STEPS" is labelled "3 Action Items" but draws two, and the
+// second stops mid-phrase ("…Registrar of"). Kept as drawn.
+//
+// ⚠ The formatting toolbar (B / I / list) and "Dictate" imply a rich-text editor
+// with speech input. Neither is specified anywhere, and both are inert.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Exactly what design/180 draws in the notes box; it stops mid-sentence. */
+const ADV_DOCKET_NOTE =
+  'Advised client regarding Clause 14.2 indemnification carveouts. Under Section 23 & 73 of the Indian Contract Act, 1872, clauses purporting to exclude or limit liability for gross';
+
+export const ADV_DOCKET = {
+  label: 'DOCKET RECORD',
+  matterRef: 'Matter #2024-88C',
+  autosaved: 'Auto-saved 16:49',
+  concluded: 'Consultation Successfully Concluded',
+  verifiedChip: 'Verified Session',
+  client: {
+    initials: 'AD',
+    name: 'Ananya Deshmukh',
+    title: 'Managing Director · Finova',
+  },
+  disbursementLabel: 'DISBURSEMENT',
+  /** Drawn as a bare figure with no fee behind it; see the note above. */
+  disbursement: 26000,
+  briefLabel: 'BRIEF DESCRIPTION',
+  matter: 'Cross-Border IP Licensing & Exclusive Jurisdiction Structuring',
+  date: { label: 'Date', value: '24 Sep 2026' },
+  billable: { label: 'Billable Time', value: '42m', unit: '/ 45m' },
+  channel: { label: 'Channel', value: 'Chamber' },
+
+  notesLabel: 'ADVOCATE NOTES (PRIVILEGED)',
+  dictate: 'Dictate',
+  citeChip: '+ Cite Indian Contract Act (1872)',
+  note: ADV_DOCKET_NOTE,
+  notesFooter: 'Encrypted with Chamber 256-bit HSM',
+  /** design/180 prints "382 chars"; the drawn text is this long. Both are reported. */
+  notesDrawnCount: '382 chars',
+  notesActualCount: ADV_DOCKET_NOTE.length,
+
+  keyPointsLabel: 'KEY POINTS DISCUSSED',
+  keyPointsMeta: 'Shared in Client Brief',
+  keyPoints: [
+    'Enforceability of 2x contract value liability cap under Bombay High Court (Commercial Division) precedent.',
+  ],
+
+  stepsLabel: 'AI RECOMMENDED NEXT STEPS',
+  /** Labelled 3; design/180 draws 2, the second cut mid-phrase. */
+  stepsMeta: '3 Action Items',
+  steps: [
+    'Circulate revised markup of Annex B with tailored gross-negligence exclusions.',
+    'Request certified extract from Registrar of',
+  ],
+
+  document: { name: 'Matter_2024-88C_Draft_AnnexB.pdf', meta: '1.4 MB · Logged in Chamber Vault' },
+  continue: 'Continue',
+  exportPdf: 'Export Client PDF',
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Consultation completed (design/181).
+//
+// ⚠ DIFFERENT CLIENT, SAME JOURNEY. Every other screen in this flow has the client
+// as Ananya Deshmukh, Managing Director of Finova Tech India, on a cross-border IP
+// licensing matter. design/181 names RAHUL SHARMA, Founder & CEO of NexaCorp
+// Technologies India Pvt Ltd, on "Series A Term Sheet & Founder Vesting Agreements",
+// under a different docket (#2024-91D against #2024-88C). It reads as a screen drawn
+// for a different scenario. Built exactly as drawn and flagged.
+//
+// ⚠ Its "Advocate Guild Platform Retainer (10%)" is the 10% side of the commission
+// conflict; see ADV_COMMISSION_10. The figures compute from the rate constant.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const ADV_COMPLETED = {
+  title: 'Consultation Completed',
+  body: 'Your legal advisory session with Rahul Sharma has concluded and verified.',
+  docketChip: 'DOCKET #2024-91D • ESCROW RELEASED',
+  client: {
+    initials: 'RS',
+    name: 'Rahul Sharma',
+    verifiedChip: 'VERIFIED',
+    title: 'Founder & CEO, NexaCorp Technologies India Pvt Ltd',
+  },
+  matterLabel: 'RETAINED LEGAL MATTER',
+  matter: 'Series A Term Sheet & Founder Vesting Agreements',
+  cells: [
+    { label: 'Session Date', value: 'Today, Sep 24' },
+    { label: 'Duration', value: '45m (Billed)' },
+    { label: 'Chamber', value: 'Encrypted P2P' },
+  ],
+  settlementLabel: 'FINANCIAL SETTLEMENT',
+  escrowChip: 'Escrow Cleared',
+  feeLabel: 'Consultation Fee (45 mins)',
+  grossFee: 32000,
+  netLabel: 'NET DISBURSEMENT',
+  netNote: 'NEFT/RTGS Direct Deposit Initiated',
+  back: 'Back To Home',
+};
