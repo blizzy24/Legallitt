@@ -2129,3 +2129,71 @@ export const ADV_NOTICE_DRAFTING = {
   confidentiality:
     "Drafts remain strictly confidential within your firm's encrypted workspace.",
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Draft legal notice (design/188).
+//
+// ⚠ SEVENTH AI SURFACE, third of three in this flow. The six sections below are
+// STATIC STRINGS. Nothing was generated from the uploaded documents, and the
+// "Legalitt AI" card at the foot — the edit assistant — does nothing: typing into
+// it and pressing a suggestion chip change no text.
+//
+// ⚠ "Step 3 of 5" is a SIXTH STEPPER IDIOM. It is a bare text label inside no other
+// counter: no dots, no bar, no numbered track, and nothing else in the notice flow
+// shows a step count at all, so there is no way to tell which five steps it means.
+//
+// ⚠ design/188 names the advocate "Adv. Abhishek Sahu", where design/148 and
+// ADVOCATE_SELF have "Abhishek Chouhan". Second surname for the same advocate.
+//
+// ⚠ design/188 misspells its own suggestion chip as "Fix Grammer". Kept as drawn.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const ADV_NOTICE_DRAFT = {
+  title: 'Draft Legal Notice',
+  /** ⚠ Sixth stepper idiom; see the note above. */
+  step: 'Step 3 of 5 • Document Editor',
+  statusChip: 'Draft',
+  parties: { client: 'Rahul Sharma', opponent: 'Amit Verma' },
+  assistChip: 'AI Assist',
+  sections: [
+    {
+      n: 1,
+      title: 'Sender Details',
+      body: 'Adv. Abhishek Sahu, High Court Bar, Indore, MP (on behalf of Rahul Sharma)',
+    },
+    {
+      n: 2,
+      title: 'Recipient Details',
+      body: 'Amit Verma, Proprietor, Verma Enterprises, Commercial Enclave, Indore',
+    },
+    {
+      n: 3,
+      title: 'Subject',
+      body: 'LEGAL NOTICE FOR RECOVERY OF OUTSTANDING DUES OF ₹2,85,000',
+    },
+    {
+      n: 4,
+      title: 'Background & Facts',
+      body: 'That my client entered into an agreement dated 10 May 2026 with you for deployment of customized enterprise IT infrastructure. The work was completed satisfactorily on 28 July 2026. An invoice numbered VE-2026-89 for ₹2,85,000 was duly raised on 15 August 2026.',
+    },
+    {
+      n: 5,
+      title: 'Legal Demand',
+      body: 'You are hereby called upon to pay the outstanding sum of ₹2,85,000 along with interest at 18% per annum from 15 Aug 2026 within fifteen (15) days of receipt of this notice.',
+    },
+    {
+      n: 6,
+      title: 'Response Time & Closing',
+      body: 'Failing compliance, legal proceedings under civil and applicable statutes will be instituted at your sole risk and cost.',
+    },
+  ],
+  ai: {
+    chip: 'Legalitt AI',
+    title: 'What would you like to change?',
+    sub: 'Tell AI what you want to modify in the draft.',
+    placeholder: 'e.g Make this more formal or change the response time to 15 days...',
+    /** ⚠ design/188 spells the second chip "Grammer". Kept as drawn. */
+    suggestions: ['Make more Formal', 'Fix Grammer'],
+  },
+  generate: 'Generate Draft',
+};
