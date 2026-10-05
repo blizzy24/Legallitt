@@ -2197,3 +2197,82 @@ export const ADV_NOTICE_DRAFT = {
   },
   generate: 'Generate Draft',
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Legal notice response — the rendered document (design/189).
+//
+// ⚠ THE DOCUMENT IS A BLANK FORM. design/188 has just produced a fully drafted
+// notice — sender, recipient, subject, facts, demand and closing, all written out.
+// design/189 then renders a template with EMPTY BLANKS for every one of those
+// fields. The draft content does not carry forward into the artefact the flow
+// exists to produce. Built as drawn; this is the single largest gap in the flow.
+//
+// ⚠ THIRD ADVOCATE NAME. The letterhead reads "GURNEET CHAWLA ADVOCATE", against
+// "Abhishek Chouhan" (design/148, ADVOCATE_SELF) and "Adv. Abhishek Sahu"
+// (design/188). Three names for the advocate across one product.
+//
+// ⚠ The letterhead firm is "INT LegalConsultants Pvt. Ltd." and the sign-off
+// "INT LegalConsultant Pvt. Ltd." — singular against plural, same document.
+//
+// ⚠ design/189 misspells "Reffrence Id" and writes "has been preserve in my office".
+// Both kept as drawn.
+//
+// ⚠ At the drawn scale the body runs at roughly 7pt on a 390pt screen, which is
+// below legible size on a device. Reproduced at the drawn proportions because it is
+// a document preview, but a real implementation needs a zoomable document view.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const ADV_NOTICE_RESPONSE = {
+  title: 'Legal Notice Response',
+  heading: 'Prepare Response',
+  statusChip: 'No Response Required',
+  toolbar: { block: 'Paragraph' },
+  letterhead: {
+    brand: 'Legalitt',
+    firm: 'INT LegalConsultants Pvt. Ltd.',
+    email: 'Intlegalconsultantspvtltd@gmail.com',
+    web: 'www.legalitt.com',
+    advocate: 'GURNEET CHAWLA ADVOCATE',
+    quals: '(BBA, LLB, LLM)',
+    enrolment: 'Enrollment No :-',
+    enrolmentNo: '821/2017',
+  },
+  docTitle: 'LEGAL NOTICE',
+  /** ⚠ "Reffrence" as drawn. */
+  refLabel: 'Reffrence Id',
+  refSuffix: '/20',
+  dateLabel: 'Date:',
+  toLabel: 'To,',
+  toLines: 3,
+  subjectLabel: 'Subject:',
+  intro: [
+    'Under instructions and authority from my client Mr. ',
+    ' S/o Shri ',
+    ',Age',
+    ' R/o ',
+    ', I hereby serve upon you this Legal Notice as under:',
+  ],
+  clauses: 5,
+  thereforeLine: 'Therefore, Through this Legal Notice, I call upon you to:',
+  thereforeItems: ['A.', 'B.'],
+  failing: {
+    lead: 'Failing which, my client shall be constrained to initiate appropriate ',
+    boldA: 'civil proceedings and',
+    mid: ' also lodge a ',
+    boldB: 'criminal complaint / FIR',
+    tail: ' against you before the police authorities for the offences of',
+    further: ' Further you are hereby called to pay ',
+    cost: ' as the cost of this legal notice.',
+  },
+  /** ⚠ "has been preserve" as drawn. */
+  copyLine: 'A copy of this Notice has been preserve in my office for record and future reference.',
+  signFor: 'For',
+  signFirm: 'INT LegalConsultant Pvt. Ltd.',
+  placeLabel: 'Place :',
+  signDateLabel: 'Date :',
+  disclaimer:
+    'Disclaimer : This legal notice has been generated through an automated document preparation platform based solely on the information, statements, and instructions provided by the user. The platform utilizes technology-assisted drafting tools to facilitate document creation and does not independently verify the accuracy, completeness, authenticity, or legal sufficiency of any information supplied by the user.',
+  editDraft: 'Edit Draft',
+  saveUpload: 'Save & Upload',
+  shareReview: 'Share for Review',
+};

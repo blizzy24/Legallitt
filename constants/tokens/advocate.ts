@@ -3058,3 +3058,112 @@ export const advNoticeDraft = {
   genRadius: 14,
   genSize: 17,
 };
+
+/**
+ * design/189 — legal notice response document. Measured at 2.000 px/pt from a
+ * 780×1688 export, which is exactly one 390×844 screen.
+ *
+ * ⚠ The page background is #F4F6F8, a COOL grey, where the rest of the app uses the
+ * warm #FAF8F5. Kept as drawn and reported.
+ *
+ * ⚠ The document body is drawn at roughly 7pt. Reproduced at the drawn proportions
+ * because it is a preview of a printed artefact, not screen copy.
+ */
+export const advNoticeResponse = {
+  padX: 20,
+  bg: '#F4F6F8',
+
+  headerTop: 12,
+  headerPadBottom: 14,
+  headerBg: '#FFFFFF',
+  backIcon: 24,
+  titleSize: 19,
+  kebab: 20,
+
+  headingGap: 16,
+  headingSize: 17,
+  statusHeight: 36,
+  statusRadius: 18,
+  statusPadX: 14,
+  statusSize: 14.5,
+  statusBorder: '#C8A882',
+  statusColour: '#8A6A3E',
+
+  cardGap: 14,
+  cardRadius: 16,
+  cardPad: 9,
+  cardBg: '#FBF8F3',
+
+  toolPadX: 10,
+  toolPadY: 12,
+  toolBlockSize: 14.5,
+  toolChevron: 14,
+  toolChevronGap: 7,
+  toolIcon: 17,
+  toolGapX: 15,
+  toolUndo: 20,
+
+  pageRadius: 4,
+  pageBg: '#FFFFFF',
+
+  lhPadX: 12,
+  lhPadY: 12,
+  lhBg: '#0B0B0B',
+  lhRule: '#C9A227',
+  lhBrandSize: 19,
+  lhMark: 22,
+  lhMarkGap: 7,
+  lhFirmGap: 2,
+  lhFirmSize: 6.5,
+  lhLineGap: 7,
+  lhIcon: 9,
+  lhIconGap: 5,
+  lhContactSize: 7.5,
+  lhDividerW: 1,
+  lhAdvSize: 9,
+  lhQualGap: 5,
+  lhQualSize: 7.5,
+  lhEnrolGap: 4,
+  lhEnrolSize: 7.5,
+  lhGold: '#C9A227',
+  lhText: '#FFFFFF',
+  lhDim: '#D8D4CC',
+
+  docPadX: 13,
+  docPadY: 14,
+  docTitleSize: 13,
+  docTitleRuleGap: 4,
+  docTitleRuleW: 160,
+  docRule: '#111111',
+
+  rowGap: 11,
+  labelSize: 8,
+  blankH: 1,
+  blankColour: '#111111',
+  bodySize: 7,
+  bodyLineHeight: 12,
+  clauseGap: 7,
+  sectionGap: 10,
+
+  discGap: 12,
+  discPadX: 10,
+  discPadY: 7,
+  discBg: '#0B0B0B',
+  discSize: 4.6,
+  discLineHeight: 7,
+  discColour: '#EDEAE4',
+
+  btnGap: 14,
+  btnGapX: 12,
+  btnHeight: 48,
+  btnRadius: 11,
+  btnSize: 16,
+  editBorder: '#C8A882',
+  editColour: '#A08A6E',
+  saveBg: '#6B5A45',
+
+  shareGap: 14,
+  shareHeight: 56,
+  shareRadius: 13,
+  shareSize: 17,
+};
