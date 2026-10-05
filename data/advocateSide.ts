@@ -2080,3 +2080,52 @@ export const ADV_NOTICE_DOCS = {
  * same entity; neither screen reconciles them.
  */
 export const ADV_NOTICE_PENDING_RECORDS = true;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Choose drafting method (design/187).
+//
+// ⚠ SEVENTH AI SURFACE, second of three in this flow. "AI Generate Draft" promises
+// a draft "synthesized automatically from client records, uploaded annexures, and
+// statutory citations" in "~8 seconds". Nothing is synthesised: picking it leads to
+// design/188's draft, whose content is a static string.
+//
+// ⚠ design/187 draws ONLY the AI variant of the primary button ("Continue with AI
+// Generation"). The manual label is not drawn anywhere, so the screen derives it
+// from the selection rather than inventing a second drawn state.
+//
+// ⚠ No separate manual builder is designed. Selecting "Create Draft Manually" leads
+// to the same design/188 editor, because there is nothing else to lead to.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const ADV_NOTICE_DRAFTING = {
+  title: 'Create Legal Notice Draft',
+  /** design/187 clips this behind the avatar ("…pose how you want to prepare your dra"). */
+  sub: 'Choose how you want to prepare your draft.',
+  docket: 'DOCKET LN-2026-1048',
+  heroLabel: 'Secured Workflow',
+  heading: 'Choose Drafting Method',
+  headingSub: 'Select how you want to compile and format this document.',
+  methods: [
+    {
+      id: 'ai' as const,
+      badge: 'RECOMMENDED',
+      title: 'AI Generate Draft',
+      chip: 'Instant',
+      body: 'Draft synthesized automatically from client records, uploaded annexures, and statutory citations.',
+      footnote: 'Populates template in ~8 seconds with full edit control',
+      /** design/187 draws only this label. */
+      action: 'Continue with AI Generation',
+    },
+    {
+      id: 'manual' as const,
+      badge: 'STANDARD BUILDER',
+      title: 'Create Draft Manually',
+      body: 'Write and format the Legal Notice paragraph-by-paragraph using the structured Legalitt standard framework.',
+      footnote: 'Blank clause template with legal clause suggestions',
+      /** NOT DRAWN — derived from the selection. See the note above. */
+      action: 'Continue with Manual Draft',
+    },
+  ],
+  confidentiality:
+    "Drafts remain strictly confidential within your firm's encrypted workspace.",
+};
