@@ -2336,3 +2336,55 @@ export const ADV_NOTICE_REVIEW = {
   messageClient: 'Message Client',
   backToRequest: 'Back to Request',
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Final notice ready (design/192) and prepare for dispatch (design/193).
+//
+// ⚠ BLUE DART IS HARDCODED IN A CAPTION. Both screens caption their primary button
+// "Takes you to Send via Blue Dart", but design/194 still offers a CHOICE between
+// sending the notice yourself and using the Legalitt partner. The caption pre-empts
+// a decision the next screen has not asked for yet — and design/200 then tracks the
+// shipment under DHL EXPRESS, not Blue Dart. Three screens, two couriers, one of
+// them promised before the choice exists.
+//
+// ⚠ design/193 ends with TWO PRIMARY ACTIONS and no stated relationship between
+// them: "Continue to Send →" and "Confirm Dispatch". Nothing says which advances the
+// flow, whether Confirm Dispatch is terminal, or what happens to the other. Built as
+// drawn, with Continue to Send routing onward.
+//
+// ⚠ design/193's checklist draws two Done rows and two Pending rows but no
+// interaction for completing them. They are made tappable here; see the screen note.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const ADV_NOTICE_RECIPIENT = {
+  name: 'Amit Verma',
+  address: 'Flat 402, Green Park Apartments, Sector 18, Rohini, New Delhi 110085',
+};
+
+export const ADV_NOTICE_FINAL = {
+  title: 'Final Notice Ready',
+  approved: {
+    title: 'Client Approved',
+    chip: 'Ready',
+    body: 'The client has reviewed and approved this legal notice. It is ready to be sent.',
+  },
+  clientLabel: 'CLIENT',
+  verifiedChip: 'Verified',
+  clientName: 'Rahul Sharma',
+  signOff: 'Client Sign-off complete • Approved today, 11:20 AM',
+  sendToLabel: 'SEND NOTICE TO',
+  sendToChip: 'Official Delivery Address',
+  docLabel: 'LEGAL NOTICE DOCUMENT',
+  docChip: 'Approved',
+  doc: { name: 'Legal_Notice_Final.pdf', meta: '4 Pages • Signed by Client' },
+  download: 'Download PDF',
+  downloadNote: 'Download the final notice and print it separately.',
+  nextStep: {
+    title: 'Next Step: Send the Notice',
+    body: 'Download the PDF, print the notice, and prepare it for courier.',
+    note: 'Keep the postal receipt safe. You will add tracking details once the packet is posted.',
+  },
+  cta: 'Continue to Send',
+  /** ⚠ Hardcodes a courier the next screen still lets you choose. */
+  ctaCaption: 'Takes you to Send via Blue Dart',
+};
