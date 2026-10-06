@@ -2388,3 +2388,37 @@ export const ADV_NOTICE_FINAL = {
   /** ⚠ Hardcodes a courier the next screen still lets you choose. */
   ctaCaption: 'Takes you to Send via Blue Dart',
 };
+
+export const ADV_NOTICE_DISPATCH = {
+  title: 'Prepare For Dispatch',
+  ready: {
+    title: 'Notice Ready for Dispatch',
+    chip: 'Ready',
+    body: 'Follow the simple steps below to prepare your printed notice packet for courier pickup.',
+  },
+  docLabel: 'LEGAL NOTICE DOCUMENT',
+  doc: { name: 'Legal_Notice_Final.pdf', meta: '4 Pages • Signed by Client', chip: 'Downloaded' },
+  download: 'Download PDF',
+  downloadNote: 'Download the final notice to your device and print it separately.',
+  noticeToLabel: 'NOTICE TO',
+  noticeToChip: 'Delivery Address',
+  checklistLabel: 'BEFORE COURIER',
+  checklistIntro: 'Check off these steps before booking courier pickup:',
+  checklist: [
+    { id: 'approved', title: 'Final notice approved', sub: 'Signed off by client', done: true },
+    { id: 'downloaded', title: 'PDF downloaded', sub: 'Saved to device storage', done: true },
+    { id: 'printed', title: 'Printed', sub: 'Print outside Legalitt on physical paper', done: false },
+    {
+      id: 'packed',
+      title: 'Ready for courier',
+      sub: 'Pack in an envelope with recipient address',
+      done: false,
+    },
+  ],
+  note: 'Legalitt does not print documents. Please print the downloaded PDF on your physical printer before the courier arrives.',
+  cta: 'Continue to Send',
+  /** ⚠ Same hardcoded courier as design/192; see the note above ADV_NOTICE_FINAL. */
+  ctaCaption: 'Takes you to Send via Blue Dart',
+  /** ⚠ Second primary action, relationship to the first unstated. */
+  confirm: 'Confirm Dispatch',
+};
