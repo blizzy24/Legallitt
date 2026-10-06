@@ -2276,3 +2276,63 @@ export const ADV_NOTICE_RESPONSE = {
   saveUpload: 'Save & Upload',
   shareReview: 'Share for Review',
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Client review (designs 190 and 191) — one screen, two states.
+//
+// design/191 is identical to design/190 above the awaiting card. It differs in
+// exactly two ways: the "Client Approved" outcome row is REMOVED, and the "Changes
+// Requested" row gains a note box. Both are driven by the state below.
+//
+// ⚠ design/190 clips its own filename to "Legal_Notice_Rahul_Sharm" — no extension
+// and the last letter of the surname missing. Kept as drawn.
+//
+// ⚠ design/191's note box reads "Client Suggestion recieve here." — "recieve" is
+// misspelled and the sentence is ungrammatical. It also reads as placeholder copy
+// rather than a real client note, but it carries no brackets, so it is kept as drawn
+// rather than treated as one of the bracketed placeholders.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const ADV_NOTICE_REVIEW = {
+  title: 'Client Review',
+  stateChip: 'AWAITING CLIENT REVIEW',
+  heading: 'Draft Sent for Review',
+  body: 'The Legal Notice draft has been sent to the client for review.',
+  typeChip: 'Legal Notice',
+  ref: 'LN-2026-1048',
+  cells: [
+    { label: 'CLIENT', value: 'Rahul Sharma', verified: true },
+    { label: 'AGAINST', value: 'Verma Enterprises' },
+    { label: 'FILING TYPE', value: 'Statutory Demand' },
+    { label: 'STATUS', value: 'In Client Queue', dot: true },
+  ],
+  progressLabel: 'REVIEW PROGRESS',
+  progress: [
+    { title: 'Draft Prepared', status: 'Completed • Ready for dispatch', state: 'done' as const },
+    { title: 'Draft Sent to Client', status: 'Completed • Delivered via App & Email', state: 'done' as const },
+    {
+      title: 'Client Review',
+      status: 'In Progress • Waiting for client feedback',
+      state: 'active' as const,
+      chip: 'Active',
+    },
+    { title: 'Final Approval', status: 'Upcoming • Final dispatch & service', state: 'upcoming' as const },
+  ],
+  draftLabel: 'DRAFT SENT',
+  /** ⚠ Clipped in design/190; kept as drawn. */
+  draftFile: { name: 'Legal_Notice_Rahul_Sharm', size: '2.4 MB', status: 'Sent to Client' },
+  viewDraft: 'View Draft',
+  messageLabel: 'MESSAGE SENT TO CLIENT',
+  messageMeta: 'Sent just now',
+  message: '“Please review the draft and let us know if any changes are required.”',
+  awaiting: {
+    title: 'Awaiting Client Review',
+    body: 'Once the client reviews the draft, you will receive their response here.',
+    approved: 'Client Approved → Continue to Final Dispatch',
+    changes: 'Changes Requested → Review Client Notes',
+    /** ⚠ "recieve" as drawn (design/191). */
+    note: 'Client Suggestion recieve here.',
+  },
+  messageClient: 'Message Client',
+  backToRequest: 'Back to Request',
+};
