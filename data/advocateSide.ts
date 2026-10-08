@@ -2693,3 +2693,95 @@ export const ADV_NOTICE_TRACKING = {
   refresh: 'Refresh Status',
   estimate: 'Estimated advocate receipt: Sep 25, 05:00 PM',
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Confirm documents (design/201) — UNFINISHED DESIGN.
+// Every [bracketed] value is a literal placeholder, rendered with brackets intact.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const ADV_NOTICE_CONFIRM = {
+  title: 'Confirm Documents',
+  deliveredChip: 'DELIVERED',
+  verified: 'Courier Verified',
+  deliveredBody: 'The courier shows that the documents were delivered.',
+  caseRef: {
+    title: 'Case Reference',
+    sub: 'Physical dossier handling',
+    rows: [
+      { label: 'Client', value: '[Client Name]' },
+      { label: 'Case', value: '[Case Name]' },
+      { label: 'Case ID', value: '[Case ID]', mono: true },
+    ],
+  },
+  documents: {
+    title: 'Documents',
+    chip: '[Document Count] Documents',
+    rows: [
+      { name: '[Document Name]', sub: 'Original Hardcopy 1' },
+      { name: '[Document Name]', sub: 'Original Hardcopy 2' },
+      { name: '[Document Name]', sub: 'Original Hardcopy 3' },
+      { name: '[Document Name]', sub: 'Original Hardcopy 4' },
+    ],
+  },
+  delivery: {
+    title: 'Delivery Details',
+    sub: 'Handover telemetry',
+    rows: [
+      { label: 'Courier', value: '[Courier Name]' },
+      { label: 'Waybill', value: '[Waybill Number]', mono: true },
+      { label: 'Delivered On', value: '[Date]' },
+      { label: 'Delivered At', value: '[Time]' },
+      { label: 'Received By', value: '[Name if available]' },
+    ],
+  },
+  ask: {
+    title: 'Did You Receive the Documents?',
+    body: 'Please confirm that the physical documents are with you.',
+    checkbox: 'I have received the physical documents.',
+  },
+  note: 'Only confirm after you have physically received the documents.',
+  cta: 'Confirm Received',
+  ctaCaption: 'Next: Documents Received',
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Documents received (design/202) — UNFINISHED DESIGN.
+// ⚠ NEITHER BUTTON HAS A DRAWN DESTINATION. "Open Case" and "Chat with Client" are
+// drawn with no onward screen anywhere in designs 183-203, so both route to the
+// report screen for now. Reported.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const ADV_NOTICE_RECEIVED = {
+  title: 'Documents Received',
+  heading: 'Documents Received',
+  body: 'You confirmed that the physical documents are with you.',
+  caseInfo: {
+    label: 'CASE INFO',
+    chip: '[Case ID]',
+    rows: [
+      { label: 'Client', value: '[Client Name]' },
+      { label: 'Case', value: '[Case Name]' },
+    ],
+  },
+  documents: {
+    title: 'Documents',
+    chip: '[Document Count]',
+    statusChip: 'Received',
+    rows: ['[Document Name]', '[Document Name]', '[Document Name]'],
+  },
+  delivery: {
+    title: 'Delivery Details',
+    rows: [
+      { label: 'Courier', value: '[Courier Name]' },
+      { label: 'Waybill', value: '[Waybill Number]', mono: true },
+      { label: 'Delivered On', value: '[Date]' },
+      { label: 'Received By', value: '[Advocate Name]' },
+    ],
+  },
+  confirmed: {
+    title: 'Receipt Confirmed',
+    body: 'The physical documents have been received and the case can now move forward.',
+  },
+  openCase: 'Open Case',
+  chat: 'Chat with Client',
+};
