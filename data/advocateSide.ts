@@ -2488,3 +2488,72 @@ export const ADV_NOTICE_SEND = {
   cta: 'Continue',
   ctaCaption: 'Next: Book Legalitt Delivery Partner pickup',
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Delivery details (design/195) — UNFINISHED DESIGN.
+//
+// Every value below in [square brackets] is a LITERAL PLACEHOLDER drawn in the
+// export. They are rendered with the brackets intact so the gaps stay visible, and
+// nothing is invented to fill them.
+//
+// ⚠ design/195 reuses the SAME [City], [State] - [PIN] and [Mobile Number]
+// placeholders for both the pickup and the receiver address, so the two blocks are
+// indistinguishable in the export.
+//
+// ⚠ Courier reads "Blue Dart" here and on design/199, but design/200 tracks the
+// shipment under DHL Express.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const ADV_NOTICE_DELIVERY = {
+  title: 'Delivery Details',
+  check: 'Check the delivery details before booking.',
+  partner: {
+    title: 'Legalitt Delivery Partner',
+    chip: 'Selected',
+    body: 'Your documents will be picked up and sent to the receiver.',
+    poweredBy: 'Powered by Blue Dart',
+    bullet: 'Direct secure legal courier',
+  },
+  pickup: {
+    label: 'Pickup From',
+    link: 'Change',
+    name: '[Client Name]',
+    address: '[Pickup Address]',
+    cityLine: '[City], [State] - [PIN]',
+    mobile: '[Mobile Number]',
+  },
+  sendTo: {
+    label: 'Send To',
+    link: 'View Address',
+    name: '[Advocate Name]',
+    address: '[Receiver Address]',
+    cityLine: '[City], [State] - [PIN]',
+    mobile: '[Mobile Number]',
+  },
+  documents: {
+    label: 'Documents',
+    chip: '[Document Count] Documents',
+    rows: ['[Document Name]', '[Document Name]', '[Document Name]'],
+    link: 'View Documents',
+  },
+  delivery: {
+    label: 'Delivery',
+    cells: [
+      { label: 'Courier', value: 'Blue Dart' },
+      { label: 'Package', value: '1' },
+      { label: 'Weight', value: '[Weight]' },
+      { label: 'Estimated Delivery', value: '[Date / Time]' },
+    ],
+  },
+  fee: {
+    label: 'Delivery Fee',
+    amount: '[₹ Amount]',
+    note: 'This is the delivery fee only. It is separate from any legal service fees.',
+  },
+  warning: {
+    title: 'Please check both addresses before booking.',
+    body: 'Your documents will be picked up from the address shown above.',
+  },
+  cta: 'Book Delivery',
+  ctaCaption: 'Next: Shipment Created',
+};
