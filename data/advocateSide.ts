@@ -2422,3 +2422,69 @@ export const ADV_NOTICE_DISPATCH = {
   /** ⚠ Second primary action, relationship to the first unstated. */
   confirm: 'Confirm Dispatch',
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Send documents (design/194).
+//
+// ⚠ FOURTH SPELLING OF THE ADVOCATE'S NAME. design/194 writes "Adv. Gurneeet
+// Chawla" — three e's — against design/189's "GURNEET CHAWLA", design/188's
+// "Adv. Abhishek Sahu" and design/148's "Abhishek Chouhan". Kept as drawn.
+//
+// ⚠ ANOTHER SERVICE AND ANOTHER REFERENCE. The chip reads "High Court
+// Representation" and the matter "#HCR-2026-1048", where this same journey has been
+// a Legal Notice under "LN-2026-1048" since design/185. design/196 then calls it
+// "High Court Represantative" (sic) under "#LGT-849204". One matter, three service
+// names and three reference formats.
+//
+// ⚠ The fourth document chip is CLIPPED to a sliver at the screen edge, with no
+// legible text. It is tinted differently from the three grey document chips, and the
+// card counts "5 Documents" against three named chips, so it is INFERRED as a "+2"
+// overflow counter. It could instead be a fourth document name; nothing in the
+// export decides it.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const ADV_NOTICE_SEND = {
+  title: 'Send Documents',
+  intro: 'Choose how you want to send your physical documents.',
+  serviceChip: 'High Court Representation',
+  matterRef: 'Matter #HCR-2026-1048',
+  parties: 'Rahul Sharma vs Amit Verma',
+  assignedLabel: 'Assigned Advocate:',
+  /** ⚠ "Gurneeet" as drawn. */
+  advocate: 'Adv. Gurneeet Chawla',
+  docsTitle: 'Documents Ready',
+  docsChip: '5 Documents',
+  docsLink: 'View',
+  docChips: ['Case Papers', 'Court Order', 'ID Proof'],
+  /** ⚠ INFERRED from the clipped chip; see the note above. */
+  docChipOverflow: '+2',
+  chooseTitle: 'Choose how to send',
+  chooseHint: 'Tap an option',
+  options: [
+    {
+      id: 'self' as const,
+      title: 'Send by Yourself',
+      body: 'Send the documents directly to your advocate.',
+      sub: 'Use any courier or delivery service.',
+    },
+    {
+      id: 'partner' as const,
+      title: 'Legalitt Delivery Partner',
+      chip: 'Recommended',
+      body: 'Legalitt will arrange delivery to your advocate.',
+      safe: 'Safe document delivery',
+    },
+  ],
+  sendToLabel: 'Send To',
+  copy: 'Copy',
+  sendTo: {
+    name: 'Adv. Gurneeet Chawla',
+    lines: ['Chamber No. 14, High Court Bar Building', 'Indore, Madhya Pradesh • 452001'],
+  },
+  note: {
+    title: 'Your advocate needs the physical documents for the case.',
+    body: 'You can send them yourself or use Legalitt Delivery.',
+  },
+  cta: 'Continue',
+  ctaCaption: 'Next: Book Legalitt Delivery Partner pickup',
+};
