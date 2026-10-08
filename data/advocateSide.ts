@@ -2596,3 +2596,46 @@ export const ADV_NOTICE_PAYMENT = {
   barLabel: 'Amount to pay',
   pay: 'Pay',
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Shipment created (design/199) — UNFINISHED DESIGN.
+//
+// Every [bracketed] value is a literal placeholder drawn in the export, rendered
+// with the brackets intact.
+//
+// ⚠ design/199's "Important" note is drawn in a column roughly a third of the card
+// wide, so its five words wrap one or two per line. Laid out to the card width here.
+//
+// ⚠ FIVE STATUS STEPS here against design/200's SEVEN, for the same shipment.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const ADV_NOTICE_SHIPMENT = {
+  title: 'Shipment Created',
+  heading: 'Delivery Booked',
+  body: 'Your documents are ready for pickup.',
+  chip: 'Booking Confirmed • Pickup Scheduled',
+  detailsLabel: 'Delivery Details',
+  details: [
+    { label: 'Courier', value: '[Courier Name]' },
+    { label: 'Waybill', value: '[Waybill Number]', copy: true },
+    { label: 'Pickup Date', value: '[Date]' },
+  ],
+  pickupLabel: 'Pickup Address',
+  pickupAddress: '[Pickup Address]',
+  sendToLabel: 'Send To',
+  receiverName: '[Receiver Name]',
+  receiverAddress: '[Receiver Address]',
+  documents: { count: '[Document Count] Documents', sub: 'Packed for courier handover' },
+  statusLabel: 'Delivery Status',
+  /** ⚠ Five steps; design/200 draws seven for the same shipment. */
+  steps: [
+    { title: 'Booking Created', state: 'done' as const },
+    { title: 'Pickup Pending', state: 'active' as const },
+    { title: 'In Transit', state: 'upcoming' as const },
+    { title: 'Delivered', state: 'upcoming' as const },
+    { title: 'Received by Advocate', state: 'upcoming' as const },
+  ],
+  important: { title: 'Important', body: 'Keep the documents packed and ready for pickup.' },
+  viewTracking: 'View Tracking',
+  viewCase: 'View Case',
+};
