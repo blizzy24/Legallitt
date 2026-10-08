@@ -2639,3 +2639,57 @@ export const ADV_NOTICE_SHIPMENT = {
   viewTracking: 'View Tracking',
   viewCase: 'View Case',
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Document delivery tracking (design/200).
+//
+// ⚠ DHL EXPRESS here, BLUE DART on designs 195 and 199 — the same shipment under
+// two couriers, and designs 192/193 promise Blue Dart before the choice is made.
+//
+// ⚠ SEVEN steps here against design/199's FIVE, for the same journey. design/199
+// has Booking Created / Pickup Pending / In Transit / Delivered / Received by
+// Advocate; design/200 inserts Pickup Booked and Out for Delivery and renames the
+// last to Advocate Received. No screen reconciles the two.
+//
+// Dates normalised from design/200's October to September 2026, as the rest of the
+// advocate flow already was.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const ADV_NOTICE_TRACKING = {
+  title: 'Document Delivery',
+  courierLabel: 'COURIER SERVICE',
+  /** ⚠ DHL Express; designs 195 and 199 say Blue Dart. */
+  courier: 'DHL Express',
+  statusChip: 'Picked Up',
+  waybillLabel: 'Waybill Number',
+  waybill: 'DHL-8942-0194',
+  sendToLabel: 'SEND TO',
+  sendTo: {
+    name: 'Advocate Sarah Jenkins',
+    lines: ['High Court Chambers, 4th Floor', "24 St. George's Avenue, District 3"],
+  },
+  documents: { title: 'Documents', sub: '3 Physical Documents', link: 'View' },
+  progressLabel: 'Delivery Progress',
+  /** ⚠ Seven steps; design/199 draws five. */
+  steps: [
+    { title: 'Booking Created', meta: 'Sep 24, 09:15 AM', state: 'done' as const },
+    { title: 'Pickup Booked', meta: 'Sep 24, 11:30 AM', state: 'done' as const },
+    { title: 'Picked Up', meta: 'Sep 24, 02:45 PM', state: 'active' as const },
+    { title: 'In Transit', meta: 'Expected Sep 25', state: 'upcoming' as const },
+    { title: 'Out for Delivery', meta: 'Pending arrival', state: 'upcoming' as const },
+    { title: 'Delivered', meta: 'Delivery agent drop-off', state: 'upcoming' as const },
+    { title: 'Advocate Received', meta: 'Final formal receipt', state: 'upcoming' as const },
+  ],
+  latest: {
+    label: 'LATEST UPDATE',
+    at: 'Today • 02:45 PM',
+    title: 'Package collected by courier',
+    body: 'Shipment processed at local intake facility. En route to sorting hub.',
+  },
+  note: {
+    title: 'Delivery and advocate receipt are different steps.',
+    body: 'The advocate will confirm in the system once physical documents are in hand and reviewed.',
+  },
+  refresh: 'Refresh Status',
+  estimate: 'Estimated advocate receipt: Sep 25, 05:00 PM',
+};
