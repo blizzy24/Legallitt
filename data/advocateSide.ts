@@ -2785,3 +2785,25 @@ export const ADV_NOTICE_RECEIVED = {
   openCase: 'Open Case',
   chat: 'Chat with Client',
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Send report (design/203).
+//
+// ⚠ THE ADVOCATE IS SHOWN THE CLIENT'S PAYMENT AS THEIR PAYOUT. "Advocate Payout
+// ₹3,500/-" is the GROSS client fee from design/185, whose own breakdown nets the
+// advocate ₹3,087 after a ₹350 platform fee and ₹63 charges. The two screens are
+// ₹413 apart on the same journey, and this is the one the advocate sees last.
+// Built as drawn; advNoticeFee() still computes the real net on design/185.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const ADV_NOTICE_REPORT = {
+  title: 'Send Report',
+  docChip: 'DOC-742',
+  summaryLabel: 'PAYMENT SUMMARY',
+  escrowChip: 'Escrow Protected',
+  payoutLabel: 'Advocate Payout',
+  /** ⚠ The gross client fee, not the net. See above. */
+  payout: '₹3,500/-',
+  note: 'Payment will be automatically credited to your registered bank account after the report is sent to the client.',
+  back: 'Back To Home',
+};

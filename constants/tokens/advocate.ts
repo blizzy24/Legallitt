@@ -4299,3 +4299,66 @@ export const advNoticeReceipt = {
   capDotGap: 8,
   capSize: 14.5,
 };
+
+/** design/203 — send report. Measured at 2.082 px/pt from an 812×1786 export. */
+export const advNoticeReport = {
+  padX: 20,
+  bg: '#FBF7F5',
+
+  headerTop: 12,
+  headerPadBottom: 14,
+  headerBorder: '#EFE8E4',
+  backIcon: 22,
+  titleSize: 19,
+  docChipHeight: 34,
+  docChipRadius: 10,
+  docChipPadX: 12,
+  docChipIcon: 15,
+  docChipIconGap: 8,
+  docChipSize: 14.5,
+  docChipBg: '#EFEDE9',
+  docChipGap: 12,
+  avatar: 36,
+  avatarGlyph: 17,
+
+  badgeTop: 60,
+  badge: 116,
+  badgeIcon: 62,
+  badgeBg: '#4CA214',
+
+  cardGap: 42,
+  cardRadius: 16,
+  cardPad: 15,
+
+  labelSize: 12,
+  labelSpacing: 0.9,
+  escrowHeight: 32,
+  escrowRadius: 16,
+  escrowPadX: 10,
+  escrowIcon: 15,
+  escrowIconGap: 8,
+  escrowSize: 13,
+  escrowBg: '#DFF6E8',
+  escrowColour: '#0F7A3D',
+
+  payoutGap: 18,
+  payoutLabelSize: 18,
+  payoutSize: 26,
+
+  noteGap: 16,
+  noteRadius: 12,
+  notePad: 13,
+  noteBg: '#F4F1ED',
+  noteIcon: 17,
+  noteIconGap: 10,
+  noteSize: 15,
+  noteLineHeight: 23,
+
+  barPadX: 20,
+  barPadTop: 14,
+  barBg: '#FFFFFF',
+  backHeight: 56,
+  backRadius: 13,
+  backSize: 17,
+  backBg: '#6B5A45',
+};
