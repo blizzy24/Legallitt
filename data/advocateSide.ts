@@ -2557,3 +2557,42 @@ export const ADV_NOTICE_DELIVERY = {
   cta: 'Book Delivery',
   ctaCaption: 'Next: Shipment Created',
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Delivery payment (design/196).
+//
+// ⚠ THE GST DOES NOT COMPUTE. design/196 draws a ₹250 service fee and ₹40 labelled
+// "Goods & Services Tax (GST 18%)", totalling ₹290. 18% of 250 is ₹45, not ₹40 —
+// which would make the total ₹295. Either the figure or the label is wrong. Drawn
+// figures are used verbatim and NOT computed, so the screen matches the export.
+//
+// ⚠ "High Court Represantative" (sic) — misspelled, and it names a DIFFERENT SERVICE
+// from the Legal Notice flow this screen sits inside. design/194 calls the same
+// matter "High Court Representation"; design/185 onward call it a Legal Notice.
+//
+// ⚠ Ref ID "#LGT-849204" is the Legal Notice reference reused once more. It has now
+// appeared on design/28, design/29, design/30, design/86 and design/196 — FIVE
+// screens across three unrelated services. Kept as drawn here.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const ADV_NOTICE_PAYMENT = {
+  title: 'Complete Payment',
+  /** ⚠ Misspelled and a different service name; see above. */
+  service: 'High Court Represantative',
+  refLabel: 'Ref ID:',
+  ref: '#LGT-849204',
+  /** ⚠ Drawn figures, not computed — the label and the arithmetic disagree. */
+  lines: [
+    { label: 'Service Fee', amount: '₹250/-' },
+    { label: 'Goods & Services Tax (GST 18%)', amount: '₹40/-' },
+  ],
+  totalLabel: 'Total Payable',
+  total: '₹290/-',
+  totalAmount: 290,
+  totalNote: 'Inclusive of all legal taxes',
+  methodsLabel: 'SELECT PAYMENT METHOD',
+  methodsMeta: 'Fast & Secure',
+  secureNote: 'Your payment is processed securely through our payment provider.',
+  barLabel: 'Amount to pay',
+  pay: 'Pay',
+};
