@@ -3289,3 +3289,47 @@ export const ADV_PSR_EDITOR = {
   saveDraft: 'Save Draft',
   continue: 'Continue',
 };
+
+// ═════════════════════════════════════════════════════════════════════════════
+// PROPERTY SEARCH REPORT — RESPONSE (design/209)
+//
+// ⚠ design/209 IS design/189. Both exports are 780×1688; differenced pixel by
+// pixel they are identical everywhere except rows 587–607 — the one line that
+// holds the document title. Nothing else on the screen differs: not the header,
+// not the toolbar, not the letterhead, not the form, not the buttons.
+//
+// Three consequences, all built as drawn:
+//
+// (a) THE HEADER READS "Legal Notice Response" on a Property Search flow.
+// (b) THE DOCUMENT IS A BLANK FORM. design/208 produces eight fully written
+//     sections — client details, property details, ownership chain, encumbrances,
+//     litigation, revenue records, opinion, recommendations. None of it reaches
+//     here. design/209 renders a ruled template with a blank for every field.
+//     This is the SAME defect as design/189 in the Legal Notice flow: two
+//     services now break the same way, the drafting step's output never reaching
+//     the artefact the flow exists to produce.
+// (c) THE LETTERHEAD READS "GURNEET CHAWLA ADVOCATE" — not the signed-in
+//     advocate, and the FOURTH name used for them across the designs.
+//
+// And because the body is copied verbatim, a Property Search Report says
+// "Legal Notice" three times in its own text: "I hereby serve upon you this
+// Legal Notice as under", "Therefore, Through this Legal Notice, I call upon
+// you to", and "A copy of this Notice has been preserve in my office".
+//
+// The body therefore comes from ADV_NOTICE_RESPONSE via <LegalDocumentPage>;
+// only the strings that design/209 could have changed, and the one it did, are
+// stored here.
+// ═════════════════════════════════════════════════════════════════════════════
+
+export const ADV_PSR_RESPONSE = {
+  /** ⚠ (a) "Legal Notice Response" on the Property Search flow, as drawn. */
+  title: 'Legal Notice Response',
+  heading: 'Prepare Response',
+  statusChip: 'No Response Required',
+  toolbar: { block: 'Paragraph' },
+  /** The single changed word — the only pixels that differ from design/189. */
+  docTitle: 'Property Search Report',
+  editDraft: 'Edit Draft',
+  saveUpload: 'Save & Upload',
+  shareReview: 'Share for Review',
+};

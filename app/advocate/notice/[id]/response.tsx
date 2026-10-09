@@ -4,11 +4,9 @@ import {
   ChevronDown,
   ChevronLeft,
   EllipsisVertical,
-  Globe,
   Italic,
   List,
   ListOrdered,
-  Mail,
   Redo2,
   Underline,
   Undo2,
@@ -16,7 +14,7 @@ import {
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import AiFlowerMark from '../../../../components/AiFlowerMark';
+import LegalDocumentPage from '../../../../components/LegalDocumentPage';
 import { shrinkToFit } from '../../../../constants/textFit';
 import { ADV_NOTICE_RESPONSE } from '../../../../data/advocateSide';
 import { advNoticeResponse as t, colors, font, ink } from '../../../../constants/theme';
@@ -37,11 +35,6 @@ import { advNoticeResponse as t, colors, font, ink } from '../../../../constants
 //
 // ⚠ The body runs at roughly 7pt at 390pt wide — below legible size on a device.
 // Reproduced at the drawn proportions; a real one needs a zoomable document view.
-
-/** A ruled blank, as the printed form draws it. */
-function Blank({ flex, width }: { flex?: number; width?: number }) {
-  return <View style={[styles.blank, flex ? { flex } : null, width ? { width } : null]} />;
-}
 
 export default function AdvocateNoticeResponseScreen() {
   const insets = useSafeAreaInsets();
@@ -97,146 +90,7 @@ export default function AdvocateNoticeResponseScreen() {
             <Redo2 size={t.toolUndo} color={colors.textPrimary} style={styles.toolIcon} />
           </View>
 
-          <View style={styles.page}>
-            <View style={styles.lh}>
-              <View style={styles.lhLeft}>
-                <View style={styles.lhBrandRow}>
-                  <AiFlowerMark size={t.lhMark} colors={[t.lhGold, '#8A6E1A']} />
-                  <Text style={styles.lhBrand} {...shrinkToFit(0.8)}>
-                    {r.letterhead.brand}
-                  </Text>
-                </View>
-                <Text style={styles.lhFirm} {...shrinkToFit(0.7)}>
-                  {r.letterhead.firm}
-                </Text>
-                <View style={styles.lhLine}>
-                  <Mail size={t.lhIcon} color={t.lhGold} />
-                  <Text style={styles.lhContact} {...shrinkToFit(0.65)}>
-                    {r.letterhead.email}
-                  </Text>
-                </View>
-                <View style={styles.lhLine}>
-                  <Globe size={t.lhIcon} color={t.lhGold} />
-                  <Text style={styles.lhContact} {...shrinkToFit(0.7)}>
-                    {r.letterhead.web}
-                  </Text>
-                </View>
-              </View>
-              <View style={styles.lhDivider} />
-              <View style={styles.lhRight}>
-                <Text style={styles.lhAdv} {...shrinkToFit(0.65)}>
-                  {r.letterhead.advocate}
-                </Text>
-                <Text style={styles.lhQual} {...shrinkToFit(0.75)}>
-                  {r.letterhead.quals}
-                </Text>
-                <Text style={styles.lhEnrol} {...shrinkToFit(0.7)}>
-                  {r.letterhead.enrolment}{' '}
-                  <Text style={styles.lhEnrolNo}>{r.letterhead.enrolmentNo}</Text>
-                </Text>
-              </View>
-            </View>
-            <View style={styles.lhRule} />
-
-            <View style={styles.doc}>
-              <Text style={styles.docTitle}>{r.docTitle}</Text>
-              <View style={styles.docTitleRule} />
-
-              <View style={styles.row}>
-                <Text style={styles.label}>{r.refLabel}</Text>
-                <Blank width={52} />
-                <Text style={styles.label}>{r.refSuffix}</Text>
-                <Blank width={44} />
-                <View style={styles.spacer} />
-                <Text style={styles.label}>{r.dateLabel}</Text>
-                <Blank width={78} />
-              </View>
-
-              <View style={styles.toRow}>
-                <Text style={styles.label}>{r.toLabel}</Text>
-                <View style={styles.toLines}>
-                  {Array.from({ length: r.toLines }).map((_, i) => (
-                    <Blank key={i} width={148} />
-                  ))}
-                </View>
-              </View>
-
-              <View style={styles.row}>
-                <Text style={styles.label}>{r.subjectLabel}</Text>
-                <Blank flex={1} />
-              </View>
-
-              <Text style={styles.body}>
-                {r.intro[0]}
-                <Text style={styles.inlineBlank}>__________</Text>
-                {r.intro[1]}
-                <Text style={styles.inlineBlank}>________</Text>
-                {r.intro[2]}
-                <Text style={styles.inlineBlank}>_____</Text>
-                {r.intro[3]}
-                <Text style={styles.inlineBlank}>__________</Text>
-                {r.intro[4]}
-              </Text>
-
-              {Array.from({ length: r.clauses }).map((_, i) => (
-                <View key={i} style={styles.clause}>
-                  <Text style={styles.clauseN}>{i + 1}.</Text>
-                  <Blank flex={1} />
-                </View>
-              ))}
-
-              <Text style={styles.bodyNext}>{r.thereforeLine}</Text>
-              {r.thereforeItems.map((item) => (
-                <Text key={item} style={styles.item}>
-                  {item}
-                </Text>
-              ))}
-
-              <Text style={styles.bodyNext}>
-                {r.failing.lead}
-                <Text style={styles.bold}>{r.failing.boldA}</Text>
-                {r.failing.mid}
-                <Text style={styles.bold}>{r.failing.boldB}</Text>
-                {r.failing.tail}
-              </Text>
-              <View style={styles.row}>
-                <Blank flex={1} />
-                <Text style={styles.body}>{r.failing.further}</Text>
-              </View>
-              <Text style={styles.body}>
-                <Text style={styles.inlineBlank}>________</Text>
-                {r.failing.cost}
-              </Text>
-
-              <Text style={styles.bodyNext}>{r.copyLine}</Text>
-
-              <View style={styles.signBlock}>
-                <Text style={styles.signFor}>{r.signFor}</Text>
-                <Text style={styles.signFirm}>{r.signFirm}</Text>
-              </View>
-
-              <View style={styles.footRow}>
-                <View style={styles.footLeft}>
-                  <View style={styles.row}>
-                    <Text style={styles.labelBold}>{r.placeLabel}</Text>
-                    <Blank width={108} />
-                  </View>
-                  <View style={styles.rowNext}>
-                    <Text style={styles.labelBold}>{r.signDateLabel}</Text>
-                    <Blank width={108} />
-                  </View>
-                </View>
-                <View style={styles.footSign}>
-                  <Blank width={92} />
-                </View>
-              </View>
-            </View>
-
-            <View style={styles.discRule} />
-            <View style={styles.disc}>
-              <Text style={styles.discText}>{r.disclaimer}</Text>
-            </View>
-          </View>
+          <LegalDocumentPage title={r.docTitle} />
 
           <View style={styles.btns}>
             <Pressable
@@ -322,7 +176,8 @@ const styles = StyleSheet.create({
   },
   toolbar: {
     paddingHorizontal: t.toolPadX,
-    paddingVertical: t.toolPadY,
+    paddingTop: t.toolPadY,
+    paddingBottom: t.toolPadBottom,
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -332,99 +187,22 @@ const styles = StyleSheet.create({
   toolIcon: { marginLeft: t.toolGapX },
   toolUndo: { marginLeft: 'auto' },
 
-  page: { borderRadius: t.pageRadius, backgroundColor: t.pageBg, overflow: 'hidden' },
-
-  lh: { backgroundColor: t.lhBg, flexDirection: 'row', padding: t.lhPadX },
-  lhLeft: { flex: 1, minWidth: 0, paddingRight: 8 },
-  lhBrandRow: { flexDirection: 'row', alignItems: 'center' },
-  lhBrand: { marginLeft: t.lhMarkGap, fontFamily: font.appHeading, fontSize: t.lhBrandSize, color: t.lhText },
-  lhFirm: { marginTop: t.lhFirmGap, fontFamily: font.appBody, fontSize: t.lhFirmSize, color: t.lhGold },
-  lhLine: { marginTop: t.lhLineGap, flexDirection: 'row', alignItems: 'center' },
-  lhContact: {
-    marginLeft: t.lhIconGap,
-    flexShrink: 1,
-    fontFamily: font.appBody,
-    fontSize: t.lhContactSize,
-    color: t.lhDim,
+  // design/209: the two buttons are sized to their labels, not split evenly —
+  // "Edit Draft" is 132pt and "Save & Upload" 161pt, each with the same padding.
+  btns: {
+    marginTop: t.btnGap,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: t.btnGapX,
   },
-  lhDivider: { width: t.lhDividerW, backgroundColor: t.lhGold },
-  lhRight: { flex: 1, minWidth: 0, paddingLeft: 8, alignItems: 'center', justifyContent: 'center' },
-  lhAdv: { fontFamily: font.appHeading, fontSize: t.lhAdvSize, color: t.lhText, textAlign: 'center' },
-  lhQual: { marginTop: t.lhQualGap, fontFamily: font.appBody, fontSize: t.lhQualSize, color: t.lhDim },
-  lhEnrol: { marginTop: t.lhEnrolGap, fontFamily: font.appBody, fontSize: t.lhEnrolSize, color: t.lhDim },
-  lhEnrolNo: { color: t.lhGold },
-  lhRule: { height: 2, backgroundColor: t.lhRule },
-
-  doc: { paddingHorizontal: t.docPadX, paddingVertical: t.docPadY },
-  docTitle: {
-    textAlign: 'center',
-    fontFamily: font.appHeading,
-    fontSize: t.docTitleSize,
-    color: colors.textPrimary,
-  },
-  docTitleRule: {
-    alignSelf: 'center',
-    marginTop: t.docTitleRuleGap,
-    width: t.docTitleRuleW,
-    height: 1,
-    backgroundColor: t.docRule,
-  },
-
-  row: { marginTop: t.rowGap, flexDirection: 'row', alignItems: 'flex-end' },
-  rowNext: { marginTop: 8, flexDirection: 'row', alignItems: 'flex-end' },
-  spacer: { flex: 1 },
-  label: { marginRight: 5, fontFamily: font.appBody, fontSize: t.labelSize, color: colors.textPrimary },
-  labelBold: { marginRight: 6, fontFamily: font.appHeading, fontSize: t.labelSize, color: colors.textPrimary },
-  blank: { height: t.blankH, marginBottom: 2, marginRight: 5, backgroundColor: t.blankColour },
-
-  toRow: { marginTop: t.rowGap, flexDirection: 'row' },
-  toLines: { marginLeft: 8, gap: 10 },
-
-  body: {
-    marginTop: t.rowGap,
-    fontFamily: font.appBody,
-    fontSize: t.bodySize,
-    lineHeight: t.bodyLineHeight,
-    color: colors.textPrimary,
-  },
-  bodyNext: {
-    marginTop: t.sectionGap,
-    fontFamily: font.appBody,
-    fontSize: t.bodySize,
-    lineHeight: t.bodyLineHeight,
-    color: colors.textPrimary,
-  },
-  inlineBlank: { color: colors.textPrimary },
-  bold: { fontFamily: font.appHeading },
-  clause: { marginTop: t.clauseGap, flexDirection: 'row', alignItems: 'flex-end' },
-  clauseN: { marginRight: 5, fontFamily: font.appBody, fontSize: t.bodySize, color: colors.textPrimary },
-  item: { marginTop: t.clauseGap, fontFamily: font.appBody, fontSize: t.bodySize, color: colors.textPrimary },
-
-  signBlock: { marginTop: t.sectionGap, alignItems: 'center' },
-  signFor: { fontFamily: font.appBody, fontSize: t.bodySize, color: colors.textPrimary },
-  signFirm: { marginTop: 3, fontFamily: font.appHeading, fontSize: t.bodySize + 1, color: colors.textPrimary },
-  footRow: { marginTop: t.sectionGap, flexDirection: 'row', alignItems: 'flex-end' },
-  footLeft: { flex: 1, minWidth: 0 },
-  footSign: { justifyContent: 'flex-end' },
-
-  discRule: { height: 2, backgroundColor: t.lhRule },
-  disc: { paddingHorizontal: t.discPadX, paddingVertical: t.discPadY, backgroundColor: t.discBg },
-  discText: {
-    fontFamily: font.appBody,
-    fontSize: t.discSize,
-    lineHeight: t.discLineHeight,
-    color: t.discColour,
-  },
-
-  btns: { marginTop: t.btnGap, flexDirection: 'row', gap: t.btnGapX },
   btn: {
-    flex: 1,
-    minWidth: 0,
+    flexShrink: 1,
     minHeight: t.btnHeight,
     borderRadius: t.btnRadius,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 10,
+    paddingHorizontal: t.btnPadX,
   },
   edit: { borderWidth: 1, borderColor: t.editBorder },
   editText: { fontFamily: font.appHeading, fontSize: t.btnSize, color: t.editColour },
