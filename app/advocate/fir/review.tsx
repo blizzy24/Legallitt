@@ -24,18 +24,17 @@ import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { DEV_PREVIEW_TOGGLES } from '../../../constants/dev';
 import { shrinkToFit } from '../../../constants/textFit';
 import { FIR_REVIEW } from '../../../data/advocateFir';
 import { advFirReview as t, colors, font, ink } from '../../../constants/theme';
 
 // FIR review & status (design/219).
 //
-// ⚠ THE PREVIEW SWITCHER IS DRAWN IN THE DESIGN. Every other preview switcher in
-// this project is a dev affordance we added; design/219 draws this one as part of
-// the screen, with its own "ADVOCATE PREVIEW SWITCHER" label and an "Interactive
-// Demo" tag. It is gated behind DEV_PREVIEW_TOGGLES on request — which means
-// turning that flag off removes UI the design actually draws. Reported.
+// THE PREVIEW SWITCHER IS CLIENT UI, NOT A DEV AFFORDANCE. Every other preview
+// switcher in this project is something we added and hid behind
+// DEV_PREVIEW_TOGGLES; design/219 draws this one as screen content, with its own
+// "ADVOCATE PREVIEW SWITCHER" label and an "Interactive Demo" tag. It is therefore
+// ungated and always rendered.
 //
 // ⚠ ITS LABELS ARE "Waiting / Approved / Changes", not "Changes Needed".
 //
@@ -82,39 +81,36 @@ export default function AdvocateFirReviewScreen() {
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        {/* ⚠ Drawn in design/219, but gated as a dev control on request. */}
-        {DEV_PREVIEW_TOGGLES && (
-          <>
-            <View style={styles.switchLabelRow}>
-              <Text style={styles.switchLabel} {...shrinkToFit(0.75)}>
-                {r.switcher.label}
+        {/* Drawn in design/219 as screen content — client UI, not a dev control. */}
+        <View style={styles.switchLabelRow}>
+          <Text style={styles.switchLabel} {...shrinkToFit(0.75)}>
+            {r.switcher.label}
+          </Text>
+          <Eye size={t.demoIcon} color={t.demoColour} style={styles.demoIcon} />
+          <Text style={styles.demo} {...shrinkToFit(0.75)}>
+            {r.switcher.demo}
+          </Text>
+        </View>
+        <View style={styles.seg}>
+          {r.switcher.states.map((s) => (
+            <Pressable
+              key={s}
+              accessibilityRole="button"
+              accessibilityState={{ selected: state === s }}
+              onPress={() => setState(s)}
+              style={[styles.segItem, state === s && styles.segItemOn]}
+            >
+              <Text style={[styles.segText, state === s && styles.segTextOn]} {...shrinkToFit(0.8)}>
+                {s}
               </Text>
-              <Eye size={t.demoIcon} color={t.demoColour} style={styles.demoIcon} />
-              <Text style={styles.demo} {...shrinkToFit(0.75)}>
-                {r.switcher.demo}
-              </Text>
-            </View>
-            <View style={styles.seg}>
-              {r.switcher.states.map((s) => (
-                <Pressable
-                  key={s}
-                  accessibilityRole="button"
-                  accessibilityState={{ selected: state === s }}
-                  onPress={() => setState(s)}
-                  style={[styles.segItem, state === s && styles.segItemOn]}
-                >
-                  <Text style={[styles.segText, state === s && styles.segTextOn]} {...shrinkToFit(0.8)}>
-                    {s}
-                  </Text>
-                </Pressable>
-              ))}
-            </View>
-            {state !== r.switcher.states[0] && (
-              <View style={styles.devNote}>
-                <Text style={styles.devNoteText}>{r.switcher.devNote}</Text>
-              </View>
-            )}
-          </>
+            </Pressable>
+          ))}
+        </View>
+        {/* Kept: the other two states have no design. See data/advocateFir.ts. */}
+        {state !== r.switcher.states[0] && (
+          <View style={styles.devNote}>
+            <Text style={styles.devNoteText}>{r.switcher.devNote}</Text>
+          </View>
         )}
 
         <View style={styles.card}>
