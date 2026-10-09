@@ -3333,3 +3333,78 @@ export const ADV_PSR_RESPONSE = {
   saveUpload: 'Save & Upload',
   shareReview: 'Share for Review',
 };
+
+// ═════════════════════════════════════════════════════════════════════════════
+// PROPERTY SEARCH REPORT — UPLOAD (design/210)
+//
+// ⚠ URGENT IS RED HERE AND AMBER EVERYWHERE ELSE. design/210's chip is a red pill
+// (#FFDAD6 on #93000A, both sampled). The advocate cases list (designs 204/205)
+// draws the same word for the same matter in amber — advCases.urgentBg #FBEEDC on
+// #B5741A. No red status pair exists anywhere in the project: constants/theme.ts's
+// `status` block has green and amber pills and a red notification DOT, nothing
+// else. So this does NOT reuse an existing status token; it is the first red pill
+// drawn. Quarantined in constants/tokens/psrUrgent.ts rather than added to the
+// shared status scale, and flagged.
+//
+// ⚠ THE FILENAME NAMES THE WRONG PERSON — "Property_Search_Report_Singhania.pdf"
+// where the client is Rahul Sharma. Consistent with design/207's
+// "Sale_Deed_Singhania.pdf", so Singhania is presumably the existing titleholder,
+// but nothing in the designs says so and the report belongs to Sharma.
+//
+// ⚠ THE PLACEHOLDER IS UNFINISHED. design/210 cuts it off mid-sentence with an
+// unclosed parenthesis: "...with zero mortgages or legal". Rendered exactly as
+// drawn — no completion invented.
+//
+// ⚠ UPLOAD CONTROLS ARE INERT. "View" and "Replace" have no designed destination,
+// and no upload flow — file picker, progress, failure, retry — is drawn anywhere in
+// the project. The screen shows an already-uploaded file and no way to get there.
+// ═════════════════════════════════════════════════════════════════════════════
+
+export const ADV_PSR_UPLOAD = {
+  title: 'Upload Property Search Report',
+  docket: 'DOCKET PSR-2026-1048',
+  statusChip: 'Search Completed',
+
+  property: {
+    label: 'PROPERTY DETAILS',
+    /** ⚠ Red, not the amber advCases.urgentBg used for the same word. */
+    urgentChip: 'URGENT · 30-Year Search',
+    name: 'Rahul Sharma',
+    /** ⚠ A fourth description of this client — see ADV_PSR_REQUEST.client.role. */
+    role: 'Applicant & Titleholder',
+    address: 'Plot No. 42, Sector B, Scheme No. 78, Vijay Nagar, Indore, Madhya Pradesh — 452001',
+  },
+
+  upload: {
+    heading: 'Upload Final Report',
+    chip: 'Report Uploaded',
+    body: 'Upload the final PDF report after completing the property search.',
+    /** ⚠ Singhania, not Sharma. */
+    file: 'Property_Search_Report_Singhania.pdf',
+    meta: '4.8 MB • Ready for submission',
+    view: 'View',
+    replace: 'Replace',
+    footnote: 'PDF format only · Max 25 MB',
+  },
+
+  payment: {
+    label: 'YOUR PAYMENT',
+    chip: 'Escrow Secured',
+    receiveLabel: 'You will receive:',
+    /** As drawn, and matching design/206's stated payout. NOT computed. */
+    amount: '₹3,800',
+    note: 'The payout is held safely in Legalitt Escrow and will be released to your registered bank account upon client dispatch.',
+  },
+
+  note: {
+    heading: 'Add Note',
+    chip: 'Optional',
+    max: 300,
+    /** ⚠ Clipped mid-sentence in design/210, unclosed bracket. Verbatim. */
+    placeholder:
+      'Add a short note for the client (e.g. 30-year search verified clear at Indore Sub-Registrar office with zero mortgages or legal',
+    delivery: 'This note will be delivered to Rahul Sharma along with the report.',
+  },
+
+  continue: 'Continue',
+};

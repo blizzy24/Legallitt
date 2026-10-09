@@ -27,6 +27,7 @@ export * from './tokens/onboarding';
 export * from './tokens/videoKyc';
 export * from './tokens/legalittAi';
 export * from './tokens/psrDecision';
+export * from './tokens/psrUrgent';
 
 export const colors = {
   brand:        '#B09C82',
