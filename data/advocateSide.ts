@@ -3551,3 +3551,14 @@ export const ADV_PSR_SENT = {
   note: 'Payment will be automatically credited to your registered bank account after the report is sent to the client.',
   back: 'Back To Home',
 };
+
+/**
+ * Per-service card action on the advocate cases list.
+ *
+ * ⚠ design/214 draws "Continue Draft →" on the FIR card, with an arrow, where
+ * design/204 draws "Review Request" with none on every other card. The design's
+ * wording is kept. Services not listed here fall back to ADV_CASES_COPY.review.
+ */
+export const ADV_CASES_ACTIONS: Partial<Record<AdvCaseMatter['serviceKey'], string>> = {
+  fir: 'Continue Draft',
+};
