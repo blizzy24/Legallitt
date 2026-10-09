@@ -1,19 +1,13 @@
 import { router, type Href } from 'expo-router';
 import {
-  ArrowRight,
-  Bell,
-  CircleCheck,
-  ClipboardList,
-  Eye,
-  FileText,
+  CalendarDays,
+  ChevronDown,
   Gavel,
-  House,
-  MessageSquare,
   Scale,
   Search,
-  ShieldAlert,
-  SquarePen,
+  SlidersHorizontal,
   UserRound,
+  Video,
 } from 'lucide-react-native';
 import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
@@ -21,133 +15,121 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { shrinkToFit } from '../../constants/textFit';
 import {
-  ADV_RESPONSE_CASES,
-  ADV_RESPONSE_FILTERS,
-  ADV_RESPONSE_STATS,
-  ADV_SERVICE_FILTERS,
-  type AdvResponseCase,
+  ADV_CASES,
+  ADV_CASES_COPY,
+  ADV_CASES_FILTERS,
+  ADV_CASES_SERVICES,
+  ADV_CASES_STATS,
+  type AdvCaseMatter,
 } from '../../data/advocateSide';
-import { advResponses as t, colors, font, ink } from '../../constants/theme';
+import { advCases as t, colors, font, ink } from '../../constants/theme';
 
-// Advocate responses / cases (design/162).
+// Advocate cases list (designs 204 and 205) — SUPERSEDES design/162.
 //
-// This lives in the TAB GROUP, as the scales tab, because design/162 draws the tab
-// bar with that tab active. app/advocate/requests/index.tsx re-exports it so the
-// path named in the brief also resolves; the component is defined once here.
+// ⚠ design/204 and design/162 are the same screen drawn twice, and both draw the tab
+// bar with the scales tab active. design/204 is the newer and far richer export, so
+// it is built here IN PLACE: the tab wiring and the app/advocate/requests/index
+// re-export keep working, and design/162's content is replaced rather than kept
+// alongside. Two lists on one tab would have no way to choose between them.
 //
-// REPORTED — TWO CLIPPED FILTER LABELS. The first chip row ends "Co…" and the second
-// "Property Sea…". Inferred as "Completed (12)" — the stat cells read REVIEW 3,
-// PROGRESS 5, RESOLVED 12, and 3 + 5 + 12 = 20, which is the All count — and
-// "Property Search Report". Both are inferences, and this is the third and fourth
-// clipped label in the advocate batch after design/151 and design/155.
+// ⚠ design/205 (Property Search filter applied) draws THREE IDENTICAL CARDS of the
+// one property search matter design/204 lists. The filter here is live against the
+// real list, so it yields one card. See data/advocateSide.ts.
+//
+// ⚠ design/205's filter button is not in the header: both designs carry search +
+// avatar there, and design/205 adds a filter button with a "2" badge in the subtitle
+// row. It is rendered when a filter is active, which is when design/205 draws it.
+//
+// Sort and search are inert; the two chip rows filter.
 
-const SERVICE_ICONS: Record<AdvResponseCase['serviceIcon'], typeof FileText> = {
-  notice: FileText,
-  fir: ShieldAlert,
-  property: House,
-  advice: Gavel,
+const BODY_ICONS = { calendar: CalendarDays, gavel: Gavel, video: Video };
+
+const STATUS_TONE: Record<string, { bg: string; fg: string }> = {
+  'Client Review': { bg: '#E4F4EA', fg: '#1E7A44' },
+  'Draft Preparation': { bg: '#FBEEDC', fg: '#B5741A' },
+  'Report Preparation': { bg: '#FBEEDC', fg: '#A8601A' },
+  'Waiting for Specialist': { bg: '#EFE9F8', fg: '#6B4FA8' },
+  'Documents Pending': { bg: '#FBEEDC', fg: '#B5741A' },
+  Active: { bg: '#E4F4EA', fg: '#1E7A44' },
+  Upcoming: { bg: '#E6EEF8', fg: '#2E5EA8' },
 };
 
-const NOTE_ICONS: Record<AdvResponseCase['noteIcon'], typeof SquarePen> = {
-  draft: SquarePen,
-  message: MessageSquare,
-  docs: FileText,
-  done: CircleCheck,
-};
+const STAT_TONE = { active: '#A08A6E', upcoming: '#F0C890', completed: '#2FBF6B' } as const;
 
-const STATUS_TONE: Record<AdvResponseCase['status'], { bg: string; colour: string }> = {
-  'draft-in-progress': { bg: '#F7E6D0', colour: '#8A6F4B' },
-  'changes-requested': { bg: '#FBE4E4', colour: '#C0392B' },
-  'needs-review': { bg: '#FBF0DC', colour: '#8A6F4B' },
-  completed: { bg: '#E3F6ED', colour: '#1E9E4A' },
-};
-
-export default function AdvocateMattersScreen() {
+export default function AdvocateCasesScreen() {
   const insets = useSafeAreaInsets();
-  const [filter, setFilter] = useState(0);
-  const [service, setService] = useState(0);
-  const [query, setQuery] = useState('');
+  const c = ADV_CASES_COPY;
+  const [filter, setFilter] = useState('All');
+  const [service, setService] = useState('All Services');
 
-  const rows = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    return ADV_RESPONSE_CASES.filter((c) => {
-      if (filter === 1 && c.status !== 'needs-review') return false;
-      if (filter === 2 && !['draft-in-progress', 'changes-requested'].includes(c.status)) return false;
-      if (filter === 3 && c.status !== 'completed') return false;
-      if (service > 0 && c.service !== ADV_SERVICE_FILTERS[service]) return false;
-      if (!q) return true;
-      return (
-        c.client.toLowerCase().includes(q) ||
-        c.matter.toLowerCase().includes(q) ||
-        c.service.toLowerCase().includes(q)
-      );
-    });
-  }, [filter, service, query]);
+  const matters = useMemo(
+    () =>
+      ADV_CASES.filter((m) => {
+        if (filter !== 'All' && m.bucket !== filter) return false;
+        if (service !== 'All Services' && m.service !== service.toUpperCase()) return false;
+        return true;
+      }),
+    [filter, service],
+  );
+  const filtersActive = (filter !== 'All' ? 1 : 0) + (service !== 'All Services' ? 1 : 0);
+
+  function review(m: AdvCaseMatter) {
+    if (m.serviceKey === 'property-search') {
+      router.push(`/advocate/property-search/${m.id}/request` as Href);
+    } else if (m.serviceKey === 'legal-notice') {
+      router.push(`/advocate/notice/${m.id}/fee` as Href);
+    }
+  }
 
   return (
     <View style={styles.screen}>
       <View style={[styles.header, { paddingTop: insets.top + t.headerTop }]}>
-        <Scale size={t.mark} color={colors.brandDark} />
-        <Text style={styles.markTitle} numberOfLines={1}>
-          Responses
+        <View style={styles.mark}>
+          <Scale size={t.markIcon} color={colors.brandDark} />
+        </View>
+        <Text style={styles.headerTitle} {...shrinkToFit(0.75)}>
+          {c.headerTitle}
         </Text>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Notifications"
-          onPress={() => router.push('/advocate/notifications')}
-        >
-          <Bell size={t.bell} color={colors.textPrimary} />
+        <Pressable accessibilityRole="button" accessibilityLabel="Search" hitSlop={10}>
+          <Search size={t.searchBtn} color={colors.textPrimary} />
         </Pressable>
         <View style={styles.avatar}>
           <UserRound size={t.avatarGlyph} color={ink.onBrand} />
         </View>
       </View>
 
-      <ScrollView
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
-      >
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.titleRow}>
-          <View style={styles.titleText}>
-            <Text style={styles.title}>Cases</Text>
-            <Text style={styles.sub} {...shrinkToFit(0.8)}>
-              Manage your active work and client requests.
+          <View style={styles.titleCol}>
+            <Text style={styles.title} {...shrinkToFit(0.75)}>
+              {c.title}
             </Text>
+            <Text style={styles.sub}>{c.subtitle}</Text>
           </View>
-          <Pressable accessibilityRole="button" accessibilityLabel="Alerts" style={styles.bellBtn}>
-            <Bell size={t.bellBtnIcon} color={colors.textPrimary} />
-            <View style={styles.bellDot} />
-          </Pressable>
+          {/* design/205 only — drawn when a filter is applied. */}
+          {filtersActive > 0 && (
+            <View style={styles.filterBtn}>
+              <SlidersHorizontal size={t.filterBtnIcon} color={colors.textPrimary} />
+              <View style={styles.filterBadge}>
+                <Text style={styles.filterBadgeText}>{filtersActive}</Text>
+              </View>
+            </View>
+          )}
         </View>
 
-        <View style={styles.cells}>
-          {ADV_RESPONSE_STATS.map((s, i) => (
-            <View key={s.label} style={styles.cell}>
-              <View style={styles.cellHead}>
-                <Text
-                  style={[styles.cellLabel, s.tone === 'green' && styles.cellLabelGreen]}
-                  {...shrinkToFit(0.75)}
-                >
+        <View style={styles.stats}>
+          {ADV_CASES_STATS.map((s) => (
+            <View key={s.label} style={styles.stat}>
+              <View style={styles.statHead}>
+                <Text style={styles.statLabel} {...shrinkToFit(0.7)}>
                   {s.label}
                 </Text>
-                {i === 0 && <ClipboardList size={t.cellIcon} color={colors.brandDark} />}
-                {i === 1 && <ClipboardList size={t.cellIcon} color={colors.brandDark} />}
-                {i === 2 && <CircleCheck size={t.cellIcon} color="#1E9E4A" />}
+                <View style={[styles.statDot, { backgroundColor: STAT_TONE[s.tone] }]} />
               </View>
-              <View style={styles.cellBody}>
-                <Text style={styles.cellValue} {...shrinkToFit(0.75)}>
-                  {s.value}
-                </Text>
-                <View style={[styles.cellChip, s.tone === 'green' && styles.cellChipGreen]}>
-                  <Text
-                    style={[styles.cellChipText, s.tone === 'green' && styles.cellChipTextGreen]}
-                    {...shrinkToFit(0.75)}
-                  >
-                    {s.chip}
-                  </Text>
-                </View>
-              </View>
+              <Text style={styles.statValue} {...shrinkToFit(0.75)}>
+                {s.value}
+              </Text>
+              <View style={[styles.statRule, { backgroundColor: STAT_TONE[s.tone] }]} />
             </View>
           ))}
         </View>
@@ -156,116 +138,157 @@ export default function AdvocateMattersScreen() {
           <Search size={t.searchIcon} color={colors.textBody} />
           <TextInput
             style={styles.searchInput}
-            placeholder="Search cases, clients or services..."
-            placeholderTextColor={colors.textMuted}
-            value={query}
-            onChangeText={setQuery}
+            placeholder={c.searchPlaceholder}
+            placeholderTextColor={colors.textBody}
           />
         </View>
 
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          style={styles.chipsRow}
-          contentContainerStyle={styles.chips}
+          style={styles.chipRow}
+          contentContainerStyle={styles.chipRowContent}
         >
-          {ADV_RESPONSE_FILTERS.map((f, i) => {
-            const on = i === filter;
-            return (
-              <Pressable
-                key={f}
-                accessibilityRole="radio"
-                accessibilityState={{ selected: on }}
-                onPress={() => setFilter(i)}
-                style={[styles.chip, on && styles.chipOn]}
-              >
-                <Text style={[styles.chipText, on && styles.chipTextOn]} {...shrinkToFit(0.8)}>
-                  {f}
-                </Text>
-              </Pressable>
-            );
-          })}
+          {ADV_CASES_FILTERS.map((f) => (
+            <Pressable
+              key={f}
+              accessibilityRole="button"
+              accessibilityState={{ selected: filter === f }}
+              onPress={() => setFilter(f)}
+              style={[styles.chip, filter === f && styles.chipOn]}
+            >
+              <Text style={[styles.chipText, filter === f && styles.chipTextOn]} numberOfLines={1}>
+                {f}
+              </Text>
+            </Pressable>
+          ))}
         </ScrollView>
 
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          style={[styles.chipsRow, styles.chipsRowNext]}
-          contentContainerStyle={styles.chips}
+          style={styles.svcRow}
+          contentContainerStyle={styles.chipRowContent}
         >
-          {ADV_SERVICE_FILTERS.map((f, i) => {
-            const on = i === service;
-            return (
-              <Pressable
-                key={f}
-                accessibilityRole="radio"
-                accessibilityState={{ selected: on }}
-                onPress={() => setService(i)}
-                style={[styles.chip, styles.chipOutline, on && styles.chipOn]}
+          {ADV_CASES_SERVICES.map((s) => (
+            <Pressable
+              key={s}
+              accessibilityRole="button"
+              accessibilityState={{ selected: service === s }}
+              onPress={() => setService(s)}
+              style={[styles.svcChip, service === s && styles.svcChipOn]}
+            >
+              <Text
+                style={[styles.svcChipText, service === s && styles.chipTextOn]}
+                numberOfLines={1}
               >
-                <Text style={[styles.chipText, on && styles.chipTextOn]} {...shrinkToFit(0.8)}>
-                  {f}
-                </Text>
-              </Pressable>
-            );
-          })}
+                {s}
+              </Text>
+            </Pressable>
+          ))}
         </ScrollView>
 
-        {rows.map((c) => {
-          const ServiceIcon = SERVICE_ICONS[c.serviceIcon];
-          const NoteIcon = NOTE_ICONS[c.noteIcon];
-          const tone = STATUS_TONE[c.status];
+        <View style={styles.ymRow}>
+          <Text style={styles.ymTitle} {...shrinkToFit(0.75)}>
+            {c.listTitle}
+          </Text>
+          <View style={styles.ymChip}>
+            <Text style={styles.ymChipText} {...shrinkToFit(0.8)}>
+              {c.listChip}
+            </Text>
+          </View>
+          <Pressable accessibilityRole="button" style={styles.sort}>
+            <Text style={styles.sortText} {...shrinkToFit(0.8)}>
+              {c.sort}
+            </Text>
+            <ChevronDown size={t.sortIcon} color={colors.textPrimary} style={styles.sortIcon} />
+          </Pressable>
+        </View>
+
+        {matters.map((m) => {
+          const tone = STATUS_TONE[m.status];
+          const Icon = m.bodyIcon ? BODY_ICONS[m.bodyIcon] : null;
+          const urgent = m.urgency === 'URGENT';
           return (
-            <View key={c.id} style={styles.card}>
+            <View key={m.id} style={styles.card}>
               <View style={styles.cardHead}>
-                <View style={styles.service}>
-                  <ServiceIcon size={t.serviceIcon} color={colors.brandDark} />
-                  <Text style={styles.serviceText} {...shrinkToFit(0.75)}>
-                    {c.service}
+                <View style={styles.svc}>
+                  <Text style={styles.svcText} {...shrinkToFit(0.7)}>
+                    {m.service}
                   </Text>
                 </View>
-                <View style={[styles.status, { backgroundColor: tone.bg }]}>
-                  <Text style={[styles.statusText, { color: tone.colour }]} {...shrinkToFit(0.75)}>
-                    {c.statusLabel}
+                <View style={[styles.urg, urgent ? styles.urgent : styles.ordinary]}>
+                  {urgent && <View style={styles.urgDot} />}
+                  <Text
+                    style={[styles.urgText, urgent ? styles.urgentText : styles.ordinaryText]}
+                    {...shrinkToFit(0.8)}
+                  >
+                    {m.urgency}
                   </Text>
                 </View>
               </View>
 
-              <View style={styles.clientRow}>
-                <Text style={styles.client} {...shrinkToFit(0.75)}>
-                  {c.client}
-                </Text>
-                <Text style={styles.when} {...shrinkToFit(0.75)}>
-                  {c.when}
-                </Text>
-              </View>
-              <Text style={styles.matter} {...shrinkToFit(0.75)}>
-                Matter: {c.matter}
+              <Text style={styles.cardTitle} {...shrinkToFit(0.7)}>
+                {m.title}
               </Text>
+              <View style={styles.refRow}>
+                {m.place ? (
+                  <>
+                    <Text style={styles.ref} {...shrinkToFit(0.7)}>
+                      {m.place}
+                    </Text>
+                    <Text style={styles.refDot}>·</Text>
+                    <Text style={styles.refMono} {...shrinkToFit(0.7)}>
+                      {m.ref}
+                    </Text>
+                  </>
+                ) : (
+                  <>
+                    <Text style={styles.refMono} {...shrinkToFit(0.7)}>
+                      {m.ref}
+                    </Text>
+                    {m.fee && (
+                      <>
+                        <Text style={styles.refDot}>·</Text>
+                        <Text style={styles.fee} {...shrinkToFit(0.7)}>
+                          {m.fee}
+                        </Text>
+                      </>
+                    )}
+                  </>
+                )}
+              </View>
 
-              <View style={styles.note}>
-                <NoteIcon
-                  size={t.noteIcon}
-                  color={c.status === 'completed' ? '#1E9E4A' : colors.brandDark}
-                />
-                <Text style={styles.noteText}>
-                  {c.note}
-                  {c.noteQuote ? <Text style={styles.noteQuote}> {c.noteQuote}</Text> : null}
+              <View style={styles.rule} />
+
+              <View style={[styles.status, { backgroundColor: tone.bg }]}>
+                <View style={[styles.statusDot, { backgroundColor: tone.fg }]} />
+                <Text style={[styles.statusText, { color: tone.fg }]} {...shrinkToFit(0.75)}>
+                  {m.status}
                 </Text>
               </View>
 
-              <Pressable
-                accessibilityRole="button"
-                onPress={() => router.push(`/advocate/requests/${c.id}` as Href)}
-                style={({ pressed }) => [styles.open, pressed && styles.pressed]}
-              >
-                <Text style={styles.openText}>Open Case</Text>
-                {c.status === 'completed' ? (
-                  <Eye size={t.openIcon} color={ink.onBrand} style={styles.openIcon} />
-                ) : (
-                  <ArrowRight size={t.openIcon} color={ink.onBrand} style={styles.openIcon} />
-                )}
-              </Pressable>
+              <View style={styles.bodyRow}>
+                {Icon && <Icon size={t.bodyIcon} color={colors.brandDark} style={styles.bodyIcon} />}
+                <Text style={styles.body}>{m.body}</Text>
+              </View>
+
+              <View style={styles.rule} />
+
+              <View style={styles.foot}>
+                <Text style={styles.footText} {...shrinkToFit(0.7)}>
+                  {m.footer}
+                </Text>
+                <Pressable
+                  accessibilityRole="button"
+                  onPress={() => review(m)}
+                  style={({ pressed }) => [styles.review, pressed && styles.pressed]}
+                >
+                  <Text style={styles.reviewText} {...shrinkToFit(0.8)}>
+                    {c.review}
+                  </Text>
+                </Pressable>
+              </View>
             </View>
           );
         })}
@@ -279,17 +302,25 @@ const styles = StyleSheet.create({
   header: {
     paddingHorizontal: t.padX,
     paddingBottom: t.headerPadBottom,
-    backgroundColor: colors.card,
+    backgroundColor: t.headerBg,
     flexDirection: 'row',
     alignItems: 'center',
   },
-  markTitle: {
+  mark: {
+    width: t.mark,
+    height: t.mark,
+    borderRadius: t.markRadius,
+    backgroundColor: t.markBg,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerTitle: {
+    marginLeft: t.markGap,
     flex: 1,
     minWidth: 0,
-    marginLeft: t.markGap,
     marginRight: 10,
     fontFamily: font.appHeading,
-    fontSize: t.markTitleSize,
+    fontSize: t.headerTitleSize,
     color: colors.textPrimary,
   },
   avatar: {
@@ -302,68 +333,71 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 
-  content: { paddingHorizontal: t.padX, paddingBottom: 130 },
+  content: { paddingHorizontal: t.padX, paddingBottom: 110 },
   titleRow: { marginTop: t.titleGap, flexDirection: 'row', alignItems: 'flex-start' },
-  titleText: { flex: 1, minWidth: 0, marginRight: 12 },
+  titleCol: { flex: 1, minWidth: 0, marginRight: 10 },
   title: { fontFamily: font.appHeading, fontSize: t.titleSize, color: colors.textPrimary },
-  sub: { marginTop: t.subGap, fontFamily: font.appBody, fontSize: t.subSize, color: colors.textBody },
-  bellBtn: {
-    width: t.bellBtn,
-    height: t.bellBtn,
-    borderRadius: t.bellBtn / 2,
-    backgroundColor: colors.card,
+  sub: {
+    marginTop: t.subGap,
+    fontFamily: font.appBody,
+    fontSize: t.subSize,
+    lineHeight: t.subLineHeight,
+    color: colors.textBody,
+  },
+  filterBtn: {
+    width: t.filterBtn,
+    height: t.filterBtn,
+    borderRadius: t.filterBtnRadius,
+    backgroundColor: t.filterBtnBg,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  bellDot: {
+  filterBadge: {
     position: 'absolute',
-    right: 9,
-    top: 9,
-    width: t.bellDot,
-    height: t.bellDot,
-    borderRadius: t.bellDot / 2,
-    backgroundColor: '#D64545',
+    right: -6,
+    top: -6,
+    minWidth: t.filterBadge,
+    height: t.filterBadge,
+    borderRadius: t.filterBadge / 2,
+    paddingHorizontal: 5,
+    backgroundColor: t.filterBadgeBg,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
+  filterBadgeText: { fontFamily: font.appSemi, fontSize: t.filterBadgeSize, color: ink.onBrand },
 
-  cells: { marginTop: t.cellsGap, flexDirection: 'row', gap: t.cellGapX },
-  cell: {
+  stats: { marginTop: t.statGap, flexDirection: 'row', gap: t.statGapX },
+  stat: {
     flex: 1,
     minWidth: 0,
-    borderRadius: t.cellRadius,
-    backgroundColor: colors.card,
-    padding: t.cellPad,
-  },
-  cellHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  cellLabel: {
-    flexShrink: 1,
-    marginRight: 6,
-    fontFamily: font.appSemi,
-    fontSize: t.cellLabelSize,
-    letterSpacing: t.cellLabelSpacing,
-    color: colors.brandDark,
-  },
-  cellLabelGreen: { color: '#1E9E4A' },
-  cellBody: { marginTop: t.cellValueGap, flexDirection: 'row', alignItems: 'center' },
-  cellValue: { flexShrink: 1, fontFamily: font.appHeading, fontSize: t.cellValueSize, color: colors.textPrimary },
-  cellChip: {
-    marginLeft: 'auto',
-    minHeight: t.cellChipHeight,
-    borderRadius: t.cellChipRadius,
-    paddingHorizontal: t.cellChipPadX,
-    backgroundColor: '#F1EDE6',
+    borderRadius: t.statRadius,
+    backgroundColor: t.statBg,
+    padding: t.statPad,
     alignItems: 'center',
-    justifyContent: 'center',
   },
-  cellChipGreen: { backgroundColor: '#E3F6ED' },
-  cellChipText: { fontFamily: font.appBody, fontSize: t.cellChipSize, color: colors.textBody },
-  cellChipTextGreen: { color: '#1E9E4A' },
+  statHead: { flexDirection: 'row', alignItems: 'center' },
+  statLabel: {
+    flexShrink: 1,
+    fontFamily: font.appSemi,
+    fontSize: t.statLabelSize,
+    letterSpacing: t.statLabelSpacing,
+    color: colors.textBody,
+  },
+  statDot: { marginLeft: 8, width: t.statDot, height: t.statDot, borderRadius: t.statDot / 2 },
+  statValue: {
+    marginTop: t.statValueGap,
+    fontFamily: font.appHeading,
+    fontSize: t.statValueSize,
+    color: colors.textPrimary,
+  },
+  statRule: { marginTop: t.statRuleGap, width: t.statRuleW, height: t.statRuleH, borderRadius: 2 },
 
   search: {
     marginTop: t.searchGap,
     minHeight: t.searchHeight,
     borderRadius: t.searchRadius,
-    backgroundColor: colors.card,
     paddingHorizontal: t.searchPadX,
+    backgroundColor: t.searchBg,
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -371,101 +405,157 @@ const styles = StyleSheet.create({
     marginLeft: t.searchIconGap,
     flex: 1,
     minWidth: 0,
-    padding: 0,
+    paddingVertical: 12,
     fontFamily: font.appBody,
     fontSize: t.searchSize,
     color: colors.textPrimary,
     outlineWidth: 0,
   },
 
-  chipsRow: { marginTop: t.chipsGap, height: t.chipHeight, flexGrow: 0 },
-  chipsRowNext: { marginTop: t.chipRowGap },
-  chips: { gap: t.chipGapX, paddingRight: 4, alignItems: 'center' },
+  chipRow: { marginTop: t.chipRowGap, flexGrow: 0, height: t.chipHeight, overflow: 'hidden' },
+  svcRow: { marginTop: t.chipRowGap, flexGrow: 0, height: t.svcChipHeight, overflow: 'hidden' },
+  chipRowContent: { gap: t.chipGapX },
   chip: {
-    minHeight: t.chipHeight,
+    height: t.chipHeight,
     borderRadius: t.chipRadius,
     paddingHorizontal: t.chipPadX,
     backgroundColor: t.chipBg,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  chipOutline: {
-    backgroundColor: t.chipOutlineBg,
-    borderWidth: 1,
-    borderColor: t.chipOutlineBorder,
-  },
-  chipOn: { backgroundColor: t.chipOnBg, borderColor: t.chipOnBg },
+  chipOn: { backgroundColor: t.chipOnBg },
   chipText: { fontFamily: font.appBody, fontSize: t.chipSize, color: colors.textPrimary },
-  chipTextOn: { fontFamily: font.appSemi, color: ink.onBrand },
+  chipTextOn: { color: t.chipOnColour },
+  svcChip: {
+    height: t.svcChipHeight,
+    borderRadius: t.svcChipRadius,
+    paddingHorizontal: t.svcChipPadX,
+    backgroundColor: t.chipBg,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  svcChipOn: { backgroundColor: t.svcChipOnBg },
+  svcChipText: { fontFamily: font.appBody, fontSize: t.svcChipSize, color: colors.textPrimary },
+
+  ymRow: { marginTop: t.ymGap, flexDirection: 'row', alignItems: 'center' },
+  ymTitle: { flexShrink: 1, fontFamily: font.appHeading, fontSize: t.ymTitleSize, color: colors.textPrimary },
+  ymChip: {
+    marginLeft: t.ymChipGap,
+    minHeight: t.ymChipHeight,
+    borderRadius: t.ymChipRadius,
+    paddingHorizontal: t.ymChipPadX,
+    backgroundColor: t.ymChipBg,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  ymChipText: { fontFamily: font.appBody, fontSize: t.ymChipSize, color: colors.textBody },
+  sort: { marginLeft: 'auto', paddingLeft: 8, flexDirection: 'row', alignItems: 'center' },
+  sortText: { fontFamily: font.appBody, fontSize: t.sortSize, color: colors.textPrimary },
+  sortIcon: { marginLeft: t.sortIconGap },
 
   card: {
     marginTop: t.cardGap,
     borderRadius: t.cardRadius,
-    backgroundColor: colors.card,
+    backgroundColor: t.cardBg,
     padding: t.cardPad,
   },
   cardHead: { flexDirection: 'row', alignItems: 'center' },
-  service: {
-    minHeight: t.serviceHeight,
-    borderRadius: t.serviceRadius,
-    paddingHorizontal: t.servicePadX,
-    backgroundColor: t.serviceBg,
-    flexDirection: 'row',
+  svc: {
+    minHeight: t.svcHeight,
+    borderRadius: t.svcRadius,
+    paddingHorizontal: t.svcPadX,
+    backgroundColor: t.svcBg,
     alignItems: 'center',
+    justifyContent: 'center',
     flexShrink: 1,
   },
-  serviceText: {
-    marginLeft: t.serviceIconGap,
-    flexShrink: 1,
-    fontFamily: font.appBody,
-    fontSize: t.serviceSize,
-    color: colors.textPrimary,
+  svcText: {
+    fontFamily: font.appSemi,
+    fontSize: t.svcSize,
+    letterSpacing: t.svcSpacing,
+    color: t.svcColour,
   },
-  status: {
+  urg: {
     marginLeft: 'auto',
     paddingLeft: 8,
+    minHeight: t.urgHeight,
+    borderRadius: t.urgRadius,
+    paddingHorizontal: t.urgPadX,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  urgent: { backgroundColor: t.urgentBg },
+  ordinary: { backgroundColor: t.ordinaryBg },
+  urgDot: {
+    width: t.urgDot,
+    height: t.urgDot,
+    borderRadius: t.urgDot / 2,
+    marginRight: t.urgDotGap,
+    backgroundColor: t.urgentColour,
+  },
+  urgText: { fontFamily: font.appSemi, fontSize: t.urgSize, letterSpacing: t.urgSpacing },
+  urgentText: { color: t.urgentColour },
+  ordinaryText: { color: t.ordinaryColour },
+
+  cardTitle: {
+    marginTop: t.cardTitleGap,
+    fontFamily: font.appHeading,
+    fontSize: t.cardTitleSize,
+    color: colors.textPrimary,
+  },
+  refRow: { marginTop: t.refGap, flexDirection: 'row', alignItems: 'center' },
+  ref: { flexShrink: 1, fontFamily: font.appBody, fontSize: t.refSize, color: colors.textBody },
+  refMono: { flexShrink: 1, fontFamily: font.mono, fontSize: t.refMonoSize, color: colors.textBody },
+  refDot: { marginHorizontal: t.refDotGap, fontFamily: font.appBody, fontSize: t.refSize, color: colors.textBody },
+  fee: { flexShrink: 1, fontFamily: font.appHeading, fontSize: t.refSize, color: colors.textPrimary },
+
+  rule: { marginVertical: t.ruleGap, height: 1, backgroundColor: t.rule },
+
+  status: {
+    alignSelf: 'flex-start',
+    maxWidth: '100%',
     minHeight: t.statusHeight,
     borderRadius: t.statusRadius,
     paddingHorizontal: t.statusPadX,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexShrink: 1,
-  },
-  statusText: { flexShrink: 1, fontFamily: font.appBody, fontSize: t.statusSize },
-
-  clientRow: { marginTop: t.clientGap, flexDirection: 'row', alignItems: 'center' },
-  client: { flex: 1, minWidth: 0, marginRight: 8, fontFamily: font.appHeading, fontSize: t.clientSize, color: colors.textPrimary },
-  when: { fontFamily: font.appBody, fontSize: t.whenSize, color: colors.textBody },
-  matter: { marginTop: t.matterGap, fontFamily: font.appBody, fontSize: t.matterSize, color: colors.textBody },
-
-  note: {
-    marginTop: t.noteGap,
-    borderRadius: t.noteRadius,
-    backgroundColor: t.noteBg,
-    padding: t.notePad,
     flexDirection: 'row',
+    alignItems: 'center',
   },
-  noteText: {
-    marginLeft: t.noteIconGap,
+  statusDot: {
+    width: t.statusDot,
+    height: t.statusDot,
+    borderRadius: t.statusDot / 2,
+    marginRight: t.statusDotGap,
+  },
+  statusText: { flexShrink: 1, fontFamily: font.appSemi, fontSize: t.statusSize },
+
+  bodyRow: { marginTop: t.bodyGap, flexDirection: 'row', alignItems: 'center' },
+  bodyIcon: { marginRight: t.bodyIconGap },
+  body: {
     flex: 1,
     minWidth: 0,
     fontFamily: font.appBody,
-    fontSize: t.noteSize,
-    lineHeight: t.noteLineHeight,
+    fontSize: t.bodySize,
+    lineHeight: t.bodyLineHeight,
     color: colors.textPrimary,
   },
-  noteQuote: { fontStyle: 'italic', color: colors.brandDark },
 
-  open: {
-    marginTop: t.openGap,
-    minHeight: t.openHeight,
-    borderRadius: t.openRadius,
-    backgroundColor: t.openBg,
-    flexDirection: 'row',
+  foot: { flexDirection: 'row', alignItems: 'center' },
+  footText: {
+    flex: 1,
+    minWidth: 0,
+    marginRight: 10,
+    fontFamily: font.appBody,
+    fontSize: t.footSize,
+    color: colors.textBody,
+  },
+  review: {
+    minHeight: t.reviewHeight,
+    borderRadius: t.reviewRadius,
+    paddingHorizontal: t.reviewPadX,
+    backgroundColor: t.reviewBg,
     alignItems: 'center',
     justifyContent: 'center',
   },
+  reviewText: { fontFamily: font.appHeading, fontSize: t.reviewSize, color: ink.onBrand },
   pressed: { opacity: 0.85 },
-  openText: { fontFamily: font.appBody, fontSize: t.openSize, color: ink.onBrand },
-  openIcon: { marginLeft: t.openIconGap },
 });
