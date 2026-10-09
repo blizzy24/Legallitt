@@ -19,7 +19,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { shrinkToFit } from '../../../constants/textFit';
 import { FIR_GENERATOR } from '../../../data/advocateFir';
-import { advFirGenerator as t, colors, font, ink, psrUrgent } from '../../../constants/theme';
+import { advFirGenerator as t, colors, font, ink, status } from '../../../constants/theme';
 
 // FIR draft generator (design/217).
 //
@@ -37,7 +37,8 @@ import { advFirGenerator as t, colors, font, ink, psrUrgent } from '../../../con
 //
 // ⚠ "5 Attached" where design/216 shows four files. See data/advocateFir.ts note 4.
 //
-// ⚠ The "Accused" chip and avatar are #FFDAD6 / #93000A — psrUrgent again.
+// ⚠ The "Accused" chip and avatar are status.redContainer / status.onRedContainer
+// — the design/210 red, now a shared palette pair.
 //
 // Both text fields are live; everything else is static.
 
@@ -130,7 +131,7 @@ export default function AdvocateFirGeneratorScreen() {
             <View key={p.name} style={[styles.person, i === 0 ? styles.personFirst : styles.personNext]}>
               <View style={[styles.personAvatar, p.accused && styles.personAvatarAccused]}>
                 {p.accused ? (
-                  <UserRoundX size={t.personAvatarGlyph} color={psrUrgent.colour} />
+                  <UserRoundX size={t.personAvatarGlyph} color={status.onRedContainer} />
                 ) : (
                   <UserRound size={t.personAvatarGlyph} color={colors.brandDark} />
                 )}
@@ -384,11 +385,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  personAvatarAccused: { backgroundColor: psrUrgent.bg },
+  personAvatarAccused: { backgroundColor: status.redContainer },
   personText: { flex: 1, minWidth: 0, marginHorizontal: t.personAvatarGap },
   personName: { fontFamily: font.appHeading, fontSize: t.personNameSize, color: colors.textPrimary },
   personRole: { marginTop: t.personRoleGap, fontFamily: font.appSemi, fontSize: t.personRoleSize, color: t.personRoleColour },
-  personRoleAccused: { color: psrUrgent.colour },
+  personRoleAccused: { color: status.onRedContainer },
   personChip: {
     minHeight: t.personChipHeight,
     borderRadius: t.personChipRadius,
@@ -398,9 +399,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexShrink: 1,
   },
-  personChipAccused: { backgroundColor: psrUrgent.bg },
+  personChipAccused: { backgroundColor: status.redContainer },
   personChipText: { fontFamily: font.appSemi, fontSize: t.personChipSize, color: t.personChipColour },
-  personChipTextAccused: { color: psrUrgent.colour },
+  personChipTextAccused: { color: status.onRedContainer },
 
   add: {
     marginTop: t.addGap,

@@ -33,8 +33,13 @@ import {
 //
 // ⚠ THE URGENT CHIP IS RED HERE AND AMBER ON THE CASES LIST. Sampled #FFDAD6 on
 // #93000A; designs 204/205 draw the same word for the same matter in amber
-// (advCases.urgentBg #FBEEDC on #B5741A). The shared `status` scale has no red pill
-// at all. Quarantined in constants/tokens/psrUrgent.ts — see the note there.
+// (advCases.urgentBg #FBEEDC on #B5741A). That inconsistency still stands.
+//
+// The red itself no longer does: it was quarantined when this screen was the only
+// place it appeared, and has since turned up identical on designs 215, 216 and 217
+// for rejection, accusation and a plain document tile. It now lives in the shared
+// palette as status.redContainer / status.onRedContainer. `psrUrgent` below is the
+// alias kept so this screen still reads in its own terms.
 //
 // ⚠ THE FILENAME NAMES SINGHANIA, THE CLIENT IS RAHUL SHARMA.
 //

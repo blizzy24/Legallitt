@@ -27,7 +27,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { shrinkToFit } from '../../../constants/textFit';
 import { FIR_REQUEST } from '../../../data/advocateFir';
-import { advFirRequest as t, colors, font, ink, psrUrgent } from '../../../constants/theme';
+import { advFirRequest as t, colors, font, ink, status } from '../../../constants/theme';
 
 // FIR request details (design/215).
 //
@@ -51,8 +51,8 @@ import { advFirRequest as t, colors, font, ink, psrUrgent } from '../../../const
 // ⚠ design/215 CLIPS the email to "rahul@example.co". Stored and rendered whole —
 // the project never ellipsizes. Note 7.
 //
-// ⚠ The Reject button is #FFDAD6 / #93000A, the pair quarantined in psrUrgent for
-// design/210's URGENT pill. Reused rather than re-declared; see advFir.ts.
+// ⚠ The Reject button is status.redContainer / status.onRedContainer — the
+// design/210 red, now a shared palette pair. See constants/theme.ts.
 
 const CELL_ICONS = { phone: Phone, mail: Mail };
 const ROW_ICONS = { alert: TriangleAlert, calendar: CalendarDays, pin: MapPin };
@@ -267,7 +267,7 @@ export default function AdvocateFirRequestScreen() {
             onPress={() => (router.canGoBack() ? router.back() : router.replace('/matters' as Href))}
             style={({ pressed }) => [styles.btn, styles.reject, pressed && styles.pressed]}
           >
-            <X size={t.btnIcon} color={psrUrgent.colour} />
+            <X size={t.btnIcon} color={status.onRedContainer} />
             <Text style={styles.rejectText} {...shrinkToFit(0.8)}>
               {r.reject}
             </Text>
@@ -525,9 +525,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexShrink: 1,
   },
-  /** ⚠ psrUrgent — the design/210 red, reused here. See advFir.ts. */
-  reject: { backgroundColor: psrUrgent.bg },
-  rejectText: { marginLeft: t.btnIconGap, fontFamily: font.appHeading, fontSize: t.btnSize, color: psrUrgent.colour, flexShrink: 1 },
+  /** The shared tinted-red container. See constants/theme.ts. */
+  reject: { backgroundColor: status.redContainer },
+  rejectText: { marginLeft: t.btnIconGap, fontFamily: font.appHeading, fontSize: t.btnSize, color: status.onRedContainer, flexShrink: 1 },
   accept: { flex: 1, backgroundColor: t.acceptBg },
   acceptText: { marginLeft: t.btnIconGap, fontFamily: font.appHeading, fontSize: t.btnSize, color: ink.onBrand, flexShrink: 1 },
   capReject: { marginTop: t.capGap, fontFamily: font.appSemi, fontSize: t.capSize, color: t.capRejectColour, flexShrink: 1 },

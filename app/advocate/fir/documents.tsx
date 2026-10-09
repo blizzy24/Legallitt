@@ -6,7 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { shrinkToFit } from '../../../constants/textFit';
 import { FIR_DOCUMENTS } from '../../../data/advocateFir';
-import { advFirDocuments as t, colors, font, ink, psrUrgent } from '../../../constants/theme';
+import { advFirDocuments as t, colors, font, ink, status } from '../../../constants/theme';
 
 // Review documents (design/216).
 //
@@ -18,8 +18,8 @@ import { advFirDocuments as t, colors, font, ink, psrUrgent } from '../../../con
 // Files Attached". Both lists are stored, each on the screen that draws it.
 // See data/advocateFir.ts note 4.
 //
-// ⚠ The PDF icon tile is #FFDAD6 — psrUrgent.bg again, the fifth use of the
-// design/210 red across two flows. Reused, not re-declared.
+// ⚠ The PDF icon tile is status.redContainer — the design/210 red, which by this
+// screen had appeared on four screens and is now in the shared palette.
 //
 // ⚠ The incident date is in the future. Note 5. The mobile is unmasked. Note 6.
 
@@ -103,7 +103,7 @@ export default function AdvocateFirDocumentsScreen() {
         {d.documents.rows.map((row) => (
           <View key={row.name} style={styles.doc}>
             <View style={styles.docIconBox}>
-              <FileText size={t.docIconGlyph} color={psrUrgent.colour} />
+              <FileText size={t.docIconGlyph} color={status.onRedContainer} />
             </View>
             <View style={styles.docText}>
               <Text style={styles.docName} {...shrinkToFit(0.7)}>
@@ -291,7 +291,7 @@ const styles = StyleSheet.create({
     width: t.docIconBox,
     height: t.docIconBox,
     borderRadius: t.docIconRadius,
-    backgroundColor: psrUrgent.bg,
+    backgroundColor: status.redContainer,
     alignItems: 'center',
     justifyContent: 'center',
   },

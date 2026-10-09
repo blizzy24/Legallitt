@@ -27,7 +27,6 @@ export * from './tokens/onboarding';
 export * from './tokens/videoKyc';
 export * from './tokens/legalittAi';
 export * from './tokens/psrDecision';
-export * from './tokens/psrUrgent';
 export * from './tokens/advFir';
 
 export const colors = {
@@ -114,6 +113,38 @@ export const status = {
   notification:  '#D7524B',  // red unread dot on the bell
   // "days remaining" uses the amber pill above on design/14 + 15. design/20 draws it as a
   // tan pill (#F5EDE5 fill, #786E64 text) instead — variant, not tokenised until confirmed.
+
+  // ── The tinted red container ────────────────────────────────────────────────
+  // A low-emphasis red surface with high-contrast red content. Named for the
+  // VISUAL ROLE, not a meaning: the designs use this one pair for three different
+  // things — urgency (design/210's "URGENT · 30-Year Search" pill), rejection
+  // (design/215's Reject button) and accusation (design/217's "Accused" chip and
+  // avatar) — plus design/216's PDF tile, which carries no state at all.
+  //
+  // Sampled from design/210 and confirmed identical on 215, 216 and 217: six
+  // screens across two flows. It was quarantined in constants/tokens/psrUrgent.ts
+  // while it appeared once; it is a palette colour now.
+  //
+  // For the record, both values are Material 3's default light-scheme
+  // errorContainer / onErrorContainer, which is almost certainly where the
+  // designs took them from.
+  redContainer:   '#FFDAD6',  // the tinted surface
+  onRedContainer: '#93000A',  // text and icons on it
+};
+
+/**
+ * Alias kept so design/210's screen and its comments still read in their own
+ * terms. It used to be a quarantine block in constants/tokens/psrUrgent.ts, back
+ * when the pair appeared on one screen; it now points at the shared palette.
+ * New code should use status.redContainer / status.onRedContainer directly.
+ *
+ * Declared here rather than in constants/tokens/ because the token modules are
+ * re-exported from the top of this file, so a token module importing `status`
+ * back from here would initialise before `status` exists.
+ */
+export const psrUrgent = {
+  bg: status.redContainer,
+  colour: status.onRedContainer,
 };
 
 // Third-party logo colours for the social sign-in marks.
