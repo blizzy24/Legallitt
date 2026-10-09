@@ -431,3 +431,96 @@ export const FIR_DRAFT = {
   send: 'Send to Client for Review',
   caption: 'Send to Client for Review opens FIR Review & Status',
 };
+
+// ── design/219 — FIR review & status ─────────────────────────────────────────
+//
+// ⚠ THE PREVIEW SWITCHER IS DRAWN IN THE DESIGN. Unlike the other unreachable-state
+// switchers in this project, which are dev affordances we added, design/219 draws
+// this one as part of the screen, with its own label ("ADVOCATE PREVIEW SWITCHER")
+// and an "Interactive Demo" tag. It is gated behind DEV_PREVIEW_TOGGLES on request,
+// which means turning that flag off removes UI the design actually draws.
+//
+// ⚠ ITS LABELS ARE "Waiting / Approved / Changes" — not "Changes Needed".
+//
+// ⚠ ONLY THE "Waiting" STATE IS DESIGNED. design/219 is a single-state export. There
+// is no Approved screen and no Changes screen anywhere in this batch, so selecting
+// those segments cannot change the content without inventing it. The segments
+// select; the content stays as drawn, and a dev-only note says so.
+//
+// ⚠ "8 Legal Sections" here, "4 Sections" on design/218.
+// ⚠ "4 Files Attached" here — a fifth document count in this flow.
+// ⚠ The docket is #FIR-2026-8841 with a "#". Note 3.
+
+export const FIR_REVIEW = {
+  title: 'Fir Review',
+  switcher: {
+    label: 'ADVOCATE PREVIEW SWITCHER',
+    demo: 'Interactive Demo',
+    /** ⚠ "Changes", not "Changes Needed". */
+    states: ['Waiting', 'Approved', 'Changes'],
+    /** Dev-only. Not drawn in any design. */
+    devNote:
+      'Only the Waiting state is designed. design/219 is a single-state export — there is no Approved or Changes screen in this batch, so these two segments show the drawn content unchanged.',
+  },
+
+  /** ⚠ 8841 and a "#". See note 3. */
+  docket: '#FIR-2026-8841',
+  statusChip: 'WAITING FOR CLIENT',
+  station: 'PS Central Kotwali, Indore',
+
+  client: {
+    label: 'CLIENT DETAILS',
+    chip: 'Verified Complainant',
+    initials: 'RS',
+    name: 'Rahul Sharma',
+    /** ⚠ Unmasked. Note 6. */
+    phone: '+91 98260 41298',
+    city: 'Indore (Madhya Pradesh)',
+  },
+
+  draft: {
+    title: 'FIR Draft',
+    version: 'v2.1',
+    by: 'Created by Legalitt Advocate',
+    proforma: 'Statutory Police Proforma',
+    /** ⚠ EIGHT here; design/218 lists FOUR. */
+    sections: '8 Legal Sections',
+    /** ⚠ A fifth count for the document set. Note 4. */
+    files: '4 Files Attached',
+    view: 'View Draft',
+  },
+
+  timeline: {
+    label: 'FILING TIMELINE',
+    stage: 'Stage 3 of 5',
+    /**
+     * ⚠ NO CONNECTOR LINES. design/219 draws five standalone circles, 23pt across,
+     * on a 50pt row pitch — no rail between them. The Property Search tracker's
+     * connector values are deliberately not reused.
+     */
+    rows: [
+      { title: 'Draft Created', sub: 'AI Assisted Proforma • 10:28 AM', tone: 'done' as const, icon: 'check' as const },
+      { title: 'Sent to Client', sub: 'SMS & App Link • Today, 10:30 AM', tone: 'done' as const, icon: 'check' as const },
+      { title: 'Waiting for Client Review', sub: 'Active step • Awaiting sign-off', tone: 'active' as const, icon: 'hourglass' as const },
+      { title: 'Approved', sub: 'Client formal consent', tone: 'todo' as const, icon: 'checkcheck' as const },
+      { title: 'Submitted to Police', sub: 'Final dispatch & receipt', tone: 'todo' as const, icon: 'send' as const },
+    ],
+  },
+
+  alert: {
+    title: 'Waiting for Client Review',
+    body: 'The FIR draft has been sent to Rahul Sharma.',
+    note: 'The client has received the draft link via Legalitt Client App and SMS. You will be notified the moment they respond.',
+    resend: 'Resend Review Link',
+    remind: 'Remind Client',
+  },
+
+  audit: {
+    label: 'AUDIT LOG & HISTORY',
+    rows: [
+      { text: 'Client viewed draft online', time: '11:10 AM' },
+      { text: 'Draft sent to client via SMS', time: '10:30 AM' },
+      { text: 'Draft generated with Legalitt AI', time: '10:28 AM' },
+    ],
+  },
+};
