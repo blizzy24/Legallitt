@@ -3125,3 +3125,167 @@ export const ADV_PSR_REQUEST = {
   continue: 'Continue to Upload Report',
   caption: 'Opens report uploader to attach your signed title report.',
 };
+
+// ═════════════════════════════════════════════════════════════════════════════
+// PROPERTY SEARCH REPORT EDITOR (design/208).
+//
+// ⚠ THIS IS THE OTHER PROPERTY. Every field below describes different land from
+// ADV_PSR_PROPERTY_REQUEST, which designs 206/207 draw for the same journey. See the
+// table above that record. Rendered exactly as design/208 draws it.
+//
+// ⚠ design/208 ALSO CONTRADICTS ITSELF, exactly as design/207 does: its Property
+// Address reads "Plot No. 42, Scheme No. 54" while its own Plot Number cell reads
+// "42-B". Both screens disagree with themselves about the plot number.
+//
+// ⚠ EIGHTH AI SURFACE. The Legalitt AI card is a writing assistant: static as
+// always, and nothing it shows was generated. Its disclaimer is the MOST SPECIFIC IN
+// THE PROJECT — "AI assists with grammar and tone only. AI never modifies dates,
+// names, registry numbers, or factual legal findings." That is a scope statement the
+// other seven surfaces do not have, and it is worth putting to the client as the
+// model for all of them.
+//
+// ⚠ "Step 3 of 5 · Report Editor" is a SEVENTH STEPPER IDIOM, and like design/188's
+// it is a bare text label inside no counter.
+//
+// ⚠ design/208 masks nothing: it shows the client's full mobile and email, where
+// design/207 masks both (+91 98260 ••••• / rahul.shar***@example.com). Same client,
+// same journey, opposite privacy treatment.
+//
+// ⚠ Several strings are CLIPPED in the export and completed here by INFERENCE:
+// the header title, three of the four Documents Checked names, and the third
+// suggestion chip. Each is marked below.
+//
+// Date normalised: design/208's Search Date reads 19 Oct 2026, a month after
+// MOCK_TODAY; moved to 19 Sep 2026 with the rest of the advocate flow.
+// ═════════════════════════════════════════════════════════════════════════════
+
+export const ADV_PSR_EDITOR = {
+  /** ⚠ Clipped in design/208 behind the Draft chip; completed by inference. */
+  title: 'Draft Property Search Report',
+  step: 'Step 3 of 5 • Report Editor',
+  statusChip: 'Draft',
+  matter: 'Rahul Sharma — Property Search',
+  matterRef: 'Ref: PSR-2026-8841 • Sub-Registrar Office, Indore',
+  /** ⚠ design/208 draws this as brand-brown sparkles, NOT the purple flower mark. */
+  assistChip: 'AI Assist',
+
+  client: {
+    title: 'Client Details',
+    cells: [
+      { label: 'Client Name', value: 'Rahul Sharma' },
+      { label: 'Mobile', value: '+91 98260 14829' },
+    ],
+    wide: [
+      { label: 'Email Address', value: 'rahul.sharma@example.com' },
+      { label: 'City / Domicile', value: 'Indore, Madhya Pradesh' },
+    ],
+  },
+  property: {
+    title: 'Property Details',
+    wide: [
+      { label: 'Property Type', value: 'Residential Property (Plot & Structure)' },
+      /** ⚠ Says Plot No. 42; the Plot Number cell says 42-B. */
+      { label: 'Property Address', value: 'Plot No. 42, Scheme No. 54, Vijay Nagar' },
+    ],
+    cells: [
+      { label: 'Village / Tehsil', value: 'Khajrana, Tehsil Indore' },
+      { label: 'District & State', value: 'Indore, MP' },
+      { label: 'Khasra / Survey No.', value: '312/1/4' },
+      { label: 'Plot Number', value: '42-B' },
+    ],
+    area: { label: 'Total Area Extent', value: '2,400 sq.ft. (approx. 222.96 sq.m.)' },
+  },
+  owner: {
+    title: 'Owner Details',
+    current: {
+      label: 'Current Registered Owner',
+      name: 'Mr. Suresh Chand Sharma',
+      relation: 'Son of Late R.K. Sharma',
+    },
+    cells: [
+      { label: 'Owner Type', value: 'Individual / Freehold' },
+      { label: 'Ownership Period', value: '14 Years (Since 2012)' },
+    ],
+    previous: { label: 'Previous Transferor Entity', value: 'M/s Indore Real Estate Holdings Pvt. Ltd.' },
+  },
+  documents: {
+    title: 'Documents Checked',
+    /** ⚠ Three of four names are clipped in design/208; completions INFERRED. */
+    rows: [
+      { icon: 'deed' as const, name: 'Sale Deed (Reg. No. 4412/2012)', sub: 'Registered at Indore District Registry' },
+      { icon: 'folder' as const, name: 'Registry Document & Index II', sub: 'Archived Registry Ledger Inspection' },
+      { icon: 'receipt' as const, name: 'Municipal Property Tax Receipt', sub: 'FY 2025-26 Payment Challan' },
+      { icon: 'seal' as const, name: 'Town Planning / Nazul Clearance', sub: 'Zonal Authority Indore Clearance Certificate' },
+    ],
+    chip: 'Checked',
+    add: 'Add Document Record',
+    footnote: '* Checked directly by Advocate during physical record inspection at the Sub-Registrar Office.',
+  },
+  search: {
+    title: 'Search Details',
+    cells: [
+      /** Normalised from design/208's 19 Oct 2026. */
+      { label: 'Search Date', value: '19 Sep 2026' },
+      { label: 'Search Period', value: '30 Years (1996–2026)' },
+    ],
+    wide: [
+      { label: 'Records Inspected', value: 'Book No. 1, Volume 418, Registration Index I & II' },
+      { label: 'Place / Registry Office', value: 'Sub-Registrar Office-II, Collectorate Compound, Indore' },
+    ],
+    notes: {
+      label: 'Additional Search Notes',
+      value: 'Physical registers inspected for encumbrances, prior mortgages, attachment orders, and lis pendens notices from 1996 till current date.',
+    },
+  },
+  history: {
+    title: 'Ownership History',
+    /** ⚠ design/208 cuts this off mid-sentence at "transferred via". Kept as drawn. */
+    body: 'The ownership details were checked from the available records. The property was originally allotted by Indore Development Authority (IDA) in 1996, transferred via',
+    verified: 'Advocate verified entry',
+    edit: 'Tap to edit',
+  },
+  findings: {
+    title: 'Search Findings',
+    rows: [
+      { lead: 'Ownership details:', body: 'Verified with original Index-II registers. Clear unbroken chain of title.' },
+      { lead: 'Loan or charge details:', body: 'No subsisting bank charges or registered mortgages found in Index-I.' },
+      { lead: 'Court case details:', body: 'No pending lis pendens or court restraint orders noted.' },
+      { lead: 'Property tax:', body: 'Up to date till FY 2025-26; no municipal arrears recorded.' },
+    ],
+    footnote: 'Search Findings • Entered directly by Advocate. Factual records remain immutable by automation.',
+  },
+  conclusion: {
+    title: 'Search Conclusion',
+    sub: 'Title Clearance Opinion',
+    body: 'Based on the inspection of records at the Sub-Registrar Office, Indore, for the period of 30 years (1996–2026), the title of Mr. Suresh Chand Sharma in respect of Residential Plot No. 42, Scheme 54, Indore, is found to be clean, clear, marketable, and free from all visible encumbrances.',
+    cells: [
+      { label: 'Final Advocate Certification' },
+      { label: 'Manual Sign-off Pending' },
+    ],
+  },
+  ai: {
+    label: 'LEGALITT AI',
+    chip: 'Writing Assistant Only',
+    title: 'What would you like to refine?',
+    sub: 'Improve report wording, polish legal clarity, or elevate tone while preserving factual data.',
+    placeholder: 'e.g. Make Section 8 more formal...',
+    /** ⚠ Third chip clipped to "Make C…"; INFERRED as "Make Concise". */
+    suggestions: ['✨ Make More Formal', '📝 Fix Grammar', '🎯 Make Concise'],
+    revisionTitle: 'Suggested Revision for Section 8',
+    livePreview: 'Live Preview',
+    originalChip: 'Original',
+    original: '"Based on the inspection of records at the Sub-Registrar Office, Indore, for the period...',
+    revisionChip: 'AI Revision',
+    revision: '"Upon detailed archival examination of title records at the Sub-Registrar Office, Indore across the 30-year span (1996–2026), the subject title held by Mr. Suresh Chand Sharma is verified as clear, marketable, and unencumbered."',
+    apply: 'Apply Revision',
+    keep: 'Keep Original',
+    /** ⚠ The most specific AI scope statement in the project. */
+    disclaimer: 'AI assists with grammar and tone only. AI never modifies dates, names, registry numbers, or factual legal findings.',
+  },
+  compliance: {
+    line1: 'Draft Created via Legalitt Advocate Platform • Bar Council Compliant Workflow',
+    line2: 'Advocate must review and approve all sections before court filing or client handoff.',
+  },
+  saveDraft: 'Save Draft',
+  continue: 'Continue',
+};
