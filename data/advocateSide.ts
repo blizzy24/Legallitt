@@ -3515,3 +3515,39 @@ export const ADV_PSR_SEND = {
   send: 'Send Report to Client',
   caption: 'Dispatches authenticated search report & triggers escrow release.',
 };
+
+// ═════════════════════════════════════════════════════════════════════════════
+// PROPERTY SEARCH REPORT — SENT (design/212)
+//
+// ⚠ design/212 IS design/203. Differenced pixel by pixel, the two 780×1784 exports
+// are identical except rows 677–715 — the payout figure. Everything else is the
+// same: the title, the DOC-742 chip, the green check, the PAYMENT SUMMARY card,
+// the credit note, the Back To Home button. Both render
+// components/ReportSentScreen.tsx.
+//
+// ⚠ AND THE COPY IS CORRECT WHERE THE ORIGINAL IS NOT.
+//   design/212  ₹3,800  — the payout design/206 states for the property search.
+//   design/203  ₹3,500  — the GROSS CLIENT FEE from design/185, whose own
+//                         breakdown nets the advocate ₹3,087 after a ₹350
+//                         platform fee and ₹63 of charges.
+// Same component, two services, and only the Legal Notice one shows the advocate
+// the client's money as their own. design/203 is the screen that needs correcting,
+// not the fee formula.
+//
+// ⚠ design/212 still reads "Send Report" in the header — the title of the screen
+// before it — on what is the confirmation that the report has already been sent.
+// Inherited from design/203 along with everything else.
+// ═════════════════════════════════════════════════════════════════════════════
+
+export const ADV_PSR_SENT = {
+  /** ⚠ "Send Report" on the sent-confirmation screen, as drawn. */
+  title: 'Send Report',
+  docChip: 'DOC-742',
+  summaryLabel: 'PAYMENT SUMMARY',
+  escrowChip: 'Escrow Protected',
+  payoutLabel: 'Advocate Payout',
+  /** The one changed value — and the correct one. */
+  payout: '₹3,800',
+  note: 'Payment will be automatically credited to your registered bank account after the report is sent to the client.',
+  back: 'Back To Home',
+};

@@ -1,22 +1,19 @@
-import { StyleSheet, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useLocalSearchParams } from 'expo-router';
 
-import { colors, font, space } from '../../../../constants/theme';
+import ReportSentScreen from '../../../../components/ReportSentScreen';
+import { ADV_PSR_SENT } from '../../../../data/advocateSide';
 
-// Placeholder — Report Sent, design/212. Not yet built; this route exists so the
-// property-search flow resolves end to end.
+// Report sent (design/212). Layout lives in components/ReportSentScreen.tsx.
+//
+// ⚠ design/212 IS design/203 — the two exports differ only in the payout figure
+// (rows 677–715). And design/212 is the one that is right: ₹3,800 matches the
+// payout design/206 states, where design/203's ₹3,500 is the client's gross fee.
+//
+// ⚠ The header still reads "Send Report" on the sent-confirmation screen.
+//
+// See data/advocateSide.ts.
+
 export default function AdvocatePropertySearchSentScreen() {
-  const insets = useSafeAreaInsets();
-  return (
-    <View style={[styles.screen, { paddingTop: insets.top + 24 }]}>
-      <Text style={styles.title}>Report Sent</Text>
-      <Text style={styles.text}>Not built yet (design/212).</Text>
-    </View>
-  );
+  useLocalSearchParams<{ id: string }>();
+  return <ReportSentScreen r={ADV_PSR_SENT} />;
 }
-
-const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.appBg, paddingHorizontal: space.screenX },
-  title: { fontFamily: font.appHeading, fontSize: 24, color: colors.textPrimary },
-  text: { marginTop: 8, fontFamily: font.appBody, fontSize: 14, color: colors.textBody },
-});
