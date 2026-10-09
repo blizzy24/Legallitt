@@ -3408,3 +3408,110 @@ export const ADV_PSR_UPLOAD = {
 
   continue: 'Continue',
 };
+
+// ═════════════════════════════════════════════════════════════════════════════
+// PROPERTY SEARCH REPORT — SEND (design/211)
+//
+// ⚠ THE COUNTER DOES NOT MATCH THE MESSAGE. design/211 reads 86/300 over a drafted
+// message that is 83 characters. Built with a live counter, so it reads 83/300
+// until the advocate types.
+//
+// ⚠ THE CLIENT'S EMAIL IS UNMASKED HERE AND MASKED IN design/207. This screen
+// prints rahul.sharma@example.com in full; the request screen shows
+// rahul.shar***@example.com. Same client, same flow, two disclosure rules.
+//
+// ⚠ A THIRD KHASRA NUMBER. design/207 records Khasra / Survey No. 123/4 and its
+// Plot Number cell 45; design/208 records 312/1/4. design/211 reads "123/4 & 45",
+// which looks like design/207's khasra and its plot number concatenated into one
+// field. On a title-verification product the survey number identifies the land.
+//
+// ⚠ "Ready for Dispatch" IS NOT A GREEN CHIP. It is the same grey pill as the
+// docket (#F0EDED) with near-black text and a green #22B573 dot. The two chips
+// that ARE green here — "Ready to Send" and "Escrow Protected" — use #E9F8F1 on
+// #22B573.
+//
+// ⚠ BOTH DELIVERY CHANNELS ARE DRAWN SELECTED, and no screen says whether either
+// can be turned off, whether one is mandatory, or what happens if both are
+// cleared. Made togglable so the state is visible; the drawn state is both on.
+//
+// ⚠ THE FILENAME IS CLIPPED in design/211 — it ends mid-word at
+// "Property_Search_Rep" with no ellipsis, running under the View chip. Wrapped
+// here instead, per the project's shrink-or-wrap rule, and flagged.
+//
+// ⚠ The Send button is #6C5C45, the deep brown; design/210's Continue button on
+// the previous screen is #B09C82, the light brand. Two primary buttons, one flow.
+// ═════════════════════════════════════════════════════════════════════════════
+
+export const ADV_PSR_SEND = {
+  title: 'Send Report',
+  docChip: 'DOC-742',
+  docket: 'DOCKET PSR-2026-1048',
+  statusChip: 'Ready for Dispatch',
+
+  client: {
+    label: 'CLIENT',
+    verified: 'Verified Identity',
+    name: 'Rahul Sharma',
+    /** ⚠ A fifth description of this client across the batch. */
+    role: 'Individual Buyer & Requester',
+    initials: 'RS',
+    appRow: 'Verified on Legalitt Client App',
+  },
+
+  property: {
+    label: 'PROPERTY',
+    chip: 'Residential Property',
+    address: 'Plot No. 42, Sector B, Scheme No. 78, Vijay Nagar, Indore, Madhya Pradesh — 452001',
+    khasraLabel: 'KHASRA / SURVEY NO:',
+    /** ⚠ A third value — see the note above. */
+    khasra: '123/4 & 45',
+  },
+
+  document: {
+    label: 'REPORT DOCUMENT',
+    chip: 'Ready to Send',
+    /** ⚠ Clipped to "Property_Search_Rep" in design/211. Wrapped here. */
+    file: 'Property_Search_Report_Singhania.pdf',
+    meta: '4.8 MB • Digitally Signed',
+    view: 'View',
+  },
+
+  message: {
+    label: 'MESSAGE TO CLIENT',
+    sub: 'This message will be delivered with your report.',
+    /** 83 characters. ⚠ design/211's counter reads 86. */
+    body: 'Your Property Search Report is ready. Please review the report in the Legalitt app.',
+    max: 300,
+  },
+
+  delivery: {
+    label: 'DELIVERY CHANNELS',
+    sub: 'Select how Rahul Sharma receives the document.',
+    channels: [
+      {
+        key: 'app',
+        title: 'Legalitt App',
+        chip: 'Instant',
+        body: 'Client will receive the report instantly in the Legalitt app with notification and encrypted download access.',
+      },
+      {
+        key: 'email',
+        title: 'Email Delivery',
+        chip: 'Copy',
+        /** ⚠ Unmasked here, masked in design/207. */
+        body: "Send a secure PDF copy to the client's registered email (rahul.sharma@example.com).",
+      },
+    ],
+  },
+
+  payment: {
+    label: 'PAYMENT SUMMARY',
+    chip: 'Escrow Protected',
+    payoutLabel: 'Advocate Payout',
+    payout: '₹3,800',
+    note: 'Payment will be automatically credited to your registered bank account after the report is sent to the client.',
+  },
+
+  send: 'Send Report to Client',
+  caption: 'Dispatches authenticated search report & triggers escrow release.',
+};
