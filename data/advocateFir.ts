@@ -524,3 +524,58 @@ export const FIR_REVIEW = {
     ],
   },
 };
+
+// ── design/220 — FIR completed ───────────────────────────────────────────────
+//
+// ⚠ THE DOCKET RETURNS TO FIR-2026-1048, unprefixed, after designs 218 and 219
+// used #FIR-2026-8841. Note 3.
+//
+// ⚠ THE PAYMENT DATE IS 19 Oct 2026 — ten days in the future, and a day after the
+// incident date the same flow calls the past. Note 5.
+//
+// ⚠ THE SUCCESS MARK IS A FOURTH GREEN (#55A900). designs 203 and 212 draw the
+// identical mark in #4CA214. See the quarantine note in constants/tokens/advFir.ts.
+//
+// ⚠ ReportSentScreen does NOT fit and is not reused. That component (designs 203
+// and 212) is a check, one PAYMENT SUMMARY card and one button. design/220 has a
+// close (×) header, a headline and sub-line, a CASE card, a YOUR PAYMENT card with
+// an inner receipt box, a five-row COMPLETED STEPS card and two actions.
+
+export const FIR_COMPLETED = {
+  title: 'Fir Completed',
+  headline: 'FIR Submitted Successfully',
+  body: 'The client approved the draft and the FIR was submitted.',
+
+  caseCard: {
+    label: 'CASE',
+    chip: 'Completed',
+    rows: [
+      { label: 'Client', value: 'Rahul Sharma' },
+      /** ⚠ Back to 1048, unprefixed. Note 3. */
+      { label: 'Request ID', value: 'FIR-2026-1048' },
+      { label: 'Service', value: 'FIR Draft' },
+    ],
+  },
+
+  payment: {
+    label: 'YOUR PAYMENT',
+    chip: 'Payment Received',
+    /** Matches design/215's ₹3,000 split, not design/214's ₹4,500 fee. Note 1. */
+    amount: '₹3,000',
+    unit: 'INR',
+    body: 'This amount has been added to your Legalitt wallet.',
+    rows: [
+      /** ⚠ Ten days in the future. Note 5. */
+      { label: 'Payment Date', value: '19 Oct 2026, 11:20 AM' },
+      { label: 'Added To', value: 'Wallet (WAL-7729)' },
+    ],
+  },
+
+  steps: {
+    label: 'COMPLETED STEPS',
+    rows: ['Draft created', 'Sent to client', 'Client approved', 'FIR submitted', 'Payment received'],
+  },
+
+  primary: 'View Earnings',
+  secondary: 'View FIR',
+};
