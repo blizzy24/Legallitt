@@ -2807,3 +2807,199 @@ export const ADV_NOTICE_REPORT = {
   note: 'Payment will be automatically credited to your registered bank account after the report is sent to the client.',
   back: 'Back To Home',
 };
+
+// ═════════════════════════════════════════════════════════════════════════════
+// ADVOCATE CASES LIST (designs 204, 205) — supersedes design/162.
+//
+// ⚠ SECOND ADVOCATE CASES LIST. design/204 and design/162 are the same screen drawn
+// twice, and both draw the advocate tab bar with the SCALES tab active:
+//     design/162  "Responses"  REVIEW 3 / PROGRESS 5 / RESOLVED 12
+//                 chips All (20) / Needs Review (3) / In Progress (5), "Open Case →"
+//     design/204  "Cases"      ACTIVE 8 / UPCOMING 4 / COMPLETED 12
+//                 chips All / Active / Upcoming / Waiting for Client, a service
+//                 filter row, a sort control, "Review Request"
+// The completed count matches at 12, so these describe one screen. design/204 is the
+// newer and far richer export and is built as canonical, IN PLACE at
+// app/(advocate)/matters.tsx, so the tab wiring and the app/advocate/requests/index
+// re-export keep working. design/162's content is superseded, not kept alongside —
+// two lists on one tab would have no way to choose between them.
+//
+// ⚠ FIR DRAFT IS PRICED HERE FOR THE FIRST TIME: "Fee: ₹4,500". Legal Notice reads
+// "Fee: ₹3,500", consistent with design/185's client fee. These are ADVOCATE-FACING
+// fees on a list card; neither is a client-facing price list, so the long-standing
+// FIR pricing gap is only partly answered.
+//
+// ⚠ design/205 (the Property Search filter applied) draws THREE IDENTICAL CARDS —
+// same client, same PSR-2026-1048, same "Search findings recorded.", same timestamp.
+// design/204's list contains exactly ONE property search matter. The filter here is
+// live and against the real list, so it yields one card, not three.
+//
+// ⚠ design/205's filter button is NOT in the header, as sometimes described: both
+// designs carry search + avatar in the header, and design/205 ADDS a filter button
+// with a "2" badge in the subtitle row beneath it.
+// ═════════════════════════════════════════════════════════════════════════════
+
+export type AdvMatterStatus =
+  | 'Client Review'
+  | 'Draft Preparation'
+  | 'Report Preparation'
+  | 'Waiting for Specialist'
+  | 'Documents Pending'
+  | 'Active'
+  | 'Upcoming';
+
+export type AdvCaseMatter = {
+  id: string;
+  service: string;
+  /** Routes Review Request; see the screen. */
+  serviceKey: 'legal-notice' | 'fir' | 'property-search' | 'forensic' | 'other';
+  urgency: 'URGENT' | 'ORDINARY';
+  title: string;
+  ref: string;
+  /** Some cards carry a fee on the reference line, others a location. */
+  fee?: string;
+  place?: string;
+  status: AdvMatterStatus;
+  /** A plain sentence, or a row with a leading icon. */
+  body: string;
+  bodyIcon?: 'calendar' | 'gavel' | 'video';
+  footer: string;
+  /** Which chip row the card answers to. */
+  bucket: 'Active' | 'Upcoming' | 'Waiting for Client';
+};
+
+export const ADV_CASES_STATS = [
+  { label: 'ACTIVE', value: '8', tone: 'active' as const },
+  { label: 'UPCOMING', value: '4', tone: 'upcoming' as const },
+  { label: 'COMPLETED', value: '12', tone: 'completed' as const },
+];
+
+export const ADV_CASES_FILTERS = ['All', 'Active', 'Upcoming', 'Waiting for Client'];
+export const ADV_CASES_SERVICES = [
+  'All Services',
+  'Legal Notice',
+  'FIR Draft',
+  'Property Search',
+];
+
+export const ADV_CASES: AdvCaseMatter[] = [
+  {
+    id: 'ln-2026-1048',
+    service: 'LEGAL NOTICE',
+    serviceKey: 'legal-notice',
+    urgency: 'URGENT',
+    title: 'Rahul Sharma → Amit Verma',
+    ref: 'LN-2026-1048',
+    fee: 'Fee: ₹3,500',
+    status: 'Client Review',
+    body: 'Draft sent to client for approval.',
+    footer: 'Updated: Today · 10:42 AM',
+    bucket: 'Waiting for Client',
+  },
+  {
+    id: 'fir-2026-1048',
+    service: 'FIR DRAFT',
+    serviceKey: 'fir',
+    urgency: 'ORDINARY',
+    title: 'Rahul Sharma · Financial Fraud',
+    ref: 'FIR-2026-1048',
+    /** ⚠ First FIR price anywhere in the project. */
+    fee: 'Fee: ₹4,500',
+    status: 'Draft Preparation',
+    body: 'Client information reviewed.',
+    footer: 'Updated: Yesterday · 04:18 PM',
+    bucket: 'Active',
+  },
+  {
+    id: 'psr-2026-1048',
+    service: 'PROPERTY SEARCH',
+    serviceKey: 'property-search',
+    urgency: 'URGENT',
+    title: 'Rahul Sharma · Residential Property',
+    ref: 'PSR-2026-1048',
+    place: 'Indore, Madhya Pradesh',
+    status: 'Report Preparation',
+    body: 'Search findings recorded.',
+    footer: 'Updated: Today · 09:20 AM',
+    bucket: 'Active',
+  },
+  {
+    id: 'df-2026-1048',
+    service: 'DOCUMENT FORENSIC',
+    serviceKey: 'forensic',
+    urgency: 'ORDINARY',
+    title: 'Rahul Sharma · Sale Agreement.pdf',
+    ref: 'DF-2026-1048',
+    status: 'Waiting for Specialist',
+    body: 'Documents sent to external forensic specialist.',
+    footer: 'Updated: 18 Sep 2026',
+    bucket: 'Active',
+  },
+  {
+    id: 'cm-2026-1048',
+    service: 'COURT MARRIAGE',
+    serviceKey: 'other',
+    urgency: 'ORDINARY',
+    title: 'Rahul Sharma & Priya Sharma',
+    ref: 'CM-2026-1048',
+    status: 'Documents Pending',
+    body: 'Additional document required · Next: Review Documents',
+    footer: 'Updated: 20 Sep 2026',
+    bucket: 'Waiting for Client',
+  },
+  {
+    id: 'hc-2026-1048',
+    service: 'HIGH COURT REPRESENTATION',
+    serviceKey: 'other',
+    urgency: 'URGENT',
+    title: 'Rahul Sharma vs. ABC Enterprises',
+    ref: 'HC-2026-1048',
+    place: 'Madhya Pradesh High Court',
+    status: 'Active',
+    body: 'Next Hearing: 24 Sep 2026 (Urgent Cause List)',
+    bodyIcon: 'calendar',
+    footer: 'Bench: Court Hall 4',
+    bucket: 'Active',
+  },
+  {
+    id: 'dc-2026-1048',
+    service: 'DISTRICT COURT REPRESENTATION',
+    serviceKey: 'other',
+    urgency: 'ORDINARY',
+    title: 'Ananya Singh vs. Verma Group',
+    ref: 'DC-2026-1048',
+    place: 'District Court, Indore',
+    status: 'Active',
+    body: 'Next Hearing: 28 Sep 2026 (Cross Examination)',
+    bodyIcon: 'gavel',
+    footer: 'Court: CJM Court 2',
+    bucket: 'Active',
+  },
+  {
+    id: 'la-2026-1048',
+    service: 'LEGAL ADVICE',
+    serviceKey: 'other',
+    urgency: 'ORDINARY',
+    title: 'Rahul Sharma · Consultation',
+    ref: 'LA-2026-1048',
+    place: 'Adv. Priya Sharma',
+    status: 'Upcoming',
+    body: 'Date: 24 Sep 2026 · 05:00 PM (Voice/Video Call)',
+    bodyIcon: 'video',
+    footer: 'Mode: Secured In-App Call',
+    bucket: 'Upcoming',
+  },
+];
+
+export const ADV_CASES_COPY = {
+  headerTitle: 'Cases',
+  title: 'Cases',
+  subtitle: 'Manage your active legal matters and case work.',
+  searchPlaceholder: 'Search client, case, service or case ID...',
+  listTitle: 'Your Matters',
+  listChip: '8 active',
+  sort: 'Recent First',
+  review: 'Review Request',
+  /** design/205 only. */
+  filterBadge: '2',
+};
