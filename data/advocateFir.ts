@@ -192,3 +192,88 @@ export const FIR_DOCUMENTS = {
   continue: 'Continue to FIR Draft',
   caption: 'Proceed to draft creation and FIR information',
 };
+
+// ── design/217 — FIR draft generator ─────────────────────────────────────────
+
+export const FIR_GENERATOR = {
+  title: 'Fir Draft Generator',
+  readyChip: 'Ready to Create',
+  lead: 'Check the details and create the FIR draft.',
+
+  complainant: {
+    title: 'Complainant Details',
+    fields: [
+      { label: 'FULL NAME', value: 'Rahul Sharma' },
+      { label: 'FATHER / HUSBAND NAME', value: 'Ramesh Sharma' },
+      { label: 'ADDRESS', value: '142/B, Silver Residency, Scheme No. 54, Vijay Nagar, Indore (M.P.)' },
+      /** ⚠ Unmasked. See note 6. */
+      { label: 'MOBILE NUMBER', value: '+91 98260 41298' },
+    ],
+  },
+
+  incident: {
+    title: 'Incident Details',
+    cells: [
+      /** ⚠ In the future. See note 5. */
+      { label: 'Date', value: '18 Oct 2026', half: true },
+      { label: 'Time', value: '~09:30 PM', half: true },
+      { label: 'Place', value: 'Commercial Complex Parking, Scheme No. 54, Indore' },
+      { label: 'Police Station', value: 'Central Kotwali, Indore' },
+    ],
+  },
+
+  people: {
+    title: 'People Involved',
+    chip: '2 Added',
+    rows: [
+      { name: 'Rahul Sharma', role: 'Aggrieved / Complainant', chip: 'Complainant', accused: false },
+      /** ⚠ design/217 CLIPS this to "Vikram Singh & 2 Associ". Stored whole. */
+      { name: 'Vikram Singh & 2 Associates', role: 'Accused', chip: 'Accused', accused: true },
+    ],
+    add: 'Add Person',
+  },
+
+  happened: {
+    title: 'What Happened?',
+    sub: "Client's original description. You can edit or add details below.",
+    /**
+     * ⚠ THE CHARACTER COUNT IS WRONG. design/217 prints "230 characters" under a
+     * statement that is 212 characters. The same defect as design/211's 86/300
+     * over an 83-character message. The counter here is live, so it reads 212.
+     */
+    body:
+      'Two unknown individuals blocked my vehicle at the office parking gate, demanded extortion money of ₹2,50,000, verbally threatened me, and damaged the front windshield. Security guard Rajesh witnessed the scuffle.',
+    countSuffix: 'characters',
+    drawnCount: 230,
+  },
+
+  other: {
+    title: 'Other Information',
+    sub: 'Add any extra details or advocate observations.',
+    placeholder: 'Add any missing information.',
+  },
+
+  documents: {
+    title: 'Documents',
+    /** ⚠ "5 Attached" — design/216 shows four. See note 4. */
+    chip: '5 Attached',
+    sub: 'Complaint, ID, Witness statement, CCTV & Lease',
+    view: 'View Documents',
+  },
+
+  create: {
+    title: 'Create FIR Draft',
+    sub: 'Use the case details to create the draft.',
+    rulesTitle: 'Important AI Rules',
+    rules: [
+      'AI can use only the information available in this case (client details, incident facts, people involved, advocate notes, and uploaded documents).',
+      'AI will never invent facts, names, dates, witnesses, or events.',
+      "AI cannot change the client's facts or make final legal decisions.",
+      'You must review the draft before it is sent to the client.',
+    ],
+    ai: 'Generate with AI',
+    aiCaption: 'Uses case details to create standard FIR draft proforma',
+    manual: 'Create Manually',
+    manualCaption: 'Open FIR draft proforma with editable fields',
+  },
+};
