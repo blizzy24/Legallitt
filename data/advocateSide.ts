@@ -3003,3 +3003,125 @@ export const ADV_CASES_COPY = {
   /** design/205 only. */
   filterBadge: '2',
 };
+
+// ═════════════════════════════════════════════════════════════════════════════
+// PROPERTY SEARCH REQUEST (designs 206, 207).
+//
+// ⚠⚠ THE PROPERTY IS TWO DIFFERENT PROPERTIES. designs 206/207 and design/208 carry
+// the same journey but describe different land:
+//
+//                 designs 206 / 207                design/208
+//   owner         Vikramaditya & Sunita Singhania  Mr. Suresh Chand Sharma
+//   acquisition   Sale Deed dated 14 May 2014      since 2012, from M/s Indore
+//                                                  Real Estate Holdings Pvt. Ltd.
+//   scheme        No. 78                           No. 54
+//   khasra        123/4                            312/1/4
+//   plot          45                               42-B
+//   village       Pipaliyahana / Indore Tehsil     Khajrana / Indore
+//   reference     PSR-2026-1048                    PSR-2026-8841
+//
+// On a title-verification product the property IS the deliverable. The advocate
+// accepts a search on one plot and drafts the report on another. Both records are
+// kept below, each rendered by the screen that draws it, and nothing is reconciled.
+//
+// ⚠ design/207 ALSO CONTRADICTS ITSELF: its full municipal address reads "Plot No.
+// 42, Sector B, Scheme No. 78" while its own Plot Number cell reads "45". So the
+// plot number differs within a single screen as well as across screens.
+//
+// ⚠ PAYOUT RATE NOT DERIVABLE. Client Paid ₹4,500, Your Payout ₹3,800 — ₹700
+// withheld, 15.56%. None of the established rates produce it: 10% → ₹4,050;
+// 10% + 18% GST on the fee → ₹3,969; 6% → ₹4,230. ₹3,800 is stored AS DRAWN and is
+// deliberately NOT computed. It is a fourth commission figure alongside design/157's
+// 6%, ADV_COMMISSION_10's 10%, and the 15% on the admin screenshots.
+//
+// ⚠ design/207 clips all three document names and their source labels behind the
+// View PDF chips. The completions marked INFERRED below are not readable in the
+// export.
+//
+// ⚠ design/206 is a 185×1016 device mockup — 0.474 px/pt, under half a pixel per
+// point, the lowest-resolution source in the project. Everything is measured from
+// design/207; only the two button colours come from 206, sampled directly.
+// ═════════════════════════════════════════════════════════════════════════════
+
+/** The property as designs 206/207 describe it. design/208 describes another. */
+export const ADV_PSR_PROPERTY_REQUEST = {
+  docket: 'DOCKET PSR-2026-1048',
+  ref: 'PSR-2026-1048',
+  typeChip: 'Residential Plot',
+  addressLabel: 'Full Municipal Address',
+  /** ⚠ Says Plot No. 42; the Plot Number cell below says 45. Both as drawn. */
+  address: 'Plot No. 42, Sector B, Scheme No. 78, Vijay Nagar, Indore, Madhya Pradesh — 452001',
+  cells: [
+    { label: 'Khasra / Survey No.', value: '123/4' },
+    { label: 'Plot Number', value: '45' },
+    { label: 'Village / Sector', value: 'Pipaliyahana / Scheme 78' },
+    { label: 'Tehsil', value: 'Indore Tehsil' },
+    { label: 'District', value: 'Indore' },
+    { label: 'State', value: 'Madhya Pradesh' },
+  ],
+  owners: {
+    label: 'Registered Owners',
+    names: 'Vikramaditya Singhania & Sunita Singhania',
+    holderType: 'Individual (Joint Title Holders)',
+    acquisitionLabel: 'Acquisition Basis',
+    acquisition: 'Registered Sale Deed dated 14 May 2014',
+  },
+};
+
+export const ADV_PSR_REQUEST = {
+  title: 'Property Search Details',
+  reportTitle: 'Property Search Report',
+  statusPending: 'Request Pending',
+  statusAccepted: 'Accepted',
+  briefPending:
+    'Review client facts and certified documents below to conduct off-platform registry search.',
+  briefAccepted:
+    'Request accepted on 23 Sep 2026. Review client facts and certified documents below to conduct off-platform registry search.',
+  acceptedOn: '23 Sep 2026',
+  client: {
+    label: 'CLIENT INFORMATION',
+    chip: 'Individual Requester',
+    name: 'Rahul Sharma',
+    initials: 'RS',
+    /** ⚠ One of three descriptions of this client across the batch. */
+    role: 'Primary Applicant & Buyer',
+    phone: '+91 98260 •••••',
+    phoneChip: 'Verified',
+    email: 'rahul.shar***@example.com',
+    emailChip: 'Secured',
+  },
+  propertyLabel: 'PROPERTY DETAILS',
+  ownerLabel: 'OWNER DETAILS',
+  requirement: {
+    label: "CLIENT'S REQUIREMENT & SCOPE",
+    quote:
+      '“I want a complete 30-year property title verification and search report before purchasing this residential plot in Scheme 78, Indore. Please verify any registered mortgages, municipal dues, or sub-registrar encumbrances.”',
+    submittedLabel: 'Submitted with request',
+    submittedOn: '23 Sep 2026',
+  },
+  documents: {
+    label: 'DOCUMENTS PROVIDED (3)',
+    vault: 'Encrypted Vault',
+    /** ⚠ Names and sources are clipped in design/207; completions are INFERRED. */
+    rows: [
+      { name: 'Sale_Deed_Singhania.pdf', meta: '24 Pages • 4.8 MB • Certified Copy' },
+      { name: 'Registry_Extract_SubRegistrar.pdf', meta: '18 Pages • 3.5 MB • Registry Office' },
+      { name: 'Property_Tax_Receipt_IMC.pdf', meta: '6 Pages • 1.2 MB • Municipal Record' },
+    ],
+    view: 'View PDF',
+  },
+  payment: {
+    label: 'PAYMENT SUMMARY',
+    chip: 'Escrow Secured',
+    paidLabel: 'Client Paid',
+    paid: '₹4,500',
+    payoutLabel: 'Your Payout',
+    /** ⚠ As drawn. NOT computed — no established rate produces it. */
+    payout: '₹3,800',
+    note: 'Held securely in Legalitt Escrow. Released automatically to your registered bank account upon client dispatch and title report approval.',
+  },
+  accept: 'Accept',
+  reject: 'Reject',
+  continue: 'Continue to Upload Report',
+  caption: 'Opens report uploader to attach your signed title report.',
+};
