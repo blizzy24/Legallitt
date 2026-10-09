@@ -142,3 +142,53 @@ export const FIR_REQUEST = {
   rejectCaption: 'Reject → Returns to Admin',
   acceptCaption: 'Accept → Review & Draft',
 };
+
+// ── design/216 — review documents ────────────────────────────────────────────
+
+export const FIR_DOCUMENTS = {
+  title: 'Review Documents',
+  accepted: {
+    title: 'Request Accepted',
+    body: 'You accepted this request. Please review the documents before drafting.',
+  },
+  client: {
+    label: 'CLIENT',
+    chip: 'Verified Client',
+    initials: 'RS',
+    name: 'Rahul Sharma',
+    /** ⚠ Unmasked, as on design/215. See note 6. */
+    meta: '+91 98260 41298 • Indore (M.P.)',
+  },
+  documents: {
+    heading: 'Client Documents',
+    /**
+     * ⚠ FOUR files with GENERIC names, where design/215 lists FIVE specific ones
+     * for the same request one screen earlier. See note 4. Both are stored.
+     */
+    chip: '4 Files',
+    rows: [
+      { name: 'Complaint.pdf', meta: '12 Pages • 4.2 MB' },
+      { name: 'Case Papers.pdf', meta: '18 Pages • 6.1 MB' },
+      { name: 'ID Proof.pdf', meta: '2 Pages • 1.4 MB' },
+      { name: 'Supporting Document.pdf', meta: '6 Pages • 2.8 MB' },
+    ],
+    view: 'View',
+  },
+  info: {
+    heading: 'Client Information',
+    rows: [
+      /** ⚠ In the future. See note 5. */
+      { label: 'Incident Date', value: '18 Oct 2026, ~09:30 PM' },
+      { label: 'Incident Place', value: 'Commercial Complex Parking, Scheme No. 54, Indore' },
+      { label: 'People Involved', value: 'Rahul Sharma (Complainant), Vikram Singh & 2 Associates (Accused)' },
+    ],
+  },
+  description: {
+    heading: "Client's Description",
+    chip: 'Original text from client',
+    body:
+      '“Two unknown individuals blocked my vehicle at the office parking gate, demanded extortion money of ₹2,50,000, verbally threatened me, and damaged the front windshield. Security guard Rajesh witnessed the scuffle.”',
+  },
+  continue: 'Continue to FIR Draft',
+  caption: 'Proceed to draft creation and FIR information',
+};
