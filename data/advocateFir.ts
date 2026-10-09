@@ -277,3 +277,157 @@ export const FIR_GENERATOR = {
     manualCaption: 'Open FIR draft proforma with editable fields',
   },
 };
+
+// ── design/218 — FIR draft (FORM I proforma) ─────────────────────────────────
+//
+// ⚠ THE DOCKET JUMPS TO #FIR-2026-8841 here, prefixed with "#". designs 214, 215
+// and 220 all read FIR-2026-1048, unprefixed. Note 3.
+//
+// ⚠ THE NARRATIVE IS CUT OFF. design/218 states "158 Words" under a Statement of
+// Facts box that is a fixed height and clips mid-sentence at "...the accused Vikram
+// Singh along with two". Roughly 55 words are legible; the remaining ~100 are not
+// in the export. Stored exactly as far as the export shows, with the cut marked.
+// NOTHING INVENTED.
+//
+// ⚠ FOUR LEGAL SECTIONS here ("4 Sections"), EIGHT on design/219 ("8 Legal
+// Sections"). An eighth count conflict in this flow.
+//
+// ⚠ A FOURTH EMAIL FORM. design/218 reads rahul.sharma@example.com (itself clipped
+// to "...@example"), design/215 reads rahul@example.com, design/211 reads
+// rahul.sharma@example.com and design/207 masks it as rahul.shar***@example.com.
+//
+// ⚠ "4 Included" documents here, with a FOURTH set of names and subtitles again
+// (Complaint Document.pdf / Case Papers.pdf / ID Proof.pdf / Other Document.pdf) —
+// and "Case Papers.pdf" is subtitled "Lease agreement executed copy", which does
+// not match its name.
+
+export const FIR_DRAFT = {
+  eyebrow: 'WORKSPACE',
+  title: 'Fir Draft',
+  statusChip: 'Draft Ready',
+  saved: 'Auto-Saved 1 min ago',
+  /** ⚠ 8841 and a "#" prefix. See note 3. */
+  docket: 'Docket #FIR-2026-8841',
+  docketSub: 'Central Kotwali, Indore',
+
+  ai: {
+    title: 'AI Draft — Please Review',
+    body: 'All facts from your client intake are filled below. You can change, add, or clear any field.',
+  },
+
+  proforma: {
+    command: 'MADHYA PRADESH POLICE STATE COMMAND',
+    title: 'FIRST INFORMATION REPORT',
+    form: 'FORM I — POLICE INFORMATION PROFORMA',
+    under: 'Under Section 173 BNSS / 154 CrPC',
+  },
+
+  sections: [
+    {
+      n: '1',
+      title: 'Police Station & Filing Time',
+      fields: [
+        { label: 'Police Station', value: 'Central Kotwali, Zone 2, Indore (M.P.)' },
+        { label: 'District & State', value: 'Indore, Madhya Pradesh', half: true },
+        { label: 'FIR Number', value: 'FIR No. ____ / 2026', half: true },
+        { label: 'Report Received Date & Time', value: '18/10/2026 at 22:45 IST' },
+      ],
+    },
+    {
+      n: '2',
+      title: 'Complainant / Reporter Info',
+      fields: [
+        { label: 'Full Legal Name', value: 'Rahul Sharma' },
+        { label: "Father's Name", value: 'Ramesh Sharma', half: true },
+        { label: 'Age & Gender', value: '34 Years / Male', half: true },
+        { label: 'Occupation / Job', value: 'Business Owner / Retailer' },
+        { label: 'Home & Present Address', value: '142/B, Silver Residency, Scheme No. 54, Vijay Nagar, Indore (M.P.)' },
+        /** ⚠ A fourth form of this client's email. Stored whole. */
+        { label: 'Phone & Email', value: '+91 98260 41298 | rahul.sharma@example.com' },
+        { label: 'Official ID Document', value: 'Aadhaar Card (XXXX-XXXX-4812) Verified', tint: true, icon: 'id' as const },
+      ],
+    },
+    {
+      n: '3',
+      title: 'When and Where It Happened',
+      fields: [
+        { label: 'Date & Time of Crime', value: '18 October 2026, ~09:30 PM (Sunday)' },
+        { label: 'Place of Incident', value: 'Commercial Complex Parking, Scheme No. 54, Indore' },
+        { label: 'Distance from Police Station', value: 'Approx. 4.5 km North-East' },
+      ],
+    },
+    {
+      n: '4',
+      title: 'Accused Person(s)',
+      note: 'Known / Suspected',
+      fields: [
+        { label: 'Main Accused Name', value: 'Vikram Singh, S/o Not Known' },
+        { label: 'Other People Involved', value: 'Accompanied by two (2) unidentified male associates' },
+        { label: 'Vehicle Used', value: 'White SUV (Reg: MP-09-CZ-4412)' },
+        { label: 'Suspected Reason / Motive', value: 'Extortion of ₹2,50,000 & intimidation regarding shop lease' },
+      ],
+      add: '+ Add Accused / Person',
+      addIcon: 'person' as const,
+    },
+  ],
+
+  legal: {
+    n: '5',
+    title: 'Applicable Legal Sections',
+    /** ⚠ "4 Sections" here, "8 Legal Sections" on design/219. */
+    note: '4 Sections',
+    hint: 'Tap × to remove any section not needed for this complaint.',
+    tags: [
+      'BNS 308(2) / IPC 384 (Extortion)',
+      'BNS 329(3) / IPC 447 (Trespass)',
+      'BNS 351(2) / IPC 506 (Threatening)',
+      'BNS 324(4) / IPC 427 (Damage)',
+    ],
+    add: '+ Add Legal Section',
+  },
+
+  facts: {
+    n: '6',
+    title: 'Statement of Facts',
+    note: 'Full Narrative',
+    /**
+     * ⚠ CUT OFF IN THE EXPORT. design/218 claims 158 words; the box clips at
+     * "...along with two" and the rest is not visible anywhere. Stored exactly
+     * as far as the PNG shows. Nothing invented.
+     */
+    body:
+      'To, The Station House Officer, Central Kotwali, Indore.\n\nRespected Sir,\nI, Rahul Sharma, aged 34 years, state that on 18th October 2026 at approximately 09:30 PM, as I was exiting my office parking at Scheme No. 54 in my vehicle, the accused Vikram Singh along with two',
+    /** ⚠ As drawn. The visible text is ~55 words, not 158. */
+    foot: '158 Words • Editable',
+    edit: 'Edit text',
+  },
+
+  witnesses: {
+    n: '7',
+    title: 'Witnesses',
+    fields: [
+      /** ⚠ Clipped in design/218 at "Scheme N". Stored whole. */
+      { label: 'Witness 1', value: 'Rajesh (On-duty Security Guard, Scheme No. 54)' },
+    ],
+    add: '+ Add Witness',
+  },
+
+  attached: {
+    n: '8',
+    title: 'Attached Documents',
+    /** ⚠ A fourth document set and a fourth count. See note 4. */
+    note: '4 Included',
+    rows: [
+      { name: 'Complaint Document.pdf', sub: 'Original signed physical statement', icon: 'copy' as const },
+      /** ⚠ The subtitle does not match the name. As drawn. */
+      { name: 'Case Papers.pdf', sub: 'Lease agreement executed copy', icon: 'doc' as const },
+      { name: 'ID Proof.pdf', sub: 'Complainant Aadhaar & PAN Card', icon: 'id' as const },
+      { name: 'Other Document.pdf', sub: 'CCTV footage video stills of SUV', icon: 'image' as const },
+    ],
+    add: '+ Attach Additional Document',
+  },
+
+  save: 'Save Draft',
+  send: 'Send to Client for Review',
+  caption: 'Send to Client for Review opens FIR Review & Status',
+};
