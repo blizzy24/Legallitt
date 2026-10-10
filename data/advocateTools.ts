@@ -149,3 +149,20 @@ export const AT_REVIEWS = {
     body: 'Client reviews will appear here after completed consultations',
   },
 };
+
+export const AT_DRAFT_EDITOR = {
+  // ⚠ The header, step label, status chip, party row and all six section cards
+  // are design/188's and are read from ADV_NOTICE_DRAFT. Only what design/266
+  // changes lives here.
+  saveDraft: 'Save Draft',
+  preview: 'Preview',
+  cta: 'Continue to Review',
+};
+
+export const AT_RESPONSE_EDITOR = {
+  // ⚠ Everything above the footer is design/189's and is read from
+  // ADV_NOTICE_RESPONSE. design/267 changes only these three.
+  back: 'Back',
+  confirm: 'Confirm & Upload',
+  generate: 'Generate Draft with AI',
+};

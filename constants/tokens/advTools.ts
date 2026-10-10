@@ -177,3 +177,66 @@ export const advReviews = {
   emptyBodySize: 13.5,
   emptyBodyLine: 15,
 };
+
+/**
+ * design/266 — legal notice draft editor. Measured at 2.000 px/pt from the
+ * content of a 786×2354 export (780px screen, 6px of frame on the right).
+ *
+ * ⚠ THIS IS NOT design/188, WHICH IS ALREADY BUILT. A pixel diff found the six
+ * section cards identical — same copy, same geometry — but 188 draws a purple
+ * "Legalitt AI" pill and ends with a full AI panel and a "Generate Draft"
+ * button, while 266 draws a warm "AI Assist" pill, has NO AI panel at all, and
+ * ends with Save Draft / Preview / Continue to Review. Only the differences are
+ * tokenised here; the shared body reads advNoticeDraft.
+ */
+export const advDraftEditor = {
+  bg: '#FAF8F5',
+  headerH: 68,
+  rule: '#E8E2DA',
+
+  partyBg: '#FFFFFF',
+  partyH: 54,
+  partyPadX: 21,
+  partySize: 13.5,
+
+  // ⚠ Warm, not the purple of design/188. #8F7A60 on #F4EEE6 is ink.accent on
+  // the existing chip surface — already in the project, nothing quarantined.
+  pillW: 90,
+  pillH: 30,
+  pillRadius: 15,
+  pillBg: '#F4EEE6',
+  pillGlyph: 15,
+  pillGap: 7,
+  pillSize: 13.5,
+
+  footerPadX: 12,
+  footerPadTop: 12,
+  footerBg: '#FFFFFF',
+  btnH: 44,
+  btnRadius: 10,
+  btnGap: 9,
+  btnSize: 15,
+  ctaTop: 8,
+  ctaH: 52,
+  ctaRadius: 12,
+  ctaSize: 17,
+};
+
+/**
+ * design/267 — legal notice response editor. Measured at 2.000 px/pt from a
+ * 780×1688 export.
+ *
+ * ⚠ THIS IS NOT design/189, WHICH IS ALREADY BUILT. The two are identical above
+ * the footer — same header, same rich-text toolbar, same letterhead and printed
+ * body, to sub-pixel anti-aliasing. 189 ends with Edit Draft / Save & Upload and
+ * a filled "Share for Review"; 267 ends with Back / Confirm & Upload and an
+ * OUTLINED "Generate Draft with AI". Only the footer is tokenised here.
+ */
+export const advResponseEditor = {
+  genTop: 10,
+  genH: 46.5,
+  genRadius: 14,
+  genBorder: '#C8AD8C',
+  genBg: '#FBF7F2',
+  genSize: 13.5,
+};

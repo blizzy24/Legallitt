@@ -1,9 +1,10 @@
 import { router, useLocalSearchParams, type Href } from 'expo-router';
-import { ArrowLeft, Pencil } from 'lucide-react-native';
+import { ArrowLeft } from 'lucide-react-native';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import AiFlowerMark from '../../../../components/AiFlowerMark';
+import NoticeDraftSections from '../../../../components/NoticeDraftSections';
 import { shrinkToFit } from '../../../../constants/textFit';
 import { ADV_NOTICE_DRAFT } from '../../../../data/advocateSide';
 import {
@@ -75,23 +76,7 @@ export default function AdvocateNoticeDraftScreen() {
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        {d.sections.map((s) => (
-          <View key={s.n} style={styles.card}>
-            <View style={styles.secHead}>
-              <Text style={styles.secTitle} {...shrinkToFit(0.75)}>
-                {s.n}. {s.title}
-              </Text>
-              {/* Inert — no editor is specified. */}
-              <Pressable accessibilityRole="button" accessibilityLabel={`Edit ${s.title}`} hitSlop={8}>
-                <Pencil size={t.pencil} color={colors.textPrimary} />
-              </Pressable>
-            </View>
-            {/* Static content — nothing here was generated. */}
-            <View style={styles.body}>
-              <Text style={styles.bodyText}>{s.body}</Text>
-            </View>
-          </View>
-        ))}
+        <NoticeDraftSections />
 
         <View style={styles.card}>
           <View style={styles.aiChip}>
