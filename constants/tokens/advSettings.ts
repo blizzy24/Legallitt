@@ -381,3 +381,96 @@ export const advDocuments = {
   vaultNoteSize: 14,
   vaultNoteLine: 19.5,
 };
+
+/**
+ * design/249 — login & security. Measured at 2.000 px/pt from the content of an
+ * 812×2560 export.
+ *
+ * ⚠ The destructive row is #BA1A1A — the SAME red this project already carries
+ * as advForensicRed (constants/tokens/advForensic.ts). Reused, not re-added.
+ */
+export const advSecurity = {
+  padX: 20,
+  bg: '#FAF8F5',
+
+  headerTop: 15,
+  backIcon: 26,
+  eyebrowSize: 11,
+  eyebrowTrack: 1.2,
+  titleTop: 3,
+  titleSize: 19,
+  shieldBtn: 36,
+  shieldGlyph: 20,
+  headerPadBottom: 14,
+
+  heroTop: 12,
+  heroW: 126,
+  heroH: 111,
+  heroRadius: 18,
+  heroGlyph: 46,
+
+  pillTop: 25,
+  pillH: 26,
+  pillRadius: 13,
+  pillPadX: 13,
+  pillBg: '#FAEDE0',
+  pillGlyph: 14,
+  pillGap: 7,
+  pillSize: 12,
+  pillTrack: 0.8,
+
+  h1Top: 4.5,
+  h1Size: 22,
+  subTop: 5.5,
+  subSize: 14.5,
+  subLine: 21,
+
+  sectionTop: 24,
+  sectionSize: 12,
+  sectionTrack: 1,
+  sectionGap: 12,
+
+  cardRadius: 16,
+  cardPadX: 17,
+  cardPadY: 16,
+
+  rowLabelSize: 11.5,
+  rowValueTop: 3,
+  rowValueSize: 15,
+  vpillH: 32,
+  vpillRadius: 16,
+  vpillPadX: 11,
+  vpillGlyph: 15,
+  vpillSize: 14,
+  rowRuleTop: 16,
+  rowGap: 16,
+
+  tile: 44,
+  tileRadius: 10,
+  tileBg: '#F2F0EE',
+  tileGlyph: 21,
+  tileGap: 13,
+  ctrlTitleSize: 17,
+  ctrlSubTop: 3,
+  ctrlSubSize: 14,
+  ctrlSubLine: 18,
+
+  toggleW: 46,
+  toggleH: 27,
+  toggleKnob: 21,
+  togglePad: 3,
+  toggleOn: '#6C5C45',
+
+  chevron: 20,
+  dangerTileBg: '#FDEAEA',
+
+  noteTop: 18,
+  noteBg: '#F2EFED',
+  noteRadius: 16,
+  notePad: 16,
+  noteTile: 42,
+  noteGlyph: 19,
+  noteGap: 13,
+  noteSize: 14.5,
+  noteLine: 23,
+};

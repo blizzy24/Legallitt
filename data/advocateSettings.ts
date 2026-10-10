@@ -359,3 +359,45 @@ export const AS_DOCUMENTS = {
       'End-to-end encrypted under Bar Council standards. Document numbers remain sealed and private.',
   },
 };
+
+export const AS_SECURITY = {
+  eyebrow: 'ACCOUNT SECURITY',
+  title: 'Login & Security',
+
+  pill: 'BAR COUNCIL IDENTITY SHIELD',
+  h1: 'Login & Security Overview',
+  sub: 'Manage how you sign in and keep your advocate credentials safe and verified.',
+
+  loginTitle: 'LOGIN INFORMATION',
+  login: [
+    { label: 'Email Address', value: 'priyasharma@gmail.com', pill: 'Verified' },
+    { label: 'Mobile Number', value: '+91 98102 •••••', pill: 'Verified' },
+  ],
+
+  controlsTitle: 'SECURITY CONTROLS',
+  controls: [
+    {
+      icon: 'phone',
+      title: 'Two-Step Verification',
+      sub: 'Authenticate high-value actions & client escrow files.',
+    },
+    { icon: 'bell', title: 'Login Alerts', sub: 'Instant SMS and secure email notice on new sessions.' },
+  ],
+
+  passwordTitle: 'PASSWORD',
+  password: {
+    title: 'Change Password',
+    // ⚠ Clipped in the export at "(Court Rec". Stored and rendered whole.
+    sub: 'Last modified 3 months ago (Court Records)',
+  },
+
+  sessionsTitle: 'ACTIVE SESSIONS',
+  devices: { title: 'Active Devices', sub: '2 devices authorized and active' },
+  signOut: {
+    title: 'Sign Out of All Devices',
+    // ⚠ Clipped in the export at "companio". Stored whole.
+    sub: 'Terminates web portals and companion devices',
+  },
+
+  note: 'Your advocate profile is safeguarded with State Bar Council verified dual keys and end-to-end encrypted docket sessions.',
+};
