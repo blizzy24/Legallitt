@@ -209,3 +209,22 @@ export const DF_DOCUMENTS = {
   continue: 'Continue',
   more: 'Request More Information',
 };
+
+// ── design/225 — waiting for specialist report ───────────────────────────────
+
+export const DF_WAITING = {
+  title: 'Waiting For Specialist Report',
+  chip: 'WAITING FOR SPECIALIST',
+  headline: 'Report Pending',
+  ref: 'DF-2026-1048',
+  state: 'Intake Dispatched',
+  grid: [
+    { label: 'Client', value: 'Rahul Sharma', tick: true },
+    { label: 'Questioned Document', value: 'Sale Agreement.pdf' },
+    { label: 'Forensic Type', value: 'Signature Examination' },
+    { label: 'Service Class', value: 'Ordinary Turnaround' },
+  ],
+  hint: 'Upload report must be filled along with affidavit',
+  upload: 'Upload Report',
+  view: 'View Request Details',
+};

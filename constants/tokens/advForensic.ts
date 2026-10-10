@@ -362,3 +362,86 @@ export const advForensicDocuments = {
   moreIconGap: 9,
   moreSize: 14.5,
 };
+
+/** design/225 — waiting for specialist report. Measured at 2.000 px/pt from a 780×1329 export. */
+export const advForensicWaiting = {
+  padX: 20,
+  bg: '#FCF9F8',
+  cardBg: '#FFFFFF',
+
+  headerTop: 12,
+  headerPadBottom: 16,
+  backIcon: 26,
+  titleSize: 17,
+  avatar: 32,
+  avatarGlyph: 15,
+  avatarBg: '#6C5C45',
+
+  /**
+   * ⚠ design/225 draws a stock illustration (folders, a magnifier and an
+   * envelope) inside a tinted circle. Rendered as a tinted circle with a single
+   * icon, the same treatment the video screens use for photographs — the artwork
+   * is not in the repo and nothing in the designs specifies it.
+   */
+  illoGap: 22,
+  illo: 130,
+  illoGlyph: 56,
+  illoBg: '#F4F1F0',
+
+  chipGap: 28,
+  chipHeight: 30,
+  chipRadius: 15,
+  chipPadX: 14,
+  chipIcon: 15,
+  chipIconGap: 9,
+  chipSize: 13,
+  chipSpacing: 0.7,
+  chipBg: '#F8EEDF',
+  chipColour: '#8A6A3E',
+
+  headlineGap: 24,
+  headlineSize: 22,
+
+  cardGap: 26,
+  cardRadius: 16,
+  cardPad: 16,
+  refSize: 18,
+  refIcon: 17,
+  refIconGap: 10,
+  stateHeight: 22,
+  stateRadius: 11,
+  statePadX: 11,
+  stateSize: 12.5,
+  stateBg: '#F8EEDF',
+  stateColour: '#8A6A3E',
+  ruleGap: 15,
+  ruleColour: '#F0EDED',
+
+  gridGap: 17,
+  gridGapY: 17,
+  gridLabelSize: 13,
+  gridLabelColour: '#6B6257',
+  gridValueGap: 6,
+  gridValueSize: 15,
+  tick: 15,
+  tickGap: 7,
+
+  hintGap: 22,
+  hintSize: 14,
+  hintColour: '#4A443C',
+
+  barPadTop: 14,
+  barPadBottom: 12,
+  barBg: '#FCF9F8',
+  uploadHeight: 48,
+  uploadRadius: 14,
+  uploadSize: 17,
+  uploadIcon: 19,
+  uploadIconGap: 10,
+  uploadBg: '#6C5C45',
+  viewGap: 11,
+  viewHeight: 44,
+  viewRadius: 12,
+  viewBg: '#EBE8E8',
+  viewSize: 15,
+};
