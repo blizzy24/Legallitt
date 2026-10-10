@@ -166,3 +166,50 @@ export const AT_RESPONSE_EDITOR = {
   confirm: 'Confirm & Upload',
   generate: 'Generate Draft with AI',
 };
+
+export const AT_ANALYTICS = {
+  title: 'Analytics',
+  month: 'August 2026',
+  range: 'This Month',
+
+  // ⚠ Note 4: Total Earnings here is ₹85,500. design/256 (Payment & Payout
+  // Settings), one tap away, says ₹84,500. ₹1,000 apart.
+  // ⚠ Note 5: Completed Cases and Earnings Overview carry the SAME +8.4%, and
+  // "Acceptance Rate 86%" is the same 86% the donut labels "Completed".
+  tiles: [
+    { label: 'Total Earnings', value: '₹85,500', delta: '18.5%' },
+    { label: 'Consultations', value: '42', delta: '12.3%' },
+    { label: 'Completed Cases', value: '36', delta: '8.4%' },
+    { label: 'Acceptance Rate', value: '86%', delta: '5.2%' },
+  ],
+
+  earnings: {
+    title: 'Earnings Overview',
+    value: '₹85,500',
+    sub: 'This Month',
+    delta: '8.4%',
+    deltaSuffix: 'Higher Than last Month',
+    chartLabel: 'Earnings',
+    axis: ['₹30k', '₹20k', '₹10k', '₹0'],
+    weeks: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+  },
+
+  consultations: {
+    title: 'Consultation Overview',
+    total: '42',
+    totalLabel: 'Total',
+    legend: [
+      { label: 'Completed', value: '36 (86%)', pct: 0.86, tone: 'green' },
+      { label: 'Pending', value: '4 (10%)', pct: 0.1, tone: 'brand' },
+      { label: 'Cancelled', value: '2 (4%)', pct: 0.04, tone: 'red' },
+    ],
+  },
+
+  performance: 'Performance',
+
+  error: {
+    title: 'Unable to Load Analytics',
+    body: 'Please try again',
+    cta: 'Try Again',
+  },
+};

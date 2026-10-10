@@ -10,13 +10,33 @@
 // token blocks in this project were written off 2× numbers without halving and
 // had to be re-measured; the error was not uniform inside any of them.
 //
-// ⚠ COLOURS — NOTHING NEW. Checked before quarantining anything:
+// ⚠ COLOURS — ONE NEW ONE, QUARANTINED BELOW. Checked before quarantining:
 //   270's error circle   #BA1A1A  — already in the project as advForensicRed
 //   266's "AI Assist"    #8C6B3F / #F4EEE6 — ink.accent family, already used
 //   the cool page grey   #F4F6F8 — already used by advNoticeResponse and
 //                                   design/245's settings root
-// No quarantine block is opened for this batch.
+// design/270's error circle is the exception: #FF6E6E is NOT any red this
+// project already has. See advAnalyticsRed below.
 // ─────────────────────────────────────────────────────────────────────────────
+
+// ⚠ PALETTE QUARANTINE — design/270's error circle.
+//
+//   errorCircle #FF6E6E   sampled from the filled disc
+//
+// The brief expected this to be the project's existing danger red. It is not.
+// The project already carries THREE reds:
+//
+//   colors.danger                #F55C42  (designs 14–21)
+//   status.notification          #D7524B  (unread dot)
+//   advForensicRed.declineColour #BA1A1A  (designs 222–232, reused on 249/253/254)
+//
+// #FF6E6E is a fourth, lighter and pinker than all of them. Built as drawn and
+// kept here rather than folded into any of the three, because picking one of
+// them would change the drawn screen and picking none of them would add a
+// fourth red to the shared palette. That is a decision for review.
+export const advAnalyticsRed = {
+  errorCircle: '#FF6E6E',
+};
 
 /** design/261–263 — document viewer. Measured at 2.000 px/pt from 780×1694 exports. */
 export const advDocViewer = {
@@ -239,4 +259,120 @@ export const advResponseEditor = {
   genBorder: '#C8AD8C',
   genBg: '#FBF7F2',
   genSize: 13.5,
+};
+
+/**
+ * designs 268 + 270 — analytics. Measured at 3.000 px/pt from 1170×2727
+ * exports. ⚠ THESE ARE 3× FILES, NOT 2×. Every value here is divided by three.
+ */
+export const advAnalytics = {
+  padX: 20,
+  bg: '#FEFCFC',
+  cardBorder: '#D9D9D9',
+
+  headerBg: '#FFFFFF',
+  headerH: 99,
+  headerTop: 14,
+  backIcon: 26,
+  titleSize: 20,
+
+  monthTop: 15,
+  monthGlyph: 20,
+  monthGap: 14,
+  monthSize: 16,
+  rangeW: 110,
+  rangeH: 38,
+  rangeRadius: 8,
+  rangeSize: 15,
+  rangeGlyph: 18,
+
+  tileTop: 22,
+  tileGap: 17,
+  tileH: 77,
+  tileRadius: 10,
+  tilePadX: 13,
+  tileLabelTop: 10.7,
+  tileLabelLine: 17,
+  tileLabelSize: 15,
+  tileValueTop: 1.5,
+  tileValueLine: 33,
+  tileValueSize: 31,
+  tileValueColour: '#906D40',
+  tileDeltaTop: 0,
+  tileDeltaGlyph: 14,
+  tileDeltaSize: 13,
+  tileDeltaColour: '#00B500',
+
+  cardTop: 9,
+  cardRadius: 10,
+  cardPadX: 13,
+  cardPadY: 13,
+
+  overTitleSize: 16,
+  overValueTop: 6,
+  overValueSize: 31,
+  overSubTop: 4,
+  overSubSize: 13,
+  overDeltaTop: 7,
+  overDeltaSize: 13,
+
+  chartTop: 10,
+  chartLabelSize: 13,
+  // Plot area, measured off the export: x 56.3…350.3, ₹30k gridline at 475.7pt
+  // and ₹0 at 569.7, four lines 31.3 apart.
+  plotLeft: 56.3,
+  plotRight: 350.3,
+  plotTop: 475.7,
+  plotBottom: 569.7,
+  gridGap: 31.3,
+  gridColour: '#CCCCCC',
+  axisSize: 10,
+  axisLabelH: 12,
+  axisLabelX: 31,
+  weekTop: 13,
+  weekSize: 13,
+  chartFill: '#FCEEE2',
+  chartLine: '#B69268',
+  chartLineW: 2.6,
+  dotR: 5,
+  ringR: 5,
+  ringW: 2.6,
+
+  donutTitleSize: 16,
+  donutTop: 17,
+  donutCx: 56.9,
+  donutCy: 61,
+  donutR: 34.7,
+  donutW: 14.3,
+  donutTotalSize: 24,
+  donutTotalLabelSize: 13,
+  donutGreen: '#598252',
+  donutBrand: '#B48E6A',
+  donutRed: '#FF0000',
+  legendLeft: 116.7,
+  legendDot: 11,
+  legendGap: 14,
+  legendRowH: 28,
+  legendSize: 16,
+  legendValueSize: 16,
+
+  perfTop: 33,
+  perfH: 49,
+  perfRadius: 12,
+  perfBorder: '#B8A790',
+  perfSize: 18,
+
+  errTop: 150,
+  errCircle: 92,
+  errGlyph: 46,
+  errTitleTop: 26,
+  errTitleSize: 20,
+  errBodyTop: 10,
+  errBodySize: 15,
+  errBodyLine: 22,
+  errCtaTop: 26,
+  errCtaH: 46,
+  errCtaRadius: 10,
+  errCtaPadX: 30,
+  errCtaSize: 16,
 };
