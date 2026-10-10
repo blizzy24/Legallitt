@@ -374,3 +374,100 @@ export const advVerifyBarCouncil = {
   saveGlyph: 13,
   saveSize: 13,
 };
+
+/**
+ * design/237 — step 4, practice details. Measured at 2.000 px/pt from a
+ * 780×2528 export.
+ *
+ * ⚠ A FOURTH HEADER ARRANGEMENT and a FOURTH field treatment in four screens:
+ * the eyebrow sits ABOVE the title, the back control is a chevron in a 40pt
+ * circle, the step pill is FILLED (#F4EEE6) rather than outlined, all four
+ * progress segments are filled on "Step 4 of 4", and the body is three white
+ * section cards on a 16pt grid while the progress bar above them stays on 20.
+ */
+export const advVerifyPractice = {
+  headerTop: 12.5,
+  backBtn: 40,
+  backIcon: 22,
+  eyebrowSize: 10.5,
+  eyebrowTrack: 1.2,
+  titleTop: 4,
+  titleSize: 17.5,
+  pillW: 87.5,
+  pillH: 26,
+  pillRadius: 13,
+  pillBg: '#F4EEE6',
+  pillSize: 12,
+  progressTop: 12.5,
+  progressHeight: 3.5,
+  headerPadBottom: 12.5,
+
+  // The cards and the note sit at 16; the progress bar above them sits at 20.
+  cardX: 16,
+  cardRadius: 16,
+  cardPadX: 17,
+  cardPadTop: 12,
+  cardPadBottom: 16,
+  cardGap: 19.5,
+
+  noteTop: 16,
+  noteH: 56.5,
+  noteBg: '#F6F3F2',
+  noteIcon: 16,
+  noteIconGap: 11,
+  noteSize: 13,
+  noteLine: 20,
+
+  bullet: 5.5,
+  bulletH: 14,
+  bulletGap: 8,
+  sectionSize: 12.5,
+  sectionTrack: 0.8,
+
+  labelTop: 11,
+  labelSize: 11,
+  labelTrack: 0.8,
+  inputTop: 5,
+  inputH: 44,
+  inputBg: '#FDFBFA',
+  inputRadius: 10,
+  inputPadX: 13,
+  colPadX: 10,
+  inputSize: 15,
+  inputGlyphGap: 8,
+  colGap: 11,
+
+  chipsTop: 10,
+  specChipH: 25.5,
+
+  modeTop: 12,
+  modeH: 79.5,
+  modeGap: 9.5,
+  modeRadius: 12,
+  modeBg: '#FCFAF8',
+  modePad: 11,
+  modeTile: 22.5,
+  modeTileRadius: 6,
+  modeTileGlyph: 14,
+  modePillH: 19.5,
+  modePillRadius: 10,
+  modePillPadX: 9,
+  modePillSize: 12,
+  modeNameTop: 20,
+  modeNameSize: 14,
+  modeCheck: 15,
+
+  areaTop: 10,
+  areaH: 110,
+  areaPadX: 12,
+  areaPadY: 13,
+  areaSize: 14.5,
+  areaLine: 20,
+  areaRuleTop: 10,
+  areaMetaTop: 8,
+  areaMetaSize: 12.5,
+  areaMetaGlyph: 13,
+
+  footerPadTop: 22,
+  ctaLabelSize: 16,
+};

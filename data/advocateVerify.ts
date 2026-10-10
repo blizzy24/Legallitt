@@ -192,3 +192,71 @@ export const AV_BAR_COUNCIL = {
   cta: 'Continue to Identity Upload',
   secondary: 'Save & Exit',
 };
+
+export const AV_PRACTICE = {
+  title: 'Practice Details',
+  eyebrow: 'ADVOCATE ENROLLMENT',
+  // ⚠ Note 1. "Step 4 of 4" with all four segments filled — and design/239,
+  // the review screen, is still ahead of it.
+  step: 'Step 4 of 4',
+  filled: 4,
+
+  note: {
+    lead: 'Professional Profile',
+    body: ' — You can update these details later from your profile settings.',
+  },
+
+  jurisdiction: {
+    section: 'JURISDICTION & CHAMBERS',
+    city: { label: 'PRIMARY CITY', value: 'Indore' },
+    council: { label: 'STATE BAR COUNCIL', value: 'Madhya Pradesh' },
+    courtsLabel: 'COURTS & FORUMS PRACTICING IN',
+    courts: [
+      { label: 'High Court of M.P. (Indore Bench)', state: 'on' },
+      { label: 'District & Sessions Court, Indore', state: 'on' },
+      { label: 'Supreme Court of India', state: 'add' },
+      { label: 'Debt Recovery Tribunal (DRT)', state: 'add' },
+    ] as const,
+    // ⚠ A FOURTH chip style: a green dot instead of a tick, on a white fill
+    // with a brand border, and the unselected chips are dashed rather than
+    // solid. design/235 drew the same idea three ways already.
+    specializationsLabel: 'PRACTICE SPECIALIZATIONS',
+    specializations: [
+      { label: 'Civil Matters', state: 'on' },
+      { label: 'Commercial & Corporate', state: 'on' },
+      { label: 'Family & Matrimonial', state: 'on' },
+      { label: 'Banking & Finance', state: 'add' },
+      { label: 'Criminal Law', state: 'add' },
+    ] as const,
+  },
+
+  office: {
+    section: 'OFFICE DETAILS',
+    firm: { label: 'LAW FIRM NAME', value: 'Sharma & Associates Chamber' },
+    // ⚠ The export clips this value mid-word ("…M.G. Road, Indor"). The full
+    // string is stored and rendered whole; never ellipsized.
+    address: {
+      label: 'PHYSICAL CHAMBER ADDRESS',
+      value: 'Suite 402, High Court Bar Chambers, M.G. Road, Indore',
+    },
+    modesLabel: 'AUTHORIZED CONSULTATION MODES',
+    modes: [
+      { name: 'Online Video', pill: 'Enabled', tone: 'green' },
+      { name: 'In-Person', pill: 'At Chamber', tone: 'brand' },
+    ] as const,
+  },
+
+  experience: {
+    section: 'PRACTICE EXPERIENCE & SUMMARY',
+    label: 'Brief Professional Profile Summary',
+    value:
+      'Over 6 years of active practice across High Court and District courts specializing in commercial disputes, property restitution, and arbitration advisory.',
+    check: 'Includes key practice highlights',
+    // Drawn as 148; the string above is 152. Stored as drawn — nothing is
+    // editable, so the counter is a label, not a computation.
+    counter: '148  /  300',
+  },
+
+  cta: 'Continue to Final Review',
+  secondary: 'Save & Exit',
+};
