@@ -423,3 +423,181 @@ export const advPerformance = {
   colConsults: 0.26,
   colRating: 0.16,
 };
+
+/**
+ * design/271 — appointment calendar. Measured at 2.000 px/pt from a 780×2160
+ * export, element by element: every figure below is a pixel reading halved.
+ */
+export const advCalendar = {
+  padX: 21,
+  bg: '#F4F6F8',
+  ink: '#4D4439',
+  rule: '#D4D4D4',
+  brand: '#A57E5A',
+
+  headerBg: '#FFFFFF',
+  headerH: 103.5,
+  headerTop: 24,
+  // The back chevron is drawn 38pt across and hangs 8pt into the 21pt gutter:
+  // its ink starts at 26.0pt, left of every other element on the screen.
+  backIcon: 38,
+  backHang: 8,
+  titleGap: 1,
+  titleSize: 18.5,
+  headerGlyph: 23,
+  headerGlyphGap: 20,
+
+  // Card 123.0–203.0pt; "Your Availability" cap 136.0–146.5 (11.0pt cap → 15.5).
+  availTop: 19.5,
+  availRadius: 16,
+  availPadX: 11.5,
+  availPadTop: 11,
+  availPadBottom: 13,
+  availTitleSize: 15.5,
+  availTitleLine: 19,
+  availRowTop: 2,
+  availGlyph: 14,
+  availGap: 6.5,
+  availOnSize: 10.5,
+  availOnLine: 14,
+  availOnColour: '#00A938',
+  availSubTop: 3,
+  availSubSize: 8,
+  availSubLine: 9,
+  // design/271 wraps the sub-line after "during your" although the card is far
+  // wider than that. The break is only reproducible by capping the column, and
+  // the export places it anywhere between 169 and 199pt.
+  availSubW: 180,
+  // Track 309.0–351.0 × 155.0–175.0pt, knob 331.0–349.0.
+  toggleW: 42,
+  toggleH: 20,
+  toggleKnob: 17,
+  togglePad: 1.5,
+  toggleOn: '#A57E5A',
+
+  monthTop: 11,
+  monthGlyph: 24,
+  monthSize: 16,
+
+  // The grid: 7 columns across a 12.4pt inset, row pitch 28.0pt, day pill
+  // 22.0pt, markers 4.0pt. Only the NUMBERS are computed — see
+  // components/MonthGrid.tsx.
+  gridTop: 15.5,
+  gridPadX: 9.5,
+  // design/271 does not centre the grid: its ink runs 34.5–361.0pt, 4.75pt
+  // right of centre on a 390pt screen. Reproduced rather than tidied up.
+  gridShift: 4.75,
+  weekdays: ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'],
+  headSize: 10,
+  rowGap: 0,
+  headRowGap: 4,
+  pill: 22,
+  daySize: 10.5,
+  mutedDay: '#B7B7B7',
+  selectedBg: '#A57E5A',
+  dotSlot: 6,
+  dot: 4,
+  dotColour: '#A57E5A',
+
+  ruleTop: 7.5,
+  todayTop: 8.5,
+  todaySize: 11,
+  schedTop: 8,
+  schedSize: 11,
+  // "+ Add Availability" pill 289.0–370.0 × 464.0–482.0pt.
+  addW: 81,
+  addH: 18,
+  addRadius: 6,
+  addBorder: '#A57E5A',
+  addGlyph: 12,
+  addGap: 3.5,
+  addSize: 8.5,
+
+  // Appointment cards: 78.0pt tall, 6.0pt apart, 348pt wide.
+  apptTop: 9.5,
+  // ⚠ design/271 leaves 6.5pt between the first three cards and 10.5pt before
+  // the fourth. Nothing distinguishes that gap; it is drawing slop, so a single
+  // 6.5pt gap is used and the court-hearing card sits 4pt higher than drawn.
+  apptGap: 6.5,
+  apptRadius: 14,
+  apptBg: '#FCF7F3',
+  apptPadX: 9,
+  // Every appointment card in design/271 is exactly 77.5pt tall, the four-line
+  // court-hearing card included, so the height is fixed and the column is
+  // centred rather than padded.
+  apptH: 77.5,
+  // Time chip 30.0–76.0 × 597.0–639.0pt.
+  timeW: 46,
+  timeH: 42,
+  timeRadius: 8,
+  timeBg: '#F7EDE4',
+  timeSize: 12.5,
+  timeLine: 13.5,
+  apptGapX: 8,
+  apptTagH: 12,
+  apptTagRadius: 6,
+  apptTagPadX: 7.5,
+  apptTagSize: 8.5,
+  apptTagBg: '#E7E0FA',
+  apptTagColour: '#5B3FD6',
+  apptNameTop: 3,
+  apptNameSize: 15.5,
+  apptNameLine: 19,
+  // ⚠ design/271 sets the fourth card's title SMALLER than the other three —
+  // 8.5pt cap against 11.0pt — because "High Court of Madhya Pradesh" does not
+  // fit at the common size. Drawn as drawn; see AT_CALENDAR.appointments.
+  apptNameSizeLong: 12,
+  apptNameLineLong: 14.5,
+  apptMatterTop: 6,
+  apptMatterSize: 10,
+  apptMatterLine: 13,
+  apptMatterColour: '#00A938',
+  apptMetaTop: 5.5,
+  apptMetaSize: 9,
+  apptMetaLine: 12,
+  apptIcon: 20,
+  apptIconColour: '#A57E5A',
+  apptIconGap: 12,
+  apptStatusH: 12,
+  apptStatusRadius: 6,
+  apptStatusPadX: 8.5,
+  apptStatusSize: 8.5,
+  apptStatusBg: '#EDFFDD',
+  apptStatusColour: '#52B100',
+  apptStatusGap: 3.5,
+  apptChevron: 22,
+  apptChevronColour: '#A2A2A2',
+
+  // "Add Hearing" 844.0–881.0pt, full 348pt width.
+  addHearingTop: 17,
+  addHearingH: 37,
+  addHearingRadius: 10,
+  addHearingGlyph: 18,
+  addHearingGap: 10,
+  addHearingSize: 12.5,
+
+  // Manage Availability card 899.0–1024.0pt.
+  manageTop: 18,
+  manageBg: '#FCF7F3',
+  manageRadius: 14,
+  managePadX: 11.5,
+  managePadTop: 8,
+  managePadBottom: 10.5,
+  manageTitleSize: 12,
+  dayCircleTop: 4.7,
+  // Seven 36.0pt circles on a 48.0pt pitch.
+  dayCircle: 36,
+  dayCircleSize: 9.5,
+  dayCircleOn: '#A57E5A',
+  dayCircleBorder: '#BABABA',
+  dayCircleOff: '#000000',
+  manageRuleTop: 15.5,
+  hoursTop: 6.3,
+  hoursTitleSize: 10.5,
+  hoursValueTop: 4,
+  hoursValueSize: 10.5,
+  editW: 66,
+  editH: 18,
+  editRadius: 6,
+  editSize: 8.5,
+};

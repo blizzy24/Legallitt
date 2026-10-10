@@ -59,6 +59,15 @@
 // 17. design/271's month grid cannot be copied at all. See the header comment
 //     on app/advocate/calendar/index.tsx — this is the one element in the batch
 //     where the export is overridden rather than reproduced.
+// 18. design/271 sets the fourth appointment's title SMALLER than the other
+//     three — 8.5pt cap against 11.0pt — because "High Court of Madhya Pradesh"
+//     does not fit at the common size. Built at both sizes, as drawn.
+// 19. design/271 leaves 6.5pt between its first three appointment cards and
+//     10.5pt before the fourth. Nothing distinguishes that card, so the gap is
+//     drawing slop; a single 6.5pt gap is used and the fourth card therefore
+//     sits 4pt higher than the export.
+// 20. design/271's month grid is not centred on the screen: its ink runs
+//     34.5–361.0pt, 4.75pt right of centre. Reproduced rather than tidied up.
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const AT_DOC_VIEWER = {
@@ -244,4 +253,109 @@ export const AT_PERFORMANCE = {
     { month: 'July', earnings: '₹79,500', consults: '39', rating: '4.8' },
     { month: 'August', earnings: '₹85,500', consults: '42', rating: '4.8', current: true },
   ],
+};
+
+type Appointment = {
+  time: string;
+  tag?: string;
+  name: string;
+  /**
+   * ⚠ design/271 draws this one title at 8.5pt cap where the other three are
+   * 11.0pt — the long court name does not fit at the common size. Kept as
+   * drawn rather than silently resized.
+   */
+  longName?: boolean;
+  matter: string;
+  meta: string;
+  icon?: 'video' | 'phone';
+  status: string;
+  upcoming?: boolean;
+};
+
+export const AT_CALENDAR = {
+  title: 'Appointment Calendar',
+
+  availability: {
+    title: 'Your Availability',
+    on: 'Available for Consultations',
+    sub: 'Clients can book consultations during your available hours',
+  },
+
+  // ⚠ NOTE 17 — design/271's month grid cannot be copied. It places 1 August
+  // 2026 under FRI (it is a Saturday) and its trailing row reads
+  // 31, 1, 2, 3, 2, 3, 4, repeating the 2 and the 3. The grid is therefore
+  // COMPUTED from the displayed month — the one place in this batch where the
+  // export is overridden. See components/MonthGrid.tsx. The selected day and
+  // the dot markers below are still exactly as drawn.
+  year: 2026,
+  month: 7, // August, 0-indexed
+  selected: 13,
+  marked: [13, 14, 15, 16],
+
+  todayLabel: 'Today, 13 August',
+  scheduleLabel: 'Today’s Schedule',
+  addAvailability: 'Add Availability',
+
+  appointments: ([
+    {
+      time: '10:00\nAM',
+      name: 'Rahul Sharma',
+      matter: 'Divorce Consultation',
+      meta: 'Video Consultation   •   30 min',
+      icon: 'video',
+      status: 'Confirmed',
+    },
+    {
+      // ⚠ Note 6: drawn as 12:00 AM. It is plainly midday.
+      // ⚠ Note 14: this row draws a PHONE icon beside the text
+      //    "Video Consultation".
+      time: '12:00\nAM',
+      name: 'Akash Sinha',
+      matter: 'Property Dispute',
+      meta: 'Video Consultation   •   30 min',
+      icon: 'phone',
+      status: 'Confirmed',
+    },
+    {
+      // ⚠ Note 6 again.
+      time: '12:00\nAM',
+      name: 'Priya Mehta',
+      matter: 'Legal Advice',
+      meta: 'Video Consultation   •   30 min',
+      icon: 'video',
+      status: 'Confirmed',
+    },
+    {
+      // ⚠ Note 7: a 9:00 AM hearing listed AFTER two 12:00 AM entries. The
+      // schedule is not in chronological order. Drawn order kept.
+      time: '9:00\nAM',
+      tag: 'Court Hearing',
+      name: 'High Court of Madhya Pradesh',
+      longName: true,
+      matter: 'Courtroom No. 12   •   Sharma vs. State',
+      meta: 'Case No. WP/1234/2026',
+      status: 'Upcoming',
+      upcoming: true,
+    },
+  ] as Appointment[]),
+
+  addHearing: 'Add Hearing',
+
+  manage: {
+    title: 'Manage Availability',
+    // ⚠ Note 9: Sunday is labelled "San". Note that design/271's month-grid
+    // header above spells it SUN correctly — only this row is wrong.
+    days: [
+      { label: 'Mon', on: true },
+      { label: 'Tue', on: true },
+      { label: 'Wed', on: true },
+      { label: 'Thu', on: true },
+      { label: 'Fri', on: true },
+      { label: 'Sat', on: false },
+      { label: 'San', on: false },
+    ],
+    hoursTitle: 'Available Hours',
+    hours: '09:00 AM - 6:00 PM',
+    edit: 'Edit Hours',
+  },
 };
