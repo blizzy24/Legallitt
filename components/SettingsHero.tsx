@@ -24,6 +24,7 @@ export default function SettingsHero({
   heroBg,
   showInfo = true,
   roundBack = true,
+  alignLeft = false,
   children,
 }: {
   eyebrow: string;
@@ -37,6 +38,8 @@ export default function SettingsHero({
   heroBg?: string;
   showInfo?: boolean;
   roundBack?: boolean;
+  /** design/254 left-aligns its header text and lets the title wrap to two lines. */
+  alignLeft?: boolean;
   children: ReactNode;
 }) {
   const insets = useSafeAreaInsets();
@@ -53,7 +56,7 @@ export default function SettingsHero({
         >
           <ChevronLeft size={t.backIcon} color="#1B1C1C" strokeWidth={2.4} />
         </Pressable>
-        <View style={styles.headCol}>
+        <View style={[styles.headCol, alignLeft && styles.headColLeft]}>
           <Text style={styles.eyebrow}>{eyebrow}</Text>
           <Text style={styles.title} {...shrinkToFit(0.8)}>
             {title}
@@ -117,6 +120,7 @@ const styles = StyleSheet.create({
     fontSize: t.titleSize,
     color: '#1B1C1C',
   },
+  headColLeft: { alignItems: 'flex-start', marginLeft: 14 },
   info: { marginRight: t.headerGap },
   avatar: {
     width: t.avatar,
