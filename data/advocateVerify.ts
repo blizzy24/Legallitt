@@ -453,3 +453,54 @@ export const AV_SUBMITTED = {
   cta: 'View Verification Details',
   secondary: 'Back to Settings',
 };
+
+type IncompleteItem = {
+  title: string;
+  sub: string;
+  state: 'todo' | 'done';
+  action: string;
+};
+
+export const AV_INCOMPLETE = {
+  eyebrow: 'ADVOCATE ENROLLMENT',
+  title: 'Complete Verification',
+  // ⚠ Note 1 again — a third "Step 3 of 4" (design/236 and design/238 both say
+  // it too), on a screen that is not a wizard step at all.
+  step: 'Step 3 of 4',
+
+  h1: 'Verification Almost Complete',
+  sub: 'A few details are still required before you can submit your advocate profile.',
+
+  progressLabel: 'Verification Progress',
+  progressValue: '75% Complete',
+  progress: 0.75,
+  progressCaption: '3 of 4 required sections completed',
+  progressLeft: '1 Section Left',
+
+  section: 'ITEMS NEEDED TO SUBMIT',
+  // ⚠ "2 actions pending" against four rows, two of which are already complete.
+  sectionMeta: '2 actions pending',
+
+  items: [
+    // ⚠ The export clips this subtitle at "or V(". The full string is stored
+    // and rendered whole. Note 9 — Aadhaar again.
+    { title: 'Identity Document', sub: 'Aadhaar Card, Passport, or Voter ID', state: 'todo', action: 'Upload' },
+    { title: 'Enrollment Certificate', sub: 'Official Sanad or Bar Council', state: 'todo', action: 'Upload' },
+    { title: 'Personal Details', sub: 'Contact info, address & basics', state: 'done', action: 'Completed' },
+    // ⚠ Clipped in the export at "& pr". Stored whole.
+    {
+      title: 'Professional Details',
+      sub: 'Qualifications, Bar Council & practice',
+      state: 'done',
+      action: 'Completed',
+    },
+  ] as IncompleteItem[],
+
+  draft: {
+    title: 'Draft Automatically Saved',
+    body: 'You can step away anytime and pick up right where you left off. All uploaded documentation remains encrypted.',
+  },
+
+  cta: 'Complete Verification',
+  secondary: 'Save & Exit for Now',
+};

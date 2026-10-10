@@ -754,3 +754,114 @@ export const advVerifySubmitted = {
   backTop: 15,
   backSize: 14,
 };
+
+/**
+ * design/241 — verification incomplete. Measured at 2.000 px/pt from the content
+ * of an 828×2544 export (a 780px screen inside a 24px frame, cropped first).
+ *
+ * ⚠ LIKE design/236, THIS EXPORT DRAWS FOREIGN CHROME: a "Requests" app header
+ * at the top and a five-tab bottom bar (Dashboard, Requests, Schedule, Messages,
+ * Profile). Neither belongs to a pushed wizard screen and neither matches this
+ * app's four advocate tabs. Not built; see the screen's header comment.
+ *
+ * ⚠ design/242 was a byte-different re-encode of this same screen — 56 differing
+ * pixels out of 2.1M, all anti-aliasing. It is archived under design/archive/.
+ */
+export const advVerifyIncomplete = {
+  padX: 20,
+
+  headerTop: 14,
+  backBtn: 34,
+  backIcon: 20,
+  backBg: '#F1EDE7',
+  headGap: 12,
+  eyebrowSize: 11,
+  eyebrowTrack: 1.2,
+  titleTop: 2,
+  titleSize: 19.5,
+  pillW: 68,
+  pillH: 22.5,
+  pillRadius: 11.25,
+  pillBg: '#F7E8D2',
+  pillSize: 12.5,
+
+  heroTop: 18,
+  heroH: 133,
+  heroRadius: 16,
+  heroInset: 10,
+  heroPanelBg: '#F7F2EE',
+  heroPanelRadius: 12,
+
+  badgeTop: 16,
+  badge: 45,
+  badgeBg: '#F5E6DA',
+  badgeGlyph: 22,
+
+  h1Top: 11,
+  h1Size: 21,
+  subTop: 8.5,
+  subSize: 14,
+  subLine: 18,
+
+  cardRadius: 14,
+  cardPadX: 16,
+  cardPadY: 15,
+
+  progressTop: 16.5,
+  progLabelSize: 15,
+  progValueSize: 15,
+  progBarTop: 10,
+  progBarH: 7.5,
+  progBarBg: '#EAE7E1',
+  progCaptionTop: 13.5,
+  progCaptionSize: 13,
+
+  sectionTop: 9.5,
+  sectionSize: 12,
+  sectionTrack: 1,
+  sectionMetaSize: 13,
+
+  itemTop: 18,
+  itemGap: 12.5,
+  itemH: 69.5,
+  itemDot: 28,
+  itemDotGlyph: 14,
+  itemGapX: 13,
+  itemTitleSize: 16,
+  itemSubTop: 2,
+  itemSubSize: 13.5,
+  itemBtnW: 81,
+  itemBtnH: 36,
+  itemBtnRadius: 9,
+  itemBtnBg: '#EFEBE4',
+  itemBtnSize: 14,
+  itemPillH: 28,
+  itemPillRadius: 8,
+  itemPillPadX: 11,
+  itemPillBg: '#F1EDE7',
+  itemPillSize: 13,
+
+  draftTop: 13,
+  draftBg: '#F6F3F2',
+  draftTile: 36,
+  draftTileRadius: 18,
+  draftTileBg: '#EFEBE5',
+  draftGlyph: 18,
+  draftGapX: 13,
+  draftTitleSize: 16,
+  draftBodyTop: 3,
+  draftBodySize: 13.5,
+  draftBodyLine: 18,
+
+  footerPadTop: 22,
+  ctaH: 50,
+  ctaRadius: 12,
+  // ⚠ NOT colors.brand. design/241 draws its primary button in a much darker
+  // brown than every other screen in this flow, which uses #B09C82. Sampled,
+  // built as drawn, and kept local rather than added to the shared palette.
+  ctaBg: '#6C5C45',
+  ctaLabelSize: 17,
+  ctaGlyph: 20,
+  secondaryTop: 15,
+  secondarySize: 15,
+};
