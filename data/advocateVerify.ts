@@ -338,3 +338,78 @@ export const AV_DOCUMENTS = {
   cta: 'Continue',
   secondary: 'Save & Exit',
 };
+
+type ReviewRow = { label: string; value: string; pill?: string; mono?: boolean; dot?: boolean };
+
+export const AV_REVIEW = {
+  eyebrow: 'ADVOCATE ENROLLMENT',
+  title: 'Review & Submit',
+  sub: 'Check your information before submitting for verification.',
+  pill: 'Final Step • 4 of 4 Completed',
+  filled: 4,
+
+  sections: [
+    {
+      title: 'PERSONAL DETAILS',
+      action: 'Edit',
+      rows: [
+        { label: 'Full Name', value: 'Adv. Rahul Sharma' },
+        // ⚠ design/234 wrote this as "14 / 08 / 1996".
+        { label: 'Date of Birth', value: '14 Aug 1996' },
+        { label: 'Mobile', value: '+91 98260 44120', pill: 'Verified' },
+        // ⚠ NOTE 4. design/234's form says adv.rahul.sharma@example.com.
+        { label: 'Email', value: 'rahul.sharma@legalitt.in', pill: 'Verified' },
+        // ⚠ NOTE 4. design/234's form says "Flat 402, Royal Palms, Scheme No. 54".
+        { label: 'Address', value: '402, Royal Residency, M.G. Road, Indore, M.P. - 452001' },
+      ] as ReviewRow[],
+    },
+    {
+      title: 'PROFESSIONAL DETAILS',
+      action: 'Edit',
+      rows: [
+        { label: 'Qualification', value: 'LL.B (Hons.), 2018' },
+        // ⚠ design/235 selected Civil Matters, Family & Matrimonial and
+        // Consumer Disputes. This review lists Civil Matters, Corporate &
+        // Commercial and Matrimonial Disputes — two of the three differ.
+        { label: 'Practice Areas', value: 'Civil Matters, Corporate & Commercial, Matrimonial Disputes' },
+        { label: 'Courts', value: 'High Court of M.P. (Indore Bench), District & Sessions Court' },
+        { label: 'Experience', value: '6+ Years Active Practice' },
+      ] as ReviewRow[],
+    },
+    {
+      title: 'BAR COUNCIL',
+      action: 'Edit',
+      rows: [
+        { label: 'State Bar Council', value: 'State Bar Council of Madhya Pradesh' },
+        { label: 'Enrollment Number', value: 'MP/1428/2018', mono: true },
+        { label: 'Enrollment Date', value: '18 / 07 / 2018' },
+        { label: 'Status', value: 'Active / Sanad Issued', dot: true },
+      ] as ReviewRow[],
+    },
+  ],
+
+  documents: {
+    title: 'DOCUMENTS',
+    action: 'View Documents',
+    // ⚠ All three read "Verified" on a form that has not been submitted yet,
+    // and design/238 drew the third one mid-upload at 68%. Drawn as drawn.
+    rows: [
+      { name: 'Identity Document', file: 'rahul_sharma_aadhaar.pdf (2.4 MB)', status: 'Verified' },
+      { name: 'Enrollment Certificate', file: 'mp_bar_council_sanad.pdf (3.1 MB)', status: 'Verified' },
+      { name: 'Professional Proof (COP)', file: 'aibe_cop_certificate.pdf (1.8 MB)', status: 'Verified' },
+    ],
+  },
+
+  confirm: {
+    title: 'I confirm that the information and documents provided are accurate and belong to me.',
+    body: 'Submitted information may be reviewed by Legalitt before your profile receives verified status.',
+  },
+
+  bci: {
+    lead: 'BCI Compliance & Data Privacy:',
+    body: ' Information submitted is encrypted and strictly maintained for professional verification.',
+  },
+
+  cta: 'Submit for Verification',
+  secondary: 'Save & Exit',
+};

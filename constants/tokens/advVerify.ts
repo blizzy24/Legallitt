@@ -569,3 +569,104 @@ export const advVerifyDocuments = {
   footerPadTop: 17,
   ctaH: 47.5,
 };
+
+/**
+ * design/239 — review & submit. Measured at 2.000 px/pt from the CONTENT of a
+ * 932×3264 export: like design/236 this one is framed, so it was cropped to its
+ * 780px screen first (x 76…856, y 26…3144).
+ *
+ * ⚠ A SIXTH header arrangement: eyebrow, then title, then a subtitle, then a
+ * rounded "Final Step · 4 of 4 Completed" pill, then a SHORT centred progress
+ * bar (251.5pt wide, not full width). The back control is a circle floated at
+ * the left of the eyebrow row.
+ */
+export const advVerifyReview = {
+  padX: 16,
+
+  headerTop: 18.5,
+  backBtn: 40,
+  backIcon: 22,
+  eyebrowSize: 11,
+  eyebrowTrack: 1.2,
+  titleTop: 8.5,
+  titleSize: 21,
+  subTop: 5,
+  subPadX: 8,
+  subSize: 13.5,
+  pillTop: 13,
+  pillH: 23.5,
+  pillRadius: 14,
+  pillPadX: 16,
+  pillBg: '#F4EEE6',
+  pillSize: 13,
+  progressTop: 9.5,
+  progressW: 251.5,
+  progressH: 3.5,
+  progressGap: 7,
+
+  cardTop: 9,
+  cardRadius: 16,
+  cardPad: 16,
+
+  tile: 34,
+  tileRadius: 9,
+  tileBg: '#FBF6F0',
+  tileGlyph: 18,
+  tileGap: 11,
+  headSize: 14,
+  headTrack: 0.7,
+  editSize: 14,
+  headRuleTop: 8,
+
+  rowTop: 5,
+  rowGap: 6.5,
+  rowLabelSize: 14,
+  rowValueSize: 14,
+  rowValueLine: 19.5,
+  rowGapX: 12,
+
+  vpillH: 21,
+  vpillRadius: 10.5,
+  vpillPadX: 8,
+  vpillSize: 11.5,
+  vpillGlyph: 11,
+  vpillGap: 8,
+
+  docTop: 14,
+  docGap: 8,
+  docH: 57,
+  docRadius: 10,
+  docBg: '#F6F8F6',
+  docPadX: 10,
+  docCheck: 26,
+  docCheckGlyph: 15,
+  docCheckBg: '#DFF3E7',
+  docGapX: 9,
+  docNameSize: 14.5,
+  docFileSize: 12.5,
+  docFileTop: 2,
+
+  confirmBox: 24,
+  confirmBoxRadius: 6,
+  confirmGap: 13,
+  confirmSize: 15,
+  confirmLine: 21,
+  confirmBodyTop: 7,
+  confirmBodySize: 13.5,
+  confirmBodyLine: 20,
+
+  bciTop: 24.5,
+  bciBg: '#F6F3F2',
+  bciGlyph: 17,
+  bciGap: 11,
+  bciSize: 13.5,
+  bciLine: 18.5,
+
+  footerPadTop: 5,
+  ctaH: 50,
+  // ⚠ The Submit button is drawn MUTED because the confirmation checkbox above
+  // it is drawn unticked. Both are static; the button does not become active.
+  ctaMutedBg: '#E6DED6',
+  ctaMutedInk: '#9A9289',
+  ctaLabelSize: 16,
+};
