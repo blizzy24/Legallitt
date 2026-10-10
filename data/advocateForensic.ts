@@ -306,3 +306,92 @@ export const DF_REPORT = {
 
   continue: 'Continue',
 };
+
+// ── design/227 — legal affidavit ─────────────────────────────────────────────
+//
+// ⚠ THE DEPONENT IS A CLIENT-SIDE ADVOCATE. The affidavit is sworn by "Adv. Priya
+// Sharma, Enr: MP/1429/2014". Priya Sharma appears on the CLIENT side of this app.
+// The signed-in advocate has been Abhishek Chouhan (design/148), Abhishek Sahu
+// (design/188), Gurneet Chawla (designs 189/209) and Gurneeet Chawla (design/194) —
+// Priya Sharma is a fifth name, and the only one from the other side of the product.
+// See note 3.
+//
+// ⚠ THE MATTER IS "Signature & Document Forensic", High Court Indore, where
+// design/228 calls the same docket "Land Title Dispute Forensic", Bengaluru Civil
+// Court. See note 2.
+
+export const DF_AFFIDAVIT = {
+  title: 'Affidavit',
+  readyChip: 'Ready to Fill',
+  docket: 'Docket DF-2026-1048',
+  headline: 'Legal Affidavit',
+  lead: 'Complete the affidavit for this report.',
+
+  steps: {
+    done: { title: 'Forensic Report', state: 'Ready' },
+    now: { title: 'Affidavit', state: 'In Progress' },
+    note: 'The affidavit is an essential companion verification document to the forensic report.',
+  },
+
+  summary: {
+    label: 'MATTER SUMMARY',
+    /** ⚠ Bengaluru Civil Court on design/228. See note 2. */
+    court: 'High Court Indore',
+    rows: [
+      { label: 'Client Name', value: 'Vikramaditya Singhania' },
+      { label: 'Request ID', value: 'DF-2026-1048', alt: true },
+      /** ⚠ "Land Title Dispute Forensic" on design/228. See note 2. */
+      { label: 'Matter', value: 'Signature & Document Forensic' },
+      { label: 'Target Document', value: 'Property_Sale_Deed_1998.pdf', alt: true },
+    ],
+  },
+
+  proforma: {
+    label: 'PROFORMA VERIFICATION',
+    title: 'AFFIDAVIT OF FORENSIC EXAMINATION',
+    sub: 'BEFORE THE COMPETENT LEGAL AUTHORITY',
+  },
+
+  /** ⚠ Priya Sharma — see note 3. */
+  deponent:
+    'Deponent Identity: I, Adv. Priya Sharma, Advocate enrolled with State Bar Council (Enr: MP/1429/2014), aged 38 years, having my office at High Court Precinct, Indore, do hereby solemnly affirm and state on oath as under:',
+
+  clauses: [
+    '1. Scope & Engagement: That I was formally engaged under Request ID #DF-2026-1048 by client Vikramaditya Singhania to conduct a direct\nphysical and optical forensic evaluation of the questioned document titled\nProperty_Sale_Deed_1998.pdf.',
+    '2. Methodology: That I examined the questioned signature on Page 4 against verified genuine reference specimens using 10x optical magnification, pen-stroke sequencing, and line-continuity analysis.',
+    '3. Confirmation: That the findings set forth in the Preliminary Forensic Examination Report dated 19 Oct 2026 represent my true and honest professional evaluation without fear, bias, or external influence.',
+    '4. Verification: That the contents of this affidavit are true to my personal professional knowledge and nothing material has been concealed therein.',
+  ],
+
+  edit: 'Edit Text',
+  add: 'Add Info',
+  save: 'Save',
+
+  signature: {
+    title: 'Advocate Signature',
+    chip: 'Signed',
+    sub: 'Sign to authenticate this formal affidavit',
+    /**
+     * ⚠ STATIC SVG PATH, drawn to match the export. There is NO signature capture
+     * and no drawing surface anywhere in this flow — that capability is unscoped
+     * and has not been agreed. Viewbox is 200×36.
+     */
+    path:
+      'M2 26 C 10 18, 16 12, 24 16 C 32 20, 30 30, 38 30 C 46 30, 48 12, 56 10 C 64 8, 66 26, 74 27 C 82 28, 84 16, 92 17 C 100 18, 100 27, 108 27 C 116 27, 120 16, 128 15 C 136 14, 140 22, 150 21 C 160 20, 170 16, 182 13 C 190 11, 194 10, 198 9',
+    underlinePath: 'M26 34 C 70 32, 130 31, 184 29',
+    signedAt: 'Signed: 19 Oct 2026, 11:42 AM',
+    enrLabel: 'Enr:',
+    enrValue: 'MP/1429/2014',
+    resign: 'Re-sign / Edit Signature',
+  },
+
+  file: {
+    name: 'Affidavit.pdf',
+    meta: '2 Pages • 240 KB • Ready to submit',
+    by: 'Created by Legalitt',
+    preview: 'Preview',
+  },
+
+  saveDraft: 'Save Draft',
+  continue: 'Continue to Review & Submit',
+};
