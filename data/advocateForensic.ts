@@ -151,3 +151,61 @@ export const DF_REQUEST = {
   more: 'Request More Info',
   decline: 'Decline Request',
 };
+
+// ── design/224 — questioned & reference documents ────────────────────────────
+
+export const DF_DOCUMENTS = {
+  /** ⚠ The same title as design/223. See note 11. */
+  title: 'Request Details',
+  caseFile: 'Case File DF-2026-1048',
+  client: 'Rahul Sharma',
+  verified: 'Verified',
+  stats: [
+    { icon: 'file' as const, value: '2', label: 'Documents' },
+    { icon: 'book' as const, value: '32 Total', label: 'Pages' },
+    { icon: 'seal' as const, value: '', label: 'Document Verified' },
+  ],
+
+  questioned: {
+    band: 'QUESTIONED DOCUMENT',
+    note: 'Subject Instrument',
+    name: 'Sale Agreement.pdf',
+    tag: 'Ready for Inspection',
+    meta: '24 Pages • 4.8 MB • Uploaded by Client (Rahul Sharma)',
+    focusLabel: 'Target Focus:',
+    focusValue: 'Signature Concern on Page 18',
+    /** ⚠ Static string. No hashing, no file reading. */
+    hash: 'SHA-256: 7f8a42…3e12',
+  },
+
+  reference: {
+    divider: 'COMPARATIVE REFERENCE EVIDENCE',
+    band: 'REFERENCE MATERIAL',
+    note: 'Benchmark Standard',
+    name: 'Previous Agreement.pdf',
+    tag: 'Verified Standard',
+    meta: '8 Pages • 2.1 MB • Registered Deed Specimen',
+    focusLabel: 'Baseline Standard:',
+    focusValue: '3 verified genuine specimen signatures',
+    hash: 'SHA-256: 9b2d18…81fc',
+  },
+
+  view: 'View Document',
+  download: 'Download PDF',
+
+  ready: {
+    title: 'Ready for Review',
+    /** ⚠ THREE, where this screen's own header says "2 Documents". See note 8. */
+    note: '3 of 3 Ready',
+    body:
+      'We check the submitted files for completeness before assigning them to a specialist. The appointed examiner will conduct the final forensic verification.',
+    rows: [
+      { title: 'Files Available & Verified', sub: 'Both PDF files are available and can be opened successfully.' },
+      { title: 'All 32 Pages Available', sub: 'No Missing or Blank Pages' },
+      { title: 'High-Resolution & Legible', sub: '300+ DPI Scan Quality Verified' },
+    ],
+  },
+
+  continue: 'Continue',
+  more: 'Request More Information',
+};
