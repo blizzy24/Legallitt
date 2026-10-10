@@ -29,8 +29,14 @@ import { advDocuments as t, colors, font, ink, status } from '../constants/theme
  * PAIR B. Those two exports are the same screen with two different headers:
  * 248 a compact horizontal card, 250 a full-bleed illustrated hero. Pixel diff
  * confirmed everything below the header is identical except one word of footer
- * copy ("remain sealed." vs "remain sealed and private."), so both routes
- * render this component and differ only in the `hero` prop.
+ * copy ("remain sealed." vs "remain sealed and private."), so one component
+ * carries both and the `hero` prop picks the header.
+ *
+ * ⚠ THE CLIENT DREW BOTH HEADERS AND CHOSE NEITHER. The illustrated hero ships
+ * on app/advocate/settings/documents.tsx by instruction; the compact card is
+ * kept reachable rather than deleted, because no decision between them was ever
+ * recorded. Both PNGs remain in design/. Do not remove the "compact" branch
+ * without one.
  *
  * STATIC, NOT WIRED. No upload, no file picker, no camera: "Upload New
  * Document", "View", "Replace" and "Add Additional Credential" all open
