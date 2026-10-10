@@ -488,3 +488,104 @@ export const DF_SUBMIT = {
   barDesk: 'Admin Desk Review',
   submit: 'Submit to Admin',
 };
+
+// ═════════════════════════════════════════════════════════════════════════════
+// ADMIN-REVIEW LOOP — designs 229–232.
+//
+// All four screens are the ADVOCATE watching work a Legalitt admin does
+// elsewhere. There is no admin role, no admin screen and no admin action in this
+// prototype, and none has been added to the role switcher.
+//
+// Shared with designs 222–228 rather than duplicated: the docket, the client
+// record and the document list all come from the records above where they match.
+//
+// ⚠ FURTHER CONTRADICTIONS FOUND IN THIS GROUP, beyond those already recorded:
+//
+// 12. A FOURTH MATTER NAME. "Document Forensic (Property Sale Deed 1998)" on
+//     designs 229 and 231, against "Signature & Document Forensic" (227),
+//     "Land Title Dispute Forensic" (228) and "Document Forensic" (226). Four
+//     names, two cities, one docket. See note 2.
+//
+// 13. THE REPORT FILENAME LOSES ITS UNDERSCORE. "Forensic Report.pdf" on
+//     design/231; "Forensic_Report.pdf" on designs 228, 229, 230 and 232.
+//
+// 14. THE WALLET IS AN UNSCOPED CAPABILITY, ASSUMED TWICE. design/232 pays
+//     "₹4,500 added to your Legalitt wallet (WAL-7729)" and design/220 pays into
+//     the same wallet with the same account number. There is no wallet feature in
+//     this app — no balance, no ledger, no transactions screen. Both amounts are
+//     static strings; nothing is built.
+//
+// 15. design/231 CLIPS the client's service line mid-word: "Document Forensic
+//     (Property Sale Deed 19" with the closing "98)" cut off by the card. Stored
+//     whole here and allowed to shrink or wrap.
+//
+// 16. design/231 draws a PHOTOGRAPH as the client avatar — the only photographic
+//     avatar in the advocate flows. Rendered as the initials block used
+//     everywhere else, per the project's standing treatment for photographs.
+//
+// 17. THE PAYMENT DATE AND FILING DUE ARE IN THE FUTURE. 19 Oct 2026 and "Today,
+//     5:00 PM" against a current date of 10 Oct 2026. Left visible, not
+//     normalised, exactly as in the FIR batch.
+// ═════════════════════════════════════════════════════════════════════════════
+
+/** Shared by designs 229–232 — one docket, one client, one document pair. */
+export const DF_ADMIN_SHARED = {
+  ref: 'DF-2026-1048',
+  client: 'Vikramaditya Singhania',
+  service: 'Document Forensic',
+  /** ⚠ A fourth name for this matter. See note 12. */
+  matter: 'Document Forensic (Property Sale Deed 1998)',
+  /** ⚠ In the future. See note 17. */
+  filingDue: 'Today, 5:00 PM',
+  report: { name: 'Forensic_Report.pdf', meta: '4 Pages • 1.8 MB' },
+  affidavit: { name: 'Affidavit.pdf', meta: '2 Pages • 240 KB' },
+};
+
+/** The switcher on design/229. Client UI, drawn in the design. */
+export const DF_ADMIN_STATES = [
+  { label: 'Waiting', route: '/advocate/forensic/admin-review' },
+  { label: 'Approved', route: '/advocate/forensic/admin-approved' },
+  { label: 'Changes Needed', route: '/advocate/forensic/admin-changes' },
+] as const;
+
+// ── design/229 — admin review status ─────────────────────────────────────────
+
+export const DF_ADMIN_REVIEW = {
+  title: 'Admin Review Status',
+  chip: 'Waiting for Admin Review',
+  /** ⚠ Static string. Not computed; no status source is scoped. */
+  est: 'Est. 15-30 min',
+  headline: 'Waiting for Admin Review',
+  body: 'Your report is being checked by Legalitt Admin before it goes to the client.',
+  note: 'Legalitt Admin checks the report format and signature affidavit before it is sent to the client. This usually takes 15–30 minutes.',
+  bell: 'You will get a notification as soon as the review is complete.',
+  refresh: 'Refresh Status',
+  viewFiles: 'View Submitted Files',
+
+  caseTitle: 'Case Details',
+  idLabel: 'ID: DF-2026-1048',
+  caseRows: [
+    { label: 'Client', value: DF_ADMIN_SHARED.client },
+    { label: 'Matter', value: DF_ADMIN_SHARED.matter },
+  ],
+  dueLabel: 'Filing Due',
+
+  filesTitle: 'Files Sent to Admin',
+  filesSub: 'Sent on 19 Oct 2026, 11:45 AM',
+  sentTag: 'Sent to Admin',
+
+  trackerTitle: 'Progress Tracker',
+  tracker: [
+    { title: 'Report Created', sub: 'Completed by Advocate • 11:30 AM', tone: 'done' as const },
+    { title: 'Affidavit Added', sub: 'Digital signature attached • 11:40 AM', tone: 'done' as const },
+    { title: 'Sent to Admin', sub: 'Submitted for verification • 11:45 AM', tone: 'done' as const },
+    { title: 'Admin Review', sub: 'In progress with Legalitt team', tone: 'now' as const },
+    { title: 'Sent to Client', sub: 'Delivered automatically by Admin', tone: 'todo' as const },
+  ],
+
+  chat: {
+    title: 'Need help with review?',
+    sub: 'Legalitt Advocate Desk is online',
+    button: 'Chat Help',
+  },
+};
