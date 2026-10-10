@@ -30,6 +30,7 @@ export * from './tokens/psrDecision';
 export * from './tokens/advFir';
 export * from './tokens/advForensic';
 export * from './tokens/advVerify';
+export * from './tokens/advSettings';
 
 export const colors = {
   brand:        '#B09C82',
