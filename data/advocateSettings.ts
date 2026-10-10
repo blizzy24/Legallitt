@@ -401,3 +401,146 @@ export const AS_SECURITY = {
 
   note: 'Your advocate profile is safeguarded with State Bar Council verified dual keys and end-to-end encrypted docket sessions.',
 };
+
+export const AS_PRIVACY = {
+  eyebrow: 'PRIVACY & PREFERENCES',
+  title: 'Privacy Settings',
+  pill: 'ADVOCATE PRIVACY CONTROL',
+  h1: 'Privacy & Visibility',
+  sub: 'Control how your professional profile, courtroom status, and client communications are visible on Legalitt.',
+
+  visibilityTitle: 'PROFILE VISIBILITY',
+  visibilityMeta: 'Publicly Regulated',
+  visibility: [
+    {
+      title: 'Show Professional Profile',
+      sub: 'Allow verified litigants to view your public advocate docket',
+    },
+    { title: 'Show Online Status', sub: "Let clients see when you're active and available for briefings" },
+  ],
+
+  commsTitle: 'COMMUNICATION PRIVACY',
+  comms: [
+    { title: 'Read Receipts', sub: 'Show clients when you have read their case-related inquiries', toggle: true },
+    {
+      title: 'Call Privacy',
+      sub: 'Control who can initiate secure video and voice consults',
+      pill: 'Verified Clients Only',
+    },
+    { title: 'Message Requests', sub: 'Screen unsolicited advisory and representation inquiries', pill: 'Filtered' },
+  ],
+
+  dataTitle: 'DATA PREFERENCES',
+  data: [
+    {
+      title: 'Personalized Recommendations',
+      sub: 'Receive case briefs matched strictly to your court jurisdiction',
+      toggle: true,
+    },
+    { title: 'Data Sharing Preferences', sub: 'Manage regulatory compliance audits and court telemetry' },
+  ],
+
+  note: {
+    title: 'Advocate Privilege & Confidentiality',
+    body: 'Advocate confidentiality and client privilege are strictly guarded under Bar Council of India professional ethics standards.',
+  },
+};
+
+export const AS_PERMISSIONS = {
+  eyebrow: 'DEVICE & PRIVACY',
+  title: 'App Permissions',
+  pill: 'DEVICE ACCESS & PRIVACY',
+  h1: 'System Permissions',
+  sub: 'Manage the permissions Legalitt uses on your device.',
+
+  permissions: [
+    { icon: 'camera', title: 'Camera', sub: 'Required for video consultations', status: 'Allowed', tone: 'allowed' },
+    { icon: 'mic', title: 'Microphone', sub: 'Required for voice and video consultations', status: 'Allowed', tone: 'allowed' },
+    { icon: 'bell', title: 'Notifications', sub: 'Receive booking and payment alerts', status: 'Allowed', tone: 'allowed' },
+    { icon: 'folder', title: 'Photos & Files', sub: 'Upload documents and profile photos', status: 'Allowed', tone: 'allowed' },
+    { icon: 'pin', title: 'Location', sub: 'Used when location-based features are enabled', status: 'Not Allowed', tone: 'denied' },
+  ] as const,
+
+  system: { title: 'System Settings', sub: 'Configure device-level permissions', action: 'Open Settings' },
+  note: 'You can change permissions from your device settings. Legalitt only accesses hardware during active sessions under strict client confidentiality.',
+};
+
+export const AS_DEVICES = {
+  // ⚠ NOTE 6: design/253's header says "App Permissions" — the same header
+  // design/252 draws — while its body is Authorized Devices. Built as drawn.
+  eyebrow: 'DEVICE & PRIVACY',
+  title: 'App Permissions',
+  pill: 'DEVICE AUTHORIZATION & PRIVACY',
+  h1: 'Authorized Devices',
+  sub: 'View and manage devices currently signed in to your account. Revoke access immediately if you recognize suspicious activity.',
+
+  currentTitle: 'CURRENT ACTIVE SESSION',
+  currentMeta: '1 DEVICE',
+  current: {
+    name: 'This Device',
+    sub: 'Windows 11 • Google Chrome',
+    where: 'New Delhi, India • Active now',
+    pill: 'Current',
+    note: 'Session secured via Bar Council two-factor token. Client consultation escrow access enabled.',
+  },
+
+  othersTitle: 'OTHER AUTHORIZED SESSIONS (2)',
+  othersAction: 'Sync',
+  others: [
+    {
+      name: 'Android Phone',
+      sub: 'Android 14 • Legalitt Mobile',
+      where: 'Mumbai, India • 12 mins ago',
+      net: 'High Court Chambers Wi-Fi',
+      // ⚠ Partly masked in the export; stored exactly as drawn.
+      ip: 'IP: 103.21.***.***',
+    },
+    {
+      name: 'iPhone 15 Pro',
+      sub: 'iOS 18 • Safari Mobile',
+      where: 'Bengaluru, India • Yesterday, 6:45 PM',
+      net: 'Cellular Network',
+      ip: 'IP: 49.36.***.***',
+    },
+  ],
+  signOutAll: 'Sign Out All Other Devices',
+  signOutNote: 'You will remain signed in only on this Windows workstation.',
+  note: 'Legalitt enforces Bar Council identity protection. Signing out terminates all active client case docket viewers and pending biometric authorizations on remote devices.',
+};
+
+export const AS_DATA = {
+  eyebrow: 'DATA & PRIVACY',
+  title: 'Data & Documents',
+  pill: 'ACCOUNT DATA & RECORDS',
+  h1: 'Data & Documents',
+  sub: 'Manage your Legalitt account data and stored documents.',
+
+  yourDataTitle: 'YOUR DATA',
+  yourData: [
+    // ⚠ Both subtitles are clipped in the export, at "your acc" and "inform".
+    // Stored and rendered whole.
+    { icon: 'user', title: 'Personal Information', sub: 'View the information stored in your account' },
+    { icon: 'archive', title: 'Download Account Data', sub: 'Request a copy of your account information' },
+  ],
+
+  documentsTitle: 'DOCUMENTS',
+  documents: [
+    { icon: 'folder', title: 'My Documents', sub: 'View uploaded documents', pill: '3 Files' },
+    { icon: 'cloud', title: 'Storage', sub: '12.4 MB used of 1 GB', pill: '1.2%' },
+  ],
+
+  actionsTitle: 'DATA ACTIONS',
+  // ⚠ STATIC, AND THESE TWO IN PARTICULAR. "Download My Data" and "Delete
+  // Account" are the DPDP Act's portability and erasure duties. They are real
+  // legal obligations. They are DRAWN here and WIRED TO NOTHING, deliberately.
+  actions: [
+    { icon: 'cloud', title: 'Download My Data', sub: 'Export available account data' },
+    // ⚠ Clipped in the export at "Legalitt acc". Stored whole.
+    { icon: 'trash', title: 'Delete Account', sub: 'Permanently remove your Legalitt account', danger: true },
+  ],
+
+  note: {
+    title: 'BCI Privacy Standard',
+    body: 'Your advocate profile data and client dockets are encrypted according to Bar Council of India digital privacy and data protection norms.',
+  },
+};

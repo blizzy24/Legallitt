@@ -474,3 +474,96 @@ export const advSecurity = {
   noteSize: 14.5,
   noteLine: 23,
 };
+
+/**
+ * Shared chrome for designs 251–254 — privacy settings, app permissions,
+ * authorized devices and data & documents. All four draw the same page: a
+ * header, one tall hero card (illustration, pill, headline, subtitle), then
+ * labelled sections of white row cards. Measured at 2.000 px/pt from the
+ * content of their 812px exports.
+ */
+export const advSettingsPage = {
+  padX: 20,
+  bg: '#FAF8F5',
+
+  headerTop: 14,
+  backBtn: 42,
+  backIcon: 24,
+  backBg: '#F0EEEB',
+  eyebrowSize: 11,
+  eyebrowTrack: 1.2,
+  titleTop: 3,
+  titleSize: 19,
+  infoGlyph: 22,
+  avatar: 36,
+  avatarGlyph: 19,
+  headerGap: 18,
+  headerPadBottom: 14,
+
+  heroTop: 3,
+  heroRadius: 18,
+  heroPadTop: 24,
+  heroPadBottom: 20,
+  heroPadX: 20,
+  artH: 100,
+  pillTop: 37,
+  pillH: 26,
+  pillRadius: 13,
+  pillPadX: 13,
+  pillBg: '#F1EDE9',
+  pillGlyph: 14,
+  pillGap: 8,
+  pillSize: 12,
+  pillTrack: 0.8,
+  h1Top: 2,
+  h1Size: 23,
+  subTop: 6,
+  subSize: 14.5,
+  subLine: 19,
+
+  sectionTop: 11,
+  sectionGap: 11,
+  sectionSize: 12,
+  sectionTrack: 1,
+  sectionMetaSize: 13,
+
+  cardRadius: 16,
+  cardPadX: 16,
+  cardPadY: 16,
+  rowGap: 16,
+  ruleTop: 16,
+
+  tile: 44,
+  tileRadius: 11,
+  tileBg: '#F2F0EE',
+  tileGlyph: 21,
+  tileGap: 13,
+  rowTitleSize: 17,
+  rowSubTop: 3,
+  rowSubSize: 14,
+  rowSubLine: 18,
+
+  statusH: 30,
+  statusRadius: 15,
+  statusPadX: 11,
+  statusGlyph: 14,
+  statusSize: 13.5,
+  statusGap: 5,
+  chevron: 20,
+
+  toggleW: 46,
+  toggleH: 27,
+  toggleKnob: 21,
+  togglePad: 3,
+  toggleOn: '#6C5C45',
+
+  noteTop: 18,
+  noteBg: '#F2EFED',
+  noteRadius: 16,
+  notePad: 16,
+  noteTile: 42,
+  noteGlyph: 19,
+  noteGap: 13,
+  noteSize: 14.5,
+  noteLine: 22,
+};
