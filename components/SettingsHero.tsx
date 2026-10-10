@@ -20,6 +20,8 @@ export default function SettingsHero({
   h1,
   sub,
   art,
+  heroCard = true,
+  heroBg,
   showInfo = true,
   roundBack = true,
   children,
@@ -30,6 +32,9 @@ export default function SettingsHero({
   h1: string;
   sub: string;
   art: ReactNode;
+  /** design/251 and 253 draw a white hero card; 252 and 254 draw none. */
+  heroCard?: boolean;
+  heroBg?: string;
   showInfo?: boolean;
   roundBack?: boolean;
   children: ReactNode;
@@ -63,7 +68,7 @@ export default function SettingsHero({
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={styles.hero}>
+        <View style={[styles.hero, !heroCard && styles.heroBare, heroBg ? { backgroundColor: heroBg } : null]}>
           <View style={styles.art}>{art}</View>
           <View style={styles.pill}>
             <ShieldCheck size={t.pillGlyph} color="#4D463D" strokeWidth={2} />
@@ -134,6 +139,7 @@ const styles = StyleSheet.create({
     paddingBottom: t.heroPadBottom,
     paddingHorizontal: t.heroPadX,
   },
+  heroBare: { backgroundColor: 'transparent', borderRadius: 0 },
   art: { height: t.artH, alignItems: 'center', justifyContent: 'center' },
   pill: {
     marginTop: t.pillTop,

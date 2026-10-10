@@ -484,7 +484,7 @@ export const advSecurity = {
  */
 export const advSettingsPage = {
   padX: 20,
-  bg: '#FAF8F5',
+  bg: '#FCF9F8',
 
   headerTop: 14,
   backBtn: 42,
