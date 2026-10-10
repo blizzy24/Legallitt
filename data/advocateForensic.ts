@@ -395,3 +395,96 @@ export const DF_AFFIDAVIT = {
   saveDraft: 'Save Draft',
   continue: 'Continue to Review & Submit',
 };
+
+// ── design/228 — review & submit ─────────────────────────────────────────────
+//
+// ⚠ THE MATTER AND THE COURT CHANGE AGAIN. "Land Title Dispute Forensic",
+// Bengaluru Civil Court • Branch Bench IV, where design/227 says "Signature &
+// Document Forensic", High Court Indore, and designs 229/231 say "Document
+// Forensic (Property Sale Deed 1998)". Three matters and two cities on one
+// docket. See note 2.
+//
+// The muted "Submit to Admin" fill (#C2BAB0) is NOT a defect: design/228 draws an
+// ADVOCATE CONFIRMATION checkbox above it, unticked, so the button is in its
+// disabled state. Built that way — ticking the box enables it and restores the
+// brand fill. The enabled colour is not drawn anywhere, so colors.brandDark is
+// used; flagged.
+//
+// ⚠ A SEVENTH GREEN. design/228's Pass / Ready / 100% Prepared text is #047857,
+// which matches none of #61B000, #55A900, #39FF07, #4CA214, #22B573 or #21B474.
+
+export const DF_SUBMIT = {
+  title: 'Review & Submit',
+  readyChip: 'Ready to Submit',
+  docket: 'DOCKET #DF-2026-1048',
+  headline: 'Final Review & Submission',
+  lead: 'Check your documents before sending them to Legalitt Admin.',
+
+  matter: {
+    label: 'MATTER SUMMARY',
+    /** ⚠ A different matter and city from design/227. See note 2. */
+    title: 'Land Title Dispute Forensic',
+    sub: 'Bengaluru Civil Court • Branch Bench IV',
+  },
+
+  client: {
+    label: 'CLIENT CONTEXT',
+    chip: 'Verified Advocate',
+    name: 'Vikramaditya Singhania',
+    request: 'Request ID: DF-2026-1048',
+    state: 'Active',
+    cells: [
+      { label: 'Requested Service', value: 'Document Forensic' },
+      { label: 'Filing Due', value: 'Today, 5:00 PM' },
+    ],
+    targetLabel: 'Target Document',
+    targetValue: 'Property_Sale_Deed_1998.pdf',
+  },
+
+  output: {
+    label: 'PRIMARY OUTPUT',
+    prepared: '100% Prepared',
+    name: 'Forensic_Report.pdf',
+    meta: '4 Pages • Examination Findings & Conclusions',
+    tag: 'Ready',
+  },
+
+  sworn: {
+    label: 'SWORN STATEMENT',
+    note: 'Digitally Signed',
+    name: 'Affidavit.pdf',
+    meta: '2 Pages • Advocate Verification & Signed Oath',
+    tag: 'Ready',
+  },
+
+  view: 'View',
+  edit: 'Edit',
+
+  safeguards: {
+    label: 'VERIFICATION SAFEGUARDS',
+    title: 'Submission Check',
+    pass: 'Pass',
+    rows: [
+      { label: 'Forensic Report', tag: 'Ready' },
+      { label: 'Affidavit', tag: 'Ready' },
+    ],
+    body:
+      'Both forensic files have met the mandatory integrity benchmarks and are confirmed ready for submission.',
+  },
+
+  confirm: {
+    label: 'ADVOCATE CONFIRMATION',
+    title: 'I have checked the report and affidavit.',
+    body: 'I certify that the examination methodology complies with High Court forensic standards.',
+  },
+
+  note: {
+    title: 'Legalitt Admin will review the report',
+    body: 'before it is sent to the client.',
+    lock: 'Documents submitted to Legalitt Admin for internal verification.',
+  },
+
+  barLabel: 'Internal Workflow',
+  barDesk: 'Admin Desk Review',
+  submit: 'Submit to Admin',
+};
