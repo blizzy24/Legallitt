@@ -158,6 +158,8 @@ export const advVerifyStep = {
   ctaLabelSize: 15,
   ctaArrow: 20,
   ctaArrowGap: 7,
+  secondaryTop: 13,
+  secondarySize: 13,
 };
 
 /** design/234 — step 1, personal details. Measured at 2.000 px/pt from a 780×2220 export. */
@@ -227,4 +229,57 @@ export const advVerifyPersonal = {
   vpillInset: 11,
   tickGlyph: 20,
   fieldIcon: 20,
+};
+
+/** The select chips on designs 235 and 237. Measured at 2.000 px/pt from design/235. */
+export const advVerifyChip = {
+  height: 30,
+  radius: 10,
+  padX: 13,
+  gapX: 6.5,
+  gapY: 6,
+  size: 13,
+  glyph: 13,
+  glyphGap: 4,
+  onBg: '#F4EEE6',
+  offBorder: '#E8E2DA',
+  addBorder: '#C9A98C',
+};
+
+/** design/235 — step 2, professional details. Measured at 2.000 px/pt from a 780×2829 export. */
+export const advVerifyProfessional = {
+  // ⚠ design/235's header is NOT design/234's. The eyebrow sits 5.5pt higher,
+  // the progress bar 7pt higher, and there is no rule under it at all.
+  headerTop: 18.75,
+  eyebrowTop: -1,
+  progressTop: 19,
+
+  noteTop: 10.5,
+  noteLine: 20.5,
+
+  sectionTop: 14.5,
+  sectionSize: 12.5,
+  sectionTrack: 0.8,
+
+  labelTop: 17.5,
+  labelTopAfterHelper: 20,
+  inputBg: '#FFFFFF',
+  inputH: 43,
+
+  chipsTop: 10.5,
+  afterChips: 21,
+  afterInput: 21,
+  sectionAfter: 20.5,
+
+  hintSize: 12,
+
+  areaTop: 11,
+  areaH: 83,
+  areaPadX: 15.5,
+  areaPadY: 14,
+  areaSize: 14,
+  areaLine: 20,
+
+  metaTop: 15.5,
+  metaSize: 12,
 };

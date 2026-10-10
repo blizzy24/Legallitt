@@ -89,3 +89,70 @@ export const AV_PERSONAL = {
 
   cta: 'Continue',
 };
+
+export const AV_PROFESSIONAL = {
+  title: 'Professional Details',
+  eyebrow: 'ADVOCATE ENROLLMENT',
+  step: 'Step 2 of 4',
+  filled: 2,
+
+  note: 'These details help Legalitt create your verified professional profile.',
+
+  credentials: 'PROFESSIONAL CREDENTIALS',
+  name: {
+    label: 'Professional Name',
+    value: 'Adv. Rahul Sharma',
+    helper: 'Will be displayed on client consultation requests',
+  },
+  qualification: { label: 'Qualification', value: 'LL.B (Hons.)' },
+  year: { label: 'Year of Qual.', value: '2018' },
+  practiceYears: { label: 'Years of Practice', value: '6+ Years Active Practice' },
+
+  jurisdiction: 'JURISDICTION & PRACTICE',
+  areas: {
+    label: 'Primary Practice Areas',
+    hint: 'Select top specialties',
+    chips: [
+      { label: 'Civil Matters', state: 'on' },
+      { label: 'Family & Matrimonial', state: 'on' },
+      { label: 'Consumer Disputes', state: 'on' },
+      { label: 'Criminal Law', state: 'off' },
+      { label: 'Corporate & Commercial', state: 'off' },
+      { label: 'Add Area', state: 'add' },
+    ] as const,
+  },
+  courts: {
+    label: 'Courts Practiced In',
+    chips: [
+      { label: 'High Court of M.P. (Indore Bench)', state: 'on' },
+      { label: 'District & Sessions Court, Indore', state: 'on' },
+      { label: 'Supreme Court of India', state: 'off' },
+      { label: 'DRT / NCLT', state: 'off' },
+    ] as const,
+  },
+  languages: {
+    label: 'Languages Spoken',
+    chips: [
+      { label: 'English', state: 'on' },
+      { label: 'Hindi', state: 'on' },
+      { label: 'Marathi', state: 'off' },
+      { label: 'Gujarati', state: 'off' },
+    ] as const,
+  },
+  city: { label: 'City of Practice', value: 'Indore' },
+  state: { label: 'State of Practice', value: 'Madhya Pradesh' },
+
+  chamber: 'CHAMBER SUMMARY',
+  about: {
+    label: 'About Your Practice',
+    value:
+      'Specialized in civil litigation, property documentation, matrimonial dispute settlement, and pre-litigation legal notices with 6+ years of court representation.',
+    helper: 'Brief overview for litigants',
+    // ⚠ Drawn as 168 characters. The string above is 161. Stored as drawn; the
+    // counter is a label, not a computation, because nothing here is editable.
+    counter: '168 / 300 characters',
+  },
+
+  cta: 'Continue',
+  secondary: 'Save & Exit',
+};

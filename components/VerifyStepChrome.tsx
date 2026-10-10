@@ -25,6 +25,13 @@ export default function VerifyStepChrome({
   segments = 4,
   cta,
   onContinue,
+  secondary,
+  onSecondary,
+  eyebrowFirst = false,
+  showRule = true,
+  headerTop = t.headerTop,
+  eyebrowTop = t.eyebrowTop,
+  progressTop = t.progressTop,
   children,
 }: {
   title: string;
@@ -34,13 +41,29 @@ export default function VerifyStepChrome({
   segments?: number;
   cta: string;
   onContinue: () => void;
+  /** design/235 and design/237 draw a second, text-only action under the button. */
+  secondary?: string;
+  onSecondary?: () => void;
+  /** design/237 draws the eyebrow ABOVE the title; 234 and 235 draw it below. */
+  eyebrowFirst?: boolean;
+  /** design/235 draws no rule under the header. 234 and 237 do. */
+  showRule?: boolean;
+  headerTop?: number;
+  eyebrowTop?: number;
+  progressTop?: number;
   children: ReactNode;
 }) {
   const insets = useSafeAreaInsets();
 
   return (
     <View style={styles.screen}>
-      <View style={[styles.header, { paddingTop: insets.top + t.headerTop }]}>
+      <View
+        style={[
+          styles.header,
+          { paddingTop: insets.top + headerTop },
+          !showRule && styles.headerNoRule,
+        ]}
+      >
         <View style={styles.headerRow}>
           <Pressable
             accessibilityRole="button"
@@ -53,12 +76,25 @@ export default function VerifyStepChrome({
           </Pressable>
 
           <View style={styles.titleCol}>
-            <Text style={styles.title} {...shrinkToFit(0.8)}>
-              {title}
-            </Text>
-            <Text style={styles.eyebrow} {...shrinkToFit(0.8)}>
-              {eyebrow}
-            </Text>
+            {eyebrowFirst ? (
+              <>
+                <Text style={styles.eyebrow} {...shrinkToFit(0.8)}>
+                  {eyebrow}
+                </Text>
+                <Text style={[styles.title, { marginTop: eyebrowTop }]} {...shrinkToFit(0.8)}>
+                  {title}
+                </Text>
+              </>
+            ) : (
+              <>
+                <Text style={styles.title} {...shrinkToFit(0.8)}>
+                  {title}
+                </Text>
+                <Text style={[styles.eyebrow, { marginTop: eyebrowTop }]} {...shrinkToFit(0.8)}>
+                  {eyebrow}
+                </Text>
+              </>
+            )}
           </View>
 
           <View style={styles.pill}>
@@ -68,7 +104,7 @@ export default function VerifyStepChrome({
           </View>
         </View>
 
-        <View style={styles.progress}>
+        <View style={[styles.progress, { marginTop: progressTop }]}>
           {Array.from({ length: segments }, (_, i) => (
             <View
               key={i}
@@ -97,6 +133,11 @@ export default function VerifyStepChrome({
           </Text>
           <ArrowRight size={t.ctaArrow} color={ink.onBrand} strokeWidth={2.4} />
         </Pressable>
+        {secondary ? (
+          <Pressable accessibilityRole="button" onPress={onSecondary}>
+            <Text style={styles.secondary}>{secondary}</Text>
+          </Pressable>
+        ) : null}
       </View>
     </View>
   );
@@ -111,6 +152,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: t.rule,
   },
+  headerNoRule: { borderBottomWidth: 0 },
   headerRow: { flexDirection: 'row', alignItems: 'center' },
   back: {
     width: t.backBtn,
@@ -130,7 +172,6 @@ const styles = StyleSheet.create({
     color: '#222222',
   },
   eyebrow: {
-    marginTop: t.eyebrowTop,
     fontFamily: font.appSemi,
     fontSize: t.eyebrowSize,
     letterSpacing: t.eyebrowTrack,
@@ -152,7 +193,7 @@ const styles = StyleSheet.create({
     color: ink.accent,
   },
 
-  progress: { marginTop: t.progressTop, flexDirection: 'row' },
+  progress: { flexDirection: 'row' },
   segment: {
     flex: 1,
     height: t.progressHeight,
@@ -184,5 +225,12 @@ const styles = StyleSheet.create({
     fontSize: t.ctaLabelSize,
     color: ink.onBrand,
     marginRight: t.ctaArrowGap,
+  },
+  secondary: {
+    marginTop: t.secondaryTop,
+    textAlign: 'center',
+    fontFamily: font.appBody,
+    fontSize: t.secondarySize,
+    color: colors.textBody,
   },
 });
