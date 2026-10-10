@@ -28,6 +28,7 @@ export * from './tokens/videoKyc';
 export * from './tokens/legalittAi';
 export * from './tokens/psrDecision';
 export * from './tokens/advFir';
+export * from './tokens/advForensic';
 
 export const colors = {
   brand:        '#B09C82',

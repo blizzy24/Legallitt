@@ -2879,8 +2879,23 @@ export const ADV_CASES_SERVICES = [
   'All Services',
   'Legal Notice',
   'FIR Draft',
+  /** ⚠ design/222 labels this chip "Documents Forensic" — plural, where the
+   *  service, the card chip and every other screen read "Document Forensic". */
+  'Documents Forensic',
   'Property Search',
 ];
+
+/**
+ * Chip label -> serviceKey. The chip labels do not match the card `service`
+ * strings ("Documents Forensic" vs "DOCUMENT FORENSIC", "Property Search" vs
+ * "PROPERTY SEARCH"), so the filter matches on the key instead of the label.
+ */
+export const ADV_CASES_SERVICE_KEYS: Record<string, AdvCaseMatter['serviceKey']> = {
+  'Legal Notice': 'legal-notice',
+  'FIR Draft': 'fir',
+  'Documents Forensic': 'forensic',
+  'Property Search': 'property-search',
+};
 
 export const ADV_CASES: AdvCaseMatter[] = [
   {

@@ -20,6 +20,7 @@ import {
   ADV_CASES,
   ADV_CASES_ACTIONS,
   ADV_CASES_COPY,
+  ADV_CASES_SERVICE_KEYS,
   ADV_CASES_FILTERS,
   ADV_CASES_SERVICES,
   ADV_CASES_STATS,
@@ -40,7 +41,7 @@ import { advCases as t, colors, font, ink } from '../constants/theme';
 // ⚠ design/214's card action reads "Continue Draft →" WITH an arrow where design/204
 // reads "Review Request" with none. Both are kept, chosen per service.
 
-export type CasesChrome = 'tab' | 'pushed';
+export type CasesChrome = 'tab' | 'pushed' | 'portal';
 
 const BODY_ICONS = { calendar: CalendarDays, gavel: Gavel, video: Video };
 
@@ -60,11 +61,29 @@ export default function AdvocateCasesList({
   chrome = 'tab',
   initialService = 'All Services',
   title,
+  eyebrow,
+  subtitle,
+  extraSearch,
+  showStats = true,
+  showListTitle = true,
 }: {
   chrome?: CasesChrome;
   initialService?: string;
-  /** Pushed variant only — the header title. The tab variant uses the design's. */
+  /** Pushed and portal variants — the header title. The tab variant uses the design's. */
   title?: string;
+  /** Portal variant — the second header line under the title (design/222). */
+  eyebrow?: string;
+  /** Portal variant — the line under the header (design/222). */
+  subtitle?: string;
+  /**
+   * Portal variant — a SECOND search field above the list's own.
+   * ⚠ design/222 genuinely draws two stacked search fields with different
+   * placeholders. Built as drawn; see data/advocateForensic.ts.
+   */
+  extraSearch?: string;
+  /** design/222 draws no stat cards and no "Your Matters" row. */
+  showStats?: boolean;
+  showListTitle?: boolean;
 }) {
   const insets = useSafeAreaInsets();
   const c = ADV_CASES_COPY;
@@ -75,7 +94,7 @@ export default function AdvocateCasesList({
     () =>
       ADV_CASES.filter((m) => {
         if (filter !== 'All' && m.bucket !== filter) return false;
-        if (service !== 'All Services' && m.service !== service.toUpperCase()) return false;
+        if (service !== 'All Services' && ADV_CASES_SERVICE_KEYS[service] !== m.serviceKey) return false;
         return true;
       }),
     [filter, service],
@@ -89,13 +108,15 @@ export default function AdvocateCasesList({
       router.push(`/advocate/notice/${m.id}/fee` as Href);
     } else if (m.serviceKey === 'fir') {
       router.push('/advocate/fir/fir-2026-1048' as Href);
+    } else if (m.serviceKey === 'forensic') {
+      router.push('/advocate/forensic/df-2026-1048' as Href);
     }
   }
 
   return (
     <View style={styles.screen}>
       <View style={[styles.header, { paddingTop: insets.top + t.headerTop }]}>
-        {chrome === 'pushed' ? (
+        {chrome !== 'tab' ? (
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Back"
@@ -109,18 +130,39 @@ export default function AdvocateCasesList({
             <Scale size={t.markIcon} color={colors.brandDark} />
           </View>
         )}
-        <Text style={styles.headerTitle} {...shrinkToFit(0.75)}>
-          {chrome === 'pushed' && title ? title : c.headerTitle}
-        </Text>
-        <Pressable accessibilityRole="button" accessibilityLabel="Search" hitSlop={10}>
-          <Search size={t.searchBtn} color={colors.textPrimary} />
-        </Pressable>
+        {chrome === 'portal' ? (
+          <View style={styles.headerCol}>
+            <Text style={styles.headerTitle} {...shrinkToFit(0.7)}>
+              {title ?? c.headerTitle}
+            </Text>
+            {eyebrow && (
+              <Text style={styles.headerEyebrow} {...shrinkToFit(0.75)}>
+                {eyebrow}
+              </Text>
+            )}
+          </View>
+        ) : (
+          <Text style={styles.headerTitle} {...shrinkToFit(0.75)}>
+            {chrome === 'pushed' && title ? title : c.headerTitle}
+          </Text>
+        )}
+        {chrome === 'portal' && (
+          <SlidersHorizontal size={t.filterBtnIcon} color={colors.textPrimary} style={styles.portalFilter} />
+        )}
+        {chrome === 'tab' && (
+          <Pressable accessibilityRole="button" accessibilityLabel="Search" hitSlop={10}>
+            <Search size={t.searchBtn} color={colors.textPrimary} />
+          </Pressable>
+        )}
         <View style={styles.avatar}>
           <UserRound size={t.avatarGlyph} color={ink.onBrand} />
         </View>
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+        {chrome === 'portal' && subtitle ? (
+          <Text style={styles.portalSub}>{subtitle}</Text>
+        ) : (
         <View style={styles.titleRow}>
           <View style={styles.titleCol}>
             <Text style={styles.title} {...shrinkToFit(0.75)}>
@@ -138,7 +180,21 @@ export default function AdvocateCasesList({
             </View>
           )}
         </View>
+        )}
 
+        {extraSearch && (
+          /* ⚠ design/222 draws a SECOND search field here. As drawn. */
+          <View style={[styles.search, styles.extraSearch]}>
+            <Search size={t.searchIcon} color={colors.textBody} />
+            <TextInput
+              style={styles.searchInput}
+              placeholder={extraSearch}
+              placeholderTextColor={colors.textBody}
+            />
+          </View>
+        )}
+
+        {showStats && (
         <View style={styles.stats}>
           {ADV_CASES_STATS.map((s) => (
             <View key={s.label} style={styles.stat}>
@@ -155,6 +211,7 @@ export default function AdvocateCasesList({
             </View>
           ))}
         </View>
+        )}
 
         <View style={styles.search}>
           <Search size={t.searchIcon} color={colors.textBody} />
@@ -210,6 +267,7 @@ export default function AdvocateCasesList({
           ))}
         </ScrollView>
 
+        {showListTitle && (
         <View style={styles.ymRow}>
           <Text style={styles.ymTitle} {...shrinkToFit(0.75)}>
             {c.listTitle}
@@ -226,6 +284,7 @@ export default function AdvocateCasesList({
             <ChevronDown size={t.sortIcon} color={colors.textPrimary} style={styles.sortIcon} />
           </Pressable>
         </View>
+        )}
 
         {matters.map((m) => {
           const tone = STATUS_TONE[m.status];
@@ -340,6 +399,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  headerCol: { flex: 1, minWidth: 0, marginLeft: t.markGap, marginRight: 10 },
+  headerEyebrow: { marginTop: t.eyebrowGap, fontFamily: font.appBody, fontSize: t.eyebrowSize, color: t.eyebrowColour },
+  portalFilter: { marginRight: t.portalFilterGap },
+  portalSub: { marginTop: t.titleGap, fontFamily: font.appBody, fontSize: t.subSize, color: colors.textBody },
+  extraSearch: { marginTop: t.extraSearchGap },
   headerTitle: {
     marginLeft: t.markGap,
     flex: 1,
