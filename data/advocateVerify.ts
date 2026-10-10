@@ -61,3 +61,31 @@ export const AV_INTRO = {
   cta: 'Start Verification',
   later: "I'll Do This Later",
 };
+
+export const AV_PERSONAL = {
+  title: 'Personal Details',
+  eyebrow: 'ADVOCATE ENROLLMENT',
+  step: 'Step 1 of 4',
+  filled: 1,
+
+  note: 'Please enter your details as they appear on your professional records.',
+
+  photo: {
+    title: 'Profile Photo',
+    sub: 'Optional · Clear legal headshot',
+    action: 'Add Photo',
+  },
+
+  fullName: { label: 'Full Name', value: 'Rahul Sharma', helper: 'Must match Bar Council records' },
+  dob: { label: 'Date of Birth', value: '14 / 08 / 1996' },
+  // ⚠ Both of these carry a "Verified" pill on a form that has not been
+  // submitted yet, and nothing in the project verifies either. Drawn as drawn.
+  mobile: { label: 'Mobile Number', value: '+91 98260 44120', verified: 'Verified' },
+  // ⚠ Note 4: design/239 reviews this form and shows a DIFFERENT email.
+  email: { label: 'Email Address', value: 'adv.rahul.sharma@example.com', verified: 'Verified' },
+  address: { label: 'Residential Address', value: 'Flat 402, Royal Palms, Scheme No. 54' },
+  city: { label: 'City', value: 'Indore' },
+  state: { label: 'State', value: 'Madhya Pradesh' },
+
+  cta: 'Continue',
+};

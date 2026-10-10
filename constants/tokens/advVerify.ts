@@ -98,7 +98,7 @@ export const advVerifyIntro = {
   notePadX: 14,
   notePadY: 13.5,
   noteIcon: 14,
-  noteIconGap: 11,
+  noteIconGap: 5,
   noteSize: 12,
   noteLine: 18,
 
@@ -111,4 +111,120 @@ export const advVerifyIntro = {
   ctaArrowGap: 7,
   laterTop: 14,
   laterSize: 13,
+};
+
+/**
+ * Shared chrome for the wizard steps (designs 234–239).
+ *
+ * ⚠ THE STEP PILL AND THE PROGRESS BAR ARE DRAWN PER SCREEN AND THEY DISAGREE
+ * WITH EACH OTHER AND WITH THE SCREEN COUNT. Four segments, six screens, and
+ * "Step 3 of 4" and "Step 4 of 4" each drawn twice. Each screen passes the
+ * values its own export draws; nothing here renumbers anything.
+ *
+ * Measured at 2.000 px/pt from design/234's 780×2220 export.
+ */
+export const advVerifyStep = {
+  padX: 20,
+  bg: '#FAF8F5',
+
+  headerTop: 21.5,
+  backBtn: 40,
+  backIcon: 22,
+  backBg: '#FFFFFF',
+  backBorder: '#E8E2DA',
+
+  titleSize: 17.5,
+  titleLine: 24,
+  eyebrowTop: 4.5,
+  eyebrowSize: 10.5,
+  eyebrowTrack: 1.2,
+
+  pillPadX: 14,
+  pillHeight: 34,
+  pillRadius: 17,
+  pillSize: 12,
+
+  progressTop: 22.5,
+  progressHeight: 3,
+  progressRadius: 1.5,
+  progressGap: 5.5,
+  progressOff: '#E8E2DA',
+  headerPadBottom: 10,
+  rule: '#EFEBE5',
+
+  footerPadTop: 12.5,
+  ctaHeight: 50,
+  ctaRadius: 12,
+  ctaLabelSize: 15,
+  ctaArrow: 20,
+  ctaArrowGap: 7,
+};
+
+/** design/234 — step 1, personal details. Measured at 2.000 px/pt from a 780×2220 export. */
+export const advVerifyPersonal = {
+  illusTop: 35.5,
+  illusHeight: 85,
+
+  noteTop: 25.5,
+  noteBg: '#F6F3F2',
+  noteRadius: 12,
+  noteBorder: '#E8E2DA',
+  notePadX: 14,
+  notePadY: 12.25,
+  noteIcon: 16,
+  noteIconGap: 11,
+  noteSize: 12.5,
+  noteLine: 20,
+
+  photoTop: 20.5,
+  photoHeight: 85.5,
+  photoRadius: 16,
+  photoPadX: 14,
+  ring: 58,
+  ringBorder: '#D8CCBA',
+  ringGlyph: 26,
+  plusBadge: 13.5,
+  plusGlyph: 9,
+  photoTextGap: 13.5,
+  photoTitleSize: 13,
+  photoSubTop: 1,
+  photoSubSize: 11,
+  addW: 84.5,
+  addH: 28,
+  addRadius: 8,
+  addSize: 13,
+
+  fieldTop: 20,
+  labelSize: 13.5,
+  labelGap: 4,
+  starGap: 3,
+  inputH: 44,
+  inputRadius: 10,
+  inputBg: '#FCFBF9',
+  inputBorder: '#E8E2DA',
+  inputPadX: 15.5,
+  inputSize: 15.5,
+  helperTop: 4.5,
+  helperSize: 12,
+  fieldGap: 16,
+  fieldGapAfterArea: 23,
+  fieldGapAfterHelper: 19,
+
+  areaH: 64,
+  areaPadTop: 12.5,
+
+  // The paired City/State inputs are drawn with 12pt of horizontal padding, not
+  // the 15.5 the full-width inputs use. Measured, and it matters: at 15.5 the
+  // drawn value "Madhya Pradesh" does not fit on one line in Public Sans.
+  colGap: 13,
+  colPadX: 12,
+
+  vpillH: 21,
+  vpillRadius: 10.5,
+  vpillPadX: 10,
+  vpillSize: 11,
+  vpillGlyph: 12,
+  vpillInset: 11,
+  tickGlyph: 20,
+  fieldIcon: 20,
 };
