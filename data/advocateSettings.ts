@@ -263,3 +263,24 @@ export const AS_EDIT_PROFILE = {
   cta: 'Save Changes',
   secondary: 'Cancel',
 };
+
+export const AS_PASSWORD = {
+  eyebrow: 'ACCOUNT SECURITY',
+  title: 'Change Password',
+  sub: 'Update your password to keep your account secure.',
+
+  fields: [
+    { label: 'Current Password', placeholder: 'Enter current password' },
+    { label: 'New Password', placeholder: 'Enter new password' },
+    { label: 'Confirm New Password', placeholder: 'Confirm new password' },
+  ],
+
+  reqTitle: 'PASSWORD REQUIREMENTS',
+  // ⚠ The export draws all four in ONE state, with all three fields empty, so
+  // there is no validation state to build. Static, per the brief.
+  requirements: ['8+ characters', '1 uppercase', '1 number', '1 special symbol'],
+
+  forgot: 'Forgot Password?',
+  cta: 'Update Password',
+  note: 'Active courtroom and portal sessions across other authenticated devices remain verified and active.',
+};

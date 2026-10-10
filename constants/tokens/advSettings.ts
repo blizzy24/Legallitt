@@ -181,3 +181,80 @@ export const advEditProfile = {
   cancelTop: 14,
   cancelSize: 14,
 };
+
+/**
+ * design/247 — change password. Measured at 2.000 px/pt from the content of an
+ * 812×1790 export (a 780px screen inside a 16px frame, cropped first).
+ *
+ * ⚠ A FOURTH BACKGROUND IN FOUR SCREENS — though this one is the project's own
+ * #FAF8F5, which neither design/245 (#F4F6F8) nor design/246 (#F7F7F5) uses.
+ */
+export const advPassword = {
+  padX: 20,
+  bg: '#FAF8F5',
+
+  headerTop: 14,
+  backIcon: 26,
+  eyebrowSize: 11,
+  eyebrowTrack: 1.2,
+  titleTop: 3,
+  titleSize: 19,
+  avatar: 36,
+  avatarGlyph: 19,
+  headerPadBottom: 14,
+
+  heroTop: 6.5,
+  heroW: 150,
+  heroH: 122,
+  heroBg: '#F4F0EB',
+  heroGlyph: 46,
+
+  subTop: 8.5,
+  subSize: 14,
+  subLine: 24,
+
+  cardTop: 13.5,
+  cardRadius: 16,
+  cardPadX: 20,
+  cardPadY: 20,
+
+  labelSize: 14,
+  labelGap: 3.5,
+  inputH: 44,
+  inputRadius: 10,
+  inputBg: '#F6F3F2',
+  inputPadX: 15,
+  inputSize: 15,
+  eyeGlyph: 20,
+  fieldGap: 22,
+
+  reqTop: 26,
+  reqBg: '#F6F3F2',
+  reqRadius: 12,
+  reqPad: 14,
+  reqTitleSize: 12,
+  reqTitleTrack: 1,
+  reqRowTop: 14,
+  reqGlyph: 16,
+  reqGap: 9,
+  reqSize: 15,
+
+  forgotTop: 26,
+  forgotSize: 15,
+
+  ctaTop: 18,
+  ctaH: 48,
+  ctaRadius: 12,
+  ctaBg: '#6C5C45',
+  ctaGlyph: 18,
+  ctaLabelSize: 17,
+
+  noteTop: 20,
+  noteBg: '#F6F3F2',
+  noteRadius: 14,
+  notePad: 16,
+  noteGlyph: 17,
+  noteGap: 11,
+  noteSize: 14,
+  noteLine: 21,
+};
