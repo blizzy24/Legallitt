@@ -212,3 +212,54 @@ export const AS_ROOT = {
     },
   ] as SettingsSection[],
 };
+
+export const AS_EDIT_PROFILE = {
+  eyebrow: 'ADVOCATE ACCOUNT',
+  title: 'Edit Profile',
+
+  name: 'Adv. Priya Sharma',
+  badge: 'Verified Advocate',
+  meta: 'priyasharma@gmail.com • Bar Council of Delhi',
+  changePhoto: 'Change Profile Photo',
+
+  personalTitle: 'PERSONAL INFORMATION',
+  personal: [
+    { label: 'Full Name', value: 'Priya Sharma' },
+    { label: 'Date of Birth', value: '12 Oct 1991', icon: 'calendar' },
+    { label: 'Mobile Number', value: '+91 98102 33419', pill: 'Verified' },
+    { label: 'Email Address', value: 'priyasharma@gmail.com', pill: 'Verified' },
+    { label: 'Residential Address', value: 'Flat 402, Judicial Enclave, Sector 15' },
+  ],
+  city: { label: 'City', value: 'New Delhi' },
+  state: { label: 'State', value: 'Delhi (NCT)' },
+
+  professionalTitle: 'PROFESSIONAL INFORMATION',
+  chamber: { label: 'Professional / Chamber Name', value: 'Chambers of Adv. Priya Sharma' },
+  qualification: { label: 'Qualification', value: 'B.A. LL.B (Hons.), LL.M (Constitutional Law)' },
+  years: { label: 'Years of Practice', value: '9+ Years' },
+  // ⚠ Note 2 — D/1842/2015, Bar Council of Delhi. The verification flow at
+  // designs 233–244 enrolls MP/1428/2018 with the MP Bar Council.
+  enrollment: { label: 'Bar Enrollment No', value: 'D/1842/2015', locked: true },
+
+  areas: {
+    label: 'Practice Areas',
+    action: '+ Add Area',
+    chips: ['Civil Litigation', 'Corporate Law', 'Arbitration & Mediation', 'Family & Matrimonial'],
+  },
+  courts: {
+    label: 'Courts Practiced In',
+    action: '+ Add Court',
+    chips: ['Supreme Court of India', 'Delhi High Court', 'Patiala House District Court'],
+  },
+  languages: { label: 'Languages', value: 'English, Hindi, Punjabi' },
+  about: {
+    label: 'About Your Practice',
+    value:
+      'Experienced legal counsel specializing in civil litigation, commercial dispute resolution, and contractual drafting before the High Court of Delhi and subordinate tribunals. Dedicated to ethical legal advisory and prompt client resolution.',
+  },
+
+  note: 'Bar Council enrollment and verified identity details can only be changed by submitting re-verification documents to Legalitt Compliance.',
+
+  cta: 'Save Changes',
+  secondary: 'Cancel',
+};

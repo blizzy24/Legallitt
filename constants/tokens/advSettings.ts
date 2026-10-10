@@ -81,3 +81,103 @@ export const advSettings = {
 
   valueSize: 14,
 };
+
+/**
+ * design/246 — edit profile. Measured at 2.000 px/pt from a 780×3818 export.
+ *
+ * ⚠ A THIRD PAGE BACKGROUND IN THREE SCREENS OF THIS SECTION: #F7F7F5 here,
+ * #F4F6F8 on design/245, and the project's own #FAF8F5 everywhere else. All
+ * measured, none reconciled.
+ */
+export const advEditProfile = {
+  padX: 16,
+  bg: '#F7F7F5',
+
+  headerTop: 10,
+  backBtn: 40,
+  backIcon: 22,
+  eyebrowSize: 11,
+  eyebrowTrack: 1.2,
+  titleTop: 4,
+  titleSize: 18,
+  headerPadBottom: 18,
+  infoBtn: 28,
+  infoGlyph: 15,
+
+  profileTop: 7,
+  profileRadius: 16,
+  profilePadY: 16,
+  avatar: 96,
+  avatarRing: 3,
+  avatarGlyph: 46,
+  camera: 42,
+  cameraGlyph: 19,
+  nameTop: 11,
+  nameSize: 18,
+  vpillTop: 7,
+  vpillH: 24,
+  vpillRadius: 12,
+  vpillPadX: 14,
+  vpillGlyph: 12,
+  vpillSize: 11.5,
+  metaTop: 11,
+  metaSize: 11.5,
+  changeTop: 14,
+  changeGlyph: 14,
+  changeGap: 8,
+  changeSize: 11.5,
+
+  sectionTop: 19.5,
+  sectionGlyph: 16,
+  sectionGap: 9,
+  sectionSize: 12,
+  sectionTrack: 1,
+  sectionBottom: 11.5,
+
+  cardRadius: 16,
+  cardPadX: 17,
+  cardPadY: 15,
+
+  labelSize: 12,
+  labelGap: 9.5,
+  inputH: 43,
+  inputRadius: 10,
+  inputPadX: 15.5,
+  inputSize: 13.5,
+  fieldGap: 13.5,
+  colGap: 12,
+  areaH: 150,
+  areaPadY: 14,
+  areaLine: 21,
+
+  vpillSmallH: 28,
+  vpillSmallSize: 12.5,
+
+  chipTop: 10,
+  chipH: 30,
+  chipRadius: 15,
+  chipPadX: 13,
+  chipGapX: 8,
+  chipGapY: 8,
+  chipBg: '#F4EEE6',
+  chipSize: 13.5,
+  chipClose: 13,
+  addSize: 13.5,
+
+  noteTop: 17,
+  noteBg: '#F5F0E9',
+  noteRadius: 14,
+  notePad: 15,
+  noteGlyph: 17,
+  noteGap: 11,
+  noteSize: 13.5,
+  noteLine: 21,
+
+  footerPadTop: 14,
+  ctaH: 48,
+  ctaRadius: 12,
+  ctaBg: '#8C7961',
+  ctaLabelSize: 17,
+  cancelTop: 14,
+  cancelSize: 14,
+};
