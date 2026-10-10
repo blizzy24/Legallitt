@@ -95,3 +95,57 @@ export const AT_DOC_VIEWER = {
     cta: 'Back to Case',
   },
 };
+
+export const AT_REVIEWS = {
+  title: 'Review and Rating',
+
+  sectionTitle: 'Your Rating',
+  ago: '1 hour ago',
+  score: '4.8',
+  // ⚠ Note 2: "review", singular, against 128 of them.
+  based: 'Based on 128 review',
+  // The breakdown does sum to 128 correctly: 105+15+5+2+1.
+  breakdown: [
+    { stars: 105, fill: 0.74 },
+    { stars: 15, fill: 0.43 },
+    { stars: 5, fill: 0.17 },
+    { stars: 2, fill: 0.1 },
+    { stars: 1, fill: 0.045 },
+  ],
+
+  // ⚠ Note 1: the third tile is labelled "Average Rating" and prints 128. The
+  // average is 4.8 — shown directly above — and 128 is the review count, which
+  // is already the FIRST tile. Drawn label, drawn number, both kept.
+  tiles: [
+    { value: '128', label: 'Total Reviews' },
+    { value: '94%', label: 'Positive Reviews' },
+    { value: '128', label: 'Average Rating' },
+  ],
+
+  reviewsTitle: 'Client Reviews',
+  filters: ['All', 'Newest', 'Highest Rated', 'Lowest Rated'],
+
+  // ⚠ Note 13: design/264 draws TWO IDENTICAL REVIEWS — same client, same five
+  // stars, same sentence, same "2 hours ago". Both built as drawn.
+  reviews: [
+    {
+      name: 'Rahul Sharma',
+      stars: 5,
+      body: 'Very professional and explained the legal process clearly. The consultation was helpful and easy to understand',
+      matter: 'Divorce Consultation',
+      ago: '2 hours ago',
+    },
+    {
+      name: 'Rahul Sharma',
+      stars: 5,
+      body: 'Very professional and explained the legal process clearly. The consultation was helpful and easy to understand',
+      matter: 'Divorce Consultation',
+      ago: '2 hours ago',
+    },
+  ],
+
+  empty: {
+    title: 'No Review Yet',
+    body: 'Client reviews will appear here after completed consultations',
+  },
+};

@@ -83,3 +83,97 @@ export const advDocViewer = {
   toolBorder: '#C8AD8C',
   docPadBottom: 20,
 };
+
+/** designs 264 + 265 — reviews and ratings. Measured at 2.000 px/pt from 780×1688 exports. */
+export const advReviews = {
+  padX: 20,
+  bg: '#F4F6F8',
+
+  headerBg: '#FFFFFF',
+  headerH: 99,
+  headerTop: 14,
+  backIcon: 26,
+  titleGap: 18,
+  titleSize: 18,
+
+  sectionTop: 19.5,
+  sectionSize: 13.5,
+
+  cardTop: 7.5,
+  cardRadius: 14,
+  cardPadX: 16,
+  cardPadY: 9,
+  cardPadBottom: 31.5,
+
+  agoSize: 11.5,
+  agoDot: 7,
+  agoGap: 7,
+  agoRowH: 13,
+  scoreTop: 0,
+  scoreLine: 32,
+  scoreSize: 37,
+  chevron: 22,
+  basedTop: 2,
+  basedSize: 12,
+
+  barTop: 14.5,
+  barGap: 6.5,
+  barRowH: 10.5,
+  barCountW: 26,
+  barCountSize: 12,
+  barStar: 15,
+  barStarGap: 8,
+  barH: 10.5,
+  barRadius: 5.25,
+  barTrack: '#EFE7E0',
+  barFill: '#9D7553',
+  barTailW: 30,
+
+  tileTop: 32,
+  tileGap: 11,
+  tileH: 65,
+  tileRadius: 14,
+  tileNumSize: 24,
+  tileLabelTop: 6,
+  tileLabelSize: 13,
+
+  chipsTop: 10.5,
+  chipH: 24,
+  chipRadius: 8,
+  chipPadX: 11,
+  chipGap: 8,
+  chipSize: 12.5,
+  chipOnBg: '#9D7553',
+
+  reviewTop: 11,
+  reviewGap: 12,
+  reviewRadius: 14,
+  reviewPadX: 16,
+  reviewPadY: 14,
+  avatar: 48,
+  avatarGap: 12,
+  nameSize: 19,
+  starsTop: 5,
+  star: 16,
+  starGap: 6,
+  replyGlyph: 22,
+  bodyTop: 12,
+  bodySize: 11.5,
+  // design/264 wraps the review body at ~240pt, well short of the card's inner
+  // width. Measured from where its lines actually break, not assumed.
+  bodyMaxW: 240,
+  // design/264 sets this body unusually tight: ink pitch 12.25pt at an 11.5pt
+  // face. Reproduced at 13 — the drawn leading, rounded up just enough that
+  // nothing clips on web.
+  bodyLine: 13,
+  footTop: 14,
+  footSize: 14,
+
+  emptyTop: 151,
+  emptyGlyph: 88,
+  emptyTitleTop: 26,
+  emptyTitleSize: 23,
+  emptyBodyTop: 11,
+  emptyBodySize: 13.5,
+  emptyBodyLine: 15,
+};
