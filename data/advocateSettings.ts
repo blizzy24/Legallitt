@@ -284,3 +284,78 @@ export const AS_PASSWORD = {
   cta: 'Update Password',
   note: 'Active courtroom and portal sessions across other authenticated devices remain verified and active.',
 };
+
+export const AS_DOCUMENTS = {
+  eyebrow: 'ADVOCATE CREDENTIALS',
+  title: 'Manage Documents',
+
+  // ⚠ PAIR B. Two headers for one screen. design/248 draws the compact card,
+  // design/250 the illustrated hero — and 250's eyebrow and body differ too.
+  heroCompact: {
+    eyebrow: 'REGULATORY FILINGS',
+    title: 'Professional Records',
+    // ⚠ Clipped in the export at "and bar…". Stored and rendered whole.
+    body: 'View and manage your verified advocate credentials and bar records.',
+  },
+  heroIllustrated: {
+    eyebrow: 'REGULATORY FILINGS & RECORDS',
+    title: 'Professional Records',
+    body: 'View and manage your uploaded professional documents and bar credentials.',
+  },
+
+  cta: 'Upload New Document',
+
+  // ⚠ The last chip is clipped in both exports, reading "Othe". Stored whole.
+  chips: ['All (3)', 'Verification (2)', 'Professional (1)', 'Other'],
+
+  docs: [
+    {
+      // ⚠ Clipped in both exports at "Enrollment Certificat".
+      title: 'Enrollment Certificate',
+      sub: 'State Bar Council Sanad',
+      meta: 'Uploaded: 18 Sep 2026',
+      size: '4.2 MB',
+      kind: 'PDF',
+      status: 'Verified',
+      tone: 'done',
+    },
+    {
+      // ⚠ Clipped in both exports at "Certificate of Pr".
+      title: 'Certificate of Practice',
+      sub: 'All India Bar Exam (AIBE)',
+      meta: 'Uploaded: 18 Sep 2026',
+      size: '3.8 MB',
+      kind: 'PDF',
+      status: 'Pending Review',
+      tone: 'pending',
+    },
+    {
+      title: 'Identity Document',
+      sub: 'Government Photo ID',
+      meta: 'Uploaded: 18 Sep 2026',
+      size: '4.4 MB',
+      kind: 'PDF',
+      status: 'Verified',
+      tone: 'done',
+    },
+  ] as const,
+
+  view: 'View',
+  replace: 'Replace',
+
+  add: {
+    title: 'Add Additional Credential',
+    sub: 'Chamber accreditation, LL.M or High Court registry',
+  },
+
+  vault: {
+    title: 'VAULT ALLOCATION',
+    meta: '3 documents • 12.4 MB',
+    fill: 0.3,
+    // ⚠ The one copy change between the pair: design/248 ends "remain sealed.",
+    // design/250 ends "remain sealed and private."
+    note248: 'End-to-end encrypted under Bar Council standards. Document numbers remain sealed.',
+    note250:
+      'End-to-end encrypted under Bar Council standards. Document numbers remain sealed and private.',
+  },
+};

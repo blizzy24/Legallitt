@@ -258,3 +258,126 @@ export const advPassword = {
   noteSize: 14,
   noteLine: 21,
 };
+
+/**
+ * designs 248 and 250 — manage documents. Measured at 2.000 px/pt from the
+ * content of 812px exports (780px screens inside 16px frames).
+ *
+ * ⚠ PAIR B. design/248 and design/250 are the SAME screen with two different
+ * headers: 248 a compact horizontal card, 250 a full-bleed illustrated hero.
+ * Everything below the header is identical bar one word of footer copy. Both
+ * are built, from one component, with a `hero` prop.
+ *
+ * ⚠ A FIFTH page background: #F6F3F2.
+ */
+export const advDocuments = {
+  padX: 20,
+  bg: '#F6F3F2',
+
+  headerTop: 21.5,
+  backIcon: 24,
+  eyebrowSize: 11,
+  eyebrowTrack: 1.2,
+  titleTop: 3,
+  titleSize: 19,
+  kebabGlyph: 20,
+  avatar: 36,
+  avatarGlyph: 19,
+  headerPadBottom: 14,
+
+  heroTop: 12,
+  heroRadius: 16,
+  heroBg: '#F8F5F4',
+  heroPadX: 16,
+  heroPadY: 16,
+  heroTile: 79,
+  heroTileRadius: 12,
+  heroTileGlyph: 42,
+  heroTileGap: 17,
+  heroEyebrowSize: 11.5,
+  heroEyebrowTrack: 0.9,
+  heroTitleTop: 4,
+  heroTitleSize: 19,
+  heroBodyTop: 4,
+  heroBodySize: 14,
+  heroBodyLine: 19.5,
+
+  // design/250's illustrated hero
+  bigHeroH: 290,
+  bigHeroGlyph: 110,
+  bigHeroEyebrowTop: 16,
+  bigHeroTitleTop: 5,
+  bigHeroTitleSize: 24,
+
+  ctaTop: 18,
+  ctaH: 43.5,
+  ctaRadius: 12,
+  ctaBg: '#6C5C45',
+  ctaGlyph: 22,
+  ctaLabelSize: 16,
+
+  chipsTop: 16.5,
+  chipH: 36,
+  chipRadius: 10,
+  chipPadX: 14,
+  chipGap: 9,
+  chipSize: 14,
+  chipOnBg: '#6C5C45',
+
+  docTop: 16,
+  docGap: 14,
+  docRadius: 16,
+  docPadX: 16,
+  docPadY: 16,
+  docTile: 48,
+  docTileRadius: 12,
+  docTileBg: '#FAEAD7',
+  docTileGlyph: 24,
+  docTileGap: 13,
+  docTitleSize: 17,
+  docSubTop: 3,
+  docSubSize: 14,
+  docMetaTop: 4,
+  docMetaSize: 14,
+  statusH: 32,
+  statusRadius: 16,
+  statusPadX: 11,
+  statusGlyph: 15,
+  statusSize: 14,
+  docRuleTop: 13,
+  actionTop: 13,
+  actionH: 48,
+  actionRadius: 10,
+  actionPadX: 16,
+  actionGlyph: 17,
+  actionGap: 8,
+  actionSize: 13.5,
+  actionGapX: 10,
+
+  addTop: 14,
+  addRadius: 16,
+  addPad: 16,
+  addTile: 44,
+  addGlyph: 20,
+  addGap: 13,
+  addTitleSize: 16,
+  addSubTop: 3,
+  addSubSize: 14,
+  addSubLine: 20,
+
+  vaultTop: 16,
+  vaultBg: '#F8F5F4',
+  vaultRadius: 16,
+  vaultPad: 16,
+  vaultTitleSize: 12,
+  vaultTitleTrack: 1,
+  vaultMetaSize: 14,
+  vaultBarTop: 11,
+  vaultBarH: 7,
+  vaultBarBg: '#E6E2DF',
+  vaultNoteTop: 11,
+  vaultGlyph: 16,
+  vaultGap: 9,
+  vaultNoteSize: 14,
+  vaultNoteLine: 19.5,
+};
