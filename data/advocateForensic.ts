@@ -676,3 +676,54 @@ export const DF_ADMIN_CHANGES = {
   update: 'Update Report',
   close: 'Close',
 };
+
+// ── design/232 — payment received ────────────────────────────────────────────
+//
+// ⚠ THE PAYOUT AND THE FEE, TOGETHER. design/232 pays the advocate ₹4,500;
+// design/223 shows a ₹15,000 Service Fee for the same request. If those are the
+// same transaction the platform keeps ₹10,500 — a 70% commission, against 6%,
+// 10%, 14.286%, 15% and 15.56% elsewhere in the app. Both numbers are stored as
+// drawn; neither is computed. See note 4.
+//
+// ⚠ THE WALLET IS UNSCOPED AND ASSUMED TWICE. "₹4,500 added to your Legalitt
+// wallet (WAL-7729)" here, and design/220 pays into the same WAL-7729. There is
+// no wallet feature in this app — no balance, no ledger, no transactions screen.
+// Static strings only. See note 14.
+//
+// ⚠ Payment date 19 Oct 2026 is nine days in the future. Left visible. Note 17.
+
+export const DF_PAID = {
+  title: 'Payment Received',
+  headline: 'Report Completed',
+  sub: 'Admin approved the report and sent it to the client.',
+
+  payLabel: 'Your Payment',
+  recvChip: 'Received',
+  /** ⚠ Against design/223's ₹15,000 Service Fee. See note 4. */
+  amount: '₹4,500',
+  unit: 'INR',
+  /** ⚠ No wallet feature exists. See note 14. */
+  wallet: 'This amount has been added to your Legalitt wallet.',
+  payRows: [
+    /** ⚠ In the future. See note 17. */
+    { label: 'Payment Date', value: '19 Oct 2026, 12:15 PM' },
+    { label: 'Added To', value: 'Legalitt Wallet (WAL-7729)' },
+  ],
+
+  caseTitle: 'Case Details',
+  doneChip: 'Completed',
+  caseRows: [
+    { label: 'Client', value: DF_ADMIN_SHARED.client },
+    { label: 'Service', value: DF_ADMIN_SHARED.service },
+    { label: 'Request ID', value: DF_ADMIN_SHARED.ref },
+  ],
+
+  statusTitle: 'Report Status',
+  status: ['Report Created', 'Affidavit Added', 'Sent to Admin', 'Admin Approved', 'Sent to Client'],
+
+  sentTitle: 'Sent to Client',
+  sentTag: 'Sent',
+  sentBy: 'Sent by Legalitt Admin',
+
+  home: 'Back To Home',
+};
