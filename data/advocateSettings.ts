@@ -603,3 +603,161 @@ export const AS_PAYOUT = {
 
   note: 'Platform fees and applicable charges are shown before final earnings are settled. Payout information is synchronized directly with your verified advocate bank records.',
 };
+
+export const AS_BANK = {
+  eyebrow: 'FINANCIAL SETTINGS',
+  title: 'Bank Account',
+  pill: 'SETTLEMENT ACCOUNT',
+  h1: 'Bank Account',
+  sub: 'Manage your verified bank account for Legalitt consultation fee payouts and professional settlements.',
+  banner: 'Bank Account Verified • Active for Payouts',
+
+  // ⚠ NOTE 3: SBI, Savings here; design/256 one tap back says HDFC, Current.
+  bank: { name: 'State Bank of India', sub: 'Primary Settlement Account', pill: 'Primary' },
+  details: [
+    { label: 'Account Holder', value: 'Priya Sharma', verified: true },
+    { label: 'Account Number', value: '•••• •••• 4821' },
+    { label: 'IFSC Code', value: 'SBIN0001234' },
+    { label: 'Account Type', value: 'Savings Account' },
+    { label: 'Branch', value: 'High Court Branch, New Delhi' },
+  ],
+
+  payoutTitle: 'PAYOUT ACCOUNT',
+  payoutBody:
+    'This account is used for your Legalitt payouts. Payouts are transferred automatically on scheduled settlement dates.',
+  payoutCta: 'Update Bank Account',
+
+  verificationTitle: 'VERIFICATION STATUS',
+  verification: [
+    { icon: 'id', title: 'Account Holder', pill: 'Verified' },
+    { icon: 'bank', title: 'Bank Details', pill: 'Verified' },
+    // ⚠ STATIC. There is no penny-drop here and no payment rail anywhere in
+    // this project. "Matched" is a drawn label.
+    { icon: 'cash', title: 'Penny Drop Test', pill: 'Matched' },
+  ],
+
+  note: {
+    title: 'Regulatory Trust & Encryption',
+    body: 'For your security, sensitive banking information is partially hidden. Legalitt encrypts all banking details in compliance with Bar Council and RBI settlement guidelines.',
+  },
+};
+
+export const AS_BANK_UPDATE = {
+  title: 'Update Bank Account',
+  eyebrow: 'DIRECT DEPOSIT SETUP',
+  h1: 'Enter your bank details.',
+  sub: 'Add your trusted bank account so legal consultation earnings arrive smoothly and on schedule.',
+
+  cardTitle: 'Bank Details',
+  cardSub: 'Linked advocate payout profile',
+  cardPill: 'Active Link',
+
+  holder: { label: 'Account Holder Name', hint: 'As on passbook', value: 'Priya Sharma' },
+  // ⚠ NOTE 10: design/258 renders the FULL account number in plain text, twice.
+  // Every other screen in this flow masks it to "•••• 4821". Drawn as drawn and
+  // flagged: this is a disclosure decision, not a styling one.
+  account: { label: 'Account Number', value: '987654324821' },
+  confirm: {
+    label: 'Confirm Account Number',
+    pill: 'Matches',
+    value: '987654324821',
+    helper: 'Re-enter your numbers carefully to prevent payment delays.',
+  },
+  ifsc: { label: 'IFSC Code', pill: 'Branch Verified', value: 'SBIN0001234' },
+  bankName: { label: 'Bank Name', value: 'State Bank of India' },
+  branch: { label: 'Branch', value: 'High Court Branch, New Delhi' },
+
+  typeTitle: 'Account Type',
+  typeHint: 'Select one',
+  types: [
+    { title: 'Savings', sub: 'Personal use', on: true },
+    { title: 'Current', sub: 'Firm / business', on: false },
+  ],
+
+  warn: { title: 'Check your bank details before saving them.', body: 'These details will be used for your payouts.' },
+  check: {
+    title: 'Bank Details Check',
+    lead: 'Automatic instant Penny-Drop validation',
+    body: 'We will check these details before saving them. A nominal test credit of ₹1 will be deposited to verify active ownership.',
+    never: 'Legalitt never asks for your ATM PIN, UPI PIN, or bank passwords.',
+  },
+  vault: '256-bit encrypted legal-grade payout vault',
+
+  ctaTitle: 'Verify Bank Details',
+  ctaSub: 'Saves and validates instantly',
+  ctaAction: 'Continue',
+};
+
+export const AS_BANK_VERIFY = {
+  title: 'Verify Bank Details',
+  // Client UI drawn in the export — NOT a dev toggle. All three segments work.
+  segments: ['Checking', 'Verified', 'Failed'],
+
+  bankLabel: 'BANK NAME',
+  bankName: 'State Bank of India',
+  typePill: 'Savings',
+  holder: { label: 'Account Holder', value: 'Priya Sharma' },
+  account: { label: 'Account Number', value: '•••• 4821' },
+  ifsc: { label: 'IFSC Code', value: 'SBIN0001234', pill: 'Branch Verified' },
+
+  // ⚠ WHAT THE EXPORT DRAWS AND WHAT IT DOES NOT. design/259 draws the
+  // CHECKING state only. The Verified and Failed segments are drawn on the
+  // switcher but no export shows either screen. Both are rendered through the
+  // SAME drawn layout with only the mark, the two lines of copy, the tracker's
+  // current step and the button label changing — the Verified wording follows
+  // design/260, which is the success screen. Nothing new is invented around
+  // them; if the client has those two screens, they replace this copy.
+  states: {
+    Checking: {
+      h1: 'Checking Bank Account',
+      sub: 'Please wait while we check your bank details.',
+      step: 1,
+      cta: 'Verifying Account...',
+      ctaNote: 'This usually takes less than 30 seconds',
+    },
+    Verified: {
+      h1: 'Bank Account Verified',
+      sub: 'Your bank details have been checked and matched.',
+      step: 2,
+      cta: 'Continue',
+      ctaNote: 'This usually takes less than 30 seconds',
+    },
+    Failed: {
+      h1: 'Verification Failed',
+      sub: 'We could not match these bank details. Check them and try again.',
+      step: 0,
+      cta: 'Try Again',
+      ctaNote: 'This usually takes less than 30 seconds',
+    },
+  },
+
+  tracker: ['Details Added', 'Checking', 'Verified'],
+  note: {
+    title: 'Secure Bank Verification',
+    body: 'Your bank details are checked securely. Your data stays private.',
+  },
+};
+
+export const AS_BANK_UPDATED = {
+  title: 'Bank Account Updated',
+  h1: 'Bank Account Updated',
+  sub: 'Your bank account has been updated successfully.',
+
+  bank: { name: 'State Bank of India', sub: 'Primary Settlement Node', pill: 'Verified' },
+  details: [
+    { label: 'Account Holder', value: 'Priya Sharma' },
+    { label: 'Account Number', value: '••••  4821' },
+    { label: 'IFSC Code', value: 'SBIN0001234' },
+    { label: 'Account Type', value: 'Savings Account' },
+  ],
+
+  note: {
+    title: 'Your payouts will go to this account.',
+    body: 'This bank account is now active for future legal fee payouts and retainer reimbursements.',
+  },
+  // ⚠ 30 Sep 2026 is in the future, like every other date in this batch.
+  updated: 'Updated on 30 Sep 2026',
+  active: 'Active',
+  cta: 'Done',
+  secondary: 'View Payout Settings',
+};
