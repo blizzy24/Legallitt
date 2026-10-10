@@ -228,3 +228,81 @@ export const DF_WAITING = {
   upload: 'Upload Report',
   view: 'View Request Details',
 };
+
+// ── design/226 — forensic report form ────────────────────────────────────────
+//
+// ⚠ THE CLIENT CHANGES HERE. Rahul Sharma on designs 222–225 becomes Vikramaditya
+// Singhania from this screen on, under the same docket DF-2026-1048. See note 1.
+
+export const DF_REPORT = {
+  title: 'Forensic Report',
+  readyChip: 'READY TO FILL',
+  lead: 'Fill in your examination findings to prepare the report.',
+
+  client: {
+    label: 'CLIENT INFORMATION',
+    chip: 'Verified Client',
+    /** ⚠ Rahul Sharma on designs 222–225. See note 1. */
+    name: 'Vikramaditya Singhania',
+    request: 'Request ID: DF-2026-1048',
+    caseLabel: 'Case Type',
+    caseValue: 'Document Forensic',
+  },
+
+  document: {
+    label: 'SUBMITTED DOCUMENT',
+    note: 'Under Direct Review',
+    name: 'Property_Sale_Deed_1998.pdf',
+    sub: 'Disputed Sale Deed / Signature Verification',
+    meta: '4 Pages  •  3.2 MB  •  ',
+    metaOk: 'Original Scanned',
+  },
+
+  exam: {
+    title: 'Advocate Examination',
+    note: 'Physical & Optical Review',
+    sections: [
+      {
+        title: 'What Was Checked?',
+        tag: 'Scope',
+        body:
+          'Examined signature on page 4 of the sale deed, paper alignment, ink consistency under magnification, and stamp impression.',
+      },
+      {
+        title: 'How Was It Checked?',
+        tag: 'Method',
+        body:
+          'Compared disputed signature with 3 registered genuine reference specimens using 10x optical magnification and side-by-side stroke analysis.',
+      },
+      {
+        title: 'Findings',
+        tag: 'Observations',
+        body:
+          'Natural stroke fluency observed in reference specimens is absent in the disputed document. Hesitation marks and unnatural pen lifts detected at letter joints.',
+      },
+      {
+        title: 'Final Result',
+        tag: 'Conclusion',
+        body:
+          'The questioned signature does not match the specimen signatures provided. Discrepancies indicate strong likelihood of simulated forgery.',
+      },
+    ],
+  },
+
+  notice: {
+    title: 'Advocate Examination Notice',
+    body:
+      'You are preparing this forensic evaluation based on your direct physical and optical examination of the submitted document.',
+  },
+
+  draft: {
+    label: 'DOCUMENT DRAFT',
+    chip: '4 Sections Completed',
+    title: 'Preliminary Forensic Examination Report',
+    body: 'Ready for advocate verification and attached affidavit sign-off.',
+    preview: 'Preview Report',
+    by: 'Created by Legalitt',
+  },
+
+  continue: 'Continue',
+};
