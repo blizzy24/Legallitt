@@ -156,3 +156,39 @@ export const AV_PROFESSIONAL = {
   cta: 'Continue',
   secondary: 'Save & Exit',
 };
+
+export const AV_BAR_COUNCIL = {
+  title: 'Bar Council Details',
+  eyebrow: 'ADVOCATE ENROLLMENT',
+  // ⚠ Note 1 again, and this is where it breaks: design/235 said "Step 2 of 4"
+  // and design/237 says "Step 4 of 4". This screen and design/237 therefore
+  // skip nothing and overlap nothing — but design/238 ALSO says "Step 3 of 4".
+  step: 'Step 3 of 4',
+  filled: 3,
+
+  note: {
+    title: 'Professional Verification',
+    body: 'Enter your enrollment details exactly as shown on your official State Bar Council license or Sanad.',
+  },
+
+  section: 'PROFESSIONAL REGISTRATION',
+
+  council: {
+    label: 'State Bar Council',
+    mandatory: 'Mandatory',
+    value: 'State Bar Council of Madhya Pradesh',
+  },
+  enrollment: {
+    label: 'Enrollment Number',
+    hint: 'Format: MP/1428/2018 or as issued by your State Bar Council',
+    value: 'MP/1428/2018',
+  },
+  enrolledOn: { label: 'Enrollment Date', value: '18 / 07 / 2018' },
+  status: { label: 'Certificate / Practice Status', value: 'Active / Sanad Issued (Authorized to Practice)' },
+  place: { label: 'Place of Enrollment', value: 'Jabalpur / Indore Bench' },
+
+  why: 'Why we ask for Bar Council details',
+
+  cta: 'Continue to Identity Upload',
+  secondary: 'Save & Exit',
+};

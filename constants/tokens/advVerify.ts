@@ -283,3 +283,94 @@ export const advVerifyProfessional = {
   metaTop: 15.5,
   metaSize: 12,
 };
+
+/**
+ * design/236 — step 3, bar council details.
+ *
+ * ⚠ THIS EXPORT IS NOT LIKE THE OTHERS. It is 844px wide, not 780: the screen
+ * is a 780px (390pt) canvas pasted inside a 32px device frame, so everything
+ * below is measured from the cropped content at 2.000 px/pt.
+ *
+ * ⚠ It also draws TWO pieces of chrome that belong to other screens — a top app
+ * header reading "Requests" (hamburger, bell, avatar) and a FIVE-tab bottom bar
+ * (Dashboard, Requests, Schedule, Messages, Profile). This app's advocate tab
+ * bar has four tabs and none of them are Schedule, Messages or Profile, and a
+ * pushed wizard screen has no tab bar at all. Neither is built here. See the
+ * header comment on app/advocate/verify/bar-council.tsx.
+ *
+ * ⚠ And its header is a THIRD arrangement: back circle and step pill on one
+ * row, then a LEFT-aligned eyebrow, then a left-aligned title, then the
+ * progress bar. Built as drawn, inline, rather than bent into VerifyStepChrome.
+ */
+export const advVerifyBarCouncil = {
+  headerTop: 12,
+  backBtn: 40,
+  backIcon: 22,
+
+  pillW: 96,
+  pillH: 28,
+  pillRadius: 14,
+  pillDot: 7,
+  pillDotGap: 8,
+  pillSize: 12.5,
+
+  eyebrowTop: 11.5,
+  eyebrowSize: 11,
+  eyebrowTrack: 1.2,
+  titleTop: 6,
+  titleSize: 21,
+  progressTop: 18,
+  progressHeight: 3.5,
+
+  noteTop: 21.5,
+  noteBg: '#F6F3F2',
+  noteRadius: 12,
+  notePadX: 14,
+  notePadTop: 7,
+  notePadBottom: 8,
+  noteTile: 32,
+  noteTileRadius: 8,
+  // The tile is WHITE with a brown glyph, not a dark chip — sampled, not guessed.
+  noteTileBg: '#FFFFFF',
+  noteTileColour: '#6C5C45',
+  noteTileGlyph: 12,
+  noteTileGap: 10,
+  noteTitleSize: 16,
+  noteTitleLine: 19,
+  noteBodyTop: 1.5,
+  noteBodySize: 13.5,
+  noteBodyLine: 21,
+
+  sectionTop: 25,
+  sectionSize: 12,
+  sectionTrack: 0.8,
+
+  labelTop: 17.5,
+  labelSize: 13.5,
+  mandatorySize: 12.5,
+  hintTop: 2,
+  hintSize: 12.5,
+  inputTop: 7,
+  inputTopTight: 8,
+  // ⚠ 47.5pt tall, white, and with a soft shadow INSTEAD of a border — all
+  // three differ from design/234 (44, #FCFBF9, 1pt border) and design/235
+  // (43, #FFFFFF, 1pt border). Three field treatments in three consecutive
+  // screens of one wizard. Built as each is drawn.
+  inputH: 47.5,
+  inputRadius: 12,
+  inputPadX: 15,
+  inputSize: 15.5,
+  fieldTop: 17.5,
+
+  dot: 11,
+  dotGap: 10,
+
+  accordionTop: 19.5,
+  accordionH: 46.5,
+
+  footerPadTop: 13,
+  ctaLabelSize: 15,
+  saveTop: 15.5,
+  saveGlyph: 13,
+  saveSize: 13,
+};
