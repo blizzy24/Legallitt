@@ -260,3 +260,81 @@ export const AV_PRACTICE = {
   cta: 'Continue to Final Review',
   secondary: 'Save & Exit',
 };
+
+type VerifyDoc = {
+  title: string;
+  pill: string;
+  status: string;
+  tone: 'done' | 'idle' | 'busy';
+  sub: string;
+  file?: { name: string; size: string; action: string };
+  progress?: number;
+  upload?: string;
+};
+
+export const AV_DOCUMENTS = {
+  title: 'Verification Documents',
+  // ⚠ Note 1, and this is the duplicate: design/236 ALSO says "Step 3 of 4".
+  step: 'STEP 3 OF 4',
+  filled: 3,
+
+  lead: 'Upload clear and valid documents for verification.',
+  accepted: 'Accepted: PDF, JPG, PNG (Max 10MB per file)',
+
+  docs: [
+    {
+      // ⚠ NOTE 9 — AADHAAR. This screen asks an advocate to upload an Aadhaar
+      // card, and design/240 confirms one was received. Aadhaar collection by a
+      // private party is legally constrained in a way nothing else on this list
+      // is. Drawn as designed, uploaded by nothing, and flagged for a decision
+      // before any of it is wired.
+      title: 'Identity Document',
+      pill: 'Required',
+      status: 'Uploaded',
+      tone: 'done',
+      sub: 'Aadhaar Card, Passport, or Voter ID (Front & Back)',
+      file: { name: 'rahul_sharma_aadhaar.pdf', size: '2.4 MB', action: 'Replace' },
+    },
+    {
+      title: 'Enrollment Certificate',
+      pill: 'Required',
+      status: 'Not Uploaded',
+      tone: 'idle',
+      sub: 'Official Sanad or State Bar Council Certificate',
+      upload: 'Upload Document',
+    },
+    {
+      title: 'Certificate of Practice',
+      pill: 'Required',
+      // The export draws this mid-upload at 68%. The bar renders at its drawn
+      // percentage and goes nowhere — see the screen's header comment.
+      status: '68%',
+      tone: 'busy',
+      sub: 'All India Bar Exam (AIBE) Certificate or Membership',
+      file: { name: 'aibe_cop_certificate.pdf', size: '', action: 'Uploading...' },
+      progress: 0.68,
+    },
+    {
+      // ⚠ PARTLY UNREADABLE IN THE EXPORT. design/238 composites its pinned
+      // footer OVER this card, so only the tops of the title glyphs survive.
+      // "Additional Document" is legible from the letterforms and the Upload
+      // Document button below it is fully visible; the pill, the status and any
+      // subtitle are covered and are NOT guessed at here beyond what the ghost
+      // text supports. Reported rather than invented.
+      title: 'Additional Document',
+      pill: 'Optional',
+      status: 'Not Uploaded',
+      tone: 'idle',
+      sub: '',
+      upload: 'Upload Document',
+    },
+  ] as VerifyDoc[],
+
+  privacy: {
+    body: "Your documents are used for verification and handled according to Legalitt's privacy and document policies.",
+    link: 'Learn more about document safety',
+  },
+
+  cta: 'Continue',
+  secondary: 'Save & Exit',
+};

@@ -471,3 +471,101 @@ export const advVerifyPractice = {
   footerPadTop: 22,
   ctaLabelSize: 16,
 };
+
+/**
+ * design/238 — step 5 of six, drawn as "Step 3 of 4". Measured at 2.000 px/pt
+ * from a 780×2173 export.
+ *
+ * ⚠ A FIFTH header arrangement: the progress bar is ABOVE everything, then a
+ * back chevron beside a filled "STEP 3 OF 4" pill, then a centred title. The
+ * whole screen is on a 16pt grid, not 20.
+ */
+export const advVerifyDocuments = {
+  padX: 16,
+
+  headerTop: 16,
+  progressHeight: 3.5,
+  rowTop: 14.5,
+  backBtn: 32,
+  backIcon: 20,
+  pillH: 22,
+  pillRadius: 11,
+  pillPadX: 14,
+  pillBg: '#F4EEE6',
+  pillSize: 12.5,
+  pillTrack: 0.8,
+  titleTop: 12,
+  titleSize: 20.5,
+
+  heroTop: 20.5,
+  heroH: 132.5,
+  heroRadius: 16,
+
+  leadTop: 10,
+  leadSize: 14,
+
+  acceptTop: 16.5,
+  acceptH: 29,
+  acceptBg: '#F5F1EB',
+  acceptRadius: 10,
+  acceptGlyph: 15,
+  acceptGap: 9,
+  acceptSize: 13,
+
+  cardTop: 11.5,
+  cardRadius: 14,
+  cardPad: 12,
+  cardGap: 17.5,
+
+  tile: 30,
+  tileRadius: 8,
+  tileBg: '#F4EEE6',
+  tileGlyph: 17,
+  tileGap: 11.5,
+  docTitleSize: 15.5,
+  reqPillH: 20,
+  reqPillRadius: 6,
+  reqPillPadX: 8,
+  reqPillBg: '#E8E0D4',
+  reqPillSize: 11.5,
+  reqPillGap: 7,
+  statusSize: 13,
+  statusGlyph: 15,
+  subTop: 2,
+  subSize: 13,
+  subLine: 18.5,
+
+  fileTop: 13,
+  fileH: 31,
+  fileRadius: 8,
+  fileBg: '#FAF8F5',
+  filePadX: 11,
+  fileGlyph: 15,
+  fileNameSize: 13.5,
+  fileMetaSize: 12.5,
+
+  ruleTop: 13,
+  uploadTop: 13,
+  uploadW: 146.5,
+  uploadH: 33.5,
+  uploadRadius: 9,
+  uploadGlyph: 16,
+  uploadSize: 14,
+
+  barTop: 9,
+  barH: 6.5,
+  barBg: '#EFE9E1',
+
+  privacyTop: 19,
+  privacyRadius: 14,
+  privacyPad: 14,
+  privacyTile: 30,
+  privacyGlyph: 16,
+  privacyGap: 11,
+  privacySize: 13.5,
+  privacyLine: 20,
+  linkTop: 5,
+
+  footerPadTop: 17,
+  ctaH: 47.5,
+};
