@@ -589,3 +589,42 @@ export const DF_ADMIN_REVIEW = {
     button: 'Chat Help',
   },
 };
+
+// ── design/230 — report approved ─────────────────────────────────────────────
+
+export const DF_ADMIN_APPROVED = {
+  title: 'Report Approved',
+  headline: 'Report Approved',
+  sub: 'Admin checked the report and approved it.',
+
+  caseTitle: 'Case Details',
+  okChip: 'Approved',
+  rows: [
+    { label: 'Client Name', value: DF_ADMIN_SHARED.client },
+    { label: 'Service', value: DF_ADMIN_SHARED.service },
+    { label: 'Request ID', value: DF_ADMIN_SHARED.ref, pill: true },
+  ],
+
+  filesTitle: 'Approved Files',
+  filesChip: '2 Files Verified',
+  fileTag: 'Approved',
+
+  sending: {
+    title: 'Sending to Client',
+    body: 'Legalitt Admin will send the report and affidavit directly to the client.',
+    /** ⚠ The wallet again — an unscoped capability. See note 14. */
+    note: 'You do not need to take any action. Your payout will be added to your Legalitt wallet once the client receives the documents.',
+  },
+
+  progressTitle: 'Case Progress',
+  progress: [
+    { title: 'Report Prepared', sub: 'Completed', tone: 'done' as const },
+    { title: 'Affidavit Added', sub: 'Signed and attached', tone: 'done' as const },
+    { title: 'Sent to Admin', sub: 'Forwarded for review', tone: 'done' as const },
+    { title: 'Approved by Admin', sub: 'Checks passed', tone: 'done' as const, subOk: true },
+    { title: 'Sending to Client', sub: 'Admin queue in progress', tone: 'now' as const },
+  ],
+
+  viewCase: 'View Case',
+  back: 'Back to Cases',
+};
