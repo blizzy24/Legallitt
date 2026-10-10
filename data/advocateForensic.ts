@@ -65,3 +65,89 @@ export const DF_REQUESTS = {
   /** ⚠ design/222 draws TWO IDENTICAL cards, as designs 205 and 214 did. */
   drawnCardCount: 2,
 };
+
+// ── design/223 — request details ─────────────────────────────────────────────
+
+export const DF_REQUEST = {
+  /** ⚠ design/224 carries the SAME header title. See note 11. */
+  title: 'Request Details',
+  statusChip: 'New Request',
+  ref: 'DF-2026-1048',
+  heading: 'Document Forensic Examination',
+
+  fee: {
+    label: 'Service Fee',
+    /** ⚠ design/232 pays the advocate ₹4,500 against this. See note 4. */
+    amount: '₹15,000',
+    secured: 'Payment Secured',
+  },
+
+  cells: [
+    { label: 'Service Class', value: 'Online Forensic' },
+    { label: 'Examination', value: 'Signature Analysis' },
+    { label: 'Expected Time', value: '3–5 Business Days' },
+    { label: 'Submission Date & Time', value: '24 Sep, 10:15 AM' },
+  ],
+
+  client: {
+    /** ⚠ Vikramaditya Singhania from design/226 on. See note 1. */
+    name: 'Rahul Sharma',
+    id: 'ID: CLI-2026-0148',
+    role: 'Client',
+    initials: 'RS',
+    /** ⚠ +91 98260 41298 everywhere else, and unmasked there. Notes 9 and 10. */
+    phone: '+91 98765 •••••',
+    phoneTag: 'Masked',
+    email: 'rahul.sha***@example.com',
+    emailTag: 'Verified',
+    /** ⚠ Indore (M.P.) on every other screen. See note 9. */
+    city: 'Mumbai, Maharashtra',
+  },
+
+  statement: {
+    title: "Client's Statement & Objective",
+    quote:
+      '“I want to check whether the signature on my agreement matches the genuine signature provided. There is a concern that the signature on page 18 may not be authorized.”',
+  },
+
+  documents: {
+    heading: 'Documents Provided',
+    /** ⚠ design/224's readiness card says "3 of 3 Ready". See note 8. */
+    note: '2 Evidentiary Files',
+    sub: 'Submitted for scientific forensic analysis',
+    rows: [
+      {
+        name: 'Sale Agreement.pdf',
+        meta: '24 Pages • 4.8 MB • Uploaded by Client',
+        tag: 'Questioned',
+        tone: 'questioned' as const,
+        flag: 'Page 18 marked for signature examination',
+        /** ⚠ Static string. No hashing, no file reading. */
+        hash: 'SHA-256:  7f8a…3e12',
+      },
+      {
+        name: 'Previous Agreement.pdf',
+        meta: '8 Pages • 2.1 MB • Registered Deed',
+        tag: 'Genuine Reference',
+        tone: 'reference' as const,
+        flag: 'Contains 3 verified genuine specimen signatures',
+        hash: 'SHA-256:  9b2d…81fc',
+      },
+    ],
+    view: 'View Document',
+  },
+
+  exam: {
+    title: 'Requested Examination',
+    tag: 'Sec. 45 & 73 IEA',
+    item: 'Signature Examination',
+    body:
+      'Compare the signature style, pen pressure, line quality, and other details with the genuine reference signatures.”',
+    protoLabel: 'Standard Protocol:',
+    protoValue: 'FDEP-v4 Protocol',
+  },
+
+  accept: 'Accept Request',
+  more: 'Request More Info',
+  decline: 'Decline Request',
+};
