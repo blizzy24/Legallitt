@@ -533,3 +533,48 @@ export const AV_NEEDS_UPDATE = {
   cta: 'Update & Resubmit',
   secondary: 'Contact Support',
 };
+
+export const AV_COMPLETE = {
+  eyebrow: 'ADVOCATE ENROLLMENT',
+  title: 'Verification Complete',
+
+  pill: 'CONFIRMED STATUS',
+  h1: 'Verified Advocate',
+  sub: 'Your professional profile has been successfully verified by Legalitt.',
+
+  label: 'ADVOCATE',
+  // ⚠ Drawn as "Adv. Rahul" — no surname, where every other screen in this flow
+  // says "Adv. Rahul Sharma". Stored as drawn.
+  name: 'Adv. Rahul',
+  verified: 'Verified',
+  enrollmentLabel: 'ENROLLMENT NUMBER',
+  enrollmentValue: 'MP/1428/2018',
+  verifiedOnLabel: 'VERIFIED ON',
+  // ⚠ The same date design/240 gives as the SUBMISSION date, so the review
+  // takes zero days. Both are in the future. Drawn as drawn.
+  verifiedOnValue: '18 September 2026',
+
+  badge: 'Legalitt Professional Verification Badge Active across client matching.',
+
+  capabilitiesTitle: 'UNLOCKED ADVOCATE CAPABILITIES',
+  capabilities: [
+    {
+      title: 'Verified profile badge',
+      sub: 'Visible across Legalitt client searches and consultation requests.',
+    },
+    {
+      title: 'Access to verified legal services',
+      sub: 'Accept legal notice requests, document drafting, and client consultations.',
+    },
+    {
+      title: 'Priority placement & direct client messaging',
+      sub: 'Direct secure chambers for all matched client matters.',
+    },
+  ],
+
+  disclaimer:
+    'Legalitt verifies identity, practice credentials, and active enrollment. This verification indicates platform credential confirmation and does not constitute a Bar Council endorsement.',
+
+  cta: 'View My Profile',
+  secondary: 'Done',
+};

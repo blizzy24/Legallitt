@@ -975,3 +975,100 @@ export const advVerifyNeedsUpdate = {
   supportTop: 14,
   supportSize: 13.5,
 };
+
+/**
+ * design/244 — verification complete. Measured at 2.000 px/pt from the CONTENT
+ * of a 932×2450 export (framed like design/236 and design/239; cropped to its
+ * 780px screen at x 76…856, y 26… first).
+ */
+export const advVerifyComplete = {
+  padX: 21,
+
+  headerTop: 25.5,
+  eyebrowSize: 10.5,
+  eyebrowTrack: 1.2,
+  titleTop: 7,
+  titleSize: 21,
+  closeBtn: 38,
+  closeGlyph: 20,
+  headerPadBottom: 16,
+
+  heroTop: 20,
+  heroH: 146,
+  heroRadius: 16,
+  artW: 300,
+  artH: 104,
+
+  pillTop: 20,
+  pillH: 34,
+  pillRadius: 17,
+  pillPadX: 16,
+  pillBg: '#E9FAF2',
+  pillBorder: '#BFEBD6',
+  pillGlyph: 15,
+  pillSize: 14,
+  pillTrack: 0.8,
+
+  h1Top: 12,
+  h1Size: 22,
+  subTop: 9,
+  subSize: 14,
+  subLine: 22,
+
+  cardTop: 21,
+  cardRadius: 16,
+  cardPadX: 17,
+  cardPadY: 17,
+
+  labelSize: 11,
+  labelTrack: 1,
+  nameTop: 5,
+  nameSize: 21,
+  vpillH: 36,
+  vpillRadius: 18,
+  vpillPadX: 14,
+  vpillGlyph: 15,
+  vpillSize: 15,
+  ruleTop: 16,
+
+  metaTop: 17,
+  metaValueTop: 12.5,
+  metaValueSize: 15.5,
+  metaDot: 9,
+
+  innerTop: 17,
+  innerBg: '#F6F3F2',
+  innerRadius: 12,
+  innerPad: 13,
+  innerTile: 32,
+  innerGlyph: 17,
+  innerGap: 11,
+  innerSize: 14,
+  innerLine: 19.5,
+
+  sectionSize: 12,
+  sectionTrack: 1,
+  capTop: 21.5,
+  capGap: 10,
+  capDot: 26,
+  capDotGlyph: 14,
+  capDotBg: '#E8F8EF',
+  capDotBorder: '#BFEBD6',
+  capGapX: 13,
+  capTitleSize: 16,
+  capSubTop: 3,
+  capSubSize: 14,
+  capSubLine: 20,
+
+  discTop: 17,
+  discBg: '#F7F3F2',
+  discSize: 13.5,
+  discLine: 17,
+
+  footerPadTop: 12.5,
+  ctaH: 51.5,
+  ctaRadius: 14,
+  ctaLabelSize: 17,
+  doneTop: 13,
+  doneSize: 15,
+};
