@@ -213,3 +213,35 @@ export const AT_ANALYTICS = {
     cta: 'Try Again',
   },
 };
+
+export const AT_PERFORMANCE = {
+  title: 'Analytics',
+  month: 'August 2026',
+  range: 'This Month',
+
+  serviceTitle: 'Service Performance',
+  // ⚠ Note 3: the Documents Forensic row draws a bar labelled 2 and a subtitle
+  // reading "5 Consultations". The five bars sum to 42 only if that row is 2,
+  // and 42 is exactly what design/268 prints for Consultations — so the BAR is
+  // right and the SUBTITLE is the wrong one. Both kept as drawn.
+  //
+  // ⚠ The bar widths are NOT proportional to the values either: 18 draws 160pt
+  // and 10 draws 71pt, where proportion would give 89. Measured widths are used
+  // so the screen matches the export.
+  services: [
+    { label: 'Legal Advice', sub: '18 Consultations', value: '18', w: 160 },
+    { label: 'Legal Notice', sub: '10 Consultations', value: '10', w: 71 },
+    { label: 'Property Search', sub: '7 Consultations', value: '7', w: 54 },
+    { label: 'FIR Draft', sub: '5 Consultations', value: '5', w: 41 },
+    { label: 'Documents Forensic', sub: '5 Consultations', value: '2', w: 26 },
+  ],
+
+  monthlyTitle: 'Monthly Performance',
+  columns: ['Monthly', 'Earnings', 'Consultations', 'Rating'],
+  months: [
+    { month: 'May', earnings: '₹62,000', consults: '31', rating: '4.6' },
+    { month: 'June', earnings: '₹72,000', consults: '36', rating: '4.7' },
+    { month: 'July', earnings: '₹79,500', consults: '39', rating: '4.8' },
+    { month: 'August', earnings: '₹85,500', consults: '42', rating: '4.8', current: true },
+  ],
+};

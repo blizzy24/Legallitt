@@ -276,7 +276,7 @@ export const advAnalytics = {
   backIcon: 26,
   titleSize: 20,
 
-  monthTop: 15,
+  monthTop: 2.5,
   monthGlyph: 20,
   monthGap: 14,
   monthSize: 16,
@@ -375,4 +375,51 @@ export const advAnalytics = {
   errCtaRadius: 10,
   errCtaPadX: 30,
   errCtaSize: 16,
+};
+
+/**
+ * design/269 — service and monthly performance. Measured at 3.000 px/pt from a
+ * 1170×2727 export. ⚠ A 3× FILE.
+ */
+export const advPerformance = {
+  cardTop: 4,
+  perfCardTop: 146.5,
+  cardPadX: 16,
+
+  titleSize: 16,
+  titleTop: 16,
+
+  rowTop: 20,
+  rowGap: 17.3,
+  rowH: 25.5,
+  labelW: 124,
+  labelSize: 13.5,
+  labelLine: 14,
+  subTop: 0,
+  subSize: 12.5,
+  subLine: 13,
+
+  barLeft: 164,
+  barW: 160,
+  barH: 20,
+  barRadius: 6,
+  barTrack: '#F4F6F8',
+  barFill: '#A57C58',
+  barValueLeft: 10,
+  barValueSize: 16,
+
+  tableTop: 9,
+  tableTitleTop: 13,
+  headTop: 14,
+  headSize: 11.5,
+  headRuleTop: 7,
+  tableRowH: 28,
+  tableRowSize: 16,
+  tableStar: 14,
+  tableStarGap: 6,
+  tableHighlight: '#F6E9DF',
+  colMonthly: 0.28,
+  colEarnings: 0.3,
+  colConsults: 0.26,
+  colRating: 0.16,
 };
