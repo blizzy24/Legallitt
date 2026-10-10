@@ -544,3 +544,62 @@ export const AS_DATA = {
     body: 'Your advocate profile data and client dockets are encrypted according to Bar Council of India digital privacy and data protection norms.',
   },
 };
+
+export const AS_LANGUAGE = {
+  eyebrow: 'PREFERENCES & ACCESSIBILITY',
+  title: 'Language',
+  pill: 'APP PREFERENCES',
+  h1: 'Choose Your Language',
+  sub: "Select the primary language you'd like to navigate, draft notes, and manage dockets in Legalitt.",
+
+  sectionTitle: 'SUPPORTED JURISDICTION LANGUAGES',
+  // ⚠ NOTE 5: the export says "5 Available" and lists TWO. The written spec for
+  // this screen says seven. Drawn as drawn — two rows, the label "5 Available".
+  sectionMeta: '5 Available',
+  languages: [
+    { code: 'EN', name: 'English', sub: 'Default (India / International)', pill: 'Active', on: true },
+    { code: 'हि', name: 'Hindi', sub: 'हिन्दी (भारत)', on: false },
+  ],
+
+  note: {
+    title: 'BCI & High Court Rules Note',
+    body: 'Court pleadings, legal notice drafts, and statutory citations remain strictly aligned with the official court language and high court regional rules.',
+  },
+  cta: 'Save Language',
+};
+
+export const AS_PAYOUT = {
+  eyebrow: 'SETTINGS',
+  // ⚠ NOTE 7: the export CLIPS this header, rendering "ment And Payout Setting".
+  // The full string is stored and rendered whole.
+  title: 'Payment And Payout Settings',
+  pill: 'FINANCIAL ACCOUNTS & SETTLEMENT',
+  h1: 'Payment & Payout Settings',
+  sub: 'Manage your linked settlement bank accounts, payout schedules, and earnings records.',
+
+  statusLabel: 'Payout Status',
+  statusPill: 'Active',
+  totalLabel: 'TOTAL EARNINGS',
+  totalValue: '₹84,500',
+  pendingLabel: 'PENDING PAYOUT',
+  pendingValue: '₹6,800',
+  settlement: 'Next automatic settlement initiates on Friday via RTGS/NEFT.',
+
+  prefsTitle: 'PAYOUT PREFERENCES',
+  // ⚠ NOTE 3: HDFC Bank, Current Account here. designs 257–260 show SBI,
+  // Savings, same last four digits. Clipped in the export at "Current Accou";
+  // stored and rendered whole.
+  bank: { title: 'Bank Account', sub: '••••4821 (HDFC Bank • Current Account)', pill: 'Primary' },
+  // ⚠ Clipped at "Every Fri". Stored whole.
+  schedule: { title: 'Payout Schedule', sub: 'Current settlement schedule: Weekly (Every Friday)' },
+
+  infoTitle: 'PAYMENT INFORMATION',
+  info: [
+    { icon: 'trend', title: 'Earnings History', sub: 'View your earnings and consultation fees' },
+    { icon: 'receipt', title: 'Payout History', sub: 'View completed and pending payouts' },
+    // ⚠ Clipped at "payment re". Stored whole.
+    { icon: 'file', title: 'Receipts & Invoices', sub: 'View and download tax invoices and payment receipts' },
+  ],
+
+  note: 'Platform fees and applicable charges are shown before final earnings are settled. Payout information is synchronized directly with your verified advocate bank records.',
+};

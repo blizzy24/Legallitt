@@ -25,6 +25,7 @@ export default function SettingsHero({
   showInfo = true,
   roundBack = true,
   alignLeft = false,
+  rightIcon,
   children,
 }: {
   eyebrow: string;
@@ -32,7 +33,7 @@ export default function SettingsHero({
   pill: string;
   h1: string;
   sub: string;
-  art: ReactNode;
+  art: ReactNode | null;
   /** design/251 and 253 draw a white hero card; 252 and 254 draw none. */
   heroCard?: boolean;
   heroBg?: string;
@@ -40,6 +41,8 @@ export default function SettingsHero({
   roundBack?: boolean;
   /** design/254 left-aligns its header text and lets the title wrap to two lines. */
   alignLeft?: boolean;
+  /** design/255 puts a globe where designs 251–253 put an info icon. */
+  rightIcon?: ReactNode;
   children: ReactNode;
 }) {
   const insets = useSafeAreaInsets();
@@ -62,7 +65,9 @@ export default function SettingsHero({
             {title}
           </Text>
         </View>
-        {showInfo ? (
+        {rightIcon ? (
+          <View style={styles.info}>{rightIcon}</View>
+        ) : showInfo ? (
           <Info size={t.infoGlyph} color="#4D463D" strokeWidth={1.8} style={styles.info} />
         ) : null}
         <View style={styles.avatar}>
@@ -72,7 +77,7 @@ export default function SettingsHero({
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={[styles.hero, !heroCard && styles.heroBare, heroBg ? { backgroundColor: heroBg } : null]}>
-          <View style={styles.art}>{art}</View>
+          {art ? <View style={styles.art}>{art}</View> : null}
           <View style={styles.pill}>
             <ShieldCheck size={t.pillGlyph} color="#4D463D" strokeWidth={2} />
             <Text style={styles.pillText} {...shrinkToFit(0.8)}>
