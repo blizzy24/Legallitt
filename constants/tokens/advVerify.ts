@@ -670,3 +670,87 @@ export const advVerifyReview = {
   ctaMutedInk: '#9A9289',
   ctaLabelSize: 16,
 };
+
+/** design/240 — verification submitted. Measured at 2.000 px/pt from a 780×2032 export. */
+export const advVerifySubmitted = {
+  padX: 20,
+
+  headerTop: 14,
+  eyebrowSize: 10.5,
+  eyebrowTrack: 1.2,
+  titleTop: 5.5,
+  titleSize: 19,
+  closeBtn: 36,
+  closeGlyph: 20,
+
+  heroTop: 22,
+  heroW: 195,
+  heroH: 97,
+  heroRadius: 14,
+
+  markTop: 33,
+  mark: 39.5,
+  markGlyph: 22,
+
+  h1Top: 12.5,
+  h1Size: 20,
+  subTop: 8,
+  subSize: 13.5,
+  subLine: 21,
+
+  cardTop: 27.5,
+  cardRadius: 14,
+  cardPadX: 17.5,
+  cardPadY: 17,
+
+  statusSize: 14,
+  statusPillH: 32,
+  statusPillRadius: 16,
+  statusPillPadX: 14,
+  statusPillBg: '#F1EBE2',
+  statusPillDot: 9,
+  statusPillSize: 14,
+  cardRuleTop: 13,
+
+  metaTop: 18.5,
+  metaLabelSize: 11,
+  metaLabelTrack: 0.9,
+  metaValueTop: 12.5,
+  metaValueSize: 14,
+  metaDivider: '#E8E2DA',
+  copyGlyph: 15,
+
+  sectionTop: 13.5,
+  sectionSize: 11.5,
+  sectionTrack: 1,
+
+  stepTop: 15.5,
+  stepDot: 26,
+  stepDotGlyph: 14,
+  stepGapX: 13,
+  stepGap: 15,
+  stepTitleSize: 15.5,
+  stepPillH: 20,
+  stepPillRadius: 5,
+  stepPillPadX: 8,
+  stepPillBg: '#EFE8DD',
+  stepPillSize: 10.5,
+  stepSubTop: 2,
+  stepSubSize: 13,
+  stepRail: 1.5,
+
+  noteTop: 17,
+  noteBg: '#F6F3F2',
+  noteGlyph: 17,
+  noteGap: 11,
+  noteSize: 13.5,
+  noteLine: 21,
+
+  footerPadTop: 24.5,
+  ctaH: 49.5,
+  ctaRadius: 12,
+  ctaLabelSize: 16,
+  ctaGlyph: 18,
+  backTop: 15,
+  backSize: 14,
+};

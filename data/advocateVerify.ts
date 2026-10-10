@@ -413,3 +413,43 @@ export const AV_REVIEW = {
   cta: 'Submit for Verification',
   secondary: 'Save & Exit',
 };
+
+type WorkflowStep = { title: string; sub: string; state: 'done' | 'active' | 'idle'; pill?: string };
+
+export const AV_SUBMITTED = {
+  eyebrow: 'ADVOCATE ENROLLMENT',
+  title: 'Verification Submitted',
+
+  h1: 'Your Verification Is Under Review',
+  sub: "We've received your professional verification details.",
+
+  statusLabel: 'Verification Status',
+  statusPill: 'Pending Review',
+  submittedLabel: 'SUBMITTED',
+  // ⚠ Dated 18 September 2026 — in the future relative to the build date, like
+  // several other dates across this project. Drawn as drawn.
+  submittedValue: '18 September 2026',
+  referenceLabel: 'REFERENCE',
+  // ⚠ NOTE 8: the fourth Legalitt service to use the 1048 suffix.
+  referenceValue: 'VER-2026-1048',
+
+  workflow: 'VERIFICATION WORKFLOW',
+  steps: [
+    { title: 'Information Submitted', sub: 'Personal & professional data saved', state: 'done' },
+    // ⚠ NOTE 9 — Aadhaar again: this line confirms an Aadhaar upload was
+    // received. See the header comment on app/advocate/verify/documents.tsx.
+    { title: 'Documents Received', sub: 'Aadhaar, Sanad & COP uploaded', state: 'done' },
+    {
+      title: 'Verification Review',
+      pill: 'IN PROGRESS',
+      sub: 'Under review by Legalitt Compliance',
+      state: 'active',
+    },
+    { title: 'Verified Advocate', sub: 'Profile badge and full client access unlocked', state: 'idle' },
+  ] as WorkflowStep[],
+
+  note: 'Legalitt will review your submitted information and documents. You can continue updating eligible profile details while verification is pending.',
+
+  cta: 'View Verification Details',
+  secondary: 'Back to Settings',
+};
