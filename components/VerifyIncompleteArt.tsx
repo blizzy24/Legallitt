@@ -5,7 +5,16 @@ import Svg, { Circle, Path, Rect, Text as SvgText } from 'react-native-svg';
  * ring carrying a warning badge. Vector, measured off the 2× export and halved;
  * the viewBox is the 330 × 113pt panel it sits in.
  */
-export default function VerifyIncompleteArt({ width, height }: { width: number; height: number }) {
+export default function VerifyIncompleteArt({
+  width,
+  height,
+  mark = 'ring',
+}: {
+  width: number;
+  height: number;
+  /** design/241 draws a 75% progress ring here; design/243 draws a warning rosette. */
+  mark?: 'ring' | 'rosette';
+}) {
   return (
     <Svg width={width} height={height} viewBox="0 0 330 113">
       <Path d="M40 28 V36 M36 32 H44" stroke="#DCD0BD" strokeWidth={1.1} />
@@ -30,20 +39,40 @@ export default function VerifyIncompleteArt({ width, height }: { width: number; 
       <Circle cx={142} cy={82} r={8} fill="none" stroke="#C7B59A" strokeWidth={1} />
       <Path d="M142 77 V88 M137 82 H147" stroke="#C7B59A" strokeWidth={1} />
 
-      {/* progress ring */}
-      <Circle cx={222} cy={54} r={26} fill="none" stroke="#EDE4D7" strokeWidth={6} />
-      <Path
-        d="M222 28 a26 26 0 1 1 -18.4 44.4"
-        fill="none"
-        stroke="#B09C82"
-        strokeWidth={6}
-        strokeLinecap="round"
-      />
-      <SvgText x={222} y={59} fontSize={13} fontWeight="700" fill="#6C5C45" textAnchor="middle">
-        75%
-      </SvgText>
-      <Circle cx={244} cy={34} r={9} fill="#F5A524" />
-      <Path d="M244 29.5 V35 M244 38 v0.5" stroke="#FFFFFF" strokeWidth={2} strokeLinecap="round" />
+      {mark === 'ring' ? (
+        <>
+          <Circle cx={222} cy={54} r={26} fill="none" stroke="#EDE4D7" strokeWidth={6} />
+          <Path
+            d="M222 28 a26 26 0 1 1 -18.4 44.4"
+            fill="none"
+            stroke="#B09C82"
+            strokeWidth={6}
+            strokeLinecap="round"
+          />
+          <SvgText x={222} y={59} fontSize={13} fontWeight="700" fill="#6C5C45" textAnchor="middle">
+            75%
+          </SvgText>
+          <Circle cx={244} cy={34} r={9} fill="#F5A524" />
+          <Path d="M244 29.5 V35 M244 38 v0.5" stroke="#FFFFFF" strokeWidth={2} strokeLinecap="round" />
+        </>
+      ) : (
+        <>
+          <Path d="M212 68 l5 13 l5 -4 l5 4 l5 -13 z" fill="#FFFFFF" stroke="#E6DBC9" strokeWidth={1} />
+          <Circle cx={222} cy={54} r={24} fill="#FFFFFF" stroke="#E6DBC9" strokeWidth={1} />
+          <Circle
+            cx={222}
+            cy={54}
+            r={20}
+            fill="none"
+            stroke="#B09C82"
+            strokeWidth={1.3}
+            strokeDasharray="2.2 3"
+            strokeLinecap="round"
+          />
+          <Circle cx={222} cy={54} r={15} fill="#F59E0B" />
+          <Path d="M222 46 V56 M222 60.5 v0.5" stroke="#FFFFFF" strokeWidth={3} strokeLinecap="round" />
+        </>
+      )}
     </Svg>
   );
 }

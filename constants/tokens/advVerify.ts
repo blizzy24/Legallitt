@@ -865,3 +865,113 @@ export const advVerifyIncomplete = {
   secondaryTop: 15,
   secondarySize: 15,
 };
+
+// ⚠ PALETTE QUARANTINE — design/243's amber set.
+//
+//   surface #FFFBEB   border #FDE68A   accent #F59E0B   ink #B45309
+//
+// These are Tailwind's amber-50 / 200 / 500 / 700 exactly. This project ALREADY
+// has an amber set, sampled from designs 14–21 and sitting in the shared theme
+// as status.pending (#F7A108), pendingText (#9E6028), pendingBg (#FFFAE9) and
+// pendingBorder (#F7E7BA) — close, but not these. design/243 is the only screen
+// in this batch that uses the Tailwind values, so they are built as drawn and
+// quarantined here rather than reconciled with, or added to, the shared amber.
+export const advVerifyAmber = {
+  surface: '#FFFBEB',
+  border: '#FDE68A',
+  accent: '#F59E0B',
+  ink: '#B45309',
+};
+
+/** design/243 — verification needs update. Measured at 2.000 px/pt from a 780×2092 export. */
+export const advVerifyNeedsUpdate = {
+  padX: 21,
+
+  headerTop: 19,
+  backBtn: 38,
+  backIcon: 21,
+  eyebrowSize: 10.5,
+  eyebrowTrack: 1.2,
+  titleTop: 9,
+  titleSize: 17.5,
+  headerPadBottom: 15.5,
+
+  heroTop: 15.5,
+  heroH: 145,
+  heroRadius: 16,
+  heroInset: 10,
+  artW: 290,
+  artH: 100,
+  heroPanelBg: '#FDFCFB',
+  heroPanelRadius: 12,
+
+  pillTop: 20,
+  pillH: 30,
+  pillRadius: 15,
+  pillPadX: 14,
+  pillDot: 9,
+  pillSize: 13.5,
+
+  h1Top: 8.5,
+  h1Size: 20,
+  quoteTop: 9,
+  quoteSize: 13.5,
+  quoteLine: 20,
+
+  cardTop: 18.5,
+  cardRadius: 14,
+  cardPadX: 16,
+  cardPadY: 16,
+  accentW: 5,
+
+  issueEyebrowTop: 0,
+  issueTile: 40,
+  issueTileRadius: 10,
+  issueTileGlyph: 20,
+  issueTileGap: 12,
+  issueEyebrowSize: 12,
+  issueEyebrowTrack: 0.9,
+  issueTitleTop: 3,
+  issueTitleSize: 17.5,
+  actionPillH: 30,
+  actionPillRadius: 8,
+  actionPillPadX: 11,
+  actionPillSize: 13.5,
+  issueBodyTop: 13,
+  issueBodySize: 14,
+  issueBodyLine: 19.5,
+  replaceTop: 15,
+  replaceH: 50,
+  replaceRadius: 10,
+  replaceGlyph: 18,
+  replaceSize: 15,
+  replaceBg: '#FAF8F5',
+
+  otherTop: 16,
+  otherHeadSize: 12,
+  otherHeadTrack: 1,
+  otherMetaSize: 13.5,
+  otherRowTop: 12,
+  otherRowGap: 19,
+  otherDot: 26,
+  otherDotGlyph: 14,
+  otherDotBg: '#DFF3E7',
+  otherGapX: 12,
+  otherNameSize: 15,
+  otherStatusSize: 14,
+  otherRule: 19,
+
+  noteTop: 18,
+  noteBg: '#F6F3F2',
+  noteGlyph: 17,
+  noteGap: 11,
+  noteSize: 13.5,
+  noteLine: 19,
+
+  footerPadTop: 15,
+  ctaH: 47.5,
+  ctaRadius: 12,
+  ctaLabelSize: 16,
+  supportTop: 14,
+  supportSize: 13.5,
+};

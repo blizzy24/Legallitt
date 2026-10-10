@@ -504,3 +504,32 @@ export const AV_INCOMPLETE = {
   cta: 'Complete Verification',
   secondary: 'Save & Exit for Now',
 };
+
+export const AV_NEEDS_UPDATE = {
+  eyebrow: 'ADVOCATE ENROLLMENT',
+  title: 'Verification Status',
+
+  pill: 'Needs Attention',
+  h1: 'Verification Needs Update',
+  quote: '"We couldn\'t complete your verification with the information currently provided."',
+
+  issue: {
+    eyebrow: 'DOCUMENT ISSUE',
+    title: 'Enrollment Certificate',
+    pill: 'Action Required',
+    body: 'The uploaded document could not be verified. Please ensure the Sanad or State Bar Council enrollment certificate is clearly readable and shows your official enrollment number.',
+    action: 'Replace Document',
+  },
+
+  other: {
+    title: 'OTHER SUBMITTED ITEMS',
+    meta: '3 Approved',
+    rows: ['Personal Details', 'Professional Details', 'Identity Document'],
+    status: 'Verified',
+  },
+
+  note: 'Your previously approved items remain securely saved. Only the requested document will undergo expedited re-review upon resubmission.',
+
+  cta: 'Update & Resubmit',
+  secondary: 'Contact Support',
+};
