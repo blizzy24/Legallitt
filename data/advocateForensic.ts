@@ -628,3 +628,51 @@ export const DF_ADMIN_APPROVED = {
   viewCase: 'View Case',
   back: 'Back to Cases',
 };
+
+// ── design/231 — changes needed ──────────────────────────────────────────────
+
+export const DF_ADMIN_CHANGES = {
+  title: 'Changes Needed',
+  chip: 'Changes Needed',
+  headline: 'Admin Asked for Changes',
+  body: 'Please update the report before it can be\nsent to the client.',
+
+  clientLabel: 'CLIENT',
+  ref: DF_ADMIN_SHARED.ref,
+  client: DF_ADMIN_SHARED.client,
+  /** ⚠ design/231 CLIPS this to "Document Forensic (Property Sale Deed 19".
+   *  Stored whole; it shrinks or wraps. See note 15. */
+  clientSub: DF_ADMIN_SHARED.matter,
+  initials: 'VS',
+
+  suggestions: {
+    title: 'Admin Suggestions',
+    chip: '3 Action Items',
+    body: 'Admin has reviewed your submission and requested these updates before client delivery.',
+    /** Static list items. Nothing is wired. */
+    items: [
+      { title: 'Add more details to the findings', body: 'Include seal ink comparison under ultraviolet lighting.' },
+      { title: 'Correct the document details', body: 'Update the registration page reference from 42 to 44.' },
+      { title: 'Update the final result', body: 'Clarify signature alteration probability score.' },
+    ],
+  },
+
+  docsLabel: 'CASE DOCUMENTS',
+  /** ⚠ No underscore here; "Forensic_Report.pdf" on 228/229/230/232. See note 13. */
+  reportName: 'Forensic Report.pdf',
+  reportMeta: DF_ADMIN_SHARED.report.meta,
+  reportTag: 'Changes Needed',
+  viewReport: 'View Report',
+  affidavitName: DF_ADMIN_SHARED.affidavit.name,
+  affidavitMeta: DF_ADMIN_SHARED.affidavit.meta,
+  affidavitTag: 'Available',
+  viewAffidavit: 'View Affidavit',
+
+  next: {
+    title: 'Next Steps',
+    body: 'Update the existing Forensic Report with the Admin suggestions. You will then re-check the Affidavit, Review & Submit, and send it back to Admin Review.',
+  },
+
+  update: 'Update Report',
+  close: 'Close',
+};
