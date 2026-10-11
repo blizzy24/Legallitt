@@ -514,6 +514,73 @@ export const advAddHearing = {
 };
 
 /**
+ * design/273 — appointment details. Measured at 2.000 px/pt from a 780×1790
+ * export, element by element.
+ */
+export const advApptDetails = {
+  padX: 21,
+  // ⚠ the two action buttons and the "Actions" label sit on a 20pt gutter
+  // where the two cards above them sit on 21pt.
+  actionPadX: 20,
+  bg: '#F4F6F8',
+  ink: '#4D4439',
+  cardBg: '#FCF7F3',
+  cardRadius: 16,
+
+  // Client card 116.0–194.0pt.
+  cardTop: 13,
+  clientH: 78,
+  clientPadX: 14,
+  // ⚠ design/273 draws a PHOTOGRAPH here. No photography ships with this
+  // prototype, so the house convention is used: a brand circle with the
+  // UserRound glyph, exactly as components/AdvocateCasesList already does.
+  avatar: 40,
+  avatarBg: '#A57E5A',
+  avatarGlyph: 24,
+  avatarGap: 9.5,
+  nameSize: 16,
+  nameLine: 19.2,
+  matterTop: 4.8,
+  matterSize: 10.5,
+  matterColour: '#00A938',
+  chipH: 11.5,
+  chipRadius: 6,
+  chipPadX: 8.5,
+  chipSize: 8.5,
+  chipBg: '#EDFFDD',
+  chipColour: '#52B100',
+  chipPadRight: 11,
+
+  // Detail card 198.0–345.5pt, rows on a 21pt pitch.
+  rowsTop: 1.5,
+  rowsPadX: 13.5,
+  rowsPadTop: 10.6,
+  rowsPadBottom: 6.5,
+  rowPitch: 21,
+  // The Consultation row carries a 22pt glyph and is drawn taller.
+  rowIconPitch: 27.5,
+  labelW: 89.5,
+  rowSize: 11,
+  rowIcon: 22,
+  rowIconColour: '#A57E5A',
+  rowIconGap: 9,
+
+  actionsTop: 2,
+  actionsSize: 11,
+  joinTop: 5.8,
+  btnH: 37.5,
+  btnRadius: 10,
+  joinBg: '#A57E5A',
+  joinGlyph: 22,
+  joinGap: 12,
+  btnSize: 13,
+  viewTop: 8,
+  viewBorder: '#A57E5A',
+
+  contentBottom: 30,
+};
+
+/**
  * design/271 — appointment calendar. Measured at 2.000 px/pt from a 780×2160
  * export, element by element: every figure below is a pixel reading halved.
  */

@@ -311,6 +311,31 @@ export const AT_ADD_HEARING = {
   save: 'Save Hearing',
 };
 
+export const AT_APPT_DETAILS = {
+  title: 'Appointment Details',
+
+  client: {
+    name: 'Rahul Sharma',
+    matter: 'Divorce Consultation',
+    status: 'Confirmed',
+  },
+
+  rows: [
+    { label: 'Date', value: '13 August 2026' },
+    { label: 'Time', value: '10:00 AM - 10:30 AM' },
+    { label: 'Consultation', value: 'Video Call', icon: true },
+    { label: 'Duration', value: '30 Minutes' },
+    // ⚠ Note 16: design/273 double-prints this label, one word over another.
+    // Rendered once.
+    { label: 'Case', value: 'Divorce Matter' },
+    { label: 'Booking', value: '#LA-2026-0813-001' },
+  ] as { label: string; value: string; icon?: boolean }[],
+
+  actions: 'Actions',
+  join: 'Join Consultation',
+  viewCase: 'View Case',
+};
+
 export const AT_CALENDAR = {
   title: 'Appointment Calendar',
 
