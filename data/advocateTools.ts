@@ -272,6 +272,45 @@ type Appointment = {
   upcoming?: boolean;
 };
 
+type HearingField = {
+  label: string;
+  value: string;
+  /** Draws the dropdown chevron. Static — no picker is scoped. */
+  select?: boolean;
+  /** The hearing-date field alone is drawn short. */
+  short?: boolean;
+  /** The notes field is the one 60pt box. */
+  tall?: boolean;
+};
+
+export const AT_ADD_HEARING = {
+  title: 'Add Court Hearing',
+
+  fields: [
+    { label: 'Court Type', value: 'High Court', select: true },
+    { label: 'Court Name', value: 'High Court of Madhya Pradesh' },
+    { label: 'Court Location', value: 'Jabalpur, Madhyapradesh' },
+    { label: 'Courtroom/ Court Number', value: 'Courtroom No. 12' },
+    { label: 'Case Title', value: 'Rahul Sharma Vs State' },
+    { label: 'Case Number', value: 'WP/1234/2026' },
+    { label: 'Hearing Date', value: '13 Aug 2026', short: true },
+    { label: 'Advocate Role', value: 'Petitioner Advocate', select: true },
+    // ⚠ Note 15: the optional Notes field is pre-filled with the value of the
+    // Advocate Role dropdown directly above it.
+    { label: 'Notes (Optional)', value: 'Petitioner Advocate', tall: true },
+  ] as HearingField[],
+
+  remindLabel: 'Remind Me',
+  remindHint: '(Select Multiple)',
+  reminders: [
+    { label: '1 Day Before', custom: false },
+    { label: '3 Hours Before', custom: false },
+    { label: 'Custom', custom: true },
+  ],
+
+  save: 'Save Hearing',
+};
+
 export const AT_CALENDAR = {
   title: 'Appointment Calendar',
 

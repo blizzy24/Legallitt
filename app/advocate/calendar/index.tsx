@@ -1,18 +1,9 @@
 import { router, type Href } from 'expo-router';
-import {
-  Bell,
-  ChevronLeft,
-  ChevronRight,
-  CircleCheck,
-  MessageSquare,
-  Phone,
-  Plus,
-  Video,
-} from 'lucide-react-native';
+import { ChevronLeft, ChevronRight, CircleCheck, Phone, Plus, Video } from 'lucide-react-native';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import AdvToolHeader from '../../../components/AdvToolHeader';
 import MonthGrid from '../../../components/MonthGrid';
 import { shrinkToFit } from '../../../constants/textFit';
 import { AT_CALENDAR } from '../../../data/advocateTools';
@@ -45,7 +36,6 @@ import { advCalendar as t, colors, font, ink } from '../../../constants/theme';
 // select. "Add Hearing" navigates and nothing else.
 
 export default function AdvocateCalendarScreen() {
-  const insets = useSafeAreaInsets();
   const d = AT_CALENDAR;
   const [view, setView] = useState({ year: d.year, month: d.month });
 
@@ -62,21 +52,7 @@ export default function AdvocateCalendarScreen() {
 
   return (
     <View style={styles.screen}>
-      <View style={[styles.header, { paddingTop: insets.top + t.headerTop }]}>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Back"
-          hitSlop={10}
-          onPress={() => (router.canGoBack() ? router.back() : router.replace('/dashboard' as Href))}
-        >
-          <ChevronLeft size={t.backIcon} color={t.ink} strokeWidth={2.6} style={styles.back} />
-        </Pressable>
-        <Text style={styles.title} {...shrinkToFit(0.8)}>
-          {d.title}
-        </Text>
-        <MessageSquare size={t.headerGlyph} color={t.ink} strokeWidth={2} />
-        <Bell size={t.headerGlyph} color={t.ink} strokeWidth={2} style={styles.bell} />
-      </View>
+      <AdvToolHeader title={d.title} />
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.avail}>
@@ -251,23 +227,6 @@ export default function AdvocateCalendarScreen() {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: t.bg },
-
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: t.padX,
-    height: t.headerH,
-    backgroundColor: t.headerBg,
-  },
-  title: {
-    flex: 1,
-    marginLeft: t.titleGap,
-    fontFamily: font.appHeading,
-    fontSize: t.titleSize,
-    color: t.ink,
-  },
-  back: { marginLeft: -t.backHang },
-  bell: { marginLeft: t.headerGlyphGap },
 
   content: { paddingBottom: 30 },
 

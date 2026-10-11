@@ -162,7 +162,10 @@ export const advReviews = {
   chipRadius: 8,
   chipPadX: 11,
   chipGap: 8,
-  chipSize: 12.5,
+  // Drawn at 12.5pt; Public Sans runs wider than the export's face, and
+  // "3 Hours Before" wraps inside the drawn 111pt chip above 10.5. Shrunk, not
+  // wrapped, per the house rule.
+  chipSize: 10.5,
   chipOnBg: '#9D7553',
 
   reviewTop: 11,
@@ -425,6 +428,92 @@ export const advPerformance = {
 };
 
 /**
+ * The back-and-title bar shared by designs 271, 272, 273 and 274. Measured off
+ * design/271 at 2.000 px/pt and checked against the other three.
+ * See components/AdvToolHeader.tsx.
+ */
+export const advToolHeader = {
+  padX: 21,
+  bg: '#FFFFFF',
+  ink: '#4D4439',
+  height: 103.5,
+  top: 24,
+  // Drawn 38pt across and hanging 8pt into the gutter: its ink starts at 26.0pt.
+  backIcon: 38,
+  backHang: 8,
+  titleGap: 1,
+  titleSize: 18.5,
+  glyph: 23,
+  glyphGap: 20,
+};
+
+/**
+ * design/272 — add court hearing. Measured at 2.000 px/pt from a 780×1790
+ * export, element by element.
+ */
+export const advAddHearing = {
+  padX: 28,
+  bg: '#F4F6F8',
+  ink: '#4D4439',
+  // ⚠ design/272 draws its header title near-black where designs 271, 273 and
+  // 274 draw theirs in #4D4439.
+  titleInk: '#1B1C1C',
+
+  contentTop: 22.3,
+  labelSize: 12.5,
+  labelLine: 15,
+  labelGap: 4,
+  groupGap: 5,
+
+  // Fields 28.0–362.0pt, 30.0pt tall, 1pt #E2E2E2 border on white.
+  fieldH: 30,
+  fieldRadius: 8,
+  fieldBorder: '#E2E2E2',
+  fieldBg: '#FFFFFF',
+  fieldPadX: 9,
+  fieldSize: 12.5,
+  chevron: 21,
+  chevronInk: '#333333',
+  // The hearing-date field alone is drawn short: 28.0–164.5pt.
+  dateW: 136.5,
+  notesH: 60,
+  notesPadY: 7,
+
+  remindTop: 11.75,
+  remindSize: 12.5,
+  chipsTop: 5.25,
+  // ⚠ the three reminder chips are drawn 99.5, 111.0 and 102.5pt wide — neither
+  // equal nor sized to their text. Those widths are used as flex weights, so at
+  // 390pt the row is the drawn row and at 360pt it narrows in proportion.
+  chipWeights: [99.5, 111, 102.5],
+  chipH: 29.5,
+  chipRadius: 8,
+  chipBorder: '#DEBFA3',
+  chipBg: '#FFFFFF',
+  chipGap: 10,
+  chipPadX: 7,
+  // Drawn at 12.5pt; Public Sans runs wider than the export's face, and
+  // "3 Hours Before" wraps inside the drawn 111pt chip above 10.5. Shrunk, not
+  // wrapped, per the house rule.
+  chipSize: 10.5,
+  boxSize: 10.5,
+  boxRadius: 3,
+  boxGap: 4.5,
+  customGlyph: 16,
+
+  // ⚠ the Save button is drawn on a 20pt gutter where every field above it
+  // sits on 28pt.
+  saveTop: 26.5,
+  savePadX: 20,
+  saveH: 36.5,
+  saveRadius: 10,
+  saveBg: '#A57E5A',
+  saveSize: 13,
+
+  contentBottom: 30,
+};
+
+/**
  * design/271 — appointment calendar. Measured at 2.000 px/pt from a 780×2160
  * export, element by element: every figure below is a pixel reading halved.
  */
@@ -435,17 +524,7 @@ export const advCalendar = {
   rule: '#D4D4D4',
   brand: '#A57E5A',
 
-  headerBg: '#FFFFFF',
-  headerH: 103.5,
-  headerTop: 24,
-  // The back chevron is drawn 38pt across and hangs 8pt into the 21pt gutter:
-  // its ink starts at 26.0pt, left of every other element on the screen.
-  backIcon: 38,
-  backHang: 8,
-  titleGap: 1,
-  titleSize: 18.5,
-  headerGlyph: 23,
-  headerGlyphGap: 20,
+  // The header is components/AdvToolHeader — see advToolHeader above.
 
   // Card 123.0–203.0pt; "Your Availability" cap 136.0–146.5 (11.0pt cap → 15.5).
   availTop: 19.5,
