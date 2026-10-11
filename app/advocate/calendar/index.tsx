@@ -30,10 +30,10 @@ import { advCalendar as t, colors, font, ink } from '../../../constants/theme';
 // ⚠ Note 9 — Manage Availability labels Sunday "San". The month-grid header
 //   above it spells SUN correctly, so only that row is wrong.
 //
-// STATIC, NOT WIRED: the availability toggle does not toggle, "Join
-// Consultation" has no calling vendor behind it (none is scoped), "Add
+// STATIC, NOT WIRED: the availability toggle does not toggle, "Add
 // Availability" and "Edit Hours" open nothing, and the day circles do not
-// select. "Add Hearing" navigates and nothing else.
+// select. What does navigate: "Add Hearing" pushes design/272, an appointment
+// card pushes design/273, and the Manage Availability card pushes design/274.
 
 export default function AdvocateCalendarScreen() {
   const d = AT_CALENDAR;
@@ -115,7 +115,17 @@ export default function AdvocateCalendarScreen() {
         </View>
 
         {d.appointments.map((ap, i) => (
-          <View key={`${ap.name}-${i}`} style={[styles.appt, { marginTop: i === 0 ? t.apptTop : t.apptGap }]}>
+          <Pressable
+            key={`${ap.name}-${i}`}
+            accessibilityRole="button"
+            accessibilityLabel={`${ap.name}, ${ap.time.replace('\n', ' ')}`}
+            onPress={() => router.push(`/advocate/calendar/${i + 1}` as Href)}
+            style={({ pressed }) => [
+              styles.appt,
+              { marginTop: i === 0 ? t.apptTop : t.apptGap },
+              pressed && styles.pressed,
+            ]}
+          >
             <View style={styles.time}>
               <Text style={styles.timeText} {...shrinkToFit(0.8)}>
                 {ap.time}
@@ -176,11 +186,12 @@ export default function AdvocateCalendarScreen() {
               strokeWidth={2.2}
               style={styles.apptChev}
             />
-          </View>
+          </Pressable>
         ))}
 
         <Pressable
           accessibilityRole="button"
+          accessibilityLabel={d.addHearing}
           style={({ pressed }) => [styles.addHearing, pressed && styles.pressed]}
           onPress={() => router.push('/advocate/calendar/add-hearing' as Href)}
         >
@@ -190,7 +201,17 @@ export default function AdvocateCalendarScreen() {
           </Text>
         </Pressable>
 
-        <View style={styles.manage}>
+        {/*
+          design/271 draws the Manage Availability block as a plain card. It is
+          the same block design/274 opens as a screen, so the card is made
+          pressable to reach it — an affordance on existing UI, not new UI.
+        */}
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={d.manage.title}
+          onPress={() => router.push('/advocate/calendar/availability' as Href)}
+          style={({ pressed }) => [styles.manage, pressed && styles.pressed]}
+        >
           <Text style={styles.manageTitle} {...shrinkToFit(0.8)}>
             {d.manage.title}
           </Text>
@@ -219,7 +240,7 @@ export default function AdvocateCalendarScreen() {
               </Text>
             </View>
           </View>
-        </View>
+        </Pressable>
       </ScrollView>
     </View>
   );
