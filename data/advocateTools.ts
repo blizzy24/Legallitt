@@ -68,6 +68,16 @@
 //     sits 4pt higher than the export.
 // 20. design/271's month grid is not centred on the screen: its ink runs
 //     34.5–361.0pt, 4.75pt right of centre. Reproduced rather than tidied up.
+// 21. design/271 and design/274 draw the same Available Hours row with
+//     different strings: "09:00 AM - 6:00 PM" on 271, "09:00 AM - 06:00 PM" on
+//     274. Each screen keeps the string it was drawn with.
+// 22. design/272's Save button sits on a 20pt gutter where every field above it
+//     sits on 28pt; design/273 does the same with its two action buttons and
+//     the "Actions" label against the 21pt its cards use.
+// 23. design/273 puts a PHOTOGRAPH of the client in its header card. No
+//     photography ships with this prototype, so the house convention is used —
+//     a brand circle with the UserRound glyph, as components/AdvocateCasesList
+//     already does. Nothing was invented to fill it.
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const AT_DOC_VIEWER = {
@@ -334,6 +344,37 @@ export const AT_APPT_DETAILS = {
   actions: 'Actions',
   join: 'Join Consultation',
   viewCase: 'View Case',
+};
+
+export const AT_AVAILABILITY = {
+  title: 'Manage Availability',
+
+  workingHours: 'Working Hours',
+  // ⚠ Note 9: Sunday is labelled "San" here too.
+  days: [
+    { label: 'Mon', on: true },
+    { label: 'Tue', on: true },
+    { label: 'Wed', on: true },
+    { label: 'Thu', on: true },
+    { label: 'Fri', on: true },
+    { label: 'Sat', on: false },
+    { label: 'San', on: false },
+  ],
+
+  hoursTitle: 'Available Hours',
+  // ⚠ Note 21: design/271 prints this same value as "09:00 AM - 6:00 PM".
+  // design/274 pads the hour. Each screen keeps the string it was drawn with.
+  hours: '09:00 AM - 06:00 PM',
+  edit: 'Edit Hours',
+
+  slots: [
+    { label: 'Morning', value: '09:00 AM - 01:00 PM' },
+    // ⚠ Note 8: drawn as "03:00 AM - 01:00 PM" — it runs backwards and
+    // overlaps the Morning slot above it. Drawn as drawn.
+    { label: 'Evening', value: '03:00 AM - 01:00 PM' },
+  ],
+
+  addSlot: 'Add Time Slot',
 };
 
 export const AT_CALENDAR = {

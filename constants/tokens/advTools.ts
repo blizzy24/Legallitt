@@ -581,6 +581,70 @@ export const advApptDetails = {
 };
 
 /**
+ * design/274 — manage availability. Measured at 2.000 px/pt from a 780×1790
+ * export, element by element.
+ */
+export const advManageAvailability = {
+  padX: 21,
+  bg: '#F4F6F8',
+  ink: '#4D4439',
+  brand: '#A57E5A',
+  cardBg: '#FCF7F3',
+  cardRadius: 16,
+
+  // Working-hours card 118.0–192.0pt.
+  cardTop: 12.5,
+  cardPadX: 11,
+  cardPadTop: 8.8,
+  cardPadBottom: 5,
+  titleSize: 16,
+  titleLine: 19.2,
+  // Seven 36pt circles on a 48pt pitch, 32.0–355.5pt.
+  circlesTop: 7,
+  circle: 36,
+  circleSize: 9.5,
+  circleOn: '#A57E5A',
+  circleBorder: '#BABABA',
+  circleOff: '#000000',
+
+  // Hours card 196.5–398.0pt.
+  hoursCardTop: 4.5,
+  hoursPadTop: 12.4,
+  hoursPadBottom: 6.5,
+  hoursTitleSize: 12,
+  hoursTitleLine: 14.4,
+  hoursValueTop: 4.3,
+  hoursValueSize: 10.5,
+  editW: 77.5,
+  editH: 27.5,
+  editRadius: 8,
+  editSize: 10.5,
+
+  // Slot rows 34.0–356.0pt, 40pt tall, 5pt apart.
+  slotsTop: 15.2,
+  slotH: 40,
+  slotRadius: 10,
+  slotBorder: '#F4DDC8',
+  slotGap: 5,
+  slotPadX: 12.5,
+  slotTitleSize: 11.5,
+  slotTitleLine: 13.7,
+  slotValueTop: 1.6,
+  slotValueSize: 10.5,
+  slotChevron: 22,
+
+  // "+ Add Time Slot" 354.0–391.5pt, dashed.
+  addTop: 13,
+  addH: 37.5,
+  addRadius: 10,
+  addGlyph: 18,
+  addGap: 10,
+  addSize: 12.5,
+
+  contentBottom: 30,
+};
+
+/**
  * design/271 — appointment calendar. Measured at 2.000 px/pt from a 780×2160
  * export, element by element: every figure below is a pixel reading halved.
  */
