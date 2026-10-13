@@ -185,3 +185,45 @@ export const CO_CHOOSE = {
   // selection, exactly as the two exports show it.
   foot: 'Next: Book Legalitt Delivery Partner pickup',
 };
+
+/** design/276 — delivery details. */
+export const CO_DETAILS = {
+  title: 'Delivery Details',
+  notice: 'Check the delivery details before booking.',
+
+  partnerTitle: 'Legalitt Delivery Partner',
+  selected: 'Selected',
+  partnerSub: 'Your documents will be picked up and sent to the receiver.',
+  // ⚠ Note 5: "Powered by Blue Dart" here and Courier "Blue Dart" on 280,
+  // against "DHL Express" with a DHL waybill on 281.
+  powered: 'Powered by Blue Dart',
+  direct: 'Direct secure legal courier',
+
+  pickupTitle: 'Pickup From',
+  pickupAction: 'Change',
+  sendTitle: 'Send To',
+  sendAction: 'View Address',
+
+  docsTitle: 'Documents',
+  docsCount: '3 Documents',
+  docs: ['Case Papers.pdf', 'Court Order.pdf', 'ID Proof.pdf'],
+  viewDocs: 'View Documents',
+
+  deliveryTitle: 'Delivery',
+  cells: [
+    { label: 'Courier', value: 'Blue Dart' },
+    { label: 'Package', value: '1' },
+    { label: 'Weight', value: '450 g' },
+    { label: 'Estimated Delivery', value: '25 Oct, by 5:00 PM' },
+  ],
+
+  feeTitle: 'Delivery Fee',
+  feeAmount: '\u20B9290/-',
+  feeNote: 'This is the delivery fee only. It is separate from any legal service fees.',
+
+  bannerTitle: 'Please check both addresses before booking.',
+  bannerBody: 'Your documents will be picked up from the address shown above.',
+
+  cta: 'Book Delivery',
+  foot: 'Next: Shipment Created',
+};
