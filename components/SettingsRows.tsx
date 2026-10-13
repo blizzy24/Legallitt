@@ -1,6 +1,6 @@
 import { ChevronRight, CircleCheck, CircleSlash } from 'lucide-react-native';
 import { Fragment, ReactNode } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { shrinkToFit } from '../constants/textFit';
 import { advSettingsPage as t, colors, font } from '../constants/theme';
@@ -43,7 +43,7 @@ export function Rule() {
 /**
  * One settings row: icon tile, title, subtitle, and a trailing control that is
  * either a toggle, a status pill with a chevron, a plain chevron, or a button.
- * STATIC — none of these controls does anything.
+ * The trailing controls are STATIC; a row navigates only when given onPress.
  */
 export function Row({
   icon,
@@ -57,6 +57,7 @@ export function Row({
   danger,
   tileBg,
   first,
+  onPress,
 }: {
   icon?: ReactNode;
   title: string;
@@ -69,9 +70,14 @@ export function Row({
   danger?: string;
   tileBg?: string;
   first?: boolean;
+  onPress?: () => void;
 }) {
+  const Wrap = onPress ? Pressable : View;
   return (
-    <View style={[styles.row, !first && { marginTop: t.rowGap }]}>
+    <Wrap
+      {...(onPress ? { accessibilityRole: 'button' as const, onPress } : {})}
+      style={[styles.row, !first && { marginTop: t.rowGap }]}
+    >
       {icon ? <View style={[styles.tile, tileBg ? { backgroundColor: tileBg } : null]}>{icon}</View> : null}
       <View style={styles.col}>
         <Text style={[styles.title, danger ? { color: danger } : null]} {...shrinkToFit(0.8)}>
@@ -113,7 +119,7 @@ export function Row({
       {chevron ? (
         <ChevronRight size={t.chevron} color={danger ?? '#4D463D'} strokeWidth={2.2} style={styles.chev} />
       ) : null}
-    </View>
+    </Wrap>
   );
 }
 

@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { router, type Href } from 'expo-router';
 import {
   Bell,
   CalendarDays,
@@ -219,7 +219,13 @@ export default function AdvocateDashboardScreen() {
               {ADV_TODAY.length} Events
             </Text>
           </View>
-          <Pressable accessibilityRole="button" hitSlop={8} style={styles.viewAll}>
+          {/* View All opens design/271's appointment calendar — the full schedule. */}
+          <Pressable
+            accessibilityRole="button"
+            hitSlop={8}
+            onPress={() => router.push('/advocate/calendar' as Href)}
+            style={styles.viewAll}
+          >
             <Text style={styles.viewAllText} {...shrinkToFit(0.8)}>
               View All
             </Text>

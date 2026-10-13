@@ -92,6 +92,7 @@ export default function AdvocatePayoutScreen() {
           pill={d.bank.pill}
           pillTone="neutral"
           chevron
+          onPress={() => router.push('/advocate/settings/bank' as Href)}
         />
         <Rule />
         <Row
@@ -117,6 +118,10 @@ export default function AdvocatePayoutScreen() {
                 title={r.title}
                 sub={r.sub}
                 chevron
+                // Earnings History opens design/268's analytics — the screen data/
+                // advocateTools.ts note 4 calls "one tap" from this one. Payout
+                // History and Receipts & Invoices have no designed destination.
+                onPress={r.icon === 'trend' ? () => router.push('/advocate/analytics' as Href) : undefined}
               />
             </Fragment>
           );
