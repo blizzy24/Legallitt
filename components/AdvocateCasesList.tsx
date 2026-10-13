@@ -110,6 +110,8 @@ export default function AdvocateCasesList({
       router.push('/advocate/fir/fir-2026-1048' as Href);
     } else if (m.serviceKey === 'forensic') {
       router.push('/advocate/forensic/df-2026-1048' as Href);
+    } else if (m.href) {
+      router.push(m.href as Href);
     }
   }
 

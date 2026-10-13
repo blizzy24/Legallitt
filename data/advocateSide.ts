@@ -2884,6 +2884,8 @@ export type AdvCaseMatter = {
   service: string;
   /** Routes Review Request; see the screen. */
   serviceKey: 'legal-notice' | 'fir' | 'property-search' | 'forensic' | 'other';
+  /** Where Review opens, for a service whose flow is not keyed by serviceKey. */
+  href?: string;
   urgency: 'URGENT' | 'ORDINARY';
   title: string;
   ref: string;
@@ -3025,6 +3027,8 @@ export const ADV_CASES: AdvCaseMatter[] = [
     id: 'la-2026-1048',
     service: 'LEGAL ADVICE',
     serviceKey: 'other',
+    /** The Legal Advice advocate flow starts at design/163's request detail. */
+    href: '/advocate/requests/la-2026-1048',
     urgency: 'ORDINARY',
     title: 'Rahul Sharma · Consultation',
     ref: 'LA-2026-1048',
