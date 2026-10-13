@@ -61,6 +61,9 @@
 // 15. design/279 has no courier content of any kind — no waybill, no address,
 //     no document count. Nothing on it can be reached from the courier flow
 //     except the "Start Tracking" button.
+// 18. design/277's reference reads #LGT-849204 — the LEGAL NOTICE prefix — on a
+//     courier payment for matter #HCR-2026-1048, and its trailing "·" has
+//     nothing after it. design/86 carried the same wrong reference.
 // 17. design/275/284 clip the document chip row and tint the clipped fourth
 //     chip differently from the three readable ones. See CO_CHOOSE.docChips.
 // 16. design/283 has no delivery tracker, although 280, 281 and 287 all draw
@@ -226,4 +229,31 @@ export const CO_DETAILS = {
 
   cta: 'Book Delivery',
   foot: 'Next: Shipment Created',
+};
+
+/** design/277 — complete payment. */
+export const CO_PAYMENT = {
+  title: 'Complete Payment',
+  // ⚠ Note 11: drawn "High Court Represantative" — misspelt, and a different
+  // label from "High Court Representation" on designs 275 and 284.
+  service: 'High Court Represantative',
+  // ⚠ Note 18: the reference is #LGT-849204 — the LEGAL NOTICE prefix, on a
+  // courier payment for matter #HCR-2026-1048. design/86 carried the same wrong
+  // reference. The trailing "·" has nothing after it; it is drawn and kept.
+  ref: 'Ref ID: #LGT-849204 \u00B7',
+  // ⚠ Note 2: 18% of ₹250 is ₹45, not ₹40, and the total would be ₹295.
+  lines: [
+    { label: 'Service Fee', value: '\u20B9250/-' },
+    { label: 'Goods & Services Tax (GST 18%)', value: '\u20B940/-' },
+  ],
+  totalLabel: 'Total Payable',
+  total: '\u20B9290/-',
+  note: 'Inclusive of all legal taxes',
+
+  methodLabel: 'SELECT PAYMENT METHOD',
+  methodNote: 'Fast & Secure',
+  secure: 'Your payment is processed securely through our payment provider.',
+
+  barLabel: 'Amount to pay',
+  pay: 'Pay',
 };
