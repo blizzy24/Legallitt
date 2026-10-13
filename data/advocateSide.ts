@@ -1841,10 +1841,8 @@ export const ADV_END = {
 // ─────────────────────────────────────────────────────────────────────────────
 // Docket record (design/180).
 //
-// ⚠ design/180 is a 333×1024 JPEG screenshot — 0.823 px/pt, LESS THAN ONE PIXEL
-// PER POINT. Every metric on this screen is read from a frame smaller than the
-// layout it describes, so the sizing is the loosest in the project. Shared values
-// are reused from neighbouring screens wherever the design does not contradict them.
+// design/180 is a 780px PNG at 2.000 px/pt; it replaced a 333×1024 JPEG, and the
+// figures below were re-read from it (they are unchanged).
 //
 // ⚠ THREE DISBURSEMENT FIGURES FOR ONE JOURNEY:
 //     design/164  net ₹25,650  (28,500 gross − 10%)
@@ -1890,7 +1888,9 @@ export const ADV_DOCKET = {
   billable: { label: 'Billable Time', value: '42m', unit: '/ 45m' },
   channel: { label: 'Channel', value: 'Chamber' },
 
-  notesLabel: 'ADVOCATE NOTES (PRIVILEGED)',
+  notesLabel: 'ADVOCATE NOTES',
+  /** Set in the lighter grey after the label on design/180. */
+  notesLabelNote: '(PRIVILEGED)',
   dictate: 'Dictate',
   citeChip: '+ Cite Indian Contract Act (1872)',
   note: ADV_DOCKET_NOTE,

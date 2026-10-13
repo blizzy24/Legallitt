@@ -1,23 +1,20 @@
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
   Bell,
-  BadgeCheck,
-  Bold,
-  CalendarDays,
+  Check,
   CheckCircle2,
-  Clock,
+  ChevronLeft,
+  ClipboardCheck,
   Copy,
   Eye,
   FileText,
   Gavel,
-  Italic,
   List,
   ListChecks,
   Mic,
   UserRound,
   Video,
 } from 'lucide-react-native';
-import { ChevronLeft } from 'lucide-react-native';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -27,9 +24,11 @@ import { advDocket as t, advRequest as h, colors, font, ink } from '../../../../
 
 // Docket record (design/180).
 //
-// ⚠ design/180 is a 333×1024 JPEG — 0.823 px/pt, less than one pixel per point.
-// The sizing here is the loosest in the project; shared values are inherited from
-// the neighbouring advocate screens where the design does not contradict them.
+// Measured from a 780px PNG at 2.000 px/pt (it replaced a 333×1024 JPEG).
+//
+// design/180 draws a photograph for the client and a PDF glyph on Export Client
+// PDF; the photo is a neutral placeholder at the drawn size and the export keeps
+// the nearest stock glyph.
 //
 // ⚠ Its "DISBURSEMENT ₹26,000" is a bare figure with no fee behind it, and agrees
 // with neither design/164's ₹25,650 nor design/181's ₹28,800. Stored as drawn, NOT
@@ -46,8 +45,8 @@ export default function AdvocateDocketScreen() {
 
   return (
     <View style={styles.screen}>
-      <View style={[styles.header, { paddingTop: insets.top + h.headerTop }]}>
-        <Text style={styles.headerTitle} numberOfLines={1}>
+      <View style={[styles.header, { paddingTop: insets.top + t.headerTop }]}>
+        <Text style={styles.headerTitle} {...shrinkToFit(0.8)}>
           Requests
         </Text>
         <Pressable
@@ -74,125 +73,130 @@ export default function AdvocateDocketScreen() {
         >
           <ChevronLeft size={t.crumbIcon} color={colors.textPrimary} />
         </Pressable>
-        <Text style={styles.crumbLabel} {...shrinkToFit(0.75)}>
-          {d.label}
-        </Text>
-        <Text style={styles.crumbDot}>•</Text>
-        <Text style={styles.crumbRef} {...shrinkToFit(0.7)}>
-          {d.matterRef}
-        </Text>
+        {/* design/180 wraps both the label and the reference onto two lines. */}
+        <Text style={styles.crumbLabel}>{d.label}</Text>
+        <View style={styles.crumbDot} />
+        <Text style={styles.crumbRef}>{d.matterRef}</Text>
         <View style={styles.saved}>
           <View style={styles.savedDot} />
-          <Text style={styles.savedText} {...shrinkToFit(0.75)}>
-            {d.autosaved}
-          </Text>
+          <Text style={styles.savedText}>{d.autosaved}</Text>
         </View>
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={styles.banner}>
-          <View style={styles.bannerIcon}>
-            <CheckCircle2 size={t.bannerIconGlyph} color={colors.brandDark} />
-          </View>
-          <Text style={styles.bannerTitle} {...shrinkToFit(0.75)}>
-            {d.concluded}
-          </Text>
-          <View style={styles.bannerChip}>
-            <Text style={styles.bannerChipText} {...shrinkToFit(0.75)}>
-              {d.verifiedChip}
-            </Text>
-          </View>
-        </View>
-
         <View style={styles.card}>
-          <View style={styles.clientRow}>
-            {/* Placeholder for design/180's photograph, at the drawn size. */}
-            <View style={styles.photo}>
-              <Text style={styles.photoText}>{d.client.initials}</Text>
+          <View style={styles.banner}>
+            <View style={styles.bannerIcon}>
+              <Check size={t.bannerIconGlyph} color={t.bannerIconColour} strokeWidth={3} />
             </View>
-            <View style={styles.clientText}>
-              <Text style={styles.name} {...shrinkToFit(0.7)}>
-                {d.client.name}
-              </Text>
-              <Text style={styles.role} {...shrinkToFit(0.7)}>
-                {d.client.title}
-              </Text>
-            </View>
-            <View style={styles.disbCol}>
-              <Text style={styles.disbLabel} {...shrinkToFit(0.75)}>
-                {d.disbursementLabel}
-              </Text>
-              <Text style={styles.disb} {...shrinkToFit(0.75)}>
-                ₹{d.disbursement.toLocaleString('en-IN')}
+            <Text style={styles.bannerTitle}>{d.concluded}</Text>
+            <View style={styles.bannerChip}>
+              <Text style={styles.bannerChipText} {...shrinkToFit(0.75)}>
+                {d.verifiedChip}
               </Text>
             </View>
           </View>
 
-          <View style={styles.brief}>
-            <Text style={styles.briefLabel} {...shrinkToFit(0.8)}>
-              {d.briefLabel}
-            </Text>
-            <Text style={styles.briefMatter}>{d.matter}</Text>
-          </View>
-
-          <View style={styles.stats}>
-            <View style={styles.stat}>
-              <Text style={styles.statLabel} {...shrinkToFit(0.75)}>
-                {d.date.label}
-              </Text>
-              <Text style={styles.statValue} {...shrinkToFit(0.7)}>
-                {d.date.value}
-              </Text>
-            </View>
-            <View style={styles.stat}>
-              <Text style={styles.statLabel} {...shrinkToFit(0.75)}>
-                {d.billable.label}
-              </Text>
-              <View style={styles.statValueRow}>
-                <Text style={styles.statValue} {...shrinkToFit(0.75)}>
-                  {d.billable.value}
+          <View style={styles.cardBody}>
+            <View style={styles.clientRow}>
+              <View>
+                {/* Placeholder for design/180's photograph, at the drawn size. */}
+                <View style={styles.photo}>
+                  <Text style={styles.photoText}>{d.client.initials}</Text>
+                </View>
+                <View style={styles.photoBadge}>
+                  <Check size={t.photoBadgeIcon} color={ink.onBrand} strokeWidth={3} />
+                </View>
+              </View>
+              <View style={styles.clientText}>
+                <Text style={styles.name} {...shrinkToFit(0.7)}>
+                  {d.client.name}
                 </Text>
-                <Text style={styles.statUnit} {...shrinkToFit(0.75)}>
-                  {d.billable.unit}
+                <Text style={styles.role} {...shrinkToFit(0.7)}>
+                  {d.client.title}
+                </Text>
+              </View>
+              <View style={styles.disbCol}>
+                <Text style={styles.disbLabel} {...shrinkToFit(0.75)}>
+                  {d.disbursementLabel}
+                </Text>
+                <Text style={styles.disb} {...shrinkToFit(0.75)}>
+                  ₹{d.disbursement.toLocaleString('en-IN')}
                 </Text>
               </View>
             </View>
-            <View style={styles.stat}>
-              <Text style={styles.statLabel} {...shrinkToFit(0.75)}>
-                {d.channel.label}
+
+            <View style={styles.brief}>
+              <Text style={styles.briefLabel} {...shrinkToFit(0.8)}>
+                {d.briefLabel}
               </Text>
-              <View style={styles.statValueRow}>
-                <Video size={t.statIcon} color={colors.textPrimary} />
-                <Text style={[styles.statValue, styles.statValueInline]} {...shrinkToFit(0.7)}>
-                  {d.channel.value}
+              <Text style={styles.briefMatter}>{d.matter}</Text>
+            </View>
+
+            <View style={styles.stats}>
+              <View style={styles.stat}>
+                <Text style={styles.statLabel} {...shrinkToFit(0.75)}>
+                  {d.date.label}
                 </Text>
+                <Text style={styles.statValue} {...shrinkToFit(0.7)}>
+                  {d.date.value}
+                </Text>
+              </View>
+              <View style={styles.stat}>
+                <Text style={styles.statLabel} {...shrinkToFit(0.75)}>
+                  {d.billable.label}
+                </Text>
+                <View style={styles.statValueRow}>
+                  <Text style={styles.statValue} {...shrinkToFit(0.75)}>
+                    {d.billable.value}
+                  </Text>
+                  <Text style={styles.statUnit} {...shrinkToFit(0.75)}>
+                    {d.billable.unit}
+                  </Text>
+                </View>
+              </View>
+              <View style={styles.stat}>
+                <Text style={styles.statLabel} {...shrinkToFit(0.75)}>
+                  {d.channel.label}
+                </Text>
+                <View style={[styles.statValueRow, styles.statIconRow]}>
+                  <Video size={t.statIcon} color={t.textBrown} />
+                  <Text style={[styles.statValue, styles.statValueInline]} {...shrinkToFit(0.7)}>
+                    {d.channel.value}
+                  </Text>
+                </View>
               </View>
             </View>
           </View>
         </View>
 
         <View style={styles.sectionRow}>
-          <Gavel size={t.sectionIcon} color={colors.textPrimary} />
+          <Gavel size={t.sectionIcon} color={t.textBrown} />
           <Text style={styles.section} {...shrinkToFit(0.7)}>
-            {d.notesLabel}
+            {d.notesLabel} <Text style={styles.sectionNote}>{d.notesLabelNote}</Text>
           </Text>
           {/* Inert — speech input is implied but specified nowhere. */}
           <Pressable accessibilityRole="button" style={styles.dictate}>
-            <Mic size={t.dictateIcon} color={t.dictateColour} />
+            <Mic size={t.dictateIcon} color={t.textBrown} />
             <Text style={styles.dictateText} {...shrinkToFit(0.8)}>
               {d.dictate}
             </Text>
           </Pressable>
         </View>
 
-        <View style={styles.card}>
-          {/* Inert — a rich-text editor is implied but not specified. */}
+        <View style={[styles.card, styles.sectionCard]}>
+          {/* Inert — a rich-text editor is implied but not specified. design/180
+              sets B and I as plain letters, not the slanted italic glyph. */}
           <View style={styles.tools}>
-            {[Bold, Italic, List].map((Icon, i) => (
-              <Pressable key={i} accessibilityRole="button" style={styles.toolBtn}>
-                <Icon size={t.toolSize} color={colors.textPrimary} />
-              </Pressable>
-            ))}
+            <Pressable accessibilityRole="button" accessibilityLabel="Bold" style={styles.toolBtn}>
+              <Text style={styles.toolBold}>B</Text>
+            </Pressable>
+            <Pressable accessibilityRole="button" accessibilityLabel="Italic" style={styles.toolBtn}>
+              <Text style={styles.toolText}>I</Text>
+            </Pressable>
+            <Pressable accessibilityRole="button" accessibilityLabel="List" style={styles.toolBtn}>
+              <List size={t.toolIcon} color={colors.textPrimary} />
+            </Pressable>
             <Pressable accessibilityRole="button" style={styles.cite}>
               <Text style={styles.citeText} {...shrinkToFit(0.7)}>
                 {d.citeChip}
@@ -200,22 +204,24 @@ export default function AdvocateDocketScreen() {
             </Pressable>
           </View>
 
-          <ScrollView style={styles.noteBox} nestedScrollEnabled>
-            <Text style={styles.note}>{d.note}</Text>
-          </ScrollView>
+          <View style={styles.noteBody}>
+            <ScrollView style={styles.noteBox} nestedScrollEnabled>
+              <Text style={styles.note}>{d.note}</Text>
+            </ScrollView>
 
-          <View style={styles.noteFoot}>
-            <Text style={styles.noteFootText} {...shrinkToFit(0.7)}>
-              {d.notesFooter}
-            </Text>
-            <Text style={styles.noteFootText} {...shrinkToFit(0.75)}>
-              {d.notesDrawnCount}
-            </Text>
+            <View style={styles.noteFoot}>
+              <Text style={styles.noteFootText} {...shrinkToFit(0.7)}>
+                {d.notesFooter}
+              </Text>
+              <Text style={styles.noteFootCount} {...shrinkToFit(0.75)}>
+                {d.notesDrawnCount}
+              </Text>
+            </View>
           </View>
         </View>
 
         <View style={styles.sectionRow}>
-          <ListChecks size={t.sectionIcon} color={colors.textPrimary} />
+          <ListChecks size={t.sectionIcon} color={t.textBrown} />
           <Text style={styles.section} {...shrinkToFit(0.7)}>
             {d.keyPointsLabel}
           </Text>
@@ -224,7 +230,7 @@ export default function AdvocateDocketScreen() {
           </Text>
         </View>
 
-        <View style={styles.card}>
+        <View style={[styles.card, styles.sectionCard, styles.listCard]}>
           {d.keyPoints.map((k) => (
             <Text key={k} style={styles.bullet}>
               • {k}
@@ -233,16 +239,16 @@ export default function AdvocateDocketScreen() {
         </View>
 
         <View style={styles.sectionRow}>
-          <CheckCircle2 size={t.sectionIcon} color={colors.textPrimary} />
+          <ClipboardCheck size={t.sectionIcon} color={t.textBrown} />
           <Text style={styles.section} {...shrinkToFit(0.7)}>
             {d.stepsLabel}
           </Text>
-          <Text style={styles.sectionMeta} {...shrinkToFit(0.75)}>
+          <Text style={[styles.sectionMeta, styles.sectionMetaBrown]} {...shrinkToFit(0.75)}>
             {d.stepsMeta}
           </Text>
         </View>
 
-        <View style={styles.card}>
+        <View style={[styles.card, styles.sectionCard, styles.listCard]}>
           {/* Static. design/180 labels this "3 Action Items" but draws two. */}
           {d.steps.map((s, i) => (
             <Text key={s} style={[styles.step, i > 0 && styles.stepNext]}>
@@ -253,7 +259,7 @@ export default function AdvocateDocketScreen() {
 
         <View style={[styles.card, styles.docCard]}>
           <View style={styles.docIcon}>
-            <FileText size={t.docIconGlyph} color={colors.brandDark} />
+            <FileText size={t.docIconGlyph} color={t.textBrown} />
           </View>
           <View style={styles.docText}>
             <Text style={styles.docName} {...shrinkToFit(0.65)}>
@@ -273,7 +279,7 @@ export default function AdvocateDocketScreen() {
           onPress={() => router.replace(`/advocate/consultation/${id}/completed` as Href)}
           style={({ pressed }) => [styles.continue, pressed && styles.pressed]}
         >
-          <BadgeCheck size={t.continueIcon} color={ink.onBrand} />
+          <CheckCircle2 size={t.continueIcon} color={ink.onBrand} />
           <Text style={styles.continueText} {...shrinkToFit(0.75)}>
             {d.continue}
           </Text>
@@ -281,7 +287,7 @@ export default function AdvocateDocketScreen() {
 
         {/* Inert — no export flow is designed. */}
         <Pressable accessibilityRole="button" style={styles.export}>
-          <Copy size={t.exportIcon} color={colors.textPrimary} />
+          <Copy size={t.exportIcon} color={t.textWarm} />
           <Text style={styles.exportText} {...shrinkToFit(0.8)}>
             {d.exportPdf}
           </Text>
@@ -295,8 +301,8 @@ const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: t.bg },
   header: {
     paddingHorizontal: t.padX,
-    paddingBottom: h.headerPadBottom,
-    backgroundColor: colors.card,
+    paddingBottom: t.headerPadBottom,
+    backgroundColor: t.bg,
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -305,8 +311,8 @@ const styles = StyleSheet.create({
     minWidth: 0,
     marginRight: 10,
     textAlign: 'center',
-    fontFamily: font.appHeading,
-    fontSize: h.titleSize,
+    fontFamily: font.appSemi,
+    fontSize: t.headerTitleSize,
     color: colors.textPrimary,
   },
   bellWrap: {},
@@ -320,7 +326,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#D64545',
   },
   avatar: {
-    marginLeft: h.avatarGap,
+    marginLeft: t.avatarGap,
     width: h.avatar,
     height: h.avatar,
     borderRadius: h.avatar / 2,
@@ -345,46 +351,67 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   crumbLabel: {
+    flex: 1,
+    minWidth: 0,
     marginLeft: t.crumbGap,
-    flexShrink: 1,
     fontFamily: font.appSemi,
     fontSize: t.crumbLabelSize,
+    lineHeight: t.crumbLineHeight,
     letterSpacing: t.crumbLabelSpacing,
-    color: colors.brandDark,
+    color: t.textBrown,
   },
   crumbDot: {
+    width: t.crumbDot,
+    height: t.crumbDot,
+    borderRadius: t.crumbDot / 2,
     marginHorizontal: t.crumbDotGap,
+    backgroundColor: t.crumbDotBg,
+  },
+  crumbRef: {
+    flex: 1,
+    minWidth: 0,
     fontFamily: font.appBody,
     fontSize: t.crumbRefSize,
-    color: colors.textBody,
+    lineHeight: t.crumbLineHeight,
+    color: t.textWarm,
   },
-  crumbRef: { flexShrink: 1, fontFamily: font.appBody, fontSize: t.crumbRefSize, color: colors.textPrimary },
   saved: {
-    marginLeft: 'auto',
-    paddingLeft: 8,
+    marginLeft: t.savedGap,
+    width: t.savedWidth,
     minHeight: t.savedHeight,
     borderRadius: t.savedRadius,
     paddingHorizontal: t.savedPadX,
     backgroundColor: t.savedBg,
     flexDirection: 'row',
     alignItems: 'center',
-    flexShrink: 1,
   },
   savedDot: {
     width: t.savedDot,
     height: t.savedDot,
     borderRadius: t.savedDot / 2,
     marginRight: t.savedDotGap,
-    backgroundColor: colors.brandDark,
+    backgroundColor: t.textBrown,
   },
-  savedText: { flexShrink: 1, fontFamily: font.appBody, fontSize: t.savedSize, color: colors.textPrimary },
+  savedText: {
+    maxWidth: t.savedTextWidth,
+    fontFamily: font.appBody,
+    fontSize: t.savedSize,
+    lineHeight: t.crumbLineHeight,
+    color: t.textWarm,
+  },
 
   content: { paddingHorizontal: t.padX, paddingBottom: 32 },
 
+  card: {
+    borderRadius: t.cardRadius,
+    backgroundColor: colors.card,
+    overflow: 'hidden',
+  },
   banner: {
-    borderRadius: t.bannerRadius,
+    paddingLeft: t.bannerPadLeft,
+    paddingRight: t.bannerPadRight,
+    paddingVertical: t.bannerPadY,
     backgroundColor: t.bannerBg,
-    padding: t.bannerPad,
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -401,7 +428,7 @@ const styles = StyleSheet.create({
     flex: 1,
     minWidth: 0,
     marginRight: 8,
-    fontFamily: font.appHeading,
+    fontFamily: font.appSemi,
     fontSize: t.bannerTitleSize,
     lineHeight: t.bannerTitleLineHeight,
     color: colors.textPrimary,
@@ -417,49 +444,60 @@ const styles = StyleSheet.create({
   },
   bannerChipText: { fontFamily: font.appBody, fontSize: t.bannerChipSize, color: t.bannerChipColour },
 
-  card: {
-    marginTop: t.cardGap,
-    borderRadius: t.cardRadius,
-    backgroundColor: colors.card,
-    padding: t.cardPad,
-  },
+  cardBody: { padding: t.cardPad, paddingBottom: t.cardPadBottom },
   clientRow: { flexDirection: 'row', alignItems: 'center' },
   photo: {
-    width: t.photo,
-    height: t.photo,
-    borderRadius: t.photo / 2,
-    backgroundColor: '#F3DCC0',
+    width: t.photoW,
+    height: t.photoH,
+    borderRadius: t.photoW / 2,
+    backgroundColor: t.photoBg,
     alignItems: 'center',
     justifyContent: 'center',
   },
   photoText: { fontFamily: font.appSemi, fontSize: t.photoText, color: colors.brandDark },
+  photoBadge: {
+    position: 'absolute',
+    right: -t.photoBadgeRing,
+    bottom: -t.photoBadgeRing,
+    width: t.photoBadge,
+    height: t.photoBadge,
+    borderRadius: t.photoBadge / 2,
+    borderWidth: t.photoBadgeRing,
+    borderColor: colors.card,
+    backgroundColor: t.textBrown,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   clientText: { flex: 1, minWidth: 0, marginLeft: t.photoGap, marginRight: 8 },
-  name: { fontFamily: font.appHeading, fontSize: t.nameSize, color: colors.textPrimary },
-  role: { marginTop: t.roleGap, fontFamily: font.appBody, fontSize: t.roleSize, color: colors.textBody },
-  disbCol: { alignItems: 'flex-end' },
+  name: { fontFamily: font.appSemi, fontSize: t.nameSize, color: colors.textPrimary },
+  role: { marginTop: t.roleGap, fontFamily: font.appBody, fontSize: t.roleSize, color: t.textWarm },
+  // design/180 hangs the disbursement from the top of the row, not its centre.
+  disbCol: { alignSelf: 'flex-start', alignItems: 'flex-end' },
   disbLabel: {
     fontFamily: font.appSemi,
     fontSize: t.disbLabelSize,
     letterSpacing: t.disbLabelSpacing,
-    color: colors.textBody,
+    color: t.textWarm,
   },
-  disb: { marginTop: t.disbGap, fontFamily: font.appHeading, fontSize: t.disbSize, color: colors.textPrimary },
+  disb: { marginTop: t.disbGap, fontFamily: font.appSemi, fontSize: t.disbSize, color: t.textBrown },
 
   brief: {
     marginTop: t.briefGap,
     borderRadius: t.briefRadius,
     backgroundColor: t.briefBg,
-    padding: t.briefPad,
+    paddingHorizontal: t.briefPadX,
+    paddingTop: t.briefPadTop,
+    paddingBottom: t.briefPadBottom,
   },
   briefLabel: {
     fontFamily: font.appSemi,
     fontSize: t.briefLabelSize,
     letterSpacing: t.briefLabelSpacing,
-    color: colors.brandDark,
+    color: t.textBrown,
   },
   briefMatter: {
     marginTop: t.briefMatterGap,
-    fontFamily: font.appHeading,
+    fontFamily: font.appSemi,
     fontSize: t.briefMatterSize,
     lineHeight: t.briefMatterLineHeight,
     color: colors.textPrimary,
@@ -469,27 +507,38 @@ const styles = StyleSheet.create({
   stat: {
     flex: 1,
     minWidth: 0,
+    minHeight: t.statHeight,
     borderRadius: t.statRadius,
     backgroundColor: t.statBg,
-    padding: t.statPad,
+    paddingHorizontal: t.statPadX,
+    justifyContent: 'center',
   },
-  statLabel: { fontFamily: font.appBody, fontSize: t.statLabelSize, color: colors.textBody },
+  statLabel: { fontFamily: font.appSemi, fontSize: t.statLabelSize, color: t.textWarm },
   statValueRow: { flexDirection: 'row', alignItems: 'baseline' },
+  statIconRow: { alignItems: 'center' },
   statValue: {
     marginTop: t.statValueGap,
-    fontFamily: font.appHeading,
+    fontFamily: font.appSemi,
     fontSize: t.statValueSize,
     color: colors.textPrimary,
   },
-  statValueInline: { marginLeft: t.statIconGap, flexShrink: 1 },
+  statValueInline: { marginLeft: t.statIconGap, flexShrink: 1, color: t.textBrown },
   statUnit: {
     marginLeft: t.statUnitGap,
     fontFamily: font.appBody,
     fontSize: t.statUnitSize,
-    color: colors.textBody,
+    color: t.textWarm,
   },
 
-  sectionRow: { marginTop: t.sectionGap, flexDirection: 'row', alignItems: 'center' },
+  sectionRow: {
+    marginTop: t.sectionGap,
+    minHeight: t.sectionHeight,
+    paddingLeft: t.sectionPadLeft,
+    paddingRight: t.sectionPadRight,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  sectionCard: { marginTop: t.sectionCardGap },
   section: {
     marginLeft: t.sectionIconGap,
     flex: 1,
@@ -500,7 +549,14 @@ const styles = StyleSheet.create({
     letterSpacing: t.sectionSpacing,
     color: colors.textPrimary,
   },
-  sectionMeta: { fontFamily: font.appBody, fontSize: t.sectionMetaSize, color: colors.textBody },
+  sectionNote: { color: t.textWarm },
+  sectionMeta: {
+    fontFamily: font.appSemi,
+    fontSize: t.sectionMetaSize,
+    letterSpacing: t.sectionMetaSpacing,
+    color: t.textWarm,
+  },
+  sectionMetaBrown: { color: t.textBrown },
   dictate: {
     minHeight: t.dictateHeight,
     borderRadius: t.dictateRadius,
@@ -511,12 +567,19 @@ const styles = StyleSheet.create({
   },
   dictateText: {
     marginLeft: t.dictateIconGap,
-    fontFamily: font.appBody,
+    fontFamily: font.appSemi,
     fontSize: t.dictateSize,
-    color: t.dictateColour,
+    color: t.textBrown,
   },
 
-  tools: { flexDirection: 'row', alignItems: 'center', gap: t.toolGapX },
+  tools: {
+    paddingHorizontal: t.toolsPadX,
+    paddingVertical: t.toolsPadY,
+    backgroundColor: t.toolsBg,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: t.toolGapX,
+  },
   toolBtn: {
     width: t.toolBtn,
     height: t.toolBtn,
@@ -525,6 +588,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  toolBold: { fontFamily: font.appHeading, fontSize: t.toolTextSize, color: colors.textPrimary },
+  toolText: { fontFamily: font.appBody, fontSize: t.toolTextSize, color: colors.textPrimary },
   cite: {
     marginLeft: 'auto',
     minHeight: t.citeHeight,
@@ -535,9 +600,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexShrink: 1,
   },
-  citeText: { fontFamily: font.appBody, fontSize: t.citeSize, color: t.citeColour },
+  citeText: { fontFamily: font.appBody, fontSize: t.citeSize, color: t.textBrown },
 
-  noteBox: { marginTop: t.noteGap, maxHeight: t.noteMaxH },
+  noteBody: { paddingHorizontal: t.notePadX, paddingTop: t.notePadTop, paddingBottom: t.notePadBottom },
+  noteBox: { maxHeight: t.noteMaxH },
   note: {
     fontFamily: font.appBody,
     fontSize: t.noteSize,
@@ -551,8 +617,22 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     gap: 10,
   },
-  noteFootText: { flexShrink: 1, fontFamily: font.appBody, fontSize: t.noteFootSize, color: colors.textBody },
+  noteFootText: {
+    flexShrink: 1,
+    fontFamily: font.appSemi,
+    fontSize: t.noteFootSize,
+    letterSpacing: t.noteFootSpacing,
+    color: t.textBrown,
+  },
+  noteFootCount: {
+    flexShrink: 1,
+    fontFamily: font.appSemi,
+    fontSize: t.noteFootSize,
+    letterSpacing: t.noteFootSpacing,
+    color: t.textWarm,
+  },
 
+  listCard: { paddingHorizontal: t.notePadX, paddingTop: t.listPadTop, paddingBottom: t.listPadBottom },
   bullet: {
     fontFamily: font.appBody,
     fontSize: t.bulletSize,
@@ -567,7 +647,13 @@ const styles = StyleSheet.create({
   },
   stepNext: { marginTop: t.stepGap },
 
-  docCard: { flexDirection: 'row', alignItems: 'center' },
+  docCard: {
+    marginTop: t.docGap,
+    paddingHorizontal: t.docPadX,
+    paddingVertical: t.docPadY,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   docIcon: {
     width: t.docIcon,
     height: t.docIcon,
@@ -577,8 +663,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   docText: { flex: 1, minWidth: 0, marginLeft: t.docIconGap, marginRight: 8 },
-  docName: { fontFamily: font.appHeading, fontSize: t.docNameSize, color: colors.textPrimary },
-  docMeta: { marginTop: t.docMetaGap, fontFamily: font.appBody, fontSize: t.docMetaSize, color: colors.textBody },
+  docName: { fontFamily: font.appSemi, fontSize: t.docNameSize, color: colors.textPrimary },
+  docMeta: {
+    marginTop: t.docMetaGap,
+    fontFamily: font.appBody,
+    fontSize: t.docMetaSize,
+    color: t.textWarm,
+  },
   docEye: {
     width: t.docEye,
     height: t.docEye,
@@ -599,7 +690,7 @@ const styles = StyleSheet.create({
   },
   continueText: {
     marginLeft: t.continueIconGap,
-    fontFamily: font.appHeading,
+    fontFamily: font.appSemi,
     fontSize: t.continueSize,
     color: ink.onBrand,
   },
@@ -613,7 +704,7 @@ const styles = StyleSheet.create({
     marginLeft: t.exportIconGap,
     fontFamily: font.appSemi,
     fontSize: t.exportSize,
-    color: colors.textPrimary,
+    color: t.textWarm,
   },
   pressed: { opacity: 0.85 },
 });
