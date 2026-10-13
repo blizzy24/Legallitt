@@ -27,7 +27,7 @@ import AiFlowerMark from '../../../../components/AiFlowerMark';
 import LegalAiCopilotPanel from '../../../../components/LegalAiCopilotPanel';
 import NoteLinesIcon from '../../../../components/NoteLinesIcon';
 import { DEV_PREVIEW_TOGGLES } from '../../../../constants/dev';
-import { shrinkToFit } from '../../../../constants/textFit';
+import { shrinkToFit, shrinkToOneLine } from '../../../../constants/textFit';
 import { ADV_VIDEO } from '../../../../data/advocateSide';
 import {
   advRequest as h,
@@ -163,8 +163,11 @@ export default function AdvocateVideoScreen() {
                 </Text>
                 <BadgeCheck size={t.nameTick} color={t.nameTickColour} style={styles.nameTick} />
               </View>
-              {/* design/173 clips this line behind the toggle; wrapped here. */}
-              <Text style={styles.company} {...shrinkToFit(0.7)}>
+              {/* design/173 clips this line behind the toggle. Shrunk to one line
+                  instead (native), so the row keeps its drawn height; the full line
+                  needs ~0.69× at 13.5pt. react-native-web ignores
+                  adjustsFontSizeToFit, so on web it wraps to two lines. */}
+              <Text style={styles.company} {...shrinkToOneLine(0.65)}>
                 {v.client.company} • {v.client.location}
               </Text>
             </View>
@@ -424,8 +427,8 @@ const styles = StyleSheet.create({
   cdText: { marginLeft: t.cdIconGap, fontFamily: font.appHeading, fontSize: t.cdSize, color: colors.textPrimary },
   cdSuffix: { marginLeft: t.cdSuffixGap, fontFamily: font.appBody, fontSize: t.cdSuffixSize, color: colors.textBody },
 
-  // Top-aligned: design/173 clips the company line to one; it wraps here, and the
-  // toggle keeps its drawn position rather than re-centring on two lines.
+  // Top-aligned so the toggle keeps its drawn position on web, where the company
+  // line cannot shrink and wraps to two lines.
   idRow: { marginTop: t.idGap, paddingHorizontal: t.padX, flexDirection: 'row', alignItems: 'flex-start' },
   idText: { flex: 1, minWidth: 0, marginRight: t.idTextGap },
   nameRow: { flexDirection: 'row', alignItems: 'center' },
