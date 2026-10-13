@@ -35,8 +35,9 @@ import {
 // ⚠ design/187 draws only the AI variant of the primary button. The label here
 // follows the selection rather than inventing a second drawn state.
 //
-// ⚠ No separate manual builder is designed, so "Create Draft Manually" leads to the
-// same editor — there is nothing else to lead to.
+// "Create Draft Manually" leads to design/266's editor (app/advocate/notice/
+// draft-editor.tsx), which is design/188's editor without the AI panel; "AI
+// Generate Draft" leads to design/188's.
 //
 // The purple is the quarantined Legalitt AI palette (constants/tokens/legalittAi.ts).
 
@@ -172,7 +173,11 @@ export default function AdvocateNoticeDraftingScreen() {
 
         <Pressable
           accessibilityRole="button"
-          onPress={() => router.push(`/advocate/notice/${id}/draft` as Href)}
+          onPress={() =>
+            router.push(
+              (method === 'manual' ? '/advocate/notice/draft-editor' : `/advocate/notice/${id}/draft`) as Href,
+            )
+          }
           style={({ pressed }) => [styles.btn, pressed && styles.pressed]}
         >
           <Text style={styles.btnText} {...shrinkToFit(0.7)}>

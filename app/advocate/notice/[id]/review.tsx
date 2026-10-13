@@ -34,7 +34,8 @@ import { advNoticeReview as t, colors, font, ink } from '../../../../constants/t
 // the last letter of the surname missing. ⚠ design/191's note reads "Client
 // Suggestion recieve here." Both kept as drawn.
 //
-// Every control is inert except the state toggle and navigation.
+// Every control is inert except the state toggle and navigation (including the
+// two outcome rows).
 
 export default function AdvocateNoticeReviewScreen() {
   const insets = useSafeAreaInsets();
@@ -221,16 +222,27 @@ export default function AdvocateNoticeReviewScreen() {
           </View>
 
           {/* design/191 removes this row entirely. */}
+          {/* The two outcome rows lead to what each outcome implies: approval to
+              design/192 (final notice ready), changes to design/267's response
+              editor (Confirm & Upload). */}
           {!changesRequested && (
-            <View style={styles.outcome}>
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => router.push(`/advocate/notice/${id}/final` as Href)}
+              style={styles.outcome}
+            >
               <View style={styles.outcomeRow}>
                 <CircleCheck size={t.outcomeIcon} color="#1E9E4A" />
                 <Text style={styles.outcomeText}>{r.awaiting.approved}</Text>
               </View>
-            </View>
+            </Pressable>
           )}
 
-          <View style={styles.outcome}>
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => router.push('/advocate/notice/response-editor' as Href)}
+            style={styles.outcome}
+          >
             <View style={styles.outcomeRow}>
               <SquarePen size={t.outcomeIcon} color={colors.textPrimary} />
               <Text style={styles.outcomeText}>{r.awaiting.changes}</Text>
@@ -241,7 +253,7 @@ export default function AdvocateNoticeReviewScreen() {
                 <Text style={styles.noteText}>{r.awaiting.note}</Text>
               </View>
             )}
-          </View>
+          </Pressable>
         </View>
 
         {/* Development only — nothing in the prototype can make a client respond. */}
