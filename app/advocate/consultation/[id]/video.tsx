@@ -7,11 +7,10 @@ import {
   Clock,
   FolderClosed,
   Lock,
-  Maximize2,
+  Maximize,
   Mic,
-  Minimize2,
   Paperclip,
-  PhoneOff,
+  Phone,
   ShieldCheck,
   SquarePen,
   SwitchCamera,
@@ -55,7 +54,11 @@ import {
 //
 // Every control is inert except fullscreen, the two panels, the mode toggle and
 // End call. design/173 clips the client's location line and the matter name behind
-// the controls that overlap them; both are laid out to fit here.
+// the controls that overlap them, and design/174 clips the matter name behind the
+// Note chip; all are laid out to fit here.
+//
+// design/174 draws the same corner-bracket glyph on the fullscreen button in both
+// states (no "exit fullscreen" glyph), and a plain handset for End call.
 
 function clock(total: number) {
   const m = Math.floor(total / 60);
@@ -83,7 +86,7 @@ export default function AdvocateVideoScreen() {
   }, [seconds]);
 
   const matterRow = (
-    <View style={styles.matter}>
+    <View style={[styles.matter, immersive && styles.matterFull]}>
       <FolderClosed size={t.matterIcon} color={colors.brandDark} />
       <Text style={styles.matterLabel} {...shrinkToFit(0.75)}>
         {v.matterLabel}
@@ -111,9 +114,9 @@ export default function AdvocateVideoScreen() {
   );
 
   return (
-    <View style={styles.screen}>
-      <View style={[styles.header, { paddingTop: insets.top + h.headerTop }]}>
-        <Text style={styles.headerTitle} numberOfLines={1}>
+    <View style={[styles.screen, immersive && styles.screenFull]}>
+      <View style={[styles.header, { paddingTop: insets.top + t.headerTop }]}>
+        <Text style={styles.headerTitle} {...shrinkToFit(0.8)}>
           Requests
         </Text>
         <Pressable
@@ -210,14 +213,10 @@ export default function AdvocateVideoScreen() {
           }}
           style={styles.fsBtn}
         >
-          {immersive ? (
-            <Minimize2 size={t.fsIcon} color={vkycDark.text} />
-          ) : (
-            <Maximize2 size={t.fsIcon} color={vkycDark.text} />
-          )}
+          <Maximize size={t.fsIcon} color={vkycDark.text} />
         </Pressable>
 
-        <View style={styles.self}>
+        <View style={[styles.self, immersive && styles.selfFull]}>
           {/* Neutral placeholder — the advocate's self-view is not a real feed. */}
           <View style={styles.selfFeed} />
           <View style={styles.flipBadge}>
@@ -230,7 +229,8 @@ export default function AdvocateVideoScreen() {
           </View>
         </View>
 
-        <View style={styles.panelBottom}>
+        {/* design/173 sets the chips side by side; design/174 stacks them. */}
+        <View style={[styles.panelBottom, immersive && styles.panelBottomFull]}>
           <View style={styles.speak}>
             <AudioLines size={t.speakIcon} color={t.speakColour} />
             <Text style={styles.speakText} {...shrinkToFit(0.7)}>
@@ -239,9 +239,7 @@ export default function AdvocateVideoScreen() {
           </View>
           <View style={styles.verify}>
             <ShieldCheck size={t.verifyIcon} color={t.verifyColour} />
-            <Text style={styles.verifyText} {...shrinkToFit(0.7)}>
-              {v.verified}
-            </Text>
+            <Text style={styles.verifyText}>{v.verified}</Text>
           </View>
         </View>
 
@@ -250,7 +248,7 @@ export default function AdvocateVideoScreen() {
           accessibilityLabel="Legal AI copilot"
           accessibilityState={{ expanded: panel === 'ai' }}
           onPress={() => setPanel((p) => (p === 'ai' ? 'none' : 'ai'))}
-          style={styles.aiMark}
+          style={[styles.aiMark, immersive && styles.aiMarkFull]}
         >
           <AiFlowerMark size={t.aiMark} />
         </Pressable>
@@ -279,7 +277,7 @@ export default function AdvocateVideoScreen() {
 
       {/* design/178 covers the control row with the copilot panel. */}
       {panel !== 'ai' && (
-      <View style={[styles.controls, { paddingBottom: insets.bottom + t.controlsPadY }]}>
+      <View style={[styles.controls, { marginBottom: insets.bottom + t.controlsBottom }]}>
         {/* All inert — there is no camera, microphone or audio route to control. */}
         <Pressable accessibilityRole="button" accessibilityLabel="Camera" style={styles.ctrl}>
           <Camera size={t.ctrlIcon} color={t.ctrlIconColour} />
@@ -293,7 +291,9 @@ export default function AdvocateVideoScreen() {
           onPress={() => router.push(`/advocate/consultation/${id}/end` as Href)}
           style={styles.end}
         >
-          <PhoneOff size={t.endIcon} color={ink.onBrand} />
+          <View style={styles.endGlyph}>
+            <Phone size={t.endIcon} color={ink.onBrand} />
+          </View>
         </Pressable>
         <Pressable accessibilityRole="button" accessibilityLabel="Speaker" style={styles.ctrl}>
           <Volume2 size={t.ctrlIcon} color={t.ctrlIconColour} />
@@ -320,10 +320,11 @@ export default function AdvocateVideoScreen() {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: t.bg },
+  screenFull: { backgroundColor: t.fullBg },
   header: {
     paddingHorizontal: t.padX,
-    paddingBottom: h.headerPadBottom,
-    backgroundColor: colors.card,
+    paddingBottom: t.headerPadBottom,
+    backgroundColor: t.bg,
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -332,8 +333,8 @@ const styles = StyleSheet.create({
     minWidth: 0,
     marginRight: 10,
     textAlign: 'center',
-    fontFamily: font.appHeading,
-    fontSize: h.titleSize,
+    fontFamily: font.appSemi,
+    fontSize: t.headerTitleSize,
     color: colors.textPrimary,
   },
   bellWrap: {},
@@ -347,7 +348,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#D64545',
   },
   avatar: {
-    marginLeft: h.avatarGap,
+    marginLeft: t.avatarGap,
     width: h.avatar,
     height: h.avatar,
     borderRadius: h.avatar / 2,
@@ -357,6 +358,7 @@ const styles = StyleSheet.create({
   },
 
   status: {
+    backgroundColor: t.bg,
     paddingHorizontal: t.padX,
     paddingTop: t.statusTop,
     paddingBottom: t.statusBottom,
@@ -377,7 +379,7 @@ const styles = StyleSheet.create({
     height: t.encDot,
     borderRadius: t.encDot / 2,
     marginRight: t.encDotGap,
-    backgroundColor: '#1E9E4A',
+    backgroundColor: t.encDotColour,
   },
   encText: {
     marginLeft: t.encIconGap,
@@ -456,7 +458,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
     fontFamily: font.appBody,
     fontSize: t.matterSize,
-    color: colors.textPrimary,
+    color: t.matterColour,
   },
   noteChip: {
     minHeight: t.noteHeight,
@@ -476,6 +478,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  matterFull: { marginHorizontal: 0, marginTop: 0, paddingHorizontal: t.matterFullPadX },
   attachText: { marginLeft: t.attachIconGap, fontFamily: font.appBody, fontSize: t.attachSize, color: colors.textPrimary },
 
   panel: {
@@ -492,7 +495,7 @@ const styles = StyleSheet.create({
   conn: {
     position: 'absolute',
     left: t.connInset,
-    top: t.connInset,
+    top: t.connTop,
     minHeight: t.connHeight,
     borderRadius: t.connRadius,
     paddingHorizontal: t.connPadX,
@@ -503,8 +506,8 @@ const styles = StyleSheet.create({
   connText: { marginLeft: t.connIconGap, fontFamily: font.appSemi, fontSize: t.connSize, color: vkycDark.text },
   fsBtn: {
     position: 'absolute',
-    right: t.connInset,
-    top: t.connInset,
+    right: t.fsInset,
+    top: t.connTop + t.connHeight / 2 - t.fsBtn / 2,
     width: t.fsBtn,
     height: t.fsBtn,
     alignItems: 'center',
@@ -513,7 +516,7 @@ const styles = StyleSheet.create({
   self: {
     position: 'absolute',
     right: t.selfInset,
-    top: t.selfInset + t.connHeight + 8,
+    top: t.selfTop,
     width: t.self,
     height: t.selfH,
     borderRadius: t.selfRadius,
@@ -522,11 +525,12 @@ const styles = StyleSheet.create({
     backgroundColor: vkycDark.feed,
     overflow: 'hidden',
   },
+  selfFull: { top: t.selfTopFull },
   selfFeed: { flex: 1, backgroundColor: vkycDark.feed },
   flipBadge: {
     position: 'absolute',
-    right: 6,
-    top: 6,
+    right: t.flipInsetRight,
+    top: t.flipInsetTop,
     width: t.flipBadge,
     height: t.flipBadge,
     borderRadius: t.flipBadge / 2,
@@ -536,8 +540,8 @@ const styles = StyleSheet.create({
   },
   selfLabel: {
     position: 'absolute',
-    left: 6,
-    bottom: 6,
+    left: t.selfLabelInset,
+    bottom: t.selfLabelBottom,
     minHeight: t.selfLabelHeight,
     borderRadius: t.selfLabelRadius,
     paddingHorizontal: t.selfLabelPadX,
@@ -549,12 +553,19 @@ const styles = StyleSheet.create({
 
   panelBottom: {
     position: 'absolute',
-    left: t.connInset,
-    right: t.connInset,
-    bottom: t.connInset,
+    left: t.chipInset,
+    right: t.chipInset,
+    bottom: t.chipBottom,
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     gap: t.chipRowGap,
+  },
+  panelBottomFull: {
+    bottom: t.chipBottomFull,
+    flexDirection: 'column-reverse',
+    alignItems: 'flex-start',
+    gap: t.chipStackGap,
   },
   speak: {
     minHeight: t.speakHeight,
@@ -567,9 +578,11 @@ const styles = StyleSheet.create({
   },
   speakText: { marginLeft: t.speakIconGap, flexShrink: 1, fontFamily: font.appBody, fontSize: t.speakSize, color: vkycDark.text },
   verify: {
+    width: t.verifyWidth,
     minHeight: t.verifyHeight,
     borderRadius: t.verifyRadius,
     paddingHorizontal: t.verifyPadX,
+    paddingVertical: t.verifyPadY,
     backgroundColor: t.overlayBg,
     flexDirection: 'row',
     alignItems: 'center',
@@ -577,16 +590,19 @@ const styles = StyleSheet.create({
   },
   verifyText: {
     marginLeft: t.verifyIconGap,
+    maxWidth: t.verifyTextWidth,
     flexShrink: 1,
     fontFamily: font.appBody,
     fontSize: t.verifySize,
+    lineHeight: t.verifyLineHeight,
     color: t.verifyColour,
   },
   aiMark: {
     position: 'absolute',
     right: t.aiMarkInset,
-    bottom: t.connInset + t.speakHeight + 12,
+    bottom: t.chipBottom + t.speakHeight + 12,
   },
+  aiMarkFull: { bottom: t.aiMarkBottom },
 
   notesPanel: {
     marginHorizontal: t.padX,
@@ -631,8 +647,8 @@ const styles = StyleSheet.create({
     borderTopRightRadius: t.controlsRadius,
     borderBottomLeftRadius: t.controlsRadius,
     borderBottomRightRadius: t.controlsRadius,
-    paddingTop: t.controlsPadY,
-    paddingHorizontal: 14,
+    paddingVertical: t.controlsPadY,
+    paddingHorizontal: t.controlsPadX,
     backgroundColor: t.controlsBg,
     flexDirection: 'row',
     alignItems: 'center',
@@ -646,6 +662,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  endGlyph: { transform: [{ rotate: '135deg' }] },
   end: {
     width: t.endBtn,
     height: t.endBtn,
