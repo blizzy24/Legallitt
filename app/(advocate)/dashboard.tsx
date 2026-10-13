@@ -16,6 +16,7 @@ import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import DevPreviewLinks from '../../components/DevPreviewLinks';
 import { shrinkToFit } from '../../constants/textFit';
 import {
   ADVOCATE_SELF,
@@ -24,6 +25,7 @@ import {
   ADV_TODAY,
   type AvailabilityMode,
 } from '../../data/advocateSide';
+import { ADVOCATE_DEV_PREVIEWS } from '../../data/devPreviews';
 import { advDashboard as t, colors, font, ink } from '../../constants/theme';
 
 // Advocate dashboard (design/148).
@@ -299,6 +301,7 @@ export default function AdvocateDashboardScreen() {
             </View>
           ),
         )}
+        <DevPreviewLinks groups={ADVOCATE_DEV_PREVIEWS} />
       </ScrollView>
     </View>
   );

@@ -3,11 +3,13 @@ import { Bell, Search } from 'lucide-react-native';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import DevPreviewLinks from '../../components/DevPreviewLinks';
 import ServiceCard from '../../components/ServiceCard';
 import VideoCarousel from '../../components/VideoCarousel';
 import { serviceIcon } from '../../components/serviceIcons';
 import { colors, font, home, ink, space, tabs } from '../../constants/theme';
 import { useSession } from '../../context/session';
+import { CLIENT_DEV_PREVIEWS } from '../../data/devPreviews';
 import { SERVICE_ROUTES } from '../../data/serviceRoutes';
 import { homeServices, popularServices, type ResolvedService } from '../../data/services';
 
@@ -94,6 +96,7 @@ export default function HomeScreen() {
             ))}
           </View>
         </View>
+        <DevPreviewLinks groups={CLIENT_DEV_PREVIEWS} />
       </ScrollView>
     </View>
   );
