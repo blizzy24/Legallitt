@@ -474,3 +474,121 @@ export const courierSuccess = {
   btnGap: 7,
   bottomPad: 40,
 };
+
+/**
+ * The delivery tracker designs 280, 281 and 287 draw. Measured off design/280
+ * at 2.0000 px/pt and checked against the other two.
+ * See components/CourierTimeline.tsx.
+ */
+export const courierTimeline = {
+  marker: 23,
+  markerTodo: 20,
+  markerGlyph: 13,
+  done: '#22B573',
+  // The active marker is a tan disc with a dark brown centre, not a ring.
+  active: '#F6DCBD',
+  activeInner: 9,
+  activeDot: '#6C5C45',
+  todo: '#F0EDED',
+  todoInner: 8,
+  todoDot: '#D0C5B9',
+  // The connector takes the colour of the step ABOVE it: green under a done
+  // step, grey everywhere else.
+  line: '#E6E1DD',
+  lineDone: '#9BE0C0',
+  lineW: 2,
+  gap: 13,
+  rowGap: 37,
+  rowGapSub: 20,
+  titleSize: 13,
+  titleActive: '#6C5C45',
+  titleTodo: '#7A746E',
+  subTop: 3.5,
+  subSize: 10.5,
+};
+
+/** design/280 — shipment created. Measured at 2.0000 px/pt from the cropped 780×2624 export. */
+export const courierShipment = {
+  padX: 20,
+  bg: '#FCF9F8',
+  ink: '#1B1C1C',
+  inkMuted: '#4D463D',
+  brand: '#6C5C45',
+  cardBg: '#FFFFFF',
+  cardRadius: 14,
+  boxBg: '#F6F3F2',
+
+  heroTop: 25.5,
+  heroCircle: 40,
+  heroGlyph: 21,
+  heroRing: '#D3F0E3',
+  heroTitleTop: 17,
+  heroTitleSize: 20,
+  heroSubTop: 9,
+  heroSubSize: 12.5,
+  pillTop: 12,
+  pillH: 24,
+  pillRadius: 12,
+  pillPadX: 11,
+  pillDot: 7,
+  pillGap: 6,
+  pillSize: 10.5,
+  pillBg: '#F0EDED',
+
+  cardTop: 22.5,
+  cardGap: 15,
+  cardPadX: 16,
+  cardPadTop: 15,
+  cardPadBottom: 22.5,
+  headGlyph: 15,
+  headGap: 7,
+  headSize: 15,
+  rowTop: 28,
+  rowGap: 20.5,
+  rowLabelSize: 12,
+  rowValueSize: 12,
+  copyChipH: 24,
+  copyChipRadius: 8,
+  copyChipPadX: 8,
+  copyGlyph: 13,
+  copyGap: 6,
+  addrLabelTop: 21,
+  sendNameTop: 11,
+  addrValueTop: 7,
+
+  docPadY: 14.5,
+  docTileH: 44,
+  docTileRadius: 10,
+  docGlyph: 17,
+  docGap: 10,
+  docTitleSize: 12.5,
+  docSubTop: 3,
+  docSubSize: 10.5,
+
+  statusTop: 19,
+  importantBg: '#FAEDE0',
+  importantPadX: 14,
+  importantPadY: 14,
+  importantCircle: 30,
+  importantGlyph: 16,
+  importantCircleBg: '#F6DCBD',
+  importantGap: 10,
+  importantTitleSize: 13,
+  importantBodyTop: 2,
+  importantBodySize: 11,
+  importantBodyLine: 16.5,
+  // ⚠ the export wraps this body into a ~62pt column — five words over five
+  // lines — inside a full-width card. Reproduced; see the screen's comment.
+  importantBodyW: 62,
+
+  barPadTop: 14,
+  barPadBottom: 24,
+  barGap: 8,
+  btnH: 52,
+  btnRadius: 12,
+  btnSize: 15,
+  btnGlyph: 17,
+  btnGap: 9,
+  btnAltBg: '#F0EDED',
+  bottomPad: 30,
+};

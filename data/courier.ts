@@ -61,6 +61,8 @@
 // 15. design/279 has no courier content of any kind — no waybill, no address,
 //     no document count. Nothing on it can be reached from the courier flow
 //     except the "Start Tracking" button.
+// 19. design/280 wraps the body of its "Important" banner into a ~62pt column
+//     — five words over five lines — inside a full-width card. Reproduced.
 // 18. design/277's reference reads #LGT-849204 — the LEGAL NOTICE prefix — on a
 //     courier payment for matter #HCR-2026-1048, and its trailing "·" has
 //     nothing after it. design/86 carried the same wrong reference.
@@ -290,4 +292,45 @@ export const CO_SUCCESS = {
   // ⚠ DOCUMENT FORENSIC copy on a courier booking.
   successBody2: 'Your forensic analysis request has been submitted.',
   cta: 'Start Tracking',
+};
+
+/** design/280 — shipment created. */
+export const CO_SHIPMENT = {
+  title: 'Shipment Created',
+  heroTitle: 'Delivery Booked',
+  heroSub: 'Your documents are ready for pickup.',
+  pill: 'Booking Confirmed \u2022 Pickup Scheduled',
+
+  detailsTitle: 'Delivery Details',
+  courierLabel: 'Courier',
+  // ⚠ Note 5: Blue Dart here, DHL Express on design/281.
+  courierValue: 'Blue Dart',
+  waybillLabel: 'Waybill',
+  waybillValue: 'BD-4471-8820',
+  pickupDateLabel: 'Pickup Date',
+  pickupDateValue: '24 Oct 2026',
+  pickupAddrLabel: 'Pickup Address',
+  pickupAddrValue: '12B Anand Nagar, Opp. Treasure Island',
+
+  sendTitle: 'Send To',
+
+  docsTitle: '3 Documents',
+  docsSub: 'Packed for courier handover',
+
+  statusTitle: 'Delivery Status',
+  steps: [
+    { title: 'Booking Created', tone: 'done' as const },
+    { title: 'Pickup Pending', tone: 'active' as const },
+    { title: 'In Transit', tone: 'todo' as const },
+    { title: 'Delivered', tone: 'todo' as const },
+    { title: 'Received by Advocate', tone: 'todo' as const },
+  ],
+
+  importantTitle: 'Important',
+  // ⚠ Note 19: the export wraps this into a ~62pt column — five words over
+  // five lines — inside a full-width card. See app/courier/shipment.tsx.
+  importantBody: 'Keep the documents packed and ready for pickup.',
+
+  cta: 'View Tracking',
+  ctaAlt: 'View Case',
 };
