@@ -160,7 +160,7 @@ export default function AdvocateVideoScreen() {
                 <Text style={styles.name} {...shrinkToFit(0.7)}>
                   {v.client.name}
                 </Text>
-                <BadgeCheck size={t.nameTick} color={colors.brandDark} style={styles.nameTick} />
+                <BadgeCheck size={t.nameTick} color={t.nameTickColour} style={styles.nameTick} />
               </View>
               {/* design/173 clips this line behind the toggle; wrapped here. */}
               <Text style={styles.company} {...shrinkToFit(0.7)}>
@@ -177,11 +177,11 @@ export default function AdvocateVideoScreen() {
                   style={[styles.toggleItem, mode === m && styles.toggleItemOn]}
                 >
                   {m === 'Video' ? (
-                    <VideoIcon size={t.toggleIcon} color={colors.textPrimary} />
+                    <VideoIcon size={t.toggleIcon} color={mode === m ? t.toggleOnIcon : t.toggleOffColour} />
                   ) : (
-                    <Mic size={t.toggleIcon} color={colors.textPrimary} />
+                    <Mic size={t.toggleIcon} color={mode === m ? t.toggleOnIcon : t.toggleOffColour} />
                   )}
-                  <Text style={styles.toggleText} {...shrinkToFit(0.8)}>
+                  <Text style={[styles.toggleText, mode !== m && styles.toggleTextOff]} {...shrinkToFit(0.8)}>
                     {m}
                   </Text>
                 </Pressable>
@@ -260,6 +260,9 @@ export default function AdvocateVideoScreen() {
       </View>
 
       {fullscreen && panel === 'none' && matterRow}
+
+      {/* design/173 leaves the space between the fixed panel and the controls empty. */}
+      {!immersive && <View style={styles.spacer} />}
 
       {panel === 'notes' && (
         <View style={styles.notesSheet}>
@@ -412,13 +415,16 @@ const styles = StyleSheet.create({
   cdText: { marginLeft: t.cdIconGap, fontFamily: font.appHeading, fontSize: t.cdSize, color: colors.textPrimary },
   cdSuffix: { marginLeft: t.cdSuffixGap, fontFamily: font.appBody, fontSize: t.cdSuffixSize, color: colors.textBody },
 
-  idRow: { paddingHorizontal: t.padX, flexDirection: 'row', alignItems: 'center' },
-  idText: { flex: 1, minWidth: 0, marginRight: 10 },
+  // Top-aligned: design/173 clips the company line to one; it wraps here, and the
+  // toggle keeps its drawn position rather than re-centring on two lines.
+  idRow: { marginTop: t.idGap, paddingHorizontal: t.padX, flexDirection: 'row', alignItems: 'flex-start' },
+  idText: { flex: 1, minWidth: 0, marginRight: t.idTextGap },
   nameRow: { flexDirection: 'row', alignItems: 'center' },
   name: { flexShrink: 1, fontFamily: font.appHeading, fontSize: t.nameSize, color: colors.textPrimary },
   nameTick: { marginLeft: t.nameTickGap },
-  company: { marginTop: t.compGap, fontFamily: font.appBody, fontSize: t.compSize, color: colors.textBody },
+  company: { marginTop: t.compGap, fontFamily: font.appBody, fontSize: t.compSize, color: t.matterColour },
   toggle: {
+    marginTop: t.toggleTop,
     minHeight: t.toggleHeight,
     borderRadius: t.toggleRadius,
     padding: t.togglePad,
@@ -434,6 +440,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   toggleItemOn: { backgroundColor: t.toggleOnBg },
+  toggleTextOff: { color: t.toggleOffColour },
   toggleText: {
     marginLeft: t.toggleIconGap,
     fontFamily: font.appSemi,
@@ -493,15 +500,15 @@ const styles = StyleSheet.create({
   attachText: { marginLeft: t.attachIconGap, fontFamily: font.appBody, fontSize: t.attachSize, color: colors.textPrimary },
 
   panel: {
-    flex: 1,
+    height: t.panelHeight,
     marginHorizontal: t.padX,
     marginTop: t.panelGap,
-    minHeight: t.panelMinHeight,
     borderRadius: t.panelRadius,
     backgroundColor: vkycDark.bg,
     overflow: 'hidden',
   },
-  panelFull: { marginHorizontal: 0, marginTop: 0, borderRadius: 0 },
+  panelFull: { flex: 1, height: undefined, marginHorizontal: 0, marginTop: 0, borderRadius: 0 },
+  spacer: { flex: 1 },
   feed: { flex: 1, backgroundColor: vkycDark.feed },
   conn: {
     position: 'absolute',
