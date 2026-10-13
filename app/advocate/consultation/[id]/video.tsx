@@ -25,6 +25,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import AiFlowerMark from '../../../../components/AiFlowerMark';
 import LegalAiCopilotPanel from '../../../../components/LegalAiCopilotPanel';
+import NoteLinesIcon from '../../../../components/NoteLinesIcon';
 import { DEV_PREVIEW_TOGGLES } from '../../../../constants/dev';
 import { shrinkToFit } from '../../../../constants/textFit';
 import { ADV_VIDEO } from '../../../../data/advocateSide';
@@ -101,7 +102,7 @@ export default function AdvocateVideoScreen() {
         onPress={() => setPanel((p) => (p === 'notes' ? 'none' : 'notes'))}
         style={styles.noteChip}
       >
-        <SquarePen size={t.noteIcon} color={colors.brandDark} />
+        <NoteLinesIcon size={t.noteIcon} color={colors.brandDark} />
         <Text style={styles.noteChipText} {...shrinkToFit(0.8)}>
           {v.noteChip}
         </Text>
@@ -268,14 +269,19 @@ export default function AdvocateVideoScreen() {
         <View style={styles.notesSheet}>
           {matterRow}
           <View style={styles.notesPanel}>
-            <ScrollView style={styles.notesList} nestedScrollEnabled>
-              {/* design/177 also draws a scroll track beside the note; the platform's
-                  own indicator stands in for it. */}
-              <View style={styles.notesBox}>
-                <Text style={styles.notesBullet}>•</Text>
-                <Text style={styles.notesText}>{v.note}</Text>
+            <View style={styles.notesBox}>
+              <ScrollView style={styles.notesList} nestedScrollEnabled showsVerticalScrollIndicator={false}>
+                <View style={styles.notesRow}>
+                  <Text style={styles.notesBullet}>•</Text>
+                  <Text style={styles.notesText}>{v.note}</Text>
+                </View>
+              </ScrollView>
+              {/* design/177's drawn scroll track. Static: the thumb sits at the top as
+                  drawn, and the note fits without scrolling. */}
+              <View style={styles.notesTrack} pointerEvents="none">
+                <View style={styles.notesThumb} />
               </View>
-            </ScrollView>
+            </View>
             {/* Inert — Edit has no designed destination. */}
             <Pressable accessibilityRole="button" style={styles.notesEdit}>
               <SquarePen size={t.notesEditIcon} color={colors.textPrimary} />
@@ -642,7 +648,25 @@ const styles = StyleSheet.create({
     paddingLeft: t.notesBoxPadLeft,
     paddingRight: t.notesBoxPadRight,
     paddingVertical: t.notesBoxPadY,
-    flexDirection: 'row',
+  },
+  notesRow: { flexDirection: 'row' },
+  notesTrack: {
+    position: 'absolute',
+    right: t.notesTrackRight,
+    top: t.notesTrackTop,
+    bottom: t.notesTrackBottom,
+    width: t.notesTrackWidth,
+    borderRadius: t.notesTrackWidth / 2,
+    borderWidth: t.notesTrackBorder,
+    borderColor: t.notesTrackBorderColour,
+    backgroundColor: t.notesTrackBg,
+  },
+  notesThumb: {
+    marginTop: t.notesThumbInset,
+    marginHorizontal: t.notesThumbInset - t.notesTrackBorder,
+    height: t.notesThumbHeight,
+    borderRadius: (t.notesTrackWidth - t.notesThumbInset * 2) / 2,
+    backgroundColor: t.notesThumbBg,
   },
   notesBullet: {
     width: t.notesBulletWidth,

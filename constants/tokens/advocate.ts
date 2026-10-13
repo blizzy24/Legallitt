@@ -2114,7 +2114,7 @@ export const advVideo = {
   noteHeight: 22,
   noteRadius: 11,
   notePadX: 9,
-  noteIcon: 14,
+  noteIcon: 12,
   noteIconGap: 3.5,
   noteSize: 10.5,
   noteBg: '#FFFFFF',
@@ -2233,6 +2233,17 @@ export const advVideo = {
   notesEditIconGap: 4,
   notesEditSize: 11,
   notesEditBg: '#F6F3F2',
+  /** design/177's scroll track beside the note: a pill with a brown thumb at the top. */
+  notesTrackWidth: 12,
+  notesTrackRight: 8.5,
+  notesTrackTop: 5.5,
+  notesTrackBottom: 4.5,
+  notesTrackBorder: 0.75,
+  notesTrackBorderColour: '#D3D3D3',
+  notesTrackBg: '#FAF8F5',
+  notesThumbInset: 2,
+  notesThumbHeight: 23,
+  notesThumbBg: '#7A6345',
 };
 
 /** design/175 — consultation paused. Measured at 2.000 px/pt from a 780×2104 export. */
@@ -2614,8 +2625,11 @@ export const advDocket = {
   continueIconGap: 9,
   continueSize: 16.5,
   exportGap: 16,
-  exportIcon: 15,
-  exportIconGap: 8,
+  exportIcon: 14,
+  exportIconGap: 6.5,
+  /** The small dot design/180 draws after "Export Client PDF". */
+  exportDot: 2,
+  exportDotGap: 17.5,
   exportSize: 13,
 };
 

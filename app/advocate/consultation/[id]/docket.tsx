@@ -5,7 +5,6 @@ import {
   CheckCircle2,
   ChevronLeft,
   ClipboardCheck,
-  Copy,
   Eye,
   FileText,
   Gavel,
@@ -18,6 +17,7 @@ import {
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import PdfStackIcon from '../../../../components/PdfStackIcon';
 import { shrinkToFit } from '../../../../constants/textFit';
 import { ADV_DOCKET } from '../../../../data/advocateSide';
 import { advDocket as t, advRequest as h, colors, font, ink } from '../../../../constants/theme';
@@ -26,9 +26,8 @@ import { advDocket as t, advRequest as h, colors, font, ink } from '../../../../
 //
 // Measured from a 780px PNG at 2.000 px/pt (it replaced a 333×1024 JPEG).
 //
-// design/180 draws a photograph for the client and a PDF glyph on Export Client
-// PDF; the photo is a neutral placeholder at the drawn size and the export keeps
-// the nearest stock glyph.
+// design/180 draws a photograph for the client; the photo is a neutral
+// placeholder at the drawn size.
 //
 // ⚠ Its "DISBURSEMENT ₹26,000" is a bare figure with no fee behind it, and agrees
 // with neither design/164's ₹25,650 nor design/181's ₹28,800. Stored as drawn, NOT
@@ -287,10 +286,13 @@ export default function AdvocateDocketScreen() {
 
         {/* Inert — no export flow is designed. */}
         <Pressable accessibilityRole="button" style={styles.export}>
-          <Copy size={t.exportIcon} color={t.textWarm} />
+          <PdfStackIcon size={t.exportIcon} color={t.textWarm} />
           <Text style={styles.exportText} {...shrinkToFit(0.8)}>
             {d.exportPdf}
           </Text>
+          {/* Decorative — design/180 draws this dot after the label; its meaning is
+              not specified. */}
+          <View style={styles.exportDot} />
         </Pressable>
       </ScrollView>
     </View>
@@ -705,6 +707,13 @@ const styles = StyleSheet.create({
     fontFamily: font.appSemi,
     fontSize: t.exportSize,
     color: t.textWarm,
+  },
+  exportDot: {
+    marginLeft: t.exportDotGap,
+    width: t.exportDot,
+    height: t.exportDot,
+    borderRadius: t.exportDot / 2,
+    backgroundColor: t.crumbDotBg,
   },
   pressed: { opacity: 0.85 },
 });
