@@ -61,6 +61,8 @@
 // 15. design/279 has no courier content of any kind — no waybill, no address,
 //     no document count. Nothing on it can be reached from the courier flow
 //     except the "Start Tracking" button.
+// 20. design/281 hard-wraps its banner body into four ragged lines, one of
+//     which is the single word "once". Reproduced with explicit breaks.
 // 19. design/280 wraps the body of its "Important" banner into a ~62pt column
 //     — five words over five lines — inside a full-width card. Reproduced.
 // 18. design/277's reference reads #LGT-849204 — the LEGAL NOTICE prefix — on a
@@ -333,4 +335,59 @@ export const CO_SHIPMENT = {
 
   cta: 'View Tracking',
   ctaAlt: 'View Case',
+};
+
+/**
+ * design/281 — document delivery tracking.
+ *
+ * ⚠ Note 5: this screen alone says DHL Express with a DHL waybill; designs 276
+ * and 280 both say Blue Dart for the same shipment.
+ * ⚠ Note 6: it addresses a seventh advocate, at an address in no Indian
+ * format. Every other screen in this batch sends to Adv. Gurneeet Chawla in
+ * Indore. Both are kept exactly as drawn.
+ * ⚠ Note 7: "3 Physical Documents" here, 5 on designs 275/284, 4 on 282.
+ */
+export const CO_TRACKING = {
+  title: 'Document Delivery',
+
+  courierLabel: 'COURIER SERVICE',
+  courierName: 'DHL Express',
+  statusPill: 'Picked Up',
+  waybillLabel: 'Waybill Number',
+  waybillValue: 'DHL-8942-0194',
+
+  sendLabel: 'SEND TO',
+  // ⚠ Note 6: a seventh advocate name and a non-Indian address.
+  receiver: 'Advocate Sarah Jenkins',
+  receiverLines: ['High Court Chambers, 4th Floor', "24 St. George's Avenue, District 3"],
+
+  docsTitle: 'Documents',
+  // ⚠ Note 7.
+  docsSub: '3 Physical Documents',
+  docsLink: 'View',
+
+  progressTitle: 'Delivery Progress',
+  steps: [
+    { title: 'Booking Created', sub: 'Oct 24, 09:15 AM', tone: 'done' as const },
+    { title: 'Pickup Booked', sub: 'Oct 24, 11:30 AM', tone: 'done' as const },
+    { title: 'Picked Up', sub: 'Oct 24, 02:45 PM', tone: 'active' as const },
+    { title: 'In Transit', sub: 'Expected Oct 25', tone: 'todo' as const },
+    { title: 'Out for Delivery', sub: 'Pending arrival', tone: 'todo' as const },
+    { title: 'Delivered', sub: 'Delivery agent drop-off', tone: 'todo' as const },
+    { title: 'Advocate Received', sub: 'Final formal receipt', tone: 'todo' as const },
+  ],
+
+  updateLabel: 'LATEST UPDATE',
+  updateTime: 'Today \u2022 02:45 PM',
+  updateTitle: 'Package collected by courier',
+  updateBody: 'Shipment processed at local intake facility. En route to sorting hub.',
+
+  bannerTitle: 'Delivery and advocate receipt are different steps.',
+  // ⚠ Note 20: the export hard-wraps this into four ragged lines, one of which
+  // is the single word "once". Reproduced with explicit breaks.
+  bannerBody:
+    'The advocate will confirm in the system\nonce\nphysical documents are in hand and\nreviewed.',
+
+  cta: 'Refresh Status',
+  foot: 'Estimated advocate receipt: Oct 25, 05:00 PM',
 };
