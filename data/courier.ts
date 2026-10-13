@@ -61,6 +61,10 @@
 // 15. design/279 has no courier content of any kind — no waybill, no address,
 //     no document count. Nothing on it can be reached from the courier flow
 //     except the "Start Tracking" button.
+// 21. designs 280, 281 and 285 hard-wrap body copy into ragged short lines —
+//     design/280's "Important" into a 62pt column, design/281's banner into
+//     four lines one of which is the word "once", design/285's instructions and
+//     "You Can Use Any Courier" card into four and three. All reproduced.
 // 20. design/281 hard-wraps its banner body into four ragged lines, one of
 //     which is the single word "once". Reproduced with explicit breaks.
 // 19. design/280 wraps the body of its "Important" banner into a ~62pt column
@@ -480,4 +484,75 @@ export const CO_RECEIVED = {
 
   cta: 'Open Case',
   ctaAlt: 'Chat with Client',
+};
+
+/** design/285 — send by yourself: instructions. */
+export const CO_SELF_INSTRUCTIONS = {
+  title: 'Send Documents Yourself',
+  sub: 'Send the physical documents directly to your advocate.',
+
+  noticeTitle: 'Physical Delivery Instructions',
+  // ⚠ Note 21: hard-wrapped in the export into four ragged lines.
+  noticeBody:
+    'Prepare and pack your documents\nsafely. Use any\ncourier service to send them to\nyour advocate.',
+
+  sendTitle: 'Send To',
+  sendTag: 'ADVOCATE OFFICE',
+  fields: [
+    { label: 'Advocate Name', value: ADVOCATE.name },
+    { label: 'Office Name', value: 'High Court Bar Chambers' },
+    { label: 'Office Address', value: 'Chamber No. 14, High Court Bar Building' },
+    { label: 'Area / Locality', value: ADVOCATE.area },
+    { label: 'City', value: ADVOCATE.city },
+    { label: 'State', value: ADVOCATE.state },
+    { label: 'PIN Code', value: ADVOCATE.pin },
+    { label: 'Mobile Number', value: ADVOCATE.mobile },
+    { label: 'Email', value: ADVOCATE.email },
+  ],
+  copy: 'Copy',
+  copyAll: 'Copy All Details',
+  copyNote: 'Copy all advocate delivery details at once.',
+
+  docsTitle: 'Documents to Send',
+  docsCount: '3 Documents',
+  docs: ['Case Papers.pdf', 'Court Order.pdf', 'ID Proof.pdf'],
+  viewDocs: 'View Documents',
+
+  howTitle: 'How to Send',
+  steps: [
+    {
+      title: 'Pack the documents safely.',
+      sub: 'Use a secure water-resistant folder or sealed package.',
+    },
+    {
+      title: "Give the advocate's details to the courier.",
+      sub: 'Ensure all contact details and address lines are provided.',
+    },
+    {
+      title: 'Send the documents and keep the receipt.',
+      sub: 'Retain the physical receipt and consignment number for your records.',
+    },
+  ],
+
+  anyTitle: 'You Can Use Any Courier',
+  // ⚠ Note 21 again, twice on the same card.
+  anyBody: 'You can use any courier or\ndelivery\nservice.',
+  anySub: 'Use the address and contact\ndetails shown\nabove.',
+
+  impTitle: 'Important',
+  impItems: [
+    'Send the documents only after checking the address.',
+    'Keep the courier receipt with you.',
+  ],
+
+  askTitle: 'Have you sent the documents?',
+  askCheck: 'I have sent the physical documents to my advocate.',
+
+  sentRows: [
+    { label: 'Sent By', value: 'Client' },
+    { label: 'Sent Date', value: '24 Oct 2026' },
+    { label: 'Sent Time', value: '03:10 PM' },
+  ],
+
+  cta: 'Continue',
 };

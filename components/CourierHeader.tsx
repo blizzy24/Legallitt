@@ -30,7 +30,7 @@ export default function CourierHeader({
 }) {
   const insets = useSafeAreaInsets();
   return (
-    <View style={[styles.bar, { paddingTop: insets.top + h.padTop }]}>
+    <View style={[styles.bar, { paddingTop: insets.top + (sub ? h.padTopTall : h.padTop) }]}>
       <View style={styles.row}>
         <Pressable
           accessibilityRole="button"
