@@ -257,3 +257,14 @@ export const CO_PAYMENT = {
   barLabel: 'Amount to pay',
   pay: 'Pay',
 };
+
+/** design/278 — Scan & Pay. */
+export const CO_SCAN_PAY = {
+  // ⚠ Note 3: the QR is labelled "Legal Notice" on a High Court Representation
+  // matter. Drawn that way.
+  service: 'Legal Notice',
+  // ⚠ Note 2: ₹290 is ₹250 + ₹40 of "GST 18%", which should be ₹45 for ₹295.
+  amount: 290,
+  // ⚠ Static string, no timer. See app/courier/scan-pay.tsx.
+  valid: '10:00',
+};
