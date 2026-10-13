@@ -391,3 +391,54 @@ export const CO_TRACKING = {
   cta: 'Refresh Status',
   foot: 'Estimated advocate receipt: Oct 25, 05:00 PM',
 };
+
+/**
+ * design/282 — the ADVOCATE confirming receipt.
+ *
+ * This screen is advocate-side, not client-side: it asks "Did You Receive the
+ * Documents?", its checkbox reads "I have received the physical documents",
+ * and its action is "Confirm Received". A client cannot confirm their own
+ * delivery. See app/advocate/courier/confirm.tsx.
+ */
+export const CO_CONFIRM = {
+  title: 'Confirm Documents',
+  deliveredPill: 'DELIVERED',
+  verified: 'Courier Verified',
+  deliveredBody: 'The courier shows that the documents were delivered.',
+
+  caseTitle: 'Case Reference',
+  caseSub: 'Physical dossier handling',
+  caseRows: [
+    { label: 'Client', value: 'Rahul Sharma' },
+    { label: 'Case', value: 'Rahul Sharma vs Amit Verma' },
+    { label: 'Case ID', value: 'HCR-2026-1048', mono: true },
+  ],
+
+  docsTitle: 'Documents',
+  // ⚠ Note 7: 4 here, 5 on designs 275/284, 3 on design/281.
+  docsCount: '4 Documents',
+  docs: [
+    { name: 'Case Papers.pdf', sub: 'Original Hardcopy 1' },
+    { name: 'Court Order.pdf', sub: 'Original Hardcopy 2' },
+    { name: 'ID Proof.pdf', sub: 'Original Hardcopy 3' },
+    { name: 'Affidavit.pdf', sub: 'Original Hardcopy 4' },
+  ],
+
+  deliveryTitle: 'Delivery Details',
+  deliverySub: 'Handover telemetry',
+  deliveryRows: [
+    { label: 'Courier', value: 'Blue Dart' },
+    { label: 'Waybill', value: 'BD-4471-8820', mono: true },
+    { label: 'Delivered On', value: '25 Oct 2026' },
+    { label: 'Delivered At', value: '04:35 PM' },
+    { label: 'Received By', value: 'Office Assistant' },
+  ],
+
+  askTitle: 'Did You Receive the Documents?',
+  askBody: 'Please confirm that the physical documents are with you.',
+  check: 'I have received the physical documents.',
+  note: 'Only confirm after you have physically received the documents.',
+
+  cta: 'Confirm Received',
+  foot: 'Next: Documents Received',
+};
