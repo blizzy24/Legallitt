@@ -32,7 +32,14 @@ export type ReportSentCopy = {
   back: string;
 };
 
-export default function ReportSentScreen({ r }: { r: ReportSentCopy }) {
+export default function ReportSentScreen({
+  r,
+  onwardHref = '/(advocate)/dashboard' as Href,
+}: {
+  r: ReportSentCopy;
+  /** Where the bottom button goes. Defaults to the dashboard, as on design/203. */
+  onwardHref?: Href;
+}) {
   const insets = useSafeAreaInsets();
 
   return (
@@ -98,7 +105,7 @@ export default function ReportSentScreen({ r }: { r: ReportSentCopy }) {
       <View style={[styles.bar, { paddingBottom: insets.bottom + 12 }]}>
         <Pressable
           accessibilityRole="button"
-          onPress={() => router.replace('/(advocate)/dashboard' as Href)}
+          onPress={() => router.replace(onwardHref)}
           style={({ pressed }) => [styles.back, pressed && styles.pressed]}
         >
           <Text style={styles.backText} {...shrinkToFit(0.8)}>

@@ -281,7 +281,11 @@ export default function AdvocateDocketScreen() {
 
         <Pressable
           accessibilityRole="button"
-          onPress={() => router.replace(`/advocate/consultation/${id}/completed` as Href)}
+          // ⚠ ORDER INFERRED. No export shows this transition: design/180's Continue
+          // is placed before design/288 (send report), whose button then opens
+          // design/181 (completed), because the report's payout note precedes the
+          // completed summary. See app/advocate/consultation/[id]/report.tsx.
+          onPress={() => router.push(`/advocate/consultation/${id}/report` as Href)}
           style={({ pressed }) => [styles.continue, pressed && styles.pressed]}
         >
           <CheckCircle2 size={t.continueIcon} color={ink.onBrand} />

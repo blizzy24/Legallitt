@@ -1,4 +1,4 @@
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, type Href } from 'expo-router';
 
 import ReportSentScreen from '../../../../components/ReportSentScreen';
 import { ADV_LA_REPORT } from '../../../../data/advocateSide';
@@ -11,9 +11,12 @@ import { ADV_LA_REPORT } from '../../../../data/advocateSide';
 // there) and the service name. The service name is carried in each flow's own data
 // record and is not drawn on either screen. See data/advocateSide.ts.
 //
-// Nothing pushes here yet — no Legal Advice screen leads to a report step.
+// Reached from the docket record's Continue (design/180).
 
 export default function AdvocateLegalAdviceReportScreen() {
-  useLocalSearchParams<{ id: string }>();
-  return <ReportSentScreen r={ADV_LA_REPORT} />;
+  const { id } = useLocalSearchParams<{ id: string }>();
+  // ⚠ ORDER INFERRED, no export shows it: docket (design/180) -> this screen ->
+  // completed (design/181). design/288's button still reads "Back To Home" as
+  // drawn; in this flow it opens Completed, whose own button goes home.
+  return <ReportSentScreen r={ADV_LA_REPORT} onwardHref={`/advocate/consultation/${id}/completed` as Href} />;
 }
