@@ -35,13 +35,13 @@ import { advCases as t, colors, font, ink } from '../constants/theme';
 // design/205 the same list with Property Search selected, design/214 the same list
 // with FIR Draft selected. design/214 draws the advocate TAB BAR with the scales tab
 // active, exactly as 204 and 205 do — so by the export it is a state of the tab, not
-// a pushed screen. It is also built at app/advocate/fir/requests.tsx on request;
-// that copy passes chrome="pushed" and renders no tab bar. See the report.
+// a pushed screen. It is the Matters tab with the FIR Draft chip selected; the
+// pushed copy that once lived at app/advocate/fir/requests.tsx was removed.
 //
 // ⚠ design/214's card action reads "Continue Draft →" WITH an arrow where design/204
 // reads "Review Request" with none. Both are kept, chosen per service.
 
-export type CasesChrome = 'tab' | 'pushed' | 'portal';
+export type CasesChrome = 'tab' | 'portal';
 
 const BODY_ICONS = { calendar: CalendarDays, gavel: Gavel, video: Video };
 
@@ -69,7 +69,7 @@ export default function AdvocateCasesList({
 }: {
   chrome?: CasesChrome;
   initialService?: string;
-  /** Pushed and portal variants — the header title. The tab variant uses the design's. */
+  /** Portal variant — the header title. The tab variant uses the design's. */
   title?: string;
   /** Portal variant — the second header line under the title (design/222). */
   eyebrow?: string;
@@ -145,7 +145,7 @@ export default function AdvocateCasesList({
           </View>
         ) : (
           <Text style={styles.headerTitle} {...shrinkToFit(0.75)}>
-            {chrome === 'pushed' && title ? title : c.headerTitle}
+            {c.headerTitle}
           </Text>
         )}
         {chrome === 'portal' && (

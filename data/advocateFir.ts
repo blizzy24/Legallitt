@@ -54,20 +54,6 @@
 export const FIR_COMMISSION_NOTE =
   'design/215: ₹500 of ₹3,500 = 14.286%. Not derivable from any existing rate.';
 
-// ── design/214 — cases list filtered to FIR Draft ────────────────────────────
-
-export const FIR_REQUESTS = {
-  /**
-   * ⚠ design/214 draws the Cases TAB (scales tab active, full tab bar), i.e. the
-   * same screen as designs 204 and 205 with the FIR Draft chip selected — not a
-   * pushed screen. Built at this route on request, without the tab bar.
-   */
-  title: 'FIR Requests',
-  service: 'FIR Draft',
-  /** ⚠ design/214 draws TWO IDENTICAL FIR cards, as design/205 drew three. */
-  drawnCardCount: 2,
-};
-
 // ── design/215 — FIR request details ─────────────────────────────────────────
 
 export const FIR_REQUEST = {
