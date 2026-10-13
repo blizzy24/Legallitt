@@ -442,3 +442,42 @@ export const CO_CONFIRM = {
   cta: 'Confirm Received',
   foot: 'Next: Documents Received',
 };
+
+/**
+ * design/283 — the ADVOCATE's receipt confirmation.
+ *
+ * ⚠ Note 16: this screen draws NO delivery tracker, although 280, 281 and 287
+ * all do and it is the last step of the same journey. It shows a document list
+ * with a "Received" pill instead. Nothing was invented to fill the gap.
+ */
+export const CO_RECEIVED = {
+  title: 'Documents Received',
+  heroTitle: 'Documents Received',
+  heroBody: 'You confirmed that the physical documents are with you.',
+
+  caseLabel: 'CASE INFO',
+  caseId: 'HCR-2026-1048',
+  caseRows: [
+    { label: 'Client', value: 'Rahul Sharma' },
+    { label: 'Case', value: 'Rahul Sharma vs Amit Verma' },
+  ],
+
+  docsTitle: 'Documents',
+  docsCount: '3 Documents',
+  receivedPill: 'Received',
+  docs: ['Case Papers.pdf', 'Court Order.pdf', 'ID Proof.pdf'],
+
+  deliveryTitle: 'Delivery Details',
+  deliveryRows: [
+    { label: 'Courier', value: 'Blue Dart' },
+    { label: 'Waybill', value: 'BD-4471-8820', mono: true },
+    { label: 'Delivered On', value: '25 Oct 2026' },
+    { label: 'Received By', value: 'Adv. Gurneeet Chawla' },
+  ],
+
+  bannerTitle: 'Receipt Confirmed',
+  bannerBody: 'The physical documents have been received and the case can now move forward.',
+
+  cta: 'Open Case',
+  ctaAlt: 'Chat with Client',
+};
