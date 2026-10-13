@@ -428,3 +428,49 @@ export const courierPayment = {
   payIconGap: 9,
   bottomPad: 26,
 };
+
+/** design/279 — the collided success screen. Measured at 2.0000 px/pt from the 780×1796 export. */
+export const courierSuccess = {
+  padX: 16,
+  bg: '#FAF8F5',
+  ink: '#222222',
+  inkMuted: '#4D4439',
+  bodyInk: '#6B6B6B',
+
+  // Request ID card 128.0–172.5pt, x 16.0–371.5.
+  refTop: 24,
+  refH: 44.5,
+  refRadius: 12,
+  refBorder: '#B09C82',
+  refBg: '#FFFFFF',
+  refPadX: 12,
+  refTile: 28,
+  refTileGlyph: 18,
+  refGap: 11,
+  refLabelSize: 10.5,
+  refValueTop: 2,
+  refValueSize: 15,
+  copyGlyph: 17,
+
+  // Payment card 280.5–403.5pt.
+  cardTop: 107,
+  cardRadius: 12,
+  cardBg: '#F6F0EA',
+  cardBorder: '#DACEC0',
+  cardPadX: 17,
+  cardPadTop: 12,
+  cardPadBottom: 14,
+  titleSize: 13.5,
+  bodyTop: 0.5,
+  bodySize: 12,
+  bodyGap: 10,
+  btnTop: 13,
+  btnH: 31.5,
+  btnW: 134,
+  btnRadius: 9,
+  btnBg: '#B09C82',
+  btnSize: 12.5,
+  btnGlyph: 15,
+  btnGap: 7,
+  bottomPad: 40,
+};

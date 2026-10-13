@@ -268,3 +268,26 @@ export const CO_SCAN_PAY = {
   // ⚠ Static string, no timer. See app/courier/scan-pay.tsx.
   valid: '10:00',
 };
+
+/**
+ * design/279 — THE BIG ONE. Three other services collided on one courier
+ * screen. See note 1 at the top of this file. Every string below is exactly
+ * what the export draws.
+ */
+export const CO_SUCCESS = {
+  // ⚠ The success screen still wears design/278's PAYMENT header.
+  title: 'Scan & Pay',
+  subtitle: 'UPI Dynamic QR',
+  intro: 'Scan the QR code using any UPI app to complete your payment.',
+
+  refLabel: 'Request ID',
+  // ⚠ PSR- is the PROPERTY SEARCH prefix. The matter is #HCR-2026-1048.
+  refValue: '#PSR739482',
+
+  successTitle: 'Payment Successful',
+  // ⚠ A fourth amount in one flow: 277 and 278 both say ₹290.
+  successBody: 'Your payment of \u20B91377 has been received.',
+  // ⚠ DOCUMENT FORENSIC copy on a courier booking.
+  successBody2: 'Your forensic analysis request has been submitted.',
+  cta: 'Start Tracking',
+};
