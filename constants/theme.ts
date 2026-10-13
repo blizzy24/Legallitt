@@ -32,6 +32,7 @@ export * from './tokens/advForensic';
 export * from './tokens/advVerify';
 export * from './tokens/advSettings';
 export * from './tokens/advTools';
+export * from './tokens/courier';
 
 export const colors = {
   brand:        '#B09C82',
