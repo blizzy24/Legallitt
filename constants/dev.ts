@@ -11,7 +11,6 @@
  * prototype drives them yet:
  *
  *   - app/legal-notice/tracking.tsx   Drafting in Progress / Awaiting Your Approval
- *   - app/legal-notice/identity.tsx   Not uploaded / Uploaded
  *   - app/fir/status.tsx + app/fir/ready.tsx   Under Review / Draft Ready
  *
  * NOT app/advocate/fir/review.tsx. That screen has a three-state switcher too, but
