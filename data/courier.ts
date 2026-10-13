@@ -628,3 +628,65 @@ export const CO_SELF_DETAILS = {
   cta: 'Submit Delivery Details',
   foot: 'Complete required fields: Courier Name, Tracking Number, Dispatch Date',
 };
+
+/** design/287 — send by yourself: sent confirmation. */
+export const CO_SELF_SENT = {
+  title: 'Documents Sent',
+  titlePill: 'SENT',
+
+  heroTitle: 'Documents Sent',
+  heroBody: 'Your delivery details have been saved.',
+
+  idLabel: 'LEGALITT DELIVERY ID',
+  idValue: 'LGT-DLV-77421',
+  idNote: 'Keep this ID for your case.',
+  copy: 'Copy',
+
+  courierTitle: 'Courier Details',
+  courierRows: [
+    { label: 'Courier', value: 'Blue Dart' },
+    { label: 'Tracking Number', value: 'BD-4471-8820', copy: true },
+    { label: 'Dispatch Date', value: '24 Oct 2026' },
+    { label: 'Courier Office', value: 'Indore - Vijay Nagar' },
+    { label: 'Tracking Link', value: 'bluedart.com/track', link: true },
+  ],
+
+  sendTitle: 'Send To',
+  savedChip: 'Saved in Case',
+  receiverLabel: 'Receiver',
+  receiverValue: ADVOCATE.name,
+  officeLabel: 'Office',
+  officeValue: 'High Court Bar Chambers',
+  addressLabel: 'Address',
+  addressValue: 'Chamber No. 14, HC Bar Building',
+  cityLine: 'Indore, Madhya Pradesh - 452001',
+  mobile: ADVOCATE.mobile,
+
+  docsTitle: 'Documents Sent',
+  docsCount: '3 Documents',
+  docs: ['Case Papers.pdf', 'Court Order.pdf', 'ID Proof.pdf'],
+  viewDocs: 'View Documents',
+
+  statusTitle: 'Delivery Status',
+  statusPill: 'Waiting for Advocate',
+  steps: [
+    { title: 'Documents Sent', sub: 'Completed', tone: 'done' as const },
+    { title: 'Waiting for Advocate', sub: 'In transit & awaiting receipt', tone: 'active' as const },
+    { title: 'Documents Received', sub: 'Pending advocate confirmation', tone: 'todo' as const },
+  ],
+  statusNote: 'Your advocate will confirm when the documents are received.',
+
+  receiptTitle: 'Courier Receipt',
+  receiptFile: 'courier-receipt.pdf',
+  receiptStatus: 'Uploaded',
+  receiptView: 'View Receipt',
+  receiptNote: 'Uploaded as proof of delivery dispatch.',
+
+  impTitle: 'Important',
+  impItems: [
+    'Keep your courier receipt and tracking number safely.',
+    'Your advocate can use the tracking number to check the delivery.',
+  ],
+
+  cta: 'Back to home',
+};
