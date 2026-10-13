@@ -229,7 +229,9 @@ export default function AdvocateVideoScreen() {
           </View>
         </View>
 
-        {/* design/173 sets the chips side by side; design/174 stacks them. */}
+        {/* design/173 sets the chips side by side; design/174 stacks them; design/177's
+            notes sheet covers them and the AI mark. */}
+        {panel !== 'notes' && (
         <View style={[styles.panelBottom, immersive && styles.panelBottomFull]}>
           <View style={styles.speak}>
             <AudioLines size={t.speakIcon} color={t.speakColour} />
@@ -242,7 +244,9 @@ export default function AdvocateVideoScreen() {
             <Text style={styles.verifyText}>{v.verified}</Text>
           </View>
         </View>
+        )}
 
+        {panel !== 'notes' && (
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Legal AI copilot"
@@ -252,24 +256,31 @@ export default function AdvocateVideoScreen() {
         >
           <AiFlowerMark size={t.aiMark} />
         </Pressable>
+        )}
       </View>
 
-      {immersive && panel !== 'ai' && matterRow}
+      {fullscreen && panel === 'none' && matterRow}
 
       {panel === 'notes' && (
-        <View style={styles.notesPanel}>
-          <ScrollView style={styles.notesList} nestedScrollEnabled>
-            <View style={styles.notesBox}>
-              <Text style={styles.notesText}>• {v.note}</Text>
-            </View>
-          </ScrollView>
-          {/* Inert — Edit has no designed destination. */}
-          <Pressable accessibilityRole="button" style={styles.notesEdit}>
-            <SquarePen size={t.notesEditIcon} color={colors.textPrimary} />
-            <Text style={styles.notesEditText} {...shrinkToFit(0.8)}>
-              {v.notesEdit}
-            </Text>
-          </Pressable>
+        <View style={styles.notesSheet}>
+          {matterRow}
+          <View style={styles.notesPanel}>
+            <ScrollView style={styles.notesList} nestedScrollEnabled>
+              {/* design/177 also draws a scroll track beside the note; the platform's
+                  own indicator stands in for it. */}
+              <View style={styles.notesBox}>
+                <Text style={styles.notesBullet}>•</Text>
+                <Text style={styles.notesText}>{v.note}</Text>
+              </View>
+            </ScrollView>
+            {/* Inert — Edit has no designed destination. */}
+            <Pressable accessibilityRole="button" style={styles.notesEdit}>
+              <SquarePen size={t.notesEditIcon} color={colors.textPrimary} />
+              <Text style={styles.notesEditText} {...shrinkToFit(0.8)}>
+                {v.notesEdit}
+              </Text>
+            </Pressable>
+          </View>
         </View>
       )}
 
@@ -604,34 +615,53 @@ const styles = StyleSheet.create({
   },
   aiMarkFull: { bottom: t.aiMarkBottom },
 
+  notesSheet: {
+    borderRadius: t.matterRadius,
+    backgroundColor: t.matterBg,
+    paddingBottom: t.notesSheetPadBottom,
+  },
   notesPanel: {
     marginHorizontal: t.padX,
-    marginTop: t.panelGap,
+    marginTop: t.notesPanelGap,
     borderRadius: t.notesPanelRadius,
     backgroundColor: t.notesPanelBg,
     padding: t.notesPanelPad,
+    paddingBottom: t.notesPanelPadBottom,
   },
   notesList: { maxHeight: t.notesListMaxH },
   notesBox: {
     borderRadius: t.notesBoxRadius,
     backgroundColor: t.notesBoxBg,
-    padding: t.notesBoxPad,
+    paddingLeft: t.notesBoxPadLeft,
+    paddingRight: t.notesBoxPadRight,
+    paddingVertical: t.notesBoxPadY,
+    flexDirection: 'row',
   },
-  notesText: {
+  notesBullet: {
+    width: t.notesBulletWidth,
     fontFamily: font.appBody,
     fontSize: t.notesSize,
     lineHeight: t.notesLineHeight,
-    color: colors.textPrimary,
+    color: t.matterColour,
+  },
+  notesText: {
+    flex: 1,
+    minWidth: 0,
+    fontFamily: font.appBody,
+    fontSize: t.notesSize,
+    lineHeight: t.notesLineHeight,
+    color: t.matterColour,
   },
   notesEdit: {
     marginTop: t.notesEditGap,
     alignSelf: 'flex-end',
+    width: t.notesEditWidth,
     minHeight: t.notesEditHeight,
     borderRadius: t.notesEditRadius,
-    paddingHorizontal: t.notesEditPadX,
     backgroundColor: t.notesEditBg,
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   notesEditText: {
     marginLeft: t.notesEditIconGap,
