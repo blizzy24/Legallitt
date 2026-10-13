@@ -246,7 +246,9 @@ export default function AdvocateConsultationRoomScreen() {
 
         <Pressable
           accessibilityRole="button"
-          onPress={() => router.push(`/advocate/consultation/${id}/chat` as Href)}
+          // design/167's Start button carries a video-camera glyph and the client card's
+          // mode chip reads "Video Call", so it opens design/173's video consultation.
+          onPress={() => router.push(`/advocate/consultation/${id}/video` as Href)}
           style={({ pressed }) => [styles.start, pressed && styles.pressed]}
         >
           <Video size={t.startIcon} color={ink.onBrand} />

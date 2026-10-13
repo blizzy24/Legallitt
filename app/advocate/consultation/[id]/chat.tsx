@@ -38,8 +38,8 @@ import { advChat as t, colors, font, ink } from '../../../../constants/theme';
 // appends the advocate's message locally — nothing is transmitted and no reply is
 // produced. The Private Notes chip toggles design/172's panel.
 //
-// The end-call button, attach button, matter chip, mic and the file row's eye are
-// inert — none has a designed destination.
+// End call opens design/179. The attach button, matter chip, mic and the file
+// row's eye are inert — none has a designed destination.
 //
 // design/168 clips the matter chip to the single letter "M"; the label here is an
 // inference. See the notes in data/advocateSide.ts.
@@ -112,11 +112,11 @@ export default function AdvocateChatScreen() {
                 {c.timer}
               </Text>
             </View>
-            {/* Inert — ending the call has no designed destination. */}
+            {/* Opens design/179's End Consultation confirmation, as video's End call does. */}
             <Pressable
               accessibilityRole="button"
               accessibilityLabel="End call"
-              onPress={() => (router.canGoBack() ? router.back() : null)}
+              onPress={() => router.push(`/advocate/consultation/${id}/end` as Href)}
               style={styles.endBtn}
             >
               <PhoneOff size={t.endBtnIcon} color={t.endBtnColour} />
