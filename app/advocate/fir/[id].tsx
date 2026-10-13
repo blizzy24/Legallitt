@@ -28,6 +28,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { shrinkToFit } from '../../../constants/textFit';
 import { FIR_REQUEST } from '../../../data/advocateFir';
 import { advFirRequest as t, colors, font, ink, status } from '../../../constants/theme';
+import { advDocHref } from '../../../data/docLinks';
 
 // FIR request details (design/215).
 //
@@ -247,7 +248,12 @@ export default function AdvocateFirRequestScreen() {
                     {d.meta}
                   </Text>
                 </View>
-                <Pressable accessibilityRole="button" accessibilityLabel={`View ${d.name}`} hitSlop={8}>
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel={`View ${d.name}`}
+                  hitSlop={8}
+                  onPress={() => router.push(advDocHref(d.name) as Href)}
+                >
                   <Eye size={t.docEye} color={colors.textPrimary} />
                 </Pressable>
               </View>

@@ -31,6 +31,7 @@ import AiFlowerMark from '../../../../components/AiFlowerMark';
 import { shrinkToFit } from '../../../../constants/textFit';
 import { ADV_CHAT } from '../../../../data/advocateSide';
 import { advChat as t, colors, font, ink } from '../../../../constants/theme';
+import { advDocHref } from '../../../../data/docLinks';
 
 // Consultation chat (designs 168, 169 and 172).
 //
@@ -193,9 +194,14 @@ export default function AdvocateChatScreen() {
                           {m.file.meta}
                         </Text>
                       </View>
-                      <View style={styles.fileEye}>
+                      <Pressable
+                        accessibilityRole="button"
+                        accessibilityLabel={`View ${m.file.name}`}
+                        onPress={() => router.push(advDocHref(m.file!.name) as Href)}
+                        style={styles.fileEye}
+                      >
                         <Eye size={t.fileEyeIcon} color={colors.textPrimary} />
-                      </View>
+                      </Pressable>
                     </View>
                   )}
                 </View>

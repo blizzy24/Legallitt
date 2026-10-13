@@ -17,6 +17,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { shrinkToFit } from '../../../../constants/textFit';
 import { ADV_NOTICE_TRACKING } from '../../../../data/advocateSide';
 import { advNoticeTracking as t, colors, font, ink } from '../../../../constants/theme';
+import { advDocHref } from '../../../../data/docLinks';
 
 // Document delivery tracking (design/200).
 //
@@ -120,7 +121,12 @@ export default function AdvocateNoticeTrackingScreen() {
               {k.documents.sub}
             </Text>
           </View>
-          <Pressable accessibilityRole="button" style={styles.docLink}>
+          {/* design/200 names no file here — only "3 Physical Documents". */}
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => router.push(advDocHref(k.documents.sub) as Href)}
+            style={styles.docLink}
+          >
             <Text style={styles.docLinkText} {...shrinkToFit(0.8)}>
               {k.documents.link}
             </Text>

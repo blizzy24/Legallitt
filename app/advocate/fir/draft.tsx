@@ -28,6 +28,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { shrinkToFit } from '../../../constants/textFit';
 import { FIR_DRAFT } from '../../../data/advocateFir';
 import { advFirDraft as t, colors, font, ink } from '../../../constants/theme';
+import { advDocHref } from '../../../data/docLinks';
 
 // FIR draft — the FORM I police proforma (design/218).
 //
@@ -264,7 +265,14 @@ export default function AdvocateFirDraftScreen() {
                     {row.sub}
                   </Text>
                 </View>
-                <Eye size={t.docEye} color={colors.textPrimary} />
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel={`View ${row.name}`}
+                  hitSlop={8}
+                  onPress={() => router.push(advDocHref(row.name) as Href)}
+                >
+                  <Eye size={t.docEye} color={colors.textPrimary} />
+                </Pressable>
               </View>
             );
           })}

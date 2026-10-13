@@ -18,6 +18,7 @@ import CourierHeader from '../../components/CourierHeader';
 import { shrinkToFit } from '../../constants/textFit';
 import { ADVOCATE, CLIENT, CO_DETAILS } from '../../data/courier';
 import { courierDetails as t, courierGreen as g, font, ink } from '../../constants/theme';
+import { clientDocHref } from '../../data/docLinks';
 
 // Client — delivery details before booking (design/276).
 //
@@ -30,8 +31,8 @@ import { courierDetails as t, courierGreen as g, font, ink } from '../../constan
 //   the client still has to specify.
 // ⚠ Note 5 — "Powered by Blue Dart" here, "DHL Express" on design/281.
 //
-// STATIC, NOT WIRED: "Change", "View Address" and "View Documents" open
-// nothing. "Book Delivery" advances to design/280 and does not book anything —
+// "View Documents" opens the document viewer. STATIC, NOT WIRED: "Change" and
+// "View Address" open nothing. "Book Delivery" advances to design/280 and does not book anything —
 // no courier vendor is scoped.
 export default function CourierDeliveryDetailsScreen() {
   const d = CO_DETAILS;
@@ -113,12 +114,17 @@ export default function CourierDeliveryDetailsScreen() {
               </Text>
             </View>
           ))}
-          <View style={styles.viewDocsRow}>
+          {/* View Documents names the set, so it opens the first document. */}
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => router.push(clientDocHref(d.docs[0]) as Href)}
+            style={styles.viewDocsRow}
+          >
             <Text style={styles.viewDocs} {...shrinkToFit(0.8)}>
               {d.viewDocs}
             </Text>
             <ArrowUpRight size={t.docRowGlyph} color={t.brand} strokeWidth={2} />
-          </View>
+          </Pressable>
         </View>
 
         <View style={styles.card}>

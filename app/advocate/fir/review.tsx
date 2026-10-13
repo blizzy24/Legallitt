@@ -220,7 +220,12 @@ export default function AdvocateFirReviewScreen() {
           </View>
 
           <View style={styles.actRow}>
-            <Pressable accessibilityRole="button" style={({ pressed }) => [styles.act, pressed && styles.pressed]}>
+            {/* The draft has its own reader, design/218, so View opens that. */}
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => router.push(`/advocate/fir/draft?id=${id ?? ''}` as Href)}
+              style={({ pressed }) => [styles.act, pressed && styles.pressed]}
+            >
               <Eye size={t.actIcon} color={colors.textPrimary} />
               <Text style={styles.actText} {...shrinkToFit(0.8)}>
                 {r.draft.view}

@@ -21,6 +21,7 @@ import PdfStackIcon from '../../../../components/PdfStackIcon';
 import { shrinkToFit } from '../../../../constants/textFit';
 import { ADV_DOCKET } from '../../../../data/advocateSide';
 import { advDocket as t, advRequest as h, colors, font, ink } from '../../../../constants/theme';
+import { advDocHref } from '../../../../data/docLinks';
 
 // Docket record (design/180).
 //
@@ -268,7 +269,12 @@ export default function AdvocateDocketScreen() {
               {d.document.meta}
             </Text>
           </View>
-          <Pressable accessibilityRole="button" accessibilityLabel="Preview" style={styles.docEye}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Preview"
+            onPress={() => router.push(advDocHref(d.document.name, { client: d.client.name, matter: d.matter }) as Href)}
+            style={styles.docEye}
+          >
             <Eye size={t.docEyeIcon} color={colors.textPrimary} />
           </Pressable>
         </View>

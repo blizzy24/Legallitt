@@ -29,6 +29,7 @@ import {
   ink,
   status,
 } from '../../../constants/theme';
+import { advDocHref } from '../../../data/docLinks';
 
 // Document Forensic request details (design/223).
 //
@@ -243,7 +244,11 @@ export default function AdvocateForensicRequestScreen() {
                 <Text style={styles.hash} {...shrinkToFit(0.75)}>
                   {d.hash}
                 </Text>
-                <Pressable accessibilityRole="button" style={styles.viewBtn}>
+                <Pressable
+                  accessibilityRole="button"
+                  onPress={() => router.push(advDocHref(d.name) as Href)}
+                  style={styles.viewBtn}
+                >
                   <Text style={styles.viewText} {...shrinkToFit(0.8)}>
                     {r.documents.view}
                   </Text>

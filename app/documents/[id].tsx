@@ -32,8 +32,11 @@ import { DOCUMENTS, VIEWER_PAGE as page, VIEWER_RELATED as related, documentById
 
 export default function DocumentViewerScreen() {
   const insets = useSafeAreaInsets();
-  const { id } = useLocalSearchParams<{ id: string }>();
-  const doc = documentById(String(id)) ?? DOCUMENTS[0];
+  const { id, name } = useLocalSearchParams<{ id: string; name?: string }>();
+  // A "View" link from another screen may name a file that is not one of the
+  // stored DOCUMENTS (see data/docLinks.ts); the name is shown over the drawn page.
+  const stored = documentById(String(id)) ?? DOCUMENTS[0];
+  const doc = name ? { ...stored, name } : stored;
 
   const [pageNo, setPageNo] = useState(1);
   const [zoom, setZoom] = useState(100);

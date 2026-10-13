@@ -22,6 +22,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { shrinkToFit } from '../../../constants/textFit';
 import { DF_DOCUMENTS } from '../../../data/advocateForensic';
 import { advForensicDocuments as t, colors, font, ink, status } from '../../../constants/theme';
+import { advDocHref } from '../../../data/docLinks';
 
 // Questioned & reference documents (design/224).
 //
@@ -129,7 +130,11 @@ function DocBlock({
         </View>
 
         <View style={styles.actRow}>
-          <Pressable accessibilityRole="button" style={({ pressed }) => [styles.act, pressed && styles.pressed]}>
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => router.push(advDocHref(name) as Href)}
+            style={({ pressed }) => [styles.act, pressed && styles.pressed]}
+          >
             <Eye size={t.actIcon} color={colors.textPrimary} />
             <Text style={styles.actText} {...shrinkToFit(0.8)}>
               {view}

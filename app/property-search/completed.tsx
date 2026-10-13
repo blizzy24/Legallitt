@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { router, type Href } from 'expo-router';
 import { Check, ChevronLeft, Download, Eye, FileText, House, Share2 } from 'lucide-react-native';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { shrinkToFit } from '../../constants/textFit';
 import { colors, font, ink, psCompleted as t, psTrack as k } from '../../constants/theme';
 import { PS_COMPLETED, PS_REQUEST_ID } from '../../data/propertySearch';
+import { clientDocHref } from '../../data/docLinks';
 
 // Analysis Completed (design/80).
 //
@@ -14,8 +15,9 @@ import { PS_COMPLETED, PS_REQUEST_ID } from '../../data/propertySearch';
 // "DF-" prefix does not match any service in the app. PSR739482 is used here, per
 // instruction. See PS_REQUEST_ID in data/propertySearch.ts.
 //
-// View Report, Download PDF and Share Report are inert — no report viewer is
-// designed for this service, and the prototype cannot write or share files.
+// View Report opens the client document viewer (design/57) — no report viewer
+// is designed for this service. Download PDF and Share Report are inert: the
+// prototype cannot write or share files.
 
 export default function PropertySearchCompletedScreen() {
   const insets = useSafeAreaInsets();
@@ -70,6 +72,7 @@ export default function PropertySearchCompletedScreen() {
 
         <Pressable
           accessibilityRole="button"
+          onPress={() => router.push(clientDocHref(`Property Search Report ${PS_REQUEST_ID}`) as Href)}
           style={({ pressed }) => [styles.button, pressed && styles.pressed]}
         >
           <Eye size={t.buttonIcon} color={ink.onBrand} />

@@ -7,6 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { shrinkToFit } from '../../../constants/textFit';
 import { FIR_DOCUMENTS } from '../../../data/advocateFir';
 import { advFirDocuments as t, colors, font, ink, status } from '../../../constants/theme';
+import { advDocHref } from '../../../data/docLinks';
 
 // Review documents (design/216).
 //
@@ -113,7 +114,11 @@ export default function AdvocateFirDocumentsScreen() {
                 {row.meta}
               </Text>
             </View>
-            <Pressable accessibilityRole="button" style={({ pressed }) => [styles.docView, pressed && styles.pressed]}>
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => router.push(advDocHref(row.name) as Href)}
+              style={({ pressed }) => [styles.docView, pressed && styles.pressed]}
+            >
               <Eye size={t.docViewIcon} color={colors.textPrimary} />
               <Text style={styles.docViewText} {...shrinkToFit(0.8)}>
                 {d.documents.view}

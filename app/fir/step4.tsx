@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { router, type Href } from 'expo-router';
 import {
   ArrowRight,
   Camera,
@@ -23,6 +23,7 @@ import FirShell from '../../components/FirShell';
 import { shrinkToFit } from '../../constants/textFit';
 import { colors, firStep4 as t, font, ink } from '../../constants/theme';
 import { CUSTODY_STATS, EVIDENCE_SECTIONS, PER_PAGE_NOTE, STAGED_FILES } from '../../data/fir';
+import { clientDocHref } from '../../data/docLinks';
 
 // FIR step 4 — Documents & Evidence (design/45).
 //
@@ -197,7 +198,12 @@ function FileRow({
           {meta}
         </Text>
       </View>
-      <Pressable accessibilityRole="button" accessibilityLabel="Preview file" style={styles.fileAction}>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel="Preview file"
+        onPress={() => router.push(clientDocHref(name) as Href)}
+        style={styles.fileAction}
+      >
         <Eye size={t.fileActionIcon} color={colors.textPrimary} />
       </Pressable>
       <Pressable

@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { router, type Href } from 'expo-router';
 import {
   ArrowLeft,
   ArrowRight,
@@ -26,6 +26,7 @@ import { shrinkToFit } from '../../constants/textFit';
 import { colors, dfUpload as t, font, ink } from '../../constants/theme';
 import { useDocumentForensic } from '../../context/documentForensic';
 import { DF_DOC_TYPES, DF_SAMPLE, dfDocTypeLabel } from '../../data/documentForensic';
+import { clientDocHref } from '../../data/docLinks';
 
 // Upload Document (design/84).
 //
@@ -161,7 +162,7 @@ export default function DocumentForensicUploadScreen() {
           </View>
 
           <View style={styles.actions}>
-            <Action icon={FileText} label="View" />
+            <Action icon={FileText} label="View" onPress={() => router.push(clientDocHref(DF_SAMPLE.documentName) as Href)} />
             <Action icon={RefreshCw} label="Replace" />
             <Action icon={Trash2} label="Remove" danger />
           </View>
@@ -220,7 +221,7 @@ export default function DocumentForensicUploadScreen() {
               {DF_SAMPLE.referenceSize} • {DF_SAMPLE.referenceState}
             </Text>
           </View>
-          <Action icon={FileText} label="View" compact />
+          <Action icon={FileText} label="View" compact onPress={() => router.push(clientDocHref(DF_SAMPLE.referenceName) as Href)} />
           <Action icon={RefreshCw} label="Replace" compact />
         </View>
 
@@ -313,15 +314,18 @@ function Action({
   label,
   danger,
   compact,
+  onPress,
 }: {
   icon: LucideIcon;
   label: string;
   danger?: boolean;
   compact?: boolean;
+  onPress?: () => void;
 }) {
   return (
     <Pressable
       accessibilityRole="button"
+      onPress={onPress}
       style={({ pressed }) => [
         styles.action,
         compact && styles.actionCompact,

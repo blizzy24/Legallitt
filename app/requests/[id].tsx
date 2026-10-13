@@ -1,4 +1,4 @@
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
   Bell,
   Briefcase,
@@ -30,6 +30,7 @@ import ConfirmModal from '../../components/ConfirmModal';
 import { shrinkToFit } from '../../constants/textFit';
 import { colors, font, ink, profile as p, requestDetail as t, status } from '../../constants/theme';
 import { REQUEST_DETAIL as d, requestById } from '../../data/requests';
+import { clientDocHref } from '../../data/docLinks';
 
 // Request Details (design/54).
 //
@@ -244,7 +245,12 @@ export default function RequestDetailScreen() {
                   {f.meta}
                 </Text>
               </View>
-              <Pressable accessibilityRole="button" accessibilityLabel="Preview" style={styles.fileAction}>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Preview"
+                onPress={() => router.push(clientDocHref(f.name) as Href)}
+                style={styles.fileAction}
+              >
                 <Eye size={t.fileActionIcon} color={colors.textPrimary} />
               </Pressable>
               <Pressable accessibilityRole="button" accessibilityLabel="Download" style={styles.fileAction}>

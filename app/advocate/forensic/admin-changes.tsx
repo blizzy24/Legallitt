@@ -17,6 +17,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { shrinkToFit } from '../../../constants/textFit';
 import { DF_ADMIN_CHANGES } from '../../../data/advocateForensic';
 import { advForensicChanges as t, colors, font, ink } from '../../../constants/theme';
+import { advDocHref } from '../../../data/docLinks';
 
 // Changes needed (design/231).
 //
@@ -74,7 +75,11 @@ export default function AdvocateForensicAdminChangesScreen() {
           </Text>
         </View>
       </View>
-      <Pressable accessibilityRole="button" style={({ pressed }) => [styles.docAct, pressed && styles.pressed]}>
+      <Pressable
+        accessibilityRole="button"
+        onPress={() => router.push(advDocHref(name) as Href)}
+        style={({ pressed }) => [styles.docAct, pressed && styles.pressed]}
+      >
         <Eye size={t.docActIcon} color={colors.textPrimary} />
         <Text style={styles.docActText} {...shrinkToFit(0.8)}>
           {action}

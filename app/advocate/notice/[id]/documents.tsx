@@ -14,6 +14,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { shrinkToFit } from '../../../../constants/textFit';
 import { ADV_NOTICE_DOCS } from '../../../../data/advocateSide';
 import { advNoticeDocs as t, colors, font, ink } from '../../../../constants/theme';
+import { advDocHref } from '../../../../data/docLinks';
 
 // Review documents (design/186).
 //
@@ -26,8 +27,8 @@ import { advNoticeDocs as t, colors, font, ink } from '../../../../constants/the
 // and the section label "4 Files Attached", but FIVE file rows are drawn. Both the
 // counts and the five rows are kept exactly as drawn.
 //
-// The View and Download chips, the edit pencil and the text area are inert — there
-// is no viewer, no download and no text entry in the prototype.
+// View opens the document viewer on that file. The Download chips, the edit pencil
+// and the text area are inert — there is no download and no text entry.
 
 export default function AdvocateNoticeDocumentsScreen() {
   const insets = useSafeAreaInsets();
@@ -140,7 +141,11 @@ export default function AdvocateNoticeDocumentsScreen() {
                 {f.meta}
               </Text>
             </View>
-            <Pressable accessibilityRole="button" style={styles.fileBtn}>
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => router.push(advDocHref(f.name) as Href)}
+              style={styles.fileBtn}
+            >
               <Text style={styles.fileBtnText} {...shrinkToFit(0.8)}>
                 View
               </Text>

@@ -16,6 +16,7 @@ import CourierTimeline from '../../../components/CourierTimeline';
 import { shrinkToFit } from '../../../constants/textFit';
 import { CO_SELF_SENT } from '../../../data/courier';
 import { courierSelfSent as t, courierGreen as g, font, ink } from '../../../constants/theme';
+import { clientDocHref } from '../../../data/docLinks';
 
 // Client — documents sent, self-send branch complete (design/287).
 //
@@ -168,11 +169,15 @@ export default function CourierSelfSentScreen() {
               </Text>
             </View>
           ))}
-          <View style={styles.viewDocs}>
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => router.push(clientDocHref(d.docs[0]) as Href)}
+            style={styles.viewDocs}
+          >
             <Text style={styles.viewDocsText} {...shrinkToFit(0.8)}>
               {d.viewDocs}
             </Text>
-          </View>
+          </Pressable>
         </View>
 
         <View style={styles.card}>
@@ -213,11 +218,15 @@ export default function CourierSelfSentScreen() {
                 {'✓ ' + d.receiptStatus}
               </Text>
             </View>
-            <View style={styles.receiptBtn}>
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => router.push(clientDocHref(d.receiptFile) as Href)}
+              style={styles.receiptBtn}
+            >
               <Text style={styles.receiptBtnText} {...shrinkToFit(0.8)}>
                 {d.receiptView}
               </Text>
-            </View>
+            </Pressable>
           </View>
           <Text style={styles.receiptNote} {...shrinkToFit(0.8)}>
             {d.receiptNote}

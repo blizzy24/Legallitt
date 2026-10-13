@@ -21,6 +21,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { shrinkToFit } from '../../../../constants/textFit';
 import { ADV_NOTICE_DELIVERY } from '../../../../data/advocateSide';
 import { advNoticeDelivery as t, colors, font, ink } from '../../../../constants/theme';
+import { advDocHref } from '../../../../data/docLinks';
 
 // Delivery details (design/195) — UNFINISHED DESIGN.
 //
@@ -183,7 +184,12 @@ export default function AdvocateNoticeDeliveryScreen() {
               </Text>
             </View>
           ))}
-          <Pressable accessibilityRole="button" style={styles.docLink}>
+          {/* View Documents names the set, so it opens the first one (a drawn placeholder). */}
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => router.push(advDocHref(d.documents.rows[0]) as Href)}
+            style={styles.docLink}
+          >
             <Text style={styles.docLinkText} {...shrinkToFit(0.8)}>
               {d.documents.link}
             </Text>

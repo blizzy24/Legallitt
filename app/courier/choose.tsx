@@ -23,6 +23,7 @@ import CourierHeader from '../../components/CourierHeader';
 import { shrinkToFit } from '../../constants/textFit';
 import { ADVOCATE, CO_CHOOSE, MATTER } from '../../data/courier';
 import { courierChoose as t, courierGreen as g, font, ink } from '../../constants/theme';
+import { clientDocHref } from '../../data/docLinks';
 
 // Client — choose how to send the physical documents (designs 275 + 284).
 //
@@ -41,8 +42,8 @@ import { courierChoose as t, courierGreen as g, font, ink } from '../../constant
 // The document chip row is CLIPPED in both exports: a fourth chip runs off the
 // right edge. It is built as a horizontal scroller and the chips are kept.
 //
-// STATIC, NOT WIRED: "View", the document chips and "Copy" do nothing — no
-// clipboard vendor is scoped for this batch.
+// "View" opens the document viewer. STATIC, NOT WIRED: the document chips and
+// "Copy" do nothing — no clipboard vendor is scoped for this batch.
 export default function CourierChooseScreen() {
   const d = CO_CHOOSE;
   const [choice, setChoice] = useState<'self' | 'partner'>('partner');
@@ -96,10 +97,17 @@ export default function CourierChooseScreen() {
               </Text>
             </View>
             <View style={styles.flex} />
-            <Eye size={t.viewGlyph} color={t.inkMuted} strokeWidth={2} />
-            <Text style={styles.view} {...shrinkToFit(0.8)}>
-              {d.docsView}
-            </Text>
+            {/* View names the set, so it opens the first document. */}
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => router.push(clientDocHref(d.docChips[0]) as Href)}
+              style={styles.viewBtn}
+            >
+              <Eye size={t.viewGlyph} color={t.inkMuted} strokeWidth={2} />
+              <Text style={styles.view} {...shrinkToFit(0.8)}>
+                {d.docsView}
+              </Text>
+            </Pressable>
           </View>
           <ScrollView
             horizontal
@@ -248,6 +256,7 @@ export default function CourierChooseScreen() {
 }
 
 const styles = StyleSheet.create({
+  viewBtn: { flexDirection: 'row', alignItems: 'center' },
   screen: { flex: 1, backgroundColor: t.bg },
   content: { paddingBottom: t.bottomPad },
   flex: { flex: 1 },

@@ -59,8 +59,19 @@ const TOOL_ICONS = [ZoomOut, ZoomIn, Maximize, Download, Share2, MoreHorizontal]
 
 export default function AdvocateDocumentViewerScreen() {
   const insets = useSafeAreaInsets();
-  const params = useLocalSearchParams<{ state?: string }>();
+  const params = useLocalSearchParams<{ state?: string; name?: string; client?: string; matter?: string }>();
   const d = AT_DOC_VIEWER;
+  // Opened from a document's "View" action (data/docLinks.ts): show that file's
+  // name, client and matter over the drawn page. With no params, design/261's.
+  // A row the opening screen did not supply is left out rather than showing
+  // design/261's Rahul Sharma / Divorce Matter against another file.
+  const linked = params.name !== undefined;
+  const file = {
+    ...d.file,
+    name: params.name ?? d.file.name,
+    clientValue: linked ? params.client : d.file.clientValue,
+    caseValue: linked ? params.matter : d.file.caseValue,
+  };
   const [state, setState] = useState<ViewerState>(
     params.state === 'error' ? 'error' : params.state === 'empty' ? 'empty' : 'loaded',
   );
@@ -88,20 +99,24 @@ export default function AdvocateDocumentViewerScreen() {
         <View style={styles.file}>
           <View style={styles.fileCol}>
             <Text style={styles.fileName} {...shrinkToFit(0.75)}>
-              {d.file.name}
+              {file.name}
             </Text>
-            <View style={styles.fileRow}>
-              <Text style={styles.fileLabel}>{d.file.clientLabel}</Text>
-              <Text style={styles.fileValue} {...shrinkToFit(0.8)}>
-                {d.file.clientValue}
-              </Text>
-            </View>
-            <View style={[styles.fileRow, { marginTop: t.fileRowGap }]}>
-              <Text style={styles.fileLabel}>{d.file.caseLabel}</Text>
-              <Text style={styles.fileValue} {...shrinkToFit(0.8)}>
-                {d.file.caseValue}
-              </Text>
-            </View>
+            {file.clientValue ? (
+              <View style={styles.fileRow}>
+                <Text style={styles.fileLabel}>{d.file.clientLabel}</Text>
+                <Text style={styles.fileValue} {...shrinkToFit(0.8)}>
+                  {file.clientValue}
+                </Text>
+              </View>
+            ) : null}
+            {file.caseValue ? (
+              <View style={[styles.fileRow, { marginTop: t.fileRowGap }]}>
+                <Text style={styles.fileLabel}>{d.file.caseLabel}</Text>
+                <Text style={styles.fileValue} {...shrinkToFit(0.8)}>
+                  {file.caseValue}
+                </Text>
+              </View>
+            ) : null}
           </View>
           <View style={styles.lockCol}>
             <Lock size={t.lockGlyph} color="#1B1C1C" strokeWidth={2} />

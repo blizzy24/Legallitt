@@ -22,6 +22,7 @@ import DocumentsHeroArt from './DocumentsHeroArt';
 import { shrinkToFit } from '../constants/textFit';
 import { AS_DOCUMENTS } from '../data/advocateSettings';
 import { advDocuments as t, colors, font, ink, status } from '../constants/theme';
+import { advDocHref } from '../data/docLinks';
 
 /**
  * Manage Documents — shared by design/248 and design/250.
@@ -38,9 +39,9 @@ import { advDocuments as t, colors, font, ink, status } from '../constants/theme
  * recorded. Both PNGs remain in design/. Do not remove the "compact" branch
  * without one.
  *
- * STATIC, NOT WIRED. No upload, no file picker, no camera: "Upload New
- * Document", "View", "Replace" and "Add Additional Credential" all open
- * nothing. The filter chips do not filter. The vault bar renders at its drawn
+ * "View" opens the document viewer on that document. Otherwise STATIC: no
+ * upload, no file picker, no camera — "Upload New Document", "Replace" and "Add
+ * Additional Credential" open nothing. The filter chips do not filter. The vault bar renders at its drawn
  * fill.
  */
 export default function AdvocateDocumentsScreen({ hero }: { hero: 'compact' | 'illustrated' }) {
@@ -169,10 +170,14 @@ export default function AdvocateDocumentsScreen({ hero }: { hero: 'compact' | 'i
             </View>
             <View style={styles.docRule} />
             <View style={styles.actions}>
-              <View style={styles.action}>
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => router.push(advDocHref(doc.title) as Href)}
+                style={styles.action}
+              >
                 <Eye size={t.actionGlyph} color="#1B1C1C" strokeWidth={1.8} />
                 <Text style={styles.actionText}>{d.view}</Text>
-              </View>
+              </Pressable>
               <View style={[styles.action, styles.actionAlt]}>
                 <RefreshCw size={t.actionGlyph} color="#4D463D" strokeWidth={1.8} />
                 <Text style={[styles.actionText, styles.actionTextAlt]}>{d.replace}</Text>

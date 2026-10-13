@@ -22,6 +22,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { shrinkToFit } from '../../../../constants/textFit';
 import { ADV_PSR_SEND } from '../../../../data/advocateSide';
 import { advPsrSend as t, colors, font, ink } from '../../../../constants/theme';
+import { advDocHref } from '../../../../data/docLinks';
 
 // Send report (design/211).
 //
@@ -178,7 +179,11 @@ export default function AdvocatePropertySearchSendScreen() {
                 {s.document.meta}
               </Text>
             </View>
-            <Pressable accessibilityRole="button" style={({ pressed }) => [styles.view, pressed && styles.pressed]}>
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => router.push(advDocHref(s.document.file) as Href)}
+              style={({ pressed }) => [styles.view, pressed && styles.pressed]}
+            >
               <Eye size={t.viewIcon} color={colors.textPrimary} />
               <Text style={styles.viewText} {...shrinkToFit(0.8)}>
                 {s.document.view}

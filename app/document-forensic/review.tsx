@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { router, type Href } from 'expo-router';
 import {
   ChevronLeft,
   CircleCheck,
@@ -20,6 +20,7 @@ import { shrinkToFit } from '../../constants/textFit';
 import { colors, dfReview as t, dfUpload as u, font, ink } from '../../constants/theme';
 import { useDocumentForensic } from '../../context/documentForensic';
 import { DF_SAMPLE, PAGE_OVERAGE_NOTE, dfDocTypeLabel } from '../../data/documentForensic';
+import { clientDocHref } from '../../data/docLinks';
 
 // Review Request (design/85).
 //
@@ -100,7 +101,7 @@ export default function DocumentForensicReviewScreen() {
           </View>
 
           <View style={styles.actions}>
-            <Action icon={FileText} label="View" />
+            <Action icon={FileText} label="View" onPress={() => router.push(clientDocHref(DF_SAMPLE.documentName) as Href)} />
             <Action icon={RefreshCw} label="Replace" />
             <Action icon={Trash2} label="Remove" danger />
           </View>
@@ -121,7 +122,7 @@ export default function DocumentForensicReviewScreen() {
 
           {/* One action row, not two — see the note at the top of the file. */}
           <View style={styles.actions}>
-            <Action icon={FileText} label="View" />
+            <Action icon={FileText} label="View" onPress={() => router.push(clientDocHref(DF_SAMPLE.referenceName) as Href)} />
             <Action icon={RefreshCw} label="Replace" />
           </View>
         </View>
@@ -166,10 +167,21 @@ export default function DocumentForensicReviewScreen() {
   );
 }
 
-function Action({ icon: Icon, label, danger }: { icon: LucideIcon; label: string; danger?: boolean }) {
+function Action({
+  icon: Icon,
+  label,
+  danger,
+  onPress,
+}: {
+  icon: LucideIcon;
+  label: string;
+  danger?: boolean;
+  onPress?: () => void;
+}) {
   return (
     <Pressable
       accessibilityRole="button"
+      onPress={onPress}
       style={({ pressed }) => [styles.action, danger && styles.actionDanger, pressed && styles.pressed]}
     >
       <Icon size={u.actionIcon} color={danger ? u.removeText : colors.textPrimary} />

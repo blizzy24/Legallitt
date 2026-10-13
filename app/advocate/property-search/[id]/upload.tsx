@@ -28,6 +28,7 @@ import {
   psrUrgent,
   status,
 } from '../../../../constants/theme';
+import { advDocHref } from '../../../../data/docLinks';
 
 // Upload property search report (design/210).
 //
@@ -161,9 +162,13 @@ export default function AdvocatePropertySearchUploadScreen() {
             </View>
           </View>
 
-          {/* Inert — no upload flow is designed anywhere. */}
+          {/* View opens the document viewer; Replace is inert — no upload flow is designed. */}
           <View style={styles.vrRow}>
-            <Pressable accessibilityRole="button" style={({ pressed }) => [styles.vr, pressed && styles.pressed]}>
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => router.push(advDocHref(u.upload.file) as Href)}
+              style={({ pressed }) => [styles.vr, pressed && styles.pressed]}
+            >
               <Eye size={t.vrIcon} color={colors.textPrimary} />
               <Text style={styles.vrText} {...shrinkToFit(0.8)}>
                 {u.upload.view}

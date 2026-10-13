@@ -216,7 +216,13 @@ export default function AdvocateFirGeneratorScreen() {
             </View>
           </View>
           <Text style={styles.sub}>{f.documents.sub}</Text>
-          <Pressable accessibilityRole="button" style={({ pressed }) => [styles.viewDoc, pressed && styles.pressed]}>
+          {/* "View Documents" names the whole set, so it opens design/216's document
+              review screen, which lists each one with its own View. */}
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => router.push(`/advocate/fir/documents?id=${id ?? ''}` as Href)}
+            style={({ pressed }) => [styles.viewDoc, pressed && styles.pressed]}
+          >
             <FolderOpen size={t.viewDocIcon} color={colors.brandDark} />
             <Text style={styles.viewDocText} {...shrinkToFit(0.8)}>
               {f.documents.view}

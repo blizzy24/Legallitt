@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { router, type Href } from 'expo-router';
 import { BookText, Check, CirclePlus, Crop, Eye, File, FingerprintPattern, RefreshCw, Trash, type LucideIcon } from 'lucide-react-native';
 import { useEffect } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
@@ -6,6 +6,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import WizardShell from '../../components/WizardShell';
 import { colors, font, ink, reviewDocs as r, wizardCardShadow } from '../../constants/theme';
 import { useLegalNotice } from '../../context/legalNotice';
+import { clientDocHref } from '../../data/docLinks';
 
 type Doc = { title: string; subtitle: string; icon: LucideIcon };
 
@@ -90,7 +91,12 @@ function DocRow({ doc }: { doc: Doc }) {
         </Text>
       </View>
       <View style={styles.actions}>
-        <Pressable accessibilityRole="button" accessibilityLabel={`View ${doc.title}`} hitSlop={8}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={`View ${doc.title}`}
+          hitSlop={8}
+          onPress={() => router.push(clientDocHref(doc.title) as Href)}
+        >
           <Eye size={r.actionIcon + 2} color={colors.textPrimary} />
         </Pressable>
         <Pressable accessibilityRole="button" accessibilityLabel={`Replace ${doc.title}`} hitSlop={8}>

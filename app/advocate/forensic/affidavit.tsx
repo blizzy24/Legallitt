@@ -22,6 +22,7 @@ import Svg, { Path } from 'react-native-svg';
 import { shrinkToFit } from '../../../constants/textFit';
 import { DF_AFFIDAVIT } from '../../../data/advocateForensic';
 import { advForensicAffidavit as t, colors, font, ink } from '../../../constants/theme';
+import { advDocHref } from '../../../data/docLinks';
 
 // Legal affidavit (design/227).
 //
@@ -252,7 +253,11 @@ export default function AdvocateForensicAffidavitScreen() {
                 {a.file.by}
               </Text>
             </View>
-            <Pressable accessibilityRole="button" style={({ pressed }) => [styles.preview, pressed && styles.pressed]}>
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => router.push(advDocHref(a.file.name) as Href)}
+              style={({ pressed }) => [styles.preview, pressed && styles.pressed]}
+            >
               <Eye size={t.previewIcon} color={colors.textPrimary} />
               <Text style={styles.previewText} {...shrinkToFit(0.8)}>
                 {a.file.preview}

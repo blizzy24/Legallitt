@@ -25,6 +25,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { shrinkToFit } from '../../../constants/textFit';
 import { DF_SUBMIT } from '../../../data/advocateForensic';
 import { advForensicSubmit as t, colors, font, ink } from '../../../constants/theme';
+import { advDocHref } from '../../../data/docLinks';
 
 // Review & submit (design/228).
 //
@@ -94,7 +95,11 @@ export default function AdvocateForensicSubmitScreen() {
         </View>
       </View>
       <View style={styles.actRow}>
-        <Pressable accessibilityRole="button" style={({ pressed }) => [styles.act, pressed && styles.pressed]}>
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => router.push(advDocHref(name) as Href)}
+          style={({ pressed }) => [styles.act, pressed && styles.pressed]}
+        >
           <Eye size={t.actIcon} color={colors.textPrimary} />
           <Text style={styles.actText} {...shrinkToFit(0.8)}>
             {s.view}

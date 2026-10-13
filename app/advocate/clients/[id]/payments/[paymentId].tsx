@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { router, type Href } from 'expo-router';
 import {
   BadgeCheck,
   ChevronLeft,
@@ -27,6 +27,7 @@ import {
   advFeeBreakdown,
 } from '../../../../../data/advocateSide';
 import { advClientSub as t, colors, font, ink } from '../../../../../constants/theme';
+import { advDocHref } from '../../../../../data/docLinks';
 
 // Payment detail (design/157).
 //
@@ -347,7 +348,11 @@ export default function AdvocatePaymentDetailScreen() {
                   {r.meta}
                 </Text>
               </View>
-              <Pressable accessibilityRole="button" style={styles.receiptView}>
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => router.push(advDocHref(r.name) as Href)}
+                style={styles.receiptView}
+              >
                 <Eye size={14} color={colors.textPrimary} />
                 <Text style={styles.receiptViewText} {...shrinkToFit(0.8)}>
                   View

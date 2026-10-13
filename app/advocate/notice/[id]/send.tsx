@@ -24,6 +24,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { shrinkToFit } from '../../../../constants/textFit';
 import { ADV_NOTICE_SEND } from '../../../../data/advocateSide';
 import { advNoticeSend as t, colors, font, ink } from '../../../../constants/theme';
+import { advDocHref } from '../../../../data/docLinks';
 
 // Send documents (design/194).
 //
@@ -102,7 +103,12 @@ export default function AdvocateNoticeSendScreen() {
                 {s.docsChip}
               </Text>
             </View>
-            <Pressable accessibilityRole="button" style={styles.docsLink}>
+            {/* View names the set, so it opens the first document; the viewer has no pager. */}
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => router.push(advDocHref(s.docChips[0]) as Href)}
+              style={styles.docsLink}
+            >
               <Eye size={t.docsLinkIcon} color={colors.brandDark} />
               <Text style={styles.docsLinkText} {...shrinkToFit(0.8)}>
                 {s.docsLink}

@@ -19,6 +19,7 @@ import CourierHeader from '../../../components/CourierHeader';
 import { shrinkToFit } from '../../../constants/textFit';
 import { CO_SELF_DETAILS } from '../../../data/courier';
 import { courierSelfDetails as t, courierGreen as g, font, ink } from '../../../constants/theme';
+import { clientDocHref } from '../../../data/docLinks';
 
 // Client — enter the courier details after sending the documents yourself
 // (design/286).
@@ -166,11 +167,15 @@ export default function CourierSelfDetailsScreen() {
                 {'✓ ' + d.receiptStatus}
               </Text>
             </View>
-            <View style={styles.receiptBtn}>
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => router.push(clientDocHref(d.receiptFile) as Href)}
+              style={styles.receiptBtn}
+            >
               <Text style={styles.receiptBtnText} {...shrinkToFit(0.8)}>
                 {d.receiptView}
               </Text>
-            </View>
+            </Pressable>
             <View style={[styles.receiptBtn, styles.receiptBtnNext]}>
               <Text style={styles.receiptBtnText} {...shrinkToFit(0.8)}>
                 {d.receiptReplace}
@@ -199,12 +204,16 @@ export default function CourierSelfDetailsScreen() {
               </Text>
             </View>
           ))}
-          <View style={styles.viewDocs}>
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => router.push(clientDocHref(d.docs[0]) as Href)}
+            style={styles.viewDocs}
+          >
             <Eye size={t.viewDocsGlyph} color={t.inkMuted} strokeWidth={2} />
             <Text style={styles.viewDocsText} {...shrinkToFit(0.8)}>
               {d.viewDocs}
             </Text>
-          </View>
+          </Pressable>
         </View>
 
         <View style={styles.card}>

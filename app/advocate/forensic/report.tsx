@@ -18,6 +18,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { shrinkToFit } from '../../../constants/textFit';
 import { DF_REPORT } from '../../../data/advocateForensic';
 import { advForensicReport as t, colors, font, ink } from '../../../constants/theme';
+import { advDocHref } from '../../../data/docLinks';
 
 // Forensic report form (design/226).
 //
@@ -190,7 +191,11 @@ export default function AdvocateForensicReportScreen() {
             </View>
             <Text style={styles.draftBody}>{r.draft.body}</Text>
           </View>
-          <Pressable accessibilityRole="button" style={({ pressed }) => [styles.preview, pressed && styles.pressed]}>
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => router.push(advDocHref(r.draft.title) as Href)}
+            style={({ pressed }) => [styles.preview, pressed && styles.pressed]}
+          >
             <Eye size={t.previewIcon} color={colors.textPrimary} />
             <Text style={styles.previewText} {...shrinkToFit(0.8)}>
               {r.draft.preview}

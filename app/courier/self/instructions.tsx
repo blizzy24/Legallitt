@@ -18,6 +18,7 @@ import CourierHeader from '../../../components/CourierHeader';
 import { shrinkToFit } from '../../../constants/textFit';
 import { CO_SELF_INSTRUCTIONS } from '../../../data/courier';
 import { courierSelfInstructions as t, font, ink } from '../../../constants/theme';
+import { clientDocHref } from '../../../data/docLinks';
 
 // Client — send the documents yourself (design/285), the second branch of
 // design/284.
@@ -29,7 +30,8 @@ import { courierSelfInstructions as t, font, ink } from '../../../constants/them
 //   are rendered in their place; all are listed in PLACEHOLDERS.
 //
 // STATIC, NOT WIRED: every Copy button and "Copy All Details" copy nothing —
-// no clipboard vendor is scoped for this batch. "View Documents" opens nothing.
+// no clipboard vendor is scoped for this batch. "View Documents" opens the
+// document viewer.
 // The "I have sent the physical documents" checkbox is real, because the
 // Continue step has to be leaveable; nothing else responds to it.
 export default function CourierSelfInstructionsScreen() {
@@ -117,9 +119,12 @@ export default function CourierSelfInstructionsScreen() {
               <CircleCheck size={t.docCheckGlyph} color="#B9B2AB" strokeWidth={2} />
             </View>
           ))}
-          <Text style={styles.viewDocs} {...shrinkToFit(0.8)}>
-            {d.viewDocs}
-          </Text>
+          {/* View Documents names the set, so it opens the first document. */}
+          <Pressable accessibilityRole="button" onPress={() => router.push(clientDocHref(d.docs[0]) as Href)}>
+            <Text style={styles.viewDocs} {...shrinkToFit(0.8)}>
+              {d.viewDocs}
+            </Text>
+          </Pressable>
         </View>
 
         <View style={styles.card}>

@@ -41,6 +41,7 @@ import {
   ADV_REQUEST_FILINGS,
 } from '../../../data/advocateSide';
 import { advRequest as t, colors, font, ink } from '../../../constants/theme';
+import { advDocHref } from '../../../data/docLinks';
 
 // Incoming request detail (design/163). designs 160 and 161 are shorter cuts of this
 // same screen; the full one is built.
@@ -368,7 +369,11 @@ export default function AdvocateRequestDetailScreen() {
                 {f.meta}
               </Text>
             </View>
-            <Pressable accessibilityRole="button" style={styles.fileView}>
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => router.push(advDocHref(f.name) as Href)}
+              style={styles.fileView}
+            >
               <Eye size={t.fileViewIcon} color={colors.textPrimary} />
               <Text style={styles.fileViewText} {...shrinkToFit(0.8)}>
                 View

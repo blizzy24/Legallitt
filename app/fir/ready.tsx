@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { router, type Href } from 'expo-router';
 import { ArrowRight, Check, Download, Eye, FileText, Gavel, ShieldCheck } from 'lucide-react-native';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -10,6 +10,7 @@ import RequestIdCard from '../../components/RequestIdCard';
 import { shrinkToFit } from '../../constants/textFit';
 import { colors, firResult as t, font, ink } from '../../constants/theme';
 import { FIR_REQUEST, READY_STAGE_CHIP, READY_TIMELINE } from '../../data/fir';
+import { clientDocHref } from '../../data/docLinks';
 
 // FIR draft ready (design/49) — the end state of the journey app/fir/status.tsx
 // starts. Both are reachable through the dev toggle at the foot of each screen.
@@ -80,7 +81,12 @@ export default function FirReadyScreen() {
                 {file.meta}
               </Text>
             </View>
-            <Pressable accessibilityRole="button" accessibilityLabel="Preview draft" style={styles.eye}>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Preview draft"
+              onPress={() => router.push(clientDocHref(file.name, 'doc-fir-draft') as Href)}
+              style={styles.eye}
+            >
               <Eye size={t.dossierEyeIcon} color={colors.textPrimary} />
             </Pressable>
           </View>

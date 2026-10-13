@@ -44,7 +44,8 @@ import {
 // The confirmation checkbox ticks, and only then does Submit enable and lead to
 // design/240 (submitted). design/239 draws the unticked, muted state; the ticked
 // state uses the brand fill (#B09C82) every other CTA in this flow is drawn in.
-// Edit and View Documents go nowhere. Nothing is submitted anywhere.
+// View Documents opens the documents step; Edit goes nowhere. Nothing is
+// submitted anywhere.
 
 const ICONS = [UserRound, Briefcase, Scale];
 
@@ -52,11 +53,13 @@ function Card({
   icon,
   title,
   action,
+  onAction,
   children,
 }: {
   icon: ReactNode;
   title: string;
   action: string;
+  onAction?: () => void;
   children: ReactNode;
 }) {
   return (
@@ -66,7 +69,13 @@ function Card({
         <Text style={styles.headTitle} {...shrinkToFit(0.75)}>
           {title}
         </Text>
-        <Text style={styles.edit}>{action}</Text>
+        {onAction ? (
+          <Pressable accessibilityRole="button" onPress={onAction} hitSlop={8}>
+            <Text style={styles.edit}>{action}</Text>
+          </Pressable>
+        ) : (
+          <Text style={styles.edit}>{action}</Text>
+        )}
       </View>
       <View style={styles.headRule} />
       {children}
@@ -154,6 +163,9 @@ export default function AdvocateVerifyReviewScreen() {
         <Card
           title={d.documents.title}
           action={d.documents.action}
+          // "View Documents" names the set: it opens design/238's documents step,
+          // which lists each one.
+          onAction={() => router.push('/advocate/verify/documents' as Href)}
           icon={<FileText size={t.tileGlyph} color={ink.accent} strokeWidth={1.8} />}
         >
           {d.documents.rows.map((r, i) => (

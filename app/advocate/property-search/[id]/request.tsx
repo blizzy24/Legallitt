@@ -32,6 +32,7 @@ import {
   ink,
   psrDecision,
 } from '../../../../constants/theme';
+import { advDocHref } from '../../../../data/docLinks';
 
 // Property search request (designs 206 and 207) — one screen, two states.
 //
@@ -303,7 +304,11 @@ export default function AdvocatePsrRequestScreen() {
                 {d.meta}
               </Text>
             </View>
-            <Pressable accessibilityRole="button" style={styles.view}>
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => router.push(advDocHref(d.name) as Href)}
+              style={styles.view}
+            >
               <Eye size={t.viewIcon} color={colors.textPrimary} />
               <Text style={styles.viewText} {...shrinkToFit(0.8)}>
                 {r.documents.view}

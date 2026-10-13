@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { router, type Href } from 'expo-router';
 import {
   BadgeCheck,
   ChevronLeft,
@@ -14,6 +14,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { shrinkToFit } from '../../constants/textFit';
 import { colors, dfReport as t, font, ink } from '../../constants/theme';
 import { DF_REPORT as d, DF_REQUEST_ID } from '../../data/documentForensic';
+import { clientDocHref } from '../../data/docLinks';
 
 // Document Forensic Report (design/90).
 //
@@ -21,8 +22,9 @@ import { DF_REPORT as d, DF_REQUEST_ID } from '../../data/documentForensic';
 // DF-2026-00245, one digit shorter. One value is used across all three; see
 // DF_REQUEST_ID in data/documentForensic.ts.
 //
-// View Report, Download PDF and Share Report are inert — no report viewer is designed
-// for this service, and the prototype cannot write or share files.
+// View Report opens the client document viewer (design/57) — no report viewer
+// is designed for this service. Download PDF and Share Report are inert: the
+// prototype cannot write or share files.
 
 export default function DocumentForensicReportScreen() {
   const insets = useSafeAreaInsets();
@@ -97,6 +99,7 @@ export default function DocumentForensicReportScreen() {
 
         <Pressable
           accessibilityRole="button"
+          onPress={() => router.push(clientDocHref(`Document Forensic Report ${DF_REQUEST_ID}`) as Href)}
           style={({ pressed }) => [styles.button, pressed && styles.pressed]}
         >
           <Eye size={t.buttonIcon} color={ink.onBrand} />

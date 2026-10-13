@@ -1,3 +1,4 @@
+import { router, type Href } from 'expo-router';
 import { Building2, ChevronRight, Copy, FileText, Info, RefreshCw, Truck } from 'lucide-react-native';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
@@ -6,6 +7,7 @@ import CourierTimeline from '../../components/CourierTimeline';
 import { shrinkToFit } from '../../constants/textFit';
 import { CO_TRACKING } from '../../data/courier';
 import { courierTracking as t, font, ink } from '../../constants/theme';
+import { clientDocHref } from '../../data/docLinks';
 
 // Client — document delivery tracking (design/281).
 //
@@ -24,7 +26,7 @@ import { courierTracking as t, font, ink } from '../../constants/theme';
 //
 // STATIC, NOT WIRED: all courier tracking. "Refresh Status" re-renders and
 // nothing changes — there is no Blue Dart or DHL API behind it, and no polling.
-// The waybill Copy button copies nothing and "View" opens nothing.
+// The waybill Copy button copies nothing; "View" opens the document viewer.
 export default function CourierTrackingScreen() {
   const d = CO_TRACKING;
 
@@ -97,10 +99,17 @@ export default function CourierTrackingScreen() {
               {d.docsSub}
             </Text>
           </View>
-          <Text style={styles.docLink} {...shrinkToFit(0.8)}>
-            {d.docsLink}
-          </Text>
-          <ChevronRight size={t.sectionGlyph} color={t.brand} strokeWidth={2.2} />
+          {/* design/281 names no file here — only "3 Physical Documents". */}
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => router.push(clientDocHref(d.docsSub) as Href)}
+            style={styles.docLinkBtn}
+          >
+            <Text style={styles.docLink} {...shrinkToFit(0.8)}>
+              {d.docsLink}
+            </Text>
+            <ChevronRight size={t.sectionGlyph} color={t.brand} strokeWidth={2.2} />
+          </Pressable>
         </View>
 
         <View style={styles.card}>
@@ -156,6 +165,7 @@ export default function CourierTrackingScreen() {
 }
 
 const styles = StyleSheet.create({
+  docLinkBtn: { flexDirection: 'row', alignItems: 'center' },
   screen: { flex: 1, backgroundColor: t.bg },
   content: { paddingBottom: t.bottomPad },
   flex: { flex: 1 },
