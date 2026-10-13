@@ -2808,6 +2808,37 @@ export const ADV_NOTICE_REPORT = {
   back: 'Back To Home',
 };
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Send report — Legal Advice (design/288).
+//
+// design/288 is design/203 with one change: the payout. Differenced pixel by pixel,
+// the two 844×1786 exports match everywhere except rows 677–713, where ₹3,500/-
+// becomes ₹25,650/-. Its own record, not shared with ADV_NOTICE_REPORT, so either
+// flow can change without moving the other.
+//
+// ₹25,650 is design/164's net payout, so it is COMPUTED from the same gross fee and
+// 10% rate rather than typed in; it matches the drawn figure.
+//
+// ⚠ The service name is not drawn anywhere on the screen — the title is still
+// "Send Report" and the chip still "DOC-742", exactly as on design/203. `service`
+// is carried in the record only, so the two flows differ in data by the payout and
+// the service name and on screen by the payout alone.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const ADV_LA_REPORT = {
+  service: 'Legal Advice',
+  title: 'Send Report',
+  /** ⚠ As drawn — design/288 keeps design/203's document number. */
+  docChip: 'DOC-742',
+  summaryLabel: 'PAYMENT SUMMARY',
+  escrowChip: 'Escrow Protected',
+  payoutLabel: 'Advocate Payout',
+  /** design/164's net: 28,500 gross − 10%. */
+  payout: `₹${advNetAt10(ADV_SCHEDULE.grossFee).net.toLocaleString('en-IN')}/-`,
+  note: 'Payment will be automatically credited to your registered bank account after the report is sent to the client.',
+  back: 'Back To Home',
+};
+
 // ═════════════════════════════════════════════════════════════════════════════
 // ADVOCATE CASES LIST (designs 204, 205) — supersedes design/162.
 //
