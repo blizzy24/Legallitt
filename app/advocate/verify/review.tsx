@@ -9,7 +9,7 @@ import {
   ShieldCheck,
   UserRound,
 } from 'lucide-react-native';
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -41,9 +41,10 @@ import {
 // ⚠ All three documents read "Verified" on a form that has not been submitted,
 // and design/238 drew the third one mid-upload at 68%.
 //
-// STATIC, NOT WIRED. The confirmation checkbox does not tick, and the Submit
-// button is DRAWN MUTED because the checkbox is drawn unticked — it stays
-// muted. Edit and View Documents go nowhere. Nothing is submitted anywhere.
+// The confirmation checkbox ticks, and only then does Submit enable and lead to
+// design/240 (submitted). design/239 draws the unticked, muted state; the ticked
+// state uses the brand fill (#B09C82) every other CTA in this flow is drawn in.
+// Edit and View Documents go nowhere. Nothing is submitted anywhere.
 
 const ICONS = [UserRound, Briefcase, Scale];
 
@@ -76,6 +77,7 @@ function Card({
 export default function AdvocateVerifyReviewScreen() {
   const insets = useSafeAreaInsets();
   const d = AV_REVIEW;
+  const [agreed, setAgreed] = useState(false);
 
   return (
     <View style={styles.screen}>
@@ -173,13 +175,20 @@ export default function AdvocateVerifyReviewScreen() {
           ))}
         </Card>
 
-        <View style={styles.confirm}>
-          <View style={styles.confirmBox} />
+        <Pressable
+          accessibilityRole="checkbox"
+          accessibilityState={{ checked: agreed }}
+          onPress={() => setAgreed((a) => !a)}
+          style={styles.confirm}
+        >
+          <View style={[styles.confirmBox, agreed && styles.confirmBoxOn]}>
+            {agreed && <Check size={t.confirmBox - 6} color={ink.onBrand} strokeWidth={3} />}
+          </View>
           <View style={styles.docCol}>
             <Text style={styles.confirmTitle}>{d.confirm.title}</Text>
             <Text style={styles.confirmBody}>{d.confirm.body}</Text>
           </View>
-        </View>
+        </Pressable>
 
         <View style={styles.bci}>
           <ShieldCheck size={t.bciGlyph} color={ink.accent} strokeWidth={1.8} />
@@ -191,12 +200,18 @@ export default function AdvocateVerifyReviewScreen() {
       </ScrollView>
 
       <View style={[styles.footer, { paddingBottom: insets.bottom + 16 }]}>
-        <View style={styles.cta}>
-          <Text style={styles.ctaLabel} {...shrinkToFit(0.8)}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityState={{ disabled: !agreed }}
+          disabled={!agreed}
+          onPress={() => router.push('/advocate/verify/submitted' as Href)}
+          style={[styles.cta, agreed && styles.ctaOn]}
+        >
+          <Text style={[styles.ctaLabel, agreed && styles.ctaLabelOn]} {...shrinkToFit(0.8)}>
             {d.cta}
           </Text>
-          <ArrowRight size={s.ctaArrow} color={t.ctaMutedInk} strokeWidth={2.4} />
-        </View>
+          <ArrowRight size={s.ctaArrow} color={agreed ? ink.onBrand : t.ctaMutedInk} strokeWidth={2.4} />
+        </Pressable>
         <Pressable
           accessibilityRole="button"
           onPress={() => (router.canGoBack() ? router.back() : router.replace('/dashboard' as Href))}
@@ -382,7 +397,10 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: colors.brand,
     marginRight: t.confirmGap,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
+  confirmBoxOn: { backgroundColor: colors.brand },
   confirmTitle: {
     fontFamily: font.appBody,
     fontSize: t.confirmSize,
@@ -437,6 +455,8 @@ const styles = StyleSheet.create({
     color: t.ctaMutedInk,
     marginRight: s.ctaArrowGap,
   },
+  ctaOn: { backgroundColor: colors.brand },
+  ctaLabelOn: { color: ink.onBrand },
   secondary: {
     marginTop: s.secondaryTop,
     textAlign: 'center',

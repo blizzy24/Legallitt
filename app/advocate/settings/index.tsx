@@ -11,12 +11,10 @@ import { advSettings as t, colors, font, ink, status } from '../../../constants/
 
 // Advocate settings root (design/245).
 //
-// ⚠ THIS IS A NEW PUSHED SCREEN, NOT A REDRAWN TAB. There is no advocate
-// Profile tab in this app to replace: app/(advocate)/ holds dashboard, matters,
-// clients and earnings, AdvocateTabBar lists exactly those four, and the
-// advocateProfile token block belongs to app/advocates/[id].tsx, which is the
-// CLIENT-facing advocate profile. design/245 itself draws a back chevron and no
-// tab bar, which settles it.
+// ⚠ A PUSHED SCREEN, OPENED FROM THE PROFILE TAB. AdvocateTabBar's fifth tab,
+// Profile, pushes this route rather than switching to it, because design/245
+// draws a back chevron and no tab bar. (The advocateProfile token block belongs
+// to app/advocates/[id].tsx, the CLIENT-facing advocate profile.)
 //
 // ⚠ PALETTE. This screen is drawn on #F4F6F8, a cool blue-grey, where every
 // other screen in the project uses the warm #FAF8F5 — with warm #FCF3EB icon

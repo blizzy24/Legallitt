@@ -1,11 +1,18 @@
 import { router, usePathname, type Href } from 'expo-router';
-import { House, Scale, UsersRound, Wallet, type LucideIcon } from 'lucide-react-native';
+import { House, Scale, UserRound, UsersRound, Wallet, type LucideIcon } from 'lucide-react-native';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { colors, ink, tabBarShadow, tabs } from '../constants/theme';
 
-// The ADVOCATE tab bar: four tabs, icon only (design/148 and design/151).
+// The ADVOCATE tab bar: five tabs, icon only (design/148 and design/151 draw four;
+// Profile is the fifth).
+//
+// PROFILE is not a tab screen. The client's flow diagram hangs the settings tree,
+// the verification wizard and the bank flow under Profile, but design/245 — the
+// settings root — draws a back chevron and no tab bar. So the Profile tab pushes
+// /advocate/settings as a full screen, and the bar is not drawn there. Its icon is
+// the client bar's Profile icon (components/TabBar.tsx).
 //
 // ─────────────────────────────────────────────────────────────────────────────
 // DELIBERATELY SEPARATE FROM components/TabBar.tsx. It repeats about forty lines of
@@ -23,6 +30,8 @@ type AdvocateTab = {
   label: string;
   icon: LucideIcon;
   route: Href;
+  /** Opens as a pushed screen rather than switching tab. */
+  push?: boolean;
 };
 
 const ADVOCATE_TABS: AdvocateTab[] = [
@@ -30,6 +39,7 @@ const ADVOCATE_TABS: AdvocateTab[] = [
   { key: 'matters', label: 'Matters', icon: Scale, route: '/(advocate)/matters' },
   { key: 'clients', label: 'Clients', icon: UsersRound, route: '/(advocate)/clients' },
   { key: 'earnings', label: 'Earnings', icon: Wallet, route: '/(advocate)/earnings' },
+  { key: 'profile', label: 'Profile', icon: UserRound, route: '/advocate/settings', push: true },
 ];
 
 export default function AdvocateTabBar() {
@@ -60,7 +70,7 @@ export default function AdvocateTabBar() {
               role="tab"
               aria-selected={active}
               accessibilityLabel={tab.label}
-              onPress={() => router.navigate(tab.route)}
+              onPress={() => (tab.push ? router.push(tab.route) : router.navigate(tab.route))}
               style={styles.slot}
             >
               <View
