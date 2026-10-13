@@ -434,6 +434,10 @@ export const courierPayment = {
 /** design/279 — the collided success screen. Measured at 2.0000 px/pt from the 780×1796 export. */
 export const courierSuccess = {
   padX: 16,
+  /** designs 298/317/324/333 only: the green tick beside the title (2.000 px/pt). */
+  tick: 28,
+  tickGap: 11,
+  tickGlyph: 14,
   bg: '#FAF8F5',
   ink: '#222222',
   inkMuted: '#4D4439',

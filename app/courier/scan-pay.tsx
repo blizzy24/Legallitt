@@ -1,4 +1,4 @@
-import type { Href } from 'expo-router';
+import { useLocalSearchParams, type Href } from 'expo-router';
 
 import ScanPayScreen from '../../components/ScanPayScreen';
 import { CO_SCAN_PAY } from '../../data/courier';
@@ -28,11 +28,14 @@ import { CO_SCAN_PAY } from '../../data/courier';
 //  · the "Waiting for payment…" spinner animates and polls nothing, and the
 //    screen never advances on its own. Use the back gesture to leave it.
 export default function CourierScanPayScreen() {
+  // ?flow=hcr is carried through to the success screen (see app/courier/success.tsx).
+  const { flow } = useLocalSearchParams<{ flow?: string }>();
   return (
     <ScanPayScreen
       service={CO_SCAN_PAY.service}
       amount={CO_SCAN_PAY.amount}
       successHref={'/courier/success' as Href}
+      query={flow ? `flow=${flow}` : undefined}
       hold
     />
   );
