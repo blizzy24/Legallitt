@@ -209,7 +209,9 @@ export default function LegalAdviceChooseScreen() {
 
         <Pressable
           accessibilityRole="button"
-          onPress={() => router.push('/legal-advice/experience')}
+          // Next in the brief's order is Your Details (design/105), then the matter
+          // picker and the experience tiers.
+          onPress={() => router.push('/legal-advice/details')}
           style={({ pressed }) => [styles.button, pressed && styles.pressed]}
         >
           <Text style={styles.buttonLabel}>Continue</Text>

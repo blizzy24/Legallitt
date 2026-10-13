@@ -191,7 +191,8 @@ export default function LegalAdviceInfoScreen() {
 
           <Pressable
             accessibilityRole="button"
-            onPress={() => router.push('/legal-advice/details')}
+            // The brief's order: info -> choose consultation type -> your details.
+            onPress={() => router.push('/legal-advice/choose')}
             style={({ pressed }) => [styles.button, pressed && styles.pressed]}
           >
             <Text style={styles.buttonLabel}>Get Legal Advice</Text>
