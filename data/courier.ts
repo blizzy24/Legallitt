@@ -556,3 +556,75 @@ export const CO_SELF_INSTRUCTIONS = {
 
   cta: 'Continue',
 };
+
+/** design/286 — send by yourself: enter the courier details. */
+export const CO_SELF_DETAILS = {
+  title: 'Documents Sent',
+  titlePill: 'Sent',
+
+  sentTitle: 'Documents Sent',
+  // ⚠ Note 21: hard-wrapped in the export into three ragged lines.
+  sentBody: 'Your documents\nhave been marked as\nsent.',
+
+  idLabel: 'LEGALITT DELIVERY ID',
+  idValue: 'LGT-DLV-77421',
+  idNote: 'Keep this ID for your case.',
+  copy: 'Copy',
+
+  formTitle: 'Courier Details',
+  formSub: 'Enter the details from your courier receipt.',
+  fields: [
+    { label: 'Courier Name', placeholder: 'Blue Dart' },
+    { label: 'Tracking Number', placeholder: 'BD-4471-8820' },
+    { label: 'Dispatch Date', placeholder: 'DD/MM/YYYY', icon: 'date' as const },
+    { label: 'Courier Office', placeholder: 'Indore - Vijay Nagar' },
+    { label: 'Courier Phone', placeholder: '+91 98260 11482' },
+    { label: 'Tracking Link', placeholder: 'Paste tracking link', icon: 'link' as const },
+  ],
+
+  otherTitle: 'Other Details',
+  expectedLabel: 'Expected Delivery Date',
+  optional: 'Optional',
+  expectedPlaceholder: 'DD/MM/YYYY',
+  receiptLabel: 'Courier Receipt',
+  upload: 'Upload Receipt',
+  uploadNote: 'Add the receipt if you have one.',
+  receiptFile: 'courier-receipt.pdf',
+  receiptStatus: 'Uploaded',
+  receiptView: 'View',
+  receiptReplace: 'Replace',
+
+  docsTitle: 'Documents Sent',
+  docsCount: '3 Documents',
+  docs: ['Case Papers.pdf', 'Court Order.pdf', 'ID Proof.pdf'],
+  viewDocs: 'View Documents',
+
+  sendTitle: 'Send To',
+  savedChip: 'Saved in Case',
+  sendRows: [
+    { label: 'RECEIVER', value: ADVOCATE.name },
+    { label: 'OFFICE', value: 'High Court Bar Chambers' },
+    { label: 'ADDRESS', value: 'Chamber No. 14, HC Bar Building' },
+    { label: 'CITY & STATE', value: `${ADVOCATE.city}, ${ADVOCATE.state}` },
+    { label: 'PIN', value: ADVOCATE.pin },
+    { label: 'MOBILE', value: ADVOCATE.mobile },
+  ],
+  sendNote: 'These details are linked to your case.',
+
+  trackTitle: 'Track Your Shipment',
+  trackBody: 'Your advocate can use the tracking number to check the shipment.',
+  trackRows: [
+    { label: 'COURIER', value: 'Blue Dart' },
+    { label: 'TRACKING NO.', value: 'BD-4471-8820' },
+  ],
+  trackCopy: 'Copy Tracking Number',
+
+  impTitle: 'Important',
+  impItems: [
+    'Check the tracking number before you submit.',
+    'Keep your courier receipt safely.',
+  ],
+
+  cta: 'Submit Delivery Details',
+  foot: 'Complete required fields: Courier Name, Tracking Number, Dispatch Date',
+};
