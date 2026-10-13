@@ -51,7 +51,7 @@ import {
 // States: base (design/173), fullscreen (design/174, which also moves the matter
 // row BELOW the panel), notes (design/177) and copilot (design/178 / design/182).
 // The notes and copilot panels are toggled from the matter row's Note chip and the
-// AI mark on the feed.
+// AI mark on the feed; the AI mark appears only in fullscreen, as in design/174.
 //
 // Every control is inert except fullscreen, the two panels, the mode toggle and
 // End call. design/173 clips the client's location line and the matter name behind
@@ -247,13 +247,16 @@ export default function AdvocateVideoScreen() {
         </View>
         )}
 
-        {panel !== 'notes' && (
+        {/* design/173 (and its re-export, 12.jpeg) draws no AI mark on the base
+            panel; design/174 draws it in fullscreen. So the copilot opens from
+            fullscreen only. */}
+        {immersive && panel !== 'notes' && (
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Legal AI copilot"
           accessibilityState={{ expanded: panel === 'ai' }}
           onPress={() => setPanel((p) => (p === 'ai' ? 'none' : 'ai'))}
-          style={[styles.aiMark, immersive && styles.aiMarkFull]}
+          style={styles.aiMark}
         >
           <AiFlowerMark size={t.aiMark} />
         </Pressable>
@@ -621,12 +624,7 @@ const styles = StyleSheet.create({
     lineHeight: t.verifyLineHeight,
     color: t.verifyColour,
   },
-  aiMark: {
-    position: 'absolute',
-    right: t.aiMarkInset,
-    bottom: t.chipBottom + t.speakHeight + 12,
-  },
-  aiMarkFull: { bottom: t.aiMarkBottom },
+  aiMark: { position: 'absolute', right: t.aiMarkInset, bottom: t.aiMarkBottom },
 
   notesSheet: {
     borderRadius: t.matterRadius,
