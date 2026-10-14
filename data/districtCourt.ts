@@ -197,3 +197,50 @@ export const DC_PREP = {
   cta: 'View Case',
   caption: 'Return to Case Dashboard',
 };
+
+/**
+ * design/314 — court fee (reached from View Case on design/313).
+ *
+ * ⚠ CONFLICT 2: "Pay Court Fee (₹3,500)" opens the shared payment (designs
+ * 315–317 = 296–298), which charges ₹40,680 — see components/CourtPaymentFlow.
+ * ⚠ CONFLICT 1: a ₹3,500 court fee, after 299 promised a ₹25,000 estimate
+ * "payable only upon advocate confirmation" and 296 took ₹40,680.
+ */
+export const DC_COURT_FEE = {
+  title: 'Court Fee',
+  sub: 'District Court Representation',
+  pill: 'FRESH CASE • REQUIRED BEFORE FILING',
+  reqTitle: 'Court Fee Required',
+  reqBody: 'A court fee is needed before your fresh case can be filed in court.',
+  reqInfo: 'This fee goes directly to the court registry to register your case.',
+  amtTitle: 'Court Fee Amount',
+  amtTag: 'Payment Pending',
+  amount: '₹3,500',
+  unit: 'INR',
+  amtDesc: 'The actual fee for your case is shown here. It is calculated by the court rules for your case value.',
+  boxRows: [
+    ['Court Registry Fee', '₹3,500'],
+    ['Filing Status', 'Awaiting Fee Payment'],
+  ] as const,
+  infoTitle: 'Case Information',
+  infoTag: 'Fresh Case',
+  parties: ['Parties', 'Rahul Sharma vs Amit Verma'] as const,
+  facts: [
+    ['Case Type', 'Civil Suit'],
+    ['Court', 'District Court, Indore'],
+  ] as const,
+  initials: 'AV',
+  adv: 'Adv. Abhishek Verma',
+  advRole: 'Assigned Advocate',
+  ask: 'Have a question about this fee? Ask your advocate.',
+  chat: 'Chat',
+  call: 'Call',
+  nextTitle: 'What Happens Next',
+  next: [
+    'Pay the court fee securely through UPI, Card, or Net Banking.',
+    'Your advocate will submit the court filing immediately.',
+    'You will receive the official court filing confirmation and receipt.',
+  ],
+  cta: 'Pay Court Fee (₹3,500)',
+  foot: '100% Secure Government Court Payment • Verified by Legalitt',
+};
