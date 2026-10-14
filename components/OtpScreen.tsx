@@ -1,7 +1,7 @@
 import { router, type Href } from 'expo-router';
 import { ArrowRight, Lock, MessageSquareMore, Pencil } from 'lucide-react-native';
 import { useEffect, useRef, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import AuthHeader from './AuthHeader';
@@ -35,6 +35,10 @@ export default function OtpScreen({ title, next, changeTo }: Props) {
   const [digits, setDigits] = useState<string[]>(['4', '8', '2', '', '', '']);
   const [seconds, setSeconds] = useState(RESEND_SECONDS);
   const inputs = useRef<(TextInput | null)[]>([]);
+  const { width } = useWindowDimensions();
+  const drawnRowW = t.boxCount * t.box + (t.boxCount - 1) * t.boxGapX;
+  const rowW = Math.min(drawnRowW, width - 2 * t.boxesEdge);
+  const boxW = (rowW - (t.boxCount - 1) * t.boxGapX) / t.boxCount;
 
   useEffect(() => {
     if (seconds <= 0) return;
@@ -89,14 +93,18 @@ export default function OtpScreen({ title, next, changeTo }: Props) {
           </Pressable>
         </View>
 
-        <View style={styles.boxes}>
+        {/* The six boxes are drawn 369pt wide at 390 — wider than the 20pt content
+            inset, 10.5pt from each screen edge. On narrower screens they keep that
+            edge and shrink instead of running off it (they overflowed 4.5pt a side
+            at 360). */}
+        <View style={[styles.boxes, { width: rowW }]}>
           {digits.map((d, i) => (
             <TextInput
               key={i}
               ref={(r) => {
                 inputs.current[i] = r;
               }}
-              style={[styles.box, d !== '' && styles.boxFilled]}
+              style={[styles.box, { width: boxW }, d !== '' && styles.boxFilled]}
               value={d}
               onChangeText={(v) => setDigit(i, v)}
               keyboardType="number-pad"

@@ -100,6 +100,9 @@ export const authOtp = {
   boxHeight: 60,
   boxRadius: 12,
   boxGapX: 9,
+  boxCount: 6,
+  /** design/135: the box row sits 10.5pt from each screen edge at 390. */
+  boxesEdge: 10.5,
   boxBorder: '#EDEBE6',
   boxFilledBg: '#FFFFFF',
   boxSize: 26,
