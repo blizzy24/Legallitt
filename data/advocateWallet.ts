@@ -284,3 +284,77 @@ export function formatINR(n: number): string {
   const tail = s.slice(-3);
   return `${head.replace(/\B(?=(\d{2})+(?!\d))/g, ',')},${tail}`;
 }
+
+/**
+ * design/360 — manage bank account. A separate screen from the settings bank
+ * flow (designs 257–260): a different layout (default + secondary accounts,
+ * guidelines, enrolment card) and different facts.
+ *
+ * ⚠ CONFLICT 5 — the advocate is Adv. Rajeshwar Rao, enrolment D/1842/2012
+ * (Delhi Bar). Priya Sharma's enrolment elsewhere is D/1842/2015: the same
+ * number, a different year, a different person. design/257, one route over,
+ * names Priya Sharma as the holder of this same SBI ••••4821 account, with
+ * IFSC SBIN0001234 against 360's SBIN0001048.
+ * ⚠ CONFLICT 6 — SBI Savings ••••4821 is primary and HDFC Current ••••9032
+ * secondary here; design/256 shows HDFC Current ••••4821. The same last four
+ * on two different banks across the app.
+ * ⚠ CONFLICT 7 — IFSC SBIN0001048 reuses the 1048 suffix.
+ * ⚠ The header carries share and download icons on a settings screen.
+ */
+export const WALLET_BANK = {
+  title: 'Manage Bank Account',
+  rbiTitle: 'RBI Regulated Payout Gateway',
+  rbiBody: 'Accounts linked here receive fee payouts via RBI-regulated NEFT/IMPS settlement channels.',
+  defaultCaps: 'DEFAULT PAYOUT METHOD',
+  direct: 'Direct 1-Tap Active',
+  secondaryCaps: 'SECONDARY ACCOUNTS',
+  linked: '1 Account Linked',
+  accounts: [
+    {
+      kind: 'primary',
+      bank: 'State Bank of India',
+      type: 'Savings Account',
+      pill: 'Primary Payout Account',
+      numberCaps: 'ACCOUNT NUMBER',
+      number: '•••• •••• •••• 4821',
+      fields: [
+        ['Beneficiary Name', 'Adv. Rajeshwar Rao'],
+        ['IFSC Code', 'SBIN0001048'],
+      ],
+      branchLabel: 'Branch Location',
+      branch: 'High Court Branch, New Delhi',
+      foot: 'Instant Settlement Ready',
+      action: 'Edit Details',
+    },
+    {
+      kind: 'secondary',
+      bank: 'HDFC Bank',
+      type: 'Current Account',
+      pill: 'Secondary Account',
+      numberCaps: 'ACCOUNT NUMBER',
+      number: '•••• 9032',
+      fields: [
+        ['Beneficiary', 'Adv. Rajeshwar Rao'],
+        ['IFSC', 'HDFC0000240'],
+      ],
+      branchLabel: 'Branch',
+      branch: 'Connaught Place, New Delhi',
+      foot: 'Payout fallback ready',
+      action: 'Set as Primary',
+    },
+  ] as const,
+  verified: 'Verified',
+  show: 'Show',
+  guideTitle: 'Advocate Payout Guidelines',
+  guide1Title: 'Bar Council Name Matching',
+  guide1Body: 'Beneficiary name must strictly match your Bar Council enrolment card: ',
+  guide1Name: 'Adv. Rajeshwar Rao.',
+  guide2Title: 'Name Mismatch or Firm Accounts?',
+  guide2Body: ['If drafting under a partnership firm or LLP entity, contact our ', 'Advocate Support Desk', ' with firm registration filings.'] as const,
+  enrolInitials: 'RR',
+  enrolTitle: 'Advocate Enrolment ID',
+  enrolValue: 'D/1842/2012 (Delhi Bar)',
+  kyc: 'KYC\nVerified',
+  add: 'Add New Bank Account',
+  back: 'Return to Wallet',
+};

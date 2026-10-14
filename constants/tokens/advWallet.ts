@@ -286,3 +286,123 @@ export const advWithdraw = {
   btnIconGap: 8,
   btnSize: 13.7,
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ⚠ OFF-PALETTE — design/360, sampled, not harmonised:
+//   · box #F2F1EF — the inner beneficiary panel inside each account card.
+//   · rrDisc #E3DEDC — the "RR" monogram disc on the enrolment card.
+//   · ⚠ violet #7947FE — the headset glyph beside "Name Mismatch or Firm
+//     Accounts?". A saturated violet used nowhere else in the app; it is not a
+//     status colour, the red pair or advFirGreen. Built as drawn and flagged.
+// The page is advWalletPalette.page; the guideline disc is advWalletPalette.glow;
+// the Primary pill is hcPalette.peachDecide (#FAEAD7 drawn, within 4).
+// ─────────────────────────────────────────────────────────────────────────────
+export const advWalletBankPalette = {
+  box: '#F2F1EF',
+  rrDisc: '#E3DEDC',
+  violet: '#7947FE',
+};
+
+/** design/360 — manage bank account. Measured at 2.000 px/pt. */
+export const advWalletBank = {
+  hdrIcon: 21,
+  hdrIconGap: 20,
+  padX: 20,
+  bottomPad: 32,
+  cardRadius: 16,
+  cardPad: 16,
+
+  rbiTop: 5,
+  rbiDisc: 36,
+  rbiGlyph: 17,
+  rbiGap: 13,
+  rbiTitleSize: 12.4,
+  rbiBodySize: 13.1,
+  rbiBodyLineHeight: 18,
+
+  capsTop: 24,
+  capsSize: 11.5,
+  capsSpacing: 1,
+  capsRightSize: 11.7,
+  cardTop: 12,
+
+  tile: 42,
+  tileRadius: 10,
+  tileGlyph: 22,
+  tileGap: 14,
+  nameSize: 17.8,
+  nameLineHeight: 22,
+  typeSize: 13.1,
+  pillsTop: 14,
+  pillH: 22,
+  pillPadX: 9,
+  pillIcon: 13,
+  pillGap: 5,
+  pillsGap: 8,
+  pillSize: 11.6,
+
+  boxTop: 14,
+  boxRadius: 12,
+  boxPad: 12,
+  boxCapsSize: 11,
+  showIcon: 14,
+  showSize: 10.8,
+  numberTop: 12,
+  numberSize: 17,
+  numberSpacing: 0.5,
+  innerTop: 12,
+  innerRadius: 8,
+  innerPad: 12,
+  noPad: 0,
+  innerFlatTop: 8,
+  fieldLabelSize: 11.7,
+  fieldValueSize: 12.4,
+  fieldValueTop: 2,
+  fieldGap: 11,
+  colGap: 16,
+
+  footTop: 20,
+  footIcon: 15,
+  footGap: 6,
+  footSize: 13.1,
+  setH: 34,
+  setPadX: 16,
+  setRadius: 10,
+  setIcon: 14,
+
+  guideTop: 25,
+  guideDisc: 32,
+  guideGlyph: 16,
+  guideGap: 14,
+  guideTitleSize: 17.8,
+  itemTop: 12,
+  itemIcon: 17,
+  itemGap: 14,
+  itemTitleSize: 12.4,
+  itemBodyTop: 4,
+  itemBodySize: 13.1,
+  itemBodyLineHeight: 21,
+
+  enrolTop: 16,
+  enrolPadY: 14,
+  rr: 34,
+  rrSize: 13,
+  enrolGap: 12,
+  enrolTitleSize: 12.4,
+  enrolValueSize: 13,
+  enrolValueLineHeight: 18,
+  kycPadX: 10,
+  kycPadY: 4,
+  kycRadius: 16,
+  kycDot: 7,
+  kycSize: 12,
+  kycLineHeight: 14,
+
+  btnTop: 48,
+  btnGap: 10,
+  btnH: 51.5,
+  btnRadius: 14,
+  btnIcon: 18,
+  btnIconGap: 9,
+  btnSize: 14.2,
+};
