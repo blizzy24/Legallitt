@@ -1499,8 +1499,9 @@ export const DC_CANCEL = {
  * ⚠ The export clips the header sub-line ("…Representati · DC-2026-1048"),
  * the advocate name ("Adv. Gurpreet Chaw") and two file names
  * ("Original_Case_Par", "Interim_Order_20"). Never-ellipsize wraps them; the
- * full names are completed from the fragments — "Interim_Order_2026.pdf" is a
- * guess. Confirm with the designer.
+ * first is completed from its fragment. The court order's name is UNREADABLE
+ * in the export past "Interim_Order_20" — it is a neutral placeholder below,
+ * awaiting a clean re-export.
  * ⚠ DPDP: Identity Proof asks for an Aadhaar (or Voter ID / Passport), as 342.
  */
 export const DC_DOCS_NEEDED = {
@@ -1558,7 +1559,9 @@ export const DC_DOCS_NEEDED = {
       tag: 'REQUIRED',
       title: 'Latest Court Order',
       desc: 'Please provide the latest court order.',
-      file: { name: 'Interim_Order_2026.pdf', meta: '3 pages • 1.1 MB • PDF', icon: 'pdf' },
+      // ⚠ PLACEHOLDER — unreadable in the export (clipped after "Interim_Order_20");
+      // awaiting a clean re-export.
+      file: { name: 'Interim_Order_XXXX.pdf', meta: '3 pages • 1.1 MB • PDF', icon: 'pdf' },
     },
     {
       tag: 'REQUIRED',
