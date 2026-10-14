@@ -619,3 +619,57 @@ export const HC_BOOKING = {
   cta: 'Continue \u2192 Confirm Delivery',
   foot: 'Safe & contactless courier pickup',
 };
+
+/**
+ * design/306 — confirm delivery.
+ *
+ * ⚠ CONFLICT 6: "Step 3 of 3 • Final Confirmation" — 305 was "Step 2 •
+ * Document Shipping" (of no stated total).
+ * ⚠ CONFLICT 9: the route ends at "High Court Bench"; 305 delivered to "MG
+ * Road Bench, Indore".
+ * ⚠ FEE: ₹250 (as 305), against the ₹290 the reused courier payment charges.
+ * "5 Documents Included" lists three.
+ */
+export const HC_COURIER_CONFIRM = {
+  title: 'Confirm Delivery',
+  step: 'Step 3 of 3 \u2022 Final Confirmation',
+  verified: 'Pre-verified',
+  intro: 'Check your delivery details before booking your Blue Dart pickup.',
+  route: 'Direct Transit Route',
+  from: 'MG Road Pickup',
+  to: 'High Court Bench',
+  sendFrom: 'Send From',
+  pickupTag: 'Pickup Address',
+  edit: 'Edit',
+  fromName: 'Rahul Sharma',
+  fromAddr: 'Flat 402, Royal Palms, MG Road, Indore, Madhya Pradesh - 452001',
+  fromPhone: '+91 98260 12345',
+  sendTo: 'Send To',
+  toTag: 'Advocate Office',
+  toName: 'Adv. Neha Verma',
+  toFirm: 'Chawla & Associates Legal Chambers',
+  toAddr: 'Chamber No. 14, High Court Bar Building, MG Road Bench, Indore, MP - 452007',
+  toPhone: '+91 94250 88910',
+  conTitle: 'Consignment & Courier Details',
+  docsTitle: '5 Documents Included',
+  docsSub: 'Case Papers, ID Proof, Petition Draft',
+  viewList: 'View\nList',
+  partnerTitle: 'Courier\nPartner',
+  partnerSub: 'Blue Dart\nExpress',
+  partnerPill: 'Air Express \u2022 Tamper\nPouch',
+  etaTitle: 'Estimated Delivery',
+  etaSub: 'Standard advocate courier protocol',
+  eta: '1\u20132 Business\nDays',
+  feeTitle: 'Delivery Fee',
+  feeTag: 'All-Inclusive',
+  fee: '\u20B9250',
+  feeBody: 'This covers secure tamper-evident envelope, doorstep pickup, and insured transit directly to your advocate.',
+  warn: 'Please check the address before placing the delivery order.',
+  checkTitle: 'I have checked the address and document details.',
+  // Drawn with "24" alone on its own line — line breaks kept as drawn.
+  checkSub: 'Blue Dart will arrive at your pickup address within\n24\nhours of booking.',
+  barLabel: 'Total Delivery Fee',
+  barTotal: '\u20B9250',
+  cta: 'Book Delivery',
+  foot: '100% Sealed Transit \u2022 Direct to Advocate Chamber',
+};
