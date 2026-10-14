@@ -95,7 +95,7 @@ export default function AdvocateWithdrawScreen() {
                 <Pressable
                   key={n}
                   accessibilityRole="radio"
-                  accessibilityState={{ checked: on }}
+                  aria-checked={on}
                   onPress={() => set(n)}
                   style={[styles.chip, on && styles.chipOn]}
                 >
@@ -170,7 +170,7 @@ export default function AdvocateWithdrawScreen() {
         </View>
 
         {/* ⚠ UNSCOPED — no payout rail. Draws only. */}
-        <View accessibilityRole="button" accessibilityState={{ disabled: !ok }} style={[styles.btn, styles.btnFirst]}>
+        <View accessibilityRole="button" aria-disabled={!ok} style={[styles.btn, styles.btnFirst]}>
           <Text style={styles.btnText} {...shrinkToFit(0.8)}>
             {`${d.confirm} (${shown})`}
           </Text>
