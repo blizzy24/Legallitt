@@ -8,8 +8,9 @@ import { courierHeader as h, font, ink } from '../constants/theme';
 
 /**
  * The back + title + avatar bar designs 275, 276, 280, 281, 282, 283, 285, 286
- * and 287 all draw. Measured off design/275 at 2.1231 px/pt and checked against
- * the others.
+ * and 287 all draw, and the High Court / District Court batch (289–337) after
+ * them. Re-measured off design/291 at 2.000 px/pt (identical to design/275's bar):
+ * the bar is 56pt to its divider, not the 65pt the first build drew.
  *
  * design/285 is the only one with a two-line title, and designs 278/279 use a
  * round-backed chevron instead of the plain arrow, so both are props rather
@@ -21,12 +22,15 @@ export default function CourierHeader({
   avatar = true,
   chevron = false,
   right,
+  backHref = '/dashboard' as Href,
 }: {
   title: string;
   sub?: string;
   avatar?: boolean;
   chevron?: boolean;
   right?: React.ReactNode;
+  /** Where Back goes when there is no history. */
+  backHref?: Href;
 }) {
   const insets = useSafeAreaInsets();
   return (
@@ -36,8 +40,8 @@ export default function CourierHeader({
           accessibilityRole="button"
           accessibilityLabel="Back"
           hitSlop={10}
-          onPress={() => (router.canGoBack() ? router.back() : router.replace('/dashboard' as Href))}
-          style={chevron ? styles.chevBtn : undefined}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace(backHref))}
+          style={chevron ? styles.chevBtn : styles.back}
         >
           {chevron ? (
             <ChevronLeft size={h.backIcon} color={h.ink} strokeWidth={2.4} />
@@ -83,8 +87,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  back: { marginLeft: h.backInset },
   titleCol: { flex: 1, marginLeft: h.titleGap },
-  title: { fontFamily: font.appHeading, fontSize: h.titleSize, color: h.ink },
+  title: { fontFamily: font.appSemi, fontSize: h.titleSize, color: h.ink },
   sub: { marginTop: h.subTop, fontFamily: font.appBody, fontSize: h.subSize, color: '#4D463D' },
   avatar: {
     width: h.avatar,
