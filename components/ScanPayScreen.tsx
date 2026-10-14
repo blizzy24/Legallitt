@@ -28,8 +28,10 @@ function mmss(total: number) {
  * `hold` freezes the screen: the countdown stays at its starting value and the
  * screen never advances on its own. design/278 is built that way on
  * instruction — a live countdown and a self-arriving "payment" would both be
- * lies on a screen with no payment behind it. Without `hold` the screen behaves
- * exactly as the Legal Notice flow always did.
+ * lies on a screen with no payment behind it. On a held screen the drawn "Pay
+ * using UPI App" button opens the success screen instead, so the flow can be
+ * walked. Without `hold` the screen behaves exactly as the Legal Notice flow
+ * always did.
  */
 export default function ScanPayScreen({
   service,
@@ -105,7 +107,14 @@ export default function ScanPayScreen({
 
         <View style={[styles.card, styles.altCard]}>
           <Text style={styles.altTitle}>Prefer another method?</Text>
-          <Pressable accessibilityRole="button" style={styles.altButton}>
+          {/* On a held screen (design/278) this drawn button is the way on: it
+              opens the success screen. No UPI app is launched and nothing is
+              charged. Callers that auto-advance leave it inert, as before. */}
+          <Pressable
+            accessibilityRole="button"
+            onPress={hold ? () => router.replace(successTarget) : undefined}
+            style={styles.altButton}
+          >
             <Smartphone size={s.altIcon} color={ink.accent} />
             <Text style={styles.altButtonText}>Pay using UPI App</Text>
           </Pressable>

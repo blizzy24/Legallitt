@@ -26,7 +26,10 @@ import { CO_SCAN_PAY } from '../../data/courier';
 //  · "QR valid for 10:00" is a fixed string. The `hold` prop freezes the
 //    countdown; there is no timer.
 //  · the "Waiting for payment…" spinner animates and polls nothing, and the
-//    screen never advances on its own. Use the back gesture to leave it.
+//    screen never advances on its own.
+//  · the drawn "Pay using UPI App" button opens the success screen (with
+//    ?flow=hcr carried through for the High Court courier). It launches no UPI
+//    app and charges nothing — it only lets the journey continue.
 export default function CourierScanPayScreen() {
   // ?flow=hcr is carried through to the success screen (see app/courier/success.tsx).
   const { flow } = useLocalSearchParams<{ flow?: string }>();
