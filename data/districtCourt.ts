@@ -1297,3 +1297,57 @@ export const DC_ACCEPTED = {
   wait: '[ Waiting for Advocate ]',
   caption: 'You will be notified once Advocate Gurpreet Chawla shares the document checklist.',
 };
+
+/**
+ * design/347 — request a new advocate.
+ *
+ * ⚠ The header still reads "Advocate Accepted" (346's title) on this
+ * change-request screen. Built as drawn.
+ * ⚠ The case title shortens to "Sharma vs Verma" here.
+ */
+export const DC_CHANGE_REQUEST = {
+  title: 'Advocate Accepted',
+  sub: 'District Court Representation',
+  topTitle: 'Want a Different Advocate?',
+  topBody: 'You can ask Legalitt to assign another advocate.',
+  topSub: 'Your request will be reviewed by the Legalitt team.',
+  assigned: 'CURRENTLY ASSIGNED',
+  verified: 'Verified Advocate',
+  name: 'Adv Abhishek Verma',
+  initials: 'AV',
+  loc: 'Indore, Madhya Pradesh',
+  chips: ['8+ Years Experience', 'District Court Matters'] as const,
+  caseTitle: 'Your Case',
+  id: 'DC-2026-1048',
+  grid: [
+    [
+      ['Case Title', 'Sharma vs Verma'],
+      ['Case Type', 'Civil'],
+    ],
+    [
+      ['Court', 'District Court'],
+      ['Service', 'Ordinary'],
+    ],
+  ] as const,
+  whyTitle: 'Why Do You Want a New Advocate?',
+  whySub: 'Choose the reason that best matches your request.',
+  reasons: [
+    'I want a different advocate',
+    'I need a different practice area',
+    'I prefer another location',
+    'I was not comfortable after talking to the advocate',
+    'I have another reason',
+  ] as const,
+  moreTitle: 'Tell Us More',
+  optional: '(Optional)',
+  moreSub: 'Share any context that helps us match the right counsel.',
+  morePlaceholder: 'Tell us briefly why you want a new advocate.',
+  warn: 'Please do not share passwords, OTPs or private account details.',
+  nextTitle: 'What Happens Next?',
+  nextBody: 'Your request will go to the Legalitt team. The team will review it and decide the next step.',
+  nextNote: 'A new advocate is not assigned automatically.',
+  agree: 'I want Legalitt to review my request for a new advocate.',
+  agreeSub: 'Your current representation remains active until approved.',
+  cta: 'Send Request',
+  back: 'Go Back',
+};
