@@ -830,8 +830,8 @@ export const HC_DELIVERED = {
  * ⚠ CROSS-SERVICE: reached from the DISTRICT COURT court-fee payment (317), it
  * is subtitled "District Court / High Court Representation" — both services at
  * once — and carries DC-2026-1048 (CONFLICT 5) on a High Court screen.
- * ⚠ CONFLICT 6: "Step 2 of 7" (Prep → Done), alongside 313's "STAGE 2 OF 7"
- * with different stages.
+ * The replacement design/318 (14 Oct) removes the "Step 2 of 7" stepper card
+ * that the first export drew; conflict 6's "Step 2 of 7" no longer applies here.
  * ⚠ CONFLICT 4: "High Court Advocate" Abhishek Verma, introduced on 300 as a
  * District Court advocate. The drawing clips his name ("Adv. Abhishek Vern");
  * it is shown in full here.
@@ -846,9 +846,6 @@ export const HC_REVIEW = {
   role: 'High Court Advocate',
   chat: 'Chat',
   call: 'Call',
-  stepHead: 'Step 2 of 7',
-  stepMeta: 'Client Review',
-  steps: ['Prep', 'Review', 'Filing', 'Hearing', 'Order', 'Next', 'Done'],
   round: 'Review Round 1 of 3',
   roundMeta: '2 rounds left if needed',
   roundTitle: 'Please Review Before Filing',

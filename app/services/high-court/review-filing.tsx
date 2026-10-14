@@ -14,7 +14,7 @@ import {
   PenLine,
   Phone,
 } from 'lucide-react-native';
-import { Fragment, useState } from 'react';
+import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -98,32 +98,7 @@ export default function HighCourtReviewFilingScreen() {
           </View>
         </View>
 
-        <View style={styles.stepper}>
-          <View style={styles.between}>
-            <Text style={styles.stepHead}>{d.stepHead}</Text>
-            <Text style={[styles.stepHead, styles.stepMeta]}>{d.stepMeta}</Text>
-          </View>
-          <View style={styles.steps}>
-            {d.steps.map((label, i) => (
-              <Fragment key={label}>
-                {i > 0 && <View style={[styles.conn, i === 1 && styles.connDone]} />}
-                <View style={styles.stepItem}>
-                  <View style={[styles.stepDisc, i === 0 && styles.discDone, i === 1 && styles.discActive, i > 1 && styles.discWait]}>
-                    {i === 0 ? (
-                      <Check size={t.stepGlyph} color={ink.onBrand} strokeWidth={3} />
-                    ) : i === 1 ? (
-                      <Eye size={t.stepGlyph} color={ink.onBrand} strokeWidth={2.2} />
-                    ) : (
-                      <Text style={styles.stepNum}>{i + 1}</Text>
-                    )}
-                  </View>
-                  <Text style={[styles.stepLabel, i === 1 && styles.stepLabelActive, i > 1 && styles.stepLabelWait]}>{label}</Text>
-                </View>
-              </Fragment>
-            ))}
-          </View>
-        </View>
-
+        {/* The replacement design/318 drops the "Step 2 of 7" stepper card. */}
         <View style={styles.round}>
           <View style={styles.between}>
             <View style={styles.roundPill}>
@@ -332,36 +307,6 @@ const styles = StyleSheet.create({
     gap: t.pillGap - 1,
   },
   pillText: { fontFamily: font.appSemi, fontSize: t.pillSize, color: c.ink },
-
-  stepper: {
-    marginTop: t.stepTop,
-    marginLeft: t.cardLeft - t.padX,
-    borderRadius: t.cardRadius,
-    backgroundColor: c.panel,
-    paddingHorizontal: t.stepPadX,
-    paddingTop: t.stepPadTop,
-    paddingBottom: t.stepPadBottom,
-  },
-  stepHead: { fontFamily: font.appSemi, fontSize: t.stepHeadSize, lineHeight: t.stepHeadLineHeight, color: c.inkWarm },
-  stepMeta: { color: c.brownLift },
-  steps: { marginTop: t.stepsTop, flexDirection: 'row', alignItems: 'flex-start' },
-  stepItem: { alignItems: 'center' },
-  stepDisc: { width: t.stepDisc, height: t.stepDisc, borderRadius: t.stepDisc / 2, alignItems: 'center', justifyContent: 'center' },
-  discDone: { backgroundColor: status.active },
-  discActive: { backgroundColor: c.brown },
-  discWait: { backgroundColor: c.tileGrey },
-  stepNum: { fontFamily: font.appSemi, fontSize: t.stepNumSize, color: c.inkMuted },
-  conn: {
-    flex: 1,
-    height: t.stepConn,
-    marginTop: t.stepDisc / 2 - t.stepConn / 2,
-    marginHorizontal: t.stepConnGap,
-    backgroundColor: c.radioGrey,
-  },
-  connDone: { backgroundColor: status.active },
-  stepLabel: { marginTop: t.stepLabelTop, fontFamily: font.appBody, fontSize: t.stepLabelSize, lineHeight: t.stepLabelLineHeight, color: c.ink },
-  stepLabelActive: { fontFamily: font.appSemi, color: c.brownInk },
-  stepLabelWait: { color: c.inkMuted },
 
   round: {
     marginTop: t.roundTop,
