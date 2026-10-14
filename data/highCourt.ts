@@ -281,3 +281,56 @@ export const HC_DOCUMENTS = {
   cta: 'Continue',
   foot: 'Secure & confidential \u2022 Encrypted document storage',
 };
+
+/** design/295 — choose service & price. */
+export const HC_PRICING = {
+  title: 'Choose Service Price',
+  // ⚠ CONFLICT 6: "Step 2 of 6", after 294's "Step 3 of 4".
+  step: 'STEP 2 OF 6 \u2022 SERVICE & PRICING',
+  h1: 'Choose Service & Price',
+  body: 'Choose how quickly you need help with your legal matter.',
+  matterLabel: 'SELECTED MATTER',
+  matterPill: 'High Court',
+  matterTitle: 'Civil Law Representation',
+  matterNew: 'New Matter',
+  matterCheck: 'Verified High Court track registry & drafting counsel',
+  speedHead: 'Choose Service Speed',
+  speedMeta: 'Tap to pick',
+  speedSub: 'Select one option to see the total guaranteed fee.',
+  /** design/295 draws Urgent selected. */
+  initial: 'urgent' as const,
+  // ⚠ CONFLICT 1: ₹24,999 / ₹34,999 here; ₹18,500 / ₹28,500 on design/289.
+  tiers: [
+    {
+      id: 'ordinary',
+      title: 'Ordinary',
+      pill: 'Standard',
+      price: '\u20B924,999',
+      desc: 'Regular timeline for calm matters',
+      time: 'Normal processing \u2022 5-7 working days',
+      speed: 'Ordinary (5-7 days)',
+      bullets: ['Standard document preparation', 'Standard court registry filing timeline', 'Dedicated senior advocate review'],
+    },
+    {
+      id: 'urgent',
+      title: 'Urgent',
+      pill: 'Priority',
+      price: '\u20B934,999',
+      desc: 'Immediate action for critical dates',
+      time: 'Fast processing \u2022 2-3 working days',
+      speed: 'Urgent (2-3 days)',
+      bullets: ['Priority express document drafting', 'Express court listing & urgent registry filing', 'Urgent senior advocate assignment'],
+    },
+  ] as const,
+  recommended: 'Recommended',
+  feeHead: 'Your Fee',
+  feeSub: 'Clear, itemized summary for this request.',
+  feeRows: { service: ['Legal Service', 'High Court Representation'], category: ['Matter Category', 'Civil Law'], speed: 'Selected Speed', base: 'Service Base Fee' },
+  totalLabel: 'TOTAL AMOUNT',
+  totalSub: 'Inclusive of all filing fees & taxes',
+  zTitle: 'Zero Surprise Commitment',
+  zBody: 'The price shown here is final. You will review everything again on the next screen before any payment is made.',
+  zGreen: 'No hidden costs \u2022 No immediate deduction today',
+  cta: 'Continue to Pay',
+  foot: '100% transparent legal pricing \u2022 Safe & confidential',
+};
