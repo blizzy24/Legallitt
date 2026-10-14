@@ -1808,3 +1808,54 @@ export const DC_TRACKING = {
   help: 'Need Help? Contact Support',
   cta: 'View Shipment Details',
 };
+
+/**
+ * design/355 — courier documents received.
+ *
+ * ⚠ CONFLICT 6: "Stage 2 of 6" — a six-stage list, against 350's eleven
+ * steps.
+ * ⚠ CONFLICT 4: received by Adv. Abhishek Verma.
+ * ⚠ The list names "Other Document" as the fifth item; 350 and 352 call it
+ * "Previous Advocate Papers" / "Other".
+ */
+export const DC_RECEIVED = {
+  kicker: 'DISTRICT COURT REPRESENTATION',
+  title: 'Documents Received',
+  heroTitle: 'Documents Delivered',
+  heroBody: 'Your advocate has received the physical documents.',
+  heroSub: 'The document step is now complete.',
+  pill: 'Advocate Verified • Chain of Custody Confirmed',
+  receiptTitle: 'Receipt Details',
+  verified: 'Verified',
+  byLabel: 'Received By',
+  by: 'Adv. Abhishek Verma',
+  docsLabel: 'Documents',
+  docsLead: '5 Documents',
+  docsRest: ' (Verified physical count)',
+  onLabel: 'Received On',
+  on: '26 October 2026',
+  statusLabel: 'Status',
+  status: 'Received • In Chamber',
+  listTitle: 'Documents Received',
+  viewAll: 'View Documents',
+  docs: ['Case Papers', 'Latest Court Order', 'Identity Proof', 'Property Papers', 'Other Document'] as const,
+  nextCaps: 'NEXT STEP',
+  nextTitle: 'Case Preparation',
+  nextBody: 'Your advocate will now prepare the case for the next stage.',
+  nextNote: 'You will receive an update once the court filing draft is ready for review.',
+  progTitle: 'Case Progress',
+  stage: 'Stage 2 of 6',
+  inProgress: 'In Progress',
+  timeline: [
+    { title: 'Documents Received', status: 'Completed on 26 Oct', state: 'done' },
+    { title: 'Case Preparation', state: 'current' },
+    { title: 'Court Filing', state: 'wait' },
+    { title: 'First Hearing', state: 'wait' },
+    { title: 'Hearing Update', state: 'wait' },
+    { title: 'Next Hearing', state: 'wait' },
+  ] as const,
+  notifLead: 'Notification Sent:',
+  notif: ' Your advocate has confirmed that the physical documents were received.',
+  cta: 'View Case',
+  caption: 'Next stage: Advocate starts case preparation',
+};
