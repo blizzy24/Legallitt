@@ -152,3 +152,40 @@ export const HC_INFO = {
   chat: 'Chat',
   back: 'Back to High Court Representation',
 };
+
+/** design/291 — choose case type. */
+export const HC_CASE_TYPE = {
+  title: 'Choose Case Type',
+  // ⚠ CONFLICT 6: "Step 1 of 4 • Intake" here; design/292 reads "Step 1 •
+  // High Court", 294 "Step 3 of 4", 295 "Step 2 of 6". Each as drawn.
+  step: 'STEP 1 OF 4 \u2022 INTAKE',
+  h1: 'Tell us about your legal matter',
+  body: 'Select an option below so we can pair you with the best advocate and prepare the right court paperwork.',
+  options: [
+    {
+      id: 'new',
+      title: 'New Case',
+      chip: 'Fresh Filing',
+      desc: 'This matter has not been submitted to court yet.',
+      bullets: ['Draft brand new petition, notices, or claims', '1-on-1 strategy call with assigned advocate'],
+    },
+    {
+      id: 'pending',
+      title: 'Pending Case',
+      chip: 'In Court',
+      desc: 'Hearings or notices are already ongoing in court.',
+      bullets: ['Enter appearance, file vakalatnama, or appeal', 'Digital calendar for hearing dates & daily orders'],
+      noc: 'A No Objection Certificate (NOC) is only needed if you are replacing a previous lawyer. We help request this smoothly.',
+    },
+  ] as const,
+  helpTitle: 'Not sure which one applies?',
+  helpBody:
+    'Don\u2019t worry! Pick the closest option. You will speak freely with an advocate who reviews your court documents before anything is submitted.',
+  helpLink: 'Contact Legal Support',
+  helpAvg: 'Average reply: < 5 mins',
+  trust: ['Bar Council Compliant', '256-bit Encrypted'],
+  cta: 'Continue',
+  /** Drawn with New Case selected; kept as drawn when Pending is chosen (no other state is designed). */
+  ctaSub: 'Next: Case Details Form',
+  foot: 'You can review or change this selection at any point.',
+};
