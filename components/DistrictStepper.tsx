@@ -17,10 +17,13 @@ export default function DistrictStepper({
   labels,
   done,
   current,
+  compact = false,
 }: {
   labels: readonly string[];
   done: number;
   current?: number;
+  /** design/343's smaller discs. */
+  compact?: boolean;
 }) {
   return (
     <View style={styles.row}>
@@ -29,14 +32,17 @@ export default function DistrictStepper({
         const active = i === current;
         return (
           <View key={l} style={styles.step}>
-            <View style={[styles.disc, isDone && styles.done, active && styles.active]}>
+            <View style={[styles.disc, compact && styles.discCompact, isDone && styles.done, active && styles.active]}>
               {isDone ? (
-                <Check size={t.glyph} color={ink.onBrand} strokeWidth={3} />
+                <Check size={compact ? t.glyphCompact : t.glyph} color={ink.onBrand} strokeWidth={3} />
               ) : (
-                <Text style={[styles.num, active && styles.numActive]}>{i + 1}</Text>
+                <Text style={[styles.num, compact && styles.numCompact, active && styles.numActive]}>{i + 1}</Text>
               )}
             </View>
-            <Text style={[styles.label, isDone && styles.labelOn, active && styles.labelActive]} {...shrinkToFit(0.75)}>
+            <Text
+              style={[styles.label, compact && styles.labelCompact, isDone && styles.labelOn, active && styles.labelActive]}
+              {...shrinkToFit(0.75)}
+            >
               {l}
             </Text>
           </View>
@@ -57,9 +63,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  discCompact: { width: t.discCompact, height: t.discCompact, borderRadius: t.discCompact / 2 },
   done: { backgroundColor: status.active },
   active: { backgroundColor: c.brown },
   num: { fontFamily: font.appSemi, fontSize: t.numSize, color: m.muted },
+  numCompact: { fontSize: t.numSizeCompact },
   numActive: { color: ink.onBrand },
   label: {
     marginTop: t.labelTop,
@@ -69,6 +77,7 @@ const styles = StyleSheet.create({
     letterSpacing: t.labelSpacing,
     color: m.muted,
   },
+  labelCompact: { marginTop: t.labelTopCompact },
   labelOn: { color: c.ink },
   labelActive: { color: c.brown },
 });

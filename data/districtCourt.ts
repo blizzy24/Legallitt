@@ -993,3 +993,74 @@ export const DC_DOCUMENTS = {
   clarBody: 'Your advocate can request remaining exhibits inside the app later.',
   cta: 'Continue to Submission',
 };
+
+/**
+ * design/343 — choose service & price.
+ *
+ * ⚠ CONFLICT 1: ₹25,000 (Ordinary) and ₹35,000 (Urgent) here; design/338
+ * prints both prices as "₹XX,XXX".
+ * ⚠ CONFLICT 6: "STEP 4 OF 4 · Final step", yet the review that follows (344)
+ * is also "STEP 4 OF 4".
+ * ⚠ The button says "Proceed to Pay", while its caption says "Next: Review
+ * Request" and the summary says "No payment is taken right now". Wired to the
+ * review (design/344), as the caption says.
+ */
+export const DC_PRICING = {
+  title: 'Choose Service & Price',
+  sub: 'District Court Representation',
+  step: 'STEP 4 OF 4',
+  final: 'Final step',
+  steps: ['Case', 'Details', 'Docs', 'Service'],
+  chips: [
+    { icon: 'gavel', label: 'Civil Matter' },
+    { icon: 'court', label: 'District Court' },
+  ] as const,
+  h1: 'Choose Your Service',
+  lead: 'Choose the service speed that fits your need.',
+  info: 'The final price is shown here before you send your request.',
+  tiers: [
+    {
+      id: 'ordinary',
+      title: 'Ordinary',
+      chip: 'Standard',
+      sub: 'Normal service',
+      price: '₹25,000',
+      feats: ['Standard case support', 'Normal processing', 'Case updates in Legalitt'],
+    },
+    {
+      id: 'urgent',
+      title: 'Urgent',
+      chip: 'Priority',
+      sub: 'Priority service',
+      price: '₹35,000',
+      feats: ['Priority case handling', 'Faster processing', 'Case updates in Legalitt'],
+    },
+  ] as const,
+  tierFoot: 'Example price • Final price confirmed from service catalog',
+  diffTitle: 'What Is the Difference?',
+  diff: [
+    ['Ordinary', 'Standard service • Normal processing'],
+    ['Urgent', 'Priority service • Faster processing'],
+  ] as const,
+  diffNote: 'Both options provide a verified District Court advocate. No court outcomes or hearing dates are guaranteed.',
+  sumTitle: 'Your Request',
+  sumChip: 'Summary',
+  rows: [
+    ['Service', 'District Court Representation'],
+    ['Case Type', 'Civil'],
+    ['Case', 'Rahul Sharma vs Amit Verma'],
+    ['Court', 'District Court, Indore'],
+  ] as const,
+  selectedLabel: 'Service Selected',
+  totalLabel: 'Total Price',
+  sumNote: 'No payment is taken right now. Review all details on the next step.',
+  beforeTitle: 'Before You Submit',
+  beforeBody:
+    'You will review your complete case details, documents, and selected service before sending your request to Legalitt.',
+  supportTitle: 'Legalitt Service Support',
+  supportBody:
+    'If your confirmed advocate does not attend a hearing or does not handle the agreed work, Legalitt may review the issue and may return part of the service fee.',
+  supportNote: 'Any refund or fee return depends on the case and Legalitt review.',
+  cta: 'Proceed to Pay',
+  caption: 'Next: Review Request • Takes 1 min',
+};
