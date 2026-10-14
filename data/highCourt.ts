@@ -972,3 +972,45 @@ export const HC_PENDING = {
   cta: 'Submit Case Verification',
   caption: 'Encrypted & legally compliant eIDAS session',
 };
+
+/**
+ * design/334 (337 matches within re-encoding noise) — case sent for
+ * verification, after the pending-case payment (331–333).
+ *
+ * ⚠ CONFLICT 5: HCR-VER-2026-8941 — yet another identifier for the matter —
+ * and WP(C) 4120/2023.
+ * ⚠ CONFLICT 9: High Court of Delhi.
+ * The drawing clips "NOC_Previous_Advoca[te.pdf]" and the court name; both
+ * are shown in full. "Usually takes 2-4 hours" / "Pending review completion"
+ * wrap in a narrow column as drawn.
+ */
+export const HC_VERIFICATION = {
+  title: 'Case Verification',
+  h1: 'Case Sent for Verification',
+  sub: 'Your case details and NOC have been submitted.',
+  ref: 'HCR-VER-2026-8941 \u2022 Today, 10:45 AM',
+  infoTitle: 'Case Information',
+  submitted: 'Submitted',
+  typeLabel: 'Case Type',
+  type: 'Pending Case',
+  courtLabel: 'Court',
+  court: 'High Court of Delhi, New Delhi',
+  numberLabel: 'Case Number',
+  number: 'WP(C) 4120/2023',
+  file: 'NOC_Previous_Advocate.pdf',
+  fileMeta: '1.4 MB',
+  uploaded: 'Uploaded',
+  statTitle: 'Verification Status',
+  review: 'Under Review',
+  statSub: 'Legalitt is checking your case details and NOC.',
+  steps: [
+    { title: 'Case Details Submitted', desc: 'Completed at 10:42 AM', state: 'done' },
+    { title: 'NOC Submitted', desc: 'Completed at\n10:44 AM', state: 'done' },
+    { title: 'Legalitt Review', desc: 'In progress \u2022\nUsually takes 2-4\nhours', state: 'current' },
+    { title: 'Verification Complete', desc: 'Pending review\ncompletion', state: 'waiting' },
+  ] as const,
+  nextTitle: 'What Happens Next?',
+  next: 'Legalitt will check your case and NOC. You will get an update when the check is complete.',
+  notify: 'We will notify you via SMS and app notification.',
+  cta: 'Go to Home',
+};
