@@ -1488,3 +1488,116 @@ export const DC_CANCEL = {
   cancel: 'Cancel Request',
   keep: 'Keep My Request',
 };
+
+/**
+ * design/350 — recommended documents.
+ *
+ * ⚠ CONFLICT 4: Advocate Gurpreet Chawla requests these documents, though the
+ * advocate accepted on 345–346 is Adv Abhishek Verma; Abhishek Verma then
+ * receives them (351–355).
+ * ⚠ CONFLICT 6: "Step 5 of 11".
+ * ⚠ The export clips the header sub-line ("…Representati · DC-2026-1048"),
+ * the advocate name ("Adv. Gurpreet Chaw") and two file names
+ * ("Original_Case_Par", "Interim_Order_20"). Never-ellipsize wraps them; the
+ * full names are completed from the fragments — "Interim_Order_2026.pdf" is a
+ * guess. Confirm with the designer.
+ * ⚠ DPDP: Identity Proof asks for an Aadhaar (or Voter ID / Passport), as 342.
+ */
+export const DC_DOCS_NEEDED = {
+  title: 'Recommended Documents',
+  sub: 'District Court Representation',
+  subId: ' · DC-2026-1048',
+  pill: 'District Court Representation • Case ID: DC-2026-1048',
+  h1: 'Recommended Documents',
+  lead: 'Advocate Gurpreet Chawla has reviewed your case and requested the documents below.',
+  caseTitle: 'Your Case',
+  caseChip: 'Active Case',
+  grid: [
+    [
+      ['Client', 'Rahul Sharma'],
+      ['Case Type', 'Civil Dispute'],
+    ],
+    [['Matter Title', 'Rahul Sharma vs Amit Verma']],
+    [
+      ['Court', 'District Court'],
+      ['Assigned Advocate', 'Adv. Gurpreet Chawla'],
+    ],
+  ] as const,
+  msgTitle: 'Message From Your Advocate',
+  quote:
+    '“Please keep the original case papers and clear copies ready. I may ask for more documents if needed.”',
+  sig: '— Advocate Gurpreet Chawla',
+  senior: 'Senior Counsel',
+  progTitle: 'Document Checklist Progress',
+  progSub: '3 of 5 total documents attached',
+  pct: '60%',
+  /** The drawn bar is 60% filled. */
+  pctValue: 0.6,
+  legend: [
+    ['Required:', ' 2 of 4 added', 'req'],
+    ['Optional:', ' 1 of 1 added', 'opt'],
+  ] as const,
+  info: 'You can upload digital copies now or prepare physical copies for delivery.',
+  sec: 'Documents Recommended',
+  secChip: '5 items',
+  secSub: 'These documents were specifically requested by your advocate for this matter.',
+  uploaded: 'Uploaded',
+  missing: 'Not Added',
+  view: 'View',
+  replace: 'Replace',
+  still: 'This document is still needed.',
+  upload: 'Upload Document',
+  docs: [
+    {
+      tag: 'REQUIRED',
+      title: 'Original Case Papers',
+      desc: 'Please provide the original case papers.',
+      file: { name: 'Original_Case_Papers.pdf', meta: '14 pages • 4.2 MB • PDF', icon: 'file' },
+    },
+    {
+      tag: 'REQUIRED',
+      title: 'Latest Court Order',
+      desc: 'Please provide the latest court order.',
+      file: { name: 'Interim_Order_2026.pdf', meta: '3 pages • 1.1 MB • PDF', icon: 'pdf' },
+    },
+    {
+      tag: 'REQUIRED',
+      title: 'Identity Proof',
+      desc: 'Please provide a valid identity document (Aadhaar, Voter ID, or Passport).',
+      icon: 'id',
+    },
+    {
+      tag: 'REQUIRED',
+      title: 'Property Papers',
+      desc: 'Please provide the property papers related to the case.',
+      icon: 'house',
+    },
+    {
+      tag: 'OPTIONAL',
+      title: 'Previous Advocate Papers',
+      desc: 'Add these papers if you have them.',
+      file: { name: 'Prior_Vakalatnama.pdf', meta: '2 pages • 820 KB • PDF', icon: 'clip' },
+    },
+  ] as const,
+  physTitle: 'Physical Documents',
+  physBody:
+    'Your advocate may need the original physical documents. After preparing the documents, you can choose how to send them.',
+  physNote: 'Digital upload helps your advocate review immediately, but physical originals may still be required in court.',
+  journeyTitle: 'Case Journey Overview',
+  step: 'Step 5 of 11',
+  timeline: [
+    { title: 'Request Submitted', status: 'Completed', state: 'done' },
+    { title: 'Under Review', status: 'Completed', state: 'done' },
+    { title: 'Advocate Assigned', status: 'Completed', state: 'done' },
+    { title: 'Client Accepted', status: 'Completed', state: 'done' },
+    { title: 'Documents', status: 'Current Step - In Progress', state: 'current' },
+    { title: 'Case Preparation', status: 'Waiting for documents', state: 'wait' },
+    { title: 'Court Filing', status: 'Waiting', state: 'wait' },
+    { title: 'First Hearing', status: 'Waiting', state: 'wait' },
+    { title: 'Hearing Update', status: 'Waiting', state: 'wait' },
+    { title: 'Next Hearing', status: 'Waiting', state: 'wait' },
+    { title: 'Case Completed', status: 'Final Stage', state: 'wait' },
+  ] as const,
+  cta: 'Continue to Delivery',
+  caption: 'Next: Choose how to send your physical documents (Send by Yourself or Legalitt Delivery)',
+};
