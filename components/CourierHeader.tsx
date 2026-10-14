@@ -21,6 +21,7 @@ export default function CourierHeader({
   sub,
   avatar = true,
   chevron = false,
+  plainChevron = false,
   right,
   backHref = '/dashboard' as Href,
 }: {
@@ -28,6 +29,8 @@ export default function CourierHeader({
   sub?: string;
   avatar?: boolean;
   chevron?: boolean;
+  /** A bare chevron with no disc behind it (design/290 and others in its batch). */
+  plainChevron?: boolean;
   right?: React.ReactNode;
   /** Where Back goes when there is no history. */
   backHref?: Href;
@@ -45,6 +48,8 @@ export default function CourierHeader({
         >
           {chevron ? (
             <ChevronLeft size={h.backIcon} color={h.ink} strokeWidth={2.4} />
+          ) : plainChevron ? (
+            <ChevronLeft size={h.plainChevron} color={h.ink} strokeWidth={2.2} />
           ) : (
             <ArrowLeft size={h.backIcon} color={h.ink} strokeWidth={2.2} />
           )}

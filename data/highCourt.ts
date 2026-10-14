@@ -89,3 +89,66 @@ export const HC_LANDING = {
   barNote: 'Inclusive of GST',
   cta: 'Continue → Choose Case Type',
 };
+
+/** design/290 — High Court information ("Learn More"). */
+export const HC_INFO = {
+  title: 'High Court Information',
+  pillL: 'Legal Guide \u2022 High Court',
+  pillR: 'Simple Guide',
+  h1: 'High Court Representation',
+  sub: 'Understand the service clearly before you get started.',
+
+  whatTitle: 'What Is High Court Representation?',
+  whatBody:
+    'High Court representation means a verified advocate handles your case directly in the High Court and helps you through every court step.',
+  whatPill: 'Verified Advocate Support',
+
+  whenTitle: 'When Can You Use It?',
+  whenSub: 'Common matters handled in the High Court',
+  when: [
+    { icon: 'writ', label: 'Writ Cases' },
+    { icon: 'bail', label: 'Bail Matters' },
+    { icon: 'civil', label: 'Civil Cases' },
+    { icon: 'criminal', label: 'Criminal Cases' },
+    { icon: 'appeal', label: 'Appeals' },
+    { icon: 'service', label: 'Service Matters' },
+    { icon: 'property', label: 'Property Matter' },
+    { icon: 'other', label: 'Other Cases' },
+  ] as const,
+
+  doTitle: 'What Does the Advocate Do?',
+  doSub: 'Your advocate will take care of these tasks:',
+  does: [
+    'Reviews your case details',
+    'Checks all your documents',
+    'Prepares the legal filing carefully',
+    'Files the required papers in court',
+    'Attends all scheduled court hearings',
+    'Gives you clear case updates',
+  ],
+
+  needTitle: 'What Do You Need?',
+  needBody: 'Your assigned advocate will tell you which exact documents are required for your matter.',
+  needNote: 'No need to worry if you do not have all papers ready right now.',
+
+  howTitle: 'How Legalitt Works',
+  howSub: '6 simple steps from start to finish',
+  steps: [
+    { title: 'Submit your case', desc: 'Tell us what your case is about in a few taps.' },
+    { title: 'Legalitt assigns an advocate', desc: 'We match you with an experienced High Court specialist.' },
+    { title: 'Chat with the advocate', desc: 'Discuss your concerns and clarify expectations freely.' },
+    { title: 'Confirm the advocate', desc: 'Once you are comfortable, approve and secure the booking.' },
+    { title: 'Send required documents', desc: 'Upload photos or digital copies directly within the app.' },
+    { title: 'Track your case', desc: 'Receive continuous hearing dates and stage updates.' },
+  ],
+
+  protTitle: 'Your Protection',
+  protBody:
+    'If a confirmed advocate does not attend a hearing or does not handle the case as agreed, Legalitt will review the matter and may return part of the service fee.',
+  protLine: 'Fair review policy for your peace of mind.',
+
+  helpTitle: 'Need Help?',
+  helpSub: 'Our team can help guide you.',
+  chat: 'Chat',
+  back: 'Back to High Court Representation',
+};

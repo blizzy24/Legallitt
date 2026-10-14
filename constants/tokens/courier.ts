@@ -49,6 +49,8 @@ export const courierHeader = {
   backIcon: 23,
   /** The arrow's box sits 6pt in from the screen margin. */
   backInset: 6,
+  /** The bare chevron the High Court batch draws in place of the arrow (design/290). */
+  plainChevron: 30,
   titleGap: 13,
   titleSize: 17.7,
   subSize: 11.1,
