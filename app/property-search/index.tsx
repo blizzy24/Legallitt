@@ -36,7 +36,7 @@ export default function PropertySearchLandingScreen() {
         >
           <ChevronLeft size={t.backIcon} color={colors.textPrimary} />
         </Pressable>
-        <Text style={styles.headerTitle} numberOfLines={1}>
+        <Text style={styles.headerTitle} {...shrinkToFit(0.8)}>
           Property Search Report
         </Text>
         <View style={styles.circleSpacer} />
@@ -46,17 +46,18 @@ export default function PropertySearchLandingScreen() {
         contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + t.cardGap }]}
         showsVerticalScrollIndicator={false}
       >
+        {/* design/72 sets the body under the title, beside the artwork. */}
         <View style={styles.heroRow}>
           <View style={styles.heroText}>
             <Text style={styles.heroTitle}>Know Your Property Before You Invest</Text>
+            <Text style={styles.heroBody}>
+              Get a professionally prepared property search report before buying, selling or
+              investing in a property.
+            </Text>
           </View>
           {/* Placeholder — sized to design/72's artwork box. */}
           <View style={styles.heroArt} />
         </View>
-        <Text style={styles.heroBody}>
-          Get a professionally prepared property search report before buying, selling or investing
-          in a property.
-        </Text>
 
         <View style={styles.card}>
           <View style={styles.explainHead}>
@@ -307,7 +308,7 @@ const styles = StyleSheet.create({
   heroRow: {
     marginTop: t.heroTop,
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
   },
   heroText: {
     flex: 1,
@@ -321,8 +322,9 @@ const styles = StyleSheet.create({
   },
   heroArt: {
     marginLeft: t.heroArtGap,
-    width: t.heroArt,
-    height: t.heroArt,
+    marginTop: t.heroArtTop,
+    width: t.heroArtW,
+    height: t.heroArtH,
     borderRadius: 12,
     backgroundColor: colors.iconChipBg,
   },
@@ -394,7 +396,7 @@ const styles = StyleSheet.create({
     height: t.bulletDot,
     borderRadius: t.bulletDot / 2,
     marginRight: t.bulletDotGap,
-    marginTop: 7,
+    marginTop: (t.explainBodyLineHeight - t.bulletDot) / 2,
     backgroundColor: ink.accent,
   },
   bulletText: {
@@ -437,7 +439,7 @@ const styles = StyleSheet.create({
     color: colors.textBody,
   },
   speedLabel: {
-    marginTop: t.sectionGap,
+    marginTop: t.speedGap,
   },
   sectionSub: {
     marginTop: t.sectionSubGap,
