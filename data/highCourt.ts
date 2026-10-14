@@ -722,3 +722,52 @@ export const HC_SHIPMENT = {
   cta: 'View Tracking',
   cta2: 'View Case',
 };
+
+/**
+ * design/311 — document delivery (tracking).
+ *
+ * ⚠ CONFLICT 4: "Adv. Gurneeet Chawla" (three e's) in the Send To card and the
+ * Advocate Received step — design/310 spelt it Gurneet. Both kept as drawn.
+ * ⚠ CONFLICT 5: waybill 8492 0419 5821 (as 310).
+ * "Real courier tracking" / "Live data synced" are drawn claims; nothing here
+ * is live. "5 Items" over "Case Papers, ID Proof, Petition Draft & 2
+ * Annexures".
+ */
+export const HC_TRACKING = {
+  title: 'Document Delivery',
+  intro: 'Track your legal documents on their way to your advocate.',
+  courier: 'Blue Dart Express',
+  state: 'In Transit',
+  wayLabel: 'WAYBILL NUMBER',
+  waybill: '8492 0419 5821',
+  copy: 'Copy',
+  expLead: 'Expected delivery: ',
+  exp: 'Tomorrow by 2:00 PM',
+  progTitle: 'Delivery Progress',
+  progSub: 'Step-by-step courier updates',
+  steps: [
+    { icon: 'check', title: 'Delivery Booked', desc: 'Order placed on Legalitt \u2022 Oct 24, 10:30 AM', state: 'done', label: 'Completed' },
+    { icon: 'check', title: 'Picked Up', desc: 'Collected from your address by courier \u2022 Oct 24, 02:15 PM', state: 'done', label: 'Completed' },
+    { icon: 'truck', title: 'In Transit', desc: 'Package moving between hubs towards destination \u2022 Oct 24, 06:40 PM', state: 'current', label: 'Current' },
+    { icon: 'clock', title: 'Out for Delivery', desc: 'Courier agent will carry papers for delivery', state: 'waiting' },
+    { icon: 'building', title: 'Delivered', desc: 'Reaches advocate reception or chamber', state: 'waiting' },
+    // ⚠ CONFLICT 4 — "Gurneeet".
+    { icon: 'badge', title: 'Advocate Received', desc: 'Signed and confirmed by Adv. Gurneeet Chawla', state: 'waiting' },
+  ] as const,
+  sendTitle: 'Send To',
+  verified: 'Verified Advocate',
+  toName: 'Adv. Gurneeet Chawla',
+  toAddr: 'Chamber No. 14, High Court Bar Building, MG Road Bench, Indore, MP - 452007',
+  docsTitle: 'Documents',
+  items: '5 Items',
+  docsText: 'Case Papers, ID Proof, Petition Draft & 2 Annexures',
+  seal: 'Sealed in tamper-evident security pouch',
+  lastTitle: 'Last Update',
+  lastMeta: 'Real courier tracking',
+  hub: 'Departed Indore Sorting Hub',
+  time: '06:40 PM',
+  date: '24 October 2026',
+  synced: 'Live data synced',
+  refresh: 'Refresh Tracking',
+  help: 'Need Help? Contact Courier Support',
+};
