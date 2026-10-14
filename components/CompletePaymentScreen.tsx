@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     marginLeft: t.backGap,
-    fontFamily: font.appHeading,
+    fontFamily: font.appSemi,
     fontSize: t.titleSize,
     color: t.ink,
   },
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
   totalRow: { marginTop: t.totalTop, flexDirection: 'row', alignItems: 'center' },
   totalLabel: {
     flex: 1,
-    fontFamily: font.appHeading,
+    fontFamily: font.appSemi,
     fontSize: t.totalLabelSize,
     color: t.ink,
   },

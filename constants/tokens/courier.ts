@@ -379,10 +379,10 @@ export const courierPayment = {
 
   headerTop: 16,
   headerH: 65,
-  backButton: 40,
+  backButton: 36,
   backIcon: 19,
   backGap: 14,
-  titleSize: 19,
+  titleSize: 15.3,
   divider: '#E8E2DA',
 
   cardTop: 16,
@@ -405,9 +405,9 @@ export const courierPayment = {
   rowTop: 12,
   rowGap: 10,
   rowSize: 12.5,
-  totalTop: 8,
-  totalLabelSize: 15.5,
-  totalValueSize: 20,
+  totalTop: 14,
+  totalLabelSize: 14,
+  totalValueSize: 17.5,
   noteTop: 4,
   noteSize: 11,
 
