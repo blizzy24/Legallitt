@@ -639,3 +639,48 @@ export const DC_CHANGE = {
   cta: 'Continue →',
   foot: 'Case History Preserved • Verified Legalitt Process',
 };
+
+/**
+ * design/335 — case completed. The last District Court screen; reached (by
+ * wiring, not by a drawn control) from the change-advocate payment success.
+ *
+ * ⚠ CONFLICT 5: WP/2026/09876.
+ * ⚠ The milestone row ends at "Closed" while 328, a few screens earlier,
+ * still had a 10 Nov 2026 hearing pending; completed "15 December 2026".
+ * The drawing clips "View filed petitions, court orders and [annexures]";
+ * the line is completed here only up to what is drawn and wraps.
+ */
+export const DC_COMPLETED = {
+  title: 'Case Completed',
+  sub: 'District Court Representation',
+  heroTitle: 'Case Completed',
+  heroBody: 'Your case has been marked as completed.',
+  heroSub: 'You can still view your case information and documents anytime.',
+  msLabel: 'MILESTONE JOURNEY',
+  msAll: 'All Steps Finished',
+  milestones: ['Docs', 'Prep', 'Filing', 'Hearings', 'Closed'],
+  tags: ['Civil Case', 'District Court, Indore'],
+  parties: 'Rahul Sharma vs Amit Verma',
+  numLabel: 'Case Number: ',
+  num: 'WP/2026/09876',
+  copy: 'Copy',
+  initials: 'AV',
+  adv: 'Adv. Abhishek Verma',
+  advSub: 'District Court • Chamber 14',
+  statLabel: 'Final Status',
+  statPill: 'Completed',
+  updLabel: 'Final Update',
+  upd: 'The case work has been completed.',
+  updDate: '15 December 2026',
+  docsTitle: 'Case Documents',
+  docsSub: 'View filed petitions, court orders and',
+  docsLink: 'View',
+  histTitle: 'Case History',
+  histSub: 'Past hearing logs and entire timeline',
+  sumLabel: 'SERVICE SUMMARY',
+  plan: ['Service Plan', 'District Court Representation'] as const,
+  tier: ['Tier / Type', 'Standard / Ordinary Service'] as const,
+  help: 'Need Help? Contact Support',
+  cta: 'View Case',
+  home: 'Back to Home',
+};
