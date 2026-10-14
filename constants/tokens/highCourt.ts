@@ -110,6 +110,15 @@ export const hcPalette = {
   pdfTile: '#FBE4E1',
   /** design/321's "Fee requested" dot — not status.pending (#F7A108). */
   amberDot: '#D97706',
+  /** design/327's "Hearing Completed" card. */
+  peachDone: '#FAF0E6',
+  /** design/327's "Completed" pill — a sage green, not greenSoft (#DEF4EA). */
+  sagePill: '#D9E6D5',
+  /** design/327's "Court Direction" card. */
+  peachDirection: '#FAEFE3',
+  // design/327 also draws near-whites #FAF8F7, #FBFAFA, #FEFBF9, #F9F7F6 and a
+  // #FBEEEC PDF tile; they are within 2–10 per channel of page / card / pdfTile
+  // and use those tokens.
 };
 
 /** design/289 — service landing. ⚠ Read off a 0.528 px/pt thumbnail; ±2pt. */

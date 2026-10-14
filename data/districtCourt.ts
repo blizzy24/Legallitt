@@ -465,3 +465,73 @@ export const DC_HEARING = {
   cta: 'View Full Case Details',
   caption: 'Return to Case Dashboard',
 };
+
+/**
+ * design/327 — case overview (after the first hearing, design/326).
+ *
+ * ⚠⚠ CONFLICT 8: the progress says First Hearing "Completed on 12 Sep 2026",
+ * while this same screen (and 320/326) puts that hearing on 25 October 2026.
+ * Built as drawn.
+ * ⚠ CONFLICT 6: "Phase 2 of 4", after 326's "Stage 2 of 5".
+ * ⚠ CONFLICT 5: Court_Order_25_Oct_2026 — and the drawing clips the file name
+ * and its meta ("Court_Order_25_Oct_202", "Certified Registry Or"); both are
+ * shown in full here, wrapped.
+ * The summary timestamp is clipped too ("25 Oct 2026, 01:"); it is not
+ * completed — the minutes are not drawn.
+ */
+export const DC_OVERVIEW = {
+  kicker: 'DISTRICT COURT REPRESENTATION',
+  title: 'Case Overview',
+  alertLead: 'Update logged: ',
+  alert: 'Your advocate has added a verified briefing for your hearing on 25 October 2026.',
+  doneHead: 'Hearing Completed',
+  donePill: 'Completed',
+  doneDate: '25 October 2026',
+  doneBody: 'Your advocate has successfully attended and filed all required briefs for this hearing session.',
+  detLabel: 'HEARING DETAILS',
+  formal: 'Formal Session',
+  rows: [
+    ['Date & Time', '25 Oct 2026 • 11:00 AM'],
+    ['Court Room', 'Court Room 3'],
+    ['Court & Bench', 'District Court • Indore'],
+    ['Lead Counsel', 'Adv. Abhishek Verma'],
+  ] as const,
+  whatTitle: 'What Happened?',
+  quote: '“The court heard the matter and asked us to file the previous order before the next date. Our argument was taken on record, and the judge granted time to place the certified copy in the registry.”',
+  byLead: 'Summary by ',
+  byName: 'Adv. Abhishek Verma',
+  // Clipped in the drawing; kept as drawn.
+  byTime: ' • 25 Oct 2026, 01:',
+  initials: 'AV',
+  dirLabel: 'COURT DIRECTION',
+  dirTitle: 'File the previous court order before the next hearing.',
+  handled: 'Action handled directly by your advocate',
+  recLabel: 'OFFICIAL RECORD',
+  recMeta: '1 File Attached',
+  recName: 'Court_Order_25_Oct_2026.pdf',
+  recFileMeta: '8 pages • Certified Registry Order',
+  view: 'View',
+  nextLabel: 'NEXT STEP',
+  nextTitle: 'File the previous court order before the next hearing.',
+  next: "Advocate's team is compiling the certified copies from the District Registry.",
+  upLabel: 'UPCOMING DATE',
+  upPill: 'Scheduled',
+  upDate: '10 November 2026',
+  upTime: '11:30 AM • Court Room 3, Indore Bench',
+  upLink: 'View Hearing Schedule',
+  progTitle: 'Case Progress',
+  phase: 'Phase 2 of 4',
+  steps: [
+    // ⚠ CONFLICT 8 — 12 Sep 2026 against the 25 Oct hearing above.
+    { title: 'First Hearing', desc: 'Completed on 12 Sep 2026', state: 'done' },
+    { title: 'Hearing Update', desc: 'Completed 25 Oct 2026', state: 'doneGreen' },
+    { title: 'Next Hearing', desc: 'Scheduled • 10 Nov 2026', state: 'current' },
+    { title: 'Final Order & Disposition', desc: 'Upcoming', state: 'waiting' },
+  ] as const,
+  qTitle: 'Have questions?',
+  qSub: 'Adv. Abhishek Verma • Lead Representation',
+  message: 'Message',
+  callChamber: 'Call Chamber',
+  cta: 'View Full Case File',
+  caption: 'Return to Case Dashboard',
+};
