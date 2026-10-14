@@ -218,3 +218,34 @@ export const HC_MATTER_TYPE = {
   cta: 'Continue to Case Details',
   foot: 'Confidential high-assurance legal platform',
 };
+
+/** design/293 — case details. */
+export const HC_CASE_DETAILS = {
+  title: 'Case Details',
+  selected: 'Selected: Civil',
+  progress: '50% Completed',
+  progressPct: 0.5,
+  h1: 'Tell us about your case',
+  body: 'Share simple facts so your High Court counsel can review the dispute.',
+  caseTitle: { label: 'Case Title', placeholder: 'Example: Rahul Sharma vs Amit Verma', hint: 'Give your case a clear name or mention both parties.' },
+  otherParty: {
+    label: 'Other Party Name',
+    placeholder: "Enter the other person's or company's name",
+    hint: 'The person, business, or department on the opposing side.',
+  },
+  happened: { label: 'What Happened?', placeholder: 'Tell us what happened in simple words.', hint: 'You can explain the problem in your own words.' },
+  charsSuffix: 'chars',
+  date: { label: 'Important Date', placeholder: 'Select Date (e.g. DD / MM / YYYY)', hint: 'Add the main date related to your case, if any.' },
+  optional: 'Optional',
+  // ⚠ CONFLICT 9: MP High Court, Indore Bench here; designs 302 and 330 say
+  // Delhi High Court; 299 and 313 District Court, Indore.
+  bench: { label: 'Court / Bench', tag: 'Pre-selected', value: 'Madhya Pradesh High Court - Indore Bench' },
+  dontKnow: "I don't know the exact bench",
+  benchInfo: 'If you are not sure which High Court bench applies, choose "I don\'t know". Your advocate will verify this.',
+  other: { label: 'Other Details', placeholder: 'Add anything else about your case.' },
+  noteTitle: 'Not sure what to write?',
+  noteBody: 'Write the problem in your own words. Your advocate will discuss and ask for more details later during consultation.',
+  status: 'Complete 3 required details to continue',
+  cta: 'Continue to Documents',
+  foot: 'Confidential & encrypted \u2022 No filing without your approval',
+};
