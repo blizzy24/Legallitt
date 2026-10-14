@@ -3,7 +3,7 @@ import { useLocalSearchParams, type Href } from 'expo-router';
 import CompletePaymentScreen from './CompletePaymentScreen';
 import PaymentSuccessScreen from './PaymentSuccessScreen';
 import ScanPayScreen from './ScanPayScreen';
-import { HC_PAYMENT, HC_SCAN_PAY, HC_SUCCESS } from '../data/highCourt';
+import { HC_PAYMENT, HC_SCAN_PAY, HC_SUCCESS, SERVICE_PAYMENT } from '../data/highCourt';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // THE ONE HIGH COURT / DISTRICT COURT PAYMENT — designs 296 → 297 → 298, drawn
@@ -18,8 +18,9 @@ import { HC_PAYMENT, HC_SCAN_PAY, HC_SUCCESS } from '../data/highCourt';
 //  · the ₹850 process fee, ₹3,500 court fee and ₹1,500 change-advocate fee all
 //    lead to this same ₹40,680 screen (the ₹250 courier fee does not — designs
 //    307/308 are the courier's own ₹290 screens, reused unchanged).
-// One component and one record (HC_PAYMENT) serve every caller, so the defect
-// is visible in one place rather than hidden in five.
+// One component serves every caller. Since the 14 Oct re-issue the service-fee
+// caller has its own record, SERVICE_PAYMENT (₹29,631 / ₹379 / ₹40,680, bar
+// ₹35,000 — still broken, see its comment); every other caller keeps HC_PAYMENT.
 //
 // ⚠ The success step says "₹1377 has been received" and "Your forensic analysis
 // request has been submitted", with #PSR739482 — conflict 3.
@@ -51,7 +52,8 @@ export default function CourtPaymentFlow({
   next: string;
   /** design/324: the success button reads "View Receipt". */
   receipt?: boolean;
-  /** The replacement design/298 success layout — the service-fee caller only. */
+  /** The service-fee caller: the re-issued 296 values (SERVICE_PAYMENT) and the
+   *  replacement 298 success layout. Every other caller keeps HC_PAYMENT. */
   hero?: boolean;
   backHref: string;
 }) {
@@ -71,5 +73,5 @@ export default function CourtPaymentFlow({
     const d = receipt ? { ...HC_SUCCESS, cta: HC_SUCCESS.ctaReceipt } : HC_SUCCESS;
     return <PaymentSuccessScreen d={d} ctaHref={next as Href} tick hero={hero} />;
   }
-  return <CompletePaymentScreen d={HC_PAYMENT} payHref={`${base}?step=scan` as Href} backHref={backHref as Href} />;
+  return <CompletePaymentScreen d={hero ? SERVICE_PAYMENT : HC_PAYMENT} payHref={`${base}?step=scan` as Href} backHref={backHref as Href} />;
 }

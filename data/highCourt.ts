@@ -364,7 +364,32 @@ export const HC_PAYMENT: typeof CO_PAYMENT = {
     { label: 'Service Fee', value: '\u20B934,999/-' },
     { label: 'Goods & Services Tax (GST 18%)', value: '\u20B9379' },
   ],
+  total: '\u20B940,680/-',  barAmount: '\u20B940,680/-',
+};
+
+/**
+ * design/296 as RE-ISSUED 14 Oct — the SERVICE-FEE payment only (the High Court
+ * intake after 295 and the District Court intake after 344). Split by caller on
+ * client instruction: the court-fee, process-fee, change-advocate and
+ * pending-case payments were re-issued unchanged and keep HC_PAYMENT.
+ *
+ * ⚠⚠ STILL INTERNALLY BROKEN — client correction, built as drawn. Three
+ * numbers that cannot all be true:
+ *  · Service Fee ₹29,631 + GST ₹379 = ₹30,010;
+ *  · Total Payable still reads ₹40,680;
+ *  · the bar's Amount to pay reads ₹35,000.
+ * (₹35,000 is also design/343's Urgent price, and ₹35,000 ÷ 1.18 = ₹29,661, not
+ * ₹29,631; 18% of ₹29,631 would be ₹5,334, not ₹379.) And the Scan & Pay that
+ * follows (design/297, re-issued unchanged) still asks for ₹40,680.
+ */
+export const SERVICE_PAYMENT: typeof CO_PAYMENT = {
+  ...HC_PAYMENT,
+  lines: [
+    { label: 'Service Fee', value: '\u20B929,631/-' },
+    { label: 'Goods & Services Tax (GST 18%)', value: '\u20B9379' },
+  ],
   total: '\u20B940,680/-',
+  barAmount: '\u20B935,000/-',
 };
 
 /** design/297 (= 316, 323, 332): the Scan & Pay step for HC_PAYMENT. */
@@ -389,7 +414,9 @@ export const HC_SUCCESS = { ...CO_SUCCESS, ctaReceipt: 'View Receipt' };
  * ⚠ CONFLICT 5: HCR-2026-1048 here against DC-2026-1048 one screen back.
  */
 export const HC_CHAT = {
-  name: 'Adv. Abhishek Verma',
+  // Re-issued 14 Oct (design/301): the header now names Adv. Gurneet Chawla
+  // (was Abhishek Verma) — conflict 4.
+  name: 'Adv. Gurneet Chawla',
   status: 'Verified Advocate \u2022 Online',
   ctxTitle: 'High Court Representation',
   ctxType: 'Civil',
@@ -530,8 +557,10 @@ export const HC_SEND_DOCS = {
   intro: 'Choose how you want to send your physical documents.',
   ref: 'Case Reference \u2022 HCR-2026-1048',
   grid: [
-    ['Advocate', 'Adv. Gurneet Chawla'],
-    ['Court', 'High Court'],
+    // Re-issued 14 Oct (design/304): Adv. Abhishek Verma / District Court (was
+    // Gurneet Chawla / High Court) — conflicts 4 and 9.
+    ['Advocate', 'Adv. Abhishek Verma'],
+    ['Court', 'District Court'],
     ['Matter', 'Civil'],
     ['Case ID', 'HCR-2026-1048'],
   ] as const,
@@ -966,7 +995,9 @@ export const HC_PENDING = {
   privTitle: 'Bank-Grade Privacy',
   privBody: 'Your case information is kept private and 256-bit encrypted.',
   review: 'You can review or edit these details before advocate assignment.',
-  cta: 'Submit Case Verification',
+  // Re-issued 14 Oct (design/330): "Procees To pay" — misspelt, built as drawn
+  // (was "Submit Case Verification").
+  cta: 'Procees To pay',
   caption: 'Encrypted & legally compliant eIDAS session',
 };
 

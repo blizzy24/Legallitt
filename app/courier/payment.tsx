@@ -1,7 +1,7 @@
 import { useLocalSearchParams, type Href } from 'expo-router';
 
 import CompletePaymentScreen from '../../components/CompletePaymentScreen';
-import { CO_PAYMENT } from '../../data/courier';
+import { CO_PAYMENT, CO_PAYMENT_HCR } from '../../data/courier';
 
 // Client — complete payment for the courier booking (design/277).
 //
@@ -34,7 +34,7 @@ export default function CourierPaymentScreen() {
   const q = flow ? `?flow=${flow}` : '';
   return (
     <CompletePaymentScreen
-      d={CO_PAYMENT}
+      d={flow === 'hcr' ? CO_PAYMENT_HCR : CO_PAYMENT}
       payHref={`/courier/scan-pay${q}` as Href}
       backHref={'/courier/choose' as Href}
     />

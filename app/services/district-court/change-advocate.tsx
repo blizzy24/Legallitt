@@ -24,7 +24,7 @@ import { DC_CHANGE } from '../../../data/districtCourt';
 // Reached from the red "Change Advocate??" note on design/328 (conflict 7).
 //
 // Conflicts 2, 4 and 6 are commented on DC_CHANGE: Continue opens the shared
-// ₹40,680 payment for a ₹1,500 fee.
+// ₹40,680 payment for a ₹12,000 fee (₹1,500 before the 14 Oct re-issue).
 //
 // Local only: the reason radios and the "Tell us more" box. Nothing is
 // submitted. Chat opens the advocate chat (design/301); Call dials nothing.

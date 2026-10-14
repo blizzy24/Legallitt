@@ -1,7 +1,7 @@
 import CourtPaymentFlow from '../../../components/CourtPaymentFlow';
 
 // District Court — change-advocate fee payment. The batch draws no payment
-// screens of its own for the ₹1,500 change fee (design/329); like every other
+// screens of its own for the ₹12,000 change fee (design/329); like every other
 // fee it lands on the shared ₹40,680 flow — components/CourtPaymentFlow,
 // conflict 2.
 //

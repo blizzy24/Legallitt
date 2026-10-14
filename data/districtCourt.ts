@@ -586,7 +586,8 @@ export const DC_NEXT_HEARING = {
 /**
  * design/329 — change advocate (from the red "Change Advocate??" note on 328).
  *
- * ⚠ CONFLICT 2: the ₹1,500 change fee's Continue opens the shared payment,
+ * ⚠ CONFLICT 2: the ₹12,000 change fee's (₹1,500 before the 14 Oct re-issue)
+ * Continue opens the shared payment,
  * which charges ₹40,680 (see components/CourtPaymentFlow).
  * ⚠ CONFLICT 6: "Court #4" — a fifth progress notation.
  * ⚠ CONFLICT 4: the photo is Adv. Abhishek Verma's.
@@ -625,7 +626,8 @@ export const DC_CHANGE = {
   morePlaceholder: 'Share any details to help us find the right advocate for you...',
   feeLabel: 'CHANGE ADVOCATE FEE',
   feeTag: 'Payment Pending',
-  fee: '₹1,500',
+  // Re-issued 14 Oct (design/329): ₹12,000 (was ₹1,500).
+  fee: '₹12,000',
   feeSub: 'One-time processing',
   feeBox: 'The fee will be shown and verified before you confirm your request. Administrative fee to transfer case representation.',
   howTitle: 'How It Works',

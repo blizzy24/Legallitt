@@ -131,7 +131,7 @@ export default function CompletePaymentScreen({
             {d.barLabel}
           </Text>
           <Text style={styles.barAmount} {...shrinkToFit(0.8)}>
-            {d.total}
+            {d.barAmount}
           </Text>
         </View>
         <Pressable

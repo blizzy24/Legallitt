@@ -263,7 +263,23 @@ export const CO_PAYMENT = {
   secure: 'Your payment is processed securely through our payment provider.',
 
   barLabel: 'Amount to pay',
+  /** The sticky bar's amount. Drawn separately from `total`; they diverge on
+   *  the corrected exports (see CO_PAYMENT_HCR, SERVICE_PAYMENT). */
+  barAmount: '\u20B9290/-',
   pay: 'Pay',
+};
+
+/**
+ * design/307 as RE-ISSUED 14 Oct — the High Court courier's payment (the
+ * ?flow=hcr caller only; the generic courier flow, design/277, is unchanged).
+ *
+ * ⚠⚠ STILL INTERNALLY BROKEN — client correction, built as drawn: Total
+ * Payable now reads ₹249, but the bar's Amount to pay still reads ₹290, and the
+ * lines above still add ₹250 + ₹40 = ₹290. Two different amounts on one screen.
+ */
+export const CO_PAYMENT_HCR: typeof CO_PAYMENT = {
+  ...CO_PAYMENT,
+  total: '\u20B9249/-',
 };
 
 /** design/278 — Scan & Pay. */
@@ -275,6 +291,13 @@ export const CO_SCAN_PAY = {
   amount: 290,
   // ⚠ Static string, no timer. See app/courier/scan-pay.tsx.
   valid: '10:00',
+};
+
+/** design/308 as RE-ISSUED 14 Oct — the ?flow=hcr caller's QR now reads ₹249
+ *  (still labelled "Legal Notice"). The generic courier (278) keeps ₹290. */
+export const CO_SCAN_PAY_HCR = {
+  ...CO_SCAN_PAY,
+  amount: 249,
 };
 
 /**
