@@ -1064,3 +1064,98 @@ export const DC_PRICING = {
   cta: 'Proceed to Pay',
   caption: 'Next: Review Request • Takes 1 min',
 };
+
+/**
+ * design/344 — review request.
+ *
+ * ⚠ CONFLICT 6: "STEP 4 OF 4 · Final Review" — 343 was already STEP 4 OF 4.
+ * ⚠ The screen says "No payment is taken right now … payable only upon
+ * advocate confirmation", yet the exports place the service-fee payment
+ * (design/298) after Submit Request. Wired Submit → that payment, per the
+ * brief; reported, not resolved.
+ * ⚠ The document list names five files ("Documents (5)"), three of which 342
+ * shows as not yet uploaded; the Aadhaar file is "Aadhaar_Card_Front_Back.jpg"
+ * here (DPDP — see DC_DOCUMENTS). CS/2024/8912 and Adv. R.K. Trivedi as on 341.
+ */
+export const DC_REVIEW = {
+  title: 'Review Request',
+  sub: 'District Court Representation',
+  step: 'STEP 4 OF 4',
+  final: 'Final Review',
+  steps: ['Type', 'Details', 'Docs', 'Service'],
+  h1: 'Check Your Request',
+  lead: 'Please check your details before sending your request.',
+  hint: 'You can edit any section if something is wrong.',
+  edit: 'Edit',
+
+  typeHead: 'Case Type',
+  typeTitle: 'District Court Representation',
+  typeChip: 'Civil Matter',
+  typeNote: 'Non-criminal proceedings',
+
+  detailsHead: 'Case Details',
+  fields: [
+    ['Case Title', 'Rahul Sharma vs Amit Verma', 'strong'],
+    ['Other Party / Defendant', 'Amit Verma & Associates', 'plain'],
+    ['Court Location', 'Indore, Madhya Pradesh (District Court, Indore)', 'pin'],
+  ] as const,
+  storyLabel: 'What Happened (Summary)',
+  story:
+    'There is a boundary wall and ancestral land ownership dispute regarding Plot No. 14. The adjacent neighbor has started unauthorized construction despite written notices.',
+  dateTitle: 'Important Impending Date',
+  date: '18 Nov 2026 (Municipal reply deadline)',
+
+  existingHead: 'Existing Case',
+  ongoingLabel: 'Ongoing Matter',
+  ongoing: 'Yes, ongoing',
+  numberLabel: 'Court Case Number',
+  number: 'CS/2024/8912',
+  prevLabel: 'Previous Advocate',
+  prev: 'Adv. R.K. Trivedi',
+  nocLabel: 'NOC Status',
+  noc: 'Not Added Yet',
+  reasonLabel: 'Reason for Advocate Change',
+  reason: 'Relocation to district headquarter',
+  nocNote: 'NOC can be uploaded later if formally requested by registry.',
+
+  docsHead: 'Documents (5)',
+  docs: [
+    { name: 'Case_Papers.pdf', meta: '12 pages • 4.2 MB', id: false },
+    { name: 'Aadhaar_Card_Front_Back.jpg', meta: '2.4 MB • Valid Gov ID', id: true },
+    { name: 'Previous_Court_Order.pdf', meta: '2 pages • 1.1 MB', id: false },
+    { name: 'Notice_or_Petition.pdf', meta: '4 pages • 1.8 MB', id: false },
+    { name: 'Boundary_Site_Photos.pdf', meta: '3 pages • 3.2 MB', id: false },
+  ] as const,
+  docsFoot: 'Optional items: None missing',
+  viewAll: 'View All Documents',
+
+  svcHead: 'Service',
+  svcTitle: 'Ordinary (Standard Service)',
+  svcDesc: 'Normal processing • Standard case support • Case updates in Legalitt',
+  svcPrice: '₹25,000',
+  svcRate: 'Standard rate',
+
+  sumTitle: 'Request Summary',
+  sumRows: [
+    ['Service', 'District Court Representation'],
+    ['Case Type', 'Civil'],
+    ['Client Name', 'Rahul Sharma'],
+    ['Target Court', 'District Court, Indore'],
+    ['Speed', 'Ordinary'],
+  ] as const,
+  totalLabel: 'Total Estimated',
+  totalSub: 'Inclusive of advocate retainer fees',
+  totalPrice: '₹25,000',
+  sumInfo: 'No payment is taken right now. Fees are confirmed and payable only upon advocate confirmation.',
+
+  beforeTitle: 'Before You Submit',
+  beforeBody:
+    'Your request will be sent to Legalitt for review. After review, Legalitt will assign a suitable advocate if the request is accepted.',
+  beforeNote: 'Sending a request does not mean that an advocate has been assigned yet. Case results and timelines can vary.',
+
+  confirm: 'I confirm that the information above is correct.',
+  agree: 'I agree to submit this request to Legalitt.',
+  legal: ['By submitting this request, you agree to the Legalitt ', 'Terms of Service', ' and ', 'Privacy Policy', '.'] as const,
+  cta: 'Submit Request',
+  caption: 'Request will be submitted for Legalitt team review • No payment now',
+};
