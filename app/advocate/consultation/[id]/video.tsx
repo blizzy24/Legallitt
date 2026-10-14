@@ -234,8 +234,10 @@ export default function AdvocateVideoScreen() {
         </View>
 
         {/* design/173 sets the chips side by side; design/174 stacks them; design/177's
-            notes sheet covers them and the AI mark. */}
-        {panel !== 'notes' && (
+            notes sheet covers them and the AI mark, and so does design/178's copilot
+            sheet (checked against 178-adv-video-ai.png; 182-ai-copilot-panel.png is
+            the panel alone and draws no feed). */}
+        {panel === 'none' && (
         <View style={[styles.panelBottom, immersive && styles.panelBottomFull]}>
           <View style={styles.speak}>
             <AudioLines size={t.speakIcon} color={t.speakColour} />
@@ -252,13 +254,14 @@ export default function AdvocateVideoScreen() {
 
         {/* design/173 (and its re-export, 12.jpeg) draws no AI mark on the base
             panel; design/174 draws it in fullscreen. So the copilot opens from
-            fullscreen only. */}
-        {immersive && panel !== 'notes' && (
+            fullscreen only. design/178 draws no mark once the copilot is open —
+            the sheet's own X closes it. */}
+        {immersive && panel === 'none' && (
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Legal AI copilot"
-          accessibilityState={{ expanded: panel === 'ai' }}
-          onPress={() => setPanel((p) => (p === 'ai' ? 'none' : 'ai'))}
+          accessibilityState={{ expanded: false }}
+          onPress={() => setPanel('ai')}
           style={styles.aiMark}
         >
           <AiFlowerMark size={t.aiMark} />
