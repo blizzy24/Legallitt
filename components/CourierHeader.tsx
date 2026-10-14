@@ -1,6 +1,6 @@
 import { router, type Href } from 'expo-router';
 import { ArrowLeft, ChevronLeft, UserRound } from 'lucide-react-native';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View, type TextStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { shrinkToFit } from '../constants/textFit';
@@ -24,6 +24,8 @@ export default function CourierHeader({
   plainChevron = false,
   right,
   backHref = '/dashboard' as Href,
+  padTop,
+  subStyle,
 }: {
   title: string;
   sub?: string;
@@ -34,10 +36,14 @@ export default function CourierHeader({
   right?: React.ReactNode;
   /** Where Back goes when there is no history. */
   backHref?: Href;
+  /** Overrides the top inset (design/300 sits its two-line title higher than 285). */
+  padTop?: number;
+  /** Overrides the subtitle's size or weight (design/300). */
+  subStyle?: TextStyle;
 }) {
   const insets = useSafeAreaInsets();
   return (
-    <View style={[styles.bar, { paddingTop: insets.top + (sub ? h.padTopTall : h.padTop) }]}>
+    <View style={[styles.bar, { paddingTop: insets.top + (padTop ?? (sub ? h.padTopTall : h.padTop)) }]}>
       <View style={styles.row}>
         <Pressable
           accessibilityRole="button"
@@ -59,7 +65,7 @@ export default function CourierHeader({
             {title}
           </Text>
           {sub ? (
-            <Text style={styles.sub} {...shrinkToFit(0.8)}>
+            <Text style={[styles.sub, subStyle]} {...shrinkToFit(0.8)}>
               {sub}
             </Text>
           ) : null}

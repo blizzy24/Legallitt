@@ -64,6 +64,10 @@ export const hcPalette = {
   greenInner: '#BBEBD2',
   /** Timeline rails. */
   rail: '#E5E2E1',
+  /** design/300's "Advocate Assigned" banner — not greenSoft (#DEF4EA). */
+  greenBanner: '#E6F2EB',
+  /** design/300's "Before You Decide" card — not peachSoft (#F9ECE1). */
+  peachDecide: '#F9EBDB',
 };
 
 /** design/289 — service landing. ⚠ Read off a 0.528 px/pt thumbnail; ±2pt. */

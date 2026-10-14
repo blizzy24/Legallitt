@@ -12,7 +12,9 @@
 //     components/PaymentSuccessScreen.tsx.
 //  4. FIVE ADVOCATES: Abhishek Verma (300, 313, 318, 325–328), Neha Verma (303,
 //     305, 306), Rajesh Sharma (330), Gurneet Chawla and Gurneeet Chawla (both
-//     spellings on design/311), plus "Ask Adv. Rahul in Chat" on 303.
+//     spellings on design/311), plus "Ask Adv. Rahul in Chat" on 303 — and
+//     design/300 assigns Abhishek Verma while its own timeline reads "Matched
+//     with Advocate Gurpreet Chawla", a sixth name.
 //  5. IDENTIFIERS: HCR-2026-1048, DC-2026-1048, DL-2026-CV, WP/2026/09876,
 //     WP(C) 4120/2023, HCR-VER-2026-8941, #LGT-849204, #PSR739482.
 //  6. STEP COUNTERS — thirteen systems ("Step 1 of 4", "Step 1 • High Court",

@@ -73,3 +73,72 @@ export const DC_SUBMITTED = {
   cta: 'View Request',
   home: 'Go to Home',
 };
+
+/**
+ * design/300 — advocate assigned.
+ *
+ * ⚠ CONFLICT 4: the card assigns Adv Abhishek Verma; the timeline's own
+ * "Advocate Assigned" step reads "Matched with Advocate Gurpreet Chawla".
+ * ⚠ CONFLICT 6: "Step 4 of 10" — design/299 one screen earlier was
+ * "Step 2 of 9", with nine timeline steps, not ten.
+ */
+export const DC_ASSIGNED = {
+  title: 'Your Advocate',
+  sub: 'District Court Representation',
+  bannerTitle: 'Advocate Assigned',
+  bannerBody: 'Legalitt has assigned an advocate to your case.',
+  bannerNote: 'You can review the advocate and talk to them before making your decision.',
+  verified: 'Verified Advocate',
+  name: 'Adv Abhishek Verma',
+  initials: 'AV',
+  practice: 'District Court Matters',
+  chips: [
+    { icon: 'award', label: '8+ Years Experience' },
+    { icon: 'pin', label: 'Indore, Madhya Pradesh' },
+    { icon: 'gavel', label: 'Civil & Property' },
+  ] as const,
+  bio: 'Experienced in civil, property and family matters with extensive trial appearance record in Indore District Courts.',
+  profile: 'View Advocate Profile',
+  caseTitle: 'Your Case',
+  tier: 'Ordinary (Standard)',
+  rows: [
+    ['Case Title', 'Rahul Sharma vs Amit Verma'],
+    ['Case Type', 'Civil'],
+    ['Court', 'District Court, Indore'],
+  ] as const,
+  idLabel: 'Request ID',
+  id: 'DC-2026-1048',
+  talkTitle: 'Talk to Your Advocate',
+  talkBody: 'You can ask questions and discuss your case before making your decision.',
+  chat: 'Chat with Advocate',
+  call: 'Call Advocate',
+  talkNote: 'Direct consultation before confirmation • No video call required',
+  decideTitle: 'Before You Decide',
+  decideBody: 'Please review the advocate details and talk to the advocate first. After that, you can decide whether to continue with this advocate.',
+  review: 'Review Advocate',
+  statusTitle: 'Request Status',
+  step: 'Step 4 of 10',
+  timeline: [
+    { title: 'Request Submitted', desc: 'Details and payment completed', state: 'done' },
+    { title: 'Under Review', desc: 'Legalitt reviewed court jurisdiction', state: 'done' },
+    // ⚠ CONFLICT 4 — Gurpreet Chawla, not the Abhishek Verma assigned above.
+    { title: 'Advocate Assigned', desc: 'Matched with Advocate Gurpreet Chawla', state: 'done' },
+    { title: 'Talk to Advocate', desc: 'You can chat or call directly with the advocate', state: 'active', chip: 'Active Step' },
+    { title: 'Client Decision', desc: 'Accept or request another advocate', state: 'waiting' },
+    { title: 'Documents', desc: 'Upload required evidence and ID', state: 'waiting' },
+    { title: 'Case Preparation', desc: 'Drafting petitions & legal notice', state: 'waiting' },
+    { title: 'Court Filing', desc: 'Official submission in District Court', state: 'waiting' },
+    { title: 'First Hearing', desc: 'Advocate appears before the magistrate', state: 'waiting' },
+    { title: 'Case Completed', desc: 'Final order & certified decree copies', state: 'waiting' },
+  ] as const,
+  nextTitle: 'What Happens Next?',
+  next: [
+    'Talk to your advocate first to discuss your case details.',
+    'After that, you can decide whether to continue with this advocate.',
+    'If you accept the advocate, your case will move to the document step.',
+  ],
+  cta: 'Review Advocate',
+  // ⚠ Reads like a designer's annotation, but it is drawn as on-screen text
+  // under the button, so it is built as drawn.
+  caption: 'Opens Review Advocate screen • Decide whether to accept or request a new advocate',
+};
