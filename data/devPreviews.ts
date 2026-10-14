@@ -24,9 +24,9 @@ export const ADVOCATE_DEV_PREVIEWS: DevPreviewGroup[] = [
   {
     label: 'HIGH COURT / DISTRICT COURT',
     links: [
-      // No drawn control leads to these two.
+      // No drawn control leads here. DC case preparation (design/313) is no
+      // longer a preview: View Case on design/355 reaches it.
       { label: 'HC documents delivered (design/312)', href: '/services/high-court/courier/delivered' },
-      { label: 'DC case preparation (design/313)', href: '/services/district-court/case-preparation' },
     ],
   },
   {
@@ -51,9 +51,9 @@ export const CLIENT_DEV_PREVIEWS: DevPreviewGroup[] = [
   {
     label: 'HIGH COURT / DISTRICT COURT',
     links: [
-      // No drawn control leads to these two.
+      // No drawn control leads here. DC case preparation (design/313) is no
+      // longer a preview: View Case on design/355 reaches it.
       { label: 'HC documents delivered (design/312)', href: '/services/high-court/courier/delivered' },
-      { label: 'DC case preparation (design/313)', href: '/services/district-court/case-preparation' },
     ],
   },
   {
