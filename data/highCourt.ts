@@ -771,3 +771,55 @@ export const HC_TRACKING = {
   refresh: 'Refresh Tracking',
   help: 'Need Help? Contact Courier Support',
 };
+
+/**
+ * design/312 — documents delivered.
+ *
+ * ⚠ CONFLICT 4: "Adv. Gurneet Chawla" (two e's again; 311 had three).
+ * ⚠ CONFLICT 6: "Step 2 of 4" — a fourth counter in the courier sub-flow.
+ * ⚠ CONFLICT 5: waybill 8492 0419 5821. "Sent from Central Registry" is the
+ * first step, though the client sent the documents (305 / 310).
+ * "5 Documents" over three names plus "2 Annexures".
+ */
+export const HC_DELIVERED = {
+  title: 'Documents Delivered',
+  h1: 'Documents Delivered',
+  sub: 'The documents reached your advocate.',
+  pill: 'Blue Dart Express \u2022 Safe Delivery Completed',
+  detTitle: 'Delivery Details',
+  signed: 'Signed & Handed',
+  grid: [
+    ['Courier', 'Blue Dart Express'],
+    ['Waybill', '8492 0419 5821'],
+    ['Delivered On', '25 October 2026'],
+    ['Delivered At', '11:30 AM'],
+  ] as const,
+  toLabel: 'Delivered To',
+  toName: 'Adv. Gurneet Chawla',
+  toAddr: 'High Court Bar Chamber No. 14, Indore',
+  docsTitle: 'Documents',
+  count: '5 Documents',
+  chips: [
+    { icon: 'file', label: 'Case Papers' },
+    { icon: 'id', label: 'ID Proof' },
+    { icon: 'gavel', label: 'Petition Draft' },
+    { icon: 'clip', label: '2 Annexures' },
+  ] as const,
+  secLabel: 'Physical Security Status',
+  secState: 'Delivered \u2713',
+  sec: 'Tamper-evident security pouch intact at chamber desk',
+  waitTitle: 'Waiting for Advocate',
+  waitBody: 'Your advocate will confirm when the documents are received.',
+  waitPill: 'Confirmation pending chamber check-in',
+  docketTitle: 'Docket Status',
+  docketStep: 'Step 2 of 4',
+  steps: [
+    { title: 'Sent from Central Registry', desc: 'Dispatched via secure air courier', state: 'done' },
+    { title: 'Delivered to Chamber', desc: 'Signed at reception desk \u2022 Today, 11:30 AM', state: 'done' },
+    { title: 'Advocate Confirmation', desc: 'In Progress \u2022 Advocate reviewing physical docket', state: 'active', chip: 'Active' },
+    { title: 'Case Preparation', desc: 'Next \u2022 High Court filing preparation', state: 'next' },
+  ] as const,
+  cta: 'Back to Home',
+  help: 'Need help? ',
+  helpLink: 'Contact Advocate or Support',
+};
