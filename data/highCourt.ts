@@ -27,6 +27,8 @@
 //  (7 and 8 are District Court — see data/districtCourt.ts.)
 // ─────────────────────────────────────────────────────────────────────────────
 
+import { CO_PAYMENT, CO_SUCCESS } from './courier';
+
 /**
  * design/289 — service landing.
  *
@@ -334,3 +336,44 @@ export const HC_PRICING = {
   cta: 'Continue to Pay',
   foot: '100% transparent legal pricing \u2022 Safe & confidential',
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// THE ONE PAYMENT RECORD — designs 296, 315, 322 and 331 (pixel-identical to
+// each other) and every fee that routes to them.
+//
+// ⚠⚠ CONFLICT 2 — BUILT EXACTLY AS DRAWN, AWAITING CLIENT CORRECTION. Do NOT
+// "fix" this by wiring the real fees:
+//  · 18% of ₹34,999 is ₹6,300, not ₹379;
+//  · ₹34,999 + ₹379 = ₹35,378, not ₹40,680;
+//  · the ₹3,500 court fee (314), the ₹850 process fee (321) and the ₹1,500
+//    change-advocate fee (329) all lead to this same ₹40,680 screen, as does
+//    the service fee chosen on 295 whichever tier it is.
+//  · The courier fee does NOT: designs 307/308 are the courier batch's own
+//    ₹250 + ₹40 = ₹290 screens (277/278), which are reused as they are.
+//  · The title is "High Court Represantative" — misspelt (conflict 10) — and
+//    the reference #LGT-849204 is the LEGAL NOTICE prefix.
+// ─────────────────────────────────────────────────────────────────────────────
+export const HC_PAYMENT: typeof CO_PAYMENT = {
+  ...CO_PAYMENT,
+  service: 'High Court Represantative',
+  ref: 'Ref ID: #LGT-849204 \u00B7',
+  lines: [
+    { label: 'Service Fee', value: '\u20B934,999/-' },
+    { label: 'Goods & Services Tax (GST 18%)', value: '\u20B9379' },
+  ],
+  total: '\u20B940,680/-',
+};
+
+/** design/297 (= 316, 323, 332): the Scan & Pay step for HC_PAYMENT. */
+export const HC_SCAN_PAY = {
+  // ⚠ The QR is labelled "Legal Notice" on a High Court / District Court fee.
+  service: 'Legal Notice',
+  amount: 40680,
+};
+
+/**
+ * designs 298, 317 and 333 (identical) and 324 (button reads "View Receipt").
+ * The same wrong-service screen as design/279 — see PaymentSuccessScreen.
+ * ⚠ CONFLICT 3: "₹1377", "forensic analysis", #PSR739482 on a court payment.
+ */
+export const HC_SUCCESS = { ...CO_SUCCESS, ctaReceipt: 'View Receipt' };
