@@ -1159,3 +1159,71 @@ export const DC_REVIEW = {
   cta: 'Submit Request',
   caption: 'Request will be submitted for Legalitt team review • No payment now',
 };
+
+/**
+ * design/345 — decide on the advocate.
+ *
+ * ⚠ CONFLICT 6: "Step 4 of 9" — the assignment screen before it (300) says
+ * "Step 4 of 10" with a ten-step list; this one has nine.
+ * ⚠ CONFLICT 4: the advocate is Adv Abhishek Verma here; the next screen (346)
+ * names Gurpreet Chawla.
+ * ⚠ The export runs past the screen into a black band carrying an "Action
+ * completed successfully" toast. It belongs to no control on the screen and is
+ * not built.
+ */
+export const DC_DECIDE = {
+  title: 'Your Advocate',
+  sub: 'District Court Representation',
+  readyMark: '?',
+  readyTitle: 'Ready to Decide?',
+  readyBody:
+    'You have reviewed the advocate and talked to them. Now choose what you want to do next with your case.',
+  verified: 'Verified Advocate',
+  name: 'Adv Abhishek Verma',
+  initials: 'AV',
+  bio: 'Experienced in civil, property, and family matters.',
+  chips: [
+    { icon: 'award', label: '8+ Years Experience' },
+    { icon: 'gavel', label: 'District Court Matters' },
+    { icon: 'pin', label: 'Indore, Madhya Pradesh' },
+  ] as const,
+  profile: 'View Full Profile',
+  convTitle: 'Your Conversation',
+  convBody: 'You can talk to your advocate again before making your final decision.',
+  avail: ['Chat available', 'Call available'] as const,
+  chat: 'View Chat',
+  call: 'Call Again',
+  caseTitle: 'Your Case',
+  tier: 'Standard Service',
+  rows: [
+    ['Case Type', 'Civil Dispute'],
+    ['Case', 'Rahul Sharma vs Amit Verma'],
+    ['Court', 'District Court, Indore'],
+  ] as const,
+  idLabel: 'Request ID',
+  id: 'DC-2026-1048',
+  ask: 'What Do You Want To Do?',
+  askSub: 'Choose one option below to move forward.',
+  accept: 'Accept Advocate',
+  acceptCap: 'Continue with this advocate for your case.',
+  change: 'Request New Advocate',
+  changeCap: 'Ask Legalitt to assign another advocate.',
+  cancel: 'Cancel Request',
+  cancelCap: 'Cancel your District Court representation request.',
+  beforeTitle: 'Before You Choose',
+  beforeBody:
+    'Please make sure you are comfortable continuing with this advocate. You can chat or call the advocate again at any time before deciding.',
+  statusTitle: 'Request Status',
+  step: 'Step 4 of 9',
+  timeline: [
+    { title: 'Request Submitted', status: 'Completed', state: 'done' },
+    { title: 'Under Review', status: 'Completed', state: 'done' },
+    { title: 'Advocate Assigned', status: 'Completed', state: 'done' },
+    { title: 'User Review', status: 'Your turn to decide', state: 'current' },
+    { title: 'Documents', status: 'Waiting', state: 'wait' },
+    { title: 'Case Preparation', status: 'Waiting', state: 'wait' },
+    { title: 'Court Filing', status: 'Waiting', state: 'wait' },
+    { title: 'First Hearing', status: 'Waiting', state: 'wait' },
+    { title: 'Case Completed', status: 'Waiting', state: 'wait' },
+  ] as const,
+};
