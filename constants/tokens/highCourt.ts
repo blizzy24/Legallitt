@@ -108,6 +108,8 @@ export const hcPalette = {
   greenDeep: '#003F24',
   /** design/320's PDF tiles — not redContainer (#FFDAD6). */
   pdfTile: '#FBE4E1',
+  /** design/321's "Fee requested" dot — not status.pending (#F7A108). */
+  amberDot: '#D97706',
 };
 
 /** design/289 — service landing. ⚠ Read off a 0.528 px/pt thumbnail; ±2pt. */

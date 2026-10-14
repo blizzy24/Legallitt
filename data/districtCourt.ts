@@ -303,3 +303,60 @@ export const DC_FILING = {
   cta: 'View Hearing Details',
   caption: 'Return to Case Overview',
 };
+
+/**
+ * design/321 — process fee (reached from View Hearing Details on design/320,
+ * by design numbering).
+ *
+ * ⚠ CONFLICT 2: "Pay Process Fee (₹850)" opens the shared payment (322–324 =
+ * 296–298 apart from 324's "View Receipt"), which charges ₹40,680.
+ * ⚠ CONFLICT 5: WP/2026/09876.
+ * "Government Portal Charges ₹0 (Included)" — the ₹40,680 screen adds GST.
+ */
+export const DC_PROCESS_FEE = {
+  title: 'Process Fee',
+  sub: 'District Court Representation',
+  pill: 'FEE REQUESTED BY ADVOCATE',
+  task: 'Court Task',
+  reqLabel: 'OFFICIAL COURT REQUEST',
+  reqTitle: 'Process Fee for Court Notice',
+  quote: '“Process fee for sending court notice to the other party.”',
+  initials: 'AV',
+  adv: 'Adv. Abhishek Verma',
+  advRole: 'Assigned Advocate',
+  dateLabel: 'Request Date',
+  date: '24 Oct 2026',
+  amtTitle: 'Process Fee Amount (Bhatta)',
+  amtTag: 'Payment Pending',
+  amount: '₹850',
+  unit: 'INR',
+  amtDesc: 'Official court summons fee requested by your advocate for filing directly with the court registry.',
+  boxRows: [
+    { label: 'Court Notice Service Fee', value: '₹850' },
+    { label: 'Government Portal Charges', value: '₹0 (Included)', green: true },
+    { label: 'Total Payable Amount', value: '₹850', total: true },
+  ] as const,
+  matterLabel: 'ASSOCIATED MATTER',
+  matterMeta: 'Active Case',
+  matter: 'Rahul Sharma vs Amit Verma',
+  matterCells: [
+    ['Case Number', 'WP/2026/09876'],
+    ['Forum', 'District Court'],
+  ] as const,
+  clarTitle: 'Need clarification?',
+  clarSub: 'Ask your advocate before paying',
+  chat: 'Chat',
+  call: 'Call',
+  recTitle: 'Receipt Status: Not Added Yet',
+  recBody: 'Your advocate will add the official court receipt after the payment is made and the process is complete.',
+  recBox: 'Once uploaded by your advocate, you will be able to view and download the official receipt right here.',
+  nextTitle: 'What happens next?',
+  nextMeta: '3 quick steps',
+  next: [
+    { title: 'Pay fee securely', desc: 'Use UPI, debit/credit cards, or net banking.' },
+    { title: 'Advocate submits to registry', desc: 'Your advocate files the notice fee directly at the court window.' },
+    { title: 'Court receipt uploaded', desc: 'Get the verified stamped receipt stored in your case records.' },
+  ],
+  cta: 'Pay Process Fee (₹850)',
+  foot: '100% Secure Payment • Official Court Filing Record',
+};
