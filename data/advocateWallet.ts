@@ -230,3 +230,57 @@ export const WALLET_PERIODS: WalletPeriod[] = [
     note: true,
   },
 ];
+
+/**
+ * design/359 — withdraw money.
+ *
+ * ⚠⚠ CONFLICT 1 — THE HEADER READS "Edit Clause" on a withdrawal screen: a
+ * template leftover, and the most visible defect in this batch. Built as drawn.
+ * ⚠ CONFLICT 8 — "Legalitt retains zero custody of escrowed client retainers"
+ * contradicts the escrow model described elsewhere in the app. Kept as drawn.
+ * ⚠ "Platform Processing Fee (0%)" here, against the 10% fee on every payment.
+ * ⚠ The export clips the fourth quick-pick chip and the bank name / IFSC on
+ * the transfer card; they are built whole and wrap.
+ * The amount entry is live: the chips select, Use Max fills the field, and the
+ * drawn ₹1,000 minimum / ₹24,850 maximum are enforced client-side only.
+ */
+export const WALLET_WITHDRAW = {
+  title: 'Edit Clause',
+  caps: 'ADVOCATE PAYOUT PORTAL',
+  sub: 'Transfer settled fees to registered accounts',
+  availCaps: 'READY TO WITHDRAW',
+  rupee: '₹',
+  availAmount: '24,850.00',
+  enterLabel: 'Enter Amount',
+  useMax: 'Use Max (₹24,850)',
+  min: 1000,
+  max: 24850,
+  initial: 20000,
+  picks: [5000, 10000, 20000, 24850] as const,
+  limits: 'Minimum withdrawal ₹1,000 · Maximum ₹24,850',
+  toCaps: 'TRANSFER TO',
+  change: 'Change',
+  bankName: 'State Bank of India •••• 4821',
+  bankSub: 'Primary Savings · IFSC: SBIN0001048',
+  verified: 'Verified',
+  amountLabel: 'Withdrawal Amount',
+  feeLabel: 'Platform Processing Fee (0%)',
+  fee: '₹0.00',
+  arrivalLabel: 'Estimated Arrival',
+  arrival: 'Today by 6:00 PM',
+  arrivalRail: ' (NEFT/IMPS)',
+  recvLabel: 'You will receive',
+  recvSub: 'Direct account credit',
+  note: 'Funds are transferred directly via Reserve Bank of India (RBI) compliant clearing network. Legalitt retains zero custody of escrowed client retainers.',
+  confirm: 'Confirm Withdrawal',
+  cancel: 'Cancel and Return to Wallet',
+};
+
+/** Indian digit grouping: 24850 → "24,850", 120000 → "1,20,000". */
+export function formatINR(n: number): string {
+  const s = String(Math.floor(n));
+  if (s.length <= 3) return s;
+  const head = s.slice(0, -3);
+  const tail = s.slice(-3);
+  return `${head.replace(/\B(?=(\d{2})+(?!\d))/g, ',')},${tail}`;
+}

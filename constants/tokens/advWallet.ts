@@ -196,3 +196,93 @@ export const advWallet = {
   noteSize: 13.5,
   noteLineHeight: 21,
 };
+
+// ⚠ OFF-PALETTE — design/359: discPeach #FDF2E6, the bank disc on the transfer
+// card. Not a status colour, the red pair or advFirGreen; not hcPalette.peachNote
+// (#FCEFDF, which the "Use Max" chip uses). Sampled; not harmonised.
+// design/359's page is hcPalette.page (#FCF9F8), not the wallet's #F7F7F5.
+export const advWithdrawPalette = {
+  discPeach: '#FDF2E6',
+};
+
+/** design/359 — withdraw money. Measured at 2.000 px/pt. */
+export const advWithdraw = {
+  padX: 20,
+  bottomPad: 32,
+  cardRadius: 16,
+  cardPad: 17,
+  cardGap: 16,
+
+  capsTop: 10,
+  capsSize: 13.3,
+  capsSpacing: 1,
+  subTop: 6,
+  subSize: 13.9,
+
+  availTop: 13.5,
+  amountTop: 12,
+  rupeeSize: 22,
+  amountSize: 28.9,
+  rupeeGap: 4,
+
+  enterSize: 14,
+  maxH: 22,
+  maxPadX: 9,
+  maxSize: 12,
+  inputTop: 16,
+  inputH: 54,
+  inputRadius: 12,
+  inputPadX: 16,
+  inputSize: 28,
+  chipsTop: 19.5,
+  chipH: 32,
+  chipPadX: 12,
+  chipGap: 7,
+  chipSize: 13.4,
+  limitTop: 22.5,
+  limitIcon: 13,
+  limitGap: 5,
+  limitSize: 11.5,
+
+  toTop: 20,
+  changeSize: 13.9,
+  bankTop: 12,
+  disc: 40,
+  discGlyph: 19,
+  bankGap: 13,
+  bankNameSize: 17,
+  bankSubSize: 13.5,
+  verH: 22,
+  verPadX: 8,
+  verIcon: 13,
+  verGap: 4,
+  verSize: 11.3,
+
+  rowH: 30,
+  rowLabelSize: 14,
+  rowValueSize: 13.7,
+  lockIcon: 13,
+  lockGap: 5,
+  ruleTop: 10,
+  ruleH: 1,
+  recvTop: 14,
+  recvSize: 13.9,
+  recvSubSize: 11,
+  recvValueSize: 21,
+  recvIcon: 17,
+  recvGap: 5,
+
+  noteTop: 18,
+  noteIcon: 15,
+  noteGap: 7,
+  noteSize: 13,
+  noteLineHeight: 21,
+
+  btnTop: 24,
+  btnGap: 8,
+  btnH: 52,
+  btnRadius: 14,
+  btnIcon: 17,
+  btnIconGap: 8,
+  btnSize: 13.7,
+};
