@@ -1664,3 +1664,61 @@ export const DC_COURIER_DETAILS = {
   cta: 'Continue to Book Delivery',
   caption: 'Next step: Book Delivery',
 };
+
+/**
+ * design/352 — book the courier delivery.
+ *
+ * ⚠ CONFLICT 1: ₹249 here; 351 showed "₹XXX". The courier payment that
+ * follows (design/307, ?flow=dcr) reads Total Payable ₹249 but Amount to pay
+ * ₹290 — see CO_PAYMENT_HCR.
+ * ⚠ CONFLICT 6: "STEP 3 OF 3 · FINAL STEP".
+ */
+export const DC_COURIER_BOOK = {
+  kicker: 'LEGALITT DELIVERY',
+  title: 'Book Delivery',
+  step: 'STEP 3 OF 3 • FINAL STEP',
+  lead: 'Review your delivery details and book your document pickup.',
+  readyTitle: 'Ready to Book',
+  readySub: 'Your delivery details are ready for booking.',
+  sumTitle: 'Delivery Summary',
+  edit: 'Edit',
+  sections: [
+    {
+      icon: 'from',
+      caps: 'FROM (PICKUP ADDRESS)',
+      name: 'Rahul Sharma',
+      body: 'Flat 204, Vijay Nagar, Indore, Madhya Pradesh · 452010',
+      phone: '+91 98765 43210',
+    },
+    {
+      icon: 'to',
+      caps: 'TO (ADVOCATE CHAMBER)',
+      name: 'Adv. Abhishek Verma',
+      body: 'District Court Office, High Court Road, Indore · 452001',
+      phone: '+91 98XXXXXX10',
+    },
+    {
+      icon: 'docs',
+      caps: 'DOCUMENTS',
+      chip: 'Sealed Pouch',
+      name: '5 Legal Documents Ready',
+      body: 'Case Papers, Court Order, ID Proof, Property Papers, Other',
+    },
+    {
+      icon: 'date',
+      caps: 'PICKUP DATE & TIME',
+      name: '24 Oct 2026 · 10:00 AM – 12:00 PM',
+      phone: 'Courier partner will call before arrival',
+    },
+  ] as const,
+  feeTitle: 'Delivery Fee',
+  feeChip: 'Standard Delivery',
+  fee: '₹249',
+  feeLabel: 'Final delivery fee',
+  feeBody: 'Includes doorstep collection, tamper-proof sealed envelope, and direct advocate chamber handoff.',
+  note: 'Please make sure the pickup and receiver details are correct before booking.',
+  agree: 'I confirm these delivery details are correct.',
+  agreeSub: 'You can track the shipment in the app once booked.',
+  cta: 'Book Delivery',
+  caption: 'Next: Shipment Created with tracking waybill',
+};
