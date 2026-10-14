@@ -1351,3 +1351,85 @@ export const DC_CHANGE_REQUEST = {
   cta: 'Send Request',
   back: 'Go Back',
 };
+
+/**
+ * design/348 — new advocate request sent.
+ *
+ * ⚠ THUMBNAIL (169px wide) — NEEDS A CLEAN RE-EXPORT, as design/289. The
+ * headings and the request rows are legible; the strings marked (?) below are
+ * best readings of illegible text and must be confirmed against a clean export.
+ * ⚠ CONFLICT 6: the timeline here has twelve steps (Admin Review current).
+ * ⚠ Both actions read "Back to Home" — a filled button and a text link.
+ */
+export const DC_CHANGE_SENT = {
+  title: 'New Advocate Request',
+  sub: 'District Court Representation',
+  heroTitle: 'Request Sent',
+  heroBody: 'Your request for a new advocate has been sent to Legalitt.', // (?)
+  heroSub: 'The Legalitt team will review your request.', // (?)
+  statusCaps: 'CURRENT STATUS',
+  statusPill: 'New Advocate Requested', // (?)
+  statusTitle: 'Your request is now waiting for Legalitt review.',
+  statusBody: 'Our team will reevaluate your case requirements and assign a suitable advocate.', // (?)
+  reqTitle: 'Your Request',
+  reqChip: 'Active Request',
+  rows: [
+    ['Service', 'District Court Representation'],
+    ['Case Type', 'Civil'],
+    ['Case Matter', 'Rahul Sharma vs Amit Verma'],
+    ['Court', 'District Court'],
+  ] as const,
+  idLabel: 'Request ID',
+  id: 'DC-2026-1048',
+  subTitle: 'Submission Details',
+  reasonCaps: 'REASON SELECTED',
+  reason: 'I want a different advocate',
+  noteCaps: 'YOUR NOTE',
+  note: '“Looking for an advocate with specific focus on local civil property documentation.”', // (?)
+  submitted: 'Submitted just now', // (?)
+  viewAll: 'View Full Submission', // (?)
+  nextTitle: 'What Happens Next?',
+  steps: [
+    {
+      title: 'Legalitt Reviews Your Request',
+      desc: 'Our legal operations team checks your matter details.', // (?)
+      pill: 'In Progress',
+      state: 'current',
+    },
+    {
+      title: 'A New Advocate Is Assigned',
+      desc: 'We will match an experienced advocate from the District Court panel.', // (?)
+      pill: 'Waiting',
+      state: 'wait',
+    },
+    {
+      title: 'You Review the New Advocate',
+      desc: 'You can view their profile, chat, or call before deciding to accept.', // (?)
+      state: 'wait',
+    },
+  ] as const,
+  tlTitle: 'Request Timeline',
+  tlLink: 'View details', // (?)
+  timeline: [
+    { title: 'Request Submitted', status: 'Initial case details submitted', state: 'done' }, // (?) status
+    { title: 'Under Review', status: 'Case details verified', state: 'done' }, // (?) status
+    { title: 'Advocate Assigned', status: 'Previous advocate linked', state: 'past' }, // (?) status
+    { title: 'New Advocate Requested', status: 'Client change request received', state: 'done' }, // (?) status
+    { title: 'Admin Review', status: 'Legalitt team is reviewing your request', state: 'current', pill: 'Current' }, // (?) status
+    { title: 'New Advocate Assigned', state: 'wait' },
+    { title: 'Client Review', state: 'wait' },
+    { title: 'Documents', state: 'wait' },
+    { title: 'Case Preparation', state: 'wait' },
+    { title: 'Court Filing', state: 'wait' },
+    { title: 'First Hearing', state: 'wait' },
+    { title: 'Case Completed', state: 'wait' },
+  ] as const,
+  updTitle: 'We Will Update You',
+  updBody: 'You will get an app notification and SMS when Legalitt updates your request.',
+  updNote: 'No new advocate has been assigned yet. Your current advocate stays on the case until the team reviews.', // (?)
+  helpTitle: 'Need Help?',
+  helpSub: 'Have a question about your request?', // (?)
+  contact: 'Contact Support',
+  cta: 'Back to Home',
+  back: 'Back to Home',
+};
