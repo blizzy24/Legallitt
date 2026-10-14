@@ -22,6 +22,17 @@ export const ADVOCATE_DEV_PREVIEWS: DevPreviewGroup[] = [
     links: [{ label: 'reviews & ratings (design/264)', href: '/advocate/reviews' }],
   },
   {
+    label: 'HIGH COURT / DISTRICT COURT',
+    links: [
+      // The courier scan & pay is held (design/278), so the High Court courier
+      // walk stops there; this enters its success with the HCR hand-off.
+      { label: 'HC courier payment successful (design/309)', href: '/courier/success?flow=hcr' },
+      // No drawn control leads to these two.
+      { label: 'HC documents delivered (design/312)', href: '/services/high-court/courier/delivered' },
+      { label: 'DC case preparation (design/313)', href: '/services/district-court/case-preparation' },
+    ],
+  },
+  {
     label: 'OUTCOME STATES',
     links: [
       { label: 'verification incomplete (design/241)', href: '/advocate/verify/incomplete' },
@@ -38,6 +49,17 @@ export const CLIENT_DEV_PREVIEWS: DevPreviewGroup[] = [
       { label: 'choose how to send (design/275)', href: '/courier/choose' },
       // design/278's scan & pay is held on instruction and never advances.
       { label: 'payment successful (design/279)', href: '/courier/success' },
+    ],
+  },
+  {
+    label: 'HIGH COURT / DISTRICT COURT',
+    links: [
+      // The courier scan & pay is held (design/278), so the High Court courier
+      // walk stops there; this enters its success with the HCR hand-off.
+      { label: 'HC courier payment successful (design/309)', href: '/courier/success?flow=hcr' },
+      // No drawn control leads to these two.
+      { label: 'HC documents delivered (design/312)', href: '/services/high-court/courier/delivered' },
+      { label: 'DC case preparation (design/313)', href: '/services/district-court/case-preparation' },
     ],
   },
   {
