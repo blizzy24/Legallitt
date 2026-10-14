@@ -49,6 +49,8 @@ export const hcPalette = {
   peachNote: '#FCEFDF',
   /** The disc on the Continue button: white at ~12% over the brown. */
   brownLift: '#7B6C58',
+  /** design/292's step pill — a third peach, between peach and peachNote. */
+  peachPill: '#F8E8D5',
 };
 
 /** design/289 — service landing. ⚠ Read off a 0.528 px/pt thumbnail; ±2pt. */
@@ -408,4 +410,72 @@ export const hcCaseType = {
   footTop: 10,
   footSize: 12,
   footPadBottom: 6,
+};
+
+/** design/292 — matter type ("Case Verification"). Measured at 2.000 px/pt. */
+export const hcMatterType = {
+  padX: 20,
+  bottomPad: 24,
+
+  stepTop: 12,
+  stepH: 22,
+  stepRadius: 11,
+  stepPadX: 10,
+  stepDot: 6,
+  stepDotGap: 7,
+  stepSize: 10.5,
+  stepSpacing: 0.8,
+  verifiedIcon: 15,
+  verifiedGap: 5,
+  verifiedSize: 11.8,
+
+  h1Top: 16,
+  h1Size: 21,
+  bodyTop: 7,
+  bodySize: 14,
+  bodyLineHeight: 20,
+
+  secTop: 21,
+  secSize: 16.5,
+  secMetaSize: 12.5,
+
+  gridTop: 12,
+  gridGap: 12,
+  cardH: 128,
+  cardRadius: 16,
+  cardPad: 14,
+  tile: 36,
+  tileRadius: 9,
+  tileIcon: 18,
+  mark: 20,
+  markGlyph: 11,
+  titleSize: 15,
+  descTop: 4,
+  descSize: 12,
+  descLineHeight: 16,
+  /** Two cards a row: each grows from 40% of the row. */
+  basis: '40%' as const,
+
+  noteTop: 20,
+  notePad: 14,
+  notePadTop: 16,
+  noteIcon: 28,
+  noteIconGlyph: 16,
+  noteIconGap: 10,
+  noteTitleSize: 14.5,
+  noteBodyTop: 4,
+  noteBodySize: 13,
+  noteBodyLineHeight: 16,
+
+  barPadTop: 12,
+  btnH: 48,
+  btnRadius: 12,
+  btnSize: 16.5,
+  btnIcon: 17,
+  btnGap: 8,
+  footTop: 9,
+  footIcon: 13,
+  footGap: 6,
+  footSize: 11.5,
+  footPadBottom: 8,
 };

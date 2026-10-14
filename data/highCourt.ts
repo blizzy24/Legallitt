@@ -189,3 +189,32 @@ export const HC_CASE_TYPE = {
   ctaSub: 'Next: Case Details Form',
   foot: 'You can review or change this selection at any point.',
 };
+
+/** design/292 — matter type. Its header reads "Case Verification". */
+export const HC_MATTER_TYPE = {
+  title: 'Case Verification',
+  // ⚠ CONFLICT 6: "Step 1 • High Court" — design/291 already called itself Step 1 of 4.
+  step: 'STEP 1 \u2022 HIGH COURT',
+  verified: 'Verified Legal Desk',
+  h1: 'Choose your case type',
+  body: 'Pick the matter you want to file or review in the High Court.',
+  secTitle: 'High Court Matters',
+  secMeta: 'Choose one',
+  /** design/292 draws Civil selected. */
+  initial: 'civil' as const,
+  matters: [
+    { id: 'writ', title: 'Writ', desc: 'Court order or public matter' },
+    { id: 'civil', title: 'Civil', desc: 'Civil dispute or suit' },
+    { id: 'criminal', title: 'Criminal', desc: 'Criminal case or defense' },
+    { id: 'bail', title: 'Bail', desc: 'Anticipatory or regular bail' },
+    { id: 'appeal', title: 'Appeal', desc: 'Challenge an earlier order' },
+    { id: 'service', title: 'Service', desc: 'Employment & service matter' },
+    { id: 'property', title: 'Property', desc: 'Land, registry & tenancy' },
+    { id: 'other', title: 'Other', desc: 'Other High Court matter' },
+  ] as const,
+  noteTitle: 'Not sure which matter fits?',
+  /** design/292 hard-wraps this into three ragged lines; reproduced. "Other" is set in ink. */
+  noteLines: [['Select ', 'Other', ' or discuss it with'], ['your assigned'], ['advocate in the next step.']] as const,
+  cta: 'Continue to Case Details',
+  foot: 'Confidential high-assurance legal platform',
+};
