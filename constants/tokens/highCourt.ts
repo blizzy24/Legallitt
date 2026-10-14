@@ -59,6 +59,11 @@ export const hcPalette = {
   peachStep: '#F8E5CF',
   /** The Urgent tier's sage "Fast processing" pill. */
   sage: '#D3DAC8',
+  /** The success badge's two rings (designs 299, 310, 312, 334). */
+  greenRing: '#E1F9EA',
+  greenInner: '#BBEBD2',
+  /** Timeline rails. */
+  rail: '#E5E2E1',
 };
 
 /** design/289 — service landing. ⚠ Read off a 0.528 px/pt thumbnail; ±2pt. */
