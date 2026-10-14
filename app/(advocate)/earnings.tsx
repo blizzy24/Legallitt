@@ -193,7 +193,7 @@ export default function AdvocateWalletScreen() {
               <Pressable
                 key={x.id}
                 accessibilityRole="tab"
-                accessibilityState={{ selected: on }}
+                aria-selected={on}
                 onPress={() => setPeriodId(x.id)}
                 style={[styles.chip, on ? styles.chipOn : i === 0 && d.greyFirstChip ? styles.chipGrey : styles.chipOff]}
               >
