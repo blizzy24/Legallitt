@@ -8,10 +8,11 @@
 //
 // ⚠⚠ STATIC, NOT WIRED — UNSCOPED. There is no payout rail, no bank API and no
 // NEFT/IMPS/RTGS integration. Every payout action is drawn and does nothing:
-// Withdraw Money, Confirm Withdrawal, Set as Primary, Add New Bank Account,
+// Confirm Withdrawal, Set as Primary, Add New Bank Account,
 // Edit Details, Download Payout Receipt, the share / download icons, Copy on
-// the UTR, the UTR Details links, View Statement, Payout Time & Limits,
-// Connect with Advocate Desk, Advocate Support Desk.
+// the UTR, View Statement, Payout Time & Limits,
+// Connect with Advocate Desk, Advocate Support Desk. Withdraw Money and UTR
+// Details are wired as navigation only, to 359 and 361.
 //
 // CONFLICTS — commented where they occur, not resolved:
 //  2. "Total Before Fees" heads the Earnings Breakdown, but its rows sum to the

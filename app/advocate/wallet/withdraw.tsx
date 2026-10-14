@@ -34,8 +34,7 @@ import { formatINR, WALLET_WITHDRAW } from '../../../data/advocateWallet';
 // no payout rail, no bank API, no NEFT/IMPS). Change opens bank account
 // management (design/360); Cancel and Return to Wallet goes back.
 //
-// No drawn control reaches this screen — Withdraw Money on the wallet is
-// unscoped and inert — so it is listed in the advocate dev preview links.
+// Reached from Withdraw Money on the wallet (designs 356-358).
 
 const grey = advWalletPalette.text;
 

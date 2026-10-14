@@ -57,11 +57,14 @@ import { WALLET, WALLET_PERIODS, type PillTone, type WalletPeriodId } from '../.
 // ONE screen, three period states. This Month / Last Month / This Year switch
 // between the three records in data/advocateWallet.ts (356 / 357 / 358).
 //
-// ⚠⚠ STATIC, NOT WIRED — UNSCOPED: no payout rail, no bank API. Withdraw
-// Money, Payout Time & Limits, View Statement, UTR Details and the filter icon
-// open nothing. Manage opens bank account management (design/360). The
-// withdrawal (359) and UTR details (361) screens are therefore reached only
-// from the advocate dev preview links.
+// ⚠⚠ STATIC, NOT WIRED — UNSCOPED: no payout rail, no bank API. Payout Time &
+// Limits, View Statement and the filter icon open nothing. Navigation only:
+// Withdraw Money opens the withdrawal (design/359), UTR Details the transfer
+// details (design/361) and Manage bank account management (design/360).
+//
+// ⚠ CONFLICT — 361 draws one payout, the ₹18,200 of This Month. UTR Details
+// under Last Month (₹42,500) and This Year (₹35,000) opens that same screen;
+// no transfer details are drawn for those two transfers.
 
 /** A zero-width space after each comma lets a long figure wrap where the
  *  export wraps it ("₹2,65, / 400" on design/358), never mid-digit. */
@@ -146,11 +149,15 @@ export default function AdvocateWalletScreen() {
             <Text style={styles.paise}>{w.paise}</Text>
           </View>
           <Text style={styles.ready}>{w.readySub}</Text>
-          {/* ⚠ UNSCOPED — no payout rail. Draws only. */}
-          <View style={styles.btn}>
+          {/* Navigation only — no payout rail. */}
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => router.push('/advocate/wallet/withdraw' as Href)}
+            style={styles.btn}
+          >
             <Text style={styles.btnText}>{w.withdraw}</Text>
             <ArrowRight size={t.btnIcon} color={ink.onBrand} strokeWidth={2.2} />
-          </View>
+          </Pressable>
           <View style={[styles.between, styles.links]}>
             <View style={styles.link}>
               <Text style={styles.linkText} {...shrinkToFit(0.8)}>
@@ -371,10 +378,14 @@ export default function AdvocateWalletScreen() {
           </View>
           <View style={[styles.between, styles.xferRow]}>
             <Text style={styles.xferAmount}>{d.transfer.amount}</Text>
-            <View style={styles.link}>
+            <Pressable
+              accessibilityRole="link"
+              onPress={() => router.push('/advocate/wallet/utr' as Href)}
+              style={styles.link}
+            >
               <Text style={styles.utr}>{w.utr}</Text>
               <ExternalLink size={t.utrIcon} color={c.brown} strokeWidth={2} />
-            </View>
+            </Pressable>
           </View>
           <Text style={styles.ref}>{d.transfer.ref}</Text>
         </View>

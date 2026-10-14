@@ -38,8 +38,7 @@ import { WALLET_UTR } from '../../../data/advocateWallet';
 // Advocate — UTR transfer details (design/361). Measured at 2.000 px/pt.
 // The ₹18,200 payout behind the wallet's "Recent Transfer" (design/356).
 //
-// No drawn control reaches it — UTR Details on the wallet is unscoped and
-// inert — so it is listed in the advocate dev preview links.
+// Reached from UTR Details on the wallet (designs 356-358).
 //
 // ⚠⚠ STATIC, NOT WIRED — UNSCOPED: Copy, the share / download icons,
 // Download Payout Receipt and Connect with Advocate Desk do nothing. Return
