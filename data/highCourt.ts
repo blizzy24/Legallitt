@@ -823,3 +823,60 @@ export const HC_DELIVERED = {
   help: 'Need help? ',
   helpLink: 'Contact Advocate or Support',
 };
+
+/**
+ * design/318 — review before filing.
+ *
+ * ⚠ CROSS-SERVICE: reached from the DISTRICT COURT court-fee payment (317), it
+ * is subtitled "District Court / High Court Representation" — both services at
+ * once — and carries DC-2026-1048 (CONFLICT 5) on a High Court screen.
+ * ⚠ CONFLICT 6: "Step 2 of 7" (Prep → Done), alongside 313's "STAGE 2 OF 7"
+ * with different stages.
+ * ⚠ CONFLICT 4: "High Court Advocate" Abhishek Verma, introduced on 300 as a
+ * District Court advocate. The drawing clips his name ("Adv. Abhishek Vern");
+ * it is shown in full here.
+ */
+export const HC_REVIEW = {
+  title: 'Review Before Filing',
+  sub: 'District Court / High Court Representation',
+  matter: 'CIVIL MATTER',
+  id: 'DC-2026-1048',
+  initials: 'AV',
+  name: 'Adv. Abhishek Verma',
+  role: 'High Court Advocate',
+  chat: 'Chat',
+  call: 'Call',
+  stepHead: 'Step 2 of 7',
+  stepMeta: 'Client Review',
+  steps: ['Prep', 'Review', 'Filing', 'Hearing', 'Order', 'Next', 'Done'],
+  round: 'Review Round 1 of 3',
+  roundMeta: '2 rounds left if needed',
+  roundTitle: 'Please Review Before Filing',
+  roundBody: 'Your advocate prepared these final documents. Please check every page before they go to court.',
+  docsTitle: 'Documents for Review',
+  files: '3 Files',
+  tap: 'Tap to view',
+  info: 'Tapping View opens document viewer. To change words, tap Add Comment.',
+  docs: [
+    { icon: 'file', name: 'Petition.pdf', meta: '32 pages \u2022 Main Plaint \u2022 2.4 MB', badge: 'Ready for sign-off', tone: 'green', add: 'Add Comment', note: true },
+    { icon: 'badge', name: 'Affidavit.pdf', meta: '8 pages \u2022 Sworn Statement \u2022 840 KB', badge: 'Signed & Ready', tone: 'peach', add: '+ Add Comment' },
+    { icon: 'folder', name: 'Supporting Papers.pdf', meta: '18 pages \u2022 6 Exhibits \u2022 3.1 MB', badge: 'Annexures', tone: 'grey', add: '+ Add Comment' },
+  ] as const,
+  view: 'View Document',
+  noteLabel: 'Your note on Page 6',
+  edit: 'Edit',
+  remove: 'Remove',
+  noteQuote: '\u201CPlease correct the property address on page 6 to House No. 42-B, Sector 15.\u201D',
+  elseTitle: 'Anything Else?',
+  optional: 'Optional',
+  elseSub: 'Tell your advocate anything else you want checked before court filing.',
+  placeholder: 'Example: Please make sure the hearing date avoids next Tuesday if possible.',
+  sentTo: 'Sent directly to Adv. Abhishek Verma',
+  limit: 300,
+  checkTitle: 'I have reviewed the documents and want my advocate to continue with filing.',
+  checkSub: 'Your advocate will only file after your confirmation.\nNo automated submission.',
+  approve: 'Approve Documents',
+  changes: 'Request Changes',
+  caption: 'Request Changes sends all your notes back to Adv. Abhishek Verma for Round 2 revisions.',
+  protocol: 'Legalitt Protocol \u2022 Client approval required before court filing \u2022 Safe & verified',
+};
