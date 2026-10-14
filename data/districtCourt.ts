@@ -142,3 +142,58 @@ export const DC_ASSIGNED = {
   // under the button, so it is built as drawn.
   caption: 'Opens Review Advocate screen • Decide whether to accept or request a new advocate',
 };
+
+/**
+ * design/313 — case preparation.
+ *
+ * ⚠ UNREACHABLE BY DESIGN — design/312 (the High Court courier's last screen)
+ * ends at Back to Home; nothing drawn leads here. Linked as a development
+ * preview state on Home.
+ * ⚠ CROSS-SERVICE: a District Court screen after the High Court courier flow.
+ * ⚠ CONFLICT 4: Adv. Abhishek Verma — 310–312 delivered to Adv. Gurneet
+ * Chawla.
+ * ⚠ CONFLICT 5: "Ref: DL-2026-CV" — a fourth identifier format for one matter.
+ * ⚠ CONFLICT 6: "STAGE 2 OF 7" (299 counted 9 steps, 300 counted 10).
+ * "All 5 physical documents" — 310–312 listed four.
+ */
+export const DC_PREP = {
+  kicker: 'DISTRICT COURT REPRESENTATION',
+  title: 'Case Preparation',
+  pill: 'In Progress',
+  desk: 'CHAMBER DESK',
+  h1: 'Case Preparation',
+  sub: 'Your advocate is preparing your case.',
+  note: 'All 5 physical documents have been received in the chamber. Your advocate is now drafting the case documents.',
+  sumLabel: 'CASE SUMMARY',
+  ref: 'Ref: DL-2026-CV',
+  parties: 'Rahul Sharma vs Amit Verma',
+  chips: ['Civil Case', 'District Court'],
+  initials: 'AV',
+  adv: 'Adv. Abhishek Verma',
+  advRole: 'Assigned Advocate',
+  latestTitle: 'Latest Update',
+  latestTag: 'Advocate Update',
+  latest: 'Your documents have been received and your advocate is now preparing the case.',
+  latestDate: '26 October 2026 • 02:30 PM',
+  nextLabel: 'NEXT STEP',
+  nextTitle: 'Court Filing',
+  next: 'Your advocate will file the case in court once the draft is finalized. You will be notified immediately.',
+  nextFoot: 'No action required from you right now.',
+  progTitle: 'Case Progress',
+  stage: 'STAGE 2 OF 7',
+  steps: [
+    { title: 'Documents Received', desc: 'Completed on 26 Oct', state: 'done' },
+    { title: 'Case Preparation', desc: 'Drafting petitions and affidavits', state: 'current', chip: 'Current Stage' },
+    { title: 'Court Filing', desc: 'Upcoming', state: 'waiting' },
+    { title: 'First Hearing', desc: 'Upcoming', state: 'waiting' },
+    { title: 'Hearing Update', desc: 'Upcoming', state: 'waiting' },
+    { title: 'Next Hearing', desc: 'Upcoming', state: 'waiting' },
+    { title: 'Case Completed', desc: 'Upcoming', state: 'waiting' },
+  ] as const,
+  qaTitle: 'Have a question about your case?',
+  qaSub: 'Speak directly with Adv. Abhishek Verma.',
+  chat: 'Chat',
+  call: 'Call',
+  cta: 'View Case',
+  caption: 'Return to Case Dashboard',
+};

@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, Text, View, type TextStyle } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { shrinkToFit } from '../constants/textFit';
-import { courierHeader as h, font, ink } from '../constants/theme';
+import { courierHeader as h, font, ink, status } from '../constants/theme';
 
 /**
  * The back + title + avatar bar designs 275, 276, 280, 281, 282, 283, 285, 286
@@ -28,6 +28,8 @@ export default function CourierHeader({
   subStyle,
   center = false,
   close = false,
+  kicker,
+  online = false,
 }: {
   title: string;
   sub?: string;
@@ -46,6 +48,10 @@ export default function CourierHeader({
   center?: boolean;
   /** An X (close) in place of the back arrow (designs 310 and 312). */
   close?: boolean;
+  /** A small capitalised line above the title (designs 313, 320, 327, 328). */
+  kicker?: string;
+  /** A green online dot on the avatar (design/313). */
+  online?: boolean;
 }) {
   const insets = useSafeAreaInsets();
   return (
@@ -69,6 +75,11 @@ export default function CourierHeader({
           )}
         </Pressable>
         <View style={styles.titleCol}>
+          {kicker ? (
+            <Text style={styles.kicker} {...shrinkToFit(0.75)}>
+              {kicker}
+            </Text>
+          ) : null}
           <Text style={[styles.title, center && styles.centered]} {...shrinkToFit(0.8)}>
             {title}
           </Text>
@@ -82,6 +93,7 @@ export default function CourierHeader({
         {avatar ? (
           <View style={styles.avatar}>
             <UserRound size={h.avatarGlyph} color={ink.onBrand} strokeWidth={1.9} />
+            {online ? <View style={styles.online} /> : null}
           </View>
         ) : null}
       </View>
@@ -110,6 +122,23 @@ const styles = StyleSheet.create({
   titleCol: { flex: 1, marginLeft: h.titleGap },
   title: { fontFamily: font.appSemi, fontSize: h.titleSize, color: h.ink },
   centered: { textAlign: 'center' },
+  kicker: {
+    fontFamily: font.appSemi,
+    fontSize: h.kickerSize,
+    letterSpacing: h.kickerSpacing,
+    color: h.kickerInk,
+  },
+  online: {
+    position: 'absolute',
+    right: -1,
+    bottom: -1,
+    width: h.onlineDot,
+    height: h.onlineDot,
+    borderRadius: h.onlineDot / 2,
+    borderWidth: h.onlineBorder,
+    borderColor: h.bg,
+    backgroundColor: status.active,
+  },
   sub: { marginTop: h.subTop, fontFamily: font.appBody, fontSize: h.subSize, color: '#4D463D' },
   avatar: {
     width: h.avatar,

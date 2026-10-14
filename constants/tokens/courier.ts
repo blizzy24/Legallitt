@@ -59,6 +59,12 @@ export const courierHeader = {
   avatarGlyph: 17,
   avatarBg: '#6C5C45',
   divider: '#F6F3F2',
+  /** The capitalised line above the title (designs 313, 320, 327, 328). */
+  kickerSize: 11,
+  kickerSpacing: 0.9,
+  kickerInk: '#4D463D',
+  onlineDot: 9,
+  onlineBorder: 1.5,
 };
 
 /** designs 275 + 284 — choose how to send. Measured at 2.1231 px/pt from 828×2204. */
