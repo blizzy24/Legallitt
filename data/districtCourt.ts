@@ -1762,3 +1762,49 @@ export const DC_SHIPMENT = {
   cta: 'Track Delivery',
   done: 'Done',
 };
+
+/**
+ * design/354 — courier delivery tracking.
+ *
+ * ⚠ The brief says this screen's QR is labelled "Legal Notice". No QR is
+ * drawn here — the Legal-Notice-labelled QR is the shared courier Scan & Pay
+ * (design/308) that precedes 353. Reported, not changed.
+ * ⚠ The button reads "View Shipment Details"; the next screen the batch draws
+ * is "Documents Received" (design/355), which it opens. Flagged.
+ */
+export const DC_TRACKING = {
+  kicker: 'LEGALITT DELIVERY',
+  title: 'Delivery Tracking',
+  pill: 'In Transit',
+  heroTitle: 'Your documents are on the way.',
+  heroSub: 'The latest delivery status is shown below.',
+  estCaps: 'ESTIMATED DELIVERY',
+  est: '26 Oct 2026',
+  tiles: [
+    ['From', 'Indore'],
+    ['To', 'District Court'],
+    ['Docs', '5 Items'],
+  ] as const,
+  infoCaps: 'SHIPMENT INFORMATION',
+  secured: 'Secured',
+  courierLabel: 'Courier',
+  courier: 'Blue Dart',
+  awbLabel: 'Waybill',
+  awb: 'BD123456789',
+  idLabel: 'Delivery ID',
+  id: 'LD-2026-001248',
+  trTitle: 'Tracking',
+  live: 'Live updates',
+  current: 'Current',
+  timeline: [
+    { title: 'Shipment Created', status: '24 Oct 2026, 09:30 AM', state: 'done' },
+    { title: 'Pickup Scheduled', status: '10:00 AM – 12:00 PM', state: 'done' },
+    { title: 'Picked Up', status: '24 Oct 2026, 11:15 AM • Indore Hub', state: 'done' },
+    { title: 'In Transit', status: 'On vehicle to sorting hub', state: 'current' },
+    { title: 'Out for Delivery', status: 'Waiting', state: 'wait' },
+    { title: 'Delivered', status: 'Waiting', state: 'wait' },
+  ] as const,
+  info: 'Once the courier marks the package delivered, your advocate will verify and confirm physical receipt in their chamber.',
+  help: 'Need Help? Contact Support',
+  cta: 'View Shipment Details',
+};

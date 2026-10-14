@@ -4249,3 +4249,120 @@ export const dcShipment = {
   doneTop: 20,
   doneSize: 14.1,
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ⚠ OFF-PALETTE — design/354, sampled, not harmonised:
+//   · truckDisc #EBDDCE — the truck disc on the In Transit card.
+//   · waitStatus #A89D8E — the "Waiting" lines; lighter than inkMuted.
+//   · waitRail #DCD9D9 — the rail below the current step (green above it).
+// None is a status colour, the red pair or advFirGreen. Reused: the estimate
+// panel is dcAcceptedPalette.docRow; the Current pill dcDocsNeededPalette.
+// fileTile with dcDocumentsPalette.shieldInk; waiting titles
+// dcDecidePalette.waitInk; the waiting dot tagMuted.
+// ─────────────────────────────────────────────────────────────────────────────
+export const dcTrackingPalette = {
+  truckDisc: '#EBDDCE',
+  waitStatus: '#A89D8E',
+  waitRail: '#DCD9D9',
+};
+
+/** design/354 — courier delivery tracking. Measured at 2.000 px/pt. */
+export const dcTracking = {
+  hdrPadTop: 4,
+  hdrTitleGap: 19.5,
+  hdrTitleSize: 17.7,
+  padX: 20,
+  bottomPad: 24,
+  cardRadius: 16,
+  cardPad: 16,
+  cardGap: 16,
+
+  heroTop: 6.5,
+  pillH: 22,
+  pillPadX: 10,
+  pillDot: 7,
+  pillGap: 7,
+  pillSize: 11.5,
+  pillSpacing: 0.5,
+  truck: 36,
+  truckGlyph: 18,
+  titleTop: 14,
+  titleSize: 17.6,
+  titleLineHeight: 24,
+  subTop: 4,
+  subSize: 12,
+  estTop: 16,
+  estH: 35,
+  estRadius: 10,
+  estPadX: 16,
+  estIcon: 16,
+  estGap: 9,
+  capsSize: 10.4,
+  capsSpacing: 1,
+  estDateSize: 14.2,
+
+  tilesTop: 16,
+  tileH: 54,
+  tileRadius: 12,
+  tileGap: 8,
+  tileCapsSize: 10.9,
+  tileCapsSpacing: 0.5,
+  tileValueSize: 14.2,
+  tileValueTop: 3.5,
+
+  rowsTop: 6,
+  rowH: 44,
+  rowLabelSize: 13.9,
+  rowValueSize: 14.5,
+  securedIcon: 15,
+  securedGap: 5,
+  securedSize: 12,
+  chipH: 26,
+  chipPadX: 10,
+  chipIcon: 15,
+  chipGap: 6,
+  copy: 28,
+  copyGlyph: 14,
+  copyGap: 8,
+
+  trTitleSize: 17.5,
+  trTitleLineHeight: 24,
+  liveSize: 11,
+  liveSpacing: 0.5,
+  tlTop: 2,
+  tlPadBottom: 3,
+  tlRowH: 56,
+  tlDisc: 24,
+  tlGlyph: 13,
+  tlRing: 7,
+  tlDot: 8,
+  tlRail: 3,
+  tlInset: 4,
+  tlGap: 16,
+  tlTitleSize: 14.2,
+  tlTitleLineHeight: 18,
+  tlStatusSize: 12,
+  tlStatusLineHeight: 16,
+  curPillH: 18,
+  curPillPadX: 7,
+  curPillSize: 10.9,
+  curPillSpacing: 0.5,
+  curPillGap: 8,
+
+  infoIcon: 17,
+  infoGap: 9,
+  infoSize: 12,
+  infoLineHeight: 20,
+  helpTop: 30.5,
+  helpIcon: 16,
+  helpGap: 6,
+  helpSize: 13.9,
+
+  barPadTop: 12,
+  barPadBottom: 12.5,
+  btnH: 52,
+  btnRadius: 12,
+  btnIcon: 18,
+  btnGap: 8,
+  btnSize: 16.3,
+};
