@@ -1227,3 +1227,73 @@ export const DC_DECIDE = {
     { title: 'Case Completed', status: 'Waiting', state: 'wait' },
   ] as const,
 };
+
+/**
+ * design/346 — advocate accepted.
+ *
+ * ⚠ CONFLICT 4: the advocate accepted here is Adv Abhishek Verma, but the
+ * caption names "Advocate Gurpreet Chawla" as the one sharing the checklist.
+ * ⚠ The notification strip is clipped mid-sentence in the export ("…Case
+ * moving to"). Built with the drawn words only; the rest is not drawn.
+ * ⚠ The progress list has eleven steps (345 had nine; 350 says "Step 5 of 11").
+ */
+export const DC_ACCEPTED = {
+  title: 'Advocate Accepted',
+  sub: 'District Court Representation',
+  notif: 'Notification sent: Advocate accepted. Case moving to',
+  okTitle: 'Advocate Accepted',
+  okBody: 'You have accepted this advocate for your case.',
+  okSub: 'Your case can now move to the next step.',
+  yourAdv: 'YOUR ADVOCATE',
+  verified: 'Verified Advocate',
+  name: 'Adv Abhishek Verma',
+  initials: 'AV',
+  chips: ['8+ Years Exp', 'District Court'] as const,
+  loc: 'Indore, Madhya Pradesh',
+  profile: 'View Profile',
+  caseTitle: 'Your Case',
+  id: 'DC-2026-1048',
+  grid: [
+    [
+      ['Case Type', 'Civil'],
+      ['Court', 'District Court'],
+    ],
+    [['Case Matter', 'Rahul Sharma vs Amit Verma']],
+    [['Service Tier', 'Ordinary']],
+  ] as const,
+  statusCaps: 'CASE STATUS',
+  statusPill: 'Client Accepted',
+  statusBody: 'You have accepted the assigned advocate.',
+  statusSub: 'The case can now move to the document step.',
+  nextCaps: 'NEXT STEP',
+  nextTitle: 'Recommended Documents',
+  nextBody: 'Your advocate will send the list of documents needed for your case.',
+  nextSub: 'You will get a notification when the list is ready.',
+  docLabel: 'Documents',
+  docChip: 'Waiting for Advocate',
+  talkTitle: 'Talk to Your Advocate',
+  talkBody: 'You can still message or call your advocate if you have questions.',
+  chat: 'Chat',
+  call: 'Call',
+  progressTitle: 'Case Progress',
+  timeline: [
+    { title: 'Request Submitted', status: 'Completed', state: 'done' },
+    { title: 'Under Review', status: 'Completed', state: 'done' },
+    { title: 'Advocate Assigned', status: 'Completed', state: 'done' },
+    { title: 'User Accepted', status: 'Completed', state: 'done' },
+    { title: 'Documents', status: 'Next Step', state: 'current' },
+    { title: 'Case Preparation', status: 'Waiting', state: 'wait' },
+    { title: 'Court Filing', status: 'Waiting', state: 'wait' },
+    { title: 'First Hearing', status: 'Waiting', state: 'wait' },
+    { title: 'Hearing Update', status: 'Waiting', state: 'wait' },
+    { title: 'Next Hearing', status: 'Waiting', state: 'wait' },
+    { title: 'Case Completed', status: 'Waiting', state: 'wait' },
+  ] as const,
+  whatTitle: 'What Happens Next?',
+  whatBody: [
+    'Your advocate will review your case and send the documents needed for the next step.',
+    'You can review the list and then send the documents.',
+  ] as const,
+  wait: '[ Waiting for Advocate ]',
+  caption: 'You will be notified once Advocate Gurpreet Chawla shares the document checklist.',
+};
