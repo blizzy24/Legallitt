@@ -556,3 +556,66 @@ export const HC_SEND_DOCS = {
   secure: 'Safe & secure legal delivery \u2022 Tracking provided',
   cta: 'Continue \u2192 Legalitt Delivery',
 };
+
+/**
+ * design/305 — Blue Dart courier booking (Legalitt Delivery from design/304).
+ *
+ * ⚠ CONFLICT 4: the recipient is Adv. Neha Verma of "Chawla & Associates
+ * Legal Chambers" — 304 named the advocate Adv. Gurneet Chawla.
+ * ⚠ CONFLICT 6: "Step 2 • Document Shipping" after 303's "STEP 5 OF 6";
+ * 306 is "Step 3 of 3".
+ * ⚠ FEE: ₹250 here and on 306. The courier payment this flow reuses
+ * (design/307 = 277, /courier/payment) charges ₹290. Each screen shows its own
+ * figure; the client must pick one.
+ */
+export const HC_BOOKING = {
+  title: 'Blue Dart Delivery',
+  step: 'Step 2 \u2022 Document Shipping',
+  powered: 'Powered by Blue Dart Express',
+  h1: 'Courier Booking',
+  sub: 'We will send your documents to your advocate.',
+  transitTitle: 'Tamper-Proof Transit',
+  transitSub: 'Indore Local Express (Air & Surface)',
+  insured: 'Insured',
+  pickupLabel: 'Pickup From',
+  origin: 'Origin',
+  pickupName: 'Rahul Sharma',
+  change: 'Change',
+  pickupAddr: 'Flat 402, Royal Palms, MG Road, Indore, Madhya Pradesh - 452001',
+  pickupPhone: '+91 98260 12345',
+  registered: 'Your Registered Pickup Address',
+  deliverLabel: 'Deliver To',
+  destination: 'Destination',
+  advName: 'Adv. Neha Verma',
+  firm: 'Chawla & Associates Legal Chambers',
+  viewAddress: 'View\nAddress',
+  advAddr: 'Chamber No. 14, High Court Bar Building, MG Road Bench, Indore, MP - 452007',
+  advPhone: '+91 94250 88910',
+  chamber: 'Verified High Court Counsel Chamber',
+  docsTitle: 'Documents',
+  docsSub: '5 Documents ready for courier',
+  viewDocs: 'View\nDocuments',
+  // "5 Documents" over four chips — drawn that way.
+  chips: ['Case Papers', 'ID Proof', 'Petition Draft', 'Court Orders'],
+  detTitle: 'Delivery Details',
+  ready: 'Ready for Dispatch',
+  tiles: [
+    { icon: 'truck', label: 'Courier', value: 'Blue Dart Express', sub: 'Air & Surface Hub' },
+    { icon: 'package', label: 'Package', value: '1 Tamper Pouch', sub: 'Reinforced & Sealed' },
+    { icon: 'weight', label: 'Weight', value: '350g', sub: 'Calculated standard', tag: 'Auto' },
+    { icon: 'clock', label: 'Estimated Delivery', value: '1\u20132 Business Days', sub: 'Blue Dart Air Express' },
+  ] as const,
+  tracking: 'Real-time tracking link will be sent via SMS upon pickup.',
+  feeLabel: 'Delivery Fee',
+  fee: '\u20B9250',
+  feeTag: 'All-Inclusive Rate',
+  feeLead: 'This is only the document delivery fee.',
+  feeNote: 'Separate from legal case fee \u2022 Inclusive of tamper-proof packing & transit insurance.',
+  custodyTitle: 'Legalitt Chain of Custody',
+  custodyBody: "Documents are securely sealed in a tamper-evident pouch and hand-delivered directly to your advocate's office with signature verification.",
+  barLabel: 'Total to pay for courier',
+  barTotal: 'Delivery Total: \u20B9250',
+  secured: 'Secured Pouch',
+  cta: 'Continue \u2192 Confirm Delivery',
+  foot: 'Safe & contactless courier pickup',
+};
