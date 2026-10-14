@@ -1,5 +1,5 @@
 import { router, type Href } from 'expo-router';
-import { ArrowLeft, ChevronLeft, UserRound } from 'lucide-react-native';
+import { ArrowLeft, ChevronLeft, UserRound, X } from 'lucide-react-native';
 import { Pressable, StyleSheet, Text, View, type TextStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -27,6 +27,7 @@ export default function CourierHeader({
   padTop,
   subStyle,
   center = false,
+  close = false,
 }: {
   title: string;
   sub?: string;
@@ -43,6 +44,8 @@ export default function CourierHeader({
   subStyle?: TextStyle;
   /** Centre the title in the space between back and the right-hand icons (design/302). */
   center?: boolean;
+  /** An X (close) in place of the back arrow (designs 310 and 312). */
+  close?: boolean;
 }) {
   const insets = useSafeAreaInsets();
   return (
@@ -50,13 +53,15 @@ export default function CourierHeader({
       <View style={styles.row}>
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Back"
+          accessibilityLabel={close ? 'Close' : 'Back'}
           hitSlop={10}
           onPress={() => (router.canGoBack() ? router.back() : router.replace(backHref))}
           style={chevron ? styles.chevBtn : styles.back}
         >
           {chevron ? (
             <ChevronLeft size={h.backIcon} color={h.ink} strokeWidth={2.4} />
+          ) : close ? (
+            <X size={h.backIcon} color={h.ink} strokeWidth={2.2} />
           ) : plainChevron ? (
             <ChevronLeft size={h.plainChevron} color={h.ink} strokeWidth={2.2} />
           ) : (

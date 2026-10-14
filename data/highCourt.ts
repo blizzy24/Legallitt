@@ -673,3 +673,52 @@ export const HC_COURIER_CONFIRM = {
   cta: 'Book Delivery',
   foot: '100% Sealed Transit \u2022 Direct to Advocate Chamber',
 };
+
+/**
+ * design/310 — shipment created (after the reused courier payment success).
+ *
+ * ⚠ CONFLICT 4: "Adv. Gurneet Chawla" again — 305 and 306, two screens back,
+ * delivered to Adv. Neha Verma.
+ * ⚠ CONFLICT 5: waybill 8492 0419 5821.
+ * "5 Documents Packed" over four chips.
+ */
+export const HC_SHIPMENT = {
+  title: 'Shipment Created',
+  h1: 'Delivery Booked',
+  sub: 'Your documents are ready for pickup.',
+  pill: 'Blue Dart Express \u2022 Doorstep Pickup',
+  detTitle: 'Delivery Details',
+  detTag: 'Standard Express',
+  wayLabel: 'WAYBILL NUMBER',
+  waybill: '8492 0419 5821',
+  schedLabel: 'SCHEDULED PICKUP',
+  sched: 'Tomorrow, 10:00 AM \u2013 1:00 PM',
+  schedSub: 'Courier partner will call before arrival',
+  fromLabel: 'PICKUP FROM',
+  fromName: 'Rahul Sharma',
+  fromAddr: 'Flat 402, Royal Palms, MG Road, Indore',
+  toLabel: 'DELIVER TO',
+  toName: 'Adv. Gurneet Chawla',
+  toAddr: 'Chamber No. 14, High Court Bench',
+  packTitle: '5 Documents Packed',
+  packSub: 'Legal physical docket verification',
+  chips: [
+    { icon: 'file', label: 'Case Papers' },
+    { icon: 'id', label: 'ID Proof' },
+    { icon: 'gavel', label: 'Petition Draft' },
+    { icon: 'copy', label: 'Supporting Annexures' },
+  ] as const,
+  seal: 'Tamper-evident envelope sealed \u2022 Barcode assigned',
+  statTitle: 'Delivery Status',
+  steps: [
+    { title: 'Shipment Created', desc: 'Order booked with Blue Dart', state: 'done' },
+    { title: 'Pickup Pending', desc: 'Courier agent assigned for pickup', state: 'active', chip: 'Active' },
+    { title: 'In Transit', desc: "Direct route to advocate's chamber", state: 'waiting' },
+    { title: 'Delivered', desc: 'Handed over with signature verification', state: 'waiting' },
+  ] as const,
+  smsLead: 'We will send tracking updates to ',
+  smsPhone: '+91 98260 12345',
+  smsTail: ' via SMS.',
+  cta: 'View Tracking',
+  cta2: 'View Case',
+};
