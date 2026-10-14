@@ -28,6 +28,11 @@ import { HC_PAYMENT, HC_SCAN_PAY, HC_SUCCESS } from '../data/highCourt';
 // and the "Waiting for payment…" spinner, which polls nothing. As in the Legal
 // Notice flow the Scan & Pay step moves on to success after a pause.
 //
+// ⚠ SPLIT BY CALLER (client instruction, 14 Oct). The re-issued exports draw
+// the service-fee success (design/298) with a new layout — `hero` — while the
+// court-fee (317) and pending-case (333) successes were re-issued unchanged.
+// Only the service-fee callers pass `hero`.
+//
 // The three steps share one route per caller, selected by ?step=; the caller's
 // route passes `next` (where the success button goes) and `receipt` (324's
 // "View Receipt" label) through the query.
@@ -37,6 +42,7 @@ export default function CourtPaymentFlow({
   base,
   next,
   receipt = false,
+  hero = false,
   backHref,
 }: {
   /** This caller's payment route, e.g. /services/high-court/payment. */
@@ -45,6 +51,8 @@ export default function CourtPaymentFlow({
   next: string;
   /** design/324: the success button reads "View Receipt". */
   receipt?: boolean;
+  /** The replacement design/298 success layout — the service-fee caller only. */
+  hero?: boolean;
   backHref: string;
 }) {
   const { step } = useLocalSearchParams<{ step?: string }>();
@@ -61,7 +69,7 @@ export default function CourtPaymentFlow({
   }
   if (step === 'done') {
     const d = receipt ? { ...HC_SUCCESS, cta: HC_SUCCESS.ctaReceipt } : HC_SUCCESS;
-    return <PaymentSuccessScreen d={d} ctaHref={next as Href} tick />;
+    return <PaymentSuccessScreen d={d} ctaHref={next as Href} tick hero={hero} />;
   }
   return <CompletePaymentScreen d={HC_PAYMENT} payHref={`${base}?step=scan` as Href} backHref={backHref as Href} />;
 }

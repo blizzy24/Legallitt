@@ -463,32 +463,46 @@ export const courierSuccess = {
   refTile: 28,
   refTileGlyph: 18,
   refGap: 11,
-  refLabelSize: 10.5,
+  refLabelSize: 10.2,
   refValueTop: 2,
-  refValueSize: 15,
+  refValueSize: 13.4,
   copyGlyph: 17,
 
-  // Payment card 280.5–403.5pt.
-  cardTop: 107,
+  // Payment card 276–408pt. ⚠ Type re-measured 14 Oct against 279, 298, 309 and
+  // the replacement 298 — all 780px exports at 2.000 px/pt. The earlier sizes
+  // ran a median 9% large (title 12.5%), from the 2.1231 px/pt assumption.
+  cardTop: 103,
   cardRadius: 12,
   cardBg: '#F6F0EA',
   cardBorder: '#DACEC0',
   cardPadX: 17,
-  cardPadTop: 12,
-  cardPadBottom: 14,
-  titleSize: 13.5,
-  bodyTop: 0.5,
-  bodySize: 12,
-  bodyGap: 10,
+  cardPadTop: 15.5,
+  cardPadBottom: 16.5,
+  titleSize: 11.9,
+  bodyTop: 5,
+  bodySize: 11,
+  bodyGap: 9,
   btnTop: 13,
   btnH: 31.5,
   btnW: 134,
   btnRadius: 9,
   btnBg: '#B09C82',
-  btnSize: 12.5,
+  btnSize: 11.7,
   btnGlyph: 15,
   btnGap: 7,
   bottomPad: 40,
+
+  // ── The replacement design/298 (the SERVICE-FEE success only) ─────────────
+  // A 121pt green disc 142.5–263.5pt, card 276–409.5, Request ID card moved
+  // below it at 421–466. Measured at 2.000 px/pt.
+  heroTop: 38.5,
+  hero: 121,
+  heroGlyph: 64,
+  heroCardTop: 12.5,
+  heroRefTop: 11.5,
+  /** ⚠ QUARANTINED — the disc is a flat #55A900, not status.active (#21B474)
+   *  nor advFirGreen. Sampled from the replacement design/298. */
+  heroGreen: '#55A900',
 };
 
 /**

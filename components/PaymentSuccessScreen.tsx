@@ -22,6 +22,12 @@ import { courierSuccess as t, font, ink, status } from '../constants/theme';
 //  · "Your forensic analysis request has been submitted" — DOCUMENT FORENSIC
 //    copy, on courier, court-fee, process-fee and High Court payments.
 //
+// The REPLACEMENT design/298 (the service-fee success, after design/296) is the
+// `hero` layout: a large green disc on top, no small tick, and the Request ID
+// card moved below the payment card. The old 298 layout is still drawn — and
+// still built — for the court-fee (317), pending-case (333) and process-fee
+// (324) successes, whose own exports were re-issued unchanged.
+//
 // Reused: components/PayHeader, the same header designs 28, 29 and 30 draw.
 //
 // STATIC, NOT WIRED: nothing was paid. The button advances.
@@ -31,36 +37,49 @@ export default function PaymentSuccessScreen({
   d,
   ctaHref,
   tick = false,
+  hero = false,
 }: {
   d: PaymentSuccessCopy;
   /** Where the card's button goes. */
   ctaHref: Href;
   /** design/298 draws a green tick beside the title; 279 and 309 draw none. */
   tick?: boolean;
+  /** The replacement design/298: a large disc on top, Request ID card below. */
+  hero?: boolean;
 }) {
+  const ref = (
+    <View style={[styles.ref, hero && styles.refBelow]}>
+      <View style={styles.refTile}>
+        <FileText size={t.refTileGlyph} color={t.refBorder} strokeWidth={2} />
+      </View>
+      <View style={styles.flex}>
+        <Text style={styles.refLabel} {...shrinkToFit(0.8)}>
+          {d.refLabel}
+        </Text>
+        <Text style={styles.refValue} {...shrinkToFit(0.8)}>
+          {d.refValue}
+        </Text>
+      </View>
+      <Copy size={t.copyGlyph} color={t.bodyInk} strokeWidth={2} />
+    </View>
+  );
+
   return (
     <View style={styles.screen}>
       <PayHeader padX={t.padX} title={d.title} subtitle={d.subtitle} intro={d.intro} />
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={styles.ref}>
-          <View style={styles.refTile}>
-            <FileText size={t.refTileGlyph} color={t.refBorder} strokeWidth={2} />
+        {hero ? (
+          <View style={styles.hero}>
+            <Check size={t.heroGlyph} color={ink.onBrand} strokeWidth={3.2} />
           </View>
-          <View style={styles.flex}>
-            <Text style={styles.refLabel} {...shrinkToFit(0.8)}>
-              {d.refLabel}
-            </Text>
-            <Text style={styles.refValue} {...shrinkToFit(0.8)}>
-              {d.refValue}
-            </Text>
-          </View>
-          <Copy size={t.copyGlyph} color={t.bodyInk} strokeWidth={2} />
-        </View>
+        ) : (
+          ref
+        )}
 
-        <View style={styles.card}>
+        <View style={[styles.card, hero && styles.cardBelowHero]}>
           <View style={styles.head}>
-            {tick && (
+            {tick && !hero && (
               <View style={styles.tick}>
                 <Check size={t.tickGlyph} color={ink.onBrand} strokeWidth={3} />
               </View>
@@ -85,6 +104,7 @@ export default function PaymentSuccessScreen({
             <ChevronRight size={t.btnGlyph} color={ink.onBrand} strokeWidth={2.4} />
           </Pressable>
         </View>
+        {hero && ref}
       </ScrollView>
     </View>
   );
@@ -108,6 +128,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  refBelow: { marginTop: t.heroRefTop },
+  hero: {
+    marginTop: t.heroTop,
+    alignSelf: 'center',
+    width: t.hero,
+    height: t.hero,
+    borderRadius: t.hero / 2,
+    backgroundColor: t.heroGreen,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cardBelowHero: { marginTop: t.heroCardTop },
   refTile: { width: t.refTile, alignItems: 'center', marginRight: t.refGap },
   refLabel: { fontFamily: font.appBody, fontSize: t.refLabelSize, color: t.inkMuted },
   refValue: {
