@@ -839,3 +839,87 @@ export const DC_CASE_TYPE = {
   cta: 'Continue',
   caption: 'Next: Case Details • Takes 2 mins',
 };
+
+/**
+ * design/341 — case details, drawn filled in.
+ *
+ * ⚠ CONFLICT 6: "STEP 2 OF 4" on the pill, while the stepper below ticks Case
+ * Type AND Details and draws Documents as the current (brown) step 3.
+ * "Basic Details — Step 1 of 5" is a second, inner counter.
+ * ⚠ The matter is "[ Civil Matter ]" / "Civil Case", while 340 draws Property
+ * selected.
+ * ⚠ CONFLICT 7: "CS/2024/8912" is a case number no other export uses.
+ * ⚠ CONFLICT 8: "Adv. R.K. Trivedi" — a previous advocate named nowhere else.
+ */
+export const DC_CASE_DETAILS = {
+  title: 'Case Details',
+  sub: 'District Court Representation',
+  step: 'STEP 2 OF 4',
+  tag: '[ Civil Matter ]',
+  steps: ['Case Type', 'Details', 'Documents', 'Service'],
+  h1: 'Tell Us About Your Case',
+  lead: 'Add a few details so we can understand your case clearly.',
+  info: 'You can always add more information or papers later.',
+
+  basicTitle: 'Basic Details',
+  basicStep: 'Step 1 of 5',
+  caseTitleLabel: 'Case Title',
+  caseTitle: 'Rahul Sharma vs Amit Verma',
+  caseTitleHelp: 'Add the names of the main people or parties in this dispute.',
+  partyLabel: 'Other Party Name',
+  party: 'Amit Verma & Associates',
+  courtCaps: 'COURT LOCATION',
+  cityLabel: 'Your City',
+  city: 'Indore',
+  districtLabel: 'District',
+  district: 'Indore',
+  stateLabel: 'State',
+  state: 'Madhya Pradesh',
+
+  happenedTitle: 'Tell Us What Happened',
+  happenedLabel: 'What Happened?',
+  happened:
+    'There is a boundary wall and ancestral land ownership dispute regarding Plot No. 14. The adjacent neighbor has started unauthorized construction despite written notices.',
+  happenedHint: 'You do not need to use legal words. Just explain the situation in your own comfortable words.',
+
+  dateTitle: 'Important Date',
+  dateQuestion: 'Is there any upcoming or important date?',
+  yes: 'Yes',
+  no: 'No',
+  dateLabel: 'Date',
+  date: '18 Nov 2026',
+  aboutLabel: 'What is this date about?',
+  about: 'Municipal reply submission deadline',
+  noteLead: 'Note:',
+  note: ' This is a date you are tracking. The advocate will add official district court appearance dates after filing.',
+
+  newTitle: 'Is This a New Case?',
+  newYes: 'Yes, this is a fresh new case',
+  newNo: 'No, my case is already going on',
+  numberLabel: 'Case Number',
+  number: 'CS/2024/8912',
+  prevLabel: 'Previous Advocate',
+  prev: 'Adv. R.K. Trivedi',
+  reasonLabel: 'Reason for Changing Advocate',
+  reason: 'Relocation to district headquarter',
+  nocTitle: 'NOC from Previous Advocate',
+  nocChip: 'Not Added Yet',
+  nocBody: 'You can provide the NOC later if needed. It is not required right now to proceed.',
+
+  moreTitle: 'More About Your Case',
+  moreTag: 'Civil Case',
+  subLabel: 'Matter Sub-Category',
+  subs: ['Property Dispute', 'Money Recovery', 'Contract / Agreement', 'Other Civil Matter'],
+  locLabel: 'Property or Dispute Location',
+  loc: 'Scheme No. 54, Vijay Nagar, Indore',
+
+  otherTitle: 'Other Details',
+  otherPlaceholder: 'Add anything else you think we should know.',
+
+  optional: ' (Optional)',
+  protTitle: 'Your Information is Protected',
+  protBody:
+    'Your case details will only be used to review your request and help the designated advocate understand your matter.',
+  cta: 'Continue to Documents',
+  caption: 'Step 3: Upload Documents • 100% Secure & Confidential',
+};

@@ -2,7 +2,7 @@ import { Check } from 'lucide-react-native';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { shrinkToFit } from '../constants/textFit';
-import { dcStepper as t, font, hcPalette as c, ink, status } from '../constants/theme';
+import { dcStepper as t, dcStepperPalette as m, font, hcPalette as c, ink, status } from '../constants/theme';
 
 /**
  * The District Court intake stepper (designs 340–343): a green disc with a
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
   },
   done: { backgroundColor: status.active },
   active: { backgroundColor: c.brown },
-  num: { fontFamily: font.appSemi, fontSize: t.numSize, color: c.inkMuted },
+  num: { fontFamily: font.appSemi, fontSize: t.numSize, color: m.muted },
   numActive: { color: ink.onBrand },
   label: {
     marginTop: t.labelTop,
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     fontSize: t.labelSize,
     lineHeight: t.labelLineHeight,
     letterSpacing: t.labelSpacing,
-    color: c.inkMuted,
+    color: m.muted,
   },
   labelOn: { color: c.ink },
   labelActive: { color: c.brown },

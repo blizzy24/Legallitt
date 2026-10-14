@@ -30,6 +30,7 @@ export default function CourierHeader({
   close = false,
   kicker,
   online = false,
+  titleGap,
 }: {
   title: string;
   sub?: string;
@@ -52,6 +53,8 @@ export default function CourierHeader({
   kicker?: string;
   /** A green online dot on the avatar (design/313). */
   online?: boolean;
+  /** Overrides the gap between back and the title (design/341). */
+  titleGap?: number;
 }) {
   const insets = useSafeAreaInsets();
   return (
@@ -74,7 +77,7 @@ export default function CourierHeader({
             <ArrowLeft size={h.backIcon} color={h.ink} strokeWidth={2.2} />
           )}
         </Pressable>
-        <View style={styles.titleCol}>
+        <View style={[styles.titleCol, titleGap !== undefined && { marginLeft: titleGap }]}>
           {kicker ? (
             <Text style={styles.kicker} {...shrinkToFit(0.75)}>
               {kicker}

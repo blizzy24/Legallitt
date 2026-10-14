@@ -2072,6 +2072,15 @@ export const dcInfo = {
   linkLineHeight: 20,
 };
 
+// ─────────────────────────────────────────────────────────────────────────────
+// ⚠ OFF-PALETTE — the intake stepper's muted numbers and labels are #938E88 on
+// both 340 and 341: lighter than hcPalette.inkMuted (#7E766C), not a status
+// colour, the red pair or advFirGreen. Sampled; not harmonised.
+// ─────────────────────────────────────────────────────────────────────────────
+export const dcStepperPalette = {
+  muted: '#938E88',
+};
+
 /** The four-step intake stepper on designs 340–343 (components/DistrictStepper). */
 export const dcStepper = {
   disc: 28,
@@ -2160,4 +2169,190 @@ export const dcCaseType = {
   capTop: 12,
   capSize: 12.0,
   capLineHeight: 16,
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ⚠ OFF-PALETTE — design/341's "Your Information is Protected" text is #423420,
+// a darker brown than hcPalette.brownInk (#735F47) and brown (#6C5C45). It is
+// not a status colour, the red pair or advFirGreen. Sampled; not harmonised.
+// ─────────────────────────────────────────────────────────────────────────────
+export const dcCaseDetailsPalette = {
+  protInk: '#423420',
+};
+
+/** design/341 — case details. Measured at 2.000 px/pt. */
+export const dcCaseDetails = {
+  hdrTitleGap: 23.5,
+  hdrSubSize: 12,
+  padX: 20,
+  /** The cards are drawn off-centre: 24pt in on the left, 16pt on the right
+   *  (x24–374), while the pill row and the button sit at 20 / 20. Kept. */
+  cardLeft: 24,
+  cardRight: 16,
+  bottomPad: 23.5,
+
+  sheetPadTop: 19,
+  sheetPadBottom: 38,
+  sheetRadius: 16,
+  pillH: 22,
+  pillPadX: 11,
+  pillIcon: 14,
+  pillGap: 7,
+  pillSize: 10.8,
+  pillSpacing: 0.8,
+  tagDot: 8,
+  tagSize: 11.2,
+  tagSpacing: 0.5,
+  stepperTop: 10,
+  stepperPadX: 12.5,
+
+  cardTop: 14,
+  cardGap: 16,
+  cardRadius: 16,
+  cardPad: 16,
+  cardPadBottom: 20,
+
+  introGap: 12,
+  introDisc: 40,
+  introGlyph: 19,
+  h1Size: 21.1,
+  h1LineHeight: 28,
+  leadTop: 4,
+  leadSize: 13.8,
+  leadLineHeight: 20,
+  infoTop: 6,
+  infoRadius: 12,
+  infoPadX: 10,
+  infoPadY: 12,
+  infoIcon: 15,
+  infoGap: 8.5,
+  infoSize: 12,
+  infoLineHeight: 15,
+
+  headIcon: 27,
+  headIconRadius: 8,
+  headGlyph: 15,
+  headGap: 10,
+  headSize: 17.6,
+  headLineHeight: 22,
+  headStepSize: 12,
+
+  /** Label gaps differ by what sits above: an input (labelTop), a section
+   *  heading, the helper line, the Yes/No toggles, the case options, chips. */
+  labelTop: 10,
+  headLabelTop: 15,
+  happenedLabelTop: 7,
+  helperLabelTop: 16,
+  toggleLabelTop: 17.5,
+  optLabelTop: 20.5,
+  chipsLabelTop: 16,
+  labelSize: 14.3,
+  labelLineHeight: 20,
+  inputTop: 6,
+  inputH: 44,
+  inputRadius: 10,
+  inputPadX: 14.5,
+  inputIcon: 18,
+  inputIconGap: 9,
+  inputSize: 14,
+  helperTop: 8,
+  helperSize: 12,
+  helperLineHeight: 16,
+  capsTop: 22,
+  capsSize: 10.4,
+  capsSpacing: 1,
+  capsLineHeight: 14,
+  capsLabelTop: 6.5,
+  colGap: 8,
+  colsLabelTop: 10,
+
+  areaH: 125,
+  areaPadY: 10,
+  areaSize: 15,
+  areaLineHeight: 20,
+  hintTop: 11,
+  hintIcon: 16,
+  hintGap: 6,
+  hintSize: 12,
+  hintLineHeight: 16,
+
+  toggleTop: 10,
+  toggleH: 42.5,
+  toggleRadius: 10,
+  toggleIcon: 17,
+  toggleGap: 8,
+  toggleSize: 15,
+
+  noteTop: 15,
+  noteRadius: 12,
+  notePadX: 10,
+  notePadY: 9,
+  noteIcon: 16,
+  noteGap: 6,
+  noteSize: 12,
+  noteLineHeight: 16,
+
+  optTop: 17,
+  optGap: 13,
+  optH: 45.5,
+  optRadius: 14,
+  optPadX: 14,
+  optRadio: 20,
+  optRadioRing: 5,
+  optGap2: 12,
+  optSize: 14.3,
+  optIcon: 18,
+
+  nocTop: 10,
+  nocRadius: 12,
+  nocPadX: 12,
+  nocPadY: 10,
+  nocTitleSize: 14,
+  nocChipH: 20,
+  nocChipPadX: 9,
+  nocChipSize: 11.5,
+  nocBodyTop: 4,
+  nocBodySize: 12,
+  nocBodyLineHeight: 20,
+
+  chipTagH: 22,
+  chipTagPadX: 10,
+  chipTagSize: 12,
+  chipsTop: 7.5,
+  chipH: 32.5,
+  chipGap: 8,
+  chipRowGap: 9,
+  chipPadX: 12.5,
+  chipRadius: 10,
+  chipSize: 14.2,
+
+  otherH: 87,
+  otherPadTop: 14,
+  otherPadX: 12.5,
+  otherSize: 14,
+
+  protTop: 16,
+  protRadius: 16,
+  protPad: 14,
+  protDisc: 32,
+  protGlyph: 16,
+  protGap: 12,
+  protTitleSize: 14.5,
+  protTitleLineHeight: 18,
+  protBodySize: 12,
+  protBodyLineHeight: 19.5,
+
+  barPadTop: 13.5,
+  barPadBottom: 9.5,
+  btnH: 52,
+  btnRadius: 14,
+  btnIcon: 19,
+  btnGap: 8,
+  btnSize: 16.2,
+  capTop: 7.5,
+  capIcon: 12,
+  capGap: 5,
+  capSize: 11.1,
+  capSpacing: 0.4,
+  capLineHeight: 14,
 };
