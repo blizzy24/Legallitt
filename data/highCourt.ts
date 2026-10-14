@@ -915,3 +915,60 @@ export const HC_CHANGE = {
   ] as const,
   close: 'Close',
 };
+
+/**
+ * design/330 (pixel-identical to 336) — pending case details. Reached from
+ * "Pending Case" on design/291.
+ *
+ * ⚠ CONFLICT 4: the previous advocate is "Adv. Rajesh Sharma".
+ * ⚠ CONFLICT 5: case number WP(C) 4120/2023.
+ * ⚠ CONFLICT 6: "STEP 2 OF 4 • CASE DETAILS" — 291 was "Step 1 of 4 • Intake",
+ * the same counter, but 292 (the New Case branch) was "Step 1 • High Court".
+ * ⚠ CONFLICT 9: "High Court of Delhi, New Delhi" — 293 filed in MP High Court,
+ * Indore Bench.
+ * The drawing breaks "case history" onto its own line ("verify your / case
+ * history / directly from court servers") — line breaks kept as drawn.
+ * "eIDAS" (an EU e-signature regulation) on an Indian court service — copy
+ * built as drawn; flagged.
+ */
+export const HC_PENDING = {
+  title: 'Pending Case',
+  step: 'STEP 2 OF 4 \u2022 CASE DETAILS',
+  h1: 'Pending Case Details',
+  sub: 'Add your current case details.',
+  transTitle: 'Seamless Advocate Transition',
+  transBody: 'We will safely read and verify your\ncase history\ndirectly from court servers.',
+  infoTitle: 'Case Information',
+  required: 'Required',
+  caseNumberLabel: 'Case Number',
+  caseNumber: 'WP(C) 4120/2023',
+  caseNumberHint: 'You can find this on your court receipt or daily order sheet.',
+  courtLabel: 'Court Name',
+  court: 'High Court of Delhi, New Delhi',
+  typeLabel: 'Case Type',
+  type: 'Writ Petition (Civil)',
+  advLabel: 'Current Advocate (Optional)',
+  optional: 'Optional',
+  // ⚠ CONFLICT 4 — Rajesh Sharma.
+  adv: 'Adv. Rajesh Sharma',
+  advHint: 'Helpful if we need to coordinate case handover.',
+  statusLabel: 'Case Status',
+  status: 'Arguments Pending',
+  nocTitle: 'No Objection Certificate (NOC)',
+  nocBody: 'If you are changing your advocate, an NOC may be required.',
+  nocInfo: "Don't have it yet? No worries, you can also request help from Legalitt or upload it later.",
+  nocFile: 'NOC_Previous_Advocate.pdf',
+  nocMeta: '1.4 MB \u2022 Uploaded',
+  uploaded: '\u2713 Uploaded',
+  view: 'View',
+  replace: 'Replace',
+  addNoc: '+ Upload Additional NOC Page',
+  otherTitle: 'Other Court Documents',
+  otherBody: 'Petitions, previous court orders, and annexures will be collected in the next step.',
+  cont: 'Continue to Documents',
+  privTitle: 'Bank-Grade Privacy',
+  privBody: 'Your case information is kept private and 256-bit encrypted.',
+  review: 'You can review or edit these details before advocate assignment.',
+  cta: 'Submit Case Verification',
+  caption: 'Encrypted & legally compliant eIDAS session',
+};
