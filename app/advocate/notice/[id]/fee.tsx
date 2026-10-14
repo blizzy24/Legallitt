@@ -226,7 +226,7 @@ export default function AdvocateNoticeFeeScreen() {
         </View>
       </ScrollView>
 
-      <View style={[styles.bar, { paddingBottom: insets.bottom + 14 }]}>
+      <View style={[styles.bar, { paddingBottom: insets.bottom + t.barPadBottom }]}>
         <View style={styles.barRow}>
           <View style={styles.barText}>
             <Text style={styles.barLabel} {...shrinkToFit(0.8)}>
