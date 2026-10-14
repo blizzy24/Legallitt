@@ -249,3 +249,35 @@ export const HC_CASE_DETAILS = {
   cta: 'Continue to Documents',
   foot: 'Confidential & encrypted \u2022 No filing without your approval',
 };
+
+/** design/294 — upload documents. */
+export const HC_DOCUMENTS = {
+  title: 'Upload Documents',
+  // ⚠ CONFLICT 6: "Step 3 of 4" — design/293 had no step, 295 is "Step 2 of 6".
+  step: 'STEP 3 OF 4',
+  matter: 'Selected Matter: Civil',
+  intro: 'Upload the documents you have for your case.',
+  addedTitle: 'Documents Added',
+  addedPill: '2 of 2 Required Added',
+  addedBody: 'All required documents uploaded \u2022 You are ready to continue',
+  noteTitle: 'You do not need to upload documents you do not have.',
+  noteBody: 'Optional files can be shared directly with your advocate at any time during your consultation.',
+  required: 'Required',
+  optional: 'Optional',
+  view: 'View',
+  replace: 'Replace',
+  docs: [
+    { id: 'case', icon: 'doc', title: 'Case Papers', required: true, sub: 'Upload papers related to your case.', file: { name: 'Case_Papers.pdf', meta: '2.4 MB \u2022 Uploaded' } },
+    { id: 'order', icon: 'gavel', title: 'Previous Court Order', required: false, sub: 'Upload the latest court order, if you have one.', upload: '+ Upload PDF / Photo', hint: 'Only if you already received an earlier court order.' },
+    // ⚠ CONFLICT 11 (DPDP): an Aadhaar card is requested as ID proof — the same
+    // concern raised on the advocate verification batch. Built as drawn.
+    { id: 'id', icon: 'id', title: 'ID Proof', required: true, sub: 'Upload a valid ID proof (Aadhaar, Passport, or Voter ID).', file: { name: 'ID_Proof.pdf', meta: '1.1 MB \u2022 Uploaded' } },
+    { id: 'notice', icon: 'mail', title: 'Notice or Petition', required: false, sub: 'Upload any notice or petition related to your case.', file: { name: 'Notice.pdf', meta: '850 KB \u2022 Uploaded' } },
+    { id: 'other', icon: 'folder', title: 'Other Documents', required: false, sub: 'Upload any other file that may help your case.', upload: '+ Upload File', hint: 'Supported files: PDF, JPG, PNG (up to 25MB)' },
+  ] as const,
+  helpTitle: 'Not sure what to upload?',
+  helpBody: 'Upload the documents you have. Your advocate can ask for more later during your case review.',
+  ready: 'Required documents ready (2/2)',
+  cta: 'Continue',
+  foot: 'Secure & confidential \u2022 Encrypted document storage',
+};
