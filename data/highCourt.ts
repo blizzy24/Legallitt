@@ -14,7 +14,8 @@
 //     305, 306), Rajesh Sharma (330), Gurneet Chawla and Gurneeet Chawla (both
 //     spellings on design/311), plus "Ask Adv. Rahul in Chat" on 303 — and
 //     design/300 assigns Abhishek Verma while its own timeline reads "Matched
-//     with Advocate Gurpreet Chawla", a sixth name.
+//     with Advocate Gurpreet Chawla", a sixth name. design/304 names the
+//     advocate Adv. Gurneet Chawla as well, two screens after Neha Verma.
 //  5. IDENTIFIERS: HCR-2026-1048, DC-2026-1048, DL-2026-CV, WP/2026/09876,
 //     WP(C) 4120/2023, HCR-VER-2026-8941, #LGT-849204, #PSR739482.
 //  6. STEP COUNTERS — thirteen systems ("Step 1 of 4", "Step 1 • High Court",
@@ -513,4 +514,45 @@ export const HC_DOCS_NEEDED = {
   caption: 'Proceed to Send Documents',
   // ⚠ CONFLICT 4 — "Adv. Rahul".
   ask: 'Have questions? Ask Adv. Rahul in Chat',
+};
+
+/**
+ * design/304 — send documents (choose delivery).
+ *
+ * ⚠ CONFLICT 4: "Adv. Gurneet Chawla" — design/303 one screen earlier is Adv.
+ * Neha Verma, and 305 after it is Neha Verma again. The drawing also runs the
+ * name into the gavel icon ("Chawl▯"); it is shown in full here (never
+ * ellipsized).
+ * ⚠ CONFLICT 9: "High Court" with no bench.
+ */
+export const HC_SEND_DOCS = {
+  title: 'Send Documents',
+  intro: 'Choose how you want to send your physical documents.',
+  ref: 'Case Reference \u2022 HCR-2026-1048',
+  grid: [
+    ['Advocate', 'Adv. Gurneet Chawla'],
+    ['Court', 'High Court'],
+    ['Matter', 'Civil'],
+    ['Case ID', 'HCR-2026-1048'],
+  ] as const,
+  readyTitle: 'Documents Ready',
+  readySub: '5 Documents prepared',
+  verified: 'All Verified',
+  view: 'View',
+  chooseTitle: 'Choose Delivery',
+  chooseSub: 'Select how you want to deliver these documents',
+  legalitt: {
+    title: 'Legalitt Delivery',
+    powered: 'Powered by Blue Dart',
+    desc: 'Legalitt will send the documents to your advocate.',
+  },
+  self: {
+    title: 'Send Yourself',
+    sub: 'Use any courier you like.',
+    desc: 'Send the documents directly to your advocate.',
+  },
+  helpTitle: 'Need Help?',
+  helpBody: 'Your advocate has shared the documents needed for your case. Contact your advocate anytime in chat if you have questions.',
+  secure: 'Safe & secure legal delivery \u2022 Tracking provided',
+  cta: 'Continue \u2192 Legalitt Delivery',
 };
