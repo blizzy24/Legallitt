@@ -360,3 +360,43 @@ export const DC_PROCESS_FEE = {
   cta: 'Pay Process Fee (₹850)',
   foot: '100% Secure Payment • Official Court Filing Record',
 };
+
+/**
+ * design/325 — process fee receipt (from "View Receipt" on design/324).
+ *
+ * ⚠ CONFLICT 2: "Amount ₹850" here — the payment just shown charged ₹40,680.
+ * ⚠ CONFLICT 5: WP/2026/09876.
+ */
+export const DC_RECEIPT = {
+  title: 'Process Fee Receipt',
+  sub: 'District Court Representation',
+  doneTitle: 'Process Fee Completed',
+  doneBody: 'The process fee has been paid and the official court receipt is ready.',
+  stats: [
+    { label: 'Amount', value: '₹850' },
+    { label: 'Payment', ok: 'Received' },
+    { label: 'Receipt', ok: 'Available' },
+  ] as const,
+  recLabel: 'RECEIPT',
+  recTag: 'Official PDF',
+  file: 'Process_Fee_Receipt.pdf',
+  fileMeta: 'PDF • 2.1 MB • Uploaded by Advocate',
+  view: 'View Receipt',
+  download: 'Download',
+  caseTitle: 'Case Details',
+  rows: [
+    ['Case Title', 'Rahul Sharma vs Amit Verma'],
+    ['Case Number', 'WP/2026/09876'],
+    ['Court', 'District Court'],
+    ['Assigned Advocate', 'Adv. Abhishek Verma'],
+  ] as const,
+  nextTitle: 'Next Step',
+  next: 'The case will continue with the next court step.',
+  qTitle: 'Have questions about this receipt?',
+  qSub: 'Ask your advocate directly for any clarification.',
+  initials: 'AV',
+  adv: 'Adv. Abhishek Verma',
+  online: 'Online',
+  cta: 'View Receipt',
+  foot: 'Verified Court Document • Stored in Case Records',
+};
