@@ -1433,3 +1433,58 @@ export const DC_CHANGE_SENT = {
   cta: 'Back to Home',
   back: 'Back to Home',
 };
+
+/**
+ * design/349 — cancel request.
+ *
+ * ⚠ No "request cancelled" screen is drawn. Cancel Request (drawn disabled
+ * until the box is ticked) returns to client Home. Flagged.
+ */
+export const DC_CANCEL = {
+  title: 'Cancel Request',
+  sub: 'District Court Representation',
+  topTitle: 'Cancel This Request?',
+  topBody: 'Are you sure you want to cancel your District Court request?',
+  topSub: 'Your current request and advocate process will stop if you cancel.',
+  reqTitle: 'Your Request',
+  id: 'DC-2026-1048',
+  cells: [
+    [
+      ['Case Type', 'Civil'],
+      ['Court', 'District Court'],
+    ],
+    [['Case', 'Rahul Sharma vs Amit Verma']],
+    [
+      ['Service', 'Ordinary'],
+      ['Current Status', 'Client Review'],
+    ],
+  ] as const,
+  advTitle: 'Current Advocate',
+  advChip: 'Awaiting Your Decision',
+  name: 'Adv Abhishek Verma',
+  initials: 'AV',
+  verified: 'Verified Advocate',
+  release: 'Will be released from this request upon cancellation.',
+  whyTitle: 'Why Are You Cancelling?',
+  whySub: 'You can choose a reason. This helps Legalitt improve the service. (Optional)',
+  reasons: [
+    'No longer need this service',
+    'Want to handle the case another way',
+    'Cost is not suitable',
+    'Found another option',
+    'Other',
+  ] as const,
+  moreTitle: 'Tell Us More (Optional)',
+  morePlaceholder: 'Tell us why you want to cancel.',
+  lock: 'Please do not share sensitive personal information, passwords, or OTPs.',
+  beforeTitle: 'Before You Cancel',
+  bullets: [
+    'After cancellation, this request will stop and the assigned advocate will no longer be part of this request.',
+    'You may need to create a new request later if you need this service again.',
+    'No penalty or fees apply for cancelling at the review stage.',
+  ] as const,
+  agree: 'I understand that this will cancel my request.',
+  agreeNote: 'This action cannot be undone once confirmed.',
+  cancel: 'Cancel Request',
+  keep: 'Keep My Request',
+};

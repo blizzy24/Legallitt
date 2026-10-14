@@ -3549,3 +3549,134 @@ export const dcChangeSent = {
   backTop: 16,
   backSize: 13,
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ⚠ OFF-PALETTE — design/349, sampled, not harmonised:
+//   · darkBrown #55442D — the shield on the warning disc and the "Client
+//     Review" pill text; darker than brown (#6C5C45) and brownInk (#735F47).
+//   · reviewPill #F6E3CD — the "Client Review" pill; between peach (#F6DCBD)
+//     and peachPill (#F8E8D5).
+// Neither is a status colour, the red pair or advFirGreen. The radios and the
+// box are #767676, dcDocumentsPalette.checkbox; the warning line is
+// advForensicRed.
+// ─────────────────────────────────────────────────────────────────────────────
+export const dcCancelPalette = {
+  darkBrown: '#55442D',
+  reviewPill: '#F6E3CD',
+};
+
+/** design/349 — cancel request. Measured at 2.000 px/pt. */
+export const dcCancel = {
+  hdrPadTop: 4,
+  hdrTitleGap: 15.5,
+  hdrSubSize: 12.1,
+  padX: 20,
+  bottomPad: 32,
+  cardTop: 19.5,
+  cardGap: 17,
+  cardRadius: 16,
+  cardPad: 16,
+
+  topDisc: 40,
+  topGlyph: 18,
+  topGap: 15,
+  topTitleSize: 17.7,
+  topTitleLineHeight: 24,
+  topBodyTop: 2,
+  topBodySize: 14,
+  topBodyLineHeight: 20,
+  topSubTop: 4,
+  topSubSize: 12,
+  topSubLineHeight: 16,
+
+  titleSize: 14.2,
+  titleLineHeight: 22,
+  chipH: 22,
+  chipPadX: 10,
+  chipIcon: 13,
+  chipGap: 6,
+  chipSize: 10.9,
+  chipSpacing: 0.5,
+  cellsTop: 18,
+  cellGap: 14,
+  colGap: 12,
+  cellH: 52,
+  cellRadius: 10,
+  cellPadX: 10,
+  cellLabelSize: 11,
+  cellLabelSpacing: 0.5,
+  cellLabelLineHeight: 15,
+  cellValueSize: 14.1,
+  cellValueLineHeight: 19,
+  pillTop: 3,
+  pillH: 18,
+  pillPadX: 8,
+
+  advTop: 9,
+  advPanelRadius: 12,
+  advPanelPad: 12,
+  photo: 52,
+  photoTextSize: 18,
+  photoGap: 14,
+  nameSize: 17.7,
+  nameLineHeight: 22,
+  verifiedIcon: 14,
+  verifiedGap: 5,
+  verifiedSize: 11.5,
+  verifiedSpacing: 0.4,
+  releaseTop: 12,
+  releaseIcon: 16,
+  releaseGap: 12,
+  releaseSize: 12,
+  releaseLineHeight: 16,
+
+  whyTitleSize: 17.6,
+  whyTitleLineHeight: 24,
+  whySubTop: 0.5,
+  whySubSize: 12,
+  whySubLineHeight: 16,
+  reasonsTop: 16.5,
+  reasonGap: 10,
+  reasonH: 42,
+  reasonRadius: 10,
+  reasonPadX: 12,
+  reasonSize: 14,
+  radio: 13,
+  radioBorder: 1.5,
+
+  areaTop: 7,
+  areaH: 84,
+  areaRadius: 12,
+  areaPad: 12,
+  areaSize: 14,
+  areaLineHeight: 20,
+  lockTop: 16,
+  lockIcon: 15,
+  lockGap: 5,
+
+  beforeIcon: 17,
+  beforeGap: 8,
+  bulletsTop: 10.5,
+  bulletGap: 7,
+  bulletDot: 5,
+  bulletInset: 4,
+  bulletTextGap: 12,
+  bulletSize: 12,
+  bulletLineHeight: 16.5,
+
+  box: 18,
+  boxRadius: 3,
+  boxBorder: 1.5,
+  boxGlyph: 12,
+  boxGap: 13,
+  agreeSize: 14.3,
+  agreeLineHeight: 18,
+  agreeNoteTop: 2,
+  agreeNoteSize: 12,
+  agreeNoteLineHeight: 16,
+
+  btnTop: 38.5,
+  btnGap: 10,
+  btnH: 52,
+  btnSize: 16.3,
+};
