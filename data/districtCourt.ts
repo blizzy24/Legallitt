@@ -923,3 +923,73 @@ export const DC_CASE_DETAILS = {
   cta: 'Continue to Documents',
   caption: 'Step 3: Upload Documents • 100% Secure & Confidential',
 };
+
+/**
+ * design/342 — upload documents.
+ *
+ * ⚠ CONFLICT 6: the stepper card says "Step 3 of 4" (Documents current); the
+ * intake pill on 341 called the screen before this one "STEP 2 OF 4".
+ * ⚠ CONFLICT 10 (DPDP): an Aadhaar card is drawn as an uploaded, REQUIRED
+ * file ("Valid Gov ID"). Aadhaar is sensitive personal data; nothing on the
+ * screen states purpose or consent. Kept as drawn.
+ * ⚠ The second file name is clipped by its REQ chip in the export
+ * ("Aadhaar_Card_Frc"). The full name below is completed from that fragment
+ * and its "JPG" meta — confirm with the designer.
+ */
+export const DC_DOCUMENTS = {
+  title: 'Upload Documents',
+  /** Drawn on two lines. */
+  sub: 'District Court\nRepresentation',
+  matter: 'CIVIL MATTER',
+  ssl: 'High-Assurance SSL',
+  stepsCaps: 'VERIFICATION STEPS',
+  stepsCount: 'Step 3 of 4',
+  steps: ['Case Type', 'Details', 'Documents', 'Service'],
+  h1: 'Upload Your Documents',
+  lead: 'Upload the relevant records and proof you currently have for your civil court filing.',
+  infoLead: 'No pressure:',
+  info: " Some documents can be furnished later if you don't have them handy today. You can safely proceed with partial paperwork.",
+  sec: 'Documents for Your Case',
+  ready: '2 of 5 ready',
+  req: 'REQ',
+  uploaded: 'Uploaded',
+  view: 'View',
+  replace: 'Replace',
+  files: [
+    { icon: 'file', name: 'Case_Papers.pdf', meta: '12 pages • PDF • 4.2 MB' },
+    { icon: 'id', name: 'Aadhaar_Card_Front.jpg', meta: '2.4 MB • JPG • Valid Gov ID' },
+  ] as const,
+  optional: 'Optional',
+  noHave: "I don't have this",
+  upload: 'Upload',
+  slots: [
+    {
+      icon: 'court',
+      title: 'Previous Court Order',
+      desc: 'Add the latest court order if you have one from an earlier hearing or court.',
+      skip: true,
+    },
+    {
+      icon: 'mail',
+      title: 'Notice or Petition',
+      desc: 'Upload any notice received or legal petition related to this dispute.',
+      skip: true,
+    },
+    {
+      icon: 'files',
+      title: 'Other Supporting Files',
+      desc: 'Add property receipts, letters, site photos, or municipal slips that may assist.',
+      skip: false,
+    },
+  ] as const,
+  add: '+ Add Another Document',
+  cantTitle: "Can't upload a required document?",
+  cantBody:
+    'You can still continue to the next step. Your assigned advocate will discuss legal workarounds, affidavit substitutes, or petition dispensations directly during your consultation.',
+  safeTitle: 'Your Documents Are Safe',
+  safeBody:
+    'Files are stored under strict end-to-end statutory encryption and used solely for briefing your verified district court advocate. Never disclosed to third parties or opposing counsel.',
+  clarTitle: 'Need document clarity?',
+  clarBody: 'Your advocate can request remaining exhibits inside the app later.',
+  cta: 'Continue to Submission',
+};

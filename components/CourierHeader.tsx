@@ -31,6 +31,7 @@ export default function CourierHeader({
   kicker,
   online = false,
   titleGap,
+  titleStyle,
 }: {
   title: string;
   sub?: string;
@@ -55,6 +56,8 @@ export default function CourierHeader({
   online?: boolean;
   /** Overrides the gap between back and the title (design/341). */
   titleGap?: number;
+  /** Overrides the title's size (design/342). */
+  titleStyle?: TextStyle;
 }) {
   const insets = useSafeAreaInsets();
   return (
@@ -83,7 +86,7 @@ export default function CourierHeader({
               {kicker}
             </Text>
           ) : null}
-          <Text style={[styles.title, center && styles.centered]} {...shrinkToFit(0.8)}>
+          <Text style={[styles.title, center && styles.centered, titleStyle]} {...shrinkToFit(0.8)}>
             {title}
           </Text>
           {sub ? (
