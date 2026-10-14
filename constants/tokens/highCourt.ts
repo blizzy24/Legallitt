@@ -99,6 +99,15 @@ export const hcPalette = {
   currentDisc: '#A68F75',
   /** design/318's "Remove" link — the same #BA1A1A as fir.removeColour. */
   removeRed: '#BA1A1A',
+  /** design/320's "Notification Sent" card — not greenTile (#D3F0E3). */
+  greenNotice: '#D4FAE3',
+  /** design/320's "Filed" pill. */
+  greenPill: '#C3F6D8',
+  /** design/320's "Scheduled" pill and its dark-green text. */
+  greenScheduled: '#C9FDE0',
+  greenDeep: '#003F24',
+  /** design/320's PDF tiles — not redContainer (#FFDAD6). */
+  pdfTile: '#FBE4E1',
 };
 
 /** design/289 — service landing. ⚠ Read off a 0.528 px/pt thumbnail; ±2pt. */

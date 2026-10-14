@@ -244,3 +244,62 @@ export const DC_COURT_FEE = {
   cta: 'Pay Court Fee (₹3,500)',
   foot: '100% Secure Government Court Payment • Verified by Legalitt',
 };
+
+/**
+ * design/320 — court filing (reached from Approve Documents on design/318).
+ *
+ * ⚠ CROSS-SERVICE: a District Court screen after the High Court review.
+ * ⚠ CONFLICT 5: filing number HC/IND/2026/18452 — an "HC" (High Court)
+ * prefix on a District Court filing — plus case number WP/2026/09876.
+ * ⚠ CONFLICT 6: "Stage 3 of 6" (313 was "STAGE 2 OF 7").
+ * ⚠ CONFLICT 9: "District Court, Indore Bench".
+ * "Filed Documents 3" — Petition, Affidavit, Supporting Papers — after five
+ * documents were couriered.
+ */
+export const DC_FILING = {
+  kicker: 'DISTRICT COURT REPRESENTATION',
+  title: 'Court Filing',
+  notifTitle: 'Notification Sent',
+  notifBody: 'Your advocate has updated your court filing details and scheduled your first hearing.',
+  filedTitle: 'Case Filed',
+  filedPill: 'Filed',
+  filedBody: 'Your advocate has updated the court filing details.',
+  filedNote: 'Details verified and submitted by your assigned advocate.',
+  detTitle: 'Filing Details',
+  detMeta: 'Official Registry',
+  rows: [
+    { label: 'Filing Date', value: '18 October 2026' },
+    { label: 'Filing Number', value: 'HC/IND/2026/18452', copy: true },
+    { label: 'Case Number', value: 'WP/2026/09876', copy: true },
+    { label: 'Filing Status', value: 'Filed', dot: true },
+    { label: 'Court', value: 'District Court, Indore Bench' },
+  ] as const,
+  hearTitle: 'First Hearing',
+  hearPill: 'Scheduled',
+  hearDate: '25 October 2026 • 11:00 AM',
+  hearRoom: 'Court Room 3, Indore Bench',
+  hearConfirm: 'Hearing details confirmed by your advocate.',
+  hearNote: 'Hearing information appears only after your advocate verifies real dates directly with the court roster.',
+  docsTitle: 'Filed Documents',
+  docs: [
+    { name: 'Petition.pdf', meta: '32 pages · PDF' },
+    { name: 'Affidavit.pdf', meta: '8 pages · PDF' },
+    { name: 'Supporting Papers.pdf', meta: '18 pages · PDF' },
+  ],
+  view: 'View',
+  nextLabel: 'NEXT STEP',
+  nextTitle: 'First Hearing',
+  next: 'Your advocate will appear in court on 25 October 2026. You will receive an update after the hearing.',
+  progTitle: 'Case Progress',
+  stage: 'Stage 3 of 6',
+  steps: [
+    { title: 'Case Preparation', desc: 'Completed', state: 'done' },
+    { title: 'Court Filing', desc: 'Completed on 18 Oct', state: 'done' },
+    { title: 'First Hearing', desc: 'Current • Scheduled for 25 Oct', state: 'current' },
+    { title: 'Hearing Update', desc: 'Upcoming', state: 'waiting' },
+    { title: 'Next Hearing', desc: 'Upcoming', state: 'waiting' },
+    { title: 'Case Completed', desc: 'Upcoming', state: 'waiting' },
+  ] as const,
+  cta: 'View Hearing Details',
+  caption: 'Return to Case Overview',
+};
