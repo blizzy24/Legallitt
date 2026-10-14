@@ -32,8 +32,14 @@ import { CO_SUCCESS } from '../../data/courier';
 // shipment screen.
 export default function CourierSuccessScreen() {
   // ?flow=hcr: the High Court courier journey (designs 304-312) continues to its
-  // own shipment screen, design/310; otherwise design/280.
+  // own shipment screen, design/310; ?flow=dcr: the District Court courier
+  // (351-355) continues to design/353; otherwise design/280.
   const { flow } = useLocalSearchParams<{ flow?: string }>();
-  const next = flow === 'hcr' ? '/services/high-court/courier/shipment' : '/courier/shipment';
+  const next =
+    flow === 'hcr'
+      ? '/services/high-court/courier/shipment'
+      : flow === 'dcr'
+        ? '/services/district-court/courier/shipment'
+        : '/courier/shipment';
   return <PaymentSuccessScreen d={CO_SUCCESS} ctaHref={next as Href} />;
 }

@@ -28,13 +28,15 @@ import { CO_PAYMENT, CO_PAYMENT_HCR } from '../../data/courier';
 // STATIC, NOT WIRED: all payment. No Razorpay, no UPI intent, no deep link.
 // "Pay" advances to the Scan & Pay screen and charges nothing.
 export default function CourierPaymentScreen() {
-  // design/306 (High Court courier) enters with ?flow=hcr so the rest of the
-  // journey returns to the High Court courier screens; see app/courier/success.tsx.
+  // design/306 (High Court courier) enters with ?flow=hcr and design/352
+  // (District Court courier) with ?flow=dcr, so the rest of the journey returns
+  // to that service's courier screens; see app/courier/success.tsx. Both draw
+  // the re-issued ₹249 payment (design/307).
   const { flow } = useLocalSearchParams<{ flow?: string }>();
   const q = flow ? `?flow=${flow}` : '';
   return (
     <CompletePaymentScreen
-      d={flow === 'hcr' ? CO_PAYMENT_HCR : CO_PAYMENT}
+      d={flow === 'hcr' || flow === 'dcr' ? CO_PAYMENT_HCR : CO_PAYMENT}
       payHref={`/courier/scan-pay${q}` as Href}
       backHref={'/courier/choose' as Href}
     />

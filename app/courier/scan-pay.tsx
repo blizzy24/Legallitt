@@ -33,8 +33,9 @@ import { CO_SCAN_PAY, CO_SCAN_PAY_HCR } from '../../data/courier';
 export default function CourierScanPayScreen() {
   // ?flow=hcr is carried through to the success screen (see app/courier/success.tsx).
   const { flow } = useLocalSearchParams<{ flow?: string }>();
-  // The High Court courier's QR was re-issued at ₹249 (design/308, 14 Oct).
-  const d = flow === 'hcr' ? CO_SCAN_PAY_HCR : CO_SCAN_PAY;
+  // The High Court courier's QR was re-issued at ₹249 (design/308, 14 Oct);
+  // the District Court courier (?flow=dcr) pays the same ₹249.
+  const d = flow === 'hcr' || flow === 'dcr' ? CO_SCAN_PAY_HCR : CO_SCAN_PAY;
   return (
     <ScanPayScreen
       service={d.service}
