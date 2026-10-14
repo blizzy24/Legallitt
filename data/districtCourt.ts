@@ -1722,3 +1722,43 @@ export const DC_COURIER_BOOK = {
   cta: 'Book Delivery',
   caption: 'Next: Shipment Created with tracking waybill',
 };
+
+/**
+ * design/353 — courier shipment created.
+ *
+ * ⚠ CONFLICT 7: new identifiers LD-2026-001248 (delivery) and BD123456789
+ * (Blue Dart waybill), used nowhere else.
+ * ⚠ CONFLICT 4: received by Adv. Abhishek Verma.
+ */
+export const DC_SHIPMENT = {
+  kicker: 'LEGALITT DELIVERY',
+  title: 'Shipment Created',
+  heroTitle: 'Delivery Booked',
+  heroBody: 'Your document delivery has been booked successfully.',
+  heroPill: 'Pickup Scheduled • Ready for Courier',
+  cardTitle: 'Shipment Details',
+  handoff: 'Official Courier Handoff',
+  idLabel: 'Delivery ID',
+  id: 'LD-2026-001248',
+  partnerLabel: 'Courier Partner',
+  partner: 'Blue Dart',
+  awbLabel: 'Waybill / AWB',
+  awb: 'BD123456789',
+  statusLabel: 'Shipment Status',
+  status: 'Pickup Scheduled',
+  pkgLabel: 'Package\nContents',
+  pkgLead: '5 Legal Documents',
+  pkgRest: ' (Sealed Pouch)',
+  pickCaps: 'PICKUP SCHEDULED',
+  pickValue: '24 October 2026 • 10:00 AM – 12:00 PM',
+  pickLine: 'Indore (Doorstep Collection)',
+  pickPhone: 'Courier partner will call before arrival.',
+  recvCaps: 'RECEIVER',
+  recvName: 'Adv. Abhishek Verma',
+  recvLine: 'District Court Office, Indore',
+  notifTitle: 'Notification Sent',
+  notifBody: 'Your document delivery has been booked. Pickup is scheduled for 24 October 2026.',
+  note: 'Please keep the sealed documents ready for pickup. Your advocate will confirm once documents are delivered.',
+  cta: 'Track Delivery',
+  done: 'Done',
+};

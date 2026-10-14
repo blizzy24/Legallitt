@@ -4135,3 +4135,117 @@ export const dcCourierBook = {
   capSize: 10.4,
   capSpacing: 0.3,
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ⚠ OFF-PALETTE — design/353, sampled, not harmonised:
+//   · heroHalo #C9F6DC — the ring around the green tick.
+//   · statusPill #E3EBE6 — "Pickup Scheduled · Ready for Courier".
+// Neither is a status colour, the red pair or advFirGreen. Reused: the tick
+// disc is status.active; the section discs and the handoff chip (#FBEDDE) are
+// within 3 of peachSoft; the notification card (#FBF1E7) is
+// dcDocsNeededPalette.halo; the alternate rows (#FBFAFA) are page.
+// ─────────────────────────────────────────────────────────────────────────────
+export const dcShipmentPalette = {
+  heroHalo: '#C9F6DC',
+  statusPill: '#E3EBE6',
+};
+
+/** design/353 — courier shipment created. Measured at 2.000 px/pt. */
+export const dcShipment = {
+  hdrPadTop: 4,
+  hdrTitleGap: 19.5,
+  hdrTitleSize: 17.7,
+  padX: 20,
+  bottomPad: 24,
+  cardRadius: 16,
+  cardPad: 16,
+  cardGap: 22,
+
+  heroTop: 16,
+  halo: 80,
+  disc: 56,
+  glyph: 26,
+  heroTitleTop: 10,
+  heroTitleSize: 21.3,
+  heroTitleLineHeight: 30,
+  heroBodyTop: 3,
+  heroBodySize: 14,
+  heroBodyLineHeight: 20,
+  heroPillTop: 8,
+  pillH: 26,
+  pillPadX: 12,
+  pillDot: 7,
+  pillGap: 6,
+  pillSize: 11,
+
+  cardTop: 24,
+  bandH: 34,
+  bandRadius: 10,
+  bandPadX: 10,
+  bandIcon: 16,
+  bandGap: 6,
+  bandTitleSize: 15.2,
+  chipH: 22,
+  chipPadX: 8,
+  chipSize: 10.9,
+  chipSpacing: 0.2,
+  rowsTop: 0.5,
+  rowH: 47.5,
+  altH: 32,
+  /** The status row is drawn shorter than the partner row. */
+  altSmallH: 24,
+  altRadius: 8,
+  rowPadX: 0,
+  altPadX: 8,
+  rowLabelSize: 11.9,
+  rowValueSize: 14.3,
+  copyIcon: 15,
+  copyGap: 8,
+  partnerH: 26,
+  partnerPadX: 10,
+  partnerIcon: 16,
+  partnerGap: 6,
+  pkgTop: 13,
+  pkgLabelW: 120,
+  pkgLineHeight: 18,
+
+  secDisc: 36,
+  secGlyph: 17,
+  secGap: 9,
+  secPadY: 15,
+  capsSize: 10.5,
+  capsSpacing: 1,
+  capsLineHeight: 15,
+  secValueSize: 14.2,
+  secValueLineHeight: 19,
+  secLineTop: 2,
+  secLineSize: 12,
+  secLineLineHeight: 18,
+  phoneIcon: 13,
+  phoneGap: 4,
+  ruleH: 1,
+
+  notifTop: 16.5,
+  notifDisc: 32,
+  notifGlyph: 16,
+  notifGap: 9,
+  notifTitleSize: 14.3,
+  notifBodySize: 12,
+  notifBodyLineHeight: 16,
+
+  noteTop: 19.5,
+  noteIcon: 15,
+  noteGap: 6,
+  noteSize: 12,
+  noteLineHeight: 16,
+
+  barPadTop: 12,
+  barPadBottom: 27,
+  btnH: 52,
+  btnRadius: 12,
+  btnIcon: 18,
+  btnGap: 4,
+  btnSize: 16.2,
+  doneTop: 20,
+  doneSize: 14.1,
+};
