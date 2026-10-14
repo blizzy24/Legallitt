@@ -30,6 +30,15 @@ export const ADVOCATE_DEV_PREVIEWS: DevPreviewGroup[] = [
     ],
   },
   {
+    label: 'ADVOCATE WALLET',
+    links: [
+      // Withdraw Money (356-358) and UTR Details are drawn but listed as
+      // unwired, so nothing on the Wallet tab reaches these two.
+      { label: 'withdraw money (design/359)', href: '/advocate/wallet/withdraw' },
+      { label: 'UTR transfer details (design/361)', href: '/advocate/wallet/utr' },
+    ],
+  },
+  {
     label: 'OUTCOME STATES',
     links: [
       { label: 'verification incomplete (design/241)', href: '/advocate/verify/incomplete' },
