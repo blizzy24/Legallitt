@@ -379,3 +379,43 @@ export const HC_SCAN_PAY = {
  * ⚠ CONFLICT 3: "₹1377", "forensic analysis", #PSR739482 on a court payment.
  */
 export const HC_SUCCESS = { ...CO_SUCCESS, ctaReceipt: 'View Receipt' };
+
+/**
+ * design/301 — advocate chat. A static transcript.
+ *
+ * ⚠ CROSS-SERVICE: opened from the DISTRICT COURT advocate screen (design/300,
+ * DC-2026-1048) and it reads "High Court Representation · HCR-2026-1048".
+ * ⚠ CONFLICT 5: HCR-2026-1048 here against DC-2026-1048 one screen back.
+ */
+export const HC_CHAT = {
+  name: 'Adv. Abhishek Verma',
+  status: 'Verified Advocate \u2022 Online',
+  ctxTitle: 'High Court Representation',
+  ctxType: 'Civil',
+  ctxId: 'HCR-2026-1048',
+  ctxActive: 'Active',
+  today: 'Today',
+  enc: 'Messages are 256-bit encrypted and private between you and your advocate.',
+  messages: [
+    { from: 'me', text: 'Hello. Can you tell me what documents I need?', time: '10:14 AM' },
+    { from: 'adv', text: 'Yes. I will share the documents needed for your case.', time: '10:15 AM' },
+    { from: 'me', text: 'Okay, please send me the list.', time: '10:15 AM' },
+    { from: 'adv', text: 'Sure. Please check the list below.', time: '10:16 AM' },
+  ] as const,
+  cardTag: 'ADVOCATE RECOMMENDED',
+  cardTime: '10:16 AM',
+  cardTitle: 'Documents You Need',
+  cardSub: 'Please keep these documents ready.',
+  docs: [
+    { name: 'Case Papers', required: true },
+    { name: 'Previous Court Order', required: true },
+    { name: 'ID Proof', required: true },
+    { name: 'Previous Advocate Papers', required: false },
+  ] as const,
+  required: 'Required',
+  optional: 'Optional',
+  noteLabel: 'Advocate Note',
+  note: 'Please bring the original papers and keep clear copies ready.',
+  cta: 'View List',
+  placeholder: 'Type a message...',
+};
