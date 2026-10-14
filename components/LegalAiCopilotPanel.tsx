@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
   },
   suggText: { fontFamily: font.appBody, fontSize: t.suggSize, color: colors.textPrimary },
 
-  list: { marginTop: t.msgGap, maxHeight: t.listMaxH },
+  list: { marginTop: t.listTop, maxHeight: t.listMaxH },
   aiRow: { marginBottom: t.msgGap, flexDirection: 'row', alignItems: 'flex-start' },
   mark: {
     width: t.markSize,
@@ -243,14 +243,16 @@ const styles = StyleSheet.create({
     maxWidth: t.bubbleMaxW,
     borderRadius: t.bubbleRadius,
     backgroundColor: t.aiBubbleBg,
-    padding: t.bubblePad,
+    paddingHorizontal: t.bubblePadX,
+    paddingVertical: t.bubblePadY,
   },
-  meRow: { marginBottom: t.msgGap, alignItems: 'flex-end' },
+  meRow: { marginBottom: t.meGap, alignItems: 'flex-end' },
   meBubble: {
     maxWidth: t.bubbleMaxW,
     borderRadius: t.bubbleRadius,
     backgroundColor: t.meBubbleBg,
-    padding: t.bubblePad,
+    paddingHorizontal: t.bubblePadX,
+    paddingVertical: t.bubblePadY,
   },
   msg: {
     fontFamily: font.appBody,
