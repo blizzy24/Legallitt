@@ -12,8 +12,7 @@ export const SERVICE_ROUTES: Partial<Record<ServiceId, Href>> = {
   'fir-draft': '/fir',
   'property-search': '/property-search',
   'document-forensic': '/document-forensic',
-  // designs 289–337. The District Court tile stays inert: the batch draws no
-  // District Court landing — its first screen (design/299) follows the High
-  // Court payment — so there is nowhere drawn for that tile to go.
+  // designs 289–337 and 338–355.
   'high-court-rep': '/services/high-court',
+  'district-court-rep': '/services/district-court',
 };

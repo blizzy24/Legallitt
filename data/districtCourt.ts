@@ -686,3 +686,54 @@ export const DC_COMPLETED = {
   cta: 'View Case',
   home: 'Back to Home',
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// THE DISTRICT COURT INTAKE AND MIDDLE SECTION — designs 338–355, issued
+// 14 Oct. Before these the District Court service had no entry of its own (its
+// first screen was 299, reached from the High Court payment); 338 is now the
+// District Court tile's landing on client Home.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * design/338 — District Court landing.
+ *
+ * ⚠ CONFLICT 1 (pricing): both tiers read "₹XX,XXX" — placeholders — while
+ * design/343, three screens on, prices them ₹25,000 / ₹35,000. Built as drawn.
+ * The body copy's line breaks ("connect with / a verified / advocate…") are
+ * drawn; kept.
+ */
+export const DC_LANDING = {
+  title: 'District Court Representation',
+  heroPill: 'Verified Court Coverage',
+  h1: 'District Court Representation',
+  body: 'Get help from a verified advocate for your District Court case.',
+  start: 'Start New Case',
+  helpTitle: 'Get Help With Your Case',
+  helpBody: 'Legalitt helps you connect with\na verified\nadvocate and manage your\nDistrict Court\ncase through the app.',
+  whyTitle: 'Why Legalitt?',
+  whyPill: 'Simple & Safe',
+  why: [
+    { icon: 'shield', title: 'Verified Advocates', body: 'Connect with a verified advocate.' },
+    { icon: 'support', title: 'Case Support', body: 'Get support through your case.' },
+    { icon: 'bell', title: 'Case Updates', body: 'See important case updates in the app.' },
+    { icon: 'folder', title: 'Document Help', body: 'Share and manage your documents.' },
+  ] as const,
+  learnTitle: 'Learn About District Court Cases',
+  learnBody: 'Learn how District Court\nrepresentation\nworks and what happens after\nyou start\na case.',
+  learnMore: 'Learn More',
+  optTitle: 'Service Options',
+  options: [
+    { badge: 'Ordinary', tone: 'grey', sub: 'Standard service', price: '₹XX,XXX', proc: 'Normal processing', icon: 'clock' },
+    { badge: 'Urgent', tone: 'peach', sub: 'Priority service', price: '₹XX,XXX', proc: 'Faster processing', icon: 'zap' },
+  ] as const,
+  optNote: 'Final price is shown before you submit your request. No payment is taken now.',
+  readyTitle: 'Ready to Start?',
+  readySub: 'Tell us about your case and submit a request.',
+  needTitle: 'Need Help First?',
+  needBody: 'Not sure what you\nneed? We can\nguide you.',
+  getHelp: 'Get Assistance',
+  supTitle: 'Legalitt Service Support',
+  supBody: 'If your confirmed advocate does not attend a hearing or does not handle the agreed work, Legalitt may review the issue and may return part of the service fee.',
+  supNote: 'Any refund or fee return depends on the case and Legalitt review.',
+  caption: 'Opens case selection • Takes 2 mins',
+};
