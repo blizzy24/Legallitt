@@ -462,3 +462,55 @@ export const HC_CONFIRM = {
   need: 'Need assistance choosing? ',
   needLink: 'Chat with Support',
 };
+
+/**
+ * design/303 — documents you need.
+ *
+ * ⚠ CONFLICT 4: the advocate here is Adv. Neha Verma — design/302 one screen
+ * earlier confirmed Adv. Abhishek Verma — and the footer link reads "Ask Adv.
+ * Rahul in Chat", a third name on one journey step.
+ * ⚠ CONFLICT 6: "STEP 5 OF 6" after 302's "STEP 4 OF 6" — consistent with 302,
+ * but not with 300's "Step 4 of 10".
+ * ⚠ CONFLICT 11 (DPDP): the ID Proof item asks for an Aadhaar card. Collecting
+ * Aadhaar is restricted; the client must confirm the purpose and the legal
+ * basis. Built as drawn.
+ * "2 of 3 Required" counts the two Ready items; the drawing has three Required
+ * items and one Optional. Built as drawn.
+ */
+export const HC_DOCS_NEEDED = {
+  title: 'Documents You Need',
+  step: 'STEP 5 OF 6 \u2022 DOCUMENTS LIST',
+  count: '2 of 3 Required',
+  advName: 'Adv. Neha Verma',
+  advSub: 'High Court Representation \u2022 HCR-2026-1048',
+  h1: 'Documents You Need',
+  body: 'Your advocate has shared these documents for your case.',
+  h2: 'Document Checklist',
+  h2Sub: 'Mark the documents you have ready before sending them to your lawyer.',
+  required: 'Required',
+  optional: 'Optional',
+  docs: [
+    { icon: 'folder', title: 'Case Papers', required: true, desc: 'All initial notices, plaints, or filings you have received or prepared.', foot: '1 copy ready', ready: true },
+    { icon: 'scale', title: 'Previous Court Order', required: true, desc: 'The latest certified or true copy of orders passed by the court.', foot: 'Certified copy', ready: true },
+    // ⚠ CONFLICT 11 (DPDP) — Aadhaar.
+    { icon: 'id', title: 'ID Proof', required: true, desc: 'Aadhaar Card, Passport, or Voter ID for client identification.', foot: 'Tap button to confirm you have this', ready: false },
+    { icon: 'briefcase', title: 'Previous Advocate Papers', required: false, desc: 'NOC or case brief from previous legal counsel if you are changing advocates.', foot: 'Only if switching lawyers', ready: false },
+  ] as const,
+  // The pills carry a glyph in their text as well as the icon beside it
+  // ("✓ Ready", "○ Not Added") — drawn that way, built that way.
+  ready: '\u2713 Ready',
+  notAdded: '\u25CB Not Added',
+  // "Adv. Neha  Verma" — the double space is in the drawing.
+  noteTitle: 'Advocate\u2019s Note \u2022 Adv. Neha  Verma',
+  note: '\u201CPlease bring the original papers and keep clear copies ready. Clear photos or scanned copies are also fine for our initial review.\u201D',
+  pickup: 'Free Pick-up',
+  nextTitle: 'Next Step',
+  nextBold: 'Send the required physical documents to your advocate.',
+  nextBody: 'You can book a doorstep courier pickup via Blue Dart or drop them off directly.',
+  impLead: 'Important: ',
+  imp: 'These documents were personally recommended by your assigned advocate for this specific court matter. Legalitt does not automatically decide legal requirements.',
+  cta: 'Continue',
+  caption: 'Proceed to Send Documents',
+  // ⚠ CONFLICT 4 — "Adv. Rahul".
+  ask: 'Have questions? Ask Adv. Rahul in Chat',
+};
