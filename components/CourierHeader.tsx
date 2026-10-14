@@ -26,6 +26,7 @@ export default function CourierHeader({
   backHref = '/dashboard' as Href,
   padTop,
   subStyle,
+  center = false,
 }: {
   title: string;
   sub?: string;
@@ -40,6 +41,8 @@ export default function CourierHeader({
   padTop?: number;
   /** Overrides the subtitle's size or weight (design/300). */
   subStyle?: TextStyle;
+  /** Centre the title in the space between back and the right-hand icons (design/302). */
+  center?: boolean;
 }) {
   const insets = useSafeAreaInsets();
   return (
@@ -61,7 +64,7 @@ export default function CourierHeader({
           )}
         </Pressable>
         <View style={styles.titleCol}>
-          <Text style={styles.title} {...shrinkToFit(0.8)}>
+          <Text style={[styles.title, center && styles.centered]} {...shrinkToFit(0.8)}>
             {title}
           </Text>
           {sub ? (
@@ -101,6 +104,7 @@ const styles = StyleSheet.create({
   back: { marginLeft: h.backInset },
   titleCol: { flex: 1, marginLeft: h.titleGap },
   title: { fontFamily: font.appSemi, fontSize: h.titleSize, color: h.ink },
+  centered: { textAlign: 'center' },
   sub: { marginTop: h.subTop, fontFamily: font.appBody, fontSize: h.subSize, color: '#4D463D' },
   avatar: {
     width: h.avatar,

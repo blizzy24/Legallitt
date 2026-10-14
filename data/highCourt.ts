@@ -419,3 +419,46 @@ export const HC_CHAT = {
   cta: 'View List',
   placeholder: 'Type a message...',
 };
+
+/**
+ * design/302 — confirm advocate.
+ *
+ * ⚠ CROSS-SERVICE: opened from the District Court screens (Review Advocate on
+ * design/300), and it reads High Court Representation · HCR-2026-1048.
+ * ⚠ CONFLICT 6: "STEP 4 OF 6" — design/300 just said "Step 4 of 10".
+ * ⚠ CONFLICT 9: "Delhi High Court" — design/293 filed in MP High Court, Indore
+ * Bench, and design/300 introduced this advocate as practising in Indore
+ * District Courts.
+ * The photo is drawn as a flat red disc with no portrait; built as drawn.
+ */
+export const HC_CONFIRM = {
+  title: 'Confirm Advocate',
+  step: 'STEP 4 OF 6 \u2022 ADVOCATE CONFIRMATION',
+  h1: 'Confirm Your Advocate',
+  sub: 'Please review your advocate before we proceed to documents.',
+  name: 'Adv. Abhishek Verma',
+  verified: 'Verified Advocate',
+  court: 'Delhi High Court \u2022 Civil & Commercial',
+  trackLabel: 'Track Record',
+  track: '12+ Yrs \u2022 450+ Cases',
+  ratingLabel: 'Client Rating',
+  rating: '4.9 (120+ reviews)',
+  barLabel: 'Bar Council ID',
+  // ⚠ CONFLICT 5 adjacent — one more identifier format.
+  barId: 'D/1482/2012 Verified',
+  langLabel: 'Languages',
+  langs: 'English, Hindi, Punjabi',
+  matterLabel: 'ASSIGNED MATTER',
+  matter: 'High Court Representation (Civil \u2022 HCR-2026-1048)',
+  matterBody: 'You can consult, share documents, and track court dates together once confirmed.',
+  question: 'Do you want to continue with this advocate?',
+  questionSub: 'Confirming this advocate assigns them to your case so they can request your documents and prepare your court filing.',
+  accept: 'Accept Advocate',
+  acceptSub: 'Proceeds to Recommended Documents',
+  requestNew: 'Request New Advocate',
+  cancel: 'Cancel',
+  cancelBody: 'Cancel will keep your case on hold and return to Assigned Advocate. It does not accept or reject this advocate.',
+  foot: ['Bar Council\nCompliant', '100%\nConfidential', 'Fair Review\nPolicy'],
+  need: 'Need assistance choosing? ',
+  needLink: 'Chat with Support',
+};
