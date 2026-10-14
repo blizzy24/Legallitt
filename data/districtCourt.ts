@@ -1601,3 +1601,66 @@ export const DC_DOCS_NEEDED = {
   cta: 'Continue to Delivery',
   caption: 'Next: Choose how to send your physical documents (Send by Yourself or Legalitt Delivery)',
 };
+
+/**
+ * design/351 — courier delivery details (District Court).
+ *
+ * ⚠ CONFLICT 1: the delivery fee is "₹XXX" here; 352 charges ₹249.
+ * ⚠ CONFLICT 6: "STEP 2 OF 3" (352 is STEP 3 OF 3; no step 1 is drawn).
+ * ⚠ CONFLICT 4: the receiver is Adv. Abhishek Verma, though 350's documents
+ * were requested by Gurpreet Chawla. His office is on "High Court Road".
+ * ⚠ The export clips the header title ("Delivery Detail") and the documents
+ * count ("5 Documents" under the Ready pill). Built in full and wrapped.
+ */
+export const DC_COURIER_DETAILS = {
+  kicker: 'LEGALITT DELIVERY',
+  title: 'Delivery Details',
+  step: 'STEP 2 OF 3',
+  h1: 'Confirm Delivery Details',
+  lead: 'Check the pickup and receiver details before booking.',
+  docsLabel: 'Documents:',
+  docsValue: ' 5 Documents',
+  ready: 'Ready',
+  view: 'View',
+  pickTitle: 'Pickup Details',
+  pickSub: 'Where the courier will collect your documents.',
+  useMine: 'Use My\nAddress',
+  fields: [
+    [['Full Name', 'Rahul Sharma']],
+    [['Mobile Number', '+91 98765 43210']],
+    [['Pickup Address', 'Flat 204, Vijay Nagar']],
+    [
+      ['Area / Locality', 'Vijay Nagar'],
+      ['City', 'Indore'],
+    ],
+    [
+      ['State', 'Madhya Pradesh'],
+      ['PIN Code', '452010'],
+    ],
+  ] as const,
+  recvTitle: 'Receiver Details',
+  recvSub: 'These details are taken from your advocate profile.',
+  recvName: 'Adv. Abhishek Verma',
+  recvAddr: 'District Court Office, High Court Road\nIndore, Madhya Pradesh - PIN 452001',
+  mobLabel: 'Mobile: ',
+  mob: '+91 98XXXXXX10',
+  editRecv: 'Edit Receiver',
+  copyAll: 'Copy All Details',
+  dateTitle: 'Pickup Date & Time',
+  dateSub: 'Choose when the courier can collect the documents.',
+  dateLabel: 'Pickup Date',
+  date: '24 Oct 2026',
+  timeLabel: 'Pickup Time',
+  time: '10:00 AM – 12:00 PM',
+  instrTitle: 'Delivery Instructions',
+  optional: 'Optional',
+  instrPlaceholder: 'Add any special instruction for pickup or delivery (e.g., Please call before pickup).',
+  feeTitle: 'Estimated Delivery Fee',
+  feeChip: 'Calculated at Booking',
+  fee: '₹XXX',
+  feeSub: 'Final fee will be shown before booking.',
+  agree: 'I confirm that the pickup and receiver details are correct.',
+  agreeSub: 'Please check the address and phone number carefully.',
+  cta: 'Continue to Book Delivery',
+  caption: 'Next step: Book Delivery',
+};
