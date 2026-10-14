@@ -400,3 +400,68 @@ export const DC_RECEIPT = {
   cta: 'View Receipt',
   foot: 'Verified Court Document • Stored in Case Records',
 };
+
+/**
+ * design/326 — first hearing (from the Next Step card on design/325).
+ *
+ * ⚠ CONFLICT 5: WP/2026/09876.
+ * ⚠ CONFLICT 6: "Stage 2 of 5" — 320 put First Hearing at "Stage 3 of 6".
+ * ⚠ The hearing is "25 Oct 2026 … Sunday Session" — 25 October 2026 is a
+ * Sunday; a district-court listing on a Sunday is unusual. Built as drawn.
+ * ⚠ The drawing clips "First Hearing Sche[duled]" and "Court listing verified
+ * and co[nfirmed]" under the pill; both are shown in full here, shrunk to fit.
+ */
+export const DC_HEARING = {
+  title: 'First Hearing',
+  sub: 'District Court Representation',
+  alertLabel: 'SCHEDULED ALERT',
+  alertTime: 'Just now',
+  alertTitle: 'Your first hearing is on 25 October 2026 at 11:00 AM',
+  alertSub: 'District Court · Court Room 3, Indore Bench',
+  schedTitle: 'First Hearing Scheduled',
+  schedSub: 'Court listing verified and confirmed',
+  schedPill: 'Scheduled',
+  detTitle: 'HEARING DETAILS',
+  registry: 'Official Registry',
+  dateLabel: 'Date',
+  date: '25 Oct\n2026',
+  dateSub: 'Sunday Session',
+  timeLabel: 'Time',
+  time: '11:00 AM',
+  timeSub: 'IST (Morning Bench)',
+  tiles: [
+    ['Court Room', 'Court Room 3'],
+    ['Court Authority', 'District Court'],
+    ['Bench', 'Indore Bench'],
+    ['Presiding Authority', 'District & Sessions Judge'],
+  ] as const,
+  confirm: 'Hearing date confirmed and added directly from the court registry by your advocate.',
+  refLabel: 'CASE REFERENCE',
+  civil: 'Civil Matter',
+  parties: 'Rahul Sharma vs Amit Verma',
+  fileLabel: 'Case File Number',
+  file: 'WP/2026/09876',
+  copy: 'Copy',
+  initials: 'AV',
+  adv: 'Adv. Abhishek Verma',
+  advSub: 'District Court · Chamber 14',
+  beforeLabel: 'BEFORE THE HEARING',
+  before: 'Keep your case documents ready and stay in touch with your advocate.',
+  beforeSub: 'Your advocate will appear in court on your behalf.',
+  update: 'Your advocate will share an update after the hearing. There are no actions required from you right now.',
+  progTitle: 'CASE PROGRESS',
+  stage: 'Stage 2 of 5',
+  steps: [
+    { title: 'Court Filing', desc: 'Completed on 18 Oct', state: 'done' },
+    { title: 'First Hearing', desc: 'Scheduled for 25 Oct at 11:00 AM', state: 'current', chip: 'Current' },
+    { title: 'Hearing Update', desc: 'Upcoming post-session brief', state: 'waiting' },
+    { title: 'Next Hearing', desc: 'To be determined by bench', state: 'waiting' },
+    { title: 'Case Completed', desc: 'Final order and decree', state: 'waiting' },
+  ] as const,
+  qTitle: 'Have questions before the hearing?',
+  qSub: 'Reach out directly to Adv. Abhishek Verma',
+  call: 'Call Advocate',
+  chat: 'Chat with\nAdvocate',
+  cta: 'View Full Case Details',
+  caption: 'Return to Case Dashboard',
+};
