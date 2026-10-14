@@ -1,0 +1,198 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// ADVOCATE WALLET — designs 356–361. Measured at 2.000 px/pt from the cropped
+// exports, except design/356, a 406px export that crops to 390px (1.000 px/pt):
+// its layout matches design/357 element for element, so the shared layout is
+// measured on 357 and only 356's own values come from 356.
+//
+// ⚠⚠ QUARANTINED PALETTE — colours these designs draw that are not in the
+// shared theme (colors / status / ink / the red pair). Several equal values
+// already quarantined elsewhere; they are restated here rather than imported
+// across features, and noted:
+//   · page #F7F7F5 — the same as advEditProfile.bg (design/246).
+//   · text #6B6B6B — the grey body text; equals hcSheetPalette.grey.
+//   · muted #767777 — the dimmed Advisory row; equals dcDecidePalette.waitInk.
+//   · red #D9534F — fee deductions. Checked against the promoted pair
+//     (status.redContainer / onRedContainer) and colors.danger (#F55C42): it is
+//     neither.
+//   · tile #F6DFC2 / tileInk #251A08 — the second avatar tone; equal
+//     dcDocsNeededPalette.fileTile and dcDocumentsPalette.shieldInk (±1).
+//   · glow #FBF1E5 — the warm corner wash on the Ready to Withdraw card.
+// The green is status.active; the green pill status.activeBg (#E9F8F1 drawn,
+// within 2); brand #B09C82 is colors.brand.
+// ─────────────────────────────────────────────────────────────────────────────
+export const advWalletPalette = {
+  page: '#F7F7F5',
+  text: '#6B6B6B',
+  muted: '#767777',
+  red: '#D9534F',
+  tile: '#F6DFC2',
+  tileInk: '#251A08',
+  glow: '#FBF1E5',
+};
+
+/** designs 356 / 357 / 358 — Wallet and Earnings (the earnings tab). */
+export const advWallet = {
+  hdrPadTop: 13.5,
+  hdrTitleGap: 23.5,
+  hdrTitleSize: 17.1,
+  hdrSubSize: 14.5,
+  hdrSubLineHeight: 19,
+  /** The sub-line wraps after "and" in all three exports. */
+  hdrSubMaxWidth: 175,
+  filterIcon: 22,
+  filterGap: 18,
+  padX: 20,
+  bottomPad: 120,
+  cardRadius: 16,
+  cardPad: 16,
+
+  heroTop: 7.5,
+  heroPad: 20,
+  heroPadTop: 18,
+  heroPadBottom: 18,
+  glowSize: 220,
+  capsSize: 11.5,
+  capsSpacing: 1,
+  capsIcon: 14,
+  capsGap: 6,
+  settledH: 20,
+  settledPadX: 8,
+  settledDot: 6,
+  settledGap: 5,
+  settledSize: 12.5,
+  amountTop: 14,
+  amountSize: 33,
+  amountLineHeight: 42,
+  paiseSize: 14,
+  paiseGap: 3,
+  readyTop: 2,
+  readySize: 13.2,
+  btnTop: 23.5,
+  btnH: 52,
+  btnRadius: 14,
+  btnIcon: 18,
+  btnGap: 8,
+  btnSize: 14.1,
+  linksTop: 13.5,
+  linkSize: 12.5,
+  linkIcon: 13,
+  nextSize: 12,
+
+  tilesTop: 22,
+  tileGap: 8.5,
+  tileH: 84,
+  tileRadius: 14,
+  tilePad: 12,
+  tilePadX: 12,
+  tileIconGap: 2,
+  tileLabelSize: 11.6,
+  tileIcon: 15,
+  tileValueTop: 4.5,
+  tileValueSize: 17.8,
+  tileValueLineHeight: 22,
+  tileSubTop: 4,
+  tileSubSize: 11.7,
+
+  chipsTop: 20,
+  chipH: 30,
+  chipPadX: 15,
+  chipGap: 9,
+  chipSize: 11,
+  chipSpacing: 0.3,
+
+  secTop: 28,
+  secIcon: 19,
+  secGap: 8,
+  secSize: 17.8,
+  secLineHeight: 24,
+  secTagSize: 11.8,
+  secCardTop: 14,
+
+  rowGapY: 15,
+  breakdownTop: 20,
+  rowTile: 32,
+  rowTileRadius: 8,
+  rowGlyph: 16,
+  rowGap: 13,
+  rowTitleSize: 14.2,
+  rowSubSize: 13.1,
+  rowValueSize: 17.9,
+  rowTitleLineHeight: 20,
+  rowSubLineHeight: 16,
+  bkPadTop: 8.5,
+  barTop: 6,
+  barH: 5,
+
+  feeRowH: 32,
+  feePadTop: 3.5,
+  feePadBottom: 9.5,
+  feeLabelSize: 13.9,
+  feeValueSize: 14.2,
+  feeChipH: 18,
+  feeChipPadX: 6,
+  feeChipSize: 11.5,
+  feeChipRadius: 5,
+  feeChipGap: 8,
+  ruleTop: 10,
+  ruleH: 1,
+  netTop: 14,
+  netLabelSize: 17.8,
+  netLabelLineHeight: 24,
+  netValueSize: 19.5,
+  netIcon: 15,
+  netGap: 4,
+
+  payTop: 5.5,
+  payGap: 14,
+  avatar: 40,
+  avatarSize: 15.5,
+  avatarGap: 12,
+  nameSize: 14.2,
+  pillH: 20,
+  pillPadX: 9,
+  pillSize: 11.5,
+  payPillH: 16,
+  metaTop: 0,
+  svcH: 18,
+  svcPadX: 7,
+  svcSize: 9.9,
+  svcRadius: 5,
+  dateSize: 9.5,
+  boxTop: 12,
+  boxH: 30,
+  boxRadius: 10,
+  boxPadX: 12,
+  boxSize: 13.5,
+  boxNetSize: 12.5,
+
+  bankTop: 14,
+  bankIcon: 40,
+  bankGlyph: 20,
+  bankGap: 12,
+  bankNameSize: 14.4,
+  bankSubSize: 13.9,
+  badgeIcon: 15,
+  badgeGap: 6,
+  manageH: 30,
+  managePadX: 13,
+  manageRadius: 10,
+  manageSize: 11.4,
+
+  xferTop: 18,
+  xferIcon: 17,
+  xferGap: 8,
+  xferTitleSize: 15.2,
+  xferSubSize: 12,
+  xferAmountTop: 10,
+  xferAmountSize: 19.5,
+  utrSize: 12,
+  utrIcon: 14,
+  refTop: 4,
+  refSize: 13.1,
+
+  noteTop: 30,
+  noteIcon: 16,
+  noteGap: 10,
+  noteSize: 13.5,
+  noteLineHeight: 21,
+};

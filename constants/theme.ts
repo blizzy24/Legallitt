@@ -35,6 +35,7 @@ export * from './tokens/advTools';
 export * from './tokens/courier';
 export * from './tokens/highCourt';
 export * from './tokens/districtCourt';
+export * from './tokens/advWallet';
 
 export const colors = {
   brand:        '#B09C82',
