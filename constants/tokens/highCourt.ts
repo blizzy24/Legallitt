@@ -116,6 +116,10 @@ export const hcPalette = {
   sagePill: '#D9E6D5',
   /** design/327's "Court Direction" card. */
   peachDirection: '#FAEFE3',
+  /** ⚠ design/328's "Change Advocate??" — pure red #EE0000, an unfinished
+   *  designer's note left in the export (conflict 7). Not the promoted red pair
+   *  (#FFDAD6 / #93000A), not removeRed. Rendered as drawn. */
+  noteRed: '#EE0000',
   // design/327 also draws near-whites #FAF8F7, #FBFAFA, #FEFBF9, #F9F7F6 and a
   // #FBEEEC PDF tile; they are within 2–10 per channel of page / card / pdfTile
   // and use those tokens.

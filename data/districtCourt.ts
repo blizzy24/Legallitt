@@ -535,3 +535,50 @@ export const DC_OVERVIEW = {
   cta: 'View Full Case File',
   caption: 'Return to Case Dashboard',
 };
+
+/**
+ * design/328 — next hearing.
+ *
+ * ⚠⚠ CONFLICT 7: "Change Advocate??" in pure red (#EE0000) under View Case —
+ * an unfinished designer's note left in the export. Rendered as drawn; it is
+ * the only drawn link to design/329 (Change Advocate), so it is wired there.
+ * ⚠ CONFLICT 9: "District Court · Court Room 3, Indore Bench".
+ */
+export const DC_NEXT_HEARING = {
+  kicker: 'DISTRICT COURT REPRESENTATION',
+  title: 'Next Hearing',
+  bannerTitle: 'Next Hearing Scheduled',
+  bannerBody: 'Your next hearing is on 10 November 2026 at 11:30 AM.',
+  bannerSub: 'District Court · Court Room 3, Indore Bench',
+  nextLabel: 'NEXT HEARING',
+  pill: 'Scheduled',
+  date: '10 Nov 2026',
+  time: '11:30 AM',
+  grid: [
+    ['Court Room', 'Room 3'],
+    ['Court', 'District Court'],
+    ['Bench', 'Indore Bench'],
+  ] as const,
+  confirm: 'Hearing listing confirmed and added directly by your advocate.',
+  advLabel: 'ADVOCATE',
+  adv: 'Adv. Abhishek Verma',
+  advSub: 'District Court · Lead Counsel',
+  verified: 'Verified',
+  nsTitle: 'Next Step',
+  nsBold: 'File the previous court order before the next hearing.',
+  ns: "Your advocate's team is preparing the certified copies from the District Registry.",
+  noteTitle: 'Advocate Note',
+  note: 'Please keep all original property and transaction receipts accessible in case the bench requests immediate physical inspection on the hearing date.',
+  progLabel: 'CASE PROGRESSION',
+  steps: [
+    { title: 'First Hearing', right: 'Completed', state: 'done' },
+    { title: 'Hearing Update', right: 'Completed', state: 'done' },
+    { title: 'Next Hearing', right: 'Scheduled · 10 Nov 2026', state: 'current' },
+    { title: 'Case Completed', right: 'Upcoming', state: 'waiting' },
+  ] as const,
+  chat: 'Chat with Adv.',
+  call: 'Call Adv.',
+  cta: 'View Case',
+  // ⚠ CONFLICT 7 — the designer's note, drawn red.
+  changeNote: 'Change Advocate??',
+};
