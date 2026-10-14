@@ -84,7 +84,7 @@ export default function CourierHeader({
             {title}
           </Text>
           {sub ? (
-            <Text style={[styles.sub, subStyle]} {...shrinkToFit(0.8)}>
+            <Text style={[styles.sub, center && styles.centered, subStyle]} {...shrinkToFit(0.8)}>
               {sub}
             </Text>
           ) : null}

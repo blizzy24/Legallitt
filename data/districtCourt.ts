@@ -805,3 +805,37 @@ export const DC_INFO = {
   cta: 'Start New Case',
   back: 'Back to District Court Representation',
 };
+
+/**
+ * design/340 — select case type.
+ *
+ * ⚠ CONFLICT 6: "STEP 1 OF 4" — a four-step intake (Case Type, Details,
+ * Documents, Service); the review that follows (344) is also "STEP 4 OF 4".
+ */
+export const DC_CASE_TYPE = {
+  title: 'Select Case Type',
+  sub: 'District Court Representation',
+  step: 'STEP 1 OF 4',
+  setup: 'Case Setup',
+  steps: ['Case Type', 'Details', 'Documents', 'Service'],
+  h1: 'What Type of Case Do You Have?',
+  lead: 'Choose the option that best matches your case.',
+  info: 'You can add more details on the next step.',
+  types: [
+    { id: 'civil', icon: 'scale', title: 'Civil', desc: 'General civil matters.' },
+    { id: 'criminal', icon: 'gavel', title: 'Criminal', desc: 'Criminal case support.' },
+    { id: 'family', icon: 'family', title: 'Family', desc: 'Family-related matters.' },
+    { id: 'divorce', icon: 'file', title: 'Divorce', desc: 'Divorce case support.' },
+    { id: 'property', icon: 'building', title: 'Property', desc: 'Property-related matters.' },
+    { id: 'money', icon: 'wallet', title: 'Money Recovery', desc: 'Help with money recovery matters.' },
+    { id: 'consumer', icon: 'bag', title: 'Consumer', desc: 'Consumer-related matters.' },
+    { id: 'other', icon: 'more', title: 'Other', desc: 'For matters not listed above.' },
+  ] as const,
+  /** Drawn selected. */
+  initial: 'property' as const,
+  noteTitle: 'District Court Representation',
+  noteBody: 'Standard procedural coverage for original petitions and suits.',
+  link: 'Not sure which one to choose? View examples',
+  cta: 'Continue',
+  caption: 'Next: Case Details • Takes 2 mins',
+};
