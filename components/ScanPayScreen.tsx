@@ -46,7 +46,10 @@ export default function ScanPayScreen({
 }) {
   const insets = useSafeAreaInsets();
   const [left, setLeft] = useState(s.validSeconds);
-  const successTarget = (query ? `${successHref}?${query}` : successHref) as Href;
+  // successHref is widened to string first: with every route typed, the
+  // template literal over the Href union is too large for tsc to represent.
+  const base = successHref as string;
+  const successTarget = (query ? `${base}?${query}` : base) as Href;
 
   useEffect(() => {
     if (hold) return;

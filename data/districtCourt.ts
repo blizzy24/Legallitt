@@ -582,3 +582,60 @@ export const DC_NEXT_HEARING = {
   // ⚠ CONFLICT 7 — the designer's note, drawn red.
   changeNote: 'Change Advocate??',
 };
+
+/**
+ * design/329 — change advocate (from the red "Change Advocate??" note on 328).
+ *
+ * ⚠ CONFLICT 2: the ₹1,500 change fee's Continue opens the shared payment,
+ * which charges ₹40,680 (see components/CourtPaymentFlow).
+ * ⚠ CONFLICT 6: "Court #4" — a fifth progress notation.
+ * ⚠ CONFLICT 4: the photo is Adv. Abhishek Verma's.
+ */
+export const DC_CHANGE = {
+  title: 'Change Advocate',
+  sub: 'District Court Representation',
+  elig: 'Eligible to Change • Ongoing Case',
+  h1: 'Request a New Advocate',
+  body: 'You can ask Legalitt to change the advocate for your ongoing case.',
+  feeNote: 'A separate change fee may apply.',
+  curLabel: 'CURRENT ADVOCATE',
+  active: 'Active',
+  initials: 'AV',
+  adv: 'Adv. Abhishek Verma',
+  advSub: 'Civil & District Court Representation',
+  chat: 'Chat',
+  call: 'Call',
+  linked: 'Your current advocate stays linked to your case until a new advocate is approved and accepted.',
+  stageLabel: 'CURRENT CASE STAGE',
+  stageMeta: 'Court #4',
+  firstLabel: 'First Hearing',
+  firstValue: 'Completed',
+  nextLabel: 'Next Hearing',
+  nextValue: '10 Nov 2026, 11:30 AM',
+  stageNote: 'Next hearing is scheduled. Work will continue smoothly without losing your case history.',
+  whyTitle: 'Why Do You Want to Change?',
+  whySub: 'Choose the main reason for your request',
+  reasons: [
+    'I want a different advocate',
+    'I need a different practice area',
+    'I am not satisfied with the current support',
+    'Other',
+  ],
+  moreTitle: 'Tell us more (optional)',
+  morePlaceholder: 'Share any details to help us find the right advocate for you...',
+  feeLabel: 'CHANGE ADVOCATE FEE',
+  feeTag: 'Payment Pending',
+  fee: '₹1,500',
+  feeSub: 'One-time processing',
+  feeBox: 'The fee will be shown and verified before you confirm your request. Administrative fee to transfer case representation.',
+  howTitle: 'How It Works',
+  how: [
+    { icon: 'lock', title: 'Current advocate is not removed immediately', body: 'No sudden stops or gaps in ongoing court actions.' },
+    { icon: 'admin', title: 'Legalitt admin reviews your request', body: 'We match you with a verified, experienced advocate.' },
+    { icon: 'talk', title: 'You can chat and call the new advocate', body: 'Talk directly before formally accepting the replacement.' },
+    { icon: 'folder', title: 'Case documents remain safe', body: 'All filings, dates, and order copies transfer cleanly.' },
+  ] as const,
+  // Drawn with an arrow in the label and another at the button's edge.
+  cta: 'Continue →',
+  foot: 'Case History Preserved • Verified Legalitt Process',
+};
