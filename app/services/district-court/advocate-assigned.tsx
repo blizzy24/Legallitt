@@ -29,9 +29,9 @@ import { DC_ASSIGNED } from '../../../data/districtCourt';
 //
 // ⚠ CROSS-SERVICE — the next two screens the batch draws are HIGH COURT ones:
 // Chat with Advocate opens design/301 (/services/high-court/chat, "High Court
-// Representation · HCR-2026-1048") and Review Advocate opens design/302
-// (/services/high-court/confirm-advocate, "Delhi High Court"). Wired by design
-// number; flagged, not resolved.
+// Representation · HCR-2026-1048"). Wired by design number; flagged, not
+// resolved. Review Advocate opened the High Court confirm screen (302) until
+// the District Court decide screen (design/345) was drawn; it now opens 345.
 //
 // The photo is drawn as a portrait; this app uses initials avatars wherever a
 // person's photo appears, so it is one here. The header avatar is drawn as a
@@ -46,7 +46,7 @@ const CHIP_ICON = { award: Award, pin: MapPin, gavel: Gavel } as const;
 export default function DistrictCourtAdvocateAssignedScreen() {
   const insets = useSafeAreaInsets();
   const d = DC_ASSIGNED;
-  const toReview = () => router.push('/services/high-court/confirm-advocate' as Href);
+  const toReview = () => router.push('/services/district-court/advocate/decide' as Href);
 
   return (
     <View style={styles.screen}>
