@@ -880,3 +880,38 @@ export const HC_REVIEW = {
   caption: 'Request Changes sends all your notes back to Adv. Abhishek Verma for Round 2 revisions.',
   protocol: 'Legalitt Protocol \u2022 Client approval required before court filing \u2022 Safe & verified',
 };
+
+/**
+ * design/319 — change-request tracking (sheet over design/318).
+ *
+ * ⚠ CONFLICT 5: DC-2026-1048 and "District Court Representation" on a sheet
+ * opened from a High Court screen.
+ * ⚠ The request quoted here ("correct the property details in the final
+ * draft") is not the note drawn on 318 ("correct the property address on page
+ * 6 to House No. 42-B, Sector 15"). Built as drawn.
+ * ⚠ Step 5 is drawn about 12pt left of steps 1–4 (an export glitch, it sits
+ * under the fade at the sheet's bottom); aligned with the others here.
+ */
+export const HC_CHANGE = {
+  title: 'Change Request Tracking',
+  round: 'Round 1',
+  sub: 'District Court Representation \u2022 DC-2026-1048',
+  reqLabel: 'YOUR REQUEST',
+  reqDate: '07 Oct 2026, 11:30 AM',
+  reqQuote: '\u201CPlease correct the property details in the final draft.\u201D',
+  requestedBy: 'Requested by:',
+  requester: 'Rahul Sharma',
+  client: '(Client)',
+  advLabel: 'Advocate:',
+  adv: 'Abhishek Verma',
+  tlTitle: 'TRACKING TIMELINE',
+  live: 'Live Status',
+  steps: [
+    { title: '1. Change Request Sent', badge: 'Completed', state: 'done', desc: '07 Oct 2026, 11:30 AM', box: 'Client notes submitted to Adv. Abhishek Verma for Round 1 revisions.' },
+    { title: '2. Advocate Reviewing', badge: 'In Progress', state: 'active', desc: 'Advocate is checking your requested changes in the draft.' },
+    { title: '3. Documents Being Updated', badge: 'Pending', state: 'pending', desc: 'Advocate edits the petition and drafts revised pages.' },
+    { title: '4. New Documents Sent', badge: 'Pending', state: 'pending', desc: 'Revised PDF files are uploaded for your re-examination.' },
+    { title: '5. Client Review Again', badge: 'Pending', state: 'pending' },
+  ] as const,
+  close: 'Close',
+};
