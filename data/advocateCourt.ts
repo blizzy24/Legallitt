@@ -1507,3 +1507,146 @@ export const COURT_FEE_CREATE: CourtSpec = {
   footer: [{ label: 'Send Court Fee Request (₹3,500)', iconRight: 'arrowRight' }],
   footerLinks: [{ icon: 'lock', t: 'Official Case Record • Client Payment Awaited After Send', tone: 'green' }],
 };
+
+// ── design/381 — court fee request sent (District Court) ─────────────────────
+// ⚠ No drawn control leads here: Send Court Fee Request (380) is unscoped.
+// Back to Case goes back. ⚠ UNSCOPED — Chat, Call, View / Replace; the
+// payment tracking is drawn state, no payment is watched.
+// ⚠ CONFLICT 7 — "Court Fee Reques" clipped in the export; stored whole.
+export const COURT_FEE_SENT: CourtSpec = {
+  title: 'Court Fee Request',
+  sub: 'District Court\nRepresentation',
+  headerRight: { pill: CASE.dc, tone: 'panel', dot: true, dotGreen: true },
+  blocks: [
+    {
+      k: 'hero',
+      icon: 'check',
+      tone: 'sent',
+      topPill: { pill: 'FRESH CASE • WAITING FOR PAYMENT', tone: 'peachPill', dot: true },
+      pill: { pill: 'Waiting for Payment', tone: 'peach', dot: true },
+      pillBelow: true,
+      title: 'Request Sent',
+      sub: 'The court fee request has been sent to the client.',
+    },
+    {
+      k: 'card',
+      top: 'clientTop',
+      pad: 'clientPad',
+      blocks: [
+        {
+          k: 'person',
+          icon: 'user',
+          greyDisc: 'tile',
+          kicker: 'Client',
+          kickerPlain: true,
+          name: CASE.client,
+          chipsGrey: true,
+          chips: [
+            { label: 'Chat', icon: 'chat' },
+            { label: 'Call', icon: 'phone' },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'reqCardTop',
+      head: { icon: 'receipt', tile: true, title: 'Court Fee Request', right: 'REQ-8921' },
+      blocks: [
+        { k: 'text', t: 'Court Fee for Case Filing', tone: 'title', top: 'reqTitleTop' },
+        { k: 'banner', tone: 'grey', text: 'Court fee required before filing the fresh civil case in District Court.', top: 'reqTextTop' },
+        { k: 'amount', tone: 'reason', capsLabel: true, label: 'PAYABLE AMOUNT', value: '₹3,500', right: { pill: 'Waiting for Client Payment', tone: 'peach', dot: true }, top: 'payTop' },
+        {
+          k: 'metaRow',
+          top: 'metaTop',
+          items: [
+            { icon: 'building', parts: [{ t: 'Requested By: ', bold: true }, { t: 'Adv. Abhishek Verma' }] },
+            { icon: 'clock', parts: [{ t: 'Today • Just now' }] },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'trackCardTop',
+      head: { icon: 'trend', tile: true, title: 'Payment Tracking' },
+      blocks: [
+        { k: 'text', t: 'Real-time payment and court filing status', tone: 'small', top: 'trackSubTop' },
+        {
+          k: 'timeline',
+          light: true,
+          greyRail: true,
+          top: 'trackTop',
+          steps: [
+            { title: 'Request Created', sub: 'Court fee request created by advocate.', state: 'done', tag: { pill: 'Done', tone: 'clearGreen', icon: 'check' } },
+            { title: 'Request Sent', sub: 'Sent to Rahul Sharma.', state: 'done', tag: { pill: 'Done', tone: 'clearGreen', icon: 'check' } },
+            { title: 'Waiting for Payment', sub: 'Waiting for the client to pay.', state: 'active', tag: { pill: 'In Progress', tone: 'peach' } },
+            { title: 'Payment Received', sub: 'Waiting for client payment confirmation.', state: 'hollow', muted: true, gap: 'laterGap' },
+            { title: 'Receipt Added', sub: 'Waiting for court process completion.', state: 'hollow', muted: true, gap: 'laterGap' },
+          ],
+        },
+        {
+          k: 'card',
+          tone: 'panel',
+          outline: true,
+          pad: 'statusPad',
+          top: 'statusTop',
+          head: { title: 'PAYMENT STATUS', caps: true, small: true, right: { pill: 'Waiting for Client Payment', tone: 'peach' } },
+          blocks: [
+            {
+              k: 'grid',
+              top: 'statusGridTop',
+              cells: [
+                { label: 'Client', value: 'Rahul Sharma • Waiting', small: true },
+                { label: 'Amount', value: '₹3,500', alignRight: true },
+              ],
+            },
+            { k: 'text', t: 'Note: Advocate cannot manually mark as paid; payment updates automatically via backend payment system.', tone: 'small', top: 'statusNoteTop' },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      head: { icon: 'folderUser', tile: true, title: 'Case Details', right: { pill: 'Fresh Case', tone: 'help' } },
+      blocks: [
+        {
+          k: 'grid',
+          boxed: 'cells',
+          top: 'caseGridTop',
+          cells: [
+            { label: 'Client', value: CASE.client },
+            { label: 'Case Type', value: 'Civil Suit' },
+            { label: 'Matter Title', value: CASE.title, wide: true },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      head: { icon: 'paperclip', tile: true, title: 'Court Fee Receipt', right: { link: 'Receipt Added', icon: 'check', green: true } },
+      blocks: [
+        { k: 'docs', tiles: true, top: 'uploadTop', items: [{ name: 'Court_Fee', meta: '1.8 MB • PDF', icon: 'pdf', inline: ['View', 'Replace'] }] },
+        { k: 'text', t: 'You can upload or update the court fee receipt after client payment or court process if needed.', tone: 'small', top: 'receiptNoteTop' },
+      ],
+    },
+    {
+      k: 'card',
+      head: { icon: 'send', tile: true, title: 'Client Notification', right: { pill: 'Sent', tone: 'greenTile', icon: 'check' } },
+      blocks: [
+        // ⚠ UNSCOPED — no SMS, no app notification was sent.
+        { k: 'text', icon: 'chat', iconGreen: true, iconSize: 'notifyIcon', t: 'The client has been notified about the court fee request via SMS & Legalitt Client App.', tone: 'small', top: 'notifyTop' },
+      ],
+    },
+    {
+      k: 'card',
+      tone: 'cream',
+      head: { icon: 'compass', title: 'Next Step', tone: 'brown', size: 'nextHeadSize' },
+      blocks: [
+        { k: 'text', t: 'Wait for the client to complete the payment. After payment is confirmed, the court fee will be marked as paid.', size: 'nextTextSize', top: 'nextTextTop' },
+      ],
+    },
+  ],
+  footer: [{ label: 'Back to Case', iconRight: 'arrowRight', back: true }],
+  footerLinks: [{ icon: 'lock', t: 'Official Case Record • Client Payment Awaited' }],
+};

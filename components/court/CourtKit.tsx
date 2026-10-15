@@ -29,6 +29,8 @@ import {
   Folder,
   FolderOpen,
   Folders,
+  FolderKanban as FolderUser,
+  Compass,
   Gavel,
   Headset,
   History,
@@ -93,6 +95,7 @@ import {
   advWalletPalette,
   courierGreen,
   courierReceived,
+  dcChangeRequestPalette,
   dcDecidePalette,
   dcDocsNeededPalette,
   dcDocumentsPalette,
@@ -212,6 +215,8 @@ const ICONS: Record<IconName, LucideIcon> = {
   filePen: FilePen,
   fileStack: FileStack,
   folderOpen: FolderOpen,
+  folderUser: FolderUser,
+  compass: Compass,
 };
 
 export function Icon({ name, size, color, sw = 2 }: { name: IconName; size: number; color: string; sw?: number }) {
@@ -233,6 +238,8 @@ const TONES: Record<Tone, { bg: string; fg: string }> = {
   panelGreen: { bg: c.panel, fg: c.greenInk },
   greyGreen: { bg: c.tileGrey, fg: c.greenInk },
   greenTile: { bg: c.greenTile, fg: c.greenInk },
+  peachPill: { bg: c.peachPill, fg: c.brownInk },
+  clearGreen: { bg: 'transparent', fg: c.greenInk },
   red: { bg: status.redContainer, fg: status.onRedContainer },
   brown: { bg: c.brown, fg: ink.onBrand },
   blue: { bg: c.blueTile, fg: c.blueInk },
@@ -406,6 +413,14 @@ function Disc({ state, deep, light }: { state: Step['state']; deep?: boolean; li
         <Check size={t.stepGlyph} color={c.greenInk} strokeWidth={2.6} />
       </View>
     );
+  if (light && state === 'active')
+    return (
+      <View style={[s.disc, { backgroundColor: c.peach }]}>
+        <View style={[s.discDot, { backgroundColor: c.brown }]} />
+      </View>
+    );
+  if (light && state === 'hollow')
+    return <View style={[s.disc, s.discHollow]} />;
   if (light && state === 'current')
     return (
       <View style={[s.disc, { backgroundColor: c.brown }]}>
@@ -474,6 +489,7 @@ function Timeline({
   deep,
   light,
   discTop,
+  greyRail,
 }: {
   steps: Step[];
   boxed?: boolean;
@@ -481,6 +497,7 @@ function Timeline({
   deep?: boolean;
   light?: boolean;
   discTop?: boolean;
+  greyRail?: boolean;
 }) {
   const { t, s } = useK();
   // Each row is padded by half the row gap above and below, so the disc centres
@@ -489,14 +506,14 @@ function Timeline({
   return (
     <View style={s.steps}>
       {steps.map((st, i) => (
-        <View key={st.title} style={[s.step, boxed ? s.stepBoxed : s.stepRow]}>
+        <View key={st.title} style={[s.step, boxed ? s.stepBoxed : s.stepRow, st.gap !== undefined && { paddingTop: t[st.gap] }]}>
           <View style={s.stepLeft}>
             {/* light (377): the rail is green between done steps. */}
             <View
               style={[
                 s.railHalf,
                 discTop && s.railTop,
-                light && i > 0 && steps[i - 1].state === 'done' && st.state === 'done' && s.railDone,
+                light && !greyRail && i > 0 && steps[i - 1].state === 'done' && st.state === 'done' && s.railDone,
                 (boxed || noRail || i === 0) && s.railHidden,
               ]}
             />
@@ -504,7 +521,7 @@ function Timeline({
             <View
               style={[
                 s.railHalf,
-                light && st.state === 'done' && steps[i + 1]?.state === 'done' && s.railDone,
+                light && !greyRail && st.state === 'done' && steps[i + 1]?.state === 'done' && s.railDone,
                 (boxed || noRail || i === steps.length - 1) && s.railHidden,
               ]}
             />
@@ -594,7 +611,7 @@ export function BlockView({ b }: { b: Block }): ReactNode {
                       ? dcPricingPalette.tierOn
                       : c.card;
       return (
-        <View style={[s.card, { backgroundColor: bg }, b.tone === 'outline' && s.outline, b.pad !== undefined && { padding: t[b.pad] }]}>
+        <View style={[s.card, { backgroundColor: bg }, (b.tone === 'outline' || b.outline) && s.outline, b.pad !== undefined && { padding: t[b.pad] }]}>
           {b.head ? <HeadRow h={b.head} /> : null}
           {b.blocks.map((x, i) => (
             <View
@@ -619,6 +636,8 @@ export function BlockView({ b }: { b: Block }): ReactNode {
             ? courierGreen.recBg
             : b.tone === 'halo'
               ? q.haloSoft
+              : b.tone === 'sent'
+                ? q.sentHalo
             : b.tone === 'deepGreen'
             ? q.heroHalo
             : b.tone === 'red'
@@ -629,7 +648,7 @@ export function BlockView({ b }: { b: Block }): ReactNode {
       const core: string =
         b.tone === 'green' || b.tone === 'halo'
           ? status.active
-          : b.tone === 'mint' || b.tone === 'deepGreen'
+          : b.tone === 'mint' || b.tone === 'deepGreen' || b.tone === 'sent'
             ? c.greenInk
             : b.tone === 'red'
               ? advForensicRed.declineColour
@@ -638,6 +657,11 @@ export function BlockView({ b }: { b: Block }): ReactNode {
                 : c.brown;
       return (
         <View style={[s.hero, b.left && s.heroLeft]}>
+          {b.topPill ? (
+            <View style={s.heroTopPill}>
+              <PillTag p={b.topPill} />
+            </View>
+          ) : null}
           <View style={[s.heroDisc, { backgroundColor: disc }]}>
             {b.flat ? (
               <Icon name={b.icon} size={t.heroFlatGlyph} color={c.brownInk} sw={2.2} />
@@ -704,7 +728,9 @@ export function BlockView({ b }: { b: Block }): ReactNode {
     case 'text':
       return (
         <View style={s.row}>
-          {b.icon ? <Icon name={b.icon} size={b.iconSize ? t[b.iconSize] : t.textIcon} color={b.tone === 'green' ? c.greenInk : c.brownInk} /> : null}
+          {b.icon ? (
+            <Icon name={b.icon} size={b.iconSize ? t[b.iconSize] : t.textIcon} color={b.tone === 'green' || b.iconGreen ? c.greenInk : c.brownInk} />
+          ) : null}
           <Text
             style={[
               s.text,
@@ -755,12 +781,12 @@ export function BlockView({ b }: { b: Block }): ReactNode {
       const cellView = (cell: (typeof b.cells)[number], style?: StyleProp<ViewStyle>) => (
         <View key={cell.label + cell.value} style={[style, (cell.sideIcon || cell.iconRight || cell.iconDisc) && s.sideIconCell, cell.shade && s.cellShade]}>
           {cell.sideIcon ? <Icon name={cell.sideIcon} size={t.sideIcon} color={c.inkWarm} /> : null}
-          <View style={(cell.sideIcon || cell.iconRight || cell.iconDisc) && s.flex}>
+          <View style={[(cell.sideIcon || cell.iconRight || cell.iconDisc) && s.flex, cell.alignRight && s.cellRight]}>
           <View style={s.row}>
             {cell.icon ? <Icon name={cell.icon} size={t.labelSize} color={c.inkMuted} /> : null}
             <Text style={[s.cellLabel, b.caps && s.cellCaps]}>{cell.label}</Text>
           </View>
-          <Text style={[s.cellValue, cell.tone === 'green' && s.green, cell.tone === 'mono' && s.mono, cell.tone === 'muted' && s.mutedValue]}>
+          <Text style={[s.cellValue, cell.tone === 'green' && s.green, cell.tone === 'mono' && s.mono, cell.tone === 'muted' && s.mutedValue, cell.small && s.cellValueSmall]}>
             {cell.value}
           </Text>
           {cell.sub ? <Text style={s.cellSub}>{cell.sub}</Text> : null}
@@ -802,7 +828,7 @@ export function BlockView({ b }: { b: Block }): ReactNode {
     case 'person':
       return (
         <View style={[s.row, s.person, b.boxed && s.personBoxed]}>
-          <View style={[s.avatar, b.greyDisc && s.greyDisc, b.greyDisc === 'help' && s.greyDiscHelp, b.photo && s.photo]}>
+          <View style={[s.avatar, b.greyDisc && s.greyDisc, b.greyDisc === 'help' && s.greyDiscHelp, b.greyDisc === 'tile' && s.greyDiscTile, b.photo && s.photo]}>
             {/* A photograph's place when b.photo: the asset was not supplied. */}
             {b.photo ? null : b.initials ? (
               <Text style={s.avatarText}>{b.initials}</Text>
@@ -811,7 +837,7 @@ export function BlockView({ b }: { b: Block }): ReactNode {
             )}
           </View>
           <View style={s.flex}>
-            {b.kicker ? <Text style={[s.caps, s.personKicker]}>{b.kicker}</Text> : null}
+            {b.kicker ? <Text style={[b.kickerPlain ? s.personKickerPlain : s.caps, s.personKicker]}>{b.kicker}</Text> : null}
             <View style={[s.row, s.wrap]}>
               <Text style={[s.name, b.small && s.nameSmall]}>{b.name}</Text>
               {b.tag ? <PillTag p={b.tag} /> : null}
@@ -835,12 +861,12 @@ export function BlockView({ b }: { b: Block }): ReactNode {
               <Phone size={t.chipIcon} color={c.brown} strokeWidth={2} />
             </View>
           ) : null}
-          {b.chips?.map((x) => <SmallChip key={x.label} b={x} />)}
+          {b.chips?.map((x) => <SmallChip key={x.label} b={x} grey={b.chipsGrey} />)}
           <RightPart r={b.right} />
         </View>
       );
     case 'timeline':
-      return <Timeline steps={b.steps} boxed={b.boxed} noRail={b.noRail} deep={b.deep} light={b.light} discTop={b.discTop} />;
+      return <Timeline steps={b.steps} boxed={b.boxed} noRail={b.noRail} deep={b.deep} light={b.light} discTop={b.discTop} greyRail={b.greyRail} />;
     case 'docs':
       return (
         <View style={s.docList}>
@@ -1113,7 +1139,14 @@ export function BlockView({ b }: { b: Block }): ReactNode {
       );
     case 'amount':
       return (
-        <View style={[s.amountBox, b.tone === 'payPeach' && { backgroundColor: dcDocumentsPalette.tilePeach }, b.tone === 'none' && s.amountBare]}>
+        <View
+          style={[
+            s.amountBox,
+            b.tone === 'payPeach' && { backgroundColor: dcDocumentsPalette.tilePeach },
+            b.tone === 'reason' && { backgroundColor: dcChangeRequestPalette.reasonOn },
+            b.tone === 'none' && s.amountBare,
+          ]}
+        >
           {b.valueRight ? (
             <View style={s.between}>
               <View style={s.flex}>
@@ -1125,7 +1158,7 @@ export function BlockView({ b }: { b: Block }): ReactNode {
           ) : (
             <View style={[s.between, b.side && s.top]}>
               <View style={s.flex}>
-                {b.label ? <Text style={s.cellLabel}>{b.label}</Text> : null}
+                {b.label ? <Text style={b.capsLabel ? s.amountCapsLabel : s.cellLabel}>{b.label}</Text> : null}
                 {b.suffixGreen ? (
                   // design/380: a small two-line status beside the brown amount.
                   <View style={[s.row, s.amountRow]}>
@@ -1230,6 +1263,27 @@ export function BlockView({ b }: { b: Block }): ReactNode {
               <Text style={s.emptyBtnText}>{b.btn}</Text>
             </View>
           ) : null}
+        </View>
+      );
+    case 'metaRow':
+      return (
+        <View style={[s.row, s.metaRow]}>
+          {b.items.map((it) => (
+            <View key={it.parts.map((p) => p.t).join('')} style={[s.row, s.top, s.metaItem]}>
+              <Icon name={it.icon} size={t.metaIcon} color={c.inkWarm} />
+              <Text style={[s.metaText, s.flex]}>
+                {it.parts.map((p) =>
+                  p.bold ? (
+                    <Text key={p.t} style={s.partBold}>
+                      {p.t}
+                    </Text>
+                  ) : (
+                    p.t
+                  ),
+                )}
+              </Text>
+            </View>
+          ))}
         </View>
       );
     case 'chip':
@@ -1561,10 +1615,13 @@ function makeStyles(t: CourtTokens) {
   labelDot: { width: t.labelDot, height: t.labelDot, borderRadius: t.labelDot / 2 },
   partBold: { fontFamily: font.appSemi, color: c.ink },
   cellIconRight: { justifyContent: 'center' },
+  cellRight: { alignItems: 'flex-end' },
+  cellValueSmall: { fontSize: t.cellSmallSize },
   cellShade: { backgroundColor: c.tileGrey },
   cellDisc: { width: t.cellDisc, height: t.cellDisc, borderRadius: t.cellDisc / 2, backgroundColor: c.card, alignItems: 'center', justifyContent: 'center' },
   amountSuffixGreen: { fontFamily: font.appSemi, color: c.greenInk },
   amountRow: { gap: t.amountBesideGap, marginTop: t.valueTop },
+  amountCapsLabel: { fontFamily: font.appSemi, fontSize: t.capsSize, letterSpacing: t.capsSpacing, color: c.brownInk },
   amountBrown: { marginTop: 0, color: c.brown },
   amountBeside: { maxWidth: t.amountBesideMax, lineHeight: t.amountBesideLine },
   amountSuffix: { fontFamily: font.appBody, fontSize: t.amountSuffixSize, color: c.inkWarm },
@@ -1594,6 +1651,7 @@ function makeStyles(t: CourtTokens) {
   headTileStep: { borderRadius: t.headTile / 2, backgroundColor: c.peachStep },
   headTileRed: { width: t.headDisc, height: t.headDisc, borderRadius: t.headDisc / 2, backgroundColor: status.redContainer },
   greyDiscHelp: { backgroundColor: c.helpGrey },
+  greyDiscTile: { backgroundColor: c.tileGrey },
   photo: { backgroundColor: c.heroArt },
   personMetaRow: { marginTop: t.personMetaTop },
   metaStrong: { fontFamily: font.appSemi, fontSize: t.metaStrongSize, color: c.ink },
@@ -1634,6 +1692,9 @@ function makeStyles(t: CourtTokens) {
   emptyText: { marginTop: t.emptyTextTop, maxWidth: t.emptyTextMax, fontFamily: font.appBody, fontSize: t.emptyTextSize, lineHeight: t.emptyTextLine, color: c.inkWarm, textAlign: 'center' },
   emptyBtn: { marginTop: t.emptyBtnTop, minHeight: t.emptyBtnH, borderRadius: t.emptyBtnRadius, paddingHorizontal: t.emptyBtnPadX, backgroundColor: c.helpGrey, justifyContent: 'center' },
   emptyBtnText: { fontFamily: font.appSemi, fontSize: t.emptyBtnSize, color: c.ink },
+  metaRow: { justifyContent: 'space-between', alignItems: 'flex-start' },
+  metaItem: { flexShrink: 1, gap: t.pillGap },
+  metaText: { fontFamily: font.appBody, fontSize: t.metaSize, lineHeight: t.metaLine, color: c.inkWarm },
   textChip: { alignSelf: 'flex-start', borderRadius: t.textChipRadius, paddingHorizontal: t.textChipPadX, paddingVertical: t.textChipPadY, backgroundColor: c.helpGrey },
   textChipText: { fontFamily: font.appSemi, fontSize: t.textChipSize, color: c.ink },
   headTileRow: { gap: t.headTileGap },
@@ -1644,6 +1705,7 @@ function makeStyles(t: CourtTokens) {
   titleBadge: { width: t.titleIconSize, height: t.titleIconSize, borderRadius: t.titleIconSize / 2, backgroundColor: status.active, alignItems: 'center', justifyContent: 'center' },
   labelTitle: { fontSize: t.labelTitleSize },
   capsStrong: { fontSize: t.capsStrongSize, letterSpacing: t.capsStrongSpacing, color: c.ink },
+  personKickerPlain: { fontFamily: font.appBody, fontSize: t.labelSize, color: c.inkWarm },
   personKicker: { marginBottom: t.personKickerGap },
   checkCards: { gap: t.checkCardGap },
   checkCard: { alignItems: 'flex-start', borderWidth: 0, borderRadius: t.cardRadius, paddingHorizontal: t.cardPad, paddingVertical: t.checkCardPadY },
@@ -1665,6 +1727,7 @@ function makeStyles(t: CourtTokens) {
   discRingBrown: { backgroundColor: c.card, borderWidth: t.stepRingW, borderColor: c.brown },
   discWait: { backgroundColor: c.tileGrey },
   discWaitDot: { width: t.waitDot, height: t.waitDot, borderRadius: t.waitDot / 2, backgroundColor: c.inkMuted },
+  discHollow: { backgroundColor: c.panel, borderWidth: 1, borderColor: c.helpGrey },
   discAccent: { backgroundColor: status.active },
   discTodo: { backgroundColor: c.helpGrey },
   discDotLight: { backgroundColor: q.todoDot },
@@ -1710,6 +1773,7 @@ function makeStyles(t: CourtTokens) {
   heroDisc: { width: t.heroDisc, height: t.heroDisc, borderRadius: t.heroDisc / 2, alignItems: 'center', justifyContent: 'center' },
   heroCore: { width: t.heroDiscInner, height: t.heroDiscInner, borderRadius: t.heroDiscInner / 2, alignItems: 'center', justifyContent: 'center' },
   heroPill: { marginTop: t.heroPillTop },
+  heroTopPill: { marginBottom: t.heroTopPillGap },
   heroPillBelow: { marginTop: t.heroPillBelowTop },
   heroTitle: { marginTop: t.heroTitleTop, fontFamily: font.appSemi, fontSize: t.heroTitleSize, color: c.ink, textAlign: 'center' },
   heroSub: { marginTop: t.heroSubTop, maxWidth: t.heroSubMax, fontFamily: font.appBody, fontSize: t.heroSubSize, lineHeight: t.heroSubLine, color: c.inkWarm, textAlign: 'center' },

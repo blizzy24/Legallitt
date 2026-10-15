@@ -82,7 +82,9 @@ export type IconName =
   | 'clipboardCheck'
   | 'filePen'
   | 'fileStack'
-  | 'folderOpen';
+  | 'folderOpen'
+  | 'folderUser'
+  | 'compass';
 
 export type Tone =
   | 'green'
@@ -98,6 +100,8 @@ export type Tone =
   | 'panelGreen'
   | 'greyGreen'
   | 'greenTile'
+  | 'peachPill'
+  | 'clearGreen'
   | 'red'
   | 'brown'
   | 'blue'
@@ -185,7 +189,7 @@ export type Step = {
   title: string;
   sub?: string;
   /** accent: the green current step of 371. next: a grey disc with a brown dot, normal text (372). */
-  state: 'done' | 'current' | 'active' | 'accent' | 'next' | 'ring' | 'wait' | 'todo';
+  state: 'done' | 'current' | 'active' | 'accent' | 'next' | 'ring' | 'wait' | 'hollow' | 'todo';
   right?: Right;
   /** Sub-line in green (378, 384 draw "Completed" green; 371 draws it grey). */
   subGreen?: boolean;
@@ -195,6 +199,8 @@ export type Step = {
   subBrown?: boolean;
   /** A grey title (378's later steps). */
   muted?: boolean;
+  /** Token for extra space above this step (381's taller pending rows). */
+  gap?: string;
 };
 
 /**
@@ -207,11 +213,13 @@ export type Spaced = { top?: string; /** A token added below the block (may be n
 export type Block = Spaced & BlockBody;
 
 type BlockBody =
-  | { k: 'card'; tone?: 'white' | 'panel' | 'cream' | 'peach' | 'green' | 'outline' | 'payPeach' | 'decline' | 'tier' | 'halo' | 'banner'; /** Blocks indented to the head's text column (379). */ indent?: boolean; head?: Head; blocks: Block[]; /** Token for its padding. */ pad?: string }
+  | { k: 'card'; tone?: 'white' | 'panel' | 'cream' | 'peach' | 'green' | 'outline' | 'payPeach' | 'decline' | 'tier' | 'halo' | 'banner'; /** Blocks indented to the head's text column (379). */ indent?: boolean; /** A hairline round it (381's payment status). */ outline?: boolean; head?: Head; blocks: Block[]; /** Token for its padding. */ pad?: string }
   | {
       k: 'hero';
       icon: IconName;
-      tone: 'green' | 'deepGreen' | 'mint' | 'halo' | 'peach' | 'red' | 'grey';
+      tone: 'green' | 'deepGreen' | 'mint' | 'halo' | 'sent' | 'peach' | 'red' | 'grey';
+      /** A pill above the disc (381). */
+      topPill?: Pill;
       pill?: Pill;
       title: string;
       sub?: string;
@@ -225,11 +233,11 @@ type BlockBody =
     }
   | { k: 'lead'; pill?: Pill; /** Text straight after the pill (377's Step 5 of 10). */ pillNote?: string; right?: Right; title?: string; text?: string }
   | { k: 'label'; text: string; right?: Right; pills?: Pill[]; /** The large ink caps of 374's section titles. */ strong?: boolean; /** A sentence-case section title (376). */ title?: boolean; /** A green dot before it (364). */ dot?: boolean; /** Inset from the gutter (364's MATTER BRIEFING). */ inset?: boolean }
-  | { k: 'text'; t?: string; parts?: { t: string; bold?: boolean; muted?: boolean }[]; /** A pill after the text (371's Civil). */ pill?: Pill; /** Token for its type size. */ size?: string; /** Token for its icon size. */ iconSize?: string; tone?: 'body' | 'muted' | 'small' | 'quote' | 'center' | 'strong' | 'green' | 'title' | 'label' | 'note'; icon?: IconName }
+  | { k: 'text'; t?: string; parts?: { t: string; bold?: boolean; muted?: boolean }[]; /** A pill after the text (371's Civil). */ pill?: Pill; /** Token for its type size. */ size?: string; /** Token for its icon size. */ iconSize?: string; iconGreen?: boolean; tone?: 'body' | 'muted' | 'small' | 'quote' | 'center' | 'strong' | 'green' | 'title' | 'label' | 'note'; icon?: IconName }
   | { k: 'rows'; rows: [string, string, ('mono' | 'monoBrown' | 'bold' | 'green' | 'quote')?][]; divided?: boolean }
   | {
       k: 'grid';
-      cells: { label: string; value: string; sub?: string; tone?: 'green' | 'mono' | 'muted'; wide?: boolean; icon?: IconName; sideIcon?: IconName; iconRight?: IconName; /** tileGrey, not panel (376). */ shade?: boolean; /** A white disc with an icon at the right (376). */ iconDisc?: IconName }[];
+      cells: { label: string; value: string; sub?: string; tone?: 'green' | 'mono' | 'muted'; wide?: boolean; icon?: IconName; sideIcon?: IconName; iconRight?: IconName; /** tileGrey, not panel (376). */ shade?: boolean; alignRight?: boolean; small?: boolean; /** A white disc with an icon at the right (376). */ iconDisc?: IconName }[];
       /** 'cells': a panel per cell. 'columns': one panel per column (363). 'panel': one panel round all (363's phone/email). */
       boxed?: 'cells' | 'columns' | 'panel';
       /** Capitalised labels (370). */
@@ -248,8 +256,12 @@ type BlockBody =
       call?: boolean;
       chips?: Btn[];
       boxed?: boolean;
-      /** A grey icon disc in place of the peach avatar: true = rail grey (363), 'help' (373). */
-      greyDisc?: boolean | 'help';
+      /** A grey icon disc in place of the peach avatar: true = rail grey (363), 'help' (373), 'tile' (381). */
+      greyDisc?: boolean | 'help' | 'tile';
+      /** The kicker in sentence case, not caps (381's Client). */
+      kickerPlain?: boolean;
+      /** Grey chips, no border (381). */
+      chipsGrey?: boolean;
       /** The smaller name and sub-line of an info row (363's AI tools card). */
       small?: boolean;
       /** A caps label above the name (374's CLIENT). */
@@ -272,6 +284,8 @@ type BlockBody =
       light?: boolean;
       /** Discs level with the title, not centred on title + sub (378). */
       discTop?: boolean;
+      /** With light: grey rails throughout (381). */
+      greyRail?: boolean;
     }
   | {
       k: 'docs';
@@ -344,12 +358,14 @@ type BlockBody =
       sub?: string;
       right?: Right;
       side?: [string, string];
-      tone?: 'panel' | 'payPeach' | 'none';
+      tone?: 'panel' | 'payPeach' | 'reason' | 'none';
       big?: boolean;
       /** The value at the right of its labels (363's "YOUR PAYMENT"). */
       valueRight?: boolean;
       /** Smaller text after the value (364's "/ 45 min"). */
       suffix?: string;
+      /** The label in caps (381). */
+      capsLabel?: boolean;
       suffixGreen?: boolean;
     }
   | { k: 'upload'; title: string; sub?: string; btn?: Btn; icon?: IconName; /** Icon beside the title, not above (380). */ inline?: boolean }
@@ -366,6 +382,7 @@ type BlockBody =
       bare?: boolean;
     }
   | { k: 'chip'; t: string }
+  | { k: 'metaRow'; items: { icon: IconName; parts: { t: string; bold?: boolean }[] }[] }
   | { k: 'empty'; icon: IconName; title: string; text: string; btn?: string }
   | { k: 'contact'; icon: IconName; t: string; btn?: string }
   | { k: 'iconRows'; rows: { icon: IconName; t: string; bold?: boolean }[] }
