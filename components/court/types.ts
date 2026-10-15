@@ -178,6 +178,8 @@ export type Btn = {
   hug?: boolean;
   /** The squat 22pt pill design/387 draws. */
   squat?: boolean;
+  /** Token for this button's height (388 draws two). */
+  h?: string;
 };
 
 export type Head = {

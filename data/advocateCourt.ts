@@ -2236,7 +2236,8 @@ export const COURT_HEARING_SCHEDULED: CourtSpec = {
       tone: 'panel',
       indent: 'bannerIndent',
       head: { icon: 'check', tile: 'greenCheck', title: 'First Hearing Scheduled', size: 'bannerTitleSize', sub: 'The hearing details have been saved.', subSize: 'bannerSubSize', topAlign: true },
-      blocks: [{ k: 'text', t: 'The court date and courtroom have been recorded in the case file.', tone: 'small', maxW: 'bannerNoteMax', top: 'bannerNoteTop' }],
+      // The line breaks are the export's own, kept as drawn.
+      blocks: [{ k: 'text', t: 'The court date and courtroom have\nbeen\nrecorded in the case file.', tone: 'small', top: 'bannerNoteTop' }],
     },
     {
       k: 'card',
@@ -2326,7 +2327,7 @@ export const COURT_HEARING_SCHEDULED: CourtSpec = {
       k: 'card',
       top: 'viewTop',
       blocks: [
-        { k: 'button', btn: { label: 'View First Hearing', icon: 'eye', to: R('hearing/live') } },
+        { k: 'button', btn: { label: 'View First Hearing', icon: 'eye', to: R('hearing/live'), h: 'viewBtnH' } },
         { k: 'text', t: 'The hearing outcome can be updated once the hearing takes place.', tone: 'center', size: 'viewNoteSize', top: 'viewNoteTop' },
       ],
     },
