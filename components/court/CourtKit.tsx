@@ -1873,10 +1873,19 @@ export function CourtSheet({ blocks, tokens, onClose }: { blocks: Block[]; token
   );
 }
 
-function SheetBody({ blocks, onClose }: { blocks: Block[]; onClose: () => void }) {
+function SheetBody({ blocks: drawn, onClose }: { blocks: Block[]; onClose: () => void }) {
   const { t, s } = useK();
   const insets = useSafeAreaInsets();
+  // The sheet sits beside its screen, not inside it, so it reads the District
+  // Court variant itself (design/419 over 418) and passes it on.
+  const svc = useLocalSearchParams<{ service?: string }>().service;
+  const path = usePathname();
+  const blocks = useMemo(
+    () => (svc === 'dc' ? dcSpec(drawn, [...DC_VALUES.all, ...(DC_VALUES.route[path] ?? [])]) : drawn),
+    [drawn, svc, path],
+  );
   return (
+    <Service.Provider value={svc}>
     <View style={StyleSheet.absoluteFill}>
       <View style={[s.sheetScrimHeader, { height: insets.top + t.sheetHeaderH }]} />
       <Pressable accessibilityRole="button" accessibilityLabel="Close" onPress={onClose} style={[s.flex, s.sheetScrim]} />
@@ -1892,6 +1901,7 @@ function SheetBody({ blocks, onClose }: { blocks: Block[]; onClose: () => void }
         ))}
       </View>
     </View>
+    </Service.Provider>
   );
 }
 
