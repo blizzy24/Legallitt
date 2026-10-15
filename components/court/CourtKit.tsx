@@ -35,6 +35,9 @@ import {
   Lightbulb,
   FileUp,
   FolderCheck,
+  CloudUpload,
+  SendHorizontal,
+  FileLock,
   Gavel,
   Headset,
   History,
@@ -226,6 +229,9 @@ const ICONS: Record<IconName, LucideIcon> = {
   lightbulb: Lightbulb,
   fileUp: FileUp,
   folderCheck: FolderCheck,
+  cloudUpload: CloudUpload,
+  sendIcon: SendHorizontal,
+  fileLock: FileLock,
 };
 
 export function Icon({ name, size, color, sw = 2 }: { name: IconName; size: number; color: string; sw?: number }) {
@@ -253,6 +259,7 @@ const TONES: Record<Tone, { bg: string; fg: string }> = {
   tilePeach: { bg: dcDocumentsPalette.tilePeach, fg: c.brownInk },
   approvedPill: { bg: q.approvedPill, fg: c.greenInk },
   solidGreen: { bg: status.active, fg: ink.onBrand },
+  redSoft: { bg: status.redContainer, fg: advForensicRed.declineColour },
   red: { bg: status.redContainer, fg: status.onRedContainer },
   brown: { bg: c.brown, fg: ink.onBrand },
   blue: { bg: c.blueTile, fg: c.blueInk },
@@ -583,7 +590,7 @@ function Field({ b }: { b: Extract<Block, { k: 'field' }> }) {
         <View style={s.between}>
           <Text style={s.fieldLabel}>
             {b.label}
-            {b.req ? <Text style={s.req}> *</Text> : null}
+            {b.req ? <Text style={!b.reqPlain && s.req}> *</Text> : null}
           </Text>
           <RightPart r={b.right} />
         </View>
@@ -768,14 +775,14 @@ export function BlockView({ b }: { b: Block }): ReactNode {
       );
     case 'text':
       return (
-        <View style={s.row}>
+        <View style={[s.row, (b.tone === 'center' || b.centerRow) && s.rowCenter]}>
           {b.icon ? (
             <Icon name={b.icon} size={b.iconSize ? t[b.iconSize] : t.textIcon} color={b.tone === 'green' || b.iconGreen ? c.greenInk : c.brownInk} />
           ) : null}
           <Text
             style={[
               s.text,
-              !b.pill && s.flex,
+              !b.pill && !b.centerRow && s.flex,
               b.tone === 'muted' && s.mutedText,
               b.tone === 'small' && s.small,
               b.tone === 'quote' && s.quote,
@@ -788,6 +795,7 @@ export function BlockView({ b }: { b: Block }): ReactNode {
               b.tone === 'smallStrong' && s.smallStrong,
               b.tone === 'kicker' && s.kickerText,
               b.size !== undefined && { fontSize: t[b.size], lineHeight: t[b.size + 'Line'] },
+              b.maxW !== undefined && { maxWidth: t[b.maxW] },
             ]}
           >
             {b.parts
@@ -829,7 +837,7 @@ export function BlockView({ b }: { b: Block }): ReactNode {
             {cell.icon ? <Icon name={cell.icon} size={t.labelSize} color={c.inkMuted} /> : null}
             <Text style={[s.cellLabel, b.caps && s.cellCaps]}>{cell.label}</Text>
           </View>
-          <Text style={[s.cellValue, cell.tone === 'green' && s.green, cell.tone === 'mono' && s.mono, cell.tone === 'muted' && s.mutedValue, cell.small && s.cellValueSmall]}>
+          <Text style={[s.cellValue, cell.tone === 'green' && s.green, cell.tone === 'mono' && s.mono, cell.tone === 'muted' && s.mutedValue, cell.small && s.cellValueSmall, cell.plain && s.cellPlain, cell.tone === 'brown' && s.monoBrown]}>
             {cell.value}
           </Text>
           {cell.sub ? <Text style={s.cellSub}>{cell.sub}</Text> : null}
@@ -914,7 +922,7 @@ export function BlockView({ b }: { b: Block }): ReactNode {
       return (
         <View style={s.docList}>
           {b.items.map((d) => (
-            <View key={d.name} style={[s.doc, b.pdf && s.docPdf, b.discs && s.docRow, b.cards && s.docCard]}>
+            <View key={d.name} style={[s.doc, b.pdf && s.docPdf, b.discs && s.docRow, b.cards && s.docCard, b.outlined && s.docOutlined]}>
               <View style={[s.row, b.pdf && s.docPdfRow, (b.discs || b.cards) && s.docPdfRow, b.cards && s.top]}>
                 {b.pdf ? (
                   <PdfStackIcon size={t.pdfIcon} color={advForensicRed.declineColour} />
@@ -985,6 +993,17 @@ export function BlockView({ b }: { b: Block }): ReactNode {
                   </View>
                 ) : null}
               </View>
+              {d.bigActions ? (
+                // ⚠ UNSCOPED — no viewer, nothing uploads.
+                <View style={[s.row, s.bigActions]}>
+                  {d.bigActions.map((x, j) => (
+                    <View key={x} style={[s.bigAction, s.flex]}>
+                      <Icon name={j === 0 ? 'eye' : 'refresh'} size={t.bigActionIcon} color={c.ink} />
+                      <Text style={s.bigActionText}>{x}</Text>
+                    </View>
+                  ))}
+                </View>
+              ) : null}
               {d.btnBelow ? (
                 // ⚠ UNSCOPED — no document viewer.
                 <View style={s.docBelow}>
@@ -1117,7 +1136,13 @@ export function BlockView({ b }: { b: Block }): ReactNode {
             <View key={st.label} style={[s.flex, b.variant === 'tiles' && s.barTile]}>
               {b.variant === 'discs' || b.variant === 'tiles' ? (
                 <View style={s.center}>
-                  <Disc state={st.state === 'done' ? 'done' : st.state === 'current' ? 'active' : 'todo'} />
+                  {st.icon && st.state !== 'done' ? (
+                    <View style={[s.disc, { backgroundColor: st.state === 'current' ? c.peach : c.helpGrey }]}>
+                      <Icon name={st.icon} size={t.stepGlyph} color={st.state === 'current' ? c.brownInk : c.inkMuted} />
+                    </View>
+                  ) : (
+                    <Disc state={st.state === 'done' ? 'done' : st.state === 'current' ? 'active' : 'todo'} />
+                  )}
                 </View>
               ) : b.variant === 'chips' ? null : (
                 <View
@@ -1130,9 +1155,19 @@ export function BlockView({ b }: { b: Block }): ReactNode {
               <View style={s.barLabelRow}>
                 {b.variant === undefined && st.state === 'done' ? <Check size={t.barIcon} color={c.greenInk} strokeWidth={2.4} /> : null}
                 {b.variant === undefined && st.state === 'bad' ? <X size={t.barIcon} color={advForensicRed.declineColour} strokeWidth={2.4} /> : null}
-                <Text style={[s.barLabel, b.variant === 'chips' && s.barChip, st.state === 'current' && s.strong, st.state === 'bad' && s.red]}>{st.label}</Text>
+                <Text
+                  style={[
+                    s.barLabel,
+                    b.variant === 'chips' && s.barChip,
+                    st.state === 'current' && s.strong,
+                    b.variant === 'tiles' && st.state === 'done' && s.strong,
+                    st.state === 'bad' && s.red,
+                  ]}
+                >
+                  {st.label}
+                </Text>
               </View>
-              {st.sub ? <Text style={[s.barLabel, st.state === 'done' && s.green]}>{st.sub}</Text> : null}
+              {st.sub ? <Text style={[s.barLabel, st.state === 'done' && s.green, b.variant === 'tiles' && st.state === 'done' && s.barSubDone]}>{st.sub}</Text> : null}
             </View>
           ))}
         </View>
@@ -1217,11 +1252,11 @@ export function BlockView({ b }: { b: Block }): ReactNode {
             <View style={[s.between, b.side && s.top]}>
               <View style={s.flex}>
                 {b.label ? <Text style={b.capsLabel ? s.amountCapsLabel : s.cellLabel}>{b.label}</Text> : null}
-                {b.suffixGreen ? (
-                  // design/380: a small two-line status beside the brown amount.
+                {b.suffixGreen || b.suffixBeside ? (
+                  // designs 380 / 385: a small two-line note beside the brown amount.
                   <View style={[s.row, s.amountRow]}>
                     <Text style={[s.amount, s.amountBrown]}>{b.value}</Text>
-                    <Text style={[s.amountSuffix, s.amountSuffixGreen, s.amountBeside]}>{b.suffix}</Text>
+                    <Text style={[s.amountSuffix, b.suffixGreen && s.amountSuffixGreen, s.amountBeside]}>{b.suffix}</Text>
                   </View>
                 ) : (
                   <Text style={[s.amount, b.big && s.amountBig]}>
@@ -1253,12 +1288,17 @@ export function BlockView({ b }: { b: Block }): ReactNode {
               <Text style={[s.checkTitle, s.uploadInlineTitle]}>{b.title}</Text>
             </View>
           ) : (
-            <View style={s.uploadDisc}>
-              <Icon name={b.icon ?? 'upload'} size={t.headIcon} color={c.brown} />
+            <View style={[s.uploadDisc, b.greyDisc && s.uploadDiscGrey]}>
+              <Icon name={b.icon ?? 'upload'} size={t.headIcon} color={b.greyDisc ? c.inkWarm : c.brown} />
             </View>
           )}
           {b.inline ? null : <Text style={[s.checkTitle, s.centerText]}>{b.title}</Text>}
           {b.sub ? <Text style={[s.checkSub, s.centerText]}>{b.sub}</Text> : null}
+          {b.pill ? (
+            <View style={s.uploadPill}>
+              <PillTag p={b.pill} />
+            </View>
+          ) : null}
           {b.btn ? (
             <View style={s.uploadBtn}>
               <Button b={b.btn} />
@@ -1716,6 +1756,7 @@ function makeStyles(t: CourtTokens) {
   flex: { flex: 1, flexShrink: 1 },
   row: { flexDirection: 'row', alignItems: 'center', gap: t.headGap },
   top: { alignItems: 'flex-start' },
+  rowCenter: { justifyContent: 'center' },
   wrap: { flexWrap: 'wrap' },
   between: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: t.headGap },
   center: { alignItems: 'center' },
@@ -1755,6 +1796,7 @@ function makeStyles(t: CourtTokens) {
   partBold: { fontFamily: font.appSemi, color: c.ink },
   cellIconRight: { justifyContent: 'center' },
   cellRight: { alignItems: 'flex-end' },
+  cellPlain: { fontFamily: font.appBody },
   cellValueSmall: { fontSize: t.cellSmallSize },
   cellShade: { backgroundColor: c.tileGrey },
   cellDisc: { width: t.cellDisc, height: t.cellDisc, borderRadius: t.cellDisc / 2, backgroundColor: c.card, alignItems: 'center', justifyContent: 'center' },
@@ -1801,6 +1843,10 @@ function makeStyles(t: CourtTokens) {
   metaGood: { gap: t.pillGap, marginTop: t.docMetaTop },
   metaGoodText: { marginTop: 0, color: status.active, fontFamily: font.appSemi },
   docSquarePanel: { backgroundColor: c.tileGrey },
+  docOutlined: { backgroundColor: c.panel, borderWidth: 1, borderColor: c.rail },
+  bigActions: { marginTop: t.bigActionsTop, gap: t.bigActionsGap },
+  bigAction: { minHeight: t.bigActionH, borderRadius: t.bigActionRadius, backgroundColor: c.helpGrey, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: t.pillGap * 2 },
+  bigActionText: { fontFamily: font.appSemi, fontSize: t.bigActionSize, color: c.ink },
   docSquareRed: { backgroundColor: c.helpGrey },
   docRightCol: { minWidth: t.docRightMin, alignItems: 'flex-end', alignSelf: 'flex-start' },
   docBelow: { alignSelf: 'flex-end', marginTop: t.docBelowTop, minHeight: t.docBelowH, borderRadius: t.docBelowH / 2, paddingHorizontal: t.docBelowPadX, backgroundColor: c.panel, flexDirection: 'row', alignItems: 'center', gap: t.pillGap },
@@ -2100,6 +2146,7 @@ function makeStyles(t: CourtTokens) {
 
   bar: { height: t.barH, borderRadius: t.barH / 2, marginHorizontal: t.barGap / 2 },
   barLabelRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: t.barIconGap, marginTop: t.barLabelTop },
+  barSubDone: { fontFamily: font.appSemi },
   barTile: { borderRadius: t.panelRadius, padding: t.panelPad / 2, backgroundColor: c.panel },
   barLabel: { fontFamily: font.appBody, fontSize: t.barLabelSize, color: c.inkWarm, textAlign: 'center' },
   barChip: { borderRadius: t.headTileRadius, padding: t.barGap * 2, backgroundColor: c.panel, textAlign: 'left' },
@@ -2139,7 +2186,9 @@ function makeStyles(t: CourtTokens) {
 
   upload: { alignItems: 'center', borderRadius: t.panelRadius, paddingHorizontal: t.cardPad, paddingVertical: t.uploadPadY, backgroundColor: c.panel, gap: t.uploadGap },
   uploadInlineTitle: { fontSize: t.uploadInlineSize, color: c.inkWarm },
+  uploadDiscGrey: { backgroundColor: c.helpGrey },
   uploadDisc: { width: t.headTile + 8, height: t.headTile + 8, borderRadius: t.headTile, backgroundColor: c.peach, alignItems: 'center', justifyContent: 'center' },
+  uploadPill: { marginTop: t.uploadPillTop },
   uploadBtn: { alignSelf: 'stretch', marginTop: t.cardInnerGap },
 
   quoteBox: { borderRadius: t.panelRadius, paddingHorizontal: t.quoteBoxPadX, paddingVertical: t.panelPad, backgroundColor: c.panel },

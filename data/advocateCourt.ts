@@ -1970,3 +1970,144 @@ export const COURT_CASE_FILED: CourtSpec = {
   footer: [{ label: '+ Add First Hearing', icon: 'plus', to: R('hearing/add') }],
   footerNote: 'Tap to enter the court hearing date when received',
 };
+
+// ── designs 385 / 386 — process fee (District Court), before and after payment
+// One layout drawn twice. ⚠ UNSCOPED — Send Process Fee Request (385) sends
+// nothing; Process Fee Completed (386) is drawn state; the receipt upload,
+// View and Replace do nothing. ⚠ "Client Will See" is STATIC sample content,
+// not a live render of the form. ⚠ No drawn control leads to either: 385 has
+// no entry, and 386 is the same screen after a payment nothing records.
+// ⚠ CONFLICT 4 / 16 — a WP/ case number and a High Court filing number on
+// this District Court case. ⚠ CONFLICT 6 — "Step 1 of 3 Active" / "3 of 3".
+// ⚠ 385's Description box clips its last line in the export; here it grows.
+// ⚠ CONFLICT 8 — "Bhatta" (a process-fee term) and Abhishek Verma again.
+const processFee = (paid: boolean): CourtSpec => ({
+  title: 'Process Fee',
+  headerPill: { pill: CASE.dc, tone: 'peach' },
+  sub: CASE.dcRep,
+  blocks: [
+    {
+      k: 'card',
+      head: { icon: 'folderOpen', title: 'Case Details', size: 'caseHeadSize', right: { pill: 'Pre-filled • Read Only', tone: 'help', icon: 'lock' } },
+      blocks: [
+        {
+          k: 'grid',
+          boxed: 'panel',
+          top: 'gridTop',
+          cells: [
+            { label: 'Client', value: CASE.client },
+            { label: 'Case Type', value: 'Civil Suit' },
+            { label: 'Case Title', value: CASE.title, wide: true },
+            { label: 'Court', value: 'District Court, Indore', wide: true, plain: true },
+            { label: 'Case Number', value: CASE.caseNo, plain: true },
+            { label: 'Filing Number', value: CASE.filingNo, plain: true },
+            { label: 'Assigned Advocate', value: 'Adv. Abhishek Verma', wide: true, tone: 'brown' },
+          ],
+        },
+        { k: 'text', icon: 'info', iconSize: 'infoIcon', t: 'These details are automatically imported from the court filing record. You do not need to re-type them.', tone: 'small', top: 'importTop' },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'reqCardTop',
+      head: { icon: 'receipt', tile: 'peach', title: 'Process Fee Request', size: 'reqHeadSize', sub: "Enter details for the client's payment request" },
+      blocks: [
+        { k: 'field', label: 'Request Heading', req: true, reqPlain: true, right: 'Bhatta / Notice', value: 'Process fee for court notice (Bhatta)', hint: 'Clear title explaining what this fee covers.', top: 'firstFieldTop' },
+        {
+          k: 'field',
+          label: 'Description',
+          req: true,
+          reqPlain: true,
+          value: 'Process fee required to issue and serve formal court summons to respondent Amit Verma through district nazarat / court process server.',
+          multiline: true,
+          hint: 'Explain the court step to the client in simple words.',
+          top: 'fieldGap',
+        },
+        { k: 'field', label: 'Process Fee Amount', req: true, reqPlain: true, prefix: '₹', value: '850', hint: 'Enter exact statutory / court process fee required for this step.', top: 'fieldGap' },
+      ],
+    },
+    {
+      k: 'card',
+      tone: 'panel',
+      top: 'previewCardTop',
+      head: { icon: 'eye', title: 'Client Will See', size: 'reqHeadSize', right: { pill: 'Interactive Preview', tone: 'help' } },
+      blocks: [
+        {
+          k: 'card',
+          top: 'previewTop',
+          pad: 'previewPad',
+          blocks: [
+            {
+              k: 'lead',
+              pill: { pill: 'Notice Fee', tone: 'peach' },
+              right: paid ? { pill: 'Payment Received', tone: 'solidGreen', icon: 'checkCircle' } : { pill: 'Payment Pending', tone: 'redSoft', dot: true },
+            },
+            { k: 'text', t: 'Process fee for court notice (Bhatta)', tone: 'title', maxW: 'previewTitleMax', top: 'previewTitleTop' },
+            { k: 'banner', tone: 'grey', text: 'Process fee required to issue and serve formal court summons to respondent Amit Verma through district nazarat / court process server.', top: 'previewTextTop' },
+            { k: 'amount', label: 'Total Payable', value: '₹850', suffix: '(statutory court charges)', suffixBeside: true, side: ['Requested by', 'Adv. Abhishek Verma'], top: 'previewAmountTop' },
+          ],
+        },
+        { k: 'text', t: 'This preview updates live so you can verify how the client receives the notice.', tone: 'center', size: 'previewNoteSize', top: 'previewNoteTop' },
+      ],
+    },
+    paid
+      ? { k: 'button', btn: { label: 'Process Fee Completed ✓', icon: 'badgeCheck', variant: 'green' }, top: 'sendTop' }
+      : { k: 'button', btn: { label: 'Send Process Fee Request', iconRight: 'sendIcon' }, top: 'sendTop' },
+    {
+      k: 'text',
+      icon: 'checkCircle',
+      iconGreen: true,
+      iconSize: 'infoIcon',
+      t: paid ? 'Payment of ₹850 confirmed & receipt stored in case registry.' : 'The client will be notified immediately via app and SMS.',
+      tone: 'small',
+      size: 'sendNoteSize',
+      centerRow: !paid,
+      top: 'sendNoteTop',
+    },
+    {
+      k: 'card',
+      top: 'lifeTop',
+      head: paid
+        ? { title: 'Service Workflow Lifecycle', size: 'reqHeadSize', right: { pill: '3 of 3 Completed', tone: 'greenTile', icon: 'check' } }
+        : { title: 'Service Workflow Lifecycle', size: 'reqHeadSize', right: 'Step 1 of 3 Active' },
+      blocks: [
+        {
+          k: 'bars',
+          variant: 'tiles',
+          top: 'tilesTop',
+          steps: paid
+            ? [
+                { label: '1. Draft & Sent', sub: 'Done ✓', state: 'done' },
+                { label: '2. Payment', sub: '₹850 Paid', state: 'done' },
+                { label: '3. Receipt', sub: 'Uploaded ✓', state: 'done' },
+              ]
+            : [
+                { label: '1. Draft & Send', sub: 'Ready', state: 'done' },
+                { label: '2. Payment', sub: 'Pending', state: 'current', icon: 'clock' },
+                { label: '3. Receipt', sub: 'Locked', state: 'todo', icon: 'fileLock' },
+              ],
+        },
+        paid
+          ? { k: 'label', text: 'Process Fee Receipt', title: true, right: { pill: 'Receipt Uploaded ✓', tone: 'solidGreen', icon: 'checkCircle' }, top: 'receiptLabelTop' }
+          : { k: 'label', text: 'Receipt Upload', title: true, right: { pill: 'Advocate Only', tone: 'help', icon: 'lock' }, top: 'receiptLabelTop' },
+        { k: 'text', t: paid ? 'Upload the receipt after the process fee is paid.' : 'Receipt can be uploaded once client payment is confirmed by backend.', tone: 'small', top: 'receiptTextTop' },
+        paid
+          ? {
+              k: 'docs',
+              tiles: true,
+              tileTone: 'peach',
+              outlined: true,
+              top: 'uploadTop',
+              items: [{ name: 'Process_Fee_Receipt.pdf', meta: '2.1 MB • Uploaded Just Now • PDF Document', icon: 'file', bigActions: ['View', 'Replace'] }],
+            }
+          : { k: 'upload', icon: 'cloudUpload', greyDisc: true, title: 'Process_Fee_Receipt.pdf', sub: 'Supported formats: PDF, JPG, PNG (Max 5MB)', pill: { pill: 'Awaiting Client Transfer', tone: 'help' }, top: 'uploadTop' },
+        ...(paid ? [{ k: 'text' as const, t: 'Supported: PDF, JPG, PNG (Max 5MB)', tone: 'small' as const, top: 'supportedTop' }] : []),
+        { k: 'text', icon: 'shieldCheck', iconSize: 'infoIcon', t: 'Official Court Process Fee • Logged in District Court Case Registry', tone: 'small', top: 'officialTop' },
+      ],
+    },
+    ...(paid ? [{ k: 'button' as const, btn: { label: 'Back to Case', icon: 'file' as const, back: true }, top: 'backTop' }] : []),
+  ],
+});
+
+export const COURT_PROCESS_FEE = processFee(false);
+export const COURT_PROCESS_FEE_DONE = processFee(true);

@@ -89,7 +89,10 @@ export type IconName =
   | 'chatQuote'
   | 'lightbulb'
   | 'fileUp'
-  | 'folderCheck';
+  | 'folderCheck'
+  | 'cloudUpload'
+  | 'sendIcon'
+  | 'fileLock';
 
 export type Tone =
   | 'green'
@@ -111,6 +114,7 @@ export type Tone =
   | 'tilePeach'
   | 'approvedPill'
   | 'solidGreen'
+  | 'redSoft'
   | 'red'
   | 'brown'
   | 'blue'
@@ -252,11 +256,11 @@ type BlockBody =
     }
   | { k: 'lead'; pill?: Pill; /** Text straight after the pill (377's Step 5 of 10). */ pillNote?: string; right?: Right; title?: string; text?: string }
   | { k: 'label'; text: string; right?: Right; pills?: Pill[]; icon?: IconName; /** The large ink caps of 374's section titles. */ strong?: boolean; /** A sentence-case section title (376). */ title?: boolean; /** A green dot before it (364). */ dot?: boolean; /** Inset from the gutter (364's MATTER BRIEFING). */ inset?: boolean }
-  | { k: 'text'; t?: string; parts?: { t: string; bold?: boolean; muted?: boolean }[]; /** A pill after the text (371's Civil). */ pill?: Pill; /** Token for its type size. */ size?: string; /** Token for its icon size. */ iconSize?: string; iconGreen?: boolean; tone?: 'body' | 'muted' | 'small' | 'smallStrong' | 'kicker' | 'quote' | 'center' | 'strong' | 'green' | 'title' | 'label' | 'note'; icon?: IconName }
+  | { k: 'text'; t?: string; parts?: { t: string; bold?: boolean; muted?: boolean }[]; /** A pill after the text (371's Civil). */ pill?: Pill; /** Token for its type size. */ size?: string; /** Token for its icon size. */ iconSize?: string; iconGreen?: boolean; /** Token for a max width (385's narrow title). */ maxW?: string; /** Icon and text centred as a group (385). */ centerRow?: boolean; tone?: 'body' | 'muted' | 'small' | 'smallStrong' | 'kicker' | 'quote' | 'center' | 'strong' | 'green' | 'title' | 'label' | 'note'; icon?: IconName }
   | { k: 'rows'; rows: [string, string, ('mono' | 'monoBrown' | 'brown' | 'bold' | 'green' | 'quote')?][]; divided?: boolean }
   | {
       k: 'grid';
-      cells: { label: string; value: string; sub?: string; tone?: 'green' | 'mono' | 'muted'; wide?: boolean; icon?: IconName; sideIcon?: IconName; iconRight?: IconName; /** tileGrey, not panel (376). */ shade?: boolean; alignRight?: boolean; small?: boolean; /** A white disc with an icon at the right (376). */ iconDisc?: IconName }[];
+      cells: { label: string; value: string; sub?: string; tone?: 'green' | 'mono' | 'muted' | 'brown'; wide?: boolean; icon?: IconName; sideIcon?: IconName; iconRight?: IconName; /** tileGrey, not panel (376). */ shade?: boolean; alignRight?: boolean; small?: boolean; /** A regular-weight value (385). */ plain?: boolean; /** A white disc with an icon at the right (376). */ iconDisc?: IconName }[];
       /** 'cells': a panel per cell. 'columns': one panel per column (363). 'panel': one panel round all (363's phone/email). */
       boxed?: 'cells' | 'columns' | 'panel';
       /** Capitalised labels (370). */
@@ -323,11 +327,15 @@ type BlockBody =
         metaGood?: string;
         /** A small button under the row, at the right (382). */
         btnBelow?: string;
+        /** Two full-width buttons under the row (386). */
+        bigActions?: string[];
       }[];
       /** The square tile's fill: 'wallet' = advWalletPalette.tile (379). */
       tileTone?: 'wallet' | 'peach';
       /** A grey tile with the red PDF glyph (382). */
       redTile?: boolean;
+      /** White rows with a hairline (386). */
+      outlined?: boolean;
       /** Icons in grey discs on the panel rows (375). */
       discs?: boolean;
       /** Each a white card with a grey square icon tile (376). */
@@ -361,6 +369,8 @@ type BlockBody =
       prefix?: string;
       /** A hairline round the box (377's note). */
       bordered?: boolean;
+      /** An ink asterisk, not red (385). */
+      reqPlain?: boolean;
       /** The larger amount entry (380). */
       big?: boolean;
     }
@@ -368,7 +378,7 @@ type BlockBody =
   | { k: 'choices'; items: { label: string; sub?: string; selected?: boolean; right?: Right; /** A green dot at the right (379). */ dot?: boolean }[] }
   | { k: 'segment'; label?: string; items: string[]; selected: number }
   | { k: 'check'; title: string; sub?: string; checked: boolean; blocks?: Block[]; /** Tapping it toggles the screen's gate (375). */ gate?: boolean }
-  | { k: 'bars'; steps: { label: string; state: 'done' | 'current' | 'todo' | 'bad'; sub?: string }[]; variant?: 'bars' | 'discs' | 'tiles' | 'chips' }
+  | { k: 'bars'; steps: { label: string; state: 'done' | 'current' | 'todo' | 'bad'; sub?: string; /** An icon in the tile's disc (385). */ icon?: IconName }[]; variant?: 'bars' | 'discs' | 'tiles' | 'chips' }
   | { k: 'numbered'; items: string[]; /** Grey number discs (384). */ grey?: boolean }
   | { k: 'banner'; icon?: IconName; title?: string; text: string; /** A brown dot at the right (373). */ dot?: boolean; center?: boolean; titleBrown?: boolean; strongText?: boolean; parts?: { t: string; bold?: boolean }[]; tone: 'grey' | 'cream' | 'green' | 'white' | 'none' | 'red' | 'help' }
   | { k: 'pills'; items: Pill[]; /** Bordered chips (377's documents). */ outline?: boolean }
@@ -392,8 +402,10 @@ type BlockBody =
       /** The label in caps (381). */
       capsLabel?: boolean;
       suffixGreen?: boolean;
+      /** The suffix beside the value, in two muted lines (385). */
+      suffixBeside?: boolean;
     }
-  | { k: 'upload'; title: string; sub?: string; btn?: Btn; icon?: IconName; /** Icon beside the title, not above (380). */ inline?: boolean }
+  | { k: 'upload'; title: string; sub?: string; btn?: Btn; icon?: IconName; /** Icon beside the title, not above (380). */ inline?: boolean; pill?: Pill; /** A grey disc (385). */ greyDisc?: boolean }
   | { k: 'quote'; t: string }
   | { k: 'chips'; items: Btn[]; tiles?: boolean; /** Grey buttons spread across the row (364). */ spread?: boolean }
   | { k: 'info'; icon: IconName; label: string; value: string }
