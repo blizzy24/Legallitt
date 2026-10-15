@@ -2328,7 +2328,7 @@ function makeStyles(t: CourtTokens) {
   upload: { alignItems: 'center', borderRadius: t.panelRadius, paddingHorizontal: t.cardPad, paddingVertical: t.uploadPadY, backgroundColor: c.panel, gap: t.uploadGap },
   uploadInlineTitle: { fontSize: t.uploadInlineSize, color: c.inkWarm },
   uploadDiscGrey: { backgroundColor: c.helpGrey },
-  uploadDisc: { width: t.headTile + 8, height: t.headTile + 8, borderRadius: t.headTile, backgroundColor: c.peach, alignItems: 'center', justifyContent: 'center' },
+  uploadDisc: { width: t.uploadDisc || t.headTile + 8, height: t.uploadDisc || t.headTile + 8, borderRadius: t.uploadDisc || t.headTile, backgroundColor: c.peach, alignItems: 'center', justifyContent: 'center' },
   uploadPill: { marginTop: t.uploadPillTop },
   uploadBtn: { alignSelf: 'stretch', marginTop: t.cardInnerGap },
 

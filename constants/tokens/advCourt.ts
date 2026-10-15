@@ -161,6 +161,8 @@ export const advCourt = {
   checkBareGap: 8,
   /** The least width a heading's title keeps beside its right part (391). */
   headTitleMin: 0,
+  /** The upload disc; 0 = headTile + 8 (393 draws it larger). */
+  uploadDisc: 0,
   /** A tight button's side padding (391). */
   tightPadX: 6,
   /** A choice row's vertical padding (391 draws them squat). */
@@ -2285,4 +2287,43 @@ export const advCourtNextHearing = {
   footerPadBottom: 26.5,
   footerStackGap: 11,
   footerBtnSize: 17,
+};
+
+/** design/393 — client changed advocate. */
+export const advCourtChangeAdvocate = {
+  headerPadTop: 21,
+  headerSubSize: 11.5,
+  top: 24,
+  pillSize: 11,
+  stripPad: 10,
+  sectionTop: 16,
+  secHeadSize: 17.6,
+  leadSubSize: 14,
+  leadSubSizeLine: 21,
+  stagePad: 8,
+  stagePillMax: 90,
+  reqPillMax: 110,
+  innerTop: 12,
+  innerGap: 10,
+  innerPad: 10,
+  askTop: 8,
+  bodySize: 14,
+  bodySizeLine: 21,
+  uploadBtnH: 50,
+  nextSize: 14,
+  nextSizeLine: 23,
+  nextTop: -5,
+  smallSize: 11.5,
+  headDisc: 40,
+  headDiscIcon: 18,
+  headTileGap: 12,
+  uploadPadY: 24,
+  uploadGap: 8,
+  labelSize: 12,
+  gridRowGap: 13,
+  kvSize: 12,
+  secHeadSizeLine: 24,
+  uploadDisc: 56,
+  headIcon: 20,
+  caseTop: 9,
 };

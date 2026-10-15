@@ -3001,3 +3001,116 @@ export const COURT_NEXT_HEARING: CourtSpec = {
   // ⚠ UNSCOPED — Save as Draft draws as text and saves nothing.
   footerLinks: [{ t: 'Updates case record & alerts client' }, { t: 'Save as Draft' }],
 };
+
+// ── design/393 — client changed advocate ─────────────────────────────────────
+// ⚠ No drawn control leads here (dev preview). ⚠ UNSCOPED — both Upload NOC
+// buttons (uploads are static per scope, so 394 has no drawn way in either),
+// Chat with Client. ⚠ CONFLICT 4 — DC-2026-1048 and District Court
+// Representation on the WP/2026/09876 High Court matter. ⚠ CONFLICT 8 — the
+// current advocate is "Abhishek Verma"; 388 names the judge "Justice Verma".
+export const COURT_CHANGE_ADVOCATE: CourtSpec = {
+  // The line break is the export's own; the chip sits beside both lines.
+  title: 'Client Changed\nAdvocate',
+  headerPill: { pill: CASE.dc, tone: 'peach' },
+  sub: CASE.dcRep,
+  avatar: true,
+  blocks: [
+    {
+      k: 'card',
+      tone: 'panel',
+      outline: true,
+      pad: 'stripPad',
+      blocks: [{ k: 'label', text: 'ADVOCATE CHANGE • HANDOVER STEP', dot: true, right: { link: 'Record Protected', icon: 'shieldCheck', muted: true, mutedIcon: true } }],
+    },
+    {
+      k: 'card',
+      top: 'sectionTop',
+      head: { icon: 'swap', tile: 'disc', title: 'Client Requested a New Advocate', size: 'secHeadSize', sub: 'The client has requested to change the advocate for this ongoing case.', subSize: 'leadSubSize', topAlign: true },
+      blocks: [
+        {
+          k: 'card',
+          tone: 'panel',
+          pad: 'stagePad',
+          top: 'innerTop',
+          blocks: [
+            {
+              k: 'pills',
+              items: [
+                { pill: 'Change Request', tone: 'brown', maxW: 'stagePillMax', lg: true },
+                { pill: 'Admin Approved', tone: 'greenTile', icon: 'checkCircle', maxW: 'stagePillMax', lg: true },
+                { pill: 'Action Required', tone: 'panel', maxW: 'stagePillMax', lg: true },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'sectionTop',
+      head: { icon: 'clipboardCheck', title: 'NOC / Consent Document', size: 'secHeadSize', right: { pill: 'Required • Not Uploaded', tone: 'peach', maxW: 'reqPillMax' } },
+      blocks: [
+        { k: 'text', t: 'Please upload the No Objection Certificate (NOC) or written consent required for the advocate handover.', size: 'bodySize', top: 'askTop' },
+        // ⚠ UNSCOPED — no file picker; nothing uploads.
+        { k: 'upload', icon: 'fileUp', title: 'Upload Scanned NOC Document', sub: 'Supported: PDF, JPG, PNG (Max 10 MB)', btn: { label: '+ Upload NOC', icon: 'plusCircle', h: 'uploadBtnH' }, top: 'innerTop' },
+        { k: 'banner', tone: 'grey', icon: 'info', text: `The uploaded NOC will be shared directly with ${CASE.client} and Legalitt Admin to complete the formal handover.`, top: 'innerGap' },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'caseTop',
+      head: { title: 'Case Details', size: 'secHeadSize', right: { pill: CASE.caseNo, tone: 'help' } },
+      blocks: [
+        {
+          k: 'grid',
+          top: 'innerTop',
+          cells: [
+            { label: 'Client', value: CASE.client },
+            { label: 'Case Type', value: 'Civil' },
+            { label: 'Case Matter', value: CASE.title, wide: true },
+            { label: 'Current Advocate', value: 'Abhishek Verma' },
+            { label: 'Last Hearing', value: '25 Oct 2026 (Done)' },
+          ],
+        },
+        { k: 'grid', boxed: 'cells', top: 'innerGap', cells: [{ label: 'Next Scheduled Hearing', value: '10 November 2026 • 11:30 AM', sideIcon: 'calendar', wide: true }] },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'sectionTop',
+      // The line break is the export's own.
+      head: { title: 'Change Advocate\nRequest', size: 'secHeadSize', right: { pill: 'Admin Approved', tone: 'greenTile', icon: 'checkCircle', maxW: 'stagePillMax' } },
+      blocks: [
+        {
+          k: 'rows',
+          top: 'innerTop',
+          rows: [
+            ['Requested By', `Client (${CASE.client})`, 'bold'],
+            ['Request Date', '28 October 2026'],
+          ],
+        },
+        { k: 'card', tone: 'panel', pad: 'innerPad', top: 'innerGap', blocks: [{ k: 'rows', rows: [['Reason Stated', '"I want a different advocate"', 'quote']] }] },
+      ],
+    },
+    {
+      k: 'card',
+      tone: 'cream',
+      top: 'sectionTop',
+      head: { icon: 'flag', tile: 'brown', title: 'Next Step', size: 'secHeadSize', topAlign: true },
+      indent: true,
+      blocks: [{ k: 'text', t: 'Upload the NOC document to proceed with the handover. Once sent, Legalitt Admin assigns the new counsel cleanly without procedural delay.', size: 'nextSize', top: 'nextTop' }],
+    },
+    {
+      k: 'card',
+      top: 'sectionTop',
+      blocks: [
+        { k: 'card', tone: 'panel', pad: 'innerPad', blocks: [{ k: 'rows', rows: [['Client Status', 'Waiting for Advocate Change', 'bold']] }] },
+        { k: 'text', t: 'Case communication remains open during handover transition:', tone: 'small', top: 'innerTop' },
+        // ⚠ UNSCOPED — no chat.
+        { k: 'button', btn: { label: 'Chat with Client', icon: 'chat', variant: 'help' }, top: 'innerGap' },
+      ],
+    },
+  ],
+  footer: [{ label: 'Upload NOC', icon: 'fileUp' }],
+  footerLinks: [{ icon: 'lock', t: 'Official Legalitt Handover • Past filings and orders remain preserved' }],
+};

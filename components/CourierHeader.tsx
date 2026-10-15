@@ -129,7 +129,8 @@ export default function CourierHeader({
 const styles = StyleSheet.create({
   bar: { backgroundColor: h.bg },
   row: {
-    height: h.height,
+    // minHeight, not height: a wrapped court title (design/393) grows the bar.
+    minHeight: h.height,
     paddingHorizontal: h.padX,
     flexDirection: 'row',
     alignItems: 'center',
