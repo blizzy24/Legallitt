@@ -76,7 +76,8 @@ export type IconName =
   | 'folders'
   | 'calendarCheck'
   | 'badgeCheck'
-  | 'scroll';
+  | 'scroll'
+  | 'inbox';
 
 export type Tone =
   | 'green'
@@ -91,6 +92,7 @@ export type Tone =
   | 'sand'
   | 'panelGreen'
   | 'greyGreen'
+  | 'greenTile'
   | 'red'
   | 'brown'
   | 'blue'
@@ -154,6 +156,8 @@ export type Head = {
   rightTop?: boolean;
   /** A green icon straight after the title (376's verified badge). */
   titleIcon?: IconName;
+  /** Token for this head's title size (377 draws two sizes). */
+  size?: string;
 };
 
 export type Step = {
@@ -164,6 +168,8 @@ export type Step = {
   right?: Right;
   /** Sub-line in green (378, 384 draw "Completed" green; 371 draws it grey). */
   subGreen?: boolean;
+  /** A pill straight after the title (377's Current). */
+  tag?: Pill;
 };
 
 /**
@@ -192,7 +198,7 @@ type BlockBody =
       /** The pill under the sub-line, not above the title (376). */
       pillBelow?: boolean;
     }
-  | { k: 'lead'; pill?: Pill; right?: Right; title?: string; text?: string }
+  | { k: 'lead'; pill?: Pill; /** Text straight after the pill (377's Step 5 of 10). */ pillNote?: string; right?: Right; title?: string; text?: string }
   | { k: 'label'; text: string; right?: Right; pills?: Pill[]; /** The large ink caps of 374's section titles. */ strong?: boolean; /** A sentence-case section title (376). */ title?: boolean; /** A green dot before it (364). */ dot?: boolean; /** Inset from the gutter (364's MATTER BRIEFING). */ inset?: boolean }
   | { k: 'text'; t?: string; parts?: { t: string; bold?: boolean; muted?: boolean }[]; /** A pill after the text (371's Civil). */ pill?: Pill; /** Token for its type size. */ size?: string; /** Token for its icon size. */ iconSize?: string; tone?: 'body' | 'muted' | 'small' | 'quote' | 'center' | 'strong' | 'green' | 'title' | 'label'; icon?: IconName }
   | { k: 'rows'; rows: [string, string, ('mono' | 'bold' | 'green' | 'quote')?][]; divided?: boolean }
@@ -229,7 +235,17 @@ type BlockBody =
       metaStrong?: boolean;
       right?: Right;
     }
-  | { k: 'timeline'; steps: Step[]; boxed?: boolean; /** No rail between discs (370). */ noRail?: boolean; /** Dark-green done discs (371). */ deep?: boolean }
+  | {
+      k: 'timeline';
+      steps: Step[];
+      boxed?: boolean;
+      /** No rail between discs (370). */
+      noRail?: boolean;
+      /** Dark-green done discs (371). */
+      deep?: boolean;
+      /** Pale green done discs on a green rail, a brown current disc (377). */
+      light?: boolean;
+    }
   | {
       k: 'docs';
       items: { name: string; meta?: string; icon?: IconName; right?: Right | 'tick' | 'circleTick' | 'ring'; btn?: string; actions?: string[] }[];
@@ -245,6 +261,8 @@ type BlockBody =
       k: 'checklist';
       /** Each item a white card of its own (374). */
       cards?: boolean;
+      /** Pale green done discs, a ring for not started (377). */
+      light?: boolean;
       items: { title: string; tag?: Pill; sub?: string; state: 'done' | 'info' | 'none' | 'progress'; right?: Right; edit?: boolean; icon?: IconName }[];
     }
   | {
@@ -260,6 +278,8 @@ type BlockBody =
       hint?: string;
       foot?: [string, string];
       prefix?: string;
+      /** A hairline round the box (377's note). */
+      bordered?: boolean;
     }
   | { k: 'fieldRow'; fields: { label: string; req?: boolean; value?: string; placeholder?: string; icon?: IconName }[] }
   | { k: 'choices'; items: { label: string; sub?: string; selected?: boolean; right?: Right }[] }
@@ -268,7 +288,9 @@ type BlockBody =
   | { k: 'bars'; steps: { label: string; state: 'done' | 'current' | 'todo' | 'bad'; sub?: string }[]; variant?: 'bars' | 'discs' | 'tiles' | 'chips' }
   | { k: 'numbered'; items: string[] }
   | { k: 'banner'; icon?: IconName; title?: string; text: string; /** A brown dot at the right (373). */ dot?: boolean; center?: boolean; parts?: { t: string; bold?: boolean }[]; tone: 'grey' | 'cream' | 'green' | 'white' | 'none' | 'red' }
-  | { k: 'pills'; items: Pill[] }
+  | { k: 'pills'; items: Pill[]; /** Bordered chips (377's documents). */ outline?: boolean }
+  | { k: 'progress'; value: number }
+  | { k: 'noteRow'; icon: IconName; t: string; btn: string }
   | { k: 'button'; btn: Btn }
   | { k: 'buttonRow'; btns: Btn[] }
   | {

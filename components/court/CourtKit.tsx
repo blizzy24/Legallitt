@@ -29,6 +29,7 @@ import {
   Headset,
   History,
   IdCard,
+  Inbox,
   Info,
   LayoutGrid,
   Mail,
@@ -90,7 +91,8 @@ import {
   dcDocumentsPalette,
   dcPricingPalette,
   dcShipmentPalette,
-  dcStepperPalette, font, hcPalette as c, ink, status } from '../../constants/theme';
+  dcStepperPalette,
+  firStep2, font, hcPalette as c, ink, status } from '../../constants/theme';
 import type { Block, Btn, CourtSpec, Head, IconName, Pill, Right, Step, Tone } from './types';
 
 // The section kit of the advocate court batch (designs 362–396). One renderer
@@ -197,6 +199,7 @@ const ICONS: Record<IconName, LucideIcon> = {
   calendarCheck: CalendarCheck,
   badgeCheck: BadgeCheck,
   scroll: ScrollIcon,
+  inbox: Inbox,
 };
 
 export function Icon({ name, size, color, sw = 2 }: { name: IconName; size: number; color: string; sw?: number }) {
@@ -217,6 +220,7 @@ const TONES: Record<Tone, { bg: string; fg: string }> = {
   sand: { bg: q.kickerSand, fg: c.brownInk },
   panelGreen: { bg: c.panel, fg: c.greenInk },
   greyGreen: { bg: c.tileGrey, fg: c.greenInk },
+  greenTile: { bg: c.greenTile, fg: c.greenInk },
   red: { bg: status.redContainer, fg: status.onRedContainer },
   brown: { bg: c.brown, fg: ink.onBrand },
   blue: { bg: c.blueTile, fg: c.blueInk },
@@ -227,11 +231,11 @@ const TONES: Record<Tone, { bg: string; fg: string }> = {
 
 const isPill = (r: unknown): r is Pill => typeof r === 'object' && r !== null && 'pill' in r;
 
-export function PillTag({ p }: { p: Pill }) {
+export function PillTag({ p, outline }: { p: Pill; outline?: boolean }) {
   const { t, s } = useK();
   const tone = TONES[p.tone];
   return (
-    <View style={[s.pill, p.lg && s.pillLg, { backgroundColor: tone.bg }]}>
+    <View style={[s.pill, p.lg && s.pillLg, outline && s.pillOutline, { backgroundColor: tone.bg }]}>
       {p.dot ? <View style={[s.pillDot, { backgroundColor: p.tone === 'green' ? status.active : tone.fg }]} /> : null}
       {p.icon ? <Icon name={p.icon} size={t.pillSize} color={tone.fg} /> : null}
       <Text style={[s.pillText, p.mono && s.mono, p.mono && s.pillMono, { color: tone.fg }]}>{p.pill}</Text>
@@ -314,7 +318,11 @@ function HeadRow({ h }: { h: Head }) {
             </View>
           ) : null}
           <View style={[s.row, s.wrap]}>
-            {h.title ? <Text style={[h.caps ? s.caps : s.headTitle, h.small && s.capsSmall, h.tone === 'red' && s.red]}>{h.title}</Text> : null}
+            {h.title ? (
+              <Text style={[h.caps ? s.caps : s.headTitle, h.small && s.capsSmall, h.tone === 'red' && s.red, h.size !== undefined && { fontSize: t[h.size] }]}>
+                {h.title}
+              </Text>
+            ) : null}
             {h.titleIcon ? (
               <View style={s.titleBadge}>
                 <Check size={t.titleBadgeGlyph} color={ink.onBrand} strokeWidth={3.4} />
@@ -370,8 +378,26 @@ export function Button({ b, flex, footer }: { b: Btn; flex?: boolean; footer?: b
   );
 }
 
-function Disc({ state, deep }: { state: Step['state']; deep?: boolean }) {
+function Disc({ state, deep, light }: { state: Step['state']; deep?: boolean; light?: boolean }) {
   const { t, s } = useK();
+  if (light && state === 'done')
+    return (
+      <View style={[s.disc, { backgroundColor: c.greenTile }]}>
+        <Check size={t.stepGlyph} color={c.greenInk} strokeWidth={2.6} />
+      </View>
+    );
+  if (light && state === 'current')
+    return (
+      <View style={[s.disc, { backgroundColor: c.brown }]}>
+        <View style={[s.discDot, { backgroundColor: ink.onBrand }]} />
+      </View>
+    );
+  if (light)
+    return (
+      <View style={[s.disc, { backgroundColor: c.tileGrey }]}>
+        <View style={[s.discDot, { backgroundColor: c.tagMuted }]} />
+      </View>
+    );
   if (state === 'done')
     return (
       <View style={[s.disc, { backgroundColor: deep ? c.greenInk : status.active }]}>
@@ -409,7 +435,19 @@ function Disc({ state, deep }: { state: Step['state']; deep?: boolean }) {
   );
 }
 
-function Timeline({ steps, boxed, noRail, deep }: { steps: Step[]; boxed?: boolean; noRail?: boolean; deep?: boolean }) {
+function Timeline({
+  steps,
+  boxed,
+  noRail,
+  deep,
+  light,
+}: {
+  steps: Step[];
+  boxed?: boolean;
+  noRail?: boolean;
+  deep?: boolean;
+  light?: boolean;
+}) {
   const { t, s } = useK();
   // Each row is padded by half the row gap above and below, so the disc centres
   // on its title + sub (as every timeline in the batch draws it) and the two
@@ -419,13 +457,23 @@ function Timeline({ steps, boxed, noRail, deep }: { steps: Step[]; boxed?: boole
       {steps.map((st, i) => (
         <View key={st.title} style={[s.step, boxed ? s.stepBoxed : s.stepRow]}>
           <View style={s.stepLeft}>
-            <View style={[s.railHalf, (boxed || noRail || i === 0) && s.railHidden]} />
-            <Disc state={st.state} deep={deep} />
-            <View style={[s.railHalf, (boxed || noRail || i === steps.length - 1) && s.railHidden]} />
+            {/* light (377): the rail is green between done steps. */}
+            <View style={[s.railHalf, light && i > 0 && steps[i - 1].state === 'done' && st.state === 'done' && s.railDone, (boxed || noRail || i === 0) && s.railHidden]} />
+            <Disc state={st.state} deep={deep} light={light} />
+            <View
+              style={[
+                s.railHalf,
+                light && st.state === 'done' && steps[i + 1]?.state === 'done' && s.railDone,
+                (boxed || noRail || i === steps.length - 1) && s.railHidden,
+              ]}
+            />
           </View>
           <View style={[s.flex, s.stepText, s.between]}>
             <View style={s.flex}>
-              <Text style={[s.stepTitle, st.state === 'todo' && deep && s.muted, st.state === 'accent' && s.accentTitle]}>{st.title}</Text>
+              <View style={[s.row, s.wrap, s.stepTitleRow]}>
+                <Text style={[s.stepTitle, st.state === 'todo' && deep && s.muted, st.state === 'accent' && s.accentTitle]}>{st.title}</Text>
+                {st.tag ? <PillTag p={st.tag} /> : null}
+              </View>
               {st.sub ? <Text style={[s.stepSub, st.subGreen && s.green, st.state === 'todo' && deep && s.mutedSub]}>{st.sub}</Text> : null}
             </View>
             <RightPart r={st.right} />
@@ -440,14 +488,16 @@ function Field({ b }: { b: Extract<Block, { k: 'field' }> }) {
   const { t, s } = useK();
   return (
     <View>
-      <View style={s.between}>
-        <Text style={s.fieldLabel}>
-          {b.label}
-          {b.req ? <Text style={s.req}> *</Text> : null}
-        </Text>
-        <RightPart r={b.right} />
-      </View>
-      <View style={[s.field, b.multiline && s.area]}>
+      {b.label ? (
+        <View style={s.between}>
+          <Text style={s.fieldLabel}>
+            {b.label}
+            {b.req ? <Text style={s.req}> *</Text> : null}
+          </Text>
+          <RightPart r={b.right} />
+        </View>
+      ) : null}
+      <View style={[s.field, b.multiline && s.area, b.bordered && s.fieldBordered, !b.label && s.fieldBare]}>
         {b.icon ? <Icon name={b.icon} size={t.chipIcon} color={c.inkWarm} /> : null}
         {b.prefix ? <Text style={s.fieldText}>{b.prefix}</Text> : null}
         <Text style={[s.fieldText, s.flex, !b.value && s.placeholder]}>{b.value ?? b.placeholder}</Text>
@@ -558,7 +608,10 @@ export function BlockView({ b }: { b: Block }): ReactNode {
         <View style={s.lead}>
           {b.pill && !b.title ? (
             <View style={s.between}>
-              <PillTag p={b.pill} />
+              <View style={s.row}>
+                <PillTag p={b.pill} />
+                {b.pillNote ? <Text style={s.pillNote}>{b.pillNote}</Text> : null}
+              </View>
               <RightPart r={b.right} />
             </View>
           ) : b.pill ? (
@@ -726,7 +779,7 @@ export function BlockView({ b }: { b: Block }): ReactNode {
         </View>
       );
     case 'timeline':
-      return <Timeline steps={b.steps} boxed={b.boxed} noRail={b.noRail} deep={b.deep} />;
+      return <Timeline steps={b.steps} boxed={b.boxed} noRail={b.noRail} deep={b.deep} light={b.light} />;
     case 'docs':
       return (
         <View style={s.docList}>
@@ -787,15 +840,21 @@ export function BlockView({ b }: { b: Block }): ReactNode {
       return (
         <View style={b.cards ? s.checkCards : s.docs}>
           {b.items.map((it) => (
-            <View key={it.title} style={[s.check, it.state === 'progress' && s.checkProgress, b.cards && s.checkCard]}>
+            <View key={it.title} style={[s.check, it.state === 'progress' && s.checkProgress, b.cards && s.checkCard, b.light && s.checkLight, b.light && it.state === 'progress' && s.checkLightProgress]}>
               <View
                 style={[
                   s.checkMark,
                   it.state === 'done' && { backgroundColor: b.cards ? c.greenTile : status.active },
                   b.cards && it.state === 'info' && { backgroundColor: c.tileGrey },
+                  b.light && it.state === 'progress' && { backgroundColor: c.peach },
+                  b.light && it.state === 'none' && s.checkRing,
                 ]}
               >
-                {it.state === 'done' ? (
+                {it.state === 'done' && b.light ? (
+                  <Check size={t.checkGlyph} color={c.greenInk} strokeWidth={2.6} />
+                ) : it.state === 'progress' && b.light ? (
+                  <Icon name={it.icon ?? 'note'} size={t.checkGlyph} color={c.brownInk} />
+                ) : it.state === 'done' ? (
                   b.cards ? (
                     <View style={s.checkCore}>
                       <Check size={t.checkGlyph} color={ink.onBrand} strokeWidth={3.2} />
@@ -952,7 +1011,7 @@ export function BlockView({ b }: { b: Block }): ReactNode {
       return (
         <View style={[s.row, s.wrap]}>
           {b.items.map((p) => (
-            <PillTag key={p.pill} p={p} />
+            <PillTag key={p.pill} p={p} outline={b.outline} />
           ))}
         </View>
       );
@@ -1038,6 +1097,22 @@ export function BlockView({ b }: { b: Block }): ReactNode {
               <Text style={s.contactBtnText}>{b.btn}</Text>
             </View>
           ) : null}
+        </View>
+      );
+    case 'progress':
+      return (
+        <View style={s.progress}>
+          <View style={[s.progressFill, { width: `${b.value * 100}%` }]} />
+        </View>
+      );
+    case 'noteRow':
+      return (
+        <View style={s.row}>
+          <Icon name={b.icon} size={t.noteRowIcon} color={c.inkWarm} />
+          <Text style={[s.noteRowText, s.flex]}>{b.t}</Text>
+          <View style={s.noteBtn}>
+            <Text style={s.noteBtnText}>{b.btn}</Text>
+          </View>
         </View>
       );
     case 'chip':
@@ -1410,6 +1485,11 @@ function makeStyles(t: CourtTokens) {
   contactText: { fontFamily: font.appSemi, fontSize: t.contactSize, color: c.ink },
   contactBtn: { minHeight: t.contactBtnH, borderRadius: t.contactBtnRadius, paddingHorizontal: t.contactBtnPadX, backgroundColor: c.card, justifyContent: 'center' },
   contactBtnText: { fontFamily: font.appSemi, fontSize: t.contactBtnSize, color: c.ink },
+  progress: { height: t.progressH, borderRadius: t.progressH / 2, backgroundColor: ink.badgeBg, overflow: 'hidden' },
+  progressFill: { height: t.progressH, borderRadius: t.progressH / 2, backgroundColor: status.active },
+  noteRowText: { fontFamily: font.appBody, fontSize: t.noteRowSize, lineHeight: t.noteRowLine, color: c.inkWarm },
+  noteBtn: { minHeight: t.noteBtnH, borderRadius: t.noteBtnRadius, paddingHorizontal: t.noteBtnPadX, backgroundColor: c.brown, justifyContent: 'center' },
+  noteBtnText: { fontFamily: font.appSemi, fontSize: t.noteBtnSize, lineHeight: t.noteBtnLine, color: ink.onBrand, textAlign: 'center' },
   textChip: { alignSelf: 'flex-start', borderRadius: t.textChipRadius, paddingHorizontal: t.textChipPadX, paddingVertical: t.textChipPadY, backgroundColor: c.helpGrey },
   textChipText: { fontFamily: font.appSemi, fontSize: t.textChipSize, color: c.ink },
   headTileRow: { gap: t.headTileGap },
@@ -1422,6 +1502,9 @@ function makeStyles(t: CourtTokens) {
   personKicker: { marginBottom: t.personKickerGap },
   checkCards: { gap: t.checkCardGap },
   checkCard: { alignItems: 'flex-start', borderWidth: 0, borderRadius: t.cardRadius, paddingHorizontal: t.cardPad, paddingVertical: t.checkCardPadY },
+  checkRing: { backgroundColor: c.tileGrey, borderWidth: t.checkRingW, borderColor: c.rail },
+  checkLight: { alignItems: 'center', backgroundColor: c.card },
+  checkLightProgress: { borderWidth: 1, borderColor: q.progBorder },
   checkCore: { width: t.checkCore, height: t.checkCore, borderRadius: t.checkCore / 2, backgroundColor: c.greenInk, alignItems: 'center', justifyContent: 'center' },
   editIcons: { gap: t.editGap, paddingRight: t.editPadRight, marginTop: t.editTop },
   kicker: { marginBottom: t.kickerGap },
@@ -1442,7 +1525,7 @@ function makeStyles(t: CourtTokens) {
   labelText: { fontSize: t.labelTextSize, lineHeight: t.labelTextLine },
   cellCaps: { fontFamily: font.appSemi, fontSize: t.cellCapsSize, letterSpacing: t.capsSpacing, textTransform: 'uppercase' },
   bannerTitle: { fontFamily: font.appSemi, fontSize: t.bannerTitleSize, color: c.ink },
-  bannerText: { fontFamily: font.appBody, fontSize: t.bannerSize, lineHeight: t.bannerLine, color: c.inkWarm },
+  bannerText: { marginTop: t.bannerTextTop, fontFamily: font.appBody, fontSize: t.bannerSize, lineHeight: t.bannerLine, color: c.inkWarm },
   bodyInline: {},
   inlineSwitch: { alignItems: 'center' },
   switchInline: { alignItems: 'center' },
@@ -1467,6 +1550,8 @@ function makeStyles(t: CourtTokens) {
     alignSelf: 'flex-start',
     flexShrink: 1,
   },
+  pillNote: { fontFamily: font.appSemi, fontSize: t.pillNoteSize, color: c.inkWarm },
+  pillOutline: { minHeight: t.chipPillH, paddingHorizontal: t.chipPillPadX, borderRadius: t.chipPillRadius, borderWidth: 1, borderColor: c.rail },
   pillLg: { minHeight: t.pillLgH, paddingHorizontal: t.pillLgPadX, borderRadius: t.pillLgH / 2 },
   pillDot: { width: t.pillDot, height: t.pillDot, borderRadius: t.pillDot / 2 },
   pillText: { fontFamily: font.appSemi, fontSize: t.pillSize, flexShrink: 1 },
@@ -1536,6 +1621,8 @@ function makeStyles(t: CourtTokens) {
   stepText: { paddingVertical: t.stepRowGap / 2 },
   railHalf: { flex: 1, width: t.stepRail, backgroundColor: c.helpGrey },
   railHidden: { backgroundColor: 'transparent' },
+  railDone: { backgroundColor: q.railDone },
+  stepTitleRow: { gap: t.stepTagGap },
   mutedSub: { color: c.inkMuted },
   disc: { width: t.stepDisc, height: t.stepDisc, borderRadius: t.stepDisc / 2, alignItems: 'center', justifyContent: 'center' },
   discRing: { borderWidth: t.stepRail, borderColor: c.ink, backgroundColor: c.card },
@@ -1569,7 +1656,7 @@ function makeStyles(t: CourtTokens) {
   checkProgress: { borderColor: c.peach, backgroundColor: c.peachNote },
   checkMark: { width: t.stepDisc, height: t.stepDisc, borderRadius: t.stepDisc / 2, alignItems: 'center', justifyContent: 'center' },
   checkTitle: { fontFamily: font.appSemi, fontSize: t.stepTitleSize, color: c.ink },
-  checkSub: { marginTop: t.headSubTop, fontFamily: font.appBody, fontSize: t.stepSubSize, lineHeight: t.smallLine, color: c.inkWarm },
+  checkSub: { marginTop: t.checkSubTop, fontFamily: font.appBody, fontSize: t.stepSubSize, lineHeight: t.smallLine, color: c.inkWarm },
   checkBody: { gap: t.checkBodyGap },
   checkBodyGap: { marginLeft: t.checkGap },
   checkBigTitle: { fontSize: t.checkTitleSize, lineHeight: t.checkTitleLine },
@@ -1588,8 +1675,10 @@ function makeStyles(t: CourtTokens) {
     alignItems: 'center',
     gap: t.headGap,
   },
+  fieldBordered: { borderWidth: 1, borderColor: firStep2.selectBorder },
+  fieldBare: { marginTop: 0 },
   area: { minHeight: t.areaMinH, alignItems: 'flex-start', paddingVertical: t.panelPad },
-  fieldText: { fontFamily: font.appBody, fontSize: t.fieldSize, lineHeight: t.textLine, color: c.ink },
+  fieldText: { fontFamily: font.appBody, fontSize: t.fieldSize, lineHeight: t.fieldLine, color: c.ink },
   placeholder: { color: c.inkMuted },
   hint: { fontFamily: font.appBody, fontSize: t.hintSize, color: c.inkWarm },
   hintRow: { marginTop: t.hintTop },

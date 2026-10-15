@@ -1040,3 +1040,118 @@ export const COURT_DOCS_RECEIVED: CourtSpec = {
   ],
   footerStack: true,
 };
+
+// ── design/377 — case preparation ────────────────────────────────────────────
+// Reached from Open Case on 376. ⚠ Continue is DRAWN DISABLED ("Complete all
+// preparation tasks first") and the tasks are static, so it stays disabled:
+// nothing drawn leads on to Court Filing (378) — reported as a dead end.
+// ⚠ UNSCOPED — View Documents, Save Note, the tasks.
+// ⚠ CONFLICT 6 — "Step 5 of 10" with a ten-step timeline; 370 draws five
+// steps, 371/372 four, 388 nine, 395/396 eight.
+// ⚠ Two task sub-lines are clipped at the card edge in the export; the cut
+// word is completed and marked (?).
+export const COURT_PREPARATION: CourtSpec = {
+  title: 'Case Preparation',
+  headerPill: { pill: 'In Progress', tone: 'help' },
+  blocks: [
+    {
+      k: 'lead',
+      pill: { pill: 'In Progress', tone: 'peach', dot: true },
+      pillNote: 'Step 5 of 10',
+      text: 'Prepare the petition and review evidence before court filing.',
+    },
+    {
+      k: 'card',
+      top: 'caseCardTop',
+      head: { icon: 'folder', title: CASE.hcr, right: { pill: 'Civil', tone: 'grey' } },
+      blocks: [
+        { k: 'person', initials: CASE.initials, name: CASE.client, tag: { pill: 'Client', tone: 'grey' }, sub: CASE.title, top: 'personTop' },
+        { k: 'banner', icon: 'building', tone: 'grey', title: CASE.court, text: CASE.bench, top: 'courtTop' },
+      ],
+    },
+    {
+      k: 'card',
+      head: { title: 'Documents Received', size: 'docsHeadSize', pills: [{ pill: 'Received', tone: 'greenTile', icon: 'check' }], sub: 'Total: 5 Documents attached' },
+      blocks: [
+        {
+          k: 'pills',
+          outline: true,
+          top: 'chipsTop',
+          items: [
+            { pill: 'Original Case Papers', tone: 'grey', icon: 'file' },
+            { pill: 'Court Order', tone: 'grey', icon: 'gavel' },
+            { pill: 'Identity Proof', tone: 'grey', icon: 'idCard' },
+            { pill: 'Property Papers', tone: 'grey', icon: 'building' },
+            { pill: 'Previous Vakalatnama', tone: 'grey', icon: 'scroll' },
+          ],
+        },
+        // ⚠ UNSCOPED — no document viewer.
+        { k: 'button', btn: { label: 'View Documents', icon: 'eye', variant: 'help' }, top: 'viewTop' },
+      ],
+    },
+    { k: 'label', text: 'Preparation Tasks', title: true, right: '2 of 5 Tasks Done', top: 'tasksLabelTop' },
+    { k: 'text', t: 'Complete each task before filing the case.', tone: 'small', top: 'tasksSubTop' },
+    { k: 'progress', value: 0.4, top: 'progressTop' },
+    {
+      k: 'checklist',
+      cards: true,
+      light: true,
+      top: 'tasksTop',
+      items: [
+        { title: 'Review Case', sub: 'Case details checked', state: 'done', right: { pill: 'Done', tone: 'greenTile', icon: 'check' } },
+        { title: 'Review Documents', sub: 'All client documents reviewed', state: 'done', right: { pill: 'Done', tone: 'greenTile', icon: 'check' } },
+        // ⚠ (?) clipped in the export after "court".
+        { title: 'Prepare Court Papers', sub: 'Prepare the petition and other court papers', state: 'progress', icon: 'note', right: { pill: 'In Progress', tone: 'peach' } },
+        { title: 'Check Filing Details', sub: 'Check the court and filing details.', state: 'none', right: { pill: 'Not Started', tone: 'grey' } },
+        // ⚠ (?) clipped in the export after "hear".
+        { title: 'Prepare for Hearing', sub: 'Get the case ready for the first hearing', state: 'none', right: { pill: 'Not Started', tone: 'grey' } },
+      ],
+    },
+    { k: 'label', text: 'My Notes', title: true, top: 'notesLabelTop' },
+    {
+      k: 'card',
+      top: 'notesTop',
+      blocks: [
+        { k: 'field', label: '', value: 'Property ownership papers have been checked. Previous court order also needs to be reviewed before filing.', multiline: true, bordered: true },
+        // ⚠ UNSCOPED — Save Note saves nothing.
+        // Drawn on two lines.
+        { k: 'noteRow', icon: 'lock', t: 'Only visible to you and your chamber team', btn: 'Save\nNote', top: 'noteRowTop' },
+      ],
+    },
+    { k: 'label', text: 'CASE PROGRESS', strong: true, top: 'progressLabelTop' },
+    {
+      k: 'card',
+      top: 'timelineTop',
+      blocks: [
+        {
+          k: 'timeline',
+          light: true,
+          steps: [
+            { title: 'Request Submitted', sub: 'Completed', state: 'done', subGreen: true },
+            { title: 'Advocate Accepted', sub: 'Completed', state: 'done', subGreen: true },
+            { title: 'Client Accepted', sub: 'Completed', state: 'done', subGreen: true },
+            { title: 'Documents Received', sub: 'Completed', state: 'done', subGreen: true },
+            { title: 'Case Preparation', sub: 'Active • Drafting writ petition', state: 'current', tag: { pill: 'Current', tone: 'peach' } },
+            { title: 'Court Filing', sub: 'Upcoming', state: 'todo' },
+            { title: 'First Hearing', sub: 'Upcoming', state: 'todo' },
+            { title: 'Hearing Update', sub: 'Upcoming', state: 'todo' },
+            { title: 'Next Hearing', sub: 'Upcoming', state: 'todo' },
+            { title: 'Case Completed', sub: 'Upcoming', state: 'todo' },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      tone: 'tier',
+      top: 'filingTop',
+      head: { icon: 'inbox', title: 'Court Filing', size: 'docsHeadSize' },
+      blocks: [
+        { k: 'text', t: 'Complete the preparation tasks before filing the case.', size: 'filingTextSize', top: 'filingTextTop' },
+        { k: 'text', icon: 'info', iconSize: 'filingInfoIcon', t: 'You can move to court filing once your drafts are ready.', tone: 'small', top: 'filingInfoTop' },
+      ],
+    },
+  ],
+  footer: [{ label: 'Continue', variant: 'disabled' }],
+  footerNote: 'Complete all preparation tasks first.',
+};
