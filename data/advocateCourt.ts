@@ -947,3 +947,96 @@ export const COURT_CONFIRM_DOCS: CourtSpec = {
     { t: 'Next: File Verification' },
   ],
 };
+
+// ── design/376 — documents received ──────────────────────────────────────────
+// Reached from Confirm Received on 375. Open Case opens Case Preparation
+// (377). ⚠ UNSCOPED — Call, the copy icon, Chat with Client; "Client Rahul
+// Sharma has been notified" is drawn copy, no notification is sent.
+// ⚠ CONFLICT 8 — "Verified by Adv. Gurneet Chawla"; the advocate is Abhishek
+// Verma elsewhere. ⚠ CONFLICT 3 — Aadhaar again. ⚠ The waybill number is
+// drawn broken after "0419" in a wide cell; kept as drawn.
+export const COURT_DOCS_RECEIVED: CourtSpec = {
+  title: 'Documents Received',
+  centerTitle: true,
+  blocks: [
+    {
+      k: 'hero',
+      icon: 'check',
+      tone: 'halo',
+      pillBelow: true,
+      pill: { pill: 'Confirmation Completed • In Advocate Custody', tone: 'help', dot: true, lg: true },
+      title: 'Documents Received',
+      sub: 'You confirmed that the physical documents were received.',
+    },
+    {
+      k: 'card',
+      top: 'firstCardTop',
+      head: { title: 'CLIENT', caps: true, titleIcon: 'badgeCheck', right: { pill: 'Matter #LGT-2026-8492', tone: 'grey' } },
+      blocks: [
+        { k: 'person', initials: CASE.initials, name: CASE.client, sub: 'Property Dispute • High Court Bench', top: 'personTop' },
+        { k: 'contact', icon: 'phone', t: CASE.phone2, btn: 'Call', top: 'contactTop' },
+      ],
+    },
+    {
+      k: 'label',
+      text: 'Physical Bundle',
+      title: true,
+      pills: [{ pill: '5 Documents', tone: 'peach' }],
+      right: { link: 'Received', icon: 'checkCircle', green: true },
+      top: 'bundleTop',
+    },
+    {
+      k: 'docs',
+      cards: true,
+      tiles: true,
+      top: 'bundleDocsTop',
+      items: [
+        { name: 'Original Case Papers & Vakalatnama', meta: 'Hard copy with original physical signatures', icon: 'gavel', right: 'tick' },
+        // ⚠ CONFLICT 3 — Aadhaar.
+        { name: 'Client Identity Proof (Aadhaar Copy)', meta: 'Self-attested government identification', icon: 'idCard', right: 'tick' },
+        { name: 'Signed Petition Draft', meta: 'Complete filing bundle ready for registry', icon: 'signature', right: 'tick' },
+        { name: 'Supporting Annexure A & B', meta: 'Registry title deeds and tax clearance receipts', icon: 'archive', right: 'tick' },
+        { name: 'Prior Court Orders & Notices', meta: 'Certified copies of previous interim directions', icon: 'scroll', right: 'tick' },
+      ],
+    },
+    { k: 'banner', icon: 'lock', tone: 'grey', center: true, text: 'Physical docket safely received in chamber', top: 'docketTop' },
+    {
+      k: 'card',
+      top: 'deliveryCardTop',
+      head: { title: 'DELIVERY DETAILS', caps: true, right: { pill: 'Handed Over', tone: 'panelGreen', dot: true } },
+      blocks: [
+        {
+          k: 'grid',
+          boxed: 'cells',
+          top: 'deliveryTop',
+          cells: [
+            { label: 'Sent By', value: 'Legalitt Delivery' },
+            { label: 'Courier Partner', value: 'Blue Dart Express' },
+            { label: 'Waybill Number', value: '8492 0419\n5821', wide: true, shade: true, iconDisc: 'copy' },
+          ],
+        },
+        { k: 'text', icon: 'shieldCheck', iconSize: 'verifyIcon', t: 'Today, 11:45 AM • Verified by Adv. Gurneet Chawla', tone: 'small', top: 'verifyTop' },
+      ],
+    },
+    {
+      k: 'card',
+      tone: 'tier',
+      top: 'nextCardTop',
+      head: { icon: 'flag', tile: 'disc', title: 'Start Case Preparation' },
+      blocks: [
+        {
+          k: 'text',
+          t: 'The documents are now ready for your case work. You can begin reviewing the petition notes or prepare registry filings.',
+          tone: 'small',
+          top: 'nextTextTop',
+        },
+        { k: 'text', icon: 'bell', iconSize: 'verifyIcon', t: 'Client Rahul Sharma has been notified.', tone: 'small', top: 'notifiedTop' },
+      ],
+    },
+  ],
+  footer: [
+    { label: 'Open Case', iconRight: 'arrowRight', to: R('case-preparation') },
+    { label: 'Chat with Client', icon: 'chat', variant: 'help' },
+  ],
+  footerStack: true,
+};

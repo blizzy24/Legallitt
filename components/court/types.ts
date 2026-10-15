@@ -74,7 +74,9 @@ export type IconName =
   | 'archive'
   | 'signature'
   | 'folders'
-  | 'calendarCheck';
+  | 'calendarCheck'
+  | 'badgeCheck'
+  | 'scroll';
 
 export type Tone =
   | 'green'
@@ -112,12 +114,14 @@ export type Right =
       chip?: boolean;
       /** Grey text with a green icon (375's Secure Audit). */
       muted?: boolean;
+      /** Green text and icon (376's Received). */
+      green?: boolean;
     }
   | { /** A grey disc with an icon (372's next-step card). */ iconDisc: IconName };
 
 export type Btn = {
   label: string;
-  variant?: 'primary' | 'soft' | 'panel' | 'white' | 'outline' | 'ghost' | 'disabled' | 'muted' | 'green' | 'danger' | 'link';
+  variant?: 'primary' | 'soft' | 'panel' | 'help' | 'white' | 'outline' | 'ghost' | 'disabled' | 'muted' | 'green' | 'danger' | 'link';
   /** Disabled until the screen's gating checkbox is ticked, then primary (375). */
   gated?: boolean;
   icon?: IconName;
@@ -148,6 +152,8 @@ export type Head = {
   rule?: boolean;
   /** The right part level with the title, not centred on title + sub (364). */
   rightTop?: boolean;
+  /** A green icon straight after the title (376's verified badge). */
+  titleIcon?: IconName;
 };
 
 export type Step = {
@@ -174,7 +180,7 @@ type BlockBody =
   | {
       k: 'hero';
       icon: IconName;
-      tone: 'green' | 'deepGreen' | 'mint' | 'peach' | 'red' | 'grey';
+      tone: 'green' | 'deepGreen' | 'mint' | 'halo' | 'peach' | 'red' | 'grey';
       pill?: Pill;
       title: string;
       sub?: string;
@@ -183,14 +189,16 @@ type BlockBody =
       flat?: boolean;
       /** The small dark dot at its top right (370). */
       badge?: boolean;
+      /** The pill under the sub-line, not above the title (376). */
+      pillBelow?: boolean;
     }
   | { k: 'lead'; pill?: Pill; right?: Right; title?: string; text?: string }
-  | { k: 'label'; text: string; right?: Right; pills?: Pill[]; /** The large ink caps of 374's section titles. */ strong?: boolean; /** A green dot before it (364). */ dot?: boolean; /** Inset from the gutter (364's MATTER BRIEFING). */ inset?: boolean }
+  | { k: 'label'; text: string; right?: Right; pills?: Pill[]; /** The large ink caps of 374's section titles. */ strong?: boolean; /** A sentence-case section title (376). */ title?: boolean; /** A green dot before it (364). */ dot?: boolean; /** Inset from the gutter (364's MATTER BRIEFING). */ inset?: boolean }
   | { k: 'text'; t?: string; parts?: { t: string; bold?: boolean; muted?: boolean }[]; /** A pill after the text (371's Civil). */ pill?: Pill; /** Token for its type size. */ size?: string; /** Token for its icon size. */ iconSize?: string; tone?: 'body' | 'muted' | 'small' | 'quote' | 'center' | 'strong' | 'green' | 'title' | 'label'; icon?: IconName }
   | { k: 'rows'; rows: [string, string, ('mono' | 'bold' | 'green' | 'quote')?][]; divided?: boolean }
   | {
       k: 'grid';
-      cells: { label: string; value: string; sub?: string; tone?: 'green' | 'mono' | 'muted'; wide?: boolean; icon?: IconName; sideIcon?: IconName; iconRight?: IconName }[];
+      cells: { label: string; value: string; sub?: string; tone?: 'green' | 'mono' | 'muted'; wide?: boolean; icon?: IconName; sideIcon?: IconName; iconRight?: IconName; /** tileGrey, not panel (376). */ shade?: boolean; /** A white disc with an icon at the right (376). */ iconDisc?: IconName }[];
       /** 'cells': a panel per cell. 'columns': one panel per column (363). 'panel': one panel round all (363's phone/email). */
       boxed?: 'cells' | 'columns' | 'panel';
       /** Capitalised labels (370). */
@@ -227,6 +235,9 @@ type BlockBody =
       items: { name: string; meta?: string; icon?: IconName; right?: Right | 'tick' | 'circleTick' | 'ring'; btn?: string; actions?: string[] }[];
       /** Icons in grey discs on the panel rows (375). */
       discs?: boolean;
+      /** Each a white card with a grey square icon tile (376). */
+      cards?: boolean;
+      tiles?: boolean;
       /** The framed-PDF glyph with no tile behind it (363), and grey "View" pills. */
       pdf?: boolean;
     }
@@ -256,7 +267,7 @@ type BlockBody =
   | { k: 'check'; title: string; sub?: string; checked: boolean; blocks?: Block[]; /** Tapping it toggles the screen's gate (375). */ gate?: boolean }
   | { k: 'bars'; steps: { label: string; state: 'done' | 'current' | 'todo' | 'bad'; sub?: string }[]; variant?: 'bars' | 'discs' | 'tiles' | 'chips' }
   | { k: 'numbered'; items: string[] }
-  | { k: 'banner'; icon?: IconName; title?: string; text: string; /** A brown dot at the right (373). */ dot?: boolean; parts?: { t: string; bold?: boolean }[]; tone: 'grey' | 'cream' | 'green' | 'white' | 'none' | 'red' }
+  | { k: 'banner'; icon?: IconName; title?: string; text: string; /** A brown dot at the right (373). */ dot?: boolean; center?: boolean; parts?: { t: string; bold?: boolean }[]; tone: 'grey' | 'cream' | 'green' | 'white' | 'none' | 'red' }
   | { k: 'pills'; items: Pill[] }
   | { k: 'button'; btn: Btn }
   | { k: 'buttonRow'; btns: Btn[] }
@@ -288,6 +299,7 @@ type BlockBody =
       bare?: boolean;
     }
   | { k: 'chip'; t: string }
+  | { k: 'contact'; icon: IconName; t: string; btn?: string }
   | { k: 'iconRows'; rows: { icon: IconName; t: string; bold?: boolean }[] }
   | { k: 'footRow'; icon?: IconName; t: string; right?: Right }
   | { k: 'gap'; h: number };
