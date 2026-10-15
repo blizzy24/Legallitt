@@ -92,7 +92,10 @@ export type IconName =
   | 'folderCheck'
   | 'cloudUpload'
   | 'sendIcon'
-  | 'fileLock';
+  | 'fileLock'
+  | 'door'
+  | 'calendarPen'
+  | 'checkCheck';
 
 export type Tone =
   | 'green'
@@ -173,6 +176,8 @@ export type Btn = {
   back?: boolean;
   /** Content width in a footer, the other button taking the rest (364). */
   hug?: boolean;
+  /** The squat 22pt pill design/387 draws. */
+  squat?: boolean;
 };
 
 export type Head = {
@@ -208,7 +213,9 @@ export type Step = {
   title: string;
   sub?: string;
   /** accent: the green current step of 371. next: a grey disc with a brown dot, normal text (372). */
-  state: 'done' | 'current' | 'active' | 'accent' | 'next' | 'ring' | 'wait' | 'hollow' | 'todo';
+  state: 'done' | 'current' | 'active' | 'accent' | 'next' | 'ring' | 'ringGreen' | 'wait' | 'hollow' | 'todo';
+  /** This one step on a panel (388's current step). */
+  boxed?: boolean;
   right?: Right;
   /** Sub-line in green (378, 384 draw "Completed" green; 371 draws it grey). */
   subGreen?: boolean;
@@ -256,11 +263,11 @@ type BlockBody =
     }
   | { k: 'lead'; pill?: Pill; /** Text straight after the pill (377's Step 5 of 10). */ pillNote?: string; right?: Right; title?: string; text?: string }
   | { k: 'label'; text: string; right?: Right; pills?: Pill[]; icon?: IconName; /** The large ink caps of 374's section titles. */ strong?: boolean; /** A sentence-case section title (376). */ title?: boolean; /** A green dot before it (364). */ dot?: boolean; /** Inset from the gutter (364's MATTER BRIEFING). */ inset?: boolean }
-  | { k: 'text'; t?: string; parts?: { t: string; bold?: boolean; muted?: boolean }[]; /** A pill after the text (371's Civil). */ pill?: Pill; /** Token for its type size. */ size?: string; /** Token for its icon size. */ iconSize?: string; iconGreen?: boolean; /** Token for a max width (385's narrow title). */ maxW?: string; /** Icon and text centred as a group (385). */ centerRow?: boolean; tone?: 'body' | 'muted' | 'small' | 'smallStrong' | 'kicker' | 'quote' | 'center' | 'strong' | 'green' | 'title' | 'label' | 'note'; icon?: IconName }
+  | { k: 'text'; t?: string; parts?: { t: string; bold?: boolean; muted?: boolean }[]; /** A pill after the text (371's Civil). */ pill?: Pill; /** Token for its type size. */ size?: string; /** Token for its icon size. */ iconSize?: string; iconGreen?: boolean; /** Token for a max width (385's narrow title). */ maxW?: string; /** Icon and text centred as a group (385). */ centerRow?: boolean; /** A green dot before it (387). */ dot?: boolean; tone?: 'body' | 'muted' | 'small' | 'smallStrong' | 'kicker' | 'quote' | 'center' | 'strong' | 'green' | 'title' | 'label' | 'note'; icon?: IconName }
   | { k: 'rows'; rows: [string, string, ('mono' | 'monoBrown' | 'brown' | 'bold' | 'green' | 'quote')?][]; divided?: boolean }
   | {
       k: 'grid';
-      cells: { label: string; value: string; sub?: string; tone?: 'green' | 'mono' | 'muted' | 'brown'; wide?: boolean; icon?: IconName; sideIcon?: IconName; iconRight?: IconName; /** tileGrey, not panel (376). */ shade?: boolean; alignRight?: boolean; small?: boolean; /** A regular-weight value (385). */ plain?: boolean; /** A white disc with an icon at the right (376). */ iconDisc?: IconName }[];
+      cells: { label: string; value: string; sub?: string; tone?: 'green' | 'mono' | 'muted' | 'brown'; wide?: boolean; icon?: IconName; sideIcon?: IconName; iconRight?: IconName; /** tileGrey, not panel (376). */ shade?: boolean; alignRight?: boolean; small?: boolean; /** A regular-weight value (385). */ plain?: boolean; /** The larger value of 388's date / time. */ big?: boolean; /** A white disc with an icon at the right (376). */ iconDisc?: IconName }[];
       /** 'cells': a panel per cell. 'columns': one panel per column (363). 'panel': one panel round all (363's phone/email). */
       boxed?: 'cells' | 'columns' | 'panel';
       /** Capitalised labels (370). */
@@ -377,7 +384,7 @@ type BlockBody =
   | { k: 'fieldRow'; fields: { label: string; req?: boolean; value?: string; placeholder?: string; icon?: IconName }[] }
   | { k: 'choices'; items: { label: string; sub?: string; selected?: boolean; right?: Right; /** A green dot at the right (379). */ dot?: boolean }[] }
   | { k: 'segment'; label?: string; items: string[]; selected: number }
-  | { k: 'check'; title: string; sub?: string; checked: boolean; blocks?: Block[]; /** Tapping it toggles the screen's gate (375). */ gate?: boolean }
+  | { k: 'check'; title: string; sub?: string; checked: boolean; blocks?: Block[]; /** Tapping it toggles the screen's gate (375). */ gate?: boolean; /** Token for the sub-line's max width (387). */ subMax?: string; /** A dark-green box (387). */ green?: boolean }
   | { k: 'bars'; steps: { label: string; state: 'done' | 'current' | 'todo' | 'bad'; sub?: string; /** An icon in the tile's disc (385). */ icon?: IconName }[]; variant?: 'bars' | 'discs' | 'tiles' | 'chips' }
   | { k: 'numbered'; items: string[]; /** Grey number discs (384). */ grey?: boolean }
   | { k: 'banner'; icon?: IconName; title?: string; text: string; /** A brown dot at the right (373). */ dot?: boolean; center?: boolean; titleBrown?: boolean; strongText?: boolean; parts?: { t: string; bold?: boolean }[]; tone: 'grey' | 'cream' | 'green' | 'white' | 'none' | 'red' | 'help' }
@@ -419,8 +426,9 @@ type BlockBody =
       bare?: boolean;
     }
   | { k: 'chip'; t: string }
+  | { k: 'ticks'; items: { t: string; green?: boolean }[][] }
   | { k: 'statusRow'; label: string; sub?: string; pill: Pill }
-  | { k: 'richRows'; rows: { label: string; value: string; pill?: Pill; sub?: string; icon?: IconName; big?: boolean }[] }
+  | { k: 'richRows'; rows: { label: string; value: string; pill?: Pill; sub?: string; icon?: IconName; big?: boolean; labelIcon?: IconName; /** The value in a grey chip (388). */ chip?: boolean }[] }
   | { k: 'stages'; items: { label: string; state: 'todo' | 'current' | 'tick' }[] }
   | { k: 'metaRow'; items: { icon: IconName; parts: { t: string; bold?: boolean }[] }[] }
   | { k: 'empty'; icon: IconName; title: string; text: string; btn?: string; /** A primary button (384). */ cta?: Btn; /** On a panel (384). */ panel?: boolean }

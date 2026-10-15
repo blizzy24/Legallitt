@@ -2111,3 +2111,225 @@ const processFee = (paid: boolean): CourtSpec => ({
 
 export const COURT_PROCESS_FEE = processFee(false);
 export const COURT_PROCESS_FEE_DONE = processFee(true);
+
+// ── design/387 — add first hearing ───────────────────────────────────────────
+// Reached from Add First Hearing on 384. Save First Hearing opens 388 —
+// navigation only, nothing is saved or synced; Cancel goes back.
+// ⚠ UNSCOPED — Commence Session, the client push, the calendar reminder.
+// ⚠ CONFLICT 5 — 25 October 2026 is a Sunday (388 says so).
+// ⚠ CONFLICT 8 — "Hon'ble Justice Verma", the opposing party's surname.
+// ⚠ The Bench value is clipped in the export ("…Madhya Pradesh High Co");
+// stored whole, it wraps. ⚠ The intro and push-preview texts are drawn in a
+// narrow column with ragged breaks, and Save First Hearing is drawn as a squat
+// 22pt pill; both kept as drawn.
+const HEARING_DEADLINE = { label: 'ACTION DEADLINE', value: 'Today, 4:30 PM', btn: { label: 'Commence Session', icon: 'gavel' as const } };
+
+export const COURT_HEARING_ADD: CourtSpec = {
+  title: 'First Hearing',
+  headerPill: { pill: CASE.hcr, tone: 'peach' },
+  sub: CASE.hcRep,
+  blocks: [
+    {
+      k: 'card',
+      pad: 'clientPad',
+      head: { title: 'CLIENT REPRESENTATION', caps: true, small: true, right: { pill: CASE.caseNo, tone: 'help' } },
+      blocks: [
+        { k: 'text', t: CASE.client, tone: 'title', top: 'nameTop' },
+        { k: 'text', icon: 'scale', iconSize: 'metaIcon', parts: [{ t: 'Rahul Sharma ' }, { t: 'vs', muted: true }, { t: ' Amit Verma' }], tone: 'small', top: 'partiesTop' },
+        { k: 'text', dot: true, t: 'Madhya Pradesh High Court • Indore Bench (Civil)', tone: 'smallStrong', top: 'courtTop' },
+      ],
+    },
+    {
+      k: 'card',
+      tone: 'cream',
+      top: 'introTop',
+      head: { icon: 'calendarCheck', tile: 'disc', title: 'Add First Hearing', size: 'introTitleSize', topAlign: true },
+      indent: 'introIndent',
+      blocks: [
+        // The line breaks are the export's own, kept as drawn.
+        { k: 'text', t: 'Enter the hearing\ndetails given by the\ncourt.', tone: 'small', size: 'introTextSize', top: 'introTextTop' },
+        { k: 'text', t: 'Legalitt records\nadvocate-confirmed\nhearing\ndates for case tracking.', tone: 'small', size: 'introNoteSize', top: 'introNoteTop' },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'infoTop',
+      head: { title: 'Hearing Information', size: 'infoHeadSize', sub: 'Please provide the official court schedule' },
+      blocks: [
+        { k: 'field', label: 'Hearing Date', req: true, right: { link: 'Cause List Verified', icon: 'checkCircle', green: true }, value: '25 October 2026', icon: 'calendar', hint: 'Enter the exact date provided in the court cause list or registry.', top: 'firstFieldTop' },
+        { k: 'field', label: 'Hearing Time', req: true, value: '11:00 AM', icon: 'clock', hint: 'Court reporting or call time.', top: 'fieldGap' },
+        { k: 'field', label: 'Court Room', req: true, value: 'Court Room 3', icon: 'door', top: 'fieldGap' },
+        // ⚠ Clipped in the export.
+        { k: 'field', label: 'Bench', req: true, value: 'Indore Bench (Madhya Pradesh High Court)', icon: 'gavel', top: 'fieldGap' },
+        { k: 'field', label: 'Judge Name', right: { pill: 'Optional', tone: 'help' }, value: "Hon'ble Justice Verma", icon: 'user', top: 'fieldGap' },
+        {
+          k: 'field',
+          label: 'Note',
+          right: { pill: 'Optional', tone: 'help' },
+          value: 'The first hearing is listed for the above date. Listed for admission and preliminary hearing.',
+          multiline: true,
+          top: 'fieldGap',
+        },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'sendTop',
+      blocks: [
+        {
+          k: 'check',
+          checked: true,
+          title: 'Send hearing details to client',
+          // The line breaks are the export's own, kept as drawn.
+          sub: 'The client will see the hearing date in\ncase\ntracking. Rahul Sharma will receive an\ninstant in-\napp notification.',
+          green: true,
+        },
+        {
+          k: 'card',
+          tone: 'panel',
+          pad: 'pushPad',
+          top: 'pushTop',
+          blocks: [
+            { k: 'text', icon: 'bell', iconSize: 'metaIcon', t: 'CLIENT PUSH PREVIEW', tone: 'kicker' },
+            { k: 'text', t: '"Your first hearing has\nbeen scheduled for 25\nOctober 2026 at 11:00\nAM in Court Room 3."', tone: 'quote', size: 'pushSize', top: 'pushTextTop' },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      tone: 'panel',
+      top: 'confirmTop',
+      blocks: [
+        { k: 'text', t: 'ON CONFIRMATION', tone: 'kicker' },
+        {
+          k: 'ticks',
+          top: 'ticksTop',
+          items: [
+            [{ t: 'Updates case progress to ' }, { t: "'First Hearing Scheduled'", green: true }],
+            [{ t: 'Syncs automatically to client tracking view' }],
+            [{ t: 'Schedules advocate calendar reminder before hearing' }],
+          ],
+        },
+      ],
+    },
+    { k: 'button', btn: { label: 'Save First Hearing', icon: 'bookmark', to: R('hearing/scheduled'), squat: true }, top: 'saveTop' },
+    { k: 'text', t: 'Tap to save and update case progress', tone: 'center', size: 'saveNoteSize', top: 'saveNoteTop' },
+    { k: 'button', btn: { label: 'Cancel', variant: 'link', back: true }, top: 'cancelTop' },
+  ],
+  deadline: HEARING_DEADLINE,
+};
+
+// ── design/388 — first hearing scheduled ─────────────────────────────────────
+// Reached from Save First Hearing on 387. View First Hearing opens 389 —
+// navigation only. ⚠ UNSCOPED — Edit Hearing Details, Commence Session; the
+// client notification is drawn copy. ⚠ CONFLICT 5 — "25 Oct 2026, Sunday".
+// ⚠ CONFLICT 6 — "Step 6 of 9". ⚠ The banner's faint corner circle is decoration
+// and is not drawn.
+export const COURT_HEARING_SCHEDULED: CourtSpec = {
+  title: 'First Hearing',
+  headerPill: { pill: CASE.hcr, tone: 'peach' },
+  sub: CASE.hcRep,
+  blocks: [
+    {
+      k: 'card',
+      tone: 'panel',
+      indent: 'bannerIndent',
+      head: { icon: 'check', tile: 'greenCheck', title: 'First Hearing Scheduled', size: 'bannerTitleSize', sub: 'The hearing details have been saved.', subSize: 'bannerSubSize', topAlign: true },
+      blocks: [{ k: 'text', t: 'The court date and courtroom have been recorded in the case file.', tone: 'small', maxW: 'bannerNoteMax', top: 'bannerNoteTop' }],
+    },
+    {
+      k: 'card',
+      top: 'scheduleTop',
+      head: { icon: 'calendar', tile: 'peach', title: 'Hearing Schedule', size: 'schedHeadSize', right: { pill: 'Scheduled', tone: 'greenTile', dot: true } },
+      blocks: [
+        {
+          k: 'grid',
+          boxed: 'panel',
+          top: 'schedGridTop',
+          cells: [
+            { label: 'Date', value: '25 Oct 2026', sub: 'Sunday', big: true },
+            { label: 'Time', value: '11:00 AM', sub: 'Morning Session', big: true, tone: 'green' },
+          ],
+        },
+        {
+          k: 'richRows',
+          top: 'schedRowsTop',
+          rows: [
+            { label: 'Court Room', labelIcon: 'door', value: 'Court Room 3', chip: true },
+            { label: 'Bench', labelIcon: 'building', value: CASE.bench },
+            { label: 'Judge', labelIcon: 'gavel', value: "Hon'ble Justice Verma" },
+          ],
+        },
+        { k: 'button', btn: { label: 'Edit Hearing Details', icon: 'calendarPen', variant: 'help' }, top: 'editTop' },
+      ],
+    },
+    {
+      k: 'card',
+      tone: 'panel',
+      top: 'updatedTop',
+      head: { icon: 'bell', tile: 'disc', title: 'Client Updated', size: 'schedHeadSize', right: { link: 'Notification Sent', icon: 'checkCheck', muted: true } },
+      blocks: [
+        { k: 'text', t: 'The client can now see this hearing date in their case tracking view.', size: 'updatedTextSize', top: 'updatedTextTop' },
+        {
+          k: 'card',
+          bar: true,
+          pad: 'noticePad',
+          top: 'noticeTop',
+          blocks: [
+            { k: 'text', t: 'Your first hearing has been scheduled.', tone: 'strong', size: 'noticeTitleSize' },
+            { k: 'text', t: '25 October 2026 at 11:00 AM in Court Room 3', tone: 'small', top: 'noticeTextTop' },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'caseTop',
+      head: { icon: 'folderOpen', title: 'Case Details', size: 'schedHeadSize', right: { pill: 'Civil', tone: 'help' } },
+      blocks: [
+        {
+          k: 'grid',
+          top: 'caseGridTop',
+          cells: [
+            { label: 'Client Name', value: CASE.client, wide: true },
+            { label: 'Parties', value: CASE.title, wide: true },
+            { label: 'Court & Bench', value: `${CASE.court} • ${CASE.bench}`, wide: true, plain: true },
+            { label: 'Case Number', value: CASE.caseNo, wide: true, tone: 'brown' },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'timelineTop',
+      head: { icon: 'trend', title: 'Case Timeline', size: 'schedHeadSize', right: 'Step 6 of 9' },
+      blocks: [
+        {
+          k: 'timeline',
+          top: 'stepsTop',
+          steps: [
+            { title: 'Documents Received', state: 'done', right: { pill: 'Done', tone: 'clearGreen' } },
+            { title: 'Client Accepted', state: 'done', right: { pill: 'Done', tone: 'clearGreen' } },
+            { title: 'Case Preparation', state: 'done', right: { pill: 'Done', tone: 'clearGreen' } },
+            { title: 'Court Filing', state: 'done', right: { pill: 'Done', tone: 'clearGreen' } },
+            { title: 'First Hearing Scheduled', state: 'done', right: { pill: 'Saved', tone: 'clearGreen' } },
+            { title: 'First Hearing', sub: 'Upcoming • 25 Oct', subGreen: true, state: 'ringGreen', boxed: true, right: { pill: 'Current', tone: 'greenTile' } },
+            { title: 'Hearing Update', state: 'wait', muted: true, right: 'Waiting' },
+            { title: 'Next Hearing', state: 'wait', muted: true, right: 'Pending' },
+            { title: 'Case Completed', state: 'wait', muted: true, right: 'Final' },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'viewTop',
+      blocks: [
+        { k: 'button', btn: { label: 'View First Hearing', icon: 'eye', to: R('hearing/live') } },
+        { k: 'text', t: 'The hearing outcome can be updated once the hearing takes place.', tone: 'center', size: 'viewNoteSize', top: 'viewNoteTop' },
+      ],
+    },
+  ],
+  deadline: HEARING_DEADLINE,
+};

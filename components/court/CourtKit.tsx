@@ -38,6 +38,8 @@ import {
   CloudUpload,
   SendHorizontal,
   FileLock,
+  DoorOpen,
+  CalendarCog as CalendarPen,
   Gavel,
   Headset,
   History,
@@ -232,6 +234,9 @@ const ICONS: Record<IconName, LucideIcon> = {
   cloudUpload: CloudUpload,
   sendIcon: SendHorizontal,
   fileLock: FileLock,
+  door: DoorOpen,
+  calendarPen: CalendarPen,
+  checkCheck: CheckCheck,
 };
 
 export function Icon({ name, size, color, sw = 2 }: { name: IconName; size: number; color: string; sw?: number }) {
@@ -387,7 +392,7 @@ function HeadRow({ h }: { h: Head }) {
   );
 }
 
-export function Button({ b, flex, footer }: { b: Btn; flex?: boolean; footer?: boolean }) {
+export function Button({ b, flex, footer, pill }: { b: Btn; flex?: boolean; footer?: boolean; pill?: boolean }) {
   const { t, s } = useK();
   const gate = useContext(Gate);
   const open = !b.gated || gate.on;
@@ -411,6 +416,8 @@ export function Button({ b, flex, footer }: { b: Btn; flex?: boolean; footer?: b
     v === 'outline' && s.btnOutline,
     v === 'danger' && s.btnDanger,
     footer && v !== 'link' && s.btnFooter,
+    b.squat && s.btnSquat,
+    pill && s.btnPill,
     flex && !b.hug && s.flex,
     b.hug && s.btnHug,
   ];
@@ -487,6 +494,12 @@ function Disc({ state, deep, light }: { state: Step['state']; deep?: boolean; li
         <View style={[s.discDot, { backgroundColor: c.brown }]} />
       </View>
     );
+  if (state === 'ringGreen')
+    return (
+      <View style={[s.disc, s.discRingGreen]}>
+        <View style={[s.discDot, { backgroundColor: ink.onBrand }]} />
+      </View>
+    );
   if (state === 'wait')
     return (
       <View style={[s.disc, s.discWait]}>
@@ -554,7 +567,7 @@ function Timeline({
               ]}
             />
           </View>
-          <View style={[s.flex, s.stepText, s.between]}>
+          <View style={[s.flex, s.stepText, s.between, st.boxed && s.stepTextBoxed]}>
             <View style={s.flex}>
               <View style={[s.row, s.wrap, s.stepTitleRow]}>
                 <Text style={[s.stepTitle, st.state === 'todo' && deep && s.muted, st.state === 'accent' && s.accentTitle, st.muted && s.stepMuted]}>{st.title}</Text>
@@ -776,6 +789,7 @@ export function BlockView({ b }: { b: Block }): ReactNode {
     case 'text':
       return (
         <View style={[s.row, (b.tone === 'center' || b.centerRow) && s.rowCenter]}>
+          {b.dot ? <View style={[s.labelDot, s.textDot]} /> : null}
           {b.icon ? (
             <Icon name={b.icon} size={b.iconSize ? t[b.iconSize] : t.textIcon} color={b.tone === 'green' || b.iconGreen ? c.greenInk : c.brownInk} />
           ) : null}
@@ -786,7 +800,7 @@ export function BlockView({ b }: { b: Block }): ReactNode {
               b.tone === 'muted' && s.mutedText,
               b.tone === 'small' && s.small,
               b.tone === 'quote' && s.quote,
-              b.tone === 'center' && s.center,
+              b.tone === 'center' && s.centerText,
               b.tone === 'strong' && s.strong,
               b.tone === 'green' && s.greenText,
               b.tone === 'title' && s.titleText,
@@ -837,7 +851,7 @@ export function BlockView({ b }: { b: Block }): ReactNode {
             {cell.icon ? <Icon name={cell.icon} size={t.labelSize} color={c.inkMuted} /> : null}
             <Text style={[s.cellLabel, b.caps && s.cellCaps]}>{cell.label}</Text>
           </View>
-          <Text style={[s.cellValue, cell.tone === 'green' && s.green, cell.tone === 'mono' && s.mono, cell.tone === 'muted' && s.mutedValue, cell.small && s.cellValueSmall, cell.plain && s.cellPlain, cell.tone === 'brown' && s.monoBrown]}>
+          <Text style={[s.cellValue, cell.tone === 'green' && s.green, cell.tone === 'mono' && s.mono, cell.tone === 'muted' && s.mutedValue, cell.small && s.cellValueSmall, cell.plain && s.cellPlain, cell.tone === 'brown' && s.monoBrown, cell.big && s.cellBig]}>
             {cell.value}
           </Text>
           {cell.sub ? <Text style={s.cellSub}>{cell.sub}</Text> : null}
@@ -1373,11 +1387,14 @@ export function BlockView({ b }: { b: Block }): ReactNode {
         <View style={s.richRows}>
           {b.rows.map((r) => (
             <View key={r.label} style={s.between}>
-              <Text style={s.richLabel}>{r.label}</Text>
+              <View style={s.row}>
+                {r.labelIcon ? <Icon name={r.labelIcon} size={t.richIcon} color={c.inkWarm} /> : null}
+                <Text style={s.richLabel}>{r.label}</Text>
+              </View>
               <View style={s.richRight}>
                 <View style={s.row}>
                   {r.icon ? <Icon name={r.icon} size={t.richIcon} color={c.inkWarm} /> : null}
-                  <Text style={[s.richValue, r.big && s.richBig]}>{r.value}</Text>
+                  <Text style={[s.richValue, r.big && s.richBig, r.chip && s.richChip]}>{r.value}</Text>
                   {r.pill ? <PillTag p={r.pill} /> : null}
                 </View>
                 {r.sub ? <Text style={s.richSub}>{r.sub}</Text> : null}
@@ -1394,6 +1411,29 @@ export function BlockView({ b }: { b: Block }): ReactNode {
             {b.sub ? <Text style={s.statusRowSub}>{b.sub}</Text> : null}
           </View>
           <PillTag p={b.pill} />
+        </View>
+      );
+    case 'ticks':
+      return (
+        <View style={s.ticks}>
+          {b.items.map((it, i) => (
+            <View key={i} style={[s.row, s.top, s.tickRow]}>
+              <View style={[s.disc, s.tickDisc]}>
+                <Check size={t.tickGlyph} color={ink.onBrand} strokeWidth={3} />
+              </View>
+              <Text style={[s.tickText, s.flex]}>
+                {it.map((p) =>
+                  p.green ? (
+                    <Text key={p.t} style={s.green}>
+                      {p.t}
+                    </Text>
+                  ) : (
+                    p.t
+                  ),
+                )}
+              </Text>
+            </View>
+          ))}
         </View>
       );
     case 'stages':
@@ -1471,10 +1511,10 @@ function CheckBlock({ b }: { b: Extract<Block, { k: 'check' }> }) {
   const on = b.gate ? gate.on : b.checked;
   const body = (
     <>
-      <View style={[s.box, on && s.boxOn]}>{on ? <Check size={t.stepGlyph} color={ink.onBrand} strokeWidth={3} /> : null}</View>
+      <View style={[s.box, on && s.boxOn, on && b.green && s.boxGreen]}>{on ? <Check size={t.stepGlyph} color={ink.onBrand} strokeWidth={3} /> : null}</View>
       <View style={[s.flex, s.checkBody, s.checkBodyGap]}>
         <Text style={[s.checkTitle, s.checkBigTitle]}>{b.title}</Text>
-        {b.sub ? <Text style={s.checkSub}>{b.sub}</Text> : null}
+        {b.sub ? <Text style={[s.checkSub, b.subMax !== undefined && { maxWidth: t[b.subMax] }]}>{b.sub}</Text> : null}
         {b.blocks?.map((x, i) => (
           <BlockView key={i} b={x} />
         ))}
@@ -1662,15 +1702,15 @@ function ScreenBody({ spec, state, onState, overlay }: ScreenProps) {
         ))}
       </ScrollView>
       {spec.deadline ? (
-        <View style={[s.deadline, { paddingBottom: insets.bottom + t.cardPad }]}>
+        <View style={[s.deadline, { paddingBottom: insets.bottom + t.deadlinePadBottom }]}>
           <View style={s.flex}>
             <Text style={s.deadlineLabel}>{spec.deadline.label}</Text>
             <View style={s.row}>
               <View style={[s.pillDot, { backgroundColor: status.active }]} />
-              <Text style={s.deadlineValue}>{spec.deadline.value}</Text>
+              <Text style={[s.deadlineValue, s.deadlineGreen]}>{spec.deadline.value}</Text>
             </View>
           </View>
-          <Button b={spec.deadline.btn} />
+          <Button b={spec.deadline.btn} pill />
         </View>
       ) : null}
       {spec.footer ? (
@@ -1757,6 +1797,7 @@ function makeStyles(t: CourtTokens) {
   row: { flexDirection: 'row', alignItems: 'center', gap: t.headGap },
   top: { alignItems: 'flex-start' },
   rowCenter: { justifyContent: 'center' },
+  textDot: { width: t.textDot, height: t.textDot, borderRadius: t.textDot / 2, backgroundColor: c.greenInk },
   wrap: { flexWrap: 'wrap' },
   between: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: t.headGap },
   center: { alignItems: 'center' },
@@ -1796,6 +1837,7 @@ function makeStyles(t: CourtTokens) {
   partBold: { fontFamily: font.appSemi, color: c.ink },
   cellIconRight: { justifyContent: 'center' },
   cellRight: { alignItems: 'flex-end' },
+  cellBig: { fontSize: t.cellBigSize },
   cellPlain: { fontFamily: font.appBody },
   cellValueSmall: { fontSize: t.cellSmallSize },
   cellShade: { backgroundColor: c.tileGrey },
@@ -1892,10 +1934,15 @@ function makeStyles(t: CourtTokens) {
   richLabel: { fontFamily: font.appBody, fontSize: t.richLabelSize, color: c.inkWarm, paddingTop: t.richLabelTop },
   richRight: { flexShrink: 1, alignItems: 'flex-end' },
   richValue: { flexShrink: 1, fontFamily: font.appSemi, fontSize: t.richValueSize, color: c.ink, textAlign: 'right' },
+  richChip: { borderRadius: t.richChipRadius, paddingHorizontal: t.richChipPadX, paddingVertical: t.richChipPadY, backgroundColor: c.helpGrey, overflow: 'hidden' },
   richBig: { fontSize: t.richBigSize },
   richSub: { marginTop: t.richSubTop, fontFamily: font.appBody, fontSize: t.richSubSize, color: c.inkWarm, textAlign: 'right' },
   statusRow: { borderRadius: t.panelRadius, paddingHorizontal: t.cellPadX, paddingVertical: t.cellPadY, backgroundColor: c.panel },
   statusRowSub: { marginTop: t.valueTop, fontFamily: font.appBody, fontSize: t.statusRowSubSize, color: c.inkWarm },
+  ticks: { gap: t.ticksGap },
+  tickRow: { gap: t.tickGap },
+  tickDisc: { width: t.tickDisc, height: t.tickDisc, borderRadius: t.tickDisc / 2, backgroundColor: status.active, marginTop: t.tickDiscTop },
+  tickText: { fontFamily: font.appBody, fontSize: t.tickSize, lineHeight: t.tickLine, color: c.ink },
   stages: { flexDirection: 'row', flexWrap: 'wrap', gap: t.stageGap },
   stage: { flexBasis: '45%', flexGrow: 1, minHeight: t.stageH, borderRadius: t.stageRadius, paddingHorizontal: t.stagePadX, backgroundColor: c.page, flexDirection: 'row', alignItems: 'center', gap: t.pillGap },
   stageOn: { backgroundColor: advWalletPalette.tile },
@@ -1937,6 +1984,7 @@ function makeStyles(t: CourtTokens) {
     backgroundColor: c.brownInk,
   },
   discRingBrown: { backgroundColor: c.card, borderWidth: t.stepRingW, borderColor: c.brown },
+  discRingGreen: { backgroundColor: c.greenInk },
   discWait: { backgroundColor: c.tileGrey },
   discWaitDot: { width: t.waitDot, height: t.waitDot, borderRadius: t.waitDot / 2, backgroundColor: c.inkMuted },
   discHollow: { backgroundColor: c.panel, borderWidth: 1, borderColor: c.helpGrey },
@@ -2057,6 +2105,7 @@ function makeStyles(t: CourtTokens) {
   stepBoxed: { marginBottom: t.gridGap, borderRadius: t.panelRadius, padding: t.panelPad, backgroundColor: c.panel, alignItems: 'center' },
   stepLeft: { alignItems: 'center', width: t.stepDisc },
   stepRow: {},
+  stepTextBoxed: { borderRadius: t.panelRadius, paddingHorizontal: t.panelPad, backgroundColor: c.panel, marginVertical: t.stepBoxedY },
   stepText: { paddingVertical: t.stepRowGap / 2 },
   railHalf: { flex: 1, width: t.stepRail, backgroundColor: c.helpGrey },
   railHidden: { backgroundColor: 'transparent' },
@@ -2143,6 +2192,7 @@ function makeStyles(t: CourtTokens) {
 
   box: { width: t.checkBox, height: t.checkBox, borderRadius: t.checkRadius, backgroundColor: c.tileGrey, alignItems: 'center', justifyContent: 'center' },
   boxOn: { backgroundColor: c.brown },
+  boxGreen: { backgroundColor: c.greenInk },
 
   bar: { height: t.barH, borderRadius: t.barH / 2, marginHorizontal: t.barGap / 2 },
   barLabelRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: t.barIconGap, marginTop: t.barLabelTop },
@@ -2168,6 +2218,8 @@ function makeStyles(t: CourtTokens) {
     justifyContent: 'center',
     gap: t.headGap,
   },
+  btnPill: { minHeight: t.deadlineBtnH, borderRadius: t.deadlineBtnH / 2, paddingHorizontal: t.deadlineBtnPadX },
+  btnSquat: { minHeight: t.squatH, borderRadius: t.squatH / 2 },
   btnFooter: { minHeight: t.footerBtnH, borderRadius: t.footerBtnRadius, borderWidth: 0, paddingHorizontal: t.footerBtnPadX },
   btnFooterText: { fontSize: t.footerBtnSize },
   btnOutline: { borderWidth: 1, borderColor: c.rail },
@@ -2239,6 +2291,7 @@ function makeStyles(t: CourtTokens) {
     backgroundColor: c.card,
   },
   deadlineLabel: { fontFamily: font.appSemi, fontSize: t.deadlineLabelSize, letterSpacing: t.capsSpacing, color: c.inkWarm },
+  deadlineGreen: { color: c.greenInk },
   deadlineValue: { fontFamily: font.appSemi, fontSize: t.deadlineValueSize, color: c.ink },
 
   switchBar: {
