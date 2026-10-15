@@ -3016,7 +3016,7 @@ export const ADV_CASES: AdvCaseMatter[] = [
     service: 'DISTRICT COURT REPRESENTATION',
     // ⚠ No District Court request is drawn: 363 is the High Court request, and
     // the batch mixes the two dockets throughout (data/advocateCourt.ts, conflict 4).
-    href: '/advocate/court/request',
+    href: '/advocate/court/dc/request',
     serviceKey: 'other',
     urgency: 'ORDINARY',
     title: 'Ananya Singh vs. Verma Group',
