@@ -2413,3 +2413,124 @@ export const COURT_HEARING_LIVE: CourtSpec = {
     { k: 'button', btn: { label: 'Preview Live Hearing Mode', icon: 'swap', variant: 'soft', centered: true, squat: true, size: 'previewSize' }, top: 'previewTop' },
   ],
 };
+
+// ── design/390 — hearing update ──────────────────────────────────────────────
+// ⚠ No drawn control leads here: 389's Start Hearing is unscoped (dev preview).
+// Save Hearing Update opens 391 — navigation only. ⚠ UNSCOPED — the
+// AI-assisted note ("Easy words saved", the character count), the court order
+// upload (View / Replace), the client notification toggle. ⚠ CONFLICT 6 —
+// "Step 3 of 5"; 388 counts nine steps. ⚠ Clipped in the export: the Next Step
+// line ("…before the next he") — the ending here is a reading, not drawn;
+// "Court_Order" wraps a word per line beside "Uploaded".
+export const COURT_HEARING_UPDATE: CourtSpec = {
+  title: 'Hearing Update',
+  headerPill: { pill: CASE.hcr, tone: 'peach' },
+  sub: CASE.hcRep,
+  avatar: true,
+  blocks: [
+    {
+      k: 'card',
+      blocks: [
+        { k: 'label', text: '', pills: [{ pill: `${CASE.caseNo} · Civil Writ`, tone: 'peach' }], right: { link: 'Verified Matter', icon: 'badgeCheck', green: true } },
+        { k: 'text', t: CASE.title, tone: 'title', top: 'caseTitleTop' },
+        { k: 'text', t: `${CASE.court} · ${CASE.bench}`, icon: 'landmark', tone: 'small', top: 'courtTop' },
+        { k: 'card', tone: 'panel', pad: 'clientPad', top: 'clientTop', blocks: [{ k: 'rows', rows: [['Client Name', CASE.client, 'bold']] }] },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'hearTop',
+      blocks: [
+        { k: 'label', text: 'Completed Hearing', title: true, dot: true, right: { pill: 'Concluded Today', tone: 'greenTile', icon: 'checkCircle' } },
+        {
+          k: 'grid',
+          boxed: 'cells',
+          top: 'hearGridTop',
+          cells: [
+            { label: 'Hearing Date', value: '25 October 2026', sub: '11:00 AM' },
+            { label: 'Court Room', value: 'Court Room 3', sub: CASE.bench },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'whatTop',
+      head: { icon: 'gavel', tile: 'peach', title: 'What Happened in Court?', size: 'updHeadSize', right: { pill: 'Advocate Notes', tone: 'peachPill' } },
+      blocks: [
+        { k: 'text', t: "Write a short note on what took place during today's hearing.", tone: 'small', top: 'askTop' },
+        {
+          k: 'card',
+          tone: 'panel',
+          pad: 'notePad',
+          top: 'noteTop',
+          blocks: [
+            { k: 'text', t: 'The court heard the matter and asked us to file the previous order before the next date.', size: 'noteSize', maxW: 'noteMax' },
+            // ⚠ UNSCOPED — the AI-assisted note: nothing is simplified, saved or counted.
+            { k: 'footRow', icon: 'check', t: 'Easy words saved', right: '87 characters', top: 'noteFootTop' },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'nextTop',
+      head: { icon: 'listChecks', tile: 'peach', title: 'Next Step', size: 'updHeadSize' },
+      blocks: [
+        { k: 'text', t: 'What needs to be done for this case next?', tone: 'small', top: 'askTop' },
+        { k: 'field', label: '', value: 'File the previous court order before the next hearing.', top: 'noteTop' },
+        { k: 'banner', tone: 'grey', icon: 'lightbulb', text: 'This helps keep case preparation on track.', top: 'tipTop' },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'orderTop',
+      head: { icon: 'file', tile: 'peach', title: 'Court Order', size: 'updHeadSize', right: { link: 'Ready', green: true } },
+      blocks: [
+        { k: 'text', t: 'Upload the official order sheet or daily order received from court.', tone: 'small', top: 'askTop' },
+        // ⚠ UNSCOPED — no file picker; View and Replace do nothing.
+        { k: 'docs', tiles: true, tileTone: 'red', inlineWhite: true, top: 'noteTop', items: [{ name: 'Court_Order', meta: '8 pages · PDF', metaGood: 'Uploaded', icon: 'pdf', inline: ['View', 'Replace'], inlineIcons: ['eye', 'refresh'] }] },
+        { k: 'text', t: 'Optional · Can be uploaded or replaced anytime', icon: 'info', tone: 'small', top: 'optTop' },
+      ],
+    },
+    {
+      k: 'card',
+      tone: 'cream',
+      top: 'sendTop',
+      blocks: [
+        // ⚠ UNSCOPED — the toggle draws ticked and does nothing; no notice is sent.
+        { k: 'check', checked: true, title: 'Send this update to the client', sub: 'The client will see this update in case tracking.', subMax: 'checkSubMax' },
+        {
+          k: 'card',
+          pad: 'pushPad',
+          top: 'pushTop',
+          indent: 'pushIndent',
+          blocks: [
+            { k: 'text', icon: 'chat', iconSize: 'metaIcon', t: 'Client Notification Preview', tone: 'smallStrong' },
+            { k: 'text', t: `"${CASE.client} will receive an in-app notice: 'Hearing update added for 25 October 2026'."`, tone: 'quote', size: 'pushSize', maxW: 'pushMax', top: 'pushTextTop' },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'progTop',
+      head: { icon: 'trend', title: 'Case Progress', size: 'updHeadSize', right: 'Step 3 of 5' },
+      blocks: [
+        {
+          k: 'timeline',
+          top: 'stepsTop',
+          steps: [
+            { title: 'First Hearing Scheduled', state: 'done', right: { link: 'Done', green: true } },
+            { title: 'First Hearing', state: 'done', right: { link: 'Completed', green: true } },
+            { title: 'Hearing Update', sub: 'Recording Outcome', state: 'ring', brown: true, right: { pill: 'Current', tone: 'brown' } },
+            { title: 'Next Hearing', state: 'wait', right: 'Pending date entry' },
+            { title: 'Case Completed', state: 'wait', right: 'Final' },
+          ],
+        },
+      ],
+    },
+  ],
+  footer: [{ label: 'Save Hearing Update', icon: 'save', to: R('hearing/review-update') }],
+  footerNote: 'Next Hearing date can be added after saving this update',
+};

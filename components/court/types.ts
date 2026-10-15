@@ -233,6 +233,8 @@ export type Step = {
   subBrown?: boolean;
   /** A grey title (378's later steps). */
   muted?: boolean;
+  /** A brown title (390's current step). */
+  brown?: boolean;
   /** Token for extra space above this step (381's taller pending rows). */
   gap?: string;
   /** A dark-green done disc (384's Court Filing). */
@@ -340,6 +342,8 @@ type BlockBody =
         actions?: string[];
         /** Small buttons in the row (379's View / Replace). */
         inline?: string[];
+        /** An icon before each inline button's label (390). */
+        inlineIcons?: IconName[];
         /** A green ticked note after the meta (380's Receipt Added). */
         metaGood?: string;
         /** A small button under the row, at the right (382). */
@@ -348,11 +352,13 @@ type BlockBody =
         bigActions?: string[];
       }[];
       /** The square tile's fill: 'wallet' = advWalletPalette.tile (379). */
-      tileTone?: 'wallet' | 'peach';
+      tileTone?: 'wallet' | 'peach' | 'red';
       /** A grey tile with the red PDF glyph (382). */
       redTile?: boolean;
       /** White rows with a hairline (386). */
       outlined?: boolean;
+      /** White inline buttons (390). */
+      inlineWhite?: boolean;
       /** Icons in grey discs on the panel rows (375). */
       discs?: boolean;
       /** Each a white card with a grey square icon tile (376). */

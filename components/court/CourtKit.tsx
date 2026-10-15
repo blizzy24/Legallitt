@@ -576,7 +576,7 @@ function Timeline({
           <View style={[s.flex, s.stepText, s.between, st.boxed && s.stepTextBoxed]}>
             <View style={s.flex}>
               <View style={[s.row, s.wrap, s.stepTitleRow]}>
-                <Text style={[s.stepTitle, st.state === 'todo' && deep && s.muted, st.state === 'accent' && s.accentTitle, st.muted && s.stepMuted]}>{st.title}</Text>
+                <Text style={[s.stepTitle, st.state === 'todo' && deep && s.muted, st.state === 'accent' && s.accentTitle, st.muted && s.stepMuted, st.brown && s.brownText]}>{st.title}</Text>
                 {st.tag ? <PillTag p={st.tag} /> : null}
               </View>
               {st.sub ? (
@@ -959,11 +959,11 @@ export function BlockView({ b }: { b: Block }): ReactNode {
                     <FileText size={t.docIcon} color={advForensicRed.declineColour} strokeWidth={2} />
                   </View>
                 ) : b.tiles ? (
-                  <View style={[s.docSquare, !b.cards && s.docSquarePanel, b.tileTone === 'wallet' && s.docSquareWallet, b.tileTone === 'peach' && s.docSquarePeach]}>
+                  <View style={[s.docSquare, !b.cards && s.docSquarePanel, b.tileTone === 'wallet' && s.docSquareWallet, b.tileTone === 'peach' && s.docSquarePeach, b.tileTone === 'red' && { backgroundColor: status.redContainer }]}>
                     {d.icon === 'pdf' ? (
-                      <PdfStackIcon size={t.docIcon} color={b.tileTone === 'wallet' ? advWalletPalette.tileInk : c.brownInk} />
+                      <PdfStackIcon size={t.docIcon} color={b.tileTone === 'wallet' ? advWalletPalette.tileInk : b.tileTone === 'red' ? status.onRedContainer : c.brownInk} />
                     ) : (
-                      <Icon name={d.icon ?? 'file'} size={t.docIcon} color={b.tileTone === 'wallet' ? advWalletPalette.tileInk : c.brownInk} />
+                      <Icon name={d.icon ?? 'file'} size={t.docIcon} color={b.tileTone === 'wallet' ? advWalletPalette.tileInk : b.tileTone === 'red' ? status.onRedContainer : c.brownInk} />
                     )}
                   </View>
                 ) : b.discs ? (
@@ -978,8 +978,8 @@ export function BlockView({ b }: { b: Block }): ReactNode {
                 <View style={s.flex}>
                   <Text style={s.docName}>{d.name}</Text>
                   {d.meta ? (
-                    <View style={s.row}>
-                      <Text style={s.docMeta}>{d.meta}</Text>
+                    <View style={[s.row, s.wrap]}>
+                      <Text style={[s.docMeta, s.shrink]}>{d.meta}</Text>
                       {d.metaGood ? (
                         <View style={[s.row, s.metaGood]}>
                           <CircleCheck size={t.docMetaSize} color={status.active} strokeWidth={2.2} />
@@ -1008,7 +1008,8 @@ export function BlockView({ b }: { b: Block }): ReactNode {
                   // ⚠ UNSCOPED — no viewer, nothing uploads.
                   <View style={s.docInline}>
                     {d.inline.map((x, j) => (
-                      <View key={x} style={[s.docInlineBtn, { backgroundColor: j === 0 ? c.tileGrey : c.helpGrey }]}>
+                      <View key={x} style={[s.docInlineBtn, s.row, { backgroundColor: b.inlineWhite ? c.card : j === 0 ? c.tileGrey : c.helpGrey }]}>
+                        {d.inlineIcons?.[j] ? <Icon name={d.inlineIcons[j]} size={t.docInlineIcon} color={c.ink} /> : null}
                         <Text style={s.docInlineText}>{x}</Text>
                       </View>
                     ))}
@@ -1903,6 +1904,7 @@ function makeStyles(t: CourtTokens) {
   docRow: { minHeight: t.docRowH, justifyContent: 'center' },
   docCard: { backgroundColor: c.card, borderRadius: t.docCardRadius, paddingHorizontal: t.docCardPadX, paddingVertical: t.docCardPadY },
   metaGood: { gap: t.pillGap, marginTop: t.docMetaTop },
+  shrink: { flexShrink: 1 },
   metaGoodText: { marginTop: 0, color: status.active, fontFamily: font.appSemi },
   docSquarePanel: { backgroundColor: c.tileGrey },
   docOutlined: { backgroundColor: c.panel, borderWidth: 1, borderColor: c.rail },
