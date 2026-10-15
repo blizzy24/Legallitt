@@ -1,3 +1,4 @@
+import { DEMO_AUTO_ADVANCE } from '../../../constants/dev';
 import { router, type Href } from 'expo-router';
 import { ArrowRight, CalendarDays, ChevronDown, CircleHelp, Info, LockKeyhole } from 'lucide-react-native';
 import { useState } from 'react';
@@ -209,7 +210,7 @@ export default function HighCourtCaseDetailsScreen() {
         <Pressable
           accessibilityRole="button"
           accessibilityState={{ disabled: !ready }}
-          disabled={!ready}
+          disabled={!ready && !DEMO_AUTO_ADVANCE}
           onPress={() => router.push('/services/high-court/documents' as Href)}
           style={[styles.btn, ready && styles.btnOn]}
         >

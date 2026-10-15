@@ -1,3 +1,4 @@
+import { DEMO_AUTO_ADVANCE } from '../../../constants/dev';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
   ArrowRight,
@@ -323,7 +324,7 @@ export default function AdvocateForensicSubmitScreen() {
             (designs 229–232) are the next group and do not exist yet. */}
         <Pressable
           accessibilityRole="button"
-          disabled={!confirmed}
+          disabled={!confirmed && !DEMO_AUTO_ADVANCE}
           accessibilityState={{ disabled: !confirmed }}
           onPress={() => router.push(`/advocate/forensic/waiting?id=${id ?? ''}` as Href)}
           style={({ pressed }) => [styles.submit, confirmed && styles.submitOn, pressed && styles.pressed]}

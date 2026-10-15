@@ -1,3 +1,4 @@
+import { DEMO_AUTO_ADVANCE } from '../../../../constants/dev';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
   ArrowLeft,
@@ -190,7 +191,7 @@ export default function AdvocateNoticeConfirmScreen() {
         <Pressable
           accessibilityRole="button"
           accessibilityState={{ disabled: !checked }}
-          disabled={!checked}
+          disabled={!checked && !DEMO_AUTO_ADVANCE}
           onPress={() => router.push(`/advocate/notice/${id}/received` as Href)}
           style={({ pressed }) => [
             styles.btn,

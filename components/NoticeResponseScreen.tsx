@@ -1,3 +1,4 @@
+import { useDemoAdvance } from '../hooks/useDemoAdvance';
 import { router, type Href } from 'expo-router';
 import {
   Bold,
@@ -67,6 +68,7 @@ export default function NoticeResponseScreen({
   variant: 'share' | 'generate';
   caseId: string;
 }) {
+  const { advance } = useDemoAdvance();
   const insets = useSafeAreaInsets();
   const id = caseId;
   const r = ADV_NOTICE_RESPONSE;
@@ -136,6 +138,8 @@ export default function NoticeResponseScreen({
             </Pressable>
             <Pressable
               accessibilityRole="button"
+              // DEMO: Save & Upload / Confirm draw without a destination; follow the flow map.
+              onPress={() => advance()}
               style={({ pressed }) => [styles.btn, styles.save, pressed && styles.pressed]}
             >
               <Text style={styles.saveText} {...shrinkToFit(0.75)}>
@@ -148,7 +152,8 @@ export default function NoticeResponseScreen({
         <Pressable
           accessibilityRole="button"
           onPress={() =>
-            generate ? undefined : router.push(`/advocate/notice/${id}/review` as Href)
+            // DEMO: the static Generate state follows the flow map (data/flowMap.ts).
+            generate ? advance() : router.push(`/advocate/notice/${id}/review` as Href)
           }
           style={({ pressed }) => [styles.share, generate && styles.generate, pressed && styles.pressed]}
         >

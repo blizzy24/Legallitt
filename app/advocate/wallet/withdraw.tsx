@@ -1,3 +1,4 @@
+import { DEMO_AUTO_ADVANCE } from '../../../constants/dev';
 import { router, type Href } from 'expo-router';
 import { ArrowLeft, BadgeCheck, CircleCheck, Gavel, Info, Landmark, Lock } from 'lucide-react-native';
 import { useState } from 'react';
@@ -169,7 +170,7 @@ export default function AdvocateWithdrawScreen() {
         </View>
 
         {/* ⚠ UNSCOPED — no payout rail. Draws only. */}
-        <View accessibilityRole="button" aria-disabled={!ok} style={[styles.btn, styles.btnFirst]}>
+        <View accessibilityRole="button" aria-disabled={!ok && !DEMO_AUTO_ADVANCE} style={[styles.btn, styles.btnFirst]}>
           <Text style={styles.btnText} {...shrinkToFit(0.8)}>
             {`${d.confirm} (${shown})`}
           </Text>

@@ -1,3 +1,4 @@
+import { DEMO_AUTO_ADVANCE } from '../../../constants/dev';
 import { router, type Href } from 'expo-router';
 import {
   ArrowRight,
@@ -161,7 +162,7 @@ export default function AdvocateCourierConfirmScreen() {
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={d.cta}
-          disabled={!checked}
+          disabled={!checked && !DEMO_AUTO_ADVANCE}
           onPress={() => router.push('/advocate/courier/received' as Href)}
           style={({ pressed }) => [
             styles.cta,

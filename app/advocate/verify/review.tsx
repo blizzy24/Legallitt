@@ -1,3 +1,4 @@
+import { DEMO_AUTO_ADVANCE } from '../../../constants/dev';
 import { router, type Href } from 'expo-router';
 import {
   ArrowRight,
@@ -215,7 +216,7 @@ export default function AdvocateVerifyReviewScreen() {
         <Pressable
           accessibilityRole="button"
           accessibilityState={{ disabled: !agreed }}
-          disabled={!agreed}
+          disabled={!agreed && !DEMO_AUTO_ADVANCE}
           onPress={() => router.push('/advocate/verify/submitted' as Href)}
           style={[styles.cta, agreed && styles.ctaOn]}
         >
