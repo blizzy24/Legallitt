@@ -196,6 +196,8 @@ const TONES: Record<Tone, { bg: string; fg: string }> = {
   sage: { bg: dcShipmentPalette.statusPill, fg: c.greenInk },
   verified: { bg: dcDecidePalette.verifiedPill, fg: c.greenInk },
   sand: { bg: q.kickerSand, fg: c.brownInk },
+  panelGreen: { bg: c.panel, fg: c.greenInk },
+  greyGreen: { bg: c.tileGrey, fg: c.greenInk },
   red: { bg: status.redContainer, fg: status.onRedContainer },
   brown: { bg: c.brown, fg: ink.onBrand },
   blue: { bg: c.blueTile, fg: c.blueInk },
@@ -227,7 +229,19 @@ function RightPart({ r }: { r?: Right }) {
   const { t, s } = useK();
   if (r === undefined) return null;
   if (typeof r === 'string') return <Text style={s.rightText}>{r}</Text>;
-  if (isPill(r)) return <PillTag p={r} />;
+  // Wrapped so a row centres it (the pill itself is flex-start for column use).
+  if (isPill(r))
+    return (
+      <View>
+        <PillTag p={r} />
+      </View>
+    );
+  if ('iconDisc' in r)
+    return (
+      <View style={s.rightDisc}>
+        <Icon name={r.iconDisc} size={t.rightDiscIcon} color={c.inkWarm} />
+      </View>
+    );
   const content = (
     <View style={[s.link, r.chip && s.linkChip]}>
       {r.icon ? <Icon name={r.icon} size={t.chipIcon} color={r.chip ? c.inkWarm : c.brown} /> : null}
@@ -267,7 +281,7 @@ function HeadRow({ h }: { h: Head }) {
             </View>
           ) : null}
           <View style={[s.row, s.wrap]}>
-            <Text style={h.caps ? s.caps : s.headTitle}>{h.title}</Text>
+            {h.title ? <Text style={h.caps ? s.caps : s.headTitle}>{h.title}</Text> : null}
             {h.pills?.map((p) => <PillTag key={p.pill} p={p} />)}
           </View>
           {h.sub ? <Text style={s.headSub}>{h.sub}</Text> : null}
@@ -334,6 +348,12 @@ function Disc({ state, deep }: { state: Step['state']; deep?: boolean }) {
         <View style={[s.discDot, { backgroundColor: c.brownInk }]} />
       </View>
     );
+  if (state === 'next')
+    return (
+      <View style={[s.disc, s.discTodo]}>
+        <View style={[s.discDot, { backgroundColor: c.brown }]} />
+      </View>
+    );
   return (
     <View style={[s.disc, s.discTodo]}>
       <View style={[s.discDot, deep && s.discDotLight]} />
@@ -355,12 +375,12 @@ function Timeline({ steps, boxed, noRail, deep }: { steps: Step[]; boxed?: boole
             <Disc state={st.state} deep={deep} />
             <View style={[s.railHalf, (boxed || noRail || i === steps.length - 1) && s.railHidden]} />
           </View>
-          <View style={[s.flex, s.stepText]}>
-            <View style={s.between}>
+          <View style={[s.flex, s.stepText, s.between]}>
+            <View style={s.flex}>
               <Text style={[s.stepTitle, st.state === 'todo' && deep && s.muted, st.state === 'accent' && s.accentTitle]}>{st.title}</Text>
-              <RightPart r={st.right} />
+              {st.sub ? <Text style={[s.stepSub, st.subGreen && s.green, st.state === 'todo' && deep && s.mutedSub]}>{st.sub}</Text> : null}
             </View>
-            {st.sub ? <Text style={[s.stepSub, st.subGreen && s.green, st.state === 'todo' && deep && s.mutedSub]}>{st.sub}</Text> : null}
+            <RightPart r={st.right} />
           </View>
         </View>
       ))}
@@ -433,7 +453,9 @@ export function BlockView({ b }: { b: Block }): ReactNode {
       const disc: string =
         b.tone === 'green'
           ? c.greenTile
-          : b.tone === 'deepGreen'
+          : b.tone === 'mint'
+            ? courierGreen.recBg
+            : b.tone === 'deepGreen'
             ? q.heroHalo
             : b.tone === 'red'
               ? status.redContainer
@@ -443,7 +465,7 @@ export function BlockView({ b }: { b: Block }): ReactNode {
       const core: string =
         b.tone === 'green'
           ? status.active
-          : b.tone === 'deepGreen'
+          : b.tone === 'mint' || b.tone === 'deepGreen'
             ? c.greenInk
             : b.tone === 'red'
               ? advForensicRed.declineColour
@@ -1056,6 +1078,7 @@ function ScreenBody({ spec, state, onState, overlay }: ScreenProps) {
         right={spec.headerRight ? <View style={s.headerRight}><PillTag p={spec.headerRight} /></View> : undefined}
         avatar={spec.avatar ?? true}
         center={spec.centerTitle}
+        plainChevron={spec.chevron}
         backHref={'/matters' as Href}
       />
       {spec.switcher && onState && !spec.switcher.inline ? (
@@ -1092,9 +1115,9 @@ function ScreenBody({ spec, state, onState, overlay }: ScreenProps) {
         </View>
       ) : null}
       {spec.footer ? (
-        <View style={[s.footer, { paddingBottom: insets.bottom + t.footerPadBottom }]}>
+        <View style={[s.footer, spec.footerStack && s.footerStack, { paddingBottom: insets.bottom + t.footerPadBottom }]}>
           {spec.footer.map((x) => (
-            <Button key={x.label} b={x} flex footer />
+            <Button key={x.label} b={x} flex={!spec.footerStack} footer />
           ))}
         </View>
       ) : null}
@@ -1148,7 +1171,7 @@ function makeStyles(t: CourtTokens) {
   headTitle: { fontFamily: font.appSemi, fontSize: t.headTitleSize, color: c.ink },
   headSub: { marginTop: t.headSubTop, maxWidth: t.headSubMax, fontFamily: font.appBody, fontSize: t.headSubSize, lineHeight: t.headSubLine, color: c.inkWarm },
   caps: { fontFamily: font.appSemi, fontSize: t.capsSize, letterSpacing: t.capsSpacing, color: c.inkWarm, textTransform: 'uppercase' },
-  rightText: { fontFamily: font.appSemi, fontSize: t.smallSize, color: c.inkWarm, textAlign: 'right', flexShrink: 1 },
+  rightText: { fontFamily: font.appSemi, fontSize: t.rightSize, color: c.inkWarm, textAlign: 'right', flexShrink: 1 },
   link: { flexDirection: 'row', alignItems: 'center', gap: t.pillGap },
   linkChip: { minHeight: t.linkChipH, paddingHorizontal: t.linkChipPadX, borderRadius: t.linkChipRadius, backgroundColor: c.panel },
   linkChipText: { color: c.inkWarm },
@@ -1180,6 +1203,8 @@ function makeStyles(t: CourtTokens) {
   footRowText: { flexShrink: 1, fontFamily: font.appSemi, fontSize: t.footRowSize, color: c.inkWarm },
   headTileBrown: { backgroundColor: c.brown },
   headTileRow: { gap: t.headTileGap },
+  rightDisc: { width: t.rightDisc, height: t.rightDisc, borderRadius: t.rightDisc / 2, backgroundColor: c.tileGrey, alignItems: 'center', justifyContent: 'center' },
+  footerStack: { flexDirection: 'column', gap: t.footerStackGap },
   kicker: { marginBottom: t.kickerGap },
   heroBadge: {
     position: 'absolute',

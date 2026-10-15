@@ -82,6 +82,8 @@ export type Tone =
   | 'sage'
   | 'verified'
   | 'sand'
+  | 'panelGreen'
+  | 'greyGreen'
   | 'red'
   | 'brown'
   | 'blue'
@@ -93,7 +95,11 @@ export type Tone =
 export type Pill = { pill: string; tone: Tone; dot?: boolean; icon?: IconName; /** The taller header / lead pill (363). */ lg?: boolean; mono?: boolean };
 
 /** What sits at the right of a heading or row: plain text, a pill or a small link. */
-export type Right = string | Pill | { link: string; icon?: IconName; iconAfter?: IconName; to?: Href; /** Drawn as a small grey button (364's Refresh). */ chip?: boolean };
+export type Right =
+  | string
+  | Pill
+  | { link: string; icon?: IconName; iconAfter?: IconName; to?: Href; /** Drawn as a small grey button (364's Refresh). */ chip?: boolean }
+  | { /** A grey disc with an icon (372's next-step card). */ iconDisc: IconName };
 
 export type Btn = {
   label: string;
@@ -127,8 +133,8 @@ export type Head = {
 export type Step = {
   title: string;
   sub?: string;
-  /** accent: the green current step of 371. */
-  state: 'done' | 'current' | 'active' | 'accent' | 'todo';
+  /** accent: the green current step of 371. next: a grey disc with a brown dot, normal text (372). */
+  state: 'done' | 'current' | 'active' | 'accent' | 'next' | 'todo';
   right?: Right;
   /** Sub-line in green (378, 384 draw "Completed" green; 371 draws it grey). */
   subGreen?: boolean;
@@ -148,7 +154,7 @@ type BlockBody =
   | {
       k: 'hero';
       icon: IconName;
-      tone: 'green' | 'deepGreen' | 'peach' | 'red' | 'grey';
+      tone: 'green' | 'deepGreen' | 'mint' | 'peach' | 'red' | 'grey';
       pill?: Pill;
       title: string;
       sub?: string;
@@ -267,6 +273,10 @@ export type CourtSpec = {
   headerPill?: Pill;
   /** Buttons pinned in a bar at the foot of the screen (363). */
   footer?: Btn[];
+  /** The footer's buttons one above the other (372). */
+  footerStack?: boolean;
+  /** A plain chevron in place of the back arrow (372). */
+  chevron?: boolean;
   /** The drawn state switcher (363, 369, 370). */
   switcher?: { label?: string; options: string[]; /** A centred pill on the page, no band (370). */ inline?: boolean };
   blocks: Block[];

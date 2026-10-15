@@ -600,3 +600,82 @@ export const COURT_ACCEPTED: CourtSpec = {
 };
 
 export const COURT_WAITING_STATES = [COURT_WAITING, { ...COURT_ACCEPTED, title: COURT_WAITING.title }];
+
+// ── design/372 — client accepted, the second drawing ─────────────────────────
+// ⚠ DIFFERS FROM 371 (18.3% of pixels; 9.4% in the best 300pt window), though
+// both draw the same state: 372 has a centred "Client Accepted" header with a
+// plain chevron, a mint halo, "The client has chosen to continue with you." as
+// one line, a CLIENT card with a call disc, one combined case card (Civil
+// pill, the id as plain text, a one-line court strip), a "Confirmed" tag and
+// "You are retained for this matter" on the third step, a grey next-step card
+// with its icon at the right, and both buttons pinned in a white footer.
+// Built as drawn; which of the two is current is the client's call.
+export const COURT_ACCEPTED_2: CourtSpec = {
+  title: 'Client Accepted',
+  centerTitle: true,
+  chevron: true,
+  blocks: [
+    {
+      k: 'hero',
+      icon: 'check',
+      tone: 'mint',
+      pill: { pill: 'CLIENT CONFIRMED • READY TO PROCEED', tone: 'panelGreen', dot: true, lg: true },
+      title: 'Client Accepted',
+      sub: 'The client has chosen to continue with you.',
+    },
+    {
+      k: 'card',
+      top: 'firstCardTop',
+      head: { title: 'CLIENT', caps: true, right: { pill: 'Verified Client', tone: 'greyGreen', icon: 'checkCircle' } },
+      blocks: [{ k: 'person', initials: CASE.initials, name: CASE.client, meta: CASE.phone, metaIcon: 'phone', call: true, top: 'personTop', bottom: 'personBottom' }],
+    },
+    {
+      k: 'card',
+      head: { title: '', right: CASE.hcr, pills: [{ pill: 'Civil', tone: 'grey' }] },
+      blocks: [
+        { k: 'text', t: CASE.hcRep, tone: 'label', top: 'serviceTop' },
+        { k: 'text', t: CASE.title, tone: 'title', top: 'valueTop' },
+        { k: 'banner', icon: 'gavel', tone: 'grey', text: `${CASE.court} • ${CASE.bench}`, top: 'courtTop', bottom: 'courtBottom' },
+      ],
+    },
+    {
+      k: 'card',
+      head: { title: 'CASE PROGRESS', caps: true, right: 'Step 3 of 4' },
+      blocks: [
+        {
+          k: 'timeline',
+          top: 'stepsTop',
+          deep: true,
+          steps: [
+            { title: 'Request Accepted', sub: 'Case intake confirmed', state: 'done' },
+            { title: 'Case Discussed', sub: 'Brief overview completed', state: 'done' },
+            { title: 'Client Accepted', sub: 'You are retained for this matter', state: 'done', right: { pill: 'Confirmed', tone: 'greyGreen' } },
+            { title: 'Recommend Documents', sub: 'Send checklist for filing', state: 'next' },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      tone: 'panel',
+      head: { title: 'RECOMMENDED NEXT STEP', caps: true, right: { iconDisc: 'listChecks' } },
+      blocks: [
+        { k: 'text', t: 'Recommend Documents', tone: 'title', top: 'nextTitleTop' },
+        { k: 'text', t: 'Tell the client which documents you need to start preparing the filing.', size: 'nextTextSize', top: 'nextTextTop' },
+        {
+          k: 'banner',
+          icon: 'info',
+          tone: 'white',
+          parts: [{ t: CASE.client }, { t: ' will receive your document checklist instantly in their Legalitt app.' }],
+          text: '',
+          top: 'nextBannerTop',
+        },
+      ],
+    },
+  ],
+  footer: [
+    { label: 'Recommend Documents', iconRight: 'arrowRight', to: R('recommend-documents') },
+    { label: 'Chat with Client', icon: 'chat', variant: 'white' },
+  ],
+  footerStack: true,
+};
