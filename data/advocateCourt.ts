@@ -1289,3 +1289,96 @@ export const COURT_FILING: CourtSpec = {
   footerNote: 'Add the filing details after you submit the case in court.',
   footerNote2: 'Continue to Hearing Update (Available after hearing)',
 };
+
+// ── design/379 — confirm court filing ────────────────────────────────────────
+// ⚠ No drawn control leads here: Mark as Filed (378) is unscoped. Save Filing
+// Details opens Case Filed (384) — navigation only, nothing is saved; Cancel
+// goes back. ⚠ UNSCOPED — the receipt upload, View / Replace, the date picker.
+// ⚠ CONFLICT 7 — "Confirm Court Filin" clipped in the export; stored whole.
+// ⚠ (?) The receipt's name is clipped to "Filing_Receipt.p"; the base name is
+// drawn whole, the extension is read as .pdf.
+export const COURT_CONFIRM_FILING: CourtSpec = {
+  title: 'Confirm Court Filing',
+  sub: CASE.hcRep,
+  headerRight: { pill: CASE.hcr, tone: 'help' },
+  blocks: [
+    {
+      k: 'card',
+      tone: 'halo',
+      indent: true,
+      head: { icon: 'clipboardCheck', tile: 'step', title: 'Add Filing Details', size: 'introTitleSize', sub: 'Enter the details after you submit the case in court.' },
+      blocks: [{ k: 'text', icon: 'info', iconSize: 'introIcon', t: 'Legalitt will save the details you enter here.', tone: 'small', top: 'introInfoTop' }],
+    },
+    {
+      k: 'card',
+      top: 'caseTop',
+      head: { icon: 'gavel', title: 'Case Details', right: { pill: 'Civil', tone: 'help' } },
+      blocks: [
+        {
+          k: 'card',
+          tone: 'panel',
+          pad: 'rowsPad',
+          top: 'rowsTop',
+          bottom: 'rowsBottom',
+          blocks: [
+            {
+              k: 'rows',
+              rows: [
+                ['Client', CASE.client],
+                ['Case Title', CASE.title],
+                ['Court', CASE.court],
+                ['Bench', CASE.bench],
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      head: { icon: 'filePen', title: 'Filing Details' },
+      blocks: [
+        { k: 'field', label: 'Filing Date', req: true, value: '18 October 2026', iconRight: 'calendar', hint: 'The actual date you submitted the case to the registry.', top: 'firstFieldTop' },
+        { k: 'field', label: 'Filing Number', req: true, value: CASE.filingNo, hint: 'Enter the filing number given by the court.', top: 'fieldGap' },
+        { k: 'field', label: 'Case Number', right: 'If assigned', value: CASE.caseNo, hint: 'Enter the case number if available.', top: 'fieldGap' },
+        { k: 'field', label: 'Filing Status', req: true, top: 'fieldGap' },
+        { k: 'choices', top: 'statusTop', items: [{ label: 'Filed', sub: 'Case has been filed in the court registry', selected: true, dot: true }] },
+        { k: 'field', label: 'Filing Note', right: 'Optional', value: 'Petition submitted at the Indore Bench.', multiline: true, hint: 'Any additional remark for your legal file.', top: 'fieldGap' },
+      ],
+    },
+    {
+      k: 'card',
+      head: { icon: 'receipt', title: 'Filing Receipt', right: 'Optional' },
+      blocks: [
+        { k: 'text', t: 'Upload the court receipt or filing acknowledgement if you have it.', size: 'receiptTextSize', top: 'receiptTextTop' },
+        {
+          k: 'docs',
+          tiles: true,
+          tileTone: 'wallet',
+          top: 'uploadTop',
+          // ⚠ (?) "Filing_Receipt.p" in the export.
+          items: [{ name: 'Filing_Receipt.pdf', meta: '2.1 MB • Uploaded', icon: 'pdf', inline: ['View', 'Replace'] }],
+        },
+        { k: 'text', icon: 'checkCircle', iconSize: 'introIcon', t: 'PDF, JPG or PNG • Optional', tone: 'small', top: 'formatsTop' },
+      ],
+    },
+    {
+      k: 'card',
+      tone: 'banner',
+      top: 'confirmTop',
+      blocks: [
+        {
+          k: 'check',
+          checked: true,
+          title: 'I confirm that I have submitted this case in court and the filing details above are correct.',
+          sub: 'Legalitt records advocate-confirmed data for case tracking.',
+        },
+      ],
+    },
+  ],
+  footer: [
+    { label: 'Save Filing Details', icon: 'save', to: R('case-filed') },
+    { label: 'Cancel', variant: 'link', back: true },
+  ],
+  footerStack: true,
+};

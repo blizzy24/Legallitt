@@ -78,7 +78,10 @@ export type IconName =
   | 'badgeCheck'
   | 'scroll'
   | 'inbox'
-  | 'paperclip';
+  | 'paperclip'
+  | 'clipboardCheck'
+  | 'filePen'
+  | 'fileStack';
 
 export type Tone =
   | 'green'
@@ -139,7 +142,7 @@ export type Btn = {
 export type Head = {
   icon?: IconName;
   /** true: grey square tile; 'peach': peach square tile (364); 'disc': peach round disc (364's Next Step). */
-  tile?: boolean | 'peach' | 'disc' | 'brown' | 'red';
+  tile?: boolean | 'peach' | 'disc' | 'brown' | 'red' | 'step';
   /** A red caps title (373); a brown one (378). */
   tone?: 'red' | 'brown';
   /** The smaller caps of a nested panel (373's CLIENT NOTE). */
@@ -187,7 +190,7 @@ export type Spaced = { top?: string; /** A token added below the block (may be n
 export type Block = Spaced & BlockBody;
 
 type BlockBody =
-  | { k: 'card'; tone?: 'white' | 'panel' | 'cream' | 'peach' | 'green' | 'outline' | 'payPeach' | 'decline' | 'tier'; head?: Head; blocks: Block[]; /** Token for its padding. */ pad?: string }
+  | { k: 'card'; tone?: 'white' | 'panel' | 'cream' | 'peach' | 'green' | 'outline' | 'payPeach' | 'decline' | 'tier' | 'halo' | 'banner'; /** Blocks indented to the head's text column (379). */ indent?: boolean; head?: Head; blocks: Block[]; /** Token for its padding. */ pad?: string }
   | {
       k: 'hero';
       icon: IconName;
@@ -255,7 +258,18 @@ type BlockBody =
     }
   | {
       k: 'docs';
-      items: { name: string; meta?: string; icon?: IconName; right?: Right | 'tick' | 'circleTick' | 'ring'; btn?: string; actions?: string[] }[];
+      items: {
+        name: string;
+        meta?: string;
+        icon?: IconName;
+        right?: Right | 'tick' | 'circleTick' | 'ring';
+        btn?: string;
+        actions?: string[];
+        /** Small buttons in the row (379's View / Replace). */
+        inline?: string[];
+      }[];
+      /** The square tile's fill: 'wallet' = advWalletPalette.tile (379). */
+      tileTone?: 'wallet';
       /** Icons in grey discs on the panel rows (375). */
       discs?: boolean;
       /** Each a white card with a grey square icon tile (376). */
@@ -291,7 +305,7 @@ type BlockBody =
       bordered?: boolean;
     }
   | { k: 'fieldRow'; fields: { label: string; req?: boolean; value?: string; placeholder?: string; icon?: IconName }[] }
-  | { k: 'choices'; items: { label: string; sub?: string; selected?: boolean; right?: Right }[] }
+  | { k: 'choices'; items: { label: string; sub?: string; selected?: boolean; right?: Right; /** A green dot at the right (379). */ dot?: boolean }[] }
   | { k: 'segment'; label?: string; items: string[]; selected: number }
   | { k: 'check'; title: string; sub?: string; checked: boolean; blocks?: Block[]; /** Tapping it toggles the screen's gate (375). */ gate?: boolean }
   | { k: 'bars'; steps: { label: string; state: 'done' | 'current' | 'todo' | 'bad'; sub?: string }[]; variant?: 'bars' | 'discs' | 'tiles' | 'chips' }

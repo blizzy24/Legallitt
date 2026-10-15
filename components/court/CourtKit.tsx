@@ -17,10 +17,13 @@ import {
   CircleHelp,
   CirclePlus,
   CircleX,
+  ClipboardCheck,
   Clock,
   Copy,
   Download,
   Eye,
+  FilePen,
+  FileStack,
   FileText,
   Flag,
   Folder,
@@ -88,6 +91,7 @@ import {
   colors,
   advWalletPalette,
   courierGreen,
+  courierReceived,
   dcDecidePalette,
   dcDocsNeededPalette,
   dcDocumentsPalette,
@@ -203,6 +207,9 @@ const ICONS: Record<IconName, LucideIcon> = {
   scroll: ScrollIcon,
   inbox: Inbox,
   paperclip: Paperclip,
+  clipboardCheck: ClipboardCheck,
+  filePen: FilePen,
+  fileStack: FileStack,
 };
 
 export function Icon({ name, size, color, sw = 2 }: { name: IconName; size: number; color: string; sw?: number }) {
@@ -299,6 +306,7 @@ function HeadRow({ h }: { h: Head }) {
               h.tile === 'disc' && s.headDisc,
               h.tile === 'brown' && s.headTileBrown,
               h.tile === 'red' && s.headTileRed,
+              h.tile === 'step' && s.headTileStep,
             ]}
           >
             {h.icon ? (
@@ -355,14 +363,16 @@ export function Button({ b, flex, footer }: { b: Btn; flex?: boolean; footer?: b
         ? advForensicRed.declineColour
         : v === 'muted'
           ? dcStepperPalette.muted
-          : c.ink;
+          : v === 'link'
+            ? c.inkWarm
+            : c.ink;
   const nav = open && (b.to !== undefined || b.back === true);
   const style: StyleProp<ViewStyle> = [
     v === 'link' ? s.btnLink : s.btn,
     { backgroundColor: bg },
     v === 'outline' && s.btnOutline,
     v === 'danger' && s.btnDanger,
-    footer && s.btnFooter,
+    footer && v !== 'link' && s.btnFooter,
     flex && !b.hug && s.flex,
     b.hug && s.btnHug,
   ];
@@ -375,7 +385,7 @@ export function Button({ b, flex, footer }: { b: Btn; flex?: boolean; footer?: b
       style={style}
     >
       {b.icon ? <Icon name={b.icon} size={t.btnIcon} color={fg} /> : null}
-      <Text style={[v === 'link' ? s.btnLinkText : s.btnText, footer && s.btnFooterText, { color: fg }]}>{b.label}</Text>
+      <Text style={[v === 'link' ? s.btnLinkText : s.btnText, footer && v !== 'link' && s.btnFooterText, { color: fg }]}>{b.label}</Text>
       {b.iconRight ? <Icon name={b.iconRight} size={t.btnIcon} color={fg} /> : null}
     </Pressable>
   );
@@ -533,12 +543,14 @@ function Field({ b }: { b: Extract<Block, { k: 'field' }> }) {
           <RightPart r={b.right} />
         </View>
       ) : null}
-      <View style={[s.field, b.multiline && s.area, b.bordered && s.fieldBordered, !b.label && s.fieldBare]}>
-        {b.icon ? <Icon name={b.icon} size={t.chipIcon} color={c.inkWarm} /> : null}
-        {b.prefix ? <Text style={s.fieldText}>{b.prefix}</Text> : null}
-        <Text style={[s.fieldText, s.flex, !b.value && s.placeholder]}>{b.value ?? b.placeholder}</Text>
-        {b.iconRight ? <Icon name={b.iconRight} size={t.chipIcon} color={c.inkWarm} /> : null}
-      </View>
+      {b.value !== undefined || b.placeholder !== undefined ? (
+        <View style={[s.field, b.multiline && s.area, b.bordered && s.fieldBordered, !b.label && s.fieldBare]}>
+          {b.icon ? <Icon name={b.icon} size={t.fieldIcon} color={c.inkWarm} /> : null}
+          {b.prefix ? <Text style={s.fieldText}>{b.prefix}</Text> : null}
+          <Text style={[s.fieldText, s.flex, !b.value && s.placeholder]}>{b.value ?? b.placeholder}</Text>
+          {b.iconRight ? <Icon name={b.iconRight} size={t.fieldIcon} color={c.inkWarm} /> : null}
+        </View>
+      ) : null}
       {b.foot ? (
         <View style={[s.between, s.hintRow]}>
           <Text style={[s.hint, s.flex]}>{b.foot[0]}</Text>
@@ -567,6 +579,10 @@ export function BlockView({ b }: { b: Block }): ReactNode {
                   ? dcDocumentsPalette.tilePeach
                   : b.tone === 'decline'
                     ? q.declineTint
+                    : b.tone === 'halo'
+                      ? dcDocsNeededPalette.halo
+                      : b.tone === 'banner'
+                        ? courierReceived.bannerBg
                     : b.tone === 'tier'
                       ? dcPricingPalette.tierOn
                       : c.card;
@@ -579,6 +595,7 @@ export function BlockView({ b }: { b: Block }): ReactNode {
               style={{
                 marginTop: i > 0 || b.head ? (t[x.top ?? 'cardInnerGap'] ?? t.cardInnerGap) : 0,
                 marginBottom: x.bottom ? t[x.bottom] : 0,
+                marginLeft: b.indent ? t.headTile + t.headTileGap : 0,
               }}
             >
               <BlockView b={x} />
@@ -825,8 +842,12 @@ export function BlockView({ b }: { b: Block }): ReactNode {
                 {b.pdf ? (
                   <PdfStackIcon size={t.pdfIcon} color={advForensicRed.declineColour} />
                 ) : b.tiles ? (
-                  <View style={[s.docSquare, !b.cards && s.docSquarePanel]}>
-                    <Icon name={d.icon ?? 'file'} size={t.docIcon} color={c.brownInk} />
+                  <View style={[s.docSquare, !b.cards && s.docSquarePanel, b.tileTone === 'wallet' && s.docSquareWallet]}>
+                    {d.icon === 'pdf' ? (
+                      <PdfStackIcon size={t.docIcon} color={b.tileTone === 'wallet' ? advWalletPalette.tileInk : c.brownInk} />
+                    ) : (
+                      <Icon name={d.icon ?? 'file'} size={t.docIcon} color={b.tileTone === 'wallet' ? advWalletPalette.tileInk : c.brownInk} />
+                    )}
                   </View>
                 ) : b.discs ? (
                   <View style={s.docDisc}>
@@ -852,6 +873,16 @@ export function BlockView({ b }: { b: Block }): ReactNode {
                 ) : (
                   <RightPart r={d.right} />
                 )}
+                {d.inline ? (
+                  // ⚠ UNSCOPED — no viewer, nothing uploads.
+                  <View style={s.docInline}>
+                    {d.inline.map((x, j) => (
+                      <View key={x} style={[s.docInlineBtn, { backgroundColor: j === 0 ? c.tileGrey : c.helpGrey }]}>
+                        <Text style={s.docInlineText}>{x}</Text>
+                      </View>
+                    ))}
+                  </View>
+                ) : null}
                 {/* ⚠ UNSCOPED — no document viewer. */}
                 {d.btn ? (
                   <View style={[s.docBtn, b.pdf && s.docBtnGrey, b.btnTone === 'help' && s.docBtnHelp]}>
@@ -946,6 +977,7 @@ export function BlockView({ b }: { b: Block }): ReactNode {
                 {ch.sub ? <Text style={s.checkSub}>{ch.sub}</Text> : null}
               </View>
               <RightPart r={ch.right} />
+              {ch.dot ? <View style={[s.labelDot, { backgroundColor: status.active }]} /> : null}
             </View>
           ))}
         </View>
@@ -1518,6 +1550,7 @@ function makeStyles(t: CourtTokens) {
   footRowText: { flexShrink: 1, fontFamily: font.appSemi, fontSize: t.footRowSize, color: c.inkWarm },
   headTileBrown: { backgroundColor: c.brown },
   capsSmall: { fontSize: t.capsSmallSize },
+  headTileStep: { borderRadius: t.headTile / 2, backgroundColor: c.peachStep },
   headTileRed: { width: t.headDisc, height: t.headDisc, borderRadius: t.headDisc / 2, backgroundColor: status.redContainer },
   greyDiscHelp: { backgroundColor: c.helpGrey },
   photo: { backgroundColor: c.heroArt },
@@ -1527,6 +1560,10 @@ function makeStyles(t: CourtTokens) {
   docRow: { minHeight: t.docRowH, justifyContent: 'center' },
   docCard: { backgroundColor: c.card, borderRadius: t.docCardRadius, paddingHorizontal: t.docCardPadX, paddingVertical: t.docCardPadY },
   docSquarePanel: { backgroundColor: c.tileGrey },
+  docSquareWallet: { backgroundColor: advWalletPalette.tile },
+  docInline: { flexDirection: 'row', gap: t.docInlineGap },
+  docInlineBtn: { minHeight: t.docInlineH, borderRadius: t.docInlineRadius, paddingHorizontal: t.docInlinePadX, justifyContent: 'center' },
+  docInlineText: { fontFamily: font.appSemi, fontSize: t.docInlineSize, color: c.ink },
   docBtnHelp: { backgroundColor: c.helpGrey },
   docSquare: { width: t.docSquare, height: t.docSquare, borderRadius: t.docSquareRadius, backgroundColor: c.helpGrey, alignItems: 'center', justifyContent: 'center' },
   iconRows: { borderRadius: t.panelRadius, paddingHorizontal: t.panelPad, paddingVertical: t.iconRowsPadY, backgroundColor: c.panel, gap: t.iconRowsGap },
@@ -1756,7 +1793,7 @@ function makeStyles(t: CourtTokens) {
   hintRow: { marginTop: t.hintTop },
 
   choice: { flexDirection: 'row', alignItems: 'center', gap: t.stepGap, borderRadius: t.panelRadius, padding: t.panelPad, backgroundColor: c.panel },
-  choiceOn: { backgroundColor: c.peachNote },
+  choiceOn: { backgroundColor: dcDocsNeededPalette.halo },
   radio: { width: t.stepDisc, height: t.stepDisc, borderRadius: t.stepDisc / 2, backgroundColor: c.radioGrey, alignItems: 'center', justifyContent: 'center' },
   radioOn: { backgroundColor: c.brown },
 
