@@ -211,6 +211,8 @@ export type Head = {
   kicker?: Pill;
   title: string;
   caps?: boolean;
+  /** With caps: ink, not warm grey (394). */
+  strong?: boolean;
   sub?: string;
   right?: Right;
   /** Token for the least width the title keeps (391); default headTitleMin. */
@@ -292,7 +294,7 @@ type BlockBody =
   | { k: 'rows'; rows: [string, string, ('mono' | 'monoBrown' | 'brown' | 'bold' | 'green' | 'quote')?][]; divided?: boolean }
   | {
       k: 'grid';
-      cells: { label: string; value: string; sub?: string; tone?: 'green' | 'mono' | 'muted' | 'brown'; wide?: boolean; icon?: IconName; sideIcon?: IconName; iconRight?: IconName; /** tileGrey, not panel (376). */ shade?: boolean; alignRight?: boolean; small?: boolean; /** A regular-weight value (385). */ plain?: boolean; /** The larger value of 388's date / time. */ big?: boolean; /** A white disc with an icon at the right (376). */ iconDisc?: IconName; /** A pill in place of the value (391). */ pill?: Pill }[];
+      cells: { label: string; value: string; sub?: string; tone?: 'green' | 'mono' | 'muted' | 'brown'; wide?: boolean; icon?: IconName; sideIcon?: IconName; iconRight?: IconName; /** tileGrey, not panel (376). */ shade?: boolean; alignRight?: boolean; small?: boolean; /** A regular-weight value (385). */ plain?: boolean; /** The larger value of 388's date / time. */ big?: boolean; /** A white disc with an icon at the right (376). */ iconDisc?: IconName; /** A pill in place of the value (391). */ pill?: Pill; /** A pill at the cell's right (394's 11:30 AM). */ rightPill?: Pill }[];
       /** 'cells': a panel per cell. 'columns': one panel per column (363). 'panel': one panel round all (363's phone/email). */
       boxed?: 'cells' | 'columns' | 'panel';
       /** Capitalised labels (370). */

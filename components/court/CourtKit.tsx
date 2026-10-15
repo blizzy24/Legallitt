@@ -391,7 +391,7 @@ function HeadRow({ h }: { h: Head }) {
           ) : null}
           <View style={[s.row, s.wrap]}>
             {h.title ? (
-              <Text style={[h.caps ? s.caps : s.headTitle, h.small && s.capsSmall, h.tone === 'red' && s.red, h.tone === 'brown' && s.brownText, h.size !== undefined && { fontSize: t[h.size], lineHeight: t[h.size + 'Line'] }]}>
+              <Text style={[h.caps ? s.caps : s.headTitle, h.caps && h.strong && s.capsStrong, h.small && s.capsSmall, h.tone === 'red' && s.red, h.tone === 'brown' && s.brownText, h.size !== undefined && { fontSize: t[h.size], lineHeight: t[h.size + 'Line'] }]}>
                 {h.title}
               </Text>
             ) : null}
@@ -878,7 +878,7 @@ export function BlockView({ b }: { b: Block }): ReactNode {
       );
     case 'grid': {
       const cellView = (cell: (typeof b.cells)[number], style?: StyleProp<ViewStyle>) => (
-        <View key={cell.label + cell.value} style={[style, (cell.sideIcon || cell.iconRight || cell.iconDisc) && s.sideIconCell, cell.shade && s.cellShade]}>
+        <View key={cell.label + cell.value} style={[style, (cell.sideIcon || cell.iconRight || cell.iconDisc || cell.rightPill) && s.sideIconCell, cell.shade && s.cellShade]}>
           {cell.sideIcon ? (
             b.tiles ? (
               <View style={s.sideTile}>
@@ -888,7 +888,7 @@ export function BlockView({ b }: { b: Block }): ReactNode {
               <Icon name={cell.sideIcon} size={t.sideIcon} color={c.inkWarm} />
             )
           ) : null}
-          <View style={[(cell.sideIcon || cell.iconRight || cell.iconDisc) && s.flex, cell.alignRight && s.cellRight]}>
+          <View style={[(cell.sideIcon || cell.iconRight || cell.iconDisc || cell.rightPill) && s.flex, cell.alignRight && s.cellRight]}>
           <View style={s.row}>
             {cell.icon ? <Icon name={cell.icon} size={t.labelSize} color={c.inkMuted} /> : null}
             <Text style={[s.cellLabel, b.caps && s.cellCaps]}>{cell.label}</Text>
@@ -904,6 +904,11 @@ export function BlockView({ b }: { b: Block }): ReactNode {
           )}
           {cell.sub ? <Text style={s.cellSub}>{cell.sub}</Text> : null}
           </View>
+          {cell.rightPill ? (
+            <View>
+              <PillTag p={cell.rightPill} />
+            </View>
+          ) : null}
           {cell.iconRight ? (
             <View style={s.cellIconRight}>
               <Icon name={cell.iconRight} size={t.headIcon} color={c.inkWarm} />

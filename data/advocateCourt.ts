@@ -3114,3 +3114,305 @@ export const COURT_CHANGE_ADVOCATE: CourtSpec = {
   footer: [{ label: 'Upload NOC', icon: 'fileUp' }],
   footerLinks: [{ icon: 'lock', t: 'Official Legalitt Handover • Past filings and orders remain preserved' }],
 };
+
+// ── design/394 — client changed advocate, NOC uploaded ───────────────────────
+// ⚠ No drawn control leads here: 393's Upload NOC is unscoped (dev preview).
+// ⚠ UNSCOPED — both Send NOC to Client buttons, View File, Replace, Chat with
+// Client, Call Client. ⚠ CONFLICT 7 — the title is clipped ("Client Changed
+// Ac"); stored whole. ⚠ CONFLICT 4 — DC-2026-1048 on the WP/2026/09876 matter.
+// ⚠ CONFLICT 8 — "Abhishek Verma (You)": the advocate being replaced is the
+// viewer. ⚠ CONFLICT 6 — "Step 3 of 5". ⚠ Further: 393 reads "Civil" and
+// "Record Protected"; 394 reads "Civil Suit" and "Preserved Record".
+export const COURT_CHANGE_ADVOCATE_NOC: CourtSpec = {
+  title: 'Client Changed Advocate',
+  sub: CASE.dcRep,
+  headerRight: { pill: CASE.dc, tone: 'help', dot: true, dotGreen: true, lg: true },
+  avatar: true,
+  blocks: [
+    { k: 'label', text: '', pills: [{ pill: 'ADVOCATE CHANGE • HANDOVER STEP', tone: 'peachPill', dot: true, maxW: 'stripPillMax', lg: true }], right: { link: 'Preserved Record', icon: 'shieldCheck', muted: true } },
+    {
+      k: 'card',
+      top: 'sectionTop',
+      head: { icon: 'swap', tile: 'disc', kicker: { pill: 'Change Request • In Progress', tone: 'peachPill' }, title: 'Client Requested a New Advocate', size: 'secHeadSize', right: '28 Oct 2026', rightTop: true },
+      blocks: [
+        { k: 'text', t: 'The client has requested to change the advocate for this ongoing case.', size: 'bodySize', top: 'innerTop' },
+        { k: 'banner', tone: 'grey', icon: 'info', text: 'Please complete the required next step. Your case notes and documents remain preserved.', top: 'innerTop' },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'caseTop',
+      head: { icon: 'folderUser', title: 'CASE DETAILS', caps: true, strong: true, size: 'capsHeadSize', right: { pill: CASE.caseNo, tone: 'help' } },
+      blocks: [
+        {
+          k: 'grid',
+          boxed: 'cells',
+          top: 'innerTop',
+          cells: [
+            { label: 'Client', value: CASE.client },
+            { label: 'Case Type', value: 'Civil Suit' },
+            { label: 'Matter Title', value: CASE.title, wide: true },
+            { label: 'Current Advocate', value: 'Abhishek Verma (You)' },
+            { label: 'Last Hearing', value: '25 Oct 2026 (Done)', small: true },
+            { label: 'Next Hearing', value: '10 November 2026', wide: true, rightPill: { pill: '11:30 AM', tone: 'peachPill', lg: true } },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'sectionTop',
+      head: { title: 'CHANGE ADVOCATE REQUEST', caps: true, strong: true, size: 'capsHeadSize', right: { pill: 'Approved by Admin', tone: 'greenTile', dot: true, maxW: 'approvedMax' } },
+      blocks: [
+        {
+          k: 'rows',
+          top: 'innerTop',
+          rows: [
+            ['Requested By', `${CASE.client} (Client)`, 'bold'],
+            ['Reason Stated', '"I want a different advocate"', 'quote'],
+            ['Submission Date', '28 October 2026'],
+          ],
+        },
+        { k: 'card', tone: 'panel', pad: 'innerPad', top: 'innerTop', blocks: [{ k: 'text', t: 'The client has asked Legalitt to reassign legal representation for the upcoming hearing.', tone: 'small' }] },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'sectionTop',
+      head: { title: 'NOC / CONSENT DOCUMENT', caps: true, strong: true, size: 'capsHeadSize', right: { pill: 'Uploaded', tone: 'greenTile', icon: 'check', iconAfter: true } },
+      blocks: [
+        { k: 'text', t: 'Upload the required document for the advocate change.', tone: 'small', top: 'askTop' },
+        // ⚠ UNSCOPED — no viewer; nothing uploads.
+        { k: 'docs', tiles: true, top: 'innerTop', items: [{ name: 'NOC_Abhishek_Verma.pdf', meta: '2.4 MB • PDF Document', icon: 'file', bigActions: ['View File', 'Replace'] }] },
+        { k: 'text', icon: 'share', t: 'This document will be shared with Legalitt Admin and the client.', tone: 'small', top: 'innerTop' },
+        { k: 'button', btn: { label: 'Send NOC to Client', iconRight: 'send', h: 'sendH', size: 'sendSize' }, top: 'innerTop' },
+        { k: 'text', t: 'Tapping Send will share this NOC with the client and Legalitt to finalize the handover.', tone: 'center', size: 'centerNoteSize', top: 'innerGap' },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'sectionTop',
+      blocks: [
+        {
+          k: 'card',
+          tone: 'panel',
+          pad: 'innerPad',
+          blocks: [
+            { k: 'text', t: 'Client Status', tone: 'small' },
+            { k: 'text', dot: true, t: 'Waiting for Handover / Reviewing New Advocate', tone: 'strong', size: 'statusSize', top: 'statusTop' },
+          ],
+        },
+        { k: 'label', text: 'MILESTONE SEQUENCE', strong: true, right: 'Step 3 of 5', top: 'innerTop' },
+        {
+          k: 'bars',
+          top: 'barsTop',
+          steps: [
+            { label: '1st Hearing', state: 'done' },
+            { label: 'Request', state: 'done' },
+            { label: 'Handover', state: 'current' },
+            { label: 'New Adv.', state: 'todo' },
+            { label: 'Continues', state: 'todo' },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      tone: 'cream',
+      top: 'sectionTop',
+      head: { icon: 'clipboardCheck', tile: 'disc', title: 'Next Step', size: 'secHeadSize', topAlign: true },
+      indent: true,
+      blocks: [{ k: 'text', t: 'Send the NOC to complete the handover. Once confirmed, Legalitt Admin assigns the new advocate and your case responsibility transfers cleanly.', size: 'nextSize', top: 'nextTop' }],
+    },
+    {
+      k: 'card',
+      top: 'sectionTop',
+      head: { icon: 'chatQuote', title: 'CASE HANDOVER COMMUNICATION', caps: true, strong: true, size: 'capsHeadSize', right: { link: '', dot: true } },
+      blocks: [
+        { k: 'text', t: 'Communication remains open until the handover is finalized.', tone: 'small', top: 'askTop' },
+        // ⚠ UNSCOPED — no chat, no telephony.
+        {
+          k: 'buttonRow',
+          top: 'innerTop',
+          btns: [
+            { label: 'Chat with Client', icon: 'chat', variant: 'soft', h: 'pairH', size: 'pairSize' },
+            { label: 'Call Client', icon: 'phone', variant: 'soft', h: 'pairH', size: 'pairSize' },
+          ],
+        },
+      ],
+    },
+  ],
+  footer: [{ label: 'Send NOC to Client', iconRight: 'arrowRight' }],
+  footerLinks: [{ icon: 'lock', t: 'Official Legalitt Process • Case History & Documents Protected', tone: 'green' }],
+};
+
+// ── design/395 — case completed ──────────────────────────────────────────────
+// ⚠ No drawn control leads here (dev preview). View Case opens 396 and View
+// Earnings the advocate Earnings tab — navigation only. ⚠ CONFLICT 1 — Fee
+// Settled ₹20,000 = 363's ₹25,000 less a 20% platform fee; the wallet
+// (356–361) charges 10%. ⚠ CONFLICT 6 — "All 8 Steps Done" over an
+// eight-item list that 388 counts as nine steps. ⚠ The hero's soft corner
+// glows are decoration and are not drawn.
+export const COURT_COMPLETED: CourtSpec = {
+  title: 'Case Completed',
+  centerTitle: true,
+  avatar: true,
+  blocks: [
+    { k: 'label', text: '', pills: [{ pill: `ID: ${CASE.hcr}`, tone: 'help', dot: true, dotGreen: true }], right: { pill: 'Archived', tone: 'peachPill', icon: 'badgeCheck', iconGreen: true } },
+    {
+      k: 'card',
+      top: 'sectionTop',
+      blocks: [{ k: 'hero', icon: 'check', tone: 'green', title: 'Case Completed', sub: 'All case work has been completed.', pill: { pill: 'Status: Completed', tone: 'help', dot: true, dotGreen: true }, pillBelow: true }],
+    },
+    {
+      k: 'card',
+      top: 'sectionTop',
+      blocks: [
+        { k: 'text', t: 'MATTER OVERVIEW', tone: 'kicker' },
+        { k: 'text', t: CASE.title, tone: 'title', top: 'innerGap' },
+        { k: 'pills', items: [{ pill: CASE.hcRep, tone: 'help' }, { pill: 'Civil', tone: 'help' }], top: 'innerGap' },
+        {
+          k: 'card',
+          tone: 'panel',
+          pad: 'innerPad',
+          top: 'innerTop',
+          blocks: [
+            {
+              k: 'rows',
+              rows: [
+                ['Court', CASE.court, 'bold'],
+                ['Bench', CASE.bench, 'bold'],
+                ['Case Number', CASE.caseNo, 'mono'],
+                ['Filing Number', CASE.filingNo, 'mono'],
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'sectionTop',
+      head: { icon: 'checkCircle', title: 'Case Progress', size: 'secHeadSize', right: { pill: 'All 8 Steps Done', tone: 'peachPill' } },
+      blocks: [
+        {
+          k: 'checklist',
+          top: 'innerTop',
+          items: [
+            { title: 'Documents Received', state: 'done' },
+            { title: 'Client Accepted', state: 'done' },
+            { title: 'Case Preparation', state: 'done' },
+            { title: 'Court Filing', state: 'done' },
+            { title: 'First Hearing', state: 'done' },
+            { title: 'Hearing Update', state: 'done' },
+            { title: 'Next Hearing', state: 'done' },
+            { title: 'Case Completed', state: 'done', right: { link: 'Final Step', green: true } },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'sectionTop',
+      head: { icon: 'wallet', title: 'Your Payment', size: 'secHeadSize', right: { pill: 'Paid', tone: 'greenTile', icon: 'checkCircle' } },
+      blocks: [
+        { k: 'amount', label: 'Fee Settled', value: '₹20,000', big: true, right: { iconDisc: 'wallet' }, top: 'innerTop' },
+        { k: 'banner', tone: 'grey', icon: 'badgeCheck', text: 'Added to your advocate wallet.', top: 'innerGap' },
+        { k: 'rows', top: 'innerTop', rows: [['Client', CASE.client, 'bold'], ['Case ID', CASE.hcr, 'mono']] },
+      ],
+    },
+    { k: 'button', btn: { label: 'View Case', iconRight: 'chevronRight', to: R('dashboard'), h: 'bigBtnH' }, top: 'sectionTop' },
+    { k: 'button', btn: { label: 'View Earnings', icon: 'wallet', variant: 'help', to: '/(advocate)/earnings' as Href, h: 'bigBtnH' }, top: 'innerTop' },
+  ],
+};
+
+// ── design/396 — case dashboard ──────────────────────────────────────────────
+// Reached from Save Next Hearing on 392 and View Case on 395. View Hearing
+// Details opens 389, Read Full Note opens 390 — navigation only. ⚠ UNSCOPED —
+// the four quick actions. ⚠ CONFLICT 1 — ₹20,000 paid (20% platform fee; the
+// wallet charges 10%). ⚠ CONFLICT 6 — "Step 8 of 8" while the last step is
+// still "Case In Progress".
+export const COURT_DASHBOARD: CourtSpec = {
+  title: 'Case Dashboard',
+  avatar: true,
+  blocks: [
+    {
+      k: 'card',
+      blocks: [
+        { k: 'label', text: '', pills: [{ pill: 'CIVIL CASE', tone: 'help' }], right: { pill: 'Active', tone: 'greenTile', dot: true } },
+        { k: 'text', t: CASE.title, tone: 'title', top: 'innerGap' },
+        { k: 'text', t: CASE.hcRep, size: 'bodySize', top: 'innerGap' },
+        { k: 'card', tone: 'panel', pad: 'innerPad', top: 'innerTop', blocks: [{ k: 'rows', rows: [['Court', 'MP High Court (Indore Bench)', 'bold'], ['Case Number', CASE.caseNo, 'brown']] }] },
+      ],
+    },
+    {
+      k: 'card',
+      tone: 'cream',
+      top: 'sectionTop',
+      head: { icon: 'calendar', tile: true, title: 'Next Hearing', size: 'secHeadSize', right: { pill: 'Upcoming', tone: 'white' } },
+      blocks: [
+        { k: 'text', t: '10 Nov 2026', tone: 'title', size: 'dateSize', top: 'innerTop' },
+        { k: 'text', t: '11:30 AM', tone: 'small' },
+        { k: 'text', icon: 'mapPin', t: `Court Room 3 · ${CASE.bench}`, size: 'bodySize', top: 'innerGap' },
+        { k: 'button', btn: { label: 'View Hearing Details', iconRight: 'arrowRight', to: R('hearing/live') }, top: 'innerTop' },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'sectionTop',
+      head: { icon: 'scroll', tile: 'disc', title: 'Latest Update', size: 'secHeadSize', right: '25 Oct 2026' },
+      blocks: [
+        { k: 'text', t: 'The court heard the matter and asked us to file the previous order before the next date.', size: 'bodySize', top: 'innerTop' },
+        { k: 'button', btn: { label: 'Read Full Note', iconRight: 'chevronRight', variant: 'panel', to: R('hearing/update') }, top: 'innerTop' },
+      ],
+    },
+    { k: 'label', text: 'QUICK ACTIONS', top: 'sectionTop' },
+    {
+      k: 'chips',
+      tiles: true,
+      top: 'innerTop',
+      items: [
+        { label: 'Documents', icon: 'folder' },
+        { label: 'Hearings', icon: 'gavel' },
+        { label: 'Updates', icon: 'bell' },
+        { label: 'Messages', icon: 'chat' },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'sectionTop',
+      head: { title: 'Case Progress', size: 'secHeadSize', right: { pill: 'Step 8 of 8', tone: 'greenTile' } },
+      blocks: [
+        {
+          k: 'timeline',
+          top: 'innerTop',
+          steps: [
+            { title: 'Documents Received', state: 'done' },
+            { title: 'Client Accepted', state: 'done' },
+            { title: 'Case Preparation', state: 'done' },
+            { title: 'Court Filing', state: 'done' },
+            { title: 'First Hearing', state: 'done' },
+            { title: 'Hearing Update', state: 'done' },
+            { title: 'Next Hearing Fixed', state: 'done' },
+            { title: 'Case In Progress', state: 'ringGreen', right: { pill: 'Current', tone: 'greenTile' } },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'sectionTop',
+      head: { title: 'Case Details', size: 'secHeadSize' },
+      blocks: [{ k: 'rows', top: 'innerTop', rows: [['Client Name', CASE.client, 'bold'], ['Case Type', 'Civil', 'bold'], ['Court', CASE.court, 'bold'], ['Bench', CASE.bench, 'bold']] }],
+    },
+    {
+      k: 'card',
+      top: 'sectionTop',
+      blocks: [
+        { k: 'label', text: 'Your Payment', title: true, right: { pill: 'Paid', tone: 'greenTile', icon: 'check' } },
+        { k: 'amount', label: '', value: '₹20,000', big: true, tone: 'none', top: 'innerGap' },
+        { k: 'text', icon: 'checkCircle', iconGreen: true, t: 'This payment has been completed.', tone: 'small', top: 'innerGap' },
+      ],
+    },
+  ],
+};
