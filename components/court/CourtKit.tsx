@@ -8,6 +8,7 @@ import {
   Building2,
   CalendarDays,
   Check,
+  CheckCheck,
   ChevronRight,
   CircleCheck,
   CirclePlus,
@@ -26,6 +27,8 @@ import {
   Info,
   LayoutGrid,
   Mail,
+  MailCheck,
+  Smartphone,
   Link,
   List,
   ListChecks,
@@ -69,7 +72,16 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import CourierHeader from '../CourierHeader';
 import PdfStackIcon from '../PdfStackIcon';
-import { advCourt, advCourtPalette as q, advForensicRed, colors, courierGreen, dcDocumentsPalette, font, hcPalette as c, ink, status } from '../../constants/theme';
+import {
+  advCourt,
+  advCourtPalette as q,
+  advForensicRed,
+  colors,
+  courierGreen,
+  dcDecidePalette,
+  dcDocsNeededPalette,
+  dcDocumentsPalette,
+  dcShipmentPalette, font, hcPalette as c, ink, status } from '../../constants/theme';
 import type { Block, Btn, CourtSpec, Head, IconName, Pill, Right, Step, Tone } from './types';
 
 // The section kit of the advocate court batch (designs 362–396). One renderer
@@ -164,6 +176,8 @@ const ICONS: Record<IconName, LucideIcon> = {
   speaker: Volume2,
   headset: Headset,
   mail: Mail,
+  mailCheck: MailCheck,
+  smartphone: Smartphone,
 };
 
 export function Icon({ name, size, color, sw = 2 }: { name: IconName; size: number; color: string; sw?: number }) {
@@ -179,6 +193,9 @@ const TONES: Record<Tone, { bg: string; fg: string }> = {
   panel: { bg: c.panel, fg: c.inkWarm },
   help: { bg: c.helpGrey, fg: c.inkWarm },
   mint: { bg: courierGreen.recBg, fg: courierGreen.recInk },
+  sage: { bg: dcShipmentPalette.statusPill, fg: c.greenInk },
+  verified: { bg: dcDecidePalette.verifiedPill, fg: c.greenInk },
+  sand: { bg: q.kickerSand, fg: c.brownInk },
   red: { bg: status.redContainer, fg: status.onRedContainer },
   brown: { bg: c.brown, fg: ink.onBrand },
   blue: { bg: c.blueTile, fg: c.blueInk },
@@ -230,11 +247,13 @@ function RightPart({ r }: { r?: Right }) {
 function HeadRow({ h }: { h: Head }) {
   const { t, s } = useK();
   return (
-    <View style={[s.between, h.rule && s.headRule]}>
-      <View style={[s.row, s.flex]}>
+    <View style={[s.between, h.rule && s.headRule, h.rightTop && s.top]}>
+      <View style={[s.row, s.flex, h.kicker && s.top, h.tile && s.headTileRow]}>
         {h.tile ? (
-          <View style={[s.headTile, h.tile === 'peach' && s.headTilePeach, h.tile === 'disc' && s.headDisc]}>
-            {h.icon ? <Icon name={h.icon} size={h.tile === 'disc' ? t.headDiscIcon : t.headIcon} color={c.brown} /> : null}
+          <View style={[s.headTile, h.tile === 'peach' && s.headTilePeach, h.tile === 'disc' && s.headDisc, h.tile === 'brown' && s.headTileBrown]}>
+            {h.icon ? (
+              <Icon name={h.icon} size={h.tile === 'disc' ? t.headDiscIcon : t.headIcon} color={h.tile === 'brown' ? ink.onBrand : c.brown} />
+            ) : null}
           </View>
         ) : h.icon ? (
           (
@@ -242,6 +261,11 @@ function HeadRow({ h }: { h: Head }) {
           )
         ) : null}
         <View style={s.flex}>
+          {h.kicker ? (
+            <View style={s.kicker}>
+              <PillTag p={h.kicker} />
+            </View>
+          ) : null}
           <View style={[s.row, s.wrap]}>
             <Text style={h.caps ? s.caps : s.headTitle}>{h.title}</Text>
             {h.pills?.map((p) => <PillTag key={p.pill} p={p} />)}
@@ -258,7 +282,7 @@ export function Button({ b, flex, footer }: { b: Btn; flex?: boolean; footer?: b
   const { t, s } = useK();
   const v = b.variant ?? 'primary';
   const bg: string =
-    v === 'primary' ? c.brown : v === 'green' ? c.greenInk : v === 'disabled' ? q.disabled : v === 'soft' ? c.tileGrey : v === 'panel' ? c.panel : v === 'outline' ? c.card : 'transparent';
+    v === 'primary' ? c.brown : v === 'green' ? c.greenInk : v === 'disabled' ? q.disabled : v === 'soft' ? c.tileGrey : v === 'panel' ? c.panel : v === 'white' ? c.card : v === 'outline' ? c.card : 'transparent';
   const fg: string = v === 'primary' || v === 'green' || v === 'disabled' ? ink.onBrand : v === 'danger' ? advForensicRed.declineColour : c.ink;
   const nav = b.to !== undefined || b.back === true;
   const style: StyleProp<ViewStyle> = [
@@ -284,12 +308,18 @@ export function Button({ b, flex, footer }: { b: Btn; flex?: boolean; footer?: b
   );
 }
 
-function Disc({ state }: { state: Step['state'] }) {
+function Disc({ state, deep }: { state: Step['state']; deep?: boolean }) {
   const { t, s } = useK();
   if (state === 'done')
     return (
-      <View style={[s.disc, { backgroundColor: status.active }]}>
+      <View style={[s.disc, { backgroundColor: deep ? c.greenInk : status.active }]}>
         <Check size={t.stepGlyph} color={ink.onBrand} strokeWidth={3} />
+      </View>
+    );
+  if (state === 'accent')
+    return (
+      <View style={[s.disc, s.discAccent]}>
+        <CheckCheck size={t.stepGlyph} color={ink.onBrand} strokeWidth={2.6} />
       </View>
     );
   if (state === 'current')
@@ -301,32 +331,36 @@ function Disc({ state }: { state: Step['state'] }) {
   if (state === 'active')
     return (
       <View style={[s.disc, { backgroundColor: c.peach }]}>
-        <View style={[s.discCore, { backgroundColor: c.brown }]} />
+        <View style={[s.discDot, { backgroundColor: c.brownInk }]} />
       </View>
     );
   return (
-    <View style={[s.disc, { backgroundColor: c.tileGrey }]}>
-      <View style={[s.discDot]} />
+    <View style={[s.disc, s.discTodo]}>
+      <View style={[s.discDot, deep && s.discDotLight]} />
     </View>
   );
 }
 
-function Timeline({ steps, boxed }: { steps: Step[]; boxed?: boolean }) {
+function Timeline({ steps, boxed, noRail, deep }: { steps: Step[]; boxed?: boolean; noRail?: boolean; deep?: boolean }) {
   const { t, s } = useK();
+  // Each row is padded by half the row gap above and below, so the disc centres
+  // on its title + sub (as every timeline in the batch draws it) and the two
+  // rail halves either side of it meet the next row's.
   return (
     <View style={s.steps}>
       {steps.map((st, i) => (
-        <View key={st.title} style={[s.step, boxed && s.stepBoxed]}>
+        <View key={st.title} style={[s.step, boxed ? s.stepBoxed : s.stepRow]}>
           <View style={s.stepLeft}>
-            <Disc state={st.state} />
-            {!boxed && i < steps.length - 1 ? <View style={s.rail} /> : null}
+            <View style={[s.railHalf, (boxed || noRail || i === 0) && s.railHidden]} />
+            <Disc state={st.state} deep={deep} />
+            <View style={[s.railHalf, (boxed || noRail || i === steps.length - 1) && s.railHidden]} />
           </View>
-          <View style={[s.flex, !boxed && s.stepBody]}>
+          <View style={[s.flex, s.stepText]}>
             <View style={s.between}>
-              <Text style={[s.stepTitle, st.state === 'todo' && s.muted]}>{st.title}</Text>
+              <Text style={[s.stepTitle, st.state === 'todo' && deep && s.muted, st.state === 'accent' && s.accentTitle]}>{st.title}</Text>
               <RightPart r={st.right} />
             </View>
-            {st.sub ? <Text style={[s.stepSub, st.subGreen && s.green]}>{st.sub}</Text> : null}
+            {st.sub ? <Text style={[s.stepSub, st.subGreen && s.green, st.state === 'todo' && deep && s.mutedSub]}>{st.sub}</Text> : null}
           </View>
         </View>
       ))}
@@ -396,14 +430,37 @@ export function BlockView({ b }: { b: Block }): ReactNode {
       );
     }
     case 'hero': {
-      const disc: string = b.tone === 'green' ? c.greenTile : b.tone === 'red' ? status.redContainer : b.tone === 'grey' ? c.tileGrey : c.peach;
-      const core: string = b.tone === 'green' ? status.active : b.tone === 'red' ? advForensicRed.declineColour : b.tone === 'grey' ? c.inkMuted : c.brown;
+      const disc: string =
+        b.tone === 'green'
+          ? c.greenTile
+          : b.tone === 'deepGreen'
+            ? q.heroHalo
+            : b.tone === 'red'
+              ? status.redContainer
+              : b.tone === 'grey'
+                ? c.tileGrey
+                : c.peach;
+      const core: string =
+        b.tone === 'green'
+          ? status.active
+          : b.tone === 'deepGreen'
+            ? c.greenInk
+            : b.tone === 'red'
+              ? advForensicRed.declineColour
+              : b.tone === 'grey'
+                ? c.inkMuted
+                : c.brown;
       return (
         <View style={[s.hero, b.left && s.heroLeft]}>
           <View style={[s.heroDisc, { backgroundColor: disc }]}>
-            <View style={[s.heroCore, { backgroundColor: core }]}>
-              <Icon name={b.icon} size={t.heroGlyph} color={ink.onBrand} sw={2.6} />
-            </View>
+            {b.flat ? (
+              <Icon name={b.icon} size={t.heroFlatGlyph} color={c.brownInk} sw={2.2} />
+            ) : (
+              <View style={[s.heroCore, { backgroundColor: core }]}>
+                <Icon name={b.icon} size={t.heroGlyph} color={ink.onBrand} sw={2.6} />
+              </View>
+            )}
+            {b.badge ? <View style={s.heroBadge} /> : null}
           </View>
           {b.pill ? (
             <View style={s.heroPill}>
@@ -444,11 +501,11 @@ export function BlockView({ b }: { b: Block }): ReactNode {
     case 'text':
       return (
         <View style={s.row}>
-          {b.icon ? <Icon name={b.icon} size={t.textIcon} color={b.tone === 'green' ? c.greenInk : c.brownInk} /> : null}
+          {b.icon ? <Icon name={b.icon} size={b.iconSize ? t[b.iconSize] : t.textIcon} color={b.tone === 'green' ? c.greenInk : c.brownInk} /> : null}
           <Text
             style={[
               s.text,
-              s.flex,
+              !b.pill && s.flex,
               b.tone === 'muted' && s.mutedText,
               b.tone === 'small' && s.small,
               b.tone === 'quote' && s.quote,
@@ -456,11 +513,27 @@ export function BlockView({ b }: { b: Block }): ReactNode {
               b.tone === 'strong' && s.strong,
               b.tone === 'green' && s.greenText,
               b.tone === 'title' && s.titleText,
+              b.tone === 'label' && s.labelText,
               b.size !== undefined && { fontSize: t[b.size], lineHeight: t[b.size + 'Line'] },
             ]}
           >
-            {b.parts ? b.parts.map((x) => (x.bold ? <Text key={x.t} style={s.partBold}>{x.t}</Text> : x.t)) : b.t}
+            {b.parts
+              ? b.parts.map((x) =>
+                  x.bold ? (
+                    <Text key={x.t} style={s.partBold}>
+                      {x.t}
+                    </Text>
+                  ) : x.muted ? (
+                    <Text key={x.t} style={s.partMuted}>
+                      {x.t}
+                    </Text>
+                  ) : (
+                    x.t
+                  ),
+                )
+              : b.t}
           </Text>
+          {b.pill ? <PillTag p={b.pill} /> : null}
         </View>
       );
     case 'rows':
@@ -481,7 +554,7 @@ export function BlockView({ b }: { b: Block }): ReactNode {
           <View style={(cell.sideIcon || cell.iconRight) && s.flex}>
           <View style={s.row}>
             {cell.icon ? <Icon name={cell.icon} size={t.labelSize} color={c.inkMuted} /> : null}
-            <Text style={s.cellLabel}>{cell.label}</Text>
+            <Text style={[s.cellLabel, b.caps && s.cellCaps]}>{cell.label}</Text>
           </View>
           <Text style={[s.cellValue, cell.tone === 'green' && s.green, cell.tone === 'mono' && s.mono, cell.tone === 'muted' && s.mutedValue]}>
             {cell.value}
@@ -550,7 +623,7 @@ export function BlockView({ b }: { b: Block }): ReactNode {
         </View>
       );
     case 'timeline':
-      return <Timeline steps={b.steps} boxed={b.boxed} />;
+      return <Timeline steps={b.steps} boxed={b.boxed} noRail={b.noRail} deep={b.deep} />;
     case 'docs':
       return (
         <View style={s.docList}>
@@ -720,13 +793,27 @@ export function BlockView({ b }: { b: Block }): ReactNode {
         </View>
       );
     case 'banner': {
-      const bg: string = b.tone === 'grey' ? c.panel : b.tone === 'cream' ? c.peachSoft : b.tone === 'green' ? c.greenSoft : b.tone === 'white' ? c.card : b.tone === 'red' ? status.redContainer : 'transparent';
+      const bg: string = b.tone === 'grey' ? c.panel : b.tone === 'cream' ? c.peachSoft : b.tone === 'green' ? c.greenSoft : b.tone === 'white' ? dcDocsNeededPalette.physPanel : b.tone === 'red' ? status.redContainer : 'transparent';
       return (
         <View style={[s.row, s.top, s.banner, { backgroundColor: bg }, b.tone === 'none' && s.bannerBare]}>
-          {b.icon ? <Icon name={b.icon} size={t.chipIcon} color={b.tone === 'green' ? c.greenInk : b.tone === 'red' ? status.onRedContainer : c.inkWarm} /> : null}
+          {b.icon ? <Icon name={b.icon} size={t.bannerIcon} color={b.tone === 'green' ? c.greenInk : b.tone === 'red' ? status.onRedContainer : c.inkWarm} /> : null}
           <View style={s.flex}>
-            {b.title ? <Text style={s.checkTitle}>{b.title}</Text> : null}
-            <Text style={[s.small, b.tone === 'red' && { color: status.onRedContainer }]}>{b.text}</Text>
+            {b.title ? <Text style={s.bannerTitle}>{b.title}</Text> : null}
+            {b.parts ? (
+              <Text style={s.bannerText}>
+                {b.parts.map((x) =>
+                  x.bold ? (
+                    <Text key={x.t} style={s.partBold}>
+                      {x.t}
+                    </Text>
+                  ) : (
+                    x.t
+                  ),
+                )}
+              </Text>
+            ) : (
+              <Text style={[s.bannerText, b.tone === 'red' && { color: status.onRedContainer }]}>{b.text}</Text>
+            )}
           </View>
         </View>
       );
@@ -902,30 +989,33 @@ export function StateSwitch({
   value,
   onChange,
   dark,
+  inline,
 }: {
   label?: string;
   options: string[];
   value: number;
   onChange: (i: number) => void;
   dark?: boolean;
+  /** A bare centred pill (370), no band. */
+  inline?: boolean;
 }) {
   const { t, s } = useK();
   return (
-    <View style={[s.switchBar, dark && s.switchDark]}>
+    <View style={[inline ? s.switchInline : s.switchBar, dark && s.switchDark]}>
       {label ? (
         <View style={s.row}>
           <SlidersHorizontal size={t.switchIcon} color={dark ? q.callInk : c.inkWarm} strokeWidth={2} />
           <Text style={[s.switchLabel, dark && { color: q.callInk }]}>{label}</Text>
         </View>
       ) : null}
-      <View style={[s.switchPill, dark && { backgroundColor: q.callTrack }]} accessibilityRole="tablist">
+      <View style={[s.switchPill, inline && s.switchPillInline, dark && { backgroundColor: q.callTrack }]} accessibilityRole="tablist">
         {options.map((o, i) => (
           <Pressable
             key={o}
             accessibilityRole="tab"
             aria-selected={i === value}
             onPress={() => onChange(i)}
-            style={[s.switchItem, i === value && (dark ? s.switchOnDark : s.switchOn)]}
+            style={[s.switchItem, inline && s.switchItemInline, i === value && (dark ? s.switchOnDark : inline ? s.switchOnInline : s.switchOn)]}
           >
             <Text style={[s.switchText, dark && { color: q.callInk }, i === value && (dark ? s.switchTextOnDark : s.switchTextOn)]}>{o}</Text>
           </Pressable>
@@ -968,12 +1058,23 @@ function ScreenBody({ spec, state, onState, overlay }: ScreenProps) {
         center={spec.centerTitle}
         backHref={'/matters' as Href}
       />
-      {spec.switcher && onState ? (
+      {spec.switcher && onState && !spec.switcher.inline ? (
         <StateSwitch label={spec.switcher.label} options={spec.switcher.options} value={state ?? 0} onChange={onState} />
       ) : null}
-      <ScrollView contentContainerStyle={[s.body, { paddingBottom: (spec.deadline ? t.deadlineH : spec.footer ? t.footerH : 0) + insets.bottom + t.bottomPad }]}>
+      <ScrollView contentContainerStyle={[s.body, spec.switcher?.inline && s.bodyInline, { paddingBottom: (spec.deadline ? t.deadlineH : spec.footer ? t.footerH : 0) + insets.bottom + t.bottomPad }]}>
+        {spec.switcher?.inline && onState ? (
+          <View style={s.inlineSwitch}>
+            <StateSwitch options={spec.switcher.options} value={state ?? 0} onChange={onState} inline />
+          </View>
+        ) : null}
         {spec.blocks.map((b, i) => (
-          <View key={i} style={{ marginTop: i > 0 ? (t[b.top ?? 'gap'] ?? t.gap) : 0, marginBottom: b.bottom ? t[b.bottom] : 0 }}>
+          <View
+            key={i}
+            style={{
+              marginTop: i > 0 ? (t[b.top ?? 'gap'] ?? t.gap) : spec.switcher?.inline ? t.inlineSwitchGap : 0,
+              marginBottom: b.bottom ? t[b.bottom] : 0,
+            }}
+          >
             <BlockView b={b} />
           </View>
         ))}
@@ -1045,7 +1146,7 @@ function makeStyles(t: CourtTokens) {
     justifyContent: 'center',
   },
   headTitle: { fontFamily: font.appSemi, fontSize: t.headTitleSize, color: c.ink },
-  headSub: { marginTop: t.headSubTop, fontFamily: font.appBody, fontSize: t.headSubSize, color: c.inkWarm },
+  headSub: { marginTop: t.headSubTop, maxWidth: t.headSubMax, fontFamily: font.appBody, fontSize: t.headSubSize, lineHeight: t.headSubLine, color: c.inkWarm },
   caps: { fontFamily: font.appSemi, fontSize: t.capsSize, letterSpacing: t.capsSpacing, color: c.inkWarm, textTransform: 'uppercase' },
   rightText: { fontFamily: font.appSemi, fontSize: t.smallSize, color: c.inkWarm, textAlign: 'right', flexShrink: 1 },
   link: { flexDirection: 'row', alignItems: 'center', gap: t.pillGap },
@@ -1077,6 +1178,33 @@ function makeStyles(t: CourtTokens) {
   scrollThumb: { height: t.scrollThumbH, borderRadius: t.scrollTrackW / 2, backgroundColor: q.thumb },
   footRow: { paddingTop: t.footRowPadTop, borderTopWidth: 1, borderTopColor: c.panel },
   footRowText: { flexShrink: 1, fontFamily: font.appSemi, fontSize: t.footRowSize, color: c.inkWarm },
+  headTileBrown: { backgroundColor: c.brown },
+  headTileRow: { gap: t.headTileGap },
+  kicker: { marginBottom: t.kickerGap },
+  heroBadge: {
+    position: 'absolute',
+    top: t.heroBadgeTop,
+    right: t.heroBadgeRight,
+    width: t.heroBadge,
+    height: t.heroBadge,
+    borderRadius: t.heroBadge / 2,
+    backgroundColor: c.brownInk,
+  },
+  discAccent: { backgroundColor: status.active },
+  discTodo: { backgroundColor: c.helpGrey },
+  discDotLight: { backgroundColor: q.todoDot },
+  accentTitle: { color: c.greenInk },
+  partMuted: { color: c.inkMuted },
+  labelText: { fontSize: t.labelTextSize, lineHeight: t.labelTextLine },
+  cellCaps: { fontFamily: font.appSemi, fontSize: t.cellCapsSize, letterSpacing: t.capsSpacing, textTransform: 'uppercase' },
+  bannerTitle: { fontFamily: font.appSemi, fontSize: t.bannerTitleSize, color: c.ink },
+  bannerText: { fontFamily: font.appBody, fontSize: t.bannerSize, lineHeight: t.bannerLine, color: c.inkWarm },
+  bodyInline: {},
+  inlineSwitch: { alignItems: 'center' },
+  switchInline: { alignItems: 'center' },
+  switchPillInline: { marginLeft: 0, padding: t.inlineSwitchPad, borderRadius: t.inlineSwitchH / 2 },
+  switchItemInline: { minHeight: t.inlineSwitchH - 2 * t.inlineSwitchPad, paddingHorizontal: t.inlineSwitchPadX, borderRadius: t.inlineSwitchH / 2 },
+  switchOnInline: { backgroundColor: c.page },
   headRule: { paddingBottom: t.headRulePad, borderBottomWidth: 1, borderBottomColor: c.rail },
   headTilePeach: { backgroundColor: c.peach },
   headDisc: { width: t.headDisc, height: t.headDisc, borderRadius: t.headDisc / 2, backgroundColor: dcDocumentsPalette.tilePeach },
@@ -1105,7 +1233,7 @@ function makeStyles(t: CourtTokens) {
   heroCore: { width: t.heroDiscInner, height: t.heroDiscInner, borderRadius: t.heroDiscInner / 2, alignItems: 'center', justifyContent: 'center' },
   heroPill: { marginTop: t.heroPillTop },
   heroTitle: { marginTop: t.heroTitleTop, fontFamily: font.appSemi, fontSize: t.heroTitleSize, color: c.ink, textAlign: 'center' },
-  heroSub: { marginTop: t.headSubTop * 2, fontFamily: font.appBody, fontSize: t.heroSubSize, lineHeight: t.heroSubLine, color: c.inkWarm, textAlign: 'center' },
+  heroSub: { marginTop: t.heroSubTop, maxWidth: t.heroSubMax, fontFamily: font.appBody, fontSize: t.heroSubSize, lineHeight: t.heroSubLine, color: c.inkWarm, textAlign: 'center' },
 
   lead: { gap: t.leadPillGap },
   leadTextTop: { marginTop: t.leadTextTop },
@@ -1144,7 +1272,7 @@ function makeStyles(t: CourtTokens) {
   mutedValue: { fontFamily: font.appBody, fontStyle: 'italic', color: c.inkWarm },
   cellSub: { marginTop: t.valueTop, fontFamily: font.appBody, fontSize: t.labelSize, color: c.inkWarm },
 
-  person: { gap: t.stepGap },
+  person: { gap: t.personGap },
   personBoxed: { borderRadius: t.panelRadius, padding: t.panelPad, backgroundColor: c.panel },
   avatar: { width: t.avatar, height: t.avatar, borderRadius: t.avatar / 2, backgroundColor: c.peach, alignItems: 'center', justifyContent: 'center' },
   avatarText: { fontFamily: font.appSemi, fontSize: t.avatarSize, color: c.brownInk },
@@ -1155,18 +1283,21 @@ function makeStyles(t: CourtTokens) {
   greyDisc: { width: t.greyDisc, height: t.greyDisc, borderRadius: t.greyDisc / 2, backgroundColor: c.rail },
   callDisc: { width: t.callDisc, height: t.callDisc, borderRadius: t.callDisc / 2, backgroundColor: c.tileGrey, alignItems: 'center', justifyContent: 'center' },
 
-  steps: { gap: 0 },
+  steps: { marginVertical: -t.stepRowGap / 2 },
   step: { flexDirection: 'row', gap: t.stepGap },
   stepBoxed: { marginBottom: t.gridGap, borderRadius: t.panelRadius, padding: t.panelPad, backgroundColor: c.panel, alignItems: 'center' },
   stepLeft: { alignItems: 'center', width: t.stepDisc },
-  stepBody: { paddingBottom: t.stepRowGap },
-  rail: { flex: 1, width: t.stepRail, backgroundColor: c.rail },
+  stepRow: {},
+  stepText: { paddingVertical: t.stepRowGap / 2 },
+  railHalf: { flex: 1, width: t.stepRail, backgroundColor: c.helpGrey },
+  railHidden: { backgroundColor: 'transparent' },
+  mutedSub: { color: c.inkMuted },
   disc: { width: t.stepDisc, height: t.stepDisc, borderRadius: t.stepDisc / 2, alignItems: 'center', justifyContent: 'center' },
   discRing: { borderWidth: t.stepRail, borderColor: c.ink, backgroundColor: c.card },
   discCore: { width: t.stepGlyph - 4, height: t.stepGlyph - 4, borderRadius: t.stepGlyph, backgroundColor: c.ink },
-  discDot: { width: t.pillDot, height: t.pillDot, borderRadius: t.pillDot / 2, backgroundColor: c.inkMuted },
+  discDot: { width: t.stepDot, height: t.stepDot, borderRadius: t.stepDot / 2, backgroundColor: c.inkWarm },
   stepTitle: { flexShrink: 1, fontFamily: font.appSemi, fontSize: t.stepTitleSize, color: c.ink },
-  stepSub: { marginTop: t.headSubTop, fontFamily: font.appBody, fontSize: t.stepSubSize, color: c.inkWarm },
+  stepSub: { marginTop: t.stepSubTop, fontFamily: font.appBody, fontSize: t.stepSubSize, color: c.inkWarm },
 
   docs: { gap: t.gridGap },
   docList: { gap: t.docsGap },
@@ -1238,7 +1369,7 @@ function makeStyles(t: CourtTokens) {
   num: { width: t.stepDisc - 2, height: t.stepDisc - 2, borderRadius: t.stepDisc, backgroundColor: c.peach, alignItems: 'center', justifyContent: 'center' },
   numText: { fontFamily: font.appSemi, fontSize: t.stepSubSize - 1, color: c.brownInk },
 
-  banner: { borderRadius: t.panelRadius, padding: t.panelPad },
+  banner: { borderRadius: t.panelRadius, paddingHorizontal: t.bannerPadX, paddingVertical: t.bannerPadY, gap: t.bannerGap },
   bannerBare: { padding: 0 },
 
   btn: {
@@ -1256,7 +1387,7 @@ function makeStyles(t: CourtTokens) {
   btnDanger: { backgroundColor: c.tileGrey },
   btnText: { flexShrink: 1, fontFamily: font.appSemi, fontSize: t.btnSize, textAlign: 'center' },
   btnLink: { alignSelf: 'center', flexDirection: 'row', alignItems: 'center', gap: t.pillGap, paddingVertical: t.barGap },
-  btnLinkText: { fontFamily: font.appSemi, fontSize: t.textSize },
+  btnLinkText: { fontFamily: font.appSemi, fontSize: t.btnLinkSize },
 
   amountBox: { borderRadius: t.panelRadius, padding: t.panelPad, backgroundColor: c.panel },
   amountBare: { padding: 0, backgroundColor: 'transparent' },

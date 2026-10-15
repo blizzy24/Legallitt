@@ -67,9 +67,27 @@ export type IconName =
   | 'speaker'
   | 'headset'
   | 'mail'
+  | 'mailCheck'
+  | 'smartphone'
   | 'arrowUp';
 
-export type Tone = 'green' | 'peach' | 'cream' | 'grey' | 'panel' | 'help' | 'mint' | 'red' | 'brown' | 'blue' | 'violet' | 'white' | 'dark';
+export type Tone =
+  | 'green'
+  | 'peach'
+  | 'cream'
+  | 'grey'
+  | 'panel'
+  | 'help'
+  | 'mint'
+  | 'sage'
+  | 'verified'
+  | 'sand'
+  | 'red'
+  | 'brown'
+  | 'blue'
+  | 'violet'
+  | 'white'
+  | 'dark';
 
 /** A small rounded tag. */
 export type Pill = { pill: string; tone: Tone; dot?: boolean; icon?: IconName; /** The taller header / lead pill (363). */ lg?: boolean; mono?: boolean };
@@ -79,7 +97,7 @@ export type Right = string | Pill | { link: string; icon?: IconName; iconAfter?:
 
 export type Btn = {
   label: string;
-  variant?: 'primary' | 'soft' | 'panel' | 'outline' | 'ghost' | 'disabled' | 'green' | 'danger' | 'link';
+  variant?: 'primary' | 'soft' | 'panel' | 'white' | 'outline' | 'ghost' | 'disabled' | 'green' | 'danger' | 'link';
   icon?: IconName;
   iconRight?: IconName;
   /** Navigation only. A button without `to` draws and does nothing (see the data file). */
@@ -92,7 +110,9 @@ export type Btn = {
 export type Head = {
   icon?: IconName;
   /** true: grey square tile; 'peach': peach square tile (364); 'disc': peach round disc (364's Next Step). */
-  tile?: boolean | 'peach' | 'disc';
+  tile?: boolean | 'peach' | 'disc' | 'brown';
+  /** A pill above the title (371's RECOMMENDED NEXT STEP). */
+  kicker?: Pill;
   title: string;
   caps?: boolean;
   sub?: string;
@@ -100,12 +120,15 @@ export type Head = {
   pills?: Pill[];
   /** A hairline under the heading (364's AI summary panel). */
   rule?: boolean;
+  /** The right part level with the title, not centred on title + sub (364). */
+  rightTop?: boolean;
 };
 
 export type Step = {
   title: string;
   sub?: string;
-  state: 'done' | 'current' | 'active' | 'todo';
+  /** accent: the green current step of 371. */
+  state: 'done' | 'current' | 'active' | 'accent' | 'todo';
   right?: Right;
   /** Sub-line in green (378, 384 draw "Completed" green; 371 draws it grey). */
   subGreen?: boolean;
@@ -122,16 +145,30 @@ export type Block = Spaced & BlockBody;
 
 type BlockBody =
   | { k: 'card'; tone?: 'white' | 'panel' | 'cream' | 'peach' | 'green' | 'outline' | 'payPeach'; head?: Head; blocks: Block[]; /** Token for its padding. */ pad?: string }
-  | { k: 'hero'; icon: IconName; tone: 'green' | 'peach' | 'red' | 'grey'; pill?: Pill; title: string; sub?: string; left?: boolean }
+  | {
+      k: 'hero';
+      icon: IconName;
+      tone: 'green' | 'deepGreen' | 'peach' | 'red' | 'grey';
+      pill?: Pill;
+      title: string;
+      sub?: string;
+      left?: boolean;
+      /** One disc with the glyph on it, no inner core (370). */
+      flat?: boolean;
+      /** The small dark dot at its top right (370). */
+      badge?: boolean;
+    }
   | { k: 'lead'; pill?: Pill; right?: Right; title?: string; text?: string }
   | { k: 'label'; text: string; right?: Right; pills?: Pill[]; /** A green dot before it (364). */ dot?: boolean; /** Inset from the gutter (364's MATTER BRIEFING). */ inset?: boolean }
-  | { k: 'text'; t?: string; parts?: { t: string; bold?: boolean }[]; /** Token for its type size. */ size?: string; tone?: 'body' | 'muted' | 'small' | 'quote' | 'center' | 'strong' | 'green' | 'title'; icon?: IconName }
+  | { k: 'text'; t?: string; parts?: { t: string; bold?: boolean; muted?: boolean }[]; /** A pill after the text (371's Civil). */ pill?: Pill; /** Token for its type size. */ size?: string; /** Token for its icon size. */ iconSize?: string; tone?: 'body' | 'muted' | 'small' | 'quote' | 'center' | 'strong' | 'green' | 'title' | 'label'; icon?: IconName }
   | { k: 'rows'; rows: [string, string, ('mono' | 'bold' | 'green' | 'quote')?][]; divided?: boolean }
   | {
       k: 'grid';
       cells: { label: string; value: string; sub?: string; tone?: 'green' | 'mono' | 'muted'; wide?: boolean; icon?: IconName; sideIcon?: IconName; iconRight?: IconName }[];
       /** 'cells': a panel per cell. 'columns': one panel per column (363). 'panel': one panel round all (363's phone/email). */
       boxed?: 'cells' | 'columns' | 'panel';
+      /** Capitalised labels (370). */
+      caps?: boolean;
     }
   | {
       k: 'person';
@@ -151,7 +188,7 @@ type BlockBody =
       /** The smaller name and sub-line of an info row (363's AI tools card). */
       small?: boolean;
     }
-  | { k: 'timeline'; steps: Step[]; boxed?: boolean }
+  | { k: 'timeline'; steps: Step[]; boxed?: boolean; /** No rail between discs (370). */ noRail?: boolean; /** Dark-green done discs (371). */ deep?: boolean }
   | {
       k: 'docs';
       items: { name: string; meta?: string; icon?: IconName; right?: Right | 'tick' | 'circleTick'; btn?: string; actions?: string[] }[];
@@ -182,7 +219,7 @@ type BlockBody =
   | { k: 'check'; title: string; sub?: string; checked: boolean; blocks?: Block[] }
   | { k: 'bars'; steps: { label: string; state: 'done' | 'current' | 'todo' | 'bad'; sub?: string }[]; variant?: 'bars' | 'discs' | 'tiles' | 'chips' }
   | { k: 'numbered'; items: string[] }
-  | { k: 'banner'; icon?: IconName; title?: string; text: string; tone: 'grey' | 'cream' | 'green' | 'white' | 'none' | 'red' }
+  | { k: 'banner'; icon?: IconName; title?: string; text: string; parts?: { t: string; bold?: boolean }[]; tone: 'grey' | 'cream' | 'green' | 'white' | 'none' | 'red' }
   | { k: 'pills'; items: Pill[] }
   | { k: 'button'; btn: Btn }
   | { k: 'buttonRow'; btns: Btn[] }
@@ -231,7 +268,7 @@ export type CourtSpec = {
   /** Buttons pinned in a bar at the foot of the screen (363). */
   footer?: Btn[];
   /** The drawn state switcher (363, 369, 370). */
-  switcher?: { label?: string; options: string[] };
+  switcher?: { label?: string; options: string[]; /** A centred pill on the page, no band (370). */ inline?: boolean };
   blocks: Block[];
   deadline?: Deadline;
 };

@@ -450,3 +450,153 @@ export const COURT_CALL = {
   end: 'END CALL',
   foot: 'Tap to finish hearing prep session',
 };
+
+// ── design/370 — waiting for the client (Waiting for Client / Client Accepted)
+// The drawn switcher ships. Its second state is design/371, drawn as its own
+// screen (and its own route, client-accepted). ⚠ 371 draws no switcher; here
+// the switcher stays above it so the state can be switched back.
+// ⚠ UNSCOPED — "You will receive an instant notification": no push. View Case
+// Notes and Contact Support open nothing.
+// ⚠ CONFLICT 6 — "Step 3 of 5" here; 371 and 372 say "Step 3 of 4".
+
+export const COURT_WAITING: CourtSpec = {
+  title: 'Waiting For Client',
+  switcher: { options: ['Waiting for Client', 'Client Accepted'], inline: true },
+  blocks: [
+    {
+      k: 'hero',
+      icon: 'clock',
+      tone: 'peach',
+      flat: true,
+      badge: true,
+      pill: { pill: 'Waiting for Client Reply', tone: 'peach', dot: true, lg: true },
+      title: 'Waiting for Client',
+      sub: 'The client is deciding whether to continue with you.',
+    },
+    {
+      k: 'card',
+      top: 'firstCardTop',
+      blocks: [
+        { k: 'text', icon: 'info', iconSize: 'spokenIcon', t: 'You have spoken with the client. The client will confirm if they want to continue.', size: 'spokenSize' },
+        { k: 'text', icon: 'bell', iconSize: 'notifyIcon', t: 'You will receive an instant notification when Rahul Sharma responds.', tone: 'small', top: 'notifyTop', bottom: 'notifyBottom' },
+      ],
+    },
+    {
+      k: 'card',
+      head: { title: 'Case Information', right: { pill: 'Active', tone: 'grey' } },
+      blocks: [
+        {
+          k: 'grid',
+          caps: true,
+          top: 'infoGridTop',
+          bottom: 'infoGridBottom',
+          cells: [
+            { label: 'CLIENT', value: CASE.client },
+            { label: 'MATTER', value: 'Civil' },
+            { label: 'CASE TITLE', value: CASE.title, wide: true },
+            { label: 'COURT', value: CASE.court, wide: true },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      head: { title: 'Case Progress', right: 'Step 3 of 5' },
+      blocks: [
+        {
+          k: 'timeline',
+          top: 'stepsTop',
+          noRail: true,
+          steps: [
+            { title: 'Request Accepted', sub: 'You accepted the client invitation', state: 'done' },
+            { title: 'Case Discussed', sub: 'Initial talk finished with Rahul Sharma', state: 'done' },
+            { title: 'Waiting for Client', sub: 'Client is reviewing the conversation', state: 'active' },
+            { title: 'Client Accepted', sub: 'Client confirms hiring', state: 'todo' },
+            { title: 'Documents', sub: 'Upload and review required case papers', state: 'todo' },
+          ],
+        },
+        { k: 'banner', icon: 'lock', tone: 'grey', text: 'Documents step unlocks once the client accepts.', top: 'lockTop' },
+      ],
+    },
+    { k: 'button', btn: { label: 'View Case Notes', icon: 'file', variant: 'white' }, top: 'notesTop' },
+    { k: 'button', btn: { label: 'Need Help? Contact Support', icon: 'headset', variant: 'link' }, top: 'helpTop' },
+  ],
+};
+
+// ── design/371 — client accepted ─────────────────────────────────────────────
+// Reached as 370's second switcher state, and as its own route. ⚠ Its header
+// still reads "Waiting For Client" — kept as drawn.
+// ⚠ UNSCOPED — Chat with Client and the call disc do nothing; the checklist is
+// not pushed to the client.
+export const COURT_ACCEPTED: CourtSpec = {
+  title: 'Waiting For Client',
+  blocks: [
+    {
+      k: 'hero',
+      icon: 'check',
+      tone: 'deepGreen',
+      pill: { pill: 'CLIENT CONFIRMED • READY TO PROCEED', tone: 'sage', dot: true, lg: true },
+      title: 'Client Accepted',
+      sub: 'The client has chosen to continue with you for legal representation.',
+    },
+    {
+      k: 'card',
+      top: 'firstCardTop',
+      head: { title: 'CLIENT DETAILS', caps: true, right: { pill: 'Verified Client', tone: 'verified', icon: 'checkCircle' } },
+      blocks: [{ k: 'person', initials: CASE.initials, name: CASE.client, meta: CASE.phone, metaIcon: 'smartphone', call: true, top: 'personTop', bottom: 'personBottom' }],
+    },
+    {
+      k: 'card',
+      head: { title: 'CASE INFORMATION', caps: true, right: { pill: CASE.hcr, tone: 'grey', mono: true } },
+      blocks: [
+        { k: 'text', t: 'Service Type', tone: 'label', top: 'serviceTop' },
+        { k: 'text', parts: [{ t: CASE.hcRep, bold: true }], pill: { pill: 'Civil', tone: 'peach' }, top: 'valueTop' },
+        { k: 'text', t: 'Case Title', tone: 'label', top: 'labelTop' },
+        { k: 'text', tone: 'title', parts: [{ t: 'Rahul Sharma ' }, { t: 'vs', muted: true }, { t: ' Amit Verma' }], top: 'valueTop' },
+        { k: 'banner', icon: 'gavel', tone: 'grey', title: CASE.court, text: CASE.bench, top: 'courtTop' },
+      ],
+    },
+    {
+      k: 'card',
+      head: { title: 'CASE PROGRESS', caps: true, right: 'Step 3 of 4' },
+      blocks: [
+        {
+          k: 'timeline',
+          top: 'stepsTop',
+          deep: true,
+          steps: [
+            { title: 'Request Accepted', sub: 'Case intake confirmed', state: 'done' },
+            { title: 'Case Discussed', sub: 'Brief overview completed', state: 'done' },
+            { title: 'Client Accepted', sub: 'Client finalized the engagement', state: 'accent' },
+            { title: 'Recommend Documents', sub: 'Send checklist for filing', state: 'todo' },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      tone: 'cream',
+      head: {
+        icon: 'listChecks',
+        tile: 'brown',
+        kicker: { pill: 'RECOMMENDED NEXT STEP', tone: 'sand' },
+        title: 'Recommend Documents',
+        sub: 'Tell the client which documents you need to start preparing the filing.',
+      },
+      blocks: [
+        {
+          k: 'banner',
+          icon: 'mailCheck',
+          tone: 'white',
+          parts: [{ t: CASE.client, bold: true }, { t: ' will receive your document checklist instantly in their Legalitt app.' }],
+          text: '',
+          top: 'nextBannerTop',
+        },
+      ],
+    },
+    { k: 'button', btn: { label: 'Recommend Documents', iconRight: 'arrowRight', to: R('recommend-documents') }, top: 'ctaTop' },
+    { k: 'button', btn: { label: 'Chat with Client', icon: 'chat', variant: 'white' }, top: 'chatTop' },
+  ],
+};
+
+export const COURT_WAITING_STATES = [COURT_WAITING, { ...COURT_ACCEPTED, title: COURT_WAITING.title }];
