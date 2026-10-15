@@ -110,6 +110,7 @@ export type Tone =
   | 'action'
   | 'tilePeach'
   | 'approvedPill'
+  | 'solidGreen'
   | 'red'
   | 'brown'
   | 'blue'
@@ -173,7 +174,7 @@ export type Btn = {
 export type Head = {
   icon?: IconName;
   /** true: grey square tile; 'peach': peach square tile (364); 'disc': peach round disc (364's Next Step). */
-  tile?: boolean | 'peach' | 'disc' | 'brown' | 'red' | 'step';
+  tile?: boolean | 'peach' | 'disc' | 'brown' | 'red' | 'step' | 'greenCheck';
   /** A red caps title (373); a brown one (378). */
   tone?: 'red' | 'brown';
   /** The smaller caps of a nested panel (373's CLIENT NOTE). */
@@ -215,6 +216,8 @@ export type Step = {
   muted?: boolean;
   /** Token for extra space above this step (381's taller pending rows). */
   gap?: string;
+  /** A dark-green done disc (384's Court Filing). */
+  deep?: boolean;
 };
 
 /**
@@ -227,7 +230,7 @@ export type Spaced = { top?: string; /** A token added below the block (may be n
 export type Block = Spaced & BlockBody;
 
 type BlockBody =
-  | { k: 'card'; tone?: 'white' | 'panel' | 'cream' | 'peach' | 'green' | 'outline' | 'payPeach' | 'decline' | 'tier' | 'halo' | 'banner' | 'tileGrey'; /** A brown bar down the left edge (383). */ bar?: boolean; /** Blocks indented to the head's text column (379); a token name for another indent (382). */ indent?: boolean | string; /** A hairline round it (381's payment status). */ outline?: boolean; head?: Head; blocks: Block[]; /** Token for its padding. */ pad?: string }
+  | { k: 'card'; tone?: 'white' | 'panel' | 'cream' | 'peach' | 'green' | 'outline' | 'payPeach' | 'decline' | 'tier' | 'halo' | 'banner' | 'tileGrey' | 'greenRing'; /** A brown bar down the left edge (383). */ bar?: boolean; /** Blocks indented to the head's text column (379); a token name for another indent (382). */ indent?: boolean | string; /** A hairline round it (381's payment status). */ outline?: boolean; head?: Head; blocks: Block[]; /** Token for its padding. */ pad?: string }
   | {
       k: 'hero';
       icon: IconName;
@@ -250,7 +253,7 @@ type BlockBody =
   | { k: 'lead'; pill?: Pill; /** Text straight after the pill (377's Step 5 of 10). */ pillNote?: string; right?: Right; title?: string; text?: string }
   | { k: 'label'; text: string; right?: Right; pills?: Pill[]; icon?: IconName; /** The large ink caps of 374's section titles. */ strong?: boolean; /** A sentence-case section title (376). */ title?: boolean; /** A green dot before it (364). */ dot?: boolean; /** Inset from the gutter (364's MATTER BRIEFING). */ inset?: boolean }
   | { k: 'text'; t?: string; parts?: { t: string; bold?: boolean; muted?: boolean }[]; /** A pill after the text (371's Civil). */ pill?: Pill; /** Token for its type size. */ size?: string; /** Token for its icon size. */ iconSize?: string; iconGreen?: boolean; tone?: 'body' | 'muted' | 'small' | 'smallStrong' | 'kicker' | 'quote' | 'center' | 'strong' | 'green' | 'title' | 'label' | 'note'; icon?: IconName }
-  | { k: 'rows'; rows: [string, string, ('mono' | 'monoBrown' | 'bold' | 'green' | 'quote')?][]; divided?: boolean }
+  | { k: 'rows'; rows: [string, string, ('mono' | 'monoBrown' | 'brown' | 'bold' | 'green' | 'quote')?][]; divided?: boolean }
   | {
       k: 'grid';
       cells: { label: string; value: string; sub?: string; tone?: 'green' | 'mono' | 'muted'; wide?: boolean; icon?: IconName; sideIcon?: IconName; iconRight?: IconName; /** tileGrey, not panel (376). */ shade?: boolean; alignRight?: boolean; small?: boolean; /** A white disc with an icon at the right (376). */ iconDisc?: IconName }[];
@@ -302,6 +305,8 @@ type BlockBody =
       discTop?: boolean;
       /** With light: grey rails throughout (381). */
       greyRail?: boolean;
+      /** A green rail between done steps (384). */
+      greenRail?: boolean;
     }
   | {
       k: 'docs';
@@ -320,7 +325,7 @@ type BlockBody =
         btnBelow?: string;
       }[];
       /** The square tile's fill: 'wallet' = advWalletPalette.tile (379). */
-      tileTone?: 'wallet';
+      tileTone?: 'wallet' | 'peach';
       /** A grey tile with the red PDF glyph (382). */
       redTile?: boolean;
       /** Icons in grey discs on the panel rows (375). */
@@ -329,7 +334,7 @@ type BlockBody =
       cards?: boolean;
       tiles?: boolean;
       /** The View buttons in helpGrey (378). */
-      btnTone?: 'help';
+      btnTone?: 'help' | 'tile';
       /** The framed-PDF glyph with no tile behind it (363), and grey "View" pills. */
       pdf?: boolean;
     }
@@ -364,7 +369,7 @@ type BlockBody =
   | { k: 'segment'; label?: string; items: string[]; selected: number }
   | { k: 'check'; title: string; sub?: string; checked: boolean; blocks?: Block[]; /** Tapping it toggles the screen's gate (375). */ gate?: boolean }
   | { k: 'bars'; steps: { label: string; state: 'done' | 'current' | 'todo' | 'bad'; sub?: string }[]; variant?: 'bars' | 'discs' | 'tiles' | 'chips' }
-  | { k: 'numbered'; items: string[] }
+  | { k: 'numbered'; items: string[]; /** Grey number discs (384). */ grey?: boolean }
   | { k: 'banner'; icon?: IconName; title?: string; text: string; /** A brown dot at the right (373). */ dot?: boolean; center?: boolean; titleBrown?: boolean; strongText?: boolean; parts?: { t: string; bold?: boolean }[]; tone: 'grey' | 'cream' | 'green' | 'white' | 'none' | 'red' | 'help' }
   | { k: 'pills'; items: Pill[]; /** Bordered chips (377's documents). */ outline?: boolean }
   | { k: 'progress'; value: number }
@@ -402,10 +407,11 @@ type BlockBody =
       bare?: boolean;
     }
   | { k: 'chip'; t: string }
+  | { k: 'statusRow'; label: string; sub?: string; pill: Pill }
   | { k: 'richRows'; rows: { label: string; value: string; pill?: Pill; sub?: string; icon?: IconName; big?: boolean }[] }
   | { k: 'stages'; items: { label: string; state: 'todo' | 'current' | 'tick' }[] }
   | { k: 'metaRow'; items: { icon: IconName; parts: { t: string; bold?: boolean }[] }[] }
-  | { k: 'empty'; icon: IconName; title: string; text: string; btn?: string }
+  | { k: 'empty'; icon: IconName; title: string; text: string; btn?: string; /** A primary button (384). */ cta?: Btn; /** On a panel (384). */ panel?: boolean }
   | { k: 'contact'; icon: IconName; t: string; btn?: string }
   | { k: 'iconRows'; rows: { icon: IconName; t: string; bold?: boolean }[] }
   | { k: 'footRow'; icon?: IconName; t: string; right?: Right }

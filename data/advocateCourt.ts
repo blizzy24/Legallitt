@@ -1834,3 +1834,139 @@ export const COURT_CLIENT_APPROVED: Block[] = [
   { k: 'button', btn: { label: 'Continue', iconRight: 'arrowRight', to: R('court-filing') }, top: 'continueTop' },
   { k: 'button', btn: { label: 'Close', variant: 'link', back: true }, top: 'closeTop' },
 ];
+
+// ── design/384 — case filed ──────────────────────────────────────────────────
+// Reached from Save Filing Details on 379. Add First Hearing (both) opens
+// 387 — navigation only. ⚠ UNSCOPED — Edit Details, View.
+// ⚠ CONFLICT 4 — the case number and the High Court filing number side by side.
+// ⚠ The footer button draws a plus icon AND a "+" in its label ("+ + Add
+// First Hearing"); kept as drawn.
+export const COURT_CASE_FILED: CourtSpec = {
+  title: 'Court Filing',
+  chevron: true,
+  headerPill: { pill: CASE.hcr, tone: 'peach' },
+  sub: CASE.hcRep,
+  blocks: [
+    {
+      k: 'card',
+      tone: 'greenRing',
+      head: { icon: 'check', tile: 'greenCheck', title: 'Case Filed', size: 'filedTitleSize', pills: [{ pill: 'Saved', tone: 'solidGreen' }], sub: 'Your filing details have been saved.', topAlign: true },
+      indent: 'filedIndent',
+      blocks: [{ k: 'text', t: 'You can add the first hearing date when the court gives it.', tone: 'small', top: 'filedNoteTop' }],
+    },
+    {
+      k: 'card',
+      head: { title: 'Case Details', size: 'bigHeadSize', right: { pill: 'Civil', tone: 'peach' } },
+      blocks: [
+        {
+          k: 'card',
+          tone: 'panel',
+          pad: 'rowsPad',
+          top: 'rowsTop',
+          blocks: [
+            {
+              k: 'rows',
+              rows: [
+                ['Client', CASE.client],
+                ['Case', CASE.title],
+                ['Court', CASE.court],
+                ['Bench', CASE.bench],
+                ['Case Number', CASE.caseNo, 'brown'],
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      head: { title: 'Filing Details', size: 'bigHeadSize', right: { link: 'Edit Details', icon: 'edit', muted: true, mutedIcon: true } },
+      blocks: [
+        {
+          k: 'grid',
+          boxed: 'cells',
+          top: 'filingGridTop',
+          cells: [
+            { label: 'Filing Date', value: '18 Oct 2026' },
+            { label: 'Filing Number', value: CASE.filingNo },
+          ],
+        },
+        { k: 'statusRow', label: 'Filing Status', sub: 'Filing recorded in registry', pill: { pill: 'Filed', tone: 'mint', icon: 'check' }, top: 'statusTop' },
+      ],
+    },
+    {
+      k: 'card',
+      head: { title: 'Filed Documents', size: 'bigHeadSize', right: '3 verified' },
+      blocks: [
+        {
+          k: 'docs',
+          tiles: true,
+          tileTone: 'peach',
+          btnTone: 'tile',
+          top: 'docsTop',
+          items: [
+            { name: 'Petition.pdf', meta: '32 pages • PDF', icon: 'file', btn: 'View' },
+            { name: 'Affidavit.pdf', meta: '8 pages • PDF', icon: 'shield', btn: 'View' },
+            { name: 'Supporting Papers.pdf', meta: '18 pages • PDF', icon: 'folder', btn: 'View' },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      head: { icon: 'calendar', title: 'First Hearing', size: 'bigHeadSize', right: { pill: 'Not Scheduled Yet', tone: 'peach' } },
+      blocks: [
+        {
+          k: 'empty',
+          panel: true,
+          icon: 'calendar',
+          title: 'The court has not given a hearing date yet.',
+          text: 'Add the date here when you receive it.',
+          cta: { label: 'Add First Hearing', icon: 'plus', to: R('hearing/add') },
+          top: 'emptyTop',
+        },
+      ],
+    },
+    {
+      k: 'card',
+      tone: 'banner',
+      head: { icon: 'info', title: 'What happens next?', size: 'whatSize' },
+      blocks: [
+        {
+          k: 'numbered',
+          grey: true,
+          top: 'numTop',
+          items: [
+            'Once court assigns a hearing date, tap "+ Add First Hearing".',
+            "Client's case tracking updates automatically with the official date and time.",
+            'You will receive an automated hearing reminder.',
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      head: { title: 'Case Progress', size: 'bigHeadSize' },
+      blocks: [
+        {
+          k: 'timeline',
+          greenRail: true,
+          top: 'stepsTop',
+          steps: [
+            { title: 'Documents Received', sub: 'Completed', state: 'done', subGreen: true },
+            { title: 'Client Accepted', sub: 'Completed', state: 'done', subGreen: true },
+            { title: 'Case Preparation', sub: 'Completed', state: 'done', subGreen: true },
+            { title: 'Court Filing', sub: 'Filed', state: 'done', deep: true, subGreen: true },
+            { title: 'First Hearing Scheduled', sub: 'Waiting for hearing date', state: 'active' },
+            { title: 'First Hearing', sub: 'Waiting', state: 'wait', muted: true },
+            { title: 'Hearing Update', sub: 'Waiting', state: 'wait', muted: true },
+            { title: 'Next Hearing', sub: 'Waiting', state: 'wait', muted: true },
+            { title: 'Case Completed', sub: 'Waiting', state: 'wait', muted: true },
+          ],
+        },
+      ],
+    },
+  ],
+  footer: [{ label: '+ Add First Hearing', icon: 'plus', to: R('hearing/add') }],
+  footerNote: 'Tap to enter the court hearing date when received',
+};
