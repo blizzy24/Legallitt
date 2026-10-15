@@ -31,6 +31,9 @@ import {
   Folders,
   FolderKanban as FolderUser,
   Compass,
+  MessageSquareQuote,
+  Lightbulb,
+  FileUp,
   Gavel,
   Headset,
   History,
@@ -217,6 +220,10 @@ const ICONS: Record<IconName, LucideIcon> = {
   folderOpen: FolderOpen,
   folderUser: FolderUser,
   compass: Compass,
+  pdfRed: FileText,
+  chatQuote: MessageSquareQuote,
+  lightbulb: Lightbulb,
+  fileUp: FileUp,
 };
 
 export function Icon({ name, size, color, sw = 2 }: { name: IconName; size: number; color: string; sw?: number }) {
@@ -240,6 +247,8 @@ const TONES: Record<Tone, { bg: string; fg: string }> = {
   greenTile: { bg: c.greenTile, fg: c.greenInk },
   peachPill: { bg: c.peachPill, fg: c.brownInk },
   clearGreen: { bg: 'transparent', fg: c.greenInk },
+  action: { bg: q.actionPill, fg: c.reqDark },
+  tilePeach: { bg: dcDocumentsPalette.tilePeach, fg: c.brownInk },
   red: { bg: status.redContainer, fg: status.onRedContainer },
   brown: { bg: c.brown, fg: ink.onBrand },
   blue: { bg: c.blueTile, fg: c.blueInk },
@@ -256,8 +265,9 @@ export function PillTag({ p, outline }: { p: Pill; outline?: boolean }) {
   return (
     <View style={[s.pill, p.lg && s.pillLg, outline && s.pillOutline, { backgroundColor: tone.bg }]}>
       {p.dot ? <View style={[s.pillDot, { backgroundColor: p.tone === 'green' || p.dotGreen ? status.active : tone.fg }]} /> : null}
-      {p.icon ? <Icon name={p.icon} size={t.pillSize} color={p.iconGreen ? status.active : tone.fg} /> : null}
+      {p.icon && !p.iconAfter ? <Icon name={p.icon} size={t.pillSize} color={p.iconGreen ? status.active : tone.fg} /> : null}
       <Text style={[s.pillText, p.mono && s.mono, p.mono && s.pillMono, { color: tone.fg }]}>{p.pill}</Text>
+      {p.icon && p.iconAfter ? <Icon name={p.icon} size={t.pillSize} color={tone.fg} /> : null}
     </View>
   );
 }
@@ -280,7 +290,7 @@ function RightPart({ r }: { r?: Right }) {
     );
   if ('iconDisc' in r)
     return (
-      <View style={s.rightDisc}>
+      <View style={[s.rightDisc, r.rail && s.rightDiscRail]}>
         <Icon name={r.iconDisc} size={t.rightDiscIcon} color={c.inkWarm} />
       </View>
     );
@@ -311,7 +321,7 @@ function HeadRow({ h }: { h: Head }) {
   const { t, s } = useK();
   return (
     <View style={[s.between, h.rule && s.headRule, h.rightTop && s.top]}>
-      <View style={[s.row, s.flex, h.kicker && s.top, h.tile && s.headTileRow]}>
+      <View style={[s.row, s.flex, (h.kicker || h.topAlign) && s.top, h.tile && s.headTileRow]}>
         {h.tile ? (
           <View
             style={[
@@ -331,6 +341,8 @@ function HeadRow({ h }: { h: Head }) {
               />
             ) : null}
           </View>
+        ) : h.icon === 'pdfRed' ? (
+          <PdfStackIcon size={t.headIcon} color={advForensicRed.declineColour} />
         ) : h.icon ? (
           (
             <Icon name={h.icon} size={t.headIcon} color={c.ink} />
@@ -355,7 +367,7 @@ function HeadRow({ h }: { h: Head }) {
             ) : null}
             {h.pills?.map((p) => <PillTag key={p.pill} p={p} />)}
           </View>
-          {h.sub ? <Text style={s.headSub}>{h.sub}</Text> : null}
+          {h.sub ? <Text style={[s.headSub, h.subSize !== undefined && { fontSize: t[h.subSize], lineHeight: t[h.subSize + 'Line'] }]}>{h.sub}</Text> : null}
         </View>
       </View>
       <RightPart r={h.right} />
@@ -619,7 +631,7 @@ export function BlockView({ b }: { b: Block }): ReactNode {
               style={{
                 marginTop: i > 0 || b.head ? (t[x.top ?? 'cardInnerGap'] ?? t.cardInnerGap) : 0,
                 marginBottom: x.bottom ? t[x.bottom] : 0,
-                marginLeft: b.indent ? t.headTile + t.headTileGap : 0,
+                marginLeft: typeof b.indent === 'string' ? t[b.indent] : b.indent ? t.headTile + t.headTileGap : 0,
               }}
             >
               <BlockView b={x} />
@@ -719,6 +731,7 @@ export function BlockView({ b }: { b: Block }): ReactNode {
         <View style={[s.between, b.inset && s.labelInset]}>
           <View style={[s.row, s.flex]}>
             {b.dot ? <View style={[s.labelDot, { backgroundColor: status.active }]} /> : null}
+            {b.icon ? <Icon name={b.icon} size={t.labelIcon} color={c.ink} /> : null}
             <Text style={[b.title ? s.headTitle : s.caps, b.strong && s.capsStrong, b.title && s.labelTitle]}>{b.text}</Text>
             {b.pills?.map((p) => <PillTag key={p.pill} p={p} />)}
           </View>
@@ -744,6 +757,7 @@ export function BlockView({ b }: { b: Block }): ReactNode {
               b.tone === 'title' && s.titleText,
               b.tone === 'label' && s.labelText,
               b.tone === 'note' && s.noteText,
+              b.tone === 'smallStrong' && s.smallStrong,
               b.size !== undefined && { fontSize: t[b.size], lineHeight: t[b.size + 'Line'] },
             ]}
           >
@@ -875,6 +889,10 @@ export function BlockView({ b }: { b: Block }): ReactNode {
               <View style={[s.row, b.pdf && s.docPdfRow, (b.discs || b.cards) && s.docPdfRow, b.cards && s.top]}>
                 {b.pdf ? (
                   <PdfStackIcon size={t.pdfIcon} color={advForensicRed.declineColour} />
+                ) : b.redTile ? (
+                  <View style={[s.docSquare, s.docSquareRed]}>
+                    <FileText size={t.docIcon} color={advForensicRed.declineColour} strokeWidth={2} />
+                  </View>
                 ) : b.tiles ? (
                   <View style={[s.docSquare, !b.cards && s.docSquarePanel, b.tileTone === 'wallet' && s.docSquareWallet]}>
                     {d.icon === 'pdf' ? (
@@ -914,6 +932,10 @@ export function BlockView({ b }: { b: Block }): ReactNode {
                   <View style={[s.disc, { backgroundColor: status.active }]}>
                     <Check size={t.stepGlyph} color={ink.onBrand} strokeWidth={3} />
                   </View>
+                ) : b.cards ? (
+                  <View style={s.docRightCol}>
+                    <RightPart r={d.right} />
+                  </View>
                 ) : (
                   <RightPart r={d.right} />
                 )}
@@ -934,6 +956,13 @@ export function BlockView({ b }: { b: Block }): ReactNode {
                   </View>
                 ) : null}
               </View>
+              {d.btnBelow ? (
+                // ⚠ UNSCOPED — no document viewer.
+                <View style={s.docBelow}>
+                  <Eye size={t.docBelowSize} color={c.ink} strokeWidth={2} />
+                  <Text style={s.docBelowText}>{d.btnBelow}</Text>
+                </View>
+              ) : null}
               {d.actions ? (
                 <View style={[s.row, s.docActions]}>
                   {d.actions.map((a) => (
@@ -1263,6 +1292,19 @@ export function BlockView({ b }: { b: Block }): ReactNode {
               <Text style={s.emptyBtnText}>{b.btn}</Text>
             </View>
           ) : null}
+        </View>
+      );
+    case 'stages':
+      return (
+        <View style={s.stages}>
+          {b.items.map((it) => (
+            <View key={it.label} style={[s.stage, it.state === 'current' && s.stageOn]}>
+              <View style={[s.labelDot, s.stageDot, it.state === 'current' && s.stageDotOn]} />
+              <Text style={[s.stageText, it.state === 'current' && s.stageTextOn]}>{it.label}</Text>
+              {it.state === 'current' ? <ArrowRight size={t.stageIcon} color={advWalletPalette.tileInk} strokeWidth={2} /> : null}
+              {it.state === 'tick' ? <Check size={t.stageIcon} color={advWalletPalette.muted} strokeWidth={2} /> : null}
+            </View>
+          ))}
         </View>
       );
     case 'metaRow':
@@ -1661,6 +1703,10 @@ function makeStyles(t: CourtTokens) {
   metaGood: { gap: t.pillGap, marginTop: t.docMetaTop },
   metaGoodText: { marginTop: 0, color: status.active, fontFamily: font.appSemi },
   docSquarePanel: { backgroundColor: c.tileGrey },
+  docSquareRed: { backgroundColor: c.helpGrey },
+  docRightCol: { minWidth: t.docRightMin, alignItems: 'flex-end', alignSelf: 'flex-start' },
+  docBelow: { alignSelf: 'flex-end', marginTop: t.docBelowTop, minHeight: t.docBelowH, borderRadius: t.docBelowH / 2, paddingHorizontal: t.docBelowPadX, backgroundColor: c.panel, flexDirection: 'row', alignItems: 'center', gap: t.pillGap },
+  docBelowText: { fontFamily: font.appSemi, fontSize: t.docBelowSize, color: c.ink },
   docSquareWallet: { backgroundColor: advWalletPalette.tile },
   docInline: { flexDirection: 'row', gap: t.docInlineGap },
   docInlineBtn: { minHeight: t.docInlineH, borderRadius: t.docInlineRadius, paddingHorizontal: t.docInlinePadX, justifyContent: 'center' },
@@ -1692,6 +1738,13 @@ function makeStyles(t: CourtTokens) {
   emptyText: { marginTop: t.emptyTextTop, maxWidth: t.emptyTextMax, fontFamily: font.appBody, fontSize: t.emptyTextSize, lineHeight: t.emptyTextLine, color: c.inkWarm, textAlign: 'center' },
   emptyBtn: { marginTop: t.emptyBtnTop, minHeight: t.emptyBtnH, borderRadius: t.emptyBtnRadius, paddingHorizontal: t.emptyBtnPadX, backgroundColor: c.helpGrey, justifyContent: 'center' },
   emptyBtnText: { fontFamily: font.appSemi, fontSize: t.emptyBtnSize, color: c.ink },
+  stages: { flexDirection: 'row', flexWrap: 'wrap', gap: t.stageGap },
+  stage: { flexBasis: '45%', flexGrow: 1, minHeight: t.stageH, borderRadius: t.stageRadius, paddingHorizontal: t.stagePadX, backgroundColor: c.page, flexDirection: 'row', alignItems: 'center', gap: t.pillGap },
+  stageOn: { backgroundColor: advWalletPalette.tile },
+  stageDotOn: { backgroundColor: advWalletPalette.tileInk },
+  stageDot: { width: t.stageDot, height: t.stageDot, borderRadius: t.stageDot / 2, backgroundColor: advWalletPalette.muted },
+  stageText: { flexShrink: 1, fontFamily: font.appSemi, fontSize: t.stageSize, color: advWalletPalette.muted },
+  stageTextOn: { fontFamily: font.appHeading, color: advWalletPalette.tileInk },
   metaRow: { justifyContent: 'space-between', alignItems: 'flex-start' },
   metaItem: { flexShrink: 1, gap: t.pillGap },
   metaText: { fontFamily: font.appBody, fontSize: t.metaSize, lineHeight: t.metaLine, color: c.inkWarm },
@@ -1700,6 +1753,7 @@ function makeStyles(t: CourtTokens) {
   headTileRow: { gap: t.headTileGap },
   rightDisc: { width: t.rightDisc, height: t.rightDisc, borderRadius: t.rightDisc / 2, backgroundColor: c.tileGrey, alignItems: 'center', justifyContent: 'center' },
   footerStack: { flexDirection: 'column', gap: t.footerStackGap },
+  rightDiscRail: { backgroundColor: c.rail },
   footerNote2: { marginTop: t.footerNote2Top, fontSize: t.footerNote2Size, color: dcStepperPalette.muted },
   footerNote: { paddingHorizontal: t.footerNotePadX, fontFamily: font.appBody, fontSize: t.footerNoteSize, lineHeight: t.footerNoteLine, color: c.inkWarm, textAlign: 'center' },
   titleBadge: { width: t.titleIconSize, height: t.titleIconSize, borderRadius: t.titleIconSize / 2, backgroundColor: status.active, alignItems: 'center', justifyContent: 'center' },
@@ -1733,6 +1787,7 @@ function makeStyles(t: CourtTokens) {
   discDotLight: { backgroundColor: q.todoDot },
   accentTitle: { color: c.greenInk },
   partMuted: { color: c.inkMuted },
+  smallStrong: { fontFamily: font.appSemi, fontSize: t.smallSize, lineHeight: t.smallLine, color: c.inkWarm },
   noteText: { fontFamily: font.appBody, fontStyle: 'italic', fontSize: t.noteSize, lineHeight: t.noteLine, color: c.inkWarm, textAlign: 'center' },
   labelText: { fontSize: t.labelTextSize, lineHeight: t.labelTextLine },
   cellCaps: { fontFamily: font.appSemi, fontSize: t.cellCapsSize, letterSpacing: t.capsSpacing, textTransform: 'uppercase' },
@@ -1960,7 +2015,7 @@ function makeStyles(t: CourtTokens) {
   uploadDisc: { width: t.headTile + 8, height: t.headTile + 8, borderRadius: t.headTile, backgroundColor: c.peach, alignItems: 'center', justifyContent: 'center' },
   uploadBtn: { alignSelf: 'stretch', marginTop: t.cardInnerGap },
 
-  quoteBox: { borderRadius: t.panelRadius, padding: t.panelPad, backgroundColor: c.panel },
+  quoteBox: { borderRadius: t.panelRadius, paddingHorizontal: t.quoteBoxPadX, paddingVertical: t.panelPad, backgroundColor: c.panel },
 
   chip: {
     minHeight: t.chipH,

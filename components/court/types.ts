@@ -84,7 +84,11 @@ export type IconName =
   | 'fileStack'
   | 'folderOpen'
   | 'folderUser'
-  | 'compass';
+  | 'compass'
+  | 'pdfRed'
+  | 'chatQuote'
+  | 'lightbulb'
+  | 'fileUp';
 
 export type Tone =
   | 'green'
@@ -102,6 +106,8 @@ export type Tone =
   | 'greenTile'
   | 'peachPill'
   | 'clearGreen'
+  | 'action'
+  | 'tilePeach'
   | 'red'
   | 'brown'
   | 'blue'
@@ -122,6 +128,8 @@ export type Pill = {
   /** The taller header / lead pill (363). */
   lg?: boolean;
   mono?: boolean;
+  /** The icon after the text (382's Verified ✓). */
+  iconAfter?: boolean;
 };
 
 /** What sits at the right of a heading or row: plain text, a pill or a small link. */
@@ -144,7 +152,7 @@ export type Right =
       /** With muted: the icon grey too (380's Pending). */
       mutedIcon?: boolean;
     }
-  | { /** A grey disc with an icon (372's next-step card). */ iconDisc: IconName };
+  | { /** A grey disc with an icon (372's next-step card). */ iconDisc: IconName; /** The darker rail grey (382). */ rail?: boolean };
 
 export type Btn = {
   label: string;
@@ -183,6 +191,10 @@ export type Head = {
   titleIcon?: IconName;
   /** Token for this head's title size (377 draws two sizes). */
   size?: string;
+  /** The tile level with the title, not centred (382's Next Step). */
+  topAlign?: boolean;
+  /** Token for the sub-line's size (382). */
+  subSize?: string;
 };
 
 export type Step = {
@@ -213,7 +225,7 @@ export type Spaced = { top?: string; /** A token added below the block (may be n
 export type Block = Spaced & BlockBody;
 
 type BlockBody =
-  | { k: 'card'; tone?: 'white' | 'panel' | 'cream' | 'peach' | 'green' | 'outline' | 'payPeach' | 'decline' | 'tier' | 'halo' | 'banner'; /** Blocks indented to the head's text column (379). */ indent?: boolean; /** A hairline round it (381's payment status). */ outline?: boolean; head?: Head; blocks: Block[]; /** Token for its padding. */ pad?: string }
+  | { k: 'card'; tone?: 'white' | 'panel' | 'cream' | 'peach' | 'green' | 'outline' | 'payPeach' | 'decline' | 'tier' | 'halo' | 'banner'; /** Blocks indented to the head's text column (379); a token name for another indent (382). */ indent?: boolean | string; /** A hairline round it (381's payment status). */ outline?: boolean; head?: Head; blocks: Block[]; /** Token for its padding. */ pad?: string }
   | {
       k: 'hero';
       icon: IconName;
@@ -232,8 +244,8 @@ type BlockBody =
       pillBelow?: boolean;
     }
   | { k: 'lead'; pill?: Pill; /** Text straight after the pill (377's Step 5 of 10). */ pillNote?: string; right?: Right; title?: string; text?: string }
-  | { k: 'label'; text: string; right?: Right; pills?: Pill[]; /** The large ink caps of 374's section titles. */ strong?: boolean; /** A sentence-case section title (376). */ title?: boolean; /** A green dot before it (364). */ dot?: boolean; /** Inset from the gutter (364's MATTER BRIEFING). */ inset?: boolean }
-  | { k: 'text'; t?: string; parts?: { t: string; bold?: boolean; muted?: boolean }[]; /** A pill after the text (371's Civil). */ pill?: Pill; /** Token for its type size. */ size?: string; /** Token for its icon size. */ iconSize?: string; iconGreen?: boolean; tone?: 'body' | 'muted' | 'small' | 'quote' | 'center' | 'strong' | 'green' | 'title' | 'label' | 'note'; icon?: IconName }
+  | { k: 'label'; text: string; right?: Right; pills?: Pill[]; icon?: IconName; /** The large ink caps of 374's section titles. */ strong?: boolean; /** A sentence-case section title (376). */ title?: boolean; /** A green dot before it (364). */ dot?: boolean; /** Inset from the gutter (364's MATTER BRIEFING). */ inset?: boolean }
+  | { k: 'text'; t?: string; parts?: { t: string; bold?: boolean; muted?: boolean }[]; /** A pill after the text (371's Civil). */ pill?: Pill; /** Token for its type size. */ size?: string; /** Token for its icon size. */ iconSize?: string; iconGreen?: boolean; tone?: 'body' | 'muted' | 'small' | 'smallStrong' | 'quote' | 'center' | 'strong' | 'green' | 'title' | 'label' | 'note'; icon?: IconName }
   | { k: 'rows'; rows: [string, string, ('mono' | 'monoBrown' | 'bold' | 'green' | 'quote')?][]; divided?: boolean }
   | {
       k: 'grid';
@@ -300,9 +312,13 @@ type BlockBody =
         inline?: string[];
         /** A green ticked note after the meta (380's Receipt Added). */
         metaGood?: string;
+        /** A small button under the row, at the right (382). */
+        btnBelow?: string;
       }[];
       /** The square tile's fill: 'wallet' = advWalletPalette.tile (379). */
       tileTone?: 'wallet';
+      /** A grey tile with the red PDF glyph (382). */
+      redTile?: boolean;
       /** Icons in grey discs on the panel rows (375). */
       discs?: boolean;
       /** Each a white card with a grey square icon tile (376). */
@@ -382,6 +398,7 @@ type BlockBody =
       bare?: boolean;
     }
   | { k: 'chip'; t: string }
+  | { k: 'stages'; items: { label: string; state: 'todo' | 'current' | 'tick' }[] }
   | { k: 'metaRow'; items: { icon: IconName; parts: { t: string; bold?: boolean }[] }[] }
   | { k: 'empty'; icon: IconName; title: string; text: string; btn?: string }
   | { k: 'contact'; icon: IconName; t: string; btn?: string }

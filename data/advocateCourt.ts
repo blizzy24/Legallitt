@@ -1650,3 +1650,133 @@ export const COURT_FEE_SENT: CourtSpec = {
   footer: [{ label: 'Back to Case', iconRight: 'arrowRight', back: true }],
   footerLinks: [{ icon: 'lock', t: 'Official Case Record • Client Payment Awaited' }],
 };
+
+// ── design/382 — pre-filing review ───────────────────────────────────────────
+// ⚠ No drawn control leads here. ⚠ UNSCOPED — Send Revised Documents (static
+// per scope), Update / Replace Documents, View Document, Chat, Call.
+// ⚠ CONFLICT 4 — "District Court / High Court Representation": both services
+// at once, on a DC-2026-1048 matter; the Representation Forum value overlaps
+// itself in the export ("District Cour" under "/ High Court").
+export const COURT_PRE_FILING: CourtSpec = {
+  title: 'Pre Filing Review',
+  headerPill: { pill: CASE.dc, tone: 'peach' },
+  sub: 'District Court / High Court Representation',
+  blocks: [
+    {
+      k: 'card',
+      tone: 'panel',
+      head: { title: '', pills: [{ pill: 'CIVIL MATTER', tone: 'peach' }], right: { iconDisc: 'gavel', rail: true } },
+      blocks: [
+        { k: 'text', t: CASE.title, tone: 'title', top: 'matterTitleTop' },
+        {
+          k: 'grid',
+          top: 'matterGridTop',
+          cells: [
+            { label: 'Lead Advocate', value: 'Adv. Abhishek Verma' },
+            { label: 'Representation Forum', value: 'District Court / High Court' },
+          ],
+        },
+        {
+          k: 'card',
+          pad: 'clientPad',
+          top: 'clientTop',
+          blocks: [
+            {
+              k: 'person',
+              initials: CASE.initials,
+              kicker: 'Client',
+              kickerPlain: true,
+              name: CASE.client,
+              chipsGrey: true,
+              chips: [
+                { label: 'Chat', icon: 'chat' },
+                { label: 'Call', icon: 'phone' },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      head: { title: 'STATUS CYCLE', caps: true, pills: [{ pill: 'Review Round 2', tone: 'peach' }], right: 'Round 1 Done' },
+      blocks: [
+        {
+          k: 'card',
+          tone: 'halo',
+          pad: 'cyclePad',
+          top: 'cycleTop',
+          indent: 'discIndent',
+          head: {
+            icon: 'note',
+            tile: 'disc',
+            title: 'Changes Requested',
+            size: 'cycleTitleSize',
+            right: { pill: 'Action Needed', tone: 'action' },
+            topAlign: true,
+          },
+          blocks: [{ k: 'text', t: 'The client has reviewed the draft and requested changes before filing.', tone: 'small', top: 'cycleTextTop' }],
+        },
+        { k: 'text', t: 'Filing Stages', tone: 'smallStrong', top: 'stagesLabelTop' },
+        {
+          k: 'stages',
+          top: 'stagesTop',
+          items: [
+            { label: '1. Ready to Send', state: 'todo' },
+            { label: '2. Waiting Review', state: 'todo' },
+            { label: '3. Changes Request', state: 'current' },
+            { label: '4. Approved', state: 'tick' },
+          ],
+        },
+      ],
+    },
+    { k: 'label', text: 'Client Feedback', title: true, icon: 'chatQuote', right: 'Yesterday, 4:15 PM', top: 'feedbackTop' },
+    { k: 'text', t: 'Received notes from client Rahul Sharma', tone: 'small', top: 'feedbackSubTop' },
+    {
+      k: 'card',
+      top: 'fbCardTop',
+      head: { icon: 'pdfRed', title: 'Petition_v1.pdf', size: 'fbTitleSize', right: { pill: 'Page 6', tone: 'help' } },
+      blocks: [{ k: 'quote', t: '"Please correct the property address on page 6 to House No. 42-B, Sector 15."', top: 'quoteTop' }],
+    },
+    {
+      k: 'card',
+      top: 'fbCard2Top',
+      head: { icon: 'list', title: 'General Note', size: 'fbTitleSize' },
+      blocks: [{ k: 'quote', t: '"Please check the respondent details and date of notice before the final filing."', top: 'quoteTop' }],
+    },
+    { k: 'label', text: 'Final Filing Documents', title: true, right: { pill: '3 Files for Sign-off', tone: 'help' }, top: 'finalTop' },
+    {
+      k: 'docs',
+      cards: true,
+      redTile: true,
+      top: 'finalDocsTop',
+      items: [
+        // ⚠ "Petition_Revised_v2." — the extension is clipped in the export.
+        { name: 'Petition_Revised_v2.pdf', meta: '32 pages • 4.2 MB • Updated draft', icon: 'pdf', right: { pill: 'Needs Re-send', tone: 'tilePeach' }, btnBelow: 'View Document' },
+        { name: 'Affidavit.pdf', meta: '8 pages • 1.1 MB • Signed by client', icon: 'pdf', right: { pill: 'Verified', tone: 'mint', icon: 'check', iconAfter: true }, btnBelow: 'View Document' },
+        { name: 'Supporting_Papers.pdf', meta: '18 pages • 3.5 MB • Annexures & Index', icon: 'pdf', right: { pill: 'Ready', tone: 'help' }, btnBelow: 'View Document' },
+      ],
+    },
+    {
+      k: 'card',
+      tone: 'tier',
+      top: 'nextTop',
+      head: {
+        icon: 'lightbulb',
+        tile: 'disc',
+        title: 'Next Step',
+        size: 'nextTitleSize',
+        subSize: 'nextSubSize',
+        sub: 'Update the petition with the corrected address and send the revised documents to Rahul Sharma for final approval. Once approved, you can proceed directly to Court Filing.',
+        topAlign: true,
+      },
+      blocks: [],
+    },
+  ],
+  footer: [
+    { label: 'Send Revised Documents', iconRight: 'arrowRight' },
+    { label: 'Update / Replace Documents', icon: 'fileUp', variant: 'help' },
+  ],
+  footerStack: true,
+  footerLinks: [{ icon: 'lock', t: 'Legalitt Handover Protocol • Client approval required before court filing • No automated filing' }],
+};
