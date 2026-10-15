@@ -77,6 +77,8 @@ import type { CourtSpec } from '../components/court/types';
 // 18. design/389 "Preview Live Hearing Mode" and 369 "Tap to finish hearing
 //     prep session" — a hearing-prep call and a live-hearing mode, neither
 //     specified.
+// 20. designs 367/368 are re-exports of 170/171 that disagree with them by up
+//     to 20pt (see app/advocate/court/ai.tsx). 366 matches 182 within 4.5pt.
 // 19. design/391 is drawn at a larger type scale than every other screen in
 //     the batch (about 1.15×) on the same 390pt width.
 // ─────────────────────────────────────────────────────────────────────────────
