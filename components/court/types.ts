@@ -81,7 +81,8 @@ export type IconName =
   | 'paperclip'
   | 'clipboardCheck'
   | 'filePen'
-  | 'fileStack';
+  | 'fileStack'
+  | 'folderOpen';
 
 export type Tone =
   | 'green'
@@ -105,7 +106,19 @@ export type Tone =
   | 'dark';
 
 /** A small rounded tag. */
-export type Pill = { pill: string; tone: Tone; dot?: boolean; icon?: IconName; /** The taller header / lead pill (363). */ lg?: boolean; mono?: boolean };
+export type Pill = {
+  pill: string;
+  tone: Tone;
+  dot?: boolean;
+  /** The dot in status green whatever the tone (380). */
+  dotGreen?: boolean;
+  icon?: IconName;
+  /** The icon in status green (380's Auto-filled). */
+  iconGreen?: boolean;
+  /** The taller header / lead pill (363). */
+  lg?: boolean;
+  mono?: boolean;
+};
 
 /** What sits at the right of a heading or row: plain text, a pill or a small link. */
 export type Right =
@@ -122,6 +135,10 @@ export type Right =
       muted?: boolean;
       /** Green text and icon (376's Received). */
       green?: boolean;
+      /** A green dot before green text (380's Live preview). */
+      dot?: boolean;
+      /** With muted: the icon grey too (380's Pending). */
+      mutedIcon?: boolean;
     }
   | { /** A grey disc with an icon (372's next-step card). */ iconDisc: IconName };
 
@@ -208,7 +225,7 @@ type BlockBody =
     }
   | { k: 'lead'; pill?: Pill; /** Text straight after the pill (377's Step 5 of 10). */ pillNote?: string; right?: Right; title?: string; text?: string }
   | { k: 'label'; text: string; right?: Right; pills?: Pill[]; /** The large ink caps of 374's section titles. */ strong?: boolean; /** A sentence-case section title (376). */ title?: boolean; /** A green dot before it (364). */ dot?: boolean; /** Inset from the gutter (364's MATTER BRIEFING). */ inset?: boolean }
-  | { k: 'text'; t?: string; parts?: { t: string; bold?: boolean; muted?: boolean }[]; /** A pill after the text (371's Civil). */ pill?: Pill; /** Token for its type size. */ size?: string; /** Token for its icon size. */ iconSize?: string; tone?: 'body' | 'muted' | 'small' | 'quote' | 'center' | 'strong' | 'green' | 'title' | 'label'; icon?: IconName }
+  | { k: 'text'; t?: string; parts?: { t: string; bold?: boolean; muted?: boolean }[]; /** A pill after the text (371's Civil). */ pill?: Pill; /** Token for its type size. */ size?: string; /** Token for its icon size. */ iconSize?: string; tone?: 'body' | 'muted' | 'small' | 'quote' | 'center' | 'strong' | 'green' | 'title' | 'label' | 'note'; icon?: IconName }
   | { k: 'rows'; rows: [string, string, ('mono' | 'monoBrown' | 'bold' | 'green' | 'quote')?][]; divided?: boolean }
   | {
       k: 'grid';
@@ -267,6 +284,8 @@ type BlockBody =
         actions?: string[];
         /** Small buttons in the row (379's View / Replace). */
         inline?: string[];
+        /** A green ticked note after the meta (380's Receipt Added). */
+        metaGood?: string;
       }[];
       /** The square tile's fill: 'wallet' = advWalletPalette.tile (379). */
       tileTone?: 'wallet';
@@ -303,6 +322,8 @@ type BlockBody =
       prefix?: string;
       /** A hairline round the box (377's note). */
       bordered?: boolean;
+      /** The larger amount entry (380). */
+      big?: boolean;
     }
   | { k: 'fieldRow'; fields: { label: string; req?: boolean; value?: string; placeholder?: string; icon?: IconName }[] }
   | { k: 'choices'; items: { label: string; sub?: string; selected?: boolean; right?: Right; /** A green dot at the right (379). */ dot?: boolean }[] }
@@ -310,7 +331,7 @@ type BlockBody =
   | { k: 'check'; title: string; sub?: string; checked: boolean; blocks?: Block[]; /** Tapping it toggles the screen's gate (375). */ gate?: boolean }
   | { k: 'bars'; steps: { label: string; state: 'done' | 'current' | 'todo' | 'bad'; sub?: string }[]; variant?: 'bars' | 'discs' | 'tiles' | 'chips' }
   | { k: 'numbered'; items: string[] }
-  | { k: 'banner'; icon?: IconName; title?: string; text: string; /** A brown dot at the right (373). */ dot?: boolean; center?: boolean; parts?: { t: string; bold?: boolean }[]; tone: 'grey' | 'cream' | 'green' | 'white' | 'none' | 'red' }
+  | { k: 'banner'; icon?: IconName; title?: string; text: string; /** A brown dot at the right (373). */ dot?: boolean; center?: boolean; titleBrown?: boolean; parts?: { t: string; bold?: boolean }[]; tone: 'grey' | 'cream' | 'green' | 'white' | 'none' | 'red' }
   | { k: 'pills'; items: Pill[]; /** Bordered chips (377's documents). */ outline?: boolean }
   | { k: 'progress'; value: number }
   | { k: 'noteRow'; icon: IconName; t: string; btn: string }
@@ -329,8 +350,9 @@ type BlockBody =
       valueRight?: boolean;
       /** Smaller text after the value (364's "/ 45 min"). */
       suffix?: string;
+      suffixGreen?: boolean;
     }
-  | { k: 'upload'; title: string; sub?: string; btn?: Btn; icon?: IconName }
+  | { k: 'upload'; title: string; sub?: string; btn?: Btn; icon?: IconName; /** Icon beside the title, not above (380). */ inline?: boolean }
   | { k: 'quote'; t: string }
   | { k: 'chips'; items: Btn[]; tiles?: boolean; /** Grey buttons spread across the row (364). */ spread?: boolean }
   | { k: 'info'; icon: IconName; label: string; value: string }
@@ -371,7 +393,7 @@ export type CourtSpec = {
   /** A second, quieter line under footerNote (378). */
   footerNote2?: string;
   /** Two short lines under the footer's button (375). */
-  footerLinks?: { icon?: IconName; t: string; tone?: 'red' }[];
+  footerLinks?: { icon?: IconName; t: string; tone?: 'red' | 'green' }[];
   /** A plain chevron in place of the back arrow (372). */
   chevron?: boolean;
   /** An icon in the header before the avatar (373's info). */

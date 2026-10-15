@@ -689,7 +689,7 @@ export const COURT_ACCEPTED_2: CourtSpec = {
 // opens the advocate dashboard.
 export const COURT_DECLINED: CourtSpec = {
   title: 'Client Declined',
-  chip: CASE.dc,
+  headerPill: { pill: CASE.dc, tone: 'help', mono: true },
   sub: CASE.dcRep,
   headerIcon: 'info',
   blocks: [
@@ -1381,4 +1381,129 @@ export const COURT_CONFIRM_FILING: CourtSpec = {
     { label: 'Cancel', variant: 'link', back: true },
   ],
   footerStack: true,
+};
+
+// ── design/380 — create court fee request (District Court) ───────────────────
+// ⚠ UNSCOPED — Send Court Fee Request sends nothing (no fee request, no SMS,
+// no app notification); the receipt upload, View / Replace and Upload Another
+// Document do nothing. ⚠ The Client View Preview is STATIC sample content: it
+// does not reflect what is typed above.
+// ⚠ The preview's "..." is drawn text, kept as written.
+// ⚠ CONFLICT 16 — Case Number "Pending Filing" (fresh case); 385 has
+// WP/2026/09876 and a High Court filing number on this District Court case.
+// ⚠ The challan's file name is clipped in the export ("Court_Fee_Challan_I…"):
+// a neutral placeholder, awaiting a clean re-export.
+export const COURT_FEE_CREATE: CourtSpec = {
+  title: 'Court Fee',
+  headerPill: { pill: CASE.dc, tone: 'peach' },
+  sub: CASE.dcRep,
+  blocks: [
+    {
+      k: 'lead',
+      pill: { pill: 'FRESH CASE • REQUIRED BEFORE FILING', tone: 'peach', dot: true, dotGreen: true },
+      title: 'Create Court Fee Request',
+      text: 'Request official court filing fee from client before submitting the fresh case to the registry.',
+    },
+    {
+      k: 'card',
+      top: 'caseTop',
+      head: { icon: 'folderOpen', title: 'Case Details', right: { pill: 'Auto-filled from Record', tone: 'panel', icon: 'refresh', iconGreen: true } },
+      blocks: [
+        {
+          k: 'grid',
+          top: 'gridTop',
+          cells: [
+            { label: 'Client', value: CASE.client },
+            { label: 'Case Type', value: 'Civil Suit' },
+            { label: 'Matter', value: CASE.title, wide: true },
+            { label: 'Court', value: 'District Court, Indore' },
+            { label: 'Status', value: 'Fresh Case' },
+            // ⚠ CONFLICT 16.
+            { label: 'Case Number', value: 'Pending Filing', tone: 'muted' },
+            { label: 'Assigned Advocate', value: 'Adv. Abhishek Verma' },
+          ],
+        },
+        { k: 'banner', icon: 'link', tone: 'grey', text: 'Existing case details linked automatically from client onboarding request.', top: 'linkTop' },
+      ],
+    },
+    {
+      k: 'card',
+      head: { icon: 'receipt', title: 'Fee Request Details', size: 'bigHeadSize' },
+      blocks: [
+        { k: 'field', label: 'Heading', req: true, right: 'Title seen by client', value: 'Court Fee for Case Filing', hint: 'Visible to client as the request title.', top: 'firstFieldTop' },
+        {
+          k: 'field',
+          label: 'Description',
+          req: true,
+          right: 'Clear explanation',
+          value: 'Court fee required before filing the fresh civil case in District Court registry as per official court valuation rules.',
+          multiline: true,
+          hint: 'Explain clearly why this court fee is needed.',
+          top: 'fieldGap',
+        },
+        {
+          k: 'field',
+          label: 'Court Fee Amount (INR)',
+          req: true,
+          right: 'Exact valuation',
+          prefix: '₹',
+          value: '3,500',
+          big: true,
+          hint: 'Enter the exact court registry fee determined for this matter.',
+          top: 'fieldGap',
+        },
+      ],
+    },
+    {
+      k: 'card',
+      tone: 'panel',
+      top: 'previewCardTop',
+      head: { icon: 'eye', title: 'Client View Preview', right: { link: 'Live preview', dot: true } },
+      blocks: [
+        {
+          k: 'card',
+          top: 'previewTop',
+          pad: 'previewPad',
+          blocks: [
+            {
+              k: 'lead',
+              pill: { pill: 'Fee Requested by Advocate', tone: 'peach' },
+              right: { link: 'Pending', icon: 'clock', muted: true, mutedIcon: true },
+            },
+            { k: 'text', t: 'Court Fee for Case Filing', tone: 'title', top: 'previewTitleTop' },
+            { k: 'text', t: 'Court fee required before filing the fresh civil case in District Court registry as per official court...', tone: 'small', top: 'previewTextTop' },
+            { k: 'amount', label: 'Payable Amount', value: '₹3,500', suffix: '• Payment Pending', suffixGreen: true, side: ['Advocate', 'Adv. Abhishek Verma'], top: 'previewAmountTop' },
+          ],
+        },
+        { k: 'text', t: 'Rahul Sharma will see this payment screen card instantly upon dispatch.', tone: 'note', top: 'previewNoteTop' },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'receiptCardTop',
+      head: { icon: 'receipt', title: 'Court Fee Receipt', right: { pill: 'Optional', tone: 'help' } },
+      blocks: [
+        { k: 'text', t: 'You can upload the court fee challan or proof of e-filing fee receipt if already paid or available.', tone: 'small', top: 'receiptTextTop' },
+        {
+          k: 'docs',
+          tiles: true,
+          top: 'uploadTop',
+          // ⚠ Unreadable in the export — a neutral placeholder.
+          items: [{ name: 'Court_Fee_Challan_XXXX', meta: '1.8 MB', metaGood: 'Receipt Added', icon: 'file', inline: ['View', 'Replace'] }],
+        },
+        { k: 'upload', inline: true, icon: 'plusCircle', title: 'Upload Another Document', sub: 'Supported: PDF, JPG, PNG (Max 10MB)', top: 'anotherTop' },
+      ],
+    },
+    {
+      k: 'banner',
+      icon: 'bell',
+      tone: 'cream',
+      title: 'Immediate Client Notification',
+      titleBrown: true,
+      text: 'Client will be notified instantly via SMS & App notification once you send this request. Case moves to court filing immediately upon payment.',
+      top: 'notifyTop',
+    },
+  ],
+  footer: [{ label: 'Send Court Fee Request (₹3,500)', iconRight: 'arrowRight' }],
+  footerLinks: [{ icon: 'lock', t: 'Official Case Record • Client Payment Awaited After Send', tone: 'green' }],
 };
