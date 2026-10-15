@@ -388,3 +388,33 @@ export const COURT_AI_SUMMARY: CourtSpec = {
     { label: 'Chat with Client', icon: 'chat' },
   ],
 };
+
+// ── design/365 — chat with the client ────────────────────────────────────────
+// ⚠ UNSCOPED — static transcript. The composer takes text; nothing is sent. The
+// call icon, Call Client, View Documents, the attachment (+) and the mic do
+// nothing. View Case opens the AI case summary (364); the AI mark opens the
+// consultation copilot (366) — navigation only, the copilot answers nothing.
+export const COURT_CHAT = {
+  name: CASE.client,
+  initials: CASE.initials,
+  status: 'Online',
+  matter: CASE.hcRep,
+  matterSub: 'Civil Case',
+  matterId: CASE.hcr,
+  actions: [
+    { label: 'Call Client', icon: 'phone' },
+    { label: 'View Case', icon: 'briefcase', to: R('ai-summary') },
+    { label: 'View Documents', icon: 'folder' },
+  ] as { label: string; icon: 'phone' | 'briefcase' | 'folder'; to?: Href }[],
+  today: 'TODAY',
+  messages: [
+    { from: 'me', text: 'Hello Rahul. I have checked your case details.', time: '10:30 AM' },
+    { from: 'them', text: 'Okay. Can you explain what will happen next?', time: '10:32 AM' },
+    { from: 'me', text: 'I will review your documents and prepare the case for court.', time: '10:33 AM' },
+    { from: 'them', text: 'What documents do I need to send?', time: '10:35 AM' },
+    { from: 'me', text: 'I will share the document list after our discussion.', time: '10:36 AM' },
+  ] as { from: 'me' | 'them'; text: string; time: string }[],
+  placeholder: 'Type a message...',
+  copilot: R('copilot'),
+  aiLabel: 'Legal AI',
+};
