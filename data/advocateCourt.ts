@@ -679,3 +679,99 @@ export const COURT_ACCEPTED_2: CourtSpec = {
   ],
   footerStack: true,
 };
+
+// ── design/373 — client declined (District Court) ────────────────────────────
+// ⚠ CONFLICT 9 — District Court (DC-2026-1048) inside the High Court flow. No
+// drawn control leads here; the decline is the client's (no switcher draws it).
+// ⚠ CONFLICT 17 — declined 5 October 2026, before 383's 07 Oct approval and
+// the 18 October filing of the same matter.
+// ⚠ UNSCOPED — the info icon and the admin re-assignment. Back to Dashboard
+// opens the advocate dashboard.
+export const COURT_DECLINED: CourtSpec = {
+  title: 'Client Declined',
+  chip: CASE.dc,
+  sub: CASE.dcRep,
+  headerIcon: 'info',
+  blocks: [
+    {
+      k: 'card',
+      tone: 'decline',
+      head: { icon: 'xCircle', tile: 'red', title: 'CASE REPRESENTATION', caps: true, tone: 'red', right: { pill: 'Decision Made', tone: 'help' } },
+      blocks: [
+        { k: 'text', t: 'Client Declined', tone: 'title', top: 'declTitleTop' },
+        { k: 'text', t: 'The client did not accept your request.', size: 'declTextSize', top: 'declTextTop' },
+        { k: 'text', icon: 'info', iconSize: 'declInfoIcon', t: "You are no longer waiting for the client's decision.", tone: 'small', top: 'declInfoTop' },
+      ],
+    },
+    {
+      k: 'card',
+      head: { title: 'REQUEST LIFECYCLE', caps: true, right: 'Step 4 of 4' },
+      blocks: [
+        {
+          k: 'bars',
+          top: 'barsTop',
+          steps: [
+            { label: 'Received', state: 'done' },
+            { label: 'Accepted', state: 'done' },
+            { label: 'In Review', state: 'done' },
+            { label: 'Declined', state: 'bad' },
+          ],
+        },
+        { k: 'banner', icon: 'swap', tone: 'grey', text: 'Next: Admin Review for New Advocate', dot: true, top: 'nextRowTop' },
+      ],
+    },
+    {
+      k: 'card',
+      head: { title: 'CLIENT', caps: true, right: { pill: 'Civil Matter', tone: 'peach' } },
+      blocks: [
+        { k: 'person', icon: 'user', greyDisc: 'help', name: CASE.client, sub: CASE.title, meta: 'District Court', metaIcon: 'gavel', top: 'personTop', bottom: 'personBottom' },
+      ],
+    },
+    {
+      k: 'card',
+      head: { title: 'CLIENT DECISION', caps: true, right: { pill: 'Declined', tone: 'red', dot: true } },
+      blocks: [
+        {
+          k: 'grid',
+          boxed: 'cells',
+          top: 'decisionTop',
+          cells: [
+            { label: 'Decision Date', value: '5 October 2026', icon: 'calendar' },
+            { label: 'Decision Time', value: '6:40 PM', icon: 'clock' },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      head: { title: 'CLIENT REASON', caps: true, right: { link: '', icon: 'quote' } },
+      blocks: [
+        { k: 'chip', t: 'I want a different advocate.', top: 'reasonTop' },
+        {
+          k: 'card',
+          tone: 'panel',
+          pad: 'notePad',
+          top: 'noteTop',
+          head: { title: 'CLIENT NOTE', caps: true, small: true },
+          blocks: [{ k: 'text', t: '"I would prefer another advocate for this case."', tone: 'quote', top: 'noteTextTop' }],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      tone: 'tier',
+      head: { icon: 'help', tile: 'brown', title: 'Next Step', right: { pill: 'Request Closed for You', tone: 'white' } },
+      blocks: [
+        { k: 'text', t: 'The request has been sent to Legalitt for review. You are no longer assigned to this request.', size: 'nextTextSize', top: 'nextTextTop' },
+        {
+          k: 'banner',
+          icon: 'shieldCheck',
+          tone: 'white',
+          text: 'Legalitt admin is reviewing the matter to reassign the client appropriately. Your acceptance metrics are safeguarded.',
+          top: 'nextBannerTop',
+        },
+      ],
+    },
+    { k: 'button', btn: { label: 'Back to Dashboard', icon: 'dashboard', variant: 'panel', to: '/dashboard' as Href }, top: 'backTop' },
+  ],
+};

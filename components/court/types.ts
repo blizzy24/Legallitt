@@ -69,7 +69,8 @@ export type IconName =
   | 'mail'
   | 'mailCheck'
   | 'smartphone'
-  | 'arrowUp';
+  | 'arrowUp'
+  | 'help';
 
 export type Tone =
   | 'green'
@@ -116,7 +117,11 @@ export type Btn = {
 export type Head = {
   icon?: IconName;
   /** true: grey square tile; 'peach': peach square tile (364); 'disc': peach round disc (364's Next Step). */
-  tile?: boolean | 'peach' | 'disc' | 'brown';
+  tile?: boolean | 'peach' | 'disc' | 'brown' | 'red';
+  /** A red caps title (373). */
+  tone?: 'red';
+  /** The smaller caps of a nested panel (373's CLIENT NOTE). */
+  small?: boolean;
   /** A pill above the title (371's RECOMMENDED NEXT STEP). */
   kicker?: Pill;
   title: string;
@@ -150,7 +155,7 @@ export type Spaced = { top?: string; /** A token added below the block (may be n
 export type Block = Spaced & BlockBody;
 
 type BlockBody =
-  | { k: 'card'; tone?: 'white' | 'panel' | 'cream' | 'peach' | 'green' | 'outline' | 'payPeach'; head?: Head; blocks: Block[]; /** Token for its padding. */ pad?: string }
+  | { k: 'card'; tone?: 'white' | 'panel' | 'cream' | 'peach' | 'green' | 'outline' | 'payPeach' | 'decline' | 'tier'; head?: Head; blocks: Block[]; /** Token for its padding. */ pad?: string }
   | {
       k: 'hero';
       icon: IconName;
@@ -189,8 +194,8 @@ type BlockBody =
       call?: boolean;
       chips?: Btn[];
       boxed?: boolean;
-      /** A grey icon disc in place of the peach avatar (363's AI tools card). */
-      greyDisc?: boolean;
+      /** A grey icon disc in place of the peach avatar: true = rail grey (363), 'help' (373). */
+      greyDisc?: boolean | 'help';
       /** The smaller name and sub-line of an info row (363's AI tools card). */
       small?: boolean;
     }
@@ -225,7 +230,7 @@ type BlockBody =
   | { k: 'check'; title: string; sub?: string; checked: boolean; blocks?: Block[] }
   | { k: 'bars'; steps: { label: string; state: 'done' | 'current' | 'todo' | 'bad'; sub?: string }[]; variant?: 'bars' | 'discs' | 'tiles' | 'chips' }
   | { k: 'numbered'; items: string[] }
-  | { k: 'banner'; icon?: IconName; title?: string; text: string; parts?: { t: string; bold?: boolean }[]; tone: 'grey' | 'cream' | 'green' | 'white' | 'none' | 'red' }
+  | { k: 'banner'; icon?: IconName; title?: string; text: string; /** A brown dot at the right (373). */ dot?: boolean; parts?: { t: string; bold?: boolean }[]; tone: 'grey' | 'cream' | 'green' | 'white' | 'none' | 'red' }
   | { k: 'pills'; items: Pill[] }
   | { k: 'button'; btn: Btn }
   | { k: 'buttonRow'; btns: Btn[] }
@@ -256,6 +261,7 @@ type BlockBody =
       /** No box of its own: the text scrolls inside the panel around it (364). */
       bare?: boolean;
     }
+  | { k: 'chip'; t: string }
   | { k: 'footRow'; icon?: IconName; t: string; right?: Right }
   | { k: 'gap'; h: number };
 
@@ -277,6 +283,8 @@ export type CourtSpec = {
   footerStack?: boolean;
   /** A plain chevron in place of the back arrow (372). */
   chevron?: boolean;
+  /** An icon in the header before the avatar (373's info). */
+  headerIcon?: IconName;
   /** The drawn state switcher (363, 369, 370). */
   switcher?: { label?: string; options: string[]; /** A centred pill on the page, no band (370). */ inline?: boolean };
   blocks: Block[];
