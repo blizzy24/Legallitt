@@ -1,3 +1,4 @@
+import { useDemoWait } from '../../hooks/useDemoAdvance';
 import { router, useLocalSearchParams } from 'expo-router';
 import {
   ArrowLeft, ArrowRight, BadgeCheck, Check, CircleUser, Copy, Download, Eye, FileCheck, FileText, Lock,
@@ -35,6 +36,8 @@ export default function TrackingScreen() {
   const tier = tierFor(form.tier);
   const paid = invoiceTotal(invoiceLines(form.tier));
   const approval = state === 'approval';
+  // DEMO: Drafting in Progress waits on the advocate; it moves to Awaiting Your Approval.
+  useDemoWait(!approval, () => setState('approval'));
   const current = TRACKING_CURRENT[state];
   const statusLabel = TRACKING_STEPS[current - 1].title;
 

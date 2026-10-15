@@ -1,3 +1,4 @@
+import { useDemoWait } from '../../hooks/useDemoAdvance';
 import { router } from 'expo-router';
 import { ArrowRight, Bell, ClipboardList, Headset, Lock, ShieldCheck } from 'lucide-react-native';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -18,6 +19,8 @@ import { FIR_REQUEST, STATUS_STAGE_CHIP, STATUS_TIMELINE } from '../../data/fir'
 // one-line change once the client says which count is right.
 
 export default function FirStatusScreen() {
+  // DEMO: Under Review moves on to the ready draft (design/49).
+  useDemoWait();
   const insets = useSafeAreaInsets();
 
   return (

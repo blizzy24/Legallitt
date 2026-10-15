@@ -1,6 +1,8 @@
 import { router, type Href } from 'expo-router';
 import { BriefcaseBusiness, CheckCheck, ChevronLeft, CirclePlus, Folder, Gavel, Mic, Phone, SendHorizontal, UserRound } from 'lucide-react-native';
 import { useState } from 'react';
+import { DEMO_AUTO_ADVANCE } from '../../../constants/dev';
+import { useDemoAdvance } from '../../../hooks/useDemoAdvance';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -24,6 +26,7 @@ import { COURT_CHAT } from '../../../data/advocateCourt';
 const ACTION_ICON = { phone: Phone, briefcase: BriefcaseBusiness, folder: Folder };
 
 export default function AdvocateCourtChatScreen() {
+  const { advance } = useDemoAdvance();
   const insets = useSafeAreaInsets();
   const d = COURT_CHAT;
   const [draft, setDraft] = useState('');
@@ -52,8 +55,10 @@ export default function AdvocateCourtChatScreen() {
               <Text style={styles.statusText}>{d.status}</Text>
             </View>
           </View>
-          {/* ⚠ UNSCOPED — no call is placed. */}
-          <Phone size={t.phoneIcon} color={h.ink} strokeWidth={1.9} style={styles.phone} />
+          {/* ⚠ UNSCOPED — no call is placed. DEMO: opens the call screen (369). */}
+          <Pressable accessibilityRole="button" disabled={!DEMO_AUTO_ADVANCE} onPress={() => router.push('/advocate/court/call' as Href)}>
+            <Phone size={t.phoneIcon} color={h.ink} strokeWidth={1.9} style={styles.phone} />
+          </Pressable>
           <View style={styles.me}>
             <UserRound size={h.avatarGlyph} color={ink.onBrand} strokeWidth={1.9} />
           </View>
@@ -137,10 +142,10 @@ export default function AdvocateCourtChatScreen() {
           {/* ⚠ UNSCOPED — no voice input. */}
           <Mic size={t.micIcon} color={c.inkMuted} strokeWidth={1.9} />
         </View>
-        {/* ⚠ UNSCOPED — nothing is sent. */}
-        <View style={styles.send}>
+        {/* ⚠ UNSCOPED — nothing is sent. DEMO: moves on to the copilot (366). */}
+        <Pressable accessibilityRole="button" disabled={!DEMO_AUTO_ADVANCE} onPress={() => advance()} style={styles.send}>
           <SendHorizontal size={t.sendIcon} color={ink.onBrand} strokeWidth={2} />
-        </View>
+        </Pressable>
       </View>
     </View>
   );

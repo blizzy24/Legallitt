@@ -6,6 +6,7 @@ import type { DevPreviewGroup } from '../components/DevPreviewLinks';
 // tapping. See components/DevPreviewLinks.tsx.
 
 export const ADVOCATE_DEV_PREVIEWS: DevPreviewGroup[] = [
+  { label: 'ALL SCREENS', links: [{ label: 'dev screen index — every route', href: '/dev' }] },
   {
     label: 'CONSULTATION CHAT',
     links: [
@@ -40,6 +41,7 @@ export const ADVOCATE_DEV_PREVIEWS: DevPreviewGroup[] = [
 ];
 
 export const CLIENT_DEV_PREVIEWS: DevPreviewGroup[] = [
+  { label: 'ALL SCREENS', links: [{ label: 'dev screen index — every route', href: '/dev' }] },
   {
     label: 'COURIER — CLIENT',
     links: [

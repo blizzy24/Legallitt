@@ -1,3 +1,4 @@
+import { useDemoWait } from '../../../../hooks/useDemoAdvance';
 import { router, type Href } from 'expo-router';
 import {
   ArrowRight,
@@ -45,6 +46,8 @@ import { DC_ACCEPTED } from '../../../../data/districtCourt';
 // on 300 and 345; the header avatar is the standard one.
 
 export default function DistrictAcceptedScreen() {
+  // DEMO: the held Waiting for Advocate bar moves on to Documents Needed.
+  useDemoWait();
   const insets = useSafeAreaInsets();
   const d = DC_ACCEPTED;
 

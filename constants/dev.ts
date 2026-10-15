@@ -27,3 +27,12 @@
  * states stay reachable for review without the on-screen control.
  */
 export const DEV_PREVIEW_TOGGLES = true;
+
+/**
+ * DEMO MODE. Every static primary control, every control disabled on work a demo
+ * user cannot do, and every "waiting for the other party" state moves on to the
+ * next screen in data/flowMap.ts (waiting states after 5 seconds). Nothing is
+ * drawn differently — only the movement changes. The switchers the designs draw
+ * are untouched. Set to false and the app behaves exactly as before.
+ */
+export const DEMO_AUTO_ADVANCE = true;

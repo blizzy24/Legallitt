@@ -293,7 +293,17 @@ export default function AdvocateCasesList({
           const Icon = m.bodyIcon ? BODY_ICONS[m.bodyIcon] : null;
           const urgent = m.urgency === 'URGENT';
           return (
-            <View key={m.id} style={styles.card}>
+            // The court cards (design/362's High Court and District Court) open
+            // their request screens from anywhere on the card, as well as from
+            // the button; the card draws exactly as before.
+            <Pressable
+              key={m.id}
+              accessibilityRole={m.href ? 'button' : undefined}
+              accessibilityLabel={m.href ? m.title : undefined}
+              disabled={!m.href}
+              onPress={() => review(m)}
+              style={styles.card}
+            >
               <View style={styles.cardHead}>
                 <View style={styles.svc}>
                   <Text style={styles.svcText} {...shrinkToFit(0.7)}>
@@ -376,7 +386,7 @@ export default function AdvocateCasesList({
                   )}
                 </Pressable>
               </View>
-            </View>
+            </Pressable>
           );
         })}
       </ScrollView>

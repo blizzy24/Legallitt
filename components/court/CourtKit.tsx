@@ -1,5 +1,7 @@
 import { router, useLocalSearchParams, usePathname, type Href } from 'expo-router';
 import { DC_VALUES } from '../../data/advocateCourt';
+import { BUTTON_TARGETS, nextRoute } from '../../data/flowMap';
+import { DEMO_AUTO_ADVANCE } from '../../constants/dev';
 import {
   Archive,
   BadgeCheck,
@@ -459,7 +461,17 @@ export function Button({ b, flex, footer, pill }: { b: Btn; flex?: boolean; foot
           : v === 'link'
             ? c.inkWarm
             : c.ink;
-  const nav = open && (b.to !== undefined || b.back === true);
+  const path = usePathname();
+  // DEMO ONLY: a static primary control, or one disabled / gated on work a demo
+  // user cannot do, follows data/flowMap.ts. A static secondary control moves
+  // only when BUTTON_TARGETS names its own drawn screen.
+  const primary = v === 'primary' || v === 'green' || v === 'disabled' || v === 'muted' || b.gated === true;
+  const own = BUTTON_TARGETS[path]?.[b.label];
+  const demoTo =
+    DEMO_AUTO_ADVANCE && b.back !== true && (own !== undefined || ((b.to === undefined || !open) && primary))
+      ? (own ?? b.to ?? nextRoute(path, b.label))
+      : undefined;
+  const nav = demoTo !== undefined || (open && (b.to !== undefined || b.back === true));
   const style: StyleProp<ViewStyle> = [
     v === 'link' ? s.btnLink : s.btn,
     { backgroundColor: bg },
@@ -479,9 +491,9 @@ export function Button({ b, flex, footer, pill }: { b: Btn; flex?: boolean; foot
   return (
     <Pressable
       accessibilityRole="button"
-      aria-disabled={v === 'disabled' || v === 'muted' || undefined}
-      disabled={v === 'disabled' || v === 'muted'}
-      onPress={nav ? () => go(b, svc) : undefined}
+      aria-disabled={(demoTo === undefined && (v === 'disabled' || v === 'muted')) || undefined}
+      disabled={demoTo === undefined && (v === 'disabled' || v === 'muted')}
+      onPress={nav ? () => go(demoTo !== undefined ? { ...b, to: demoTo as Href } : b, svc) : undefined}
       style={style}
     >
       {b.icon ? <Icon name={b.icon} size={t.btnIcon} color={fg} /> : null}

@@ -1,3 +1,4 @@
+import { useDemoWait } from '../../../hooks/useDemoAdvance';
 import { SwitchedCourtScreen } from '../../../components/court/CourtKit';
 import { advCourtAccepted, advCourtWaiting } from '../../../constants/theme';
 import { COURT_WAITING_STATES } from '../../../data/advocateCourt';
@@ -9,5 +10,7 @@ import { COURT_WAITING_STATES } from '../../../data/advocateCourt';
 const TOKENS = [advCourtWaiting, advCourtAccepted];
 
 export default function AdvocateCourtWaitingScreen() {
+  // DEMO: Waiting for Client moves on to Client Accepted (371) after 5 seconds.
+  useDemoWait();
   return <SwitchedCourtScreen specs={COURT_WAITING_STATES} tokens={TOKENS} />;
 }

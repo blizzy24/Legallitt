@@ -1,6 +1,7 @@
 import { router, type Href } from 'expo-router';
 import { ArrowLeft, Gavel, LockKeyhole, Mic, NotebookPen, Phone, UserRound, Volume2 } from 'lucide-react-native';
 import { useState } from 'react';
+import { useDemoWait } from '../../../hooks/useDemoAdvance';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Circle, Defs, RadialGradient, Stop } from 'react-native-svg';
@@ -47,6 +48,8 @@ export default function AdvocateCourtCallScreen() {
   const d = COURT_CALL;
   const [state, setState] = useState(0);
   const ended = state === 1;
+  // DEMO: once the call has ended, move on to Waiting for Client (370).
+  useDemoWait(ended);
   const R = t.glow / 2;
 
   return (

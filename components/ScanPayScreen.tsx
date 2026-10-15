@@ -1,4 +1,6 @@
 import { router, type Href } from 'expo-router';
+import { DEMO_AUTO_ADVANCE } from '../constants/dev';
+import { DEMO_WAIT_MS } from '../hooks/useDemoAdvance';
 import { Clock, QrCode, Smartphone } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -61,6 +63,13 @@ export default function ScanPayScreen({
       clearInterval(tick);
       clearTimeout(done);
     };
+  }, [hold]);
+
+  // DEMO: a held screen still moves on, after the shared demo wait.
+  useEffect(() => {
+    if (!hold || !DEMO_AUTO_ADVANCE) return;
+    const done = setTimeout(() => router.replace(successTarget), DEMO_WAIT_MS);
+    return () => clearTimeout(done);
   }, [hold]);
 
   return (
