@@ -838,3 +838,112 @@ export const COURT_RECOMMEND: CourtSpec = {
   footer: [{ label: 'Send to Client', iconRight: 'arrowRight' }],
   footerNote: 'After sending, the client will be prompted to prepare and dispatch these documents.',
 };
+
+// ── design/375 — confirm documents ───────────────────────────────────────────
+// The drawn checkbox gates Confirm Received, as the design draws it disabled:
+// ticking the box enables it, and it opens Documents Received (376) —
+// navigation only, nothing is recorded and the client is not notified.
+// ⚠ UNSCOPED — "Report Missing Documents", the copy icon and Secure Audit.
+// ⚠ CONFLICT 3 — "Client Identity Proof (Aadhaar Copy)".
+// ⚠ CONFLICT 4 / 11 — a third id (#LGT-2026-8492) and a second phone number.
+// ⚠ CONFLICT 17 — delivered 25 Oct 2026, a week after 379's 18 October filing.
+// ⚠ The client photograph is not supplied: a neutral disc at the drawn size.
+export const COURT_CONFIRM_DOCS: CourtSpec = {
+  title: 'Confirm Documents',
+  blocks: [
+    {
+      k: 'lead',
+      pill: { pill: 'Step 1 of 2 • Manual Verification', tone: 'peach', dot: true },
+      right: { link: 'Secure Audit', icon: 'lock', muted: true },
+      text: 'Please check that you have received the physical legal documents from your client.',
+    },
+    {
+      k: 'card',
+      top: 'clientTop',
+      head: { icon: 'idCard', title: 'CLIENT', caps: true, right: { pill: '#LGT-2026-8492', tone: 'grey', mono: true } },
+      blocks: [
+        {
+          k: 'person',
+          photo: true,
+          name: CASE.client,
+          sub: 'Property Dispute • High Court Bench',
+          meta: CASE.phone2,
+          metaIcon: 'phone',
+          metaStrong: true,
+          top: 'personTop',
+        },
+      ],
+    },
+    {
+      k: 'card',
+      head: { icon: 'archive', title: 'DOCUMENTS RECEIVED', caps: true, pills: [{ pill: '5 Physical Documents', tone: 'peach' }] },
+      blocks: [
+        { k: 'text', t: 'Check that each document is inside the package:', tone: 'small', top: 'checkTextTop' },
+        {
+          k: 'docs',
+          discs: true,
+          top: 'docsTop',
+          bottom: 'docsBottom',
+          items: [
+            // Drawn broken after "&"; the next row, the same width, is not. The
+            // break is kept as drawn.
+            { name: 'Original Case Papers &\nVakalatnama', icon: 'file', right: 'ring' },
+            // ⚠ CONFLICT 3 — Aadhaar.
+            { name: 'Client Identity Proof (Aadhaar Copy)', icon: 'idCard', right: 'ring' },
+            { name: 'Signed Petition Draft', icon: 'signature', right: 'ring' },
+            { name: 'Supporting Annexure A & B', icon: 'folders', right: 'ring' },
+            { name: 'Prior Court Orders & Notices', icon: 'gavel', right: 'ring' },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      head: { icon: 'truck', title: 'DELIVERY DETAILS', caps: true, right: { pill: 'Delivered', tone: 'verified', dot: true } },
+      blocks: [
+        {
+          k: 'grid',
+          boxed: 'cells',
+          top: 'deliveryTop',
+          cells: [
+            { label: 'Courier Partner', value: 'Blue Dart Express' },
+            { label: 'Waybill Number', value: '8492 0419 5821', tone: 'mono', iconRight: 'copy' },
+          ],
+        },
+        {
+          k: 'iconRows',
+          top: 'placeTop',
+          rows: [
+            { icon: 'calendarCheck', t: '25 Oct 2026, 11:30 AM', bold: true },
+            { icon: 'building', t: 'Chamber Desk, High Court Bar Building' },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'banner',
+      icon: 'info',
+      tone: 'cream',
+      text: 'Courier delivery alone does not mean legal custody. You must confirm that you have the papers in hand.',
+      top: 'custodyTop',
+    },
+    {
+      k: 'card',
+      top: 'checkTop',
+      blocks: [
+        {
+          k: 'check',
+          gate: true,
+          title: 'I have received the physical documents.',
+          sub: 'Once confirmed, your client will be notified and case preparation can start.',
+          checked: false,
+        },
+      ],
+    },
+  ],
+  footer: [{ label: 'Confirm Received', iconRight: 'arrowRight', variant: 'muted', gated: true, to: R('documents-received') }],
+  footerLinks: [
+    { icon: 'alert', t: 'Need help? Report Missing Documents', tone: 'red' },
+    { t: 'Next: File Verification' },
+  ],
+};

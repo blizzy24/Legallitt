@@ -1,11 +1,13 @@
 import { router, type Href } from 'expo-router';
 import {
+  Archive,
   ArrowLeftRight,
   ArrowRight,
   ArrowUp,
   Bell,
   Bookmark,
   Building2,
+  CalendarCheck,
   CalendarDays,
   Check,
   CheckCheck,
@@ -21,6 +23,7 @@ import {
   FileText,
   Flag,
   Folder,
+  Folders,
   Gavel,
   Headset,
   History,
@@ -49,6 +52,7 @@ import {
   Scale,
   Send,
   Share2,
+  Signature,
   SlidersHorizontal,
   Shield,
   ShieldCheck,
@@ -83,7 +87,8 @@ import {
   dcDocsNeededPalette,
   dcDocumentsPalette,
   dcPricingPalette,
-  dcShipmentPalette, font, hcPalette as c, ink, status } from '../../constants/theme';
+  dcShipmentPalette,
+  dcStepperPalette, font, hcPalette as c, ink, status } from '../../constants/theme';
 import type { Block, Btn, CourtSpec, Head, IconName, Pill, Right, Step, Tone } from './types';
 
 // The section kit of the advocate court batch (designs 362–396). One renderer
@@ -95,6 +100,9 @@ import type { Block, Btn, CourtSpec, Head, IconName, Pill, Right, Step, Tone } f
 // sends, no AI, no calls, no notifications (see the data file's header).
 
 export type CourtTokens = { -readonly [K in keyof typeof advCourt]: number } & Record<string, number>;
+
+/** The screen's gate: a drawn checkbox that enables a drawn-disabled button (375). */
+const Gate = createContext<{ on: boolean; toggle: () => void }>({ on: false, toggle: () => {} });
 
 /** Per-screen measured tokens: the kit's defaults with that screen's own block over them. */
 const Kit = createContext<{ t: CourtTokens; s: ReturnType<typeof makeStyles> } | null>(null);
@@ -181,6 +189,10 @@ const ICONS: Record<IconName, LucideIcon> = {
   mailCheck: MailCheck,
   smartphone: Smartphone,
   help: CircleHelp,
+  archive: Archive,
+  signature: Signature,
+  folders: Folders,
+  calendarCheck: CalendarCheck,
 };
 
 export function Icon({ name, size, color, sw = 2 }: { name: IconName; size: number; color: string; sw?: number }) {
@@ -247,8 +259,8 @@ function RightPart({ r }: { r?: Right }) {
     );
   const content = (
     <View style={[s.link, r.chip && s.linkChip]}>
-      {r.icon ? <Icon name={r.icon} size={t.chipIcon} color={r.chip ? c.inkWarm : r.link ? c.brown : c.inkWarm} /> : null}
-      {r.link ? <Text style={[s.linkText, r.chip && s.linkChipText]}>{r.link}</Text> : null}
+      {r.icon ? <Icon name={r.icon} size={t.chipIcon} color={r.muted ? c.greenInk : r.chip ? c.inkWarm : r.link ? c.brown : c.inkWarm} /> : null}
+      {r.link ? <Text style={[s.linkText, r.chip && s.linkChipText, r.muted && s.linkMuted]}>{r.link}</Text> : null}
       {r.iconAfter ? <Icon name={r.iconAfter} size={t.chipIcon} color={c.brown} /> : null}
     </View>
   );
@@ -309,11 +321,20 @@ function HeadRow({ h }: { h: Head }) {
 
 export function Button({ b, flex, footer }: { b: Btn; flex?: boolean; footer?: boolean }) {
   const { t, s } = useK();
-  const v = b.variant ?? 'primary';
+  const gate = useContext(Gate);
+  const open = !b.gated || gate.on;
+  const v = b.gated && gate.on ? 'primary' : (b.variant ?? 'primary');
   const bg: string =
-    v === 'primary' ? c.brown : v === 'green' ? c.greenInk : v === 'disabled' ? q.disabled : v === 'soft' ? c.tileGrey : v === 'panel' ? c.panel : v === 'white' ? c.card : v === 'outline' ? c.card : 'transparent';
-  const fg: string = v === 'primary' || v === 'green' || v === 'disabled' ? ink.onBrand : v === 'danger' ? advForensicRed.declineColour : c.ink;
-  const nav = b.to !== undefined || b.back === true;
+    v === 'primary' ? c.brown : v === 'green' ? c.greenInk : v === 'disabled' ? q.disabled : v === 'soft' ? c.tileGrey : v === 'panel' ? c.panel : v === 'white' ? c.card : v === 'muted' ? dcDecidePalette.waitDisc : v === 'outline' ? c.card : 'transparent';
+  const fg: string =
+    v === 'primary' || v === 'green' || v === 'disabled'
+      ? ink.onBrand
+      : v === 'danger'
+        ? advForensicRed.declineColour
+        : v === 'muted'
+          ? dcStepperPalette.muted
+          : c.ink;
+  const nav = open && (b.to !== undefined || b.back === true);
   const style: StyleProp<ViewStyle> = [
     v === 'link' ? s.btnLink : s.btn,
     { backgroundColor: bg },
@@ -326,7 +347,8 @@ export function Button({ b, flex, footer }: { b: Btn; flex?: boolean; footer?: b
   return (
     <Pressable
       accessibilityRole="button"
-      aria-disabled={v === 'disabled' || undefined}
+      aria-disabled={v === 'disabled' || v === 'muted' || undefined}
+      disabled={v === 'disabled' || v === 'muted'}
       onPress={nav ? () => go(b) : undefined}
       style={style}
     >
@@ -516,15 +538,24 @@ export function BlockView({ b }: { b: Block }): ReactNode {
     case 'lead':
       return (
         <View style={s.lead}>
-          {b.pill ? <PillTag p={b.pill} /> : null}
+          {b.pill && !b.title ? (
+            <View style={s.between}>
+              <PillTag p={b.pill} />
+              <RightPart r={b.right} />
+            </View>
+          ) : b.pill ? (
+            <PillTag p={b.pill} />
+          ) : null}
           <View style={s.between}>
             <View style={s.flex}>
               {b.title ? <Text style={s.leadTitle}>{b.title}</Text> : null}
               {b.text ? <Text style={[s.leadText, b.title && s.leadTextTop]}>{b.text}</Text> : null}
             </View>
-            <View style={s.leadRight}>
-              <RightPart r={b.right} />
-            </View>
+            {b.title || !b.pill ? (
+              <View style={s.leadRight}>
+                <RightPart r={b.right} />
+              </View>
+            ) : null}
           </View>
         </View>
       );
@@ -633,8 +664,13 @@ export function BlockView({ b }: { b: Block }): ReactNode {
     case 'person':
       return (
         <View style={[s.row, s.person, b.boxed && s.personBoxed]}>
-          <View style={[s.avatar, b.greyDisc && s.greyDisc, b.greyDisc === 'help' && s.greyDiscHelp]}>
-            {b.initials ? <Text style={s.avatarText}>{b.initials}</Text> : <Icon name={b.icon ?? 'user'} size={t.headIcon} color={c.brown} />}
+          <View style={[s.avatar, b.greyDisc && s.greyDisc, b.greyDisc === 'help' && s.greyDiscHelp, b.photo && s.photo]}>
+            {/* A photograph's place when b.photo: the asset was not supplied. */}
+            {b.photo ? null : b.initials ? (
+              <Text style={s.avatarText}>{b.initials}</Text>
+            ) : (
+              <Icon name={b.icon ?? 'user'} size={t.headIcon} color={c.brown} />
+            )}
           </View>
           <View style={s.flex}>
             {b.kicker ? <Text style={[s.caps, s.personKicker]}>{b.kicker}</Text> : null}
@@ -649,9 +685,9 @@ export function BlockView({ b }: { b: Block }): ReactNode {
               </View>
             ) : null}
             {b.meta ? (
-              <View style={s.row}>
-                {b.metaIcon ? <Icon name={b.metaIcon} size={t.personSubSize} color={c.inkWarm} /> : null}
-                <Text style={s.personSub}>{b.meta}</Text>
+              <View style={[s.row, s.personMetaRow]}>
+                {b.metaIcon ? <Icon name={b.metaIcon} size={t.personMetaIcon} color={c.inkWarm} /> : null}
+                <Text style={[s.personSub, b.metaStrong && s.metaStrong]}>{b.meta}</Text>
               </View>
             ) : null}
           </View>
@@ -671,10 +707,14 @@ export function BlockView({ b }: { b: Block }): ReactNode {
       return (
         <View style={s.docList}>
           {b.items.map((d) => (
-            <View key={d.name} style={[s.doc, b.pdf && s.docPdf]}>
-              <View style={[s.row, b.pdf && s.docPdfRow]}>
+            <View key={d.name} style={[s.doc, b.pdf && s.docPdf, b.discs && s.docRow]}>
+              <View style={[s.row, b.pdf && s.docPdfRow, b.discs && s.docPdfRow]}>
                 {b.pdf ? (
                   <PdfStackIcon size={t.pdfIcon} color={advForensicRed.declineColour} />
+                ) : b.discs ? (
+                  <View style={s.docDisc}>
+                    <Icon name={d.icon ?? 'file'} size={t.docIcon} color={c.inkMuted} />
+                  </View>
                 ) : (
                   <View style={s.docTile}>
                     <Icon name={d.icon ?? 'pdf'} size={t.docIcon} color={advForensicRed.declineColour} />
@@ -686,6 +726,8 @@ export function BlockView({ b }: { b: Block }): ReactNode {
                 </View>
                 {d.right === 'tick' ? (
                   <Check size={t.docIcon} color={c.greenInk} strokeWidth={2.4} />
+                ) : d.right === 'ring' ? (
+                  <CircleCheck size={t.ringIcon} color={c.greenInk} strokeWidth={2} />
                 ) : d.right === 'circleTick' ? (
                   <View style={[s.disc, { backgroundColor: status.active }]}>
                     <Check size={t.stepGlyph} color={ink.onBrand} strokeWidth={3} />
@@ -799,16 +841,16 @@ export function BlockView({ b }: { b: Block }): ReactNode {
         </View>
       );
     case 'check':
+      return <CheckBlock b={b} />;
+    case 'iconRows':
       return (
-        <View style={[s.row, s.top]}>
-          <View style={[s.box, b.checked && s.boxOn]}>{b.checked ? <Check size={t.stepGlyph} color={ink.onBrand} strokeWidth={3} /> : null}</View>
-          <View style={[s.flex, s.checkBody]}>
-            <Text style={s.checkTitle}>{b.title}</Text>
-            {b.sub ? <Text style={s.checkSub}>{b.sub}</Text> : null}
-            {b.blocks?.map((x, i) => (
-              <BlockView key={i} b={x} />
-            ))}
-          </View>
+        <View style={s.iconRows}>
+          {b.rows.map((r) => (
+            <View key={r.t} style={s.row}>
+              <Icon name={r.icon} size={t.iconRowIcon} color={c.inkWarm} />
+              <Text style={[s.iconRowText, r.bold && s.iconRowBold]}>{r.t}</Text>
+            </View>
+          ))}
         </View>
       );
     case 'bars':
@@ -992,6 +1034,31 @@ export function BlockView({ b }: { b: Block }): ReactNode {
   }
 }
 
+function CheckBlock({ b }: { b: Extract<Block, { k: 'check' }> }) {
+  const { t, s } = useK();
+  const gate = useContext(Gate);
+  const on = b.gate ? gate.on : b.checked;
+  const body = (
+    <>
+      <View style={[s.box, on && s.boxOn]}>{on ? <Check size={t.stepGlyph} color={ink.onBrand} strokeWidth={3} /> : null}</View>
+      <View style={[s.flex, s.checkBody, s.checkBodyGap]}>
+        <Text style={[s.checkTitle, s.checkBigTitle]}>{b.title}</Text>
+        {b.sub ? <Text style={s.checkSub}>{b.sub}</Text> : null}
+        {b.blocks?.map((x, i) => (
+          <BlockView key={i} b={x} />
+        ))}
+      </View>
+    </>
+  );
+  return b.gate ? (
+    <Pressable accessibilityRole="checkbox" aria-checked={on} onPress={gate.toggle} style={[s.row, s.top]}>
+      {body}
+    </Pressable>
+  ) : (
+    <View style={[s.row, s.top]}>{body}</View>
+  );
+}
+
 /**
  * A fixed-height box whose text scrolls, with the drawn track and thumb (364).
  * The export clips its text under the thumb; here it wraps short of it.
@@ -1111,9 +1178,12 @@ export function CourtScreen(props: ScreenProps) {
 
 function ScreenBody({ spec, state, onState, overlay }: ScreenProps) {
   const { t, s } = useK();
+  const [gateOn, setGateOn] = useState(false);
+  const gate = useMemo(() => ({ on: gateOn, toggle: () => setGateOn((v) => !v) }), [gateOn]);
   const headerSub = useMemo(() => ({ fontSize: t.headerSubSize }), [t.headerSubSize]);
   const insets = useSafeAreaInsets();
   return (
+    <Gate.Provider value={gate}>
     <View style={s.page}>
       <CourierHeader
         title={spec.title}
@@ -1173,15 +1243,27 @@ function ScreenBody({ spec, state, onState, overlay }: ScreenProps) {
         </View>
       ) : null}
       {spec.footer ? (
-        <View style={[s.footer, (spec.footerStack || spec.footerNote) && s.footerStack, { paddingBottom: insets.bottom + t.footerPadBottom }]}>
+        <View style={[s.footer, (spec.footerStack || spec.footerNote || spec.footerLinks) && s.footerStack, { paddingBottom: insets.bottom + t.footerPadBottom }]}>
           {spec.footer.map((x) => (
-            <Button key={x.label} b={x} flex={!spec.footerStack && !spec.footerNote} footer />
+            <Button key={x.label} b={x} flex={!spec.footerStack && !spec.footerNote && !spec.footerLinks} footer />
           ))}
           {spec.footerNote ? <Text style={s.footerNote}>{spec.footerNote}</Text> : null}
+          {spec.footerLinks ? (
+            <View style={s.footerLinks}>
+              {spec.footerLinks.map((l) => (
+                // ⚠ UNSCOPED — opens nothing.
+                <View key={l.t} style={s.footerLink}>
+                  {l.icon ? <Icon name={l.icon} size={t.footerLinkIcon} color={l.tone === 'red' ? advForensicRed.declineColour : c.inkWarm} /> : null}
+                  <Text style={[s.footerLinkText, l.tone === 'red' && s.red, l.tone === 'red' && s.centerText]}>{l.t}</Text>
+                </View>
+              ))}
+            </View>
+          ) : null}
         </View>
       ) : null}
       {overlay}
     </View>
+    </Gate.Provider>
   );
 }
 
@@ -1234,6 +1316,7 @@ function makeStyles(t: CourtTokens) {
   link: { flexDirection: 'row', alignItems: 'center', gap: t.pillGap },
   linkChip: { minHeight: t.linkChipH, paddingHorizontal: t.linkChipPadX, borderRadius: t.linkChipRadius, backgroundColor: c.panel },
   linkChipText: { color: c.inkWarm },
+  linkMuted: { color: c.inkWarm },
   labelInset: { paddingHorizontal: t.labelInset },
   labelDot: { width: t.labelDot, height: t.labelDot, borderRadius: t.labelDot / 2 },
   partBold: { fontFamily: font.appSemi, color: c.ink },
@@ -1264,6 +1347,17 @@ function makeStyles(t: CourtTokens) {
   capsSmall: { fontSize: t.capsSmallSize },
   headTileRed: { width: t.headDisc, height: t.headDisc, borderRadius: t.headDisc / 2, backgroundColor: status.redContainer },
   greyDiscHelp: { backgroundColor: c.helpGrey },
+  photo: { backgroundColor: c.heroArt },
+  personMetaRow: { marginTop: t.personMetaTop },
+  metaStrong: { fontFamily: font.appSemi, fontSize: t.metaStrongSize, color: c.ink },
+  docDisc: { width: t.docDisc, height: t.docDisc, borderRadius: t.docDisc / 2, backgroundColor: c.tileGrey, alignItems: 'center', justifyContent: 'center' },
+  docRow: { minHeight: t.docRowH, justifyContent: 'center' },
+  iconRows: { borderRadius: t.panelRadius, paddingHorizontal: t.panelPad, paddingVertical: t.iconRowsPadY, backgroundColor: c.panel, gap: t.iconRowsGap },
+  iconRowText: { fontFamily: font.appBody, fontSize: t.iconRowSize, color: c.inkWarm },
+  iconRowBold: { fontFamily: font.appSemi, color: c.ink },
+  footerLinks: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: t.footerGap, paddingHorizontal: t.footerLinksPadX },
+  footerLink: { flexDirection: 'row', alignItems: 'center', gap: t.pillGap, flexShrink: 1 },
+  footerLinkText: { flexShrink: 1, fontFamily: font.appSemi, fontSize: t.footerLinkSize, lineHeight: t.footerLinkLine, color: c.inkWarm },
   bannerDot: { backgroundColor: c.brown, alignSelf: 'center' },
   textChip: { alignSelf: 'flex-start', borderRadius: t.textChipRadius, paddingHorizontal: t.textChipPadX, paddingVertical: t.textChipPadY, backgroundColor: c.helpGrey },
   textChipText: { fontFamily: font.appSemi, fontSize: t.textChipSize, color: c.ink },
@@ -1400,7 +1494,7 @@ function makeStyles(t: CourtTokens) {
   docList: { gap: t.docsGap },
   doc: { borderRadius: t.panelRadius, paddingHorizontal: t.docPadX, paddingVertical: t.docPadY, backgroundColor: c.panel },
   docTile: { width: t.docTile, height: t.docTile, borderRadius: t.headTileRadius, backgroundColor: status.redContainer, alignItems: 'center', justifyContent: 'center' },
-  docName: { fontFamily: font.appSemi, fontSize: t.docNameSize, color: c.ink },
+  docName: { fontFamily: font.appSemi, fontSize: t.docNameSize, lineHeight: t.docNameLine, color: c.ink },
   docMeta: { marginTop: t.docMetaTop, fontFamily: font.appBody, fontSize: t.docMetaSize, color: c.inkWarm },
   docBtn: {
     minHeight: t.docBtnH,
@@ -1422,7 +1516,9 @@ function makeStyles(t: CourtTokens) {
   checkMark: { width: t.stepDisc, height: t.stepDisc, borderRadius: t.stepDisc / 2, alignItems: 'center', justifyContent: 'center' },
   checkTitle: { fontFamily: font.appSemi, fontSize: t.stepTitleSize, color: c.ink },
   checkSub: { marginTop: t.headSubTop, fontFamily: font.appBody, fontSize: t.stepSubSize, lineHeight: t.smallLine, color: c.inkWarm },
-  checkBody: { gap: t.headSubTop },
+  checkBody: { gap: t.checkBodyGap },
+  checkBodyGap: { marginLeft: t.checkGap },
+  checkBigTitle: { fontSize: t.checkTitleSize, lineHeight: t.checkTitleLine },
 
   fieldLabel: { flexShrink: 1, fontFamily: font.appSemi, fontSize: t.fieldLabelSize, color: c.ink },
   req: { color: advForensicRed.declineColour },
@@ -1455,7 +1551,7 @@ function makeStyles(t: CourtTokens) {
   segText: { fontFamily: font.appSemi, fontSize: t.textSize, color: c.inkWarm, textAlign: 'center' },
   segTextOn: { color: ink.onBrand },
 
-  box: { width: t.checkBox, height: t.checkBox, borderRadius: t.checkRadius, backgroundColor: c.radioGrey, alignItems: 'center', justifyContent: 'center' },
+  box: { width: t.checkBox, height: t.checkBox, borderRadius: t.checkRadius, backgroundColor: c.tileGrey, alignItems: 'center', justifyContent: 'center' },
   boxOn: { backgroundColor: c.brown },
 
   bar: { height: t.barH, borderRadius: t.barH / 2, marginHorizontal: t.barGap / 2 },

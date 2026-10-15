@@ -70,7 +70,11 @@ export type IconName =
   | 'mailCheck'
   | 'smartphone'
   | 'arrowUp'
-  | 'help';
+  | 'help'
+  | 'archive'
+  | 'signature'
+  | 'folders'
+  | 'calendarCheck';
 
 export type Tone =
   | 'green'
@@ -99,12 +103,23 @@ export type Pill = { pill: string; tone: Tone; dot?: boolean; icon?: IconName; /
 export type Right =
   | string
   | Pill
-  | { link: string; icon?: IconName; iconAfter?: IconName; to?: Href; /** Drawn as a small grey button (364's Refresh). */ chip?: boolean }
+  | {
+      link: string;
+      icon?: IconName;
+      iconAfter?: IconName;
+      to?: Href;
+      /** Drawn as a small grey button (364's Refresh). */
+      chip?: boolean;
+      /** Grey text with a green icon (375's Secure Audit). */
+      muted?: boolean;
+    }
   | { /** A grey disc with an icon (372's next-step card). */ iconDisc: IconName };
 
 export type Btn = {
   label: string;
-  variant?: 'primary' | 'soft' | 'panel' | 'white' | 'outline' | 'ghost' | 'disabled' | 'green' | 'danger' | 'link';
+  variant?: 'primary' | 'soft' | 'panel' | 'white' | 'outline' | 'ghost' | 'disabled' | 'muted' | 'green' | 'danger' | 'link';
+  /** Disabled until the screen's gating checkbox is ticked, then primary (375). */
+  gated?: boolean;
   icon?: IconName;
   iconRight?: IconName;
   /** Navigation only. A button without `to` draws and does nothing (see the data file). */
@@ -200,12 +215,18 @@ type BlockBody =
       small?: boolean;
       /** A caps label above the name (374's CLIENT). */
       kicker?: string;
+      /** A photograph's place: a neutral disc, no asset supplied (375). */
+      photo?: boolean;
+      /** The meta line in ink semibold (375's phone). */
+      metaStrong?: boolean;
       right?: Right;
     }
   | { k: 'timeline'; steps: Step[]; boxed?: boolean; /** No rail between discs (370). */ noRail?: boolean; /** Dark-green done discs (371). */ deep?: boolean }
   | {
       k: 'docs';
-      items: { name: string; meta?: string; icon?: IconName; right?: Right | 'tick' | 'circleTick'; btn?: string; actions?: string[] }[];
+      items: { name: string; meta?: string; icon?: IconName; right?: Right | 'tick' | 'circleTick' | 'ring'; btn?: string; actions?: string[] }[];
+      /** Icons in grey discs on the panel rows (375). */
+      discs?: boolean;
       /** The framed-PDF glyph with no tile behind it (363), and grey "View" pills. */
       pdf?: boolean;
     }
@@ -232,7 +253,7 @@ type BlockBody =
   | { k: 'fieldRow'; fields: { label: string; req?: boolean; value?: string; placeholder?: string; icon?: IconName }[] }
   | { k: 'choices'; items: { label: string; sub?: string; selected?: boolean; right?: Right }[] }
   | { k: 'segment'; label?: string; items: string[]; selected: number }
-  | { k: 'check'; title: string; sub?: string; checked: boolean; blocks?: Block[] }
+  | { k: 'check'; title: string; sub?: string; checked: boolean; blocks?: Block[]; /** Tapping it toggles the screen's gate (375). */ gate?: boolean }
   | { k: 'bars'; steps: { label: string; state: 'done' | 'current' | 'todo' | 'bad'; sub?: string }[]; variant?: 'bars' | 'discs' | 'tiles' | 'chips' }
   | { k: 'numbered'; items: string[] }
   | { k: 'banner'; icon?: IconName; title?: string; text: string; /** A brown dot at the right (373). */ dot?: boolean; parts?: { t: string; bold?: boolean }[]; tone: 'grey' | 'cream' | 'green' | 'white' | 'none' | 'red' }
@@ -267,6 +288,7 @@ type BlockBody =
       bare?: boolean;
     }
   | { k: 'chip'; t: string }
+  | { k: 'iconRows'; rows: { icon: IconName; t: string; bold?: boolean }[] }
   | { k: 'footRow'; icon?: IconName; t: string; right?: Right }
   | { k: 'gap'; h: number };
 
@@ -288,6 +310,8 @@ export type CourtSpec = {
   footerStack?: boolean;
   /** A line under the footer's button (374). */
   footerNote?: string;
+  /** Two short lines under the footer's button (375). */
+  footerLinks?: { icon?: IconName; t: string; tone?: 'red' }[];
   /** A plain chevron in place of the back arrow (372). */
   chevron?: boolean;
   /** An icon in the header before the avatar (373's info). */
