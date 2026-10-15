@@ -170,7 +170,7 @@ type BlockBody =
       badge?: boolean;
     }
   | { k: 'lead'; pill?: Pill; right?: Right; title?: string; text?: string }
-  | { k: 'label'; text: string; right?: Right; pills?: Pill[]; /** A green dot before it (364). */ dot?: boolean; /** Inset from the gutter (364's MATTER BRIEFING). */ inset?: boolean }
+  | { k: 'label'; text: string; right?: Right; pills?: Pill[]; /** The large ink caps of 374's section titles. */ strong?: boolean; /** A green dot before it (364). */ dot?: boolean; /** Inset from the gutter (364's MATTER BRIEFING). */ inset?: boolean }
   | { k: 'text'; t?: string; parts?: { t: string; bold?: boolean; muted?: boolean }[]; /** A pill after the text (371's Civil). */ pill?: Pill; /** Token for its type size. */ size?: string; /** Token for its icon size. */ iconSize?: string; tone?: 'body' | 'muted' | 'small' | 'quote' | 'center' | 'strong' | 'green' | 'title' | 'label'; icon?: IconName }
   | { k: 'rows'; rows: [string, string, ('mono' | 'bold' | 'green' | 'quote')?][]; divided?: boolean }
   | {
@@ -198,6 +198,9 @@ type BlockBody =
       greyDisc?: boolean | 'help';
       /** The smaller name and sub-line of an info row (363's AI tools card). */
       small?: boolean;
+      /** A caps label above the name (374's CLIENT). */
+      kicker?: string;
+      right?: Right;
     }
   | { k: 'timeline'; steps: Step[]; boxed?: boolean; /** No rail between discs (370). */ noRail?: boolean; /** Dark-green done discs (371). */ deep?: boolean }
   | {
@@ -208,6 +211,8 @@ type BlockBody =
     }
   | {
       k: 'checklist';
+      /** Each item a white card of its own (374). */
+      cards?: boolean;
       items: { title: string; tag?: Pill; sub?: string; state: 'done' | 'info' | 'none' | 'progress'; right?: Right; edit?: boolean; icon?: IconName }[];
     }
   | {
@@ -281,6 +286,8 @@ export type CourtSpec = {
   footer?: Btn[];
   /** The footer's buttons one above the other (372). */
   footerStack?: boolean;
+  /** A line under the footer's button (374). */
+  footerNote?: string;
   /** A plain chevron in place of the back arrow (372). */
   chevron?: boolean;
   /** An icon in the header before the avatar (373's info). */

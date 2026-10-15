@@ -533,7 +533,7 @@ export function BlockView({ b }: { b: Block }): ReactNode {
         <View style={[s.between, b.inset && s.labelInset]}>
           <View style={[s.row, s.flex]}>
             {b.dot ? <View style={[s.labelDot, { backgroundColor: status.active }]} /> : null}
-            <Text style={s.caps}>{b.text}</Text>
+            <Text style={[s.caps, b.strong && s.capsStrong]}>{b.text}</Text>
             {b.pills?.map((p) => <PillTag key={p.pill} p={p} />)}
           </View>
           <RightPart r={b.right} />
@@ -637,6 +637,7 @@ export function BlockView({ b }: { b: Block }): ReactNode {
             {b.initials ? <Text style={s.avatarText}>{b.initials}</Text> : <Icon name={b.icon ?? 'user'} size={t.headIcon} color={c.brown} />}
           </View>
           <View style={s.flex}>
+            {b.kicker ? <Text style={[s.caps, s.personKicker]}>{b.kicker}</Text> : null}
             <View style={[s.row, s.wrap]}>
               <Text style={[s.name, b.small && s.nameSmall]}>{b.name}</Text>
               {b.tag ? <PillTag p={b.tag} /> : null}
@@ -661,6 +662,7 @@ export function BlockView({ b }: { b: Block }): ReactNode {
             </View>
           ) : null}
           {b.chips?.map((x) => <SmallChip key={x.label} b={x} />)}
+          <RightPart r={b.right} />
         </View>
       );
     case 'timeline':
@@ -713,12 +715,24 @@ export function BlockView({ b }: { b: Block }): ReactNode {
       );
     case 'checklist':
       return (
-        <View style={s.docs}>
+        <View style={b.cards ? s.checkCards : s.docs}>
           {b.items.map((it) => (
-            <View key={it.title} style={[s.check, it.state === 'progress' && s.checkProgress]}>
-              <View style={[s.checkMark, it.state === 'done' && { backgroundColor: status.active }]}>
+            <View key={it.title} style={[s.check, it.state === 'progress' && s.checkProgress, b.cards && s.checkCard]}>
+              <View
+                style={[
+                  s.checkMark,
+                  it.state === 'done' && { backgroundColor: b.cards ? c.greenTile : status.active },
+                  b.cards && it.state === 'info' && { backgroundColor: c.tileGrey },
+                ]}
+              >
                 {it.state === 'done' ? (
-                  <Check size={t.stepGlyph} color={ink.onBrand} strokeWidth={3} />
+                  b.cards ? (
+                    <View style={s.checkCore}>
+                      <Check size={t.checkGlyph} color={ink.onBrand} strokeWidth={3.2} />
+                    </View>
+                  ) : (
+                    <Check size={t.stepGlyph} color={ink.onBrand} strokeWidth={3} />
+                  )
                 ) : it.state === 'info' ? (
                   <Info size={t.chipIcon} color={c.inkWarm} strokeWidth={2} />
                 ) : it.icon ? (
@@ -735,9 +749,9 @@ export function BlockView({ b }: { b: Block }): ReactNode {
               <RightPart r={it.right} />
               {it.edit ? (
                 // ⚠ UNSCOPED — edit / delete draw only.
-                <View style={s.row}>
-                  <Pencil size={t.chipIcon} color={c.inkWarm} strokeWidth={2} />
-                  <Trash2 size={t.chipIcon} color={advForensicRed.declineColour} strokeWidth={2} />
+                <View style={[s.row, s.editIcons]}>
+                  <Pencil size={t.editIcon} color={c.inkWarm} strokeWidth={2} />
+                  <Trash2 size={t.editIcon} color={advForensicRed.declineColour} strokeWidth={2} />
                 </View>
               ) : null}
             </View>
@@ -1159,10 +1173,11 @@ function ScreenBody({ spec, state, onState, overlay }: ScreenProps) {
         </View>
       ) : null}
       {spec.footer ? (
-        <View style={[s.footer, spec.footerStack && s.footerStack, { paddingBottom: insets.bottom + t.footerPadBottom }]}>
+        <View style={[s.footer, (spec.footerStack || spec.footerNote) && s.footerStack, { paddingBottom: insets.bottom + t.footerPadBottom }]}>
           {spec.footer.map((x) => (
-            <Button key={x.label} b={x} flex={!spec.footerStack} footer />
+            <Button key={x.label} b={x} flex={!spec.footerStack && !spec.footerNote} footer />
           ))}
+          {spec.footerNote ? <Text style={s.footerNote}>{spec.footerNote}</Text> : null}
         </View>
       ) : null}
       {overlay}
@@ -1255,6 +1270,13 @@ function makeStyles(t: CourtTokens) {
   headTileRow: { gap: t.headTileGap },
   rightDisc: { width: t.rightDisc, height: t.rightDisc, borderRadius: t.rightDisc / 2, backgroundColor: c.tileGrey, alignItems: 'center', justifyContent: 'center' },
   footerStack: { flexDirection: 'column', gap: t.footerStackGap },
+  footerNote: { paddingHorizontal: t.footerNotePadX, fontFamily: font.appBody, fontSize: t.footerNoteSize, lineHeight: t.footerNoteLine, color: c.inkWarm, textAlign: 'center' },
+  capsStrong: { fontSize: t.capsStrongSize, letterSpacing: t.capsStrongSpacing, color: c.ink },
+  personKicker: { marginBottom: t.personKickerGap },
+  checkCards: { gap: t.checkCardGap },
+  checkCard: { alignItems: 'flex-start', borderWidth: 0, borderRadius: t.cardRadius, paddingHorizontal: t.cardPad, paddingVertical: t.checkCardPadY },
+  checkCore: { width: t.checkCore, height: t.checkCore, borderRadius: t.checkCore / 2, backgroundColor: c.greenInk, alignItems: 'center', justifyContent: 'center' },
+  editIcons: { gap: t.editGap, paddingRight: t.editPadRight, marginTop: t.editTop },
   kicker: { marginBottom: t.kickerGap },
   heroBadge: {
     position: 'absolute',

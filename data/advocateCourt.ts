@@ -775,3 +775,66 @@ export const COURT_DECLINED: CourtSpec = {
     { k: 'button', btn: { label: 'Back to Dashboard', icon: 'dashboard', variant: 'panel', to: '/dashboard' as Href }, top: 'backTop' },
   ],
 };
+
+// ── design/374 — recommend documents ─────────────────────────────────────────
+// ⚠ UNSCOPED — Send to Client sends nothing (no push, no checklist delivery);
+// Add Document and each item's edit / delete do nothing; the message is drawn
+// text, "Tap to edit" opens nothing.
+// ⚠ CONFLICT 3 — "Aadhaar Card or PAN Card (self-attested copy)".
+// ⚠ CONFLICT 14 — 363 shows these papers already uploaded.
+export const COURT_RECOMMEND: CourtSpec = {
+  title: 'Recommend Documents',
+  blocks: [
+    { k: 'text', t: 'Tell the client which documents to keep ready.', size: 'leadSize' },
+    {
+      k: 'card',
+      top: 'clientTop',
+      blocks: [
+        {
+          k: 'person',
+          icon: 'user',
+          kicker: 'CLIENT',
+          name: CASE.client,
+          right: { pill: 'Civil Matter', tone: 'grey' },
+        },
+        { k: 'text', icon: 'building', iconSize: 'courtIcon', t: CASE.court, tone: 'small', top: 'courtTop' },
+      ],
+    },
+    {
+      k: 'label',
+      text: 'DOCUMENTS NEEDED',
+      strong: true,
+      pills: [
+        { pill: '4 Required', tone: 'peach' },
+        { pill: '1 Optional', tone: 'grey' },
+      ],
+      top: 'docsLabelTop',
+    },
+    {
+      k: 'checklist',
+      cards: true,
+      top: 'docsTop',
+      items: [
+        { title: 'Original Case Papers', tag: { pill: 'Required', tone: 'peach' }, sub: 'All previous filings and petition copies', state: 'done', edit: true },
+        { title: 'Latest Court Order', tag: { pill: 'Required', tone: 'peach' }, sub: 'Certified copy of the most recent interim order', state: 'done', edit: true },
+        // ⚠ CONFLICT 3 — Aadhaar.
+        { title: 'Identity Proof', tag: { pill: 'Required', tone: 'peach' }, sub: 'Aadhaar Card or PAN Card (self-attested copy)', state: 'done', edit: true },
+        { title: 'Previous Advocate Papers', tag: { pill: 'Optional', tone: 'grey' }, sub: 'NOC or vakalatnama from earlier advocate if applicable', state: 'info', edit: true },
+        { title: 'Property Papers', tag: { pill: 'Required', tone: 'peach' }, sub: 'Registry documents and revenue record excerpts', state: 'done', edit: true },
+      ],
+    },
+    { k: 'button', btn: { label: 'Add Document', icon: 'plusCircle', variant: 'soft' }, top: 'addTop' },
+    { k: 'label', text: 'MESSAGE TO RAHUL SHARMA', strong: true, right: { link: '', icon: 'note' }, top: 'msgLabelTop' },
+    {
+      k: 'card',
+      top: 'msgTop',
+      blocks: [
+        { k: 'text', t: 'Please keep the original case papers and clear copies ready. I may ask for more documents if needed.', size: 'msgSize' },
+        { k: 'footRow', t: 'Direct Advocate Note', right: 'Tap to edit', top: 'msgFootTop' },
+      ],
+    },
+    { k: 'banner', icon: 'shieldCheck', tone: 'none', text: 'The client will see this note with your document checklist in their Legalitt app.', top: 'noteTop' },
+  ],
+  footer: [{ label: 'Send to Client', iconRight: 'arrowRight' }],
+  footerNote: 'After sending, the client will be prompted to prepare and dispatch these documents.',
+};
