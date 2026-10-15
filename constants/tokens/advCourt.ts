@@ -2400,3 +2400,27 @@ export const advCourtDashboard = {
   rowGap: 20,
   stepRowGap: 14,
 };
+
+/** design/398 — District Court request details. */
+export const advCourtDcRequest = {
+  headerPadTop: 14,
+  top: 12,
+  pillSize: 11,
+  sectionTop: 14,
+  secHeadSize: 17.6,
+  innerTop: 12,
+  innerGap: 6,
+  innerPad: 12,
+  rowGap: 12,
+};
+
+/** design/399 — client documents. */
+export const advCourtDcDocuments = {
+  headerPadTop: 21,
+  top: 14,
+  pillSize: 11,
+  sectionTop: 16,
+  rowHeadSize: 15,
+  innerTop: 10,
+  innerGap: 6,
+};

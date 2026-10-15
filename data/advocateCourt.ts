@@ -3416,3 +3416,236 @@ export const COURT_DASHBOARD: CourtSpec = {
     },
   ],
 };
+
+// ═══ DISTRICT COURT ADVOCATE — design/397–432 ═══════════════════════════════
+// Diffed against 362–396 after cropping frames (397–432 are @2x, frames 16–76px
+// a side; 402/403 have none; 415/422 are low-res JPEGs).
+//   DUPLICATES (6) — no change: 402 = 367, 403 = 368, 407 = 366 (re-scaled
+//   exports of the same screens), 404 = 369, 431 = 396, 429 = 428.
+//   GENUINELY NEW (3): 398 (DC request details), 399 (client documents),
+//   410 (374 plus an AI Document Suggestions card and delete icons).
+//   VALUES-ONLY (27): the routes below with ?service=dc. 406 vs 408 differ as
+//   371 vs 372 do.
+// The District Court variant is the same route with ?service=dc; the kit swaps
+// these strings into the spec's copy and keeps ?service=dc on court pushes.
+// Screens built as custom TSX (365 chat, 366 copilot, 369 call, 383 sheet)
+// are not swapped — 401/404/407/419 match them apart from the docket.
+export const DC_VALUES: { all: readonly (readonly [string, string])[]; route: Record<string, readonly (readonly [string, string])[]> } = {
+  all: [
+    // 406, 408, 411, 413, 414, 415, 420, 424, 425, 426, 432: "Madhya Pradesh
+    // District Court" where 371–395 read "Madhya Pradesh High Court".
+    ['Madhya Pradesh High Court', 'Madhya Pradesh District Court'],
+    // 427: "MP District Court (Indore Bench)".
+    ['MP High Court', 'MP District Court'],
+    // 411: "Property Dispute • District Court Bench".
+    ['High Court Bench', 'District Court Bench'],
+  ],
+  route: {
+    // 406: the case information reads District Court Representation.
+    '/advocate/court/client-accepted': [['High Court Representation', 'District Court Representation']],
+  },
+};
+// ⚠ CONFLICT (DC 2) — docket mixing is kept as drawn: 415, 423–427 and 432
+// keep HCR-2026-1048 and "High Court Representation" over Madhya Pradesh
+// District Court; 418's header reads "District Court / High Court
+// Representation" (as 382). 422 reads DC-2026-1048 where 386 reads HCR.
+// ⚠ CONFLICT (DC 4) — 424 schedules the first hearing for 25 October 2026, a
+// Sunday (as 388 / 389). ⚠ CONFLICT (DC 3) — Aadhaar on 400 (as 364), 410 and
+// 411 (as 374 / 375). ⚠ CONFLICT (DC 5) — #LGT-2026-8492, a Legal Notice
+// prefix, on 411 and 412 (as 375 / 376). ⚠ 415 is a 273px JPEG; its OCR reads
+// "19 October 2026" where 379 has 18 — too blurred to call, 379's kept.
+
+// ── design/398 — District Court request details ──────────────────────────────
+// Reached from the Cases tab's District Court card. Accept Request opens 399 —
+// navigation only. ⚠ UNSCOPED — Decline Request, the contact rows, the
+// document eye icons, View All Documents. ⚠ CONFLICT 1 — ₹25,000 less a
+// ₹5,000 Legalitt fee = ₹20,000: 20%, where the wallet (356–361) takes 10%.
+// ⚠ "No AI findings yet" is an AI surface (static). ⚠ The header photo is not
+// supplied; the user disc stands in.
+export const COURT_DC_REQUEST: CourtSpec = {
+  kicker: 'DISTRICT COURT REPRESENTATION',
+  title: 'Request Details',
+  avatar: true,
+  blocks: [
+    { k: 'label', text: '', pills: [{ pill: CASE.dc, tone: 'peach', dot: true }], right: { pill: 'New Request Assigned', tone: 'greenTile', icon: 'checkCircle' } },
+    { k: 'text', icon: 'calendar', t: 'Request Received: 5 October 2026', tone: 'small', top: 'innerGap' },
+    {
+      k: 'card',
+      top: 'sectionTop',
+      head: { title: 'Client', size: 'secHeadSize', right: { link: '', icon: 'user' } },
+      blocks: [
+        { k: 'person', initials: CASE.initials, name: CASE.client, sub: 'Individual Petitioner', top: 'innerTop' },
+        {
+          k: 'card',
+          tone: 'panel',
+          pad: 'innerPad',
+          top: 'innerTop',
+          blocks: [
+            {
+              k: 'iconRows',
+              rows: [
+                { icon: 'phone', t: CASE.phone },
+                { icon: 'mail', t: 'rahul.sharma@email.com' },
+                { icon: 'mapPin', t: 'Indore, Madhya Pradesh' },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'sectionTop',
+      head: { title: 'Case Details', size: 'secHeadSize', right: { link: '', icon: 'gavel' } },
+      blocks: [
+        {
+          k: 'grid',
+          boxed: 'cells',
+          caps: true,
+          top: 'innerTop',
+          cells: [
+            { label: 'CASE TYPE', value: 'Civil' },
+            { label: 'COURT', value: 'District Court' },
+            { label: 'MATTER', value: CASE.title, wide: true },
+            { label: 'CITY', value: 'Indore' },
+            { label: 'IMPORTANT DATE', value: '12 Oct 2026' },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      tone: 'panel',
+      top: 'sectionTop',
+      blocks: [
+        { k: 'label', icon: 'quote', text: 'WHAT HAPPENED?', right: `${CASE.client} • Client` },
+        { k: 'text', t: '"I bought a property from Amit Verma. There is a dispute about the ownership documents. I need help with the case."', tone: 'quote', top: 'innerGap' },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'sectionTop',
+      head: { title: 'Client Documents', size: 'secHeadSize', pills: [{ pill: '5 files', tone: 'help' }], right: { link: '', icon: 'folder' } },
+      blocks: [
+        {
+          k: 'docs',
+          tiles: true,
+          tileTone: 'red',
+          top: 'innerTop',
+          items: [
+            { name: 'Case_Papers.pdf', meta: '12 pages • 4.8 MB', icon: 'pdf', right: { link: '', icon: 'eye' } },
+            { name: 'Previous_Order.pdf', meta: '8 pages • 3.2 MB', icon: 'pdf', right: { link: '', icon: 'eye' } },
+            { name: 'Sale_Deed.pdf', meta: '14 pages • 6.1 MB', icon: 'pdf', right: { link: '', icon: 'eye' } },
+            { name: 'ID_Proof.pdf', meta: '2 pages • 1.5 MB', icon: 'pdf', right: { link: '', icon: 'eye' } },
+            { name: 'Property_Documents.pdf', meta: '10 pages • 4.6 MB', icon: 'pdf', right: { link: '', icon: 'eye' } },
+          ],
+        },
+        { k: 'text', t: 'View All Documents →', tone: 'smallStrong', top: 'innerTop' },
+        { k: 'banner', tone: 'grey', icon: 'info', text: 'No AI findings yet. Review original files.', top: 'innerGap' },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'sectionTop',
+      blocks: [
+        { k: 'label', text: 'Your Payment', title: true, right: { pill: 'Paid by Client', tone: 'greenTile', dot: true } },
+        { k: 'rows', top: 'innerTop', rows: [['Client Fee', '₹25,000', 'bold'], ['Legalitt Fee', '-₹5,000', 'bold']] },
+        { k: 'amount', label: 'Your Amount', value: '₹20,000', valueRight: true, big: true, tone: 'none', top: 'innerTop' },
+        { k: 'text', t: 'Held safely by Legalitt until representation begins.', tone: 'small', top: 'innerGap' },
+      ],
+    },
+  ],
+  footer: [
+    { label: 'Decline Request', variant: 'soft', hug: true },
+    { label: 'Accept Request', icon: 'checkCircle', to: '/advocate/court/dc/client-documents' as Href },
+  ],
+};
+
+// ── design/399 — client documents ────────────────────────────────────────────
+// Reached from Accept Request on 398. Continue to Case Summary opens 400 (364
+// with ?service=dc) — navigation only. ⚠ UNSCOPED — View, Request Document,
+// the private note field.
+export const COURT_DC_CLIENT_DOCUMENTS: CourtSpec = {
+  title: 'Client Documents',
+  headerPill: { pill: CASE.dc, tone: 'peach' },
+  sub: CASE.dcRep,
+  avatar: true,
+  blocks: [
+    {
+      k: 'card',
+      blocks: [
+        { k: 'pills', items: [{ pill: 'Civil · District Court', tone: 'peach' }, { pill: 'Indore', tone: 'white', icon: 'mapPin' }] },
+        { k: 'text', t: CASE.title, tone: 'title', top: 'innerGap' },
+      ],
+    },
+    { k: 'card', tone: 'panel', top: 'sectionTop', blocks: [{ k: 'statusRow', label: '5 Documents Uploaded', sub: 'Review files uploaded by client', pill: { pill: 'Ready for Review', tone: 'greenTile', dot: true } }] },
+    { k: 'label', text: 'Uploaded Documents (5)', title: true, right: 'All verified', top: 'sectionTop' },
+    {
+      k: 'docs',
+      cards: true,
+      tileTone: 'red',
+      top: 'innerTop',
+      items: [
+        { name: 'Case_Papers.pdf', meta: '12 pages · 4.8 MB', icon: 'pdf', metaGood: ' ', btn: 'View' },
+        { name: 'Previous_Order.pdf', meta: '8 pages · 3.2 MB', icon: 'pdf', metaGood: ' ', btn: 'View' },
+        { name: 'Sale_Deed.pdf', meta: '14 pages · 6.1 MB', icon: 'pdf', metaGood: ' ', btn: 'View' },
+        { name: 'ID_Proof.pdf', meta: '2 pages · 1.5 MB', icon: 'pdf', metaGood: ' ', btn: 'View' },
+        { name: 'Property_Documents.pdf', meta: '10 pages · 4.6 MB', icon: 'pdf', metaGood: ' ', btn: 'View' },
+      ],
+    },
+    {
+      k: 'card',
+      tone: 'panel',
+      top: 'sectionTop',
+      head: { icon: 'filePen', tile: 'disc', title: 'Need another document?', size: 'rowHeadSize', sub: 'You can request additional records from the client anytime.', topAlign: true },
+      indent: true,
+      blocks: [{ k: 'button', btn: { label: 'Request Document', icon: 'plus', variant: 'white', start: true, squat: true }, top: 'innerTop' }],
+    },
+    {
+      k: 'card',
+      top: 'sectionTop',
+      head: { icon: 'lock', title: 'Private Note (Only for you)', size: 'rowHeadSize', right: 'Confidential' },
+      blocks: [{ k: 'field', label: '', placeholder: 'Add private notes about these documents. Client cannot see this.', multiline: true, top: 'innerTop' }],
+    },
+    {
+      k: 'stages',
+      top: 'sectionTop',
+      items: [
+        { label: 'Request Accepted', state: 'tick' },
+        { label: 'Review Documents', state: 'current' },
+        { label: 'Case Summary', state: 'todo' },
+      ],
+    },
+  ],
+  footer: [{ label: 'Continue to Case Summary', iconRight: 'arrowRight', to: R('ai-summary?service=dc') }],
+  footerNote: 'Next: AI Case Summary',
+};
+
+// ── design/410 — recommend documents (District Court) ────────────────────────
+// 374 plus delete icons on every item and an AI Document Suggestions card.
+// ⚠ UNSCOPED — the AI suggestions (static, an unspecified AI surface), edit /
+// delete, Add Document, Send to Client. ⚠ CONFLICT 3 — Aadhaar (as 374).
+const aiSuggestions: Block = {
+  k: 'card',
+  tone: 'outline',
+  top: 'addTop',
+  head: { icon: 'sparkles', title: 'AI Document Suggestions', pills: [{ pill: '3 Suggestions', tone: 'violet' }] },
+  blocks: [
+    { k: 'text', t: 'AI found these documents may be useful for your case.', tone: 'small', top: 'courtTop' },
+    { k: 'banner', tone: 'white', icon: 'shieldCheck', parts: [{ t: 'Advocate Review Required:', bold: true }, { t: ' Your advocate checks these suggestions before asking you for documents.' }], text: '', top: 'courtTop' },
+    {
+      k: 'checklist',
+      cards: true,
+      top: 'courtTop',
+      items: [
+        { title: 'Previous Court Order', tag: { pill: 'SUGGESTED', tone: 'violet' }, sub: 'Waiting for Advocate Review', state: 'info', icon: 'file' },
+        { title: 'Property Ownership Papers', tag: { pill: 'SUGGESTED', tone: 'violet' }, sub: 'Waiting for Advocate Review', state: 'info', icon: 'building' },
+        { title: 'Latest Notice', tag: { pill: 'SUGGESTED', tone: 'violet' }, sub: 'Waiting for Advocate Review', state: 'info', icon: 'mail' },
+      ],
+    },
+  ],
+};
+export const COURT_RECOMMEND_DC: CourtSpec = {
+  ...COURT_RECOMMEND,
+  blocks: COURT_RECOMMEND.blocks.flatMap((b) => (b.k === 'button' && b.btn.label === 'Add Document' ? [b, aiSuggestions] : [b])),
+};

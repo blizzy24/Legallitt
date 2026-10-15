@@ -1,4 +1,5 @@
-import { router, type Href } from 'expo-router';
+import { router, useLocalSearchParams, usePathname, type Href } from 'expo-router';
+import { DC_VALUES } from '../../data/advocateCourt';
 import {
   Archive,
   BadgeCheck,
@@ -298,13 +299,31 @@ export function PillTag({ p, outline }: { p: Pill; outline?: boolean }) {
   );
 }
 
-function go(b: Btn) {
+/** 'dc' when the screen was opened as the District Court variant (design/397–432). */
+const Service = createContext<string | undefined>(undefined);
+
+/** Keeps the District Court variant across court pushes (navigation only). */
+function withService(to: Href, svc: string | undefined): Href {
+  if (svc !== 'dc' || typeof to !== 'string' || !to.startsWith('/advocate/court/')) return to;
+  return `${to}${to.includes('?') ? '&' : '?'}service=dc` as Href;
+}
+
+/** The District Court values (data/advocateCourt.ts DC_VALUES) swapped into a spec's copy. */
+function dcSpec<T>(x: T, pairs: readonly (readonly [string, string])[]): T {
+  if (typeof x === 'string') return pairs.reduce<string>((a, [f, r]) => a.split(f).join(r), x) as T;
+  if (Array.isArray(x)) return x.map((v) => dcSpec(v, pairs)) as T;
+  if (x && typeof x === 'object') return Object.fromEntries(Object.entries(x).map(([k, v]) => [k, k === 'to' ? v : dcSpec(v, pairs)])) as T;
+  return x;
+}
+
+function go(b: Btn, svc?: string) {
   if (b.back) return router.canGoBack() ? router.back() : router.replace('/matters' as Href);
-  if (b.to) router.push(b.to);
+  if (b.to) router.push(withService(b.to, svc));
 }
 
 function RightPart({ r }: { r?: Right }) {
   const { t, s } = useK();
+  const svc = useContext(Service);
   if (r === undefined) return null;
   if (typeof r === 'string') return <Text style={s.rightText}>{r}</Text>;
   // Wrapped so a row centres it (the pill itself is flex-start for column use).
@@ -335,7 +354,7 @@ function RightPart({ r }: { r?: Right }) {
     </View>
   );
   return r.to ? (
-    <Pressable accessibilityRole="link" onPress={() => router.push(r.to as Href)}>
+    <Pressable accessibilityRole="link" onPress={() => router.push(withService(r.to as Href, svc))}>
       {content}
     </Pressable>
   ) : (
@@ -424,6 +443,7 @@ function HeadRow({ h }: { h: Head }) {
 export function Button({ b, flex, footer, pill }: { b: Btn; flex?: boolean; footer?: boolean; pill?: boolean }) {
   const { t, s } = useK();
   const gate = useContext(Gate);
+  const svc = useContext(Service);
   const open = !b.gated || gate.on;
   const v = b.gated && gate.on ? 'primary' : (b.variant ?? 'primary');
   const bg: string =
@@ -460,7 +480,7 @@ export function Button({ b, flex, footer, pill }: { b: Btn; flex?: boolean; foot
       accessibilityRole="button"
       aria-disabled={v === 'disabled' || v === 'muted' || undefined}
       disabled={v === 'disabled' || v === 'muted'}
-      onPress={nav ? () => go(b) : undefined}
+      onPress={nav ? () => go(b, svc) : undefined}
       style={style}
     >
       {b.icon ? <Icon name={b.icon} size={t.btnIcon} color={fg} /> : null}
@@ -1725,18 +1745,26 @@ export function CourtScreen(props: ScreenProps) {
   );
 }
 
-function ScreenBody({ spec, state, onState, overlay }: ScreenProps) {
+function ScreenBody({ spec: drawn, state, onState, overlay }: ScreenProps) {
   const { t, s } = useK();
+  const svc = useLocalSearchParams<{ service?: string }>().service;
+  const path = usePathname();
+  const spec = useMemo(
+    () => (svc === 'dc' ? dcSpec(drawn, [...DC_VALUES.all, ...(DC_VALUES.route[path] ?? [])]) : drawn),
+    [drawn, svc, path],
+  );
   const [gateOn, setGateOn] = useState(false);
   const gate = useMemo(() => ({ on: gateOn, toggle: () => setGateOn((v) => !v) }), [gateOn]);
   const headerSub = useMemo(() => ({ fontSize: t.headerSubSize }), [t.headerSubSize]);
   const insets = useSafeAreaInsets();
   return (
+    <Service.Provider value={svc}>
     <Gate.Provider value={gate}>
     <View style={s.page}>
       <CourierHeader
         title={spec.title}
         sub={spec.sub}
+        kicker={spec.kicker}
         titleChip={spec.headerPill ? <PillTag p={spec.headerPill} /> : spec.chip}
         padTop={t.headerPadTop}
         titleGap={t.headerTitleGap}
@@ -1816,6 +1844,7 @@ function ScreenBody({ spec, state, onState, overlay }: ScreenProps) {
       {overlay}
     </View>
     </Gate.Provider>
+    </Service.Provider>
   );
 }
 

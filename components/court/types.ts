@@ -484,6 +484,8 @@ export type Deadline = { label: string; value: string; btn: Btn };
 
 export type CourtSpec = {
   title: string;
+  /** A small caps line above the title (398). */
+  kicker?: string;
   sub?: string;
   chip?: string;
   centerTitle?: boolean;
