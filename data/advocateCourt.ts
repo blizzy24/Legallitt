@@ -420,3 +420,33 @@ export const COURT_CHAT = {
   copilot: R('copilot'),
   aiLabel: 'Legal AI',
 };
+
+// ── design/369 — call with the client (Active Call / Call Ended) ─────────────
+// ⚠⚠ UNSCOPED — no calling vendor. Nothing is dialled, muted, routed to the
+// speaker or noted; the timer does not run. END CALL selects the Call Ended
+// state of the drawn switcher and goes nowhere.
+// ⚠ "Call Ended" has NO DRAWN SCREEN: it is 369's layout with the drawn copy
+// changed — the status reads the switcher's own "Call Ended", the waveform and
+// END CALL give way, and the footnote stays.
+// ⚠ CONFLICT 18 — "Tap to finish hearing prep session": no hearing-prep
+// session is specified.
+export const COURT_CALL = {
+  title: 'Call With Client',
+  switchLabel: 'PREVIEW STATE:',
+  states: ['Active Call', 'Call Ended'],
+  encrypted: '256-Bit Encrypted Audio',
+  matter: `${CASE.hcRep} • ${CASE.hcr}`,
+  initials: CASE.initials,
+  role: 'ADVOCATE CLIENT',
+  name: CASE.client,
+  connected: 'Connected',
+  ended: 'Call Ended',
+  timer: '12:48',
+  keys: [
+    { label: 'Mute', icon: 'mic' as const },
+    { label: 'Speaker', icon: 'speaker' as const },
+    { label: 'Add Note', icon: 'note' as const },
+  ],
+  end: 'END CALL',
+  foot: 'Tap to finish hearing prep session',
+};

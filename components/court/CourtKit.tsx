@@ -914,11 +914,11 @@ export function StateSwitch({
     <View style={[s.switchBar, dark && s.switchDark]}>
       {label ? (
         <View style={s.row}>
-          <SlidersHorizontal size={t.switchIcon} color={dark ? q.callMuted : c.inkWarm} strokeWidth={2} />
-          <Text style={[s.switchLabel, dark && { color: q.callMuted }]}>{label}</Text>
+          <SlidersHorizontal size={t.switchIcon} color={dark ? q.callInk : c.inkWarm} strokeWidth={2} />
+          <Text style={[s.switchLabel, dark && { color: q.callInk }]}>{label}</Text>
         </View>
       ) : null}
-      <View style={[s.switchPill, dark && { backgroundColor: q.callKey }]} accessibilityRole="tablist">
+      <View style={[s.switchPill, dark && { backgroundColor: q.callTrack }]} accessibilityRole="tablist">
         {options.map((o, i) => (
           <Pressable
             key={o}
@@ -927,7 +927,7 @@ export function StateSwitch({
             onPress={() => onChange(i)}
             style={[s.switchItem, i === value && (dark ? s.switchOnDark : s.switchOn)]}
           >
-            <Text style={[s.switchText, dark && { color: q.callMuted }, i === value && (dark ? s.switchTextOnDark : s.switchTextOn)]}>{o}</Text>
+            <Text style={[s.switchText, dark && { color: q.callInk }, i === value && (dark ? s.switchTextOnDark : s.switchTextOn)]}>{o}</Text>
           </Pressable>
         ))}
       </View>
@@ -1325,7 +1325,7 @@ function makeStyles(t: CourtTokens) {
     gap: t.headGap,
     backgroundColor: c.panel,
   },
-  switchDark: { backgroundColor: q.callBg },
+  switchDark: { backgroundColor: q.callBand },
   switchLabel: { fontFamily: font.appSemi, fontSize: t.switchLabelSize, letterSpacing: t.capsSpacing, color: c.inkWarm },
   switchPill: { flexDirection: 'row', borderRadius: t.switchH / 2, padding: t.barGap / 2, backgroundColor: c.tileGrey, marginLeft: 'auto' },
   switchItem: { minHeight: t.switchH - t.barGap, paddingHorizontal: t.switchPadX, borderRadius: t.switchH / 2, justifyContent: 'center' },
