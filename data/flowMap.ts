@@ -6,7 +6,30 @@
 // hand where the designs draw them (marked). Patterns with [param] match any
 // value; the target keeps the same param when it has one.
 
+/** A screen with no next screen (a terminal or placeholder page). */
+export const TERMINAL = '';
+
 export const FLOW_MAP: Record<string, string> = {
+  // ── routes with no design number (data/flowMap.ts, demo part 2) ──
+  // Each mapped to what the screen itself leads to; TERMINAL where nothing follows.
+  '/': '/onboarding', // splash → onboarding
+  '/role': '/dashboard', // role picker → the advocate dashboard (client: /home)
+  '/advocate/consultation/[id]/video': '/advocate/consultation/[id]/end', // End Call
+  '/advocate/requests/[id]': '/advocate/requests/[id]/confirmed', // accept → confirmed
+  '/cases': '/cases/all', // the client cases tab → View All
+  '/cases/all': '/cases/[id]', // a case card
+  '/cases/[id]': '/documents/case', // the case's documents
+  '/earnings': '/advocate/wallet/withdraw', // Withdraw Money
+  '/fir/info': '/fir/step1', // Start
+  '/fir/pay-placeholder': TERMINAL, // a placeholder that only returns home
+  '/hearings': '/hearings/[id]', // a hearing card
+  '/hearings/[id]': '/cases/[id]', // its case
+  '/property-search/request': '/property-search/review', // Continue
+  '/services': '/legal-notice', // the first service tile
+  '/services/district-court/case-details': '/services/district-court/documents', // Continue
+  '/services/district-court/documents': '/services/district-court/pricing', // Continue
+  '/services/district-court/documents-needed': '/services/district-court/courier/details', // Send documents
+  '/services/district-court/review': TERMINAL, // the review's actions are edits back into the form
   // ── advocate/ai ──
   // last: /advocate/ai (171)
   // ── advocate/analytics ──
@@ -376,6 +399,7 @@ export function nextRoute(path: string, label?: string): string | undefined {
   for (const [from, to] of Object.entries(FLOW_MAP)) {
     const m = path.match(toRe(from));
     if (!m) continue;
+    if (to === TERMINAL) return undefined;
     let i = 1;
     return to.replace(/\[[^\]]+\]/g, () => m[i++] ?? '1');
   }

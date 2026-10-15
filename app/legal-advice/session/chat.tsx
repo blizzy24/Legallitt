@@ -1,3 +1,4 @@
+import DemoPressable from '../../../components/DemoPressable';
 import { router } from 'expo-router';
 import { BadgeCheck, ChevronLeft, Clock, Mic, Plus, Send } from 'lucide-react-native';
 import { useState } from 'react';
@@ -125,14 +126,14 @@ export default function LegalAdviceChatSessionScreen() {
           <Pressable accessibilityRole="button" accessibilityLabel="Voice message" hitSlop={6}>
             <Mic size={t.micSize} color={colors.textPrimary} />
           </Pressable>
-          <Pressable
+          <DemoPressable
             accessibilityRole="button"
             accessibilityLabel="Send"
             hitSlop={6}
             style={styles.send}
           >
             <Send size={t.sendSize} color={colors.brand} fill={colors.brand} />
-          </Pressable>
+          </DemoPressable>
         </View>
       </View>
     </View>

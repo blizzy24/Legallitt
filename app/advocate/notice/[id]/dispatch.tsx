@@ -1,3 +1,4 @@
+import DemoPressable from '../../../../components/DemoPressable';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
   ArrowLeft,
@@ -209,7 +210,7 @@ export default function AdvocateNoticeDispatchScreen() {
 
       {/* ⚠ Second primary action; see the note at the top of this file. Inert. */}
       <View style={[styles.bar, { paddingBottom: insets.bottom + 12 }]}>
-        <Pressable
+        <DemoPressable
           accessibilityRole="button"
           style={({ pressed }) => [styles.confirm, pressed && styles.pressed]}
         >
@@ -217,7 +218,7 @@ export default function AdvocateNoticeDispatchScreen() {
           <Text style={styles.confirmText} {...shrinkToFit(0.75)}>
             {d.confirm}
           </Text>
-        </Pressable>
+        </DemoPressable>
       </View>
     </View>
   );

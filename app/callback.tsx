@@ -1,3 +1,4 @@
+import DemoPressable from '../components/DemoPressable';
 import { router } from 'expo-router';
 import { ArrowRight, CircleQuestionMark, Headset } from 'lucide-react-native';
 import { useState } from 'react';
@@ -79,10 +80,10 @@ export default function CallbackScreen() {
           <Text style={styles.infoText}>Our team will review your request and contact you in 24 hours</Text>
         </View>
 
-        <Pressable accessibilityRole="button" style={({ pressed }) => [styles.button, pressed && styles.pressed]}>
+        <DemoPressable accessibilityRole="button" style={({ pressed }) => [styles.button, pressed && styles.pressed]}>
           <Text style={styles.buttonText}>Request Callback</Text>
           <ArrowRight size={k.buttonIcon} color={ink.onBrand} />
-        </Pressable>
+        </DemoPressable>
 
         <Text style={styles.footer}>Your information will be used only to process your callback request.</Text>
       </ScrollView>

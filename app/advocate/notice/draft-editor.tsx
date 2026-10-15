@@ -1,3 +1,4 @@
+import DemoPressable from '../../../components/DemoPressable';
 import { router, type Href } from 'expo-router';
 import { ArrowLeft, Sparkles } from 'lucide-react-native';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -91,16 +92,16 @@ export default function AdvocateNoticeDraftEditorScreen() {
 
       <View style={[styles.footer, { paddingBottom: insets.bottom + 14 }]}>
         <View style={styles.btnRow}>
-          <Pressable accessibilityRole="button" style={styles.btn}>
+          <DemoPressable accessibilityRole="button" style={styles.btn}>
             <Text style={styles.btnText} {...shrinkToFit(0.8)}>
               {e.saveDraft}
             </Text>
-          </Pressable>
-          <Pressable accessibilityRole="button" style={[styles.btn, { marginLeft: t.btnGap }]}>
+          </DemoPressable>
+          <DemoPressable accessibilityRole="button" style={[styles.btn, { marginLeft: t.btnGap }]}>
             <Text style={styles.btnText} {...shrinkToFit(0.8)}>
               {e.preview}
             </Text>
-          </Pressable>
+          </DemoPressable>
         </View>
         <Pressable
           accessibilityRole="button"

@@ -1,3 +1,4 @@
+import DemoPressable from '../../../components/DemoPressable';
 import { ArrowRight, BadgeCheck, Check, FileText, MessageSquare, ShieldCheck } from 'lucide-react-native';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -126,7 +127,7 @@ export default function AdvocateCourierReceivedScreen() {
       </ScrollView>
 
       <View style={[styles.bar, { paddingBottom: insets.bottom + t.barPadBottom }]}>
-        <Pressable
+        <DemoPressable
           accessibilityRole="button"
           accessibilityLabel={d.cta}
           style={({ pressed }) => [styles.btn, pressed && styles.pressed]}
@@ -135,7 +136,7 @@ export default function AdvocateCourierReceivedScreen() {
             {d.cta}
           </Text>
           <ArrowRight size={t.btnGlyph} color={ink.onBrand} strokeWidth={2.2} />
-        </Pressable>
+        </DemoPressable>
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={d.ctaAlt}

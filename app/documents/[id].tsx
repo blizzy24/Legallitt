@@ -1,3 +1,4 @@
+import DemoPressable from '../../components/DemoPressable';
 import { router, useLocalSearchParams } from 'expo-router';
 import {
   ChevronLeft,
@@ -265,12 +266,12 @@ export default function DocumentViewerScreen() {
               Share
             </Text>
           </Pressable>
-          <Pressable accessibilityRole="button" style={[styles.action, styles.actionFilled]}>
+          <DemoPressable accessibilityRole="button" style={[styles.action, styles.actionFilled]}>
             <Download size={t.actionGlyph} color={ink.onBrand} />
             <Text style={[styles.actionLabel, styles.actionLabelOn]} {...shrinkToFit(0.8)}>
               Download
             </Text>
-          </Pressable>
+          </DemoPressable>
           <Pressable
             accessibilityRole="button"
             onPress={back}

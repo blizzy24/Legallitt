@@ -1,3 +1,4 @@
+import DemoPressable from '../../../../components/DemoPressable';
 import { router } from 'expo-router';
 import {
   ArrowRight,
@@ -224,13 +225,13 @@ export default function AdvocateClientDocumentsScreen() {
           );
         })}
 
-        <Pressable
+        <DemoPressable
           accessibilityRole="button"
           style={({ pressed }) => [styles.primary, pressed && styles.pressed]}
         >
           <Upload size={t.actionIcon} color={ink.onBrand} />
           <Text style={styles.primaryText}>Upload Document</Text>
-        </Pressable>
+        </DemoPressable>
         <Pressable
           accessibilityRole="button"
           style={({ pressed }) => [styles.secondary, pressed && styles.pressed]}

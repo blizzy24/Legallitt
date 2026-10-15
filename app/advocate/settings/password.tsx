@@ -1,3 +1,4 @@
+import DemoPressable from '../../../components/DemoPressable';
 import { router, type Href } from 'expo-router';
 import { ChevronLeft, CircleCheck, Eye, Lock, ShieldCheck, UserRound } from 'lucide-react-native';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -79,12 +80,12 @@ export default function AdvocatePasswordScreen() {
 
           <Text style={styles.forgot}>{d.forgot}</Text>
 
-          <Pressable accessibilityRole="button" style={({ pressed }) => [styles.cta, pressed && styles.pressed]}>
+          <DemoPressable accessibilityRole="button" style={({ pressed }) => [styles.cta, pressed && styles.pressed]}>
             <ShieldCheck size={t.ctaGlyph} color={ink.onBrand} strokeWidth={2} />
             <Text style={styles.ctaLabel} {...shrinkToFit(0.8)}>
               {d.cta}
             </Text>
-          </Pressable>
+          </DemoPressable>
         </View>
 
         <View style={styles.note}>

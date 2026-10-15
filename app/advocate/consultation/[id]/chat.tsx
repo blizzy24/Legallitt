@@ -1,3 +1,4 @@
+import DemoPressable from '../../../../components/DemoPressable';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
   ArrowUp,
@@ -308,9 +309,9 @@ export default function AdvocateChatScreen() {
             <ArrowUp size={t.composerBtnIcon} color={ink.onBrand} />
           </Pressable>
         ) : (
-          <Pressable accessibilityRole="button" accessibilityLabel="Voice note" style={styles.send}>
+          <DemoPressable accessibilityRole="button" accessibilityLabel="Voice note" style={styles.send}>
             <Mic size={t.composerBtnIcon} color={ink.onBrand} />
-          </Pressable>
+          </DemoPressable>
         )}
       </View>
     </View>

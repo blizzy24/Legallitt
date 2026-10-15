@@ -1,3 +1,4 @@
+import DemoPressable from '../../components/DemoPressable';
 import { router, type Href } from 'expo-router';
 import { ArrowRight, Check, Download, Eye, FileText, Gavel, ShieldCheck } from 'lucide-react-native';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -140,13 +141,13 @@ export default function FirReadyScreen() {
 
         <View style={styles.spacer} />
 
-        <Pressable
+        <DemoPressable
           accessibilityRole="button"
           style={({ pressed }) => [styles.button, pressed && styles.pressed]}
         >
           <Text style={styles.buttonLabel}>View FIR Draft</Text>
           <ArrowRight size={t.buttonIcon} color={ink.onBrand} style={styles.buttonIcon} />
-        </Pressable>
+        </DemoPressable>
 
         <Pressable
           accessibilityRole="button"

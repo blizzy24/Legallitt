@@ -1,3 +1,4 @@
+import DemoPressable from '../../../../components/DemoPressable';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
   Bold,
@@ -104,14 +105,14 @@ export default function AdvocatePropertySearchResponseScreen() {
                 {r.editDraft}
               </Text>
             </Pressable>
-            <Pressable
+            <DemoPressable
               accessibilityRole="button"
               style={({ pressed }) => [styles.btn, styles.save, pressed && styles.pressed]}
             >
               <Text style={styles.saveText} {...shrinkToFit(0.75)}>
                 {r.saveUpload}
               </Text>
-            </Pressable>
+            </DemoPressable>
           </View>
         </View>
 

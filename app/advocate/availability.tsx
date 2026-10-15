@@ -1,3 +1,4 @@
+import DemoPressable from '../../components/DemoPressable';
 import { router } from 'expo-router';
 import { CalendarDays, Check, ChevronLeft, ChevronRight, Settings } from 'lucide-react-native';
 import { useMemo, useState } from 'react';
@@ -339,13 +340,13 @@ export default function AdvocateAvailabilityScreen() {
       </ScrollView>
 
       <View style={[styles.saveBar, { paddingBottom: insets.bottom + 14 }]}>
-        <Pressable
+        <DemoPressable
           accessibilityRole="button"
           style={({ pressed }) => [styles.save, pressed && styles.pressed]}
         >
           <Check size={t.saveIcon} color={ink.onBrand} strokeWidth={3} />
           <Text style={styles.saveText}>Save Availability</Text>
-        </Pressable>
+        </DemoPressable>
       </View>
     </View>
   );

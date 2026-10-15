@@ -1,3 +1,4 @@
+import DemoPressable from '../../../components/DemoPressable';
 import { router } from 'expo-router';
 import {
   ArrowRight,
@@ -118,9 +119,9 @@ export default function DigilockerVerifiedScreen() {
             </Text>
           </View>
 
-          <Pressable accessibilityRole="button" accessibilityLabel="Share" style={styles.share}>
+          <DemoPressable accessibilityRole="button" accessibilityLabel="Share" style={styles.share}>
             <Share2 size={t.shareIcon} color={colors.textPrimary} />
-          </Pressable>
+          </DemoPressable>
         </View>
 
         <View style={styles.card}>

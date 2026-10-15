@@ -1,3 +1,4 @@
+import DemoPressable from '../../components/DemoPressable';
 import { router, useLocalSearchParams } from 'expo-router';
 import {
   Building2,
@@ -191,9 +192,9 @@ export default function HearingDetailsScreen() {
 
       <View style={[styles.bar, { paddingBottom: h.barPadBottom + insets.bottom }]}>
         {/* Contact Advocate has no destination yet. */}
-        <Pressable accessibilityRole="button" style={[styles.barButton, styles.barButtonLight]}>
+        <DemoPressable accessibilityRole="button" style={[styles.barButton, styles.barButtonLight]}>
           <Text style={styles.barButtonLightText}>Contact Advocate</Text>
-        </Pressable>
+        </DemoPressable>
         <Pressable accessibilityRole="button" onPress={openCase} style={[styles.barButton, styles.barButtonBrand]}>
           <Text style={styles.barButtonBrandText}>View Case File</Text>
         </Pressable>

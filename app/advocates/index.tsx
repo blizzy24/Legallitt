@@ -1,3 +1,4 @@
+import DemoPressable from '../../components/DemoPressable';
 import { router, type Href } from 'expo-router';
 import { Check, ChevronLeft, Heart, MapPin, Search, Star } from 'lucide-react-native';
 import { useState } from 'react';
@@ -194,11 +195,11 @@ function AdvocateCard({
             View Profile
           </Text>
         </Pressable>
-        <Pressable accessibilityRole="button" style={[styles.action, styles.filled]}>
+        <DemoPressable accessibilityRole="button" style={[styles.action, styles.filled]}>
           <Text style={styles.filledLabel} {...shrinkToFit(0.8)}>
             Book Consultation
           </Text>
-        </Pressable>
+        </DemoPressable>
       </View>
     </View>
   );

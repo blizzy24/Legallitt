@@ -1,3 +1,4 @@
+import DemoPressable from '../../../components/DemoPressable';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
   ArrowRight,
@@ -287,12 +288,12 @@ export default function AdvocateFirDraftScreen() {
 
       <View style={[styles.bar, { paddingBottom: insets.bottom + t.barPadBottom }]}>
         <View style={styles.barRow}>
-          <Pressable accessibilityRole="button" style={({ pressed }) => [styles.btn, styles.save, pressed && styles.pressed]}>
+          <DemoPressable accessibilityRole="button" style={({ pressed }) => [styles.btn, styles.save, pressed && styles.pressed]}>
             <Save size={t.btnIcon} color={t.saveColour} />
             <Text style={styles.saveText} {...shrinkToFit(0.8)}>
               {d.save}
             </Text>
-          </Pressable>
+          </DemoPressable>
           <Pressable
             accessibilityRole="button"
             onPress={() => router.push(`/advocate/fir/review?id=${id ?? ''}` as Href)}

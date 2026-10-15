@@ -1,3 +1,4 @@
+import DemoPressable from '../../components/DemoPressable';
 import { useDemoWait } from '../../hooks/useDemoAdvance';
 import { router, useLocalSearchParams } from 'expo-router';
 import {
@@ -234,11 +235,11 @@ export default function TrackingScreen() {
 
       {approval && (
         <View style={[styles.fixedBar, { paddingBottom: insets.bottom + t.barPadBottom }]}>
-          <Pressable accessibilityRole="button" style={[styles.home, styles.barButton]}>
+          <DemoPressable accessibilityRole="button" style={[styles.home, styles.barButton]}>
             <FileCheck size={t.homeIcon} color={ink.onBrand} />
             <Text style={styles.homeText}>Review & Approve Draft</Text>
             <ArrowRight size={t.buttonIcon} color={ink.onBrand} />
-          </Pressable>
+          </DemoPressable>
           <View style={styles.caption}>
             <ShieldCheck size={t.captionIcon} color={colors.textBody} />
             <Text style={styles.captionText}>Your information is secure and confidential.</Text>

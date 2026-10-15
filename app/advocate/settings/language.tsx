@@ -1,3 +1,4 @@
+import DemoPressable from '../../../components/DemoPressable';
 import { Check, Gavel, Globe, Languages } from 'lucide-react-native';
 import { Fragment } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
@@ -82,12 +83,12 @@ export default function AdvocateLanguageScreen() {
         </View>
       </View>
 
-      <Pressable accessibilityRole="button" style={({ pressed }) => [styles.cta, pressed && styles.pressed]}>
+      <DemoPressable accessibilityRole="button" style={({ pressed }) => [styles.cta, pressed && styles.pressed]}>
         <Check size={20} color={ink.onBrand} strokeWidth={2.6} />
         <Text style={styles.ctaLabel} {...shrinkToFit(0.8)}>
           {d.cta}
         </Text>
-      </Pressable>
+      </DemoPressable>
     </SettingsHero>
   );
 }

@@ -1,3 +1,4 @@
+import DemoPressable from '../../components/DemoPressable';
 import { router, type Href } from 'expo-router';
 import { Building2, ChevronRight, Copy, FileText, Info, RefreshCw, Truck } from 'lucide-react-native';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -146,7 +147,7 @@ export default function CourierTrackingScreen() {
           </View>
         </View>
 
-        <Pressable
+        <DemoPressable
           accessibilityRole="button"
           accessibilityLabel={d.cta}
           style={({ pressed }) => [styles.cta, pressed && styles.pressed]}
@@ -155,7 +156,7 @@ export default function CourierTrackingScreen() {
           <Text style={styles.ctaText} {...shrinkToFit(0.8)}>
             {d.cta}
           </Text>
-        </Pressable>
+        </DemoPressable>
         <Text style={styles.foot} {...shrinkToFit(0.8)}>
           {d.foot}
         </Text>

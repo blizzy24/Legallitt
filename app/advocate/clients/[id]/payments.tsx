@@ -1,3 +1,4 @@
+import DemoPressable from '../../../../components/DemoPressable';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
   ChevronLeft,
@@ -242,13 +243,13 @@ export default function AdvocateClientPaymentsScreen() {
           );
         })}
 
-        <Pressable
+        <DemoPressable
           accessibilityRole="button"
           style={({ pressed }) => [styles.primary, pressed && styles.pressed]}
         >
           <FilePlus2 size={17} color={ink.onBrand} />
           <Text style={styles.primaryText}>Generate New Invoice</Text>
-        </Pressable>
+        </DemoPressable>
         <Pressable
           accessibilityRole="button"
           style={({ pressed }) => [styles.secondary, pressed && styles.pressed]}

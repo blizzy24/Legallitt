@@ -1,3 +1,4 @@
+import DemoPressable from '../../../../components/DemoPressable';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
   ArrowLeft,
@@ -398,14 +399,14 @@ export default function AdvocatePsrEditorScreen() {
 
       <View style={[styles.bar, { paddingBottom: insets.bottom + 12 }]}>
         <View style={styles.btnRow}>
-          <Pressable
+          <DemoPressable
             accessibilityRole="button"
             style={({ pressed }) => [styles.btn, styles.save, pressed && styles.pressed]}
           >
             <Text style={styles.saveText} {...shrinkToFit(0.8)}>
               {e.saveDraft}
             </Text>
-          </Pressable>
+          </DemoPressable>
           <Pressable
             accessibilityRole="button"
             onPress={() => router.push(`/advocate/property-search/${id}/response` as Href)}

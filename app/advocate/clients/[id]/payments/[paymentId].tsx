@@ -1,3 +1,4 @@
+import DemoPressable from '../../../../../components/DemoPressable';
 import { router, type Href } from 'expo-router';
 import {
   BadgeCheck,
@@ -362,7 +363,7 @@ export default function AdvocatePaymentDetailScreen() {
           ))}
         </View>
 
-        <Pressable
+        <DemoPressable
           accessibilityRole="button"
           style={({ pressed }) => [styles.primary, pressed && styles.pressed]}
         >
@@ -370,7 +371,7 @@ export default function AdvocatePaymentDetailScreen() {
           <Text style={styles.primaryText} {...shrinkToFit(0.8)}>
             Download Full Docket Statement (PDF)
           </Text>
-        </Pressable>
+        </DemoPressable>
         <Pressable
           accessibilityRole="button"
           style={({ pressed }) => [styles.secondary, pressed && styles.pressed]}
