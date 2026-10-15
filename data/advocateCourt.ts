@@ -2334,3 +2334,82 @@ export const COURT_HEARING_SCHEDULED: CourtSpec = {
   ],
   deadline: HEARING_DEADLINE,
 };
+
+// ── design/389 — today's hearing (hearing live) ──────────────────────────────
+// Reached from View First Hearing on 388. ⚠ UNSCOPED — Start Hearing and
+// Preview Live Hearing Mode draw and do nothing; no screen is drawn for either,
+// so 390 has no drawn way in (dev preview). ⚠ CONFLICT 5 — 25 October 2026 is
+// a Sunday. ⚠ CONFLICT 8 — the bench reads "Hon'ble Justice" with no name;
+// 388 gives "Hon'ble Justice Verma". "List #14" appears nowhere else.
+export const COURT_HEARING_LIVE: CourtSpec = {
+  title: 'First Hearing',
+  headerPill: { pill: CASE.hcr, tone: 'peach' },
+  sub: CASE.hcRep,
+  avatar: true,
+  blocks: [
+    { k: 'label', text: '', pills: [{ pill: CASE.bench, tone: 'help' }, { pill: 'List #14', tone: 'help' }], right: { pill: 'Scheduled', tone: 'peach' } },
+    {
+      k: 'card',
+      top: 'caseTop',
+      blocks: [
+        { k: 'label', text: 'CIVIL WRIT PETITION', right: { iconDisc: 'gavel' }, bottom: 'kickerBottom' },
+        { k: 'text', t: CASE.title, tone: 'title', top: 'caseTitleTop' },
+        {
+          k: 'grid',
+          top: 'caseGridTop',
+          cells: [
+            { label: 'Case Number', value: CASE.caseNo },
+            { label: 'Client', value: CASE.client },
+          ],
+        },
+        { k: 'text', t: `${CASE.court} · ${CASE.bench}`, icon: 'landmark', tone: 'small', top: 'courtTop' },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'todayTop',
+      head: { icon: 'calendar', title: "Today's Hearing", size: 'todayHeadSize' },
+      blocks: [
+        { k: 'amount', label: 'Scheduled Date & Time', value: '25 October 2026', side: ['', '11:00 AM'], sideBig: true, top: 'whenTop' },
+        {
+          k: 'grid',
+          tiles: true,
+          top: 'roomTop',
+          cells: [
+            { label: 'Court Room', value: 'Court Room 3', sideIcon: 'door' },
+            { label: 'Presiding Bench', value: "Hon'ble Justice", sideIcon: 'scale' },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'readyTop',
+      head: { title: 'Ready for Hearing', size: 'todayHeadSize', sub: 'Pre-hearing verification checklist', right: { link: '', icon: 'shieldCheck', muted: true } },
+      blocks: [
+        {
+          k: 'checklist',
+          bare: true,
+          top: 'readyListTop',
+          items: [
+            { title: 'Court Papers Ready', sub: 'Petition, affidavit and filed supporting papers', state: 'done' },
+            { title: 'Documents Ready', sub: 'All verified client records in hand', state: 'done' },
+            { title: 'Advocate Ready', sub: `Present at ${CASE.bench}, Court Room 3`, state: 'done' },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'banner',
+      tone: 'cream',
+      disc: true,
+      icon: 'shield',
+      top: 'beforeTop',
+      title: 'Before You Start',
+      text: 'Make sure you have the required case papers and documents ready before calling or presenting to the court bench.',
+    },
+    { k: 'button', btn: { label: 'Start Hearing', icon: 'playCircle', h: 'startH' }, top: 'startTop' },
+    { k: 'text', t: 'Tap once when case matter is called before the bench', tone: 'center', size: 'startNoteSize', top: 'startNoteTop' },
+    { k: 'button', btn: { label: 'Preview Live Hearing Mode', icon: 'swap', variant: 'soft', centered: true, squat: true, size: 'previewSize' }, top: 'previewTop' },
+  ],
+};

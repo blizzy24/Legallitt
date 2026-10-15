@@ -95,7 +95,9 @@ export type IconName =
   | 'fileLock'
   | 'door'
   | 'calendarPen'
-  | 'checkCheck';
+  | 'checkCheck'
+  | 'playCircle'
+  | 'landmark';
 
 export type Tone =
   | 'green'
@@ -180,6 +182,10 @@ export type Btn = {
   squat?: boolean;
   /** Token for this button's height (388 draws two). */
   h?: string;
+  /** Content width, centred in its column (389's Preview Live Hearing Mode). */
+  centered?: boolean;
+  /** Token for this button's type size (389). */
+  size?: string;
 };
 
 export type Head = {
@@ -274,6 +280,8 @@ type BlockBody =
       boxed?: 'cells' | 'columns' | 'panel';
       /** Capitalised labels (370). */
       caps?: boolean;
+      /** Each sideIcon on a peach tile (389). */
+      tiles?: boolean;
     }
   | {
       k: 'person';
@@ -361,6 +369,8 @@ type BlockBody =
       cards?: boolean;
       /** Pale green done discs, a ring for not started (377). */
       light?: boolean;
+      /** No box round each item (389). */
+      bare?: boolean;
       items: { title: string; tag?: Pill; sub?: string; state: 'done' | 'info' | 'none' | 'progress'; right?: Right; edit?: boolean; icon?: IconName }[];
     }
   | {
@@ -389,7 +399,7 @@ type BlockBody =
   | { k: 'check'; title: string; sub?: string; checked: boolean; blocks?: Block[]; /** Tapping it toggles the screen's gate (375). */ gate?: boolean; /** Token for the sub-line's max width (387). */ subMax?: string; /** A dark-green box (387). */ green?: boolean }
   | { k: 'bars'; steps: { label: string; state: 'done' | 'current' | 'todo' | 'bad'; sub?: string; /** An icon in the tile's disc (385). */ icon?: IconName }[]; variant?: 'bars' | 'discs' | 'tiles' | 'chips' }
   | { k: 'numbered'; items: string[]; /** Grey number discs (384). */ grey?: boolean }
-  | { k: 'banner'; icon?: IconName; title?: string; text: string; /** A brown dot at the right (373). */ dot?: boolean; center?: boolean; titleBrown?: boolean; strongText?: boolean; parts?: { t: string; bold?: boolean }[]; tone: 'grey' | 'cream' | 'green' | 'white' | 'none' | 'red' | 'help' }
+  | { k: 'banner'; icon?: IconName; title?: string; text: string; /** A brown dot at the right (373). */ dot?: boolean; center?: boolean; titleBrown?: boolean; strongText?: boolean; parts?: { t: string; bold?: boolean }[]; tone: 'grey' | 'cream' | 'green' | 'white' | 'none' | 'red' | 'help'; /** The icon white on a tan disc (389). */ disc?: boolean }
   | { k: 'pills'; items: Pill[]; /** Bordered chips (377's documents). */ outline?: boolean }
   | { k: 'progress'; value: number }
   | { k: 'noteRow'; icon: IconName; t: string; btn: string }
@@ -413,6 +423,8 @@ type BlockBody =
       suffixGreen?: boolean;
       /** The suffix beside the value, in two muted lines (385). */
       suffixBeside?: boolean;
+      /** side[1] at the amount's own size, level with the label (389's 11:00 AM). */
+      sideBig?: boolean;
     }
   | { k: 'upload'; title: string; sub?: string; btn?: Btn; icon?: IconName; /** Icon beside the title, not above (380). */ inline?: boolean; pill?: Pill; /** A grey disc (385). */ greyDisc?: boolean }
   | { k: 'quote'; t: string }

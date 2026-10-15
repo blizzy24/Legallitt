@@ -62,6 +62,8 @@ import {
   Pencil,
   Phone,
   Play,
+  CirclePlay,
+  Landmark,
   Plus,
   Quote,
   Receipt,
@@ -200,6 +202,8 @@ const ICONS: Record<IconName, LucideIcon> = {
   video: Video,
   swap: ArrowLeftRight,
   play: Play,
+  playCircle: CirclePlay,
+  landmark: Landmark,
   dashboard: LayoutGrid,
   bookmark: Bookmark,
   idCard: IdCard,
@@ -421,6 +425,7 @@ export function Button({ b, flex, footer, pill }: { b: Btn; flex?: boolean; foot
     pill && s.btnPill,
     flex && !b.hug && s.flex,
     b.hug && s.btnHug,
+    b.centered && s.btnCentered,
   ];
   return (
     <Pressable
@@ -431,7 +436,7 @@ export function Button({ b, flex, footer, pill }: { b: Btn; flex?: boolean; foot
       style={style}
     >
       {b.icon ? <Icon name={b.icon} size={t.btnIcon} color={fg} /> : null}
-      <Text style={[v === 'link' ? s.btnLinkText : s.btnText, footer && v !== 'link' && s.btnFooterText, { color: fg }]}>{b.label}</Text>
+      <Text style={[v === 'link' ? s.btnLinkText : s.btnText, footer && v !== 'link' && s.btnFooterText, b.size !== undefined && { fontSize: t[b.size] }, { color: fg }]}>{b.label}</Text>
       {b.iconRight ? <Icon name={b.iconRight} size={t.btnIcon} color={fg} /> : null}
     </Pressable>
   );
@@ -781,7 +786,7 @@ export function BlockView({ b }: { b: Block }): ReactNode {
           <View style={[s.row, s.flex]}>
             {b.dot ? <View style={[s.labelDot, { backgroundColor: status.active }]} /> : null}
             {b.icon ? <Icon name={b.icon} size={t.labelIcon} color={c.ink} /> : null}
-            <Text style={[b.title ? s.headTitle : s.caps, b.strong && s.capsStrong, b.title && s.labelTitle]}>{b.text}</Text>
+            {b.text ? <Text style={[b.title ? s.headTitle : s.caps, b.strong && s.capsStrong, b.title && s.labelTitle]}>{b.text}</Text> : null}
             {b.pills?.map((p) => <PillTag key={p.pill} p={p} />)}
           </View>
           <RightPart r={b.right} />
@@ -846,7 +851,15 @@ export function BlockView({ b }: { b: Block }): ReactNode {
     case 'grid': {
       const cellView = (cell: (typeof b.cells)[number], style?: StyleProp<ViewStyle>) => (
         <View key={cell.label + cell.value} style={[style, (cell.sideIcon || cell.iconRight || cell.iconDisc) && s.sideIconCell, cell.shade && s.cellShade]}>
-          {cell.sideIcon ? <Icon name={cell.sideIcon} size={t.sideIcon} color={c.inkWarm} /> : null}
+          {cell.sideIcon ? (
+            b.tiles ? (
+              <View style={s.sideTile}>
+                <Icon name={cell.sideIcon} size={t.sideIcon} color={c.brownInk} />
+              </View>
+            ) : (
+              <Icon name={cell.sideIcon} size={t.sideIcon} color={c.inkWarm} />
+            )
+          ) : null}
           <View style={[(cell.sideIcon || cell.iconRight || cell.iconDisc) && s.flex, cell.alignRight && s.cellRight]}>
           <View style={s.row}>
             {cell.icon ? <Icon name={cell.icon} size={t.labelSize} color={c.inkMuted} /> : null}
@@ -1041,9 +1054,9 @@ export function BlockView({ b }: { b: Block }): ReactNode {
       );
     case 'checklist':
       return (
-        <View style={b.cards ? s.checkCards : s.docs}>
+        <View style={[b.cards ? s.checkCards : s.docs, b.bare && s.checkBareList]}>
           {b.items.map((it) => (
-            <View key={it.title} style={[s.check, it.state === 'progress' && s.checkProgress, b.cards && s.checkCard, b.light && s.checkLight, b.light && it.state === 'progress' && s.checkLightProgress]}>
+            <View key={it.title} style={[s.check, b.bare && s.checkBare, it.state === 'progress' && s.checkProgress, b.cards && s.checkCard, b.light && s.checkLight, b.light && it.state === 'progress' && s.checkLightProgress]}>
               <View
                 style={[
                   s.checkMark,
@@ -1204,7 +1217,13 @@ export function BlockView({ b }: { b: Block }): ReactNode {
       const bg: string = b.tone === 'grey' ? c.panel : b.tone === 'cream' ? c.peachSoft : b.tone === 'green' ? c.greenSoft : b.tone === 'white' ? dcDocsNeededPalette.physPanel : b.tone === 'help' ? c.helpGrey : b.tone === 'red' ? status.redContainer : 'transparent';
       return (
         <View style={[s.row, s.top, s.banner, { backgroundColor: bg }, b.tone === 'none' && s.bannerBare, b.center && s.bannerCenter]}>
-          {b.icon ? <Icon name={b.icon} size={t.bannerIcon} color={b.tone === 'green' ? c.greenInk : b.tone === 'red' ? status.onRedContainer : c.inkWarm} /> : null}
+          {b.icon && b.disc ? (
+            <View style={s.bannerDisc}>
+              <Icon name={b.icon} size={t.bannerIcon} color={ink.onBrand} />
+            </View>
+          ) : b.icon ? (
+            <Icon name={b.icon} size={t.bannerIcon} color={b.tone === 'green' ? c.greenInk : b.tone === 'red' ? status.onRedContainer : c.inkWarm} />
+          ) : null}
           <View style={!b.center && s.flex}>
             {b.title ? <Text style={[s.bannerTitle, b.titleBrown && s.brownText]}>{b.title}</Text> : null}
             {b.parts ? (
@@ -1283,8 +1302,8 @@ export function BlockView({ b }: { b: Block }): ReactNode {
               </View>
               {b.side ? (
                 <View style={s.amountSide}>
-                  <Text style={s.cellLabel}>{b.side[0]}</Text>
-                  <Text style={[s.cellValue, s.rightAlign]}>{b.side[1]}</Text>
+                  {b.side[0] ? <Text style={s.cellLabel}>{b.side[0]}</Text> : null}
+                  <Text style={[b.sideBig ? s.amountSideBig : s.cellValue, s.rightAlign]}>{b.side[1]}</Text>
                 </View>
               ) : (
                 <RightPart r={b.right} />
@@ -2013,6 +2032,12 @@ function makeStyles(t: CourtTokens) {
   pillMono: { fontSize: t.pillMonoSize },
   headerRight: { marginRight: t.headerRightGap },
   btnHug: { paddingHorizontal: t.hugPadX },
+  btnCentered: { alignSelf: 'center', paddingHorizontal: t.hugPadX },
+  sideTile: { width: t.sideTile, height: t.sideTile, borderRadius: t.sideTileRadius, backgroundColor: c.peachSoft, alignItems: 'center', justifyContent: 'center' },
+  amountSideBig: { marginTop: t.sideBigTop, fontFamily: font.appSemi, fontSize: t.amountSize, color: c.ink },
+  bannerDisc: { width: t.bannerDisc, height: t.bannerDisc, borderRadius: t.bannerDisc / 2, backgroundColor: c.avatarTan, alignItems: 'center', justifyContent: 'center' },
+  checkBare: { padding: 0, borderWidth: 0, backgroundColor: 'transparent' },
+  checkBareList: { gap: t.checkBareGap },
   linkText: { fontFamily: font.appSemi, fontSize: t.smallSize, color: c.brown },
 
   pill: {
