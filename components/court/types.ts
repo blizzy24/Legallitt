@@ -88,7 +88,8 @@ export type IconName =
   | 'pdfRed'
   | 'chatQuote'
   | 'lightbulb'
-  | 'fileUp';
+  | 'fileUp'
+  | 'folderCheck';
 
 export type Tone =
   | 'green'
@@ -108,6 +109,7 @@ export type Tone =
   | 'clearGreen'
   | 'action'
   | 'tilePeach'
+  | 'approvedPill'
   | 'red'
   | 'brown'
   | 'blue'
@@ -225,11 +227,13 @@ export type Spaced = { top?: string; /** A token added below the block (may be n
 export type Block = Spaced & BlockBody;
 
 type BlockBody =
-  | { k: 'card'; tone?: 'white' | 'panel' | 'cream' | 'peach' | 'green' | 'outline' | 'payPeach' | 'decline' | 'tier' | 'halo' | 'banner'; /** Blocks indented to the head's text column (379); a token name for another indent (382). */ indent?: boolean | string; /** A hairline round it (381's payment status). */ outline?: boolean; head?: Head; blocks: Block[]; /** Token for its padding. */ pad?: string }
+  | { k: 'card'; tone?: 'white' | 'panel' | 'cream' | 'peach' | 'green' | 'outline' | 'payPeach' | 'decline' | 'tier' | 'halo' | 'banner' | 'tileGrey'; /** A brown bar down the left edge (383). */ bar?: boolean; /** Blocks indented to the head's text column (379); a token name for another indent (382). */ indent?: boolean | string; /** A hairline round it (381's payment status). */ outline?: boolean; head?: Head; blocks: Block[]; /** Token for its padding. */ pad?: string }
   | {
       k: 'hero';
       icon: IconName;
-      tone: 'green' | 'deepGreen' | 'mint' | 'halo' | 'sent' | 'peach' | 'red' | 'grey';
+      tone: 'green' | 'deepGreen' | 'mint' | 'halo' | 'sent' | 'approved' | 'peach' | 'red' | 'grey';
+      /** A small peach badge with an icon at the disc's top right (383). */
+      badgeIcon?: IconName;
       /** A pill above the disc (381). */
       topPill?: Pill;
       pill?: Pill;
@@ -245,7 +249,7 @@ type BlockBody =
     }
   | { k: 'lead'; pill?: Pill; /** Text straight after the pill (377's Step 5 of 10). */ pillNote?: string; right?: Right; title?: string; text?: string }
   | { k: 'label'; text: string; right?: Right; pills?: Pill[]; icon?: IconName; /** The large ink caps of 374's section titles. */ strong?: boolean; /** A sentence-case section title (376). */ title?: boolean; /** A green dot before it (364). */ dot?: boolean; /** Inset from the gutter (364's MATTER BRIEFING). */ inset?: boolean }
-  | { k: 'text'; t?: string; parts?: { t: string; bold?: boolean; muted?: boolean }[]; /** A pill after the text (371's Civil). */ pill?: Pill; /** Token for its type size. */ size?: string; /** Token for its icon size. */ iconSize?: string; iconGreen?: boolean; tone?: 'body' | 'muted' | 'small' | 'smallStrong' | 'quote' | 'center' | 'strong' | 'green' | 'title' | 'label' | 'note'; icon?: IconName }
+  | { k: 'text'; t?: string; parts?: { t: string; bold?: boolean; muted?: boolean }[]; /** A pill after the text (371's Civil). */ pill?: Pill; /** Token for its type size. */ size?: string; /** Token for its icon size. */ iconSize?: string; iconGreen?: boolean; tone?: 'body' | 'muted' | 'small' | 'smallStrong' | 'kicker' | 'quote' | 'center' | 'strong' | 'green' | 'title' | 'label' | 'note'; icon?: IconName }
   | { k: 'rows'; rows: [string, string, ('mono' | 'monoBrown' | 'bold' | 'green' | 'quote')?][]; divided?: boolean }
   | {
       k: 'grid';
@@ -361,7 +365,7 @@ type BlockBody =
   | { k: 'check'; title: string; sub?: string; checked: boolean; blocks?: Block[]; /** Tapping it toggles the screen's gate (375). */ gate?: boolean }
   | { k: 'bars'; steps: { label: string; state: 'done' | 'current' | 'todo' | 'bad'; sub?: string }[]; variant?: 'bars' | 'discs' | 'tiles' | 'chips' }
   | { k: 'numbered'; items: string[] }
-  | { k: 'banner'; icon?: IconName; title?: string; text: string; /** A brown dot at the right (373). */ dot?: boolean; center?: boolean; titleBrown?: boolean; parts?: { t: string; bold?: boolean }[]; tone: 'grey' | 'cream' | 'green' | 'white' | 'none' | 'red' }
+  | { k: 'banner'; icon?: IconName; title?: string; text: string; /** A brown dot at the right (373). */ dot?: boolean; center?: boolean; titleBrown?: boolean; strongText?: boolean; parts?: { t: string; bold?: boolean }[]; tone: 'grey' | 'cream' | 'green' | 'white' | 'none' | 'red' | 'help' }
   | { k: 'pills'; items: Pill[]; /** Bordered chips (377's documents). */ outline?: boolean }
   | { k: 'progress'; value: number }
   | { k: 'noteRow'; icon: IconName; t: string; btn: string }
@@ -398,6 +402,7 @@ type BlockBody =
       bare?: boolean;
     }
   | { k: 'chip'; t: string }
+  | { k: 'richRows'; rows: { label: string; value: string; pill?: Pill; sub?: string; icon?: IconName; big?: boolean }[] }
   | { k: 'stages'; items: { label: string; state: 'todo' | 'current' | 'tick' }[] }
   | { k: 'metaRow'; items: { icon: IconName; parts: { t: string; bold?: boolean }[] }[] }
   | { k: 'empty'; icon: IconName; title: string; text: string; btn?: string }

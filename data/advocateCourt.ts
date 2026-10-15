@@ -1,6 +1,6 @@
 import type { Href } from 'expo-router';
 
-import type { CourtSpec } from '../components/court/types';
+import type { Block, CourtSpec } from '../components/court/types';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ADVOCATE HIGH COURT / DISTRICT COURT — designs 362–396, the advocate side of
@@ -1780,3 +1780,57 @@ export const COURT_PRE_FILING: CourtSpec = {
   footerStack: true,
   footerLinks: [{ icon: 'lock', t: 'Legalitt Handover Protocol • Client approval required before court filing • No automated filing' }],
 };
+
+// ── design/383 — client approved (a sheet over 382) ──────────────────────────
+// Continue opens Court Filing (378) — navigation only, nothing is filed;
+// Close and the scrim go back. ⚠ No drawn control leads here (382's Send
+// Revised Documents is unscoped).
+// ⚠ CONFLICT — 383's dimmed background is NOT 382: it shows "SUIT FOR
+// RECOVERY", "Commercial Division • Court Room 4B" and "Client Sign-Off
+// Completed", a screen drawn nowhere in the batch. The sheet is shown over
+// 382, the one pre-filing review that is drawn.
+// ⚠ CONFLICT 17 — approved 07 Oct 2026, two days after 373's 5 October decline.
+// ⚠ (?) "3 Documents Approved: Petition, Affidavit, Su…" is clipped; completed
+// from 382's third document, Supporting Papers.
+export const COURT_CLIENT_APPROVED: Block[] = [
+  { k: 'hero', icon: 'check', tone: 'approved', badgeIcon: 'shieldCheck', title: 'Client Approved', sub: 'The client has approved the final documents.' },
+  {
+    k: 'card',
+    tone: 'panel',
+    pad: 'panelPadSheet',
+    top: 'sheetPanelTop',
+    blocks: [
+      {
+        k: 'richRows',
+        rows: [
+          { label: 'Client', value: CASE.client, pill: { pill: 'Verified', tone: 'approvedPill', icon: 'check' } },
+          { label: 'Case', value: CASE.title, sub: `Civil • ${CASE.dc}` },
+          { label: 'Approved on', value: '07 Oct 2026, 02:15 PM', icon: 'clock', big: true },
+        ],
+      },
+      {
+        k: 'banner',
+        icon: 'folderCheck',
+        tone: 'white',
+        parts: [{ t: '3 Documents Approved: Petition, Affidavit, Supporting Papers', bold: true }],
+        text: '',
+        top: 'docsRowTop',
+      },
+    ],
+  },
+  {
+    k: 'card',
+    tone: 'tileGrey',
+    bar: true,
+    pad: 'nextPad',
+    top: 'nextTop',
+    blocks: [
+      { k: 'text', parts: [{ t: 'NEXT STEP', bold: true }, { t: '  •  Offline Filing' }], tone: 'kicker' },
+      { k: 'text', t: 'Proceed with the actual court filing.', tone: 'strong', size: 'nextTitleSize', top: 'nextTitleTop' },
+      { k: 'text', t: 'Court filing is completed offline. After filing, update the filing details in Legalitt.', tone: 'small', top: 'nextTextTop' },
+      { k: 'banner', icon: 'gavel', tone: 'help', text: 'Manual Court Filing Required • Case is not filed automatically', strongText: true, top: 'nextInnerTop' },
+    ],
+  },
+  { k: 'button', btn: { label: 'Continue', iconRight: 'arrowRight', to: R('court-filing') }, top: 'continueTop' },
+  { k: 'button', btn: { label: 'Close', variant: 'link', back: true }, top: 'closeTop' },
+];

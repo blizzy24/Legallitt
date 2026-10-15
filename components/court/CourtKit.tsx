@@ -34,6 +34,7 @@ import {
   MessageSquareQuote,
   Lightbulb,
   FileUp,
+  FolderCheck,
   Gavel,
   Headset,
   History,
@@ -224,6 +225,7 @@ const ICONS: Record<IconName, LucideIcon> = {
   chatQuote: MessageSquareQuote,
   lightbulb: Lightbulb,
   fileUp: FileUp,
+  folderCheck: FolderCheck,
 };
 
 export function Icon({ name, size, color, sw = 2 }: { name: IconName; size: number; color: string; sw?: number }) {
@@ -249,6 +251,7 @@ const TONES: Record<Tone, { bg: string; fg: string }> = {
   clearGreen: { bg: 'transparent', fg: c.greenInk },
   action: { bg: q.actionPill, fg: c.reqDark },
   tilePeach: { bg: dcDocumentsPalette.tilePeach, fg: c.brownInk },
+  approvedPill: { bg: q.approvedPill, fg: c.greenInk },
   red: { bg: status.redContainer, fg: status.onRedContainer },
   brown: { bg: c.brown, fg: ink.onBrand },
   blue: { bg: c.blueTile, fg: c.blueInk },
@@ -619,11 +622,21 @@ export function BlockView({ b }: { b: Block }): ReactNode {
                       ? dcDocsNeededPalette.halo
                       : b.tone === 'banner'
                         ? courierReceived.bannerBg
+                        : b.tone === 'tileGrey'
+                          ? c.tileGrey
                     : b.tone === 'tier'
                       ? dcPricingPalette.tierOn
                       : c.card;
       return (
-        <View style={[s.card, { backgroundColor: bg }, (b.tone === 'outline' || b.outline) && s.outline, b.pad !== undefined && { padding: t[b.pad] }]}>
+        <View
+          style={[
+            s.card,
+            { backgroundColor: bg },
+            (b.tone === 'outline' || b.outline) && s.outline,
+            b.pad !== undefined && { padding: t[b.pad] },
+            b.bar && s.cardBar,
+          ]}
+        >
           {b.head ? <HeadRow h={b.head} /> : null}
           {b.blocks.map((x, i) => (
             <View
@@ -650,6 +663,8 @@ export function BlockView({ b }: { b: Block }): ReactNode {
               ? q.haloSoft
               : b.tone === 'sent'
                 ? q.sentHalo
+                : b.tone === 'approved'
+                  ? c.greenSoft
             : b.tone === 'deepGreen'
             ? q.heroHalo
             : b.tone === 'red'
@@ -660,7 +675,7 @@ export function BlockView({ b }: { b: Block }): ReactNode {
       const core: string =
         b.tone === 'green' || b.tone === 'halo'
           ? status.active
-          : b.tone === 'mint' || b.tone === 'deepGreen' || b.tone === 'sent'
+          : b.tone === 'mint' || b.tone === 'deepGreen' || b.tone === 'sent' || b.tone === 'approved'
             ? c.greenInk
             : b.tone === 'red'
               ? advForensicRed.declineColour
@@ -683,6 +698,11 @@ export function BlockView({ b }: { b: Block }): ReactNode {
               </View>
             )}
             {b.badge ? <View style={s.heroBadge} /> : null}
+            {b.badgeIcon ? (
+              <View style={s.heroBadgeIcon}>
+                <Icon name={b.badgeIcon} size={t.heroBadgeGlyph} color={advWalletPalette.tileInk} />
+              </View>
+            ) : null}
           </View>
           {b.pill && !b.pillBelow ? (
             <View style={s.heroPill}>
@@ -758,6 +778,7 @@ export function BlockView({ b }: { b: Block }): ReactNode {
               b.tone === 'label' && s.labelText,
               b.tone === 'note' && s.noteText,
               b.tone === 'smallStrong' && s.smallStrong,
+              b.tone === 'kicker' && s.kickerText,
               b.size !== undefined && { fontSize: t[b.size], lineHeight: t[b.size + 'Line'] },
             ]}
           >
@@ -1122,7 +1143,7 @@ export function BlockView({ b }: { b: Block }): ReactNode {
         </View>
       );
     case 'banner': {
-      const bg: string = b.tone === 'grey' ? c.panel : b.tone === 'cream' ? c.peachSoft : b.tone === 'green' ? c.greenSoft : b.tone === 'white' ? dcDocsNeededPalette.physPanel : b.tone === 'red' ? status.redContainer : 'transparent';
+      const bg: string = b.tone === 'grey' ? c.panel : b.tone === 'cream' ? c.peachSoft : b.tone === 'green' ? c.greenSoft : b.tone === 'white' ? dcDocsNeededPalette.physPanel : b.tone === 'help' ? c.helpGrey : b.tone === 'red' ? status.redContainer : 'transparent';
       return (
         <View style={[s.row, s.top, s.banner, { backgroundColor: bg }, b.tone === 'none' && s.bannerBare, b.center && s.bannerCenter]}>
           {b.icon ? <Icon name={b.icon} size={t.bannerIcon} color={b.tone === 'green' ? c.greenInk : b.tone === 'red' ? status.onRedContainer : c.inkWarm} /> : null}
@@ -1141,7 +1162,7 @@ export function BlockView({ b }: { b: Block }): ReactNode {
                 )}
               </Text>
             ) : (
-              <Text style={[s.bannerText, b.tone === 'red' && { color: status.onRedContainer }]}>{b.text}</Text>
+              <Text style={[s.bannerText, b.tone === 'red' && { color: status.onRedContainer }, b.strongText && s.bannerStrong]}>{b.text}</Text>
             )}
           </View>
           {b.dot ? <View style={[s.labelDot, s.bannerDot]} /> : null}
@@ -1292,6 +1313,24 @@ export function BlockView({ b }: { b: Block }): ReactNode {
               <Text style={s.emptyBtnText}>{b.btn}</Text>
             </View>
           ) : null}
+        </View>
+      );
+    case 'richRows':
+      return (
+        <View style={s.richRows}>
+          {b.rows.map((r) => (
+            <View key={r.label} style={s.between}>
+              <Text style={s.richLabel}>{r.label}</Text>
+              <View style={s.richRight}>
+                <View style={s.row}>
+                  {r.icon ? <Icon name={r.icon} size={t.richIcon} color={c.inkWarm} /> : null}
+                  <Text style={[s.richValue, r.big && s.richBig]}>{r.value}</Text>
+                  {r.pill ? <PillTag p={r.pill} /> : null}
+                </View>
+                {r.sub ? <Text style={s.richSub}>{r.sub}</Text> : null}
+              </View>
+            </View>
+          ))}
         </View>
       );
     case 'stages':
@@ -1599,6 +1638,40 @@ function ScreenBody({ spec, state, onState, overlay }: ScreenProps) {
   );
 }
 
+/**
+ * A bottom sheet drawn over a screen (383): the batch's scrim (lighter over the
+ * header, as drawn), a grab handle, a close disc, and its own blocks.
+ */
+export function CourtSheet({ blocks, tokens, onClose }: { blocks: Block[]; tokens?: Readonly<Record<string, number>>; onClose: () => void }) {
+  return (
+    <CourtTokensProvider tokens={tokens}>
+      <SheetBody blocks={blocks} onClose={onClose} />
+    </CourtTokensProvider>
+  );
+}
+
+function SheetBody({ blocks, onClose }: { blocks: Block[]; onClose: () => void }) {
+  const { t, s } = useK();
+  const insets = useSafeAreaInsets();
+  return (
+    <View style={StyleSheet.absoluteFill}>
+      <View style={[s.sheetScrimHeader, { height: insets.top + t.sheetHeaderH }]} />
+      <Pressable accessibilityRole="button" accessibilityLabel="Close" onPress={onClose} style={[s.flex, s.sheetScrim]} />
+      <View style={[s.sheet, { paddingBottom: insets.bottom + t.sheetPadBottom }]}>
+        <View style={s.sheetGrab} />
+        <Pressable accessibilityRole="button" accessibilityLabel="Close" onPress={onClose} style={s.sheetClose}>
+          <X size={t.sheetCloseIcon} color={c.inkWarm} strokeWidth={2} />
+        </Pressable>
+        {blocks.map((b, i) => (
+          <View key={i} style={{ marginTop: i > 0 ? (t[b.top ?? 'gap'] ?? t.gap) : t.sheetFirstTop, marginBottom: b.bottom ? t[b.bottom] : 0 }}>
+            <BlockView b={b} />
+          </View>
+        ))}
+      </View>
+    </View>
+  );
+}
+
 /** A screen with a drawn two-state switcher; each state is its own spec. */
 export function SwitchedCourtScreen({
   specs,
@@ -1632,6 +1705,7 @@ function makeStyles(t: CourtTokens) {
   strong: { fontFamily: font.appSemi, color: c.ink },
 
   card: { borderRadius: t.cardRadius, padding: t.cardPad },
+  cardBar: { borderLeftWidth: t.cardBarW, borderLeftColor: c.brown, borderTopLeftRadius: t.cardBarRadius, borderBottomLeftRadius: t.cardBarRadius },
   outline: { borderWidth: 1, borderColor: c.rail },
   headTile: {
     width: t.headTile,
@@ -1721,6 +1795,7 @@ function makeStyles(t: CourtTokens) {
   footerLinkGreen: { color: c.ink },
   footerLink: { flexDirection: 'row', alignItems: 'center', gap: t.pillGap, flexShrink: 1 },
   footerLinkText: { flexShrink: 1, fontFamily: font.appSemi, fontSize: t.footerLinkSize, lineHeight: t.footerLinkLine, color: c.inkWarm },
+  bannerStrong: { fontFamily: font.appSemi },
   bannerCenter: { justifyContent: 'center', alignItems: 'center' },
   bannerDot: { backgroundColor: c.brown, alignSelf: 'center' },
   contact: { borderRadius: t.panelRadius, paddingHorizontal: t.panelPad, minHeight: t.contactH, backgroundColor: c.panel },
@@ -1738,6 +1813,12 @@ function makeStyles(t: CourtTokens) {
   emptyText: { marginTop: t.emptyTextTop, maxWidth: t.emptyTextMax, fontFamily: font.appBody, fontSize: t.emptyTextSize, lineHeight: t.emptyTextLine, color: c.inkWarm, textAlign: 'center' },
   emptyBtn: { marginTop: t.emptyBtnTop, minHeight: t.emptyBtnH, borderRadius: t.emptyBtnRadius, paddingHorizontal: t.emptyBtnPadX, backgroundColor: c.helpGrey, justifyContent: 'center' },
   emptyBtnText: { fontFamily: font.appSemi, fontSize: t.emptyBtnSize, color: c.ink },
+  richRows: { gap: t.richGap },
+  richLabel: { fontFamily: font.appBody, fontSize: t.richLabelSize, color: c.inkWarm, paddingTop: t.richLabelTop },
+  richRight: { flexShrink: 1, alignItems: 'flex-end' },
+  richValue: { flexShrink: 1, fontFamily: font.appSemi, fontSize: t.richValueSize, color: c.ink, textAlign: 'right' },
+  richBig: { fontSize: t.richBigSize },
+  richSub: { marginTop: t.richSubTop, fontFamily: font.appBody, fontSize: t.richSubSize, color: c.inkWarm, textAlign: 'right' },
   stages: { flexDirection: 'row', flexWrap: 'wrap', gap: t.stageGap },
   stage: { flexBasis: '45%', flexGrow: 1, minHeight: t.stageH, borderRadius: t.stageRadius, paddingHorizontal: t.stagePadX, backgroundColor: c.page, flexDirection: 'row', alignItems: 'center', gap: t.pillGap },
   stageOn: { backgroundColor: advWalletPalette.tile },
@@ -1787,6 +1868,7 @@ function makeStyles(t: CourtTokens) {
   discDotLight: { backgroundColor: q.todoDot },
   accentTitle: { color: c.greenInk },
   partMuted: { color: c.inkMuted },
+  kickerText: { fontFamily: font.appBody, fontSize: t.capsSize, letterSpacing: t.capsSpacing, color: c.brownInk },
   smallStrong: { fontFamily: font.appSemi, fontSize: t.smallSize, lineHeight: t.smallLine, color: c.inkWarm },
   noteText: { fontFamily: font.appBody, fontStyle: 'italic', fontSize: t.noteSize, lineHeight: t.noteLine, color: c.inkWarm, textAlign: 'center' },
   labelText: { fontSize: t.labelTextSize, lineHeight: t.labelTextLine },
@@ -1828,6 +1910,17 @@ function makeStyles(t: CourtTokens) {
   heroDisc: { width: t.heroDisc, height: t.heroDisc, borderRadius: t.heroDisc / 2, alignItems: 'center', justifyContent: 'center' },
   heroCore: { width: t.heroDiscInner, height: t.heroDiscInner, borderRadius: t.heroDiscInner / 2, alignItems: 'center', justifyContent: 'center' },
   heroPill: { marginTop: t.heroPillTop },
+  heroBadgeIcon: {
+    position: 'absolute',
+    top: t.heroBadgeIconTop,
+    right: t.heroBadgeIconRight,
+    width: t.heroBadgeIconSize,
+    height: t.heroBadgeIconSize,
+    borderRadius: t.heroBadgeIconSize / 2,
+    backgroundColor: advWalletPalette.tile,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   heroTopPill: { marginBottom: t.heroTopPillGap },
   heroPillBelow: { marginTop: t.heroPillBelowTop },
   heroTitle: { marginTop: t.heroTitleTop, fontFamily: font.appSemi, fontSize: t.heroTitleSize, color: c.ink, textAlign: 'center' },
@@ -2046,6 +2139,11 @@ function makeStyles(t: CourtTokens) {
     borderTopWidth: 1,
     borderTopColor: c.rail,
   },
+  sheetScrimHeader: { backgroundColor: q.scrimHeader },
+  sheetScrim: { backgroundColor: q.scrim },
+  sheet: { position: 'absolute', left: 0, right: 0, bottom: 0, borderTopLeftRadius: t.sheetRadius, borderTopRightRadius: t.sheetRadius, backgroundColor: c.card, paddingHorizontal: t.sheetPadX, paddingTop: t.sheetPadTop },
+  sheetGrab: { alignSelf: 'center', width: t.sheetGrabW, height: t.sheetGrabH, borderRadius: t.sheetGrabH / 2, backgroundColor: c.rail },
+  sheetClose: { position: 'absolute', top: t.sheetCloseTop, right: t.sheetCloseRight, width: t.sheetClose, height: t.sheetClose, borderRadius: t.sheetClose / 2, backgroundColor: c.panel, alignItems: 'center', justifyContent: 'center' },
   footer: {
     position: 'absolute',
     left: 0,
