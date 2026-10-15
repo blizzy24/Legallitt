@@ -468,7 +468,7 @@ export function Button({ b, flex, footer, pill }: { b: Btn; flex?: boolean; foot
   const primary = v === 'primary' || v === 'green' || v === 'disabled' || v === 'muted' || b.gated === true;
   const own = BUTTON_TARGETS[path]?.[b.label];
   const demoTo =
-    DEMO_AUTO_ADVANCE && b.back !== true && (own !== undefined || ((b.to === undefined || !open) && primary))
+    DEMO_AUTO_ADVANCE && (own !== undefined || (b.back !== true && (b.to === undefined || !open) && primary))
       ? (own ?? b.to ?? nextRoute(path, b.label))
       : undefined;
   const nav = demoTo !== undefined || (open && (b.to !== undefined || b.back === true));
@@ -493,7 +493,7 @@ export function Button({ b, flex, footer, pill }: { b: Btn; flex?: boolean; foot
       accessibilityRole="button"
       aria-disabled={(demoTo === undefined && (v === 'disabled' || v === 'muted')) || undefined}
       disabled={demoTo === undefined && (v === 'disabled' || v === 'muted')}
-      onPress={nav ? () => go(demoTo !== undefined ? { ...b, to: demoTo as Href } : b, svc) : undefined}
+      onPress={nav ? () => go(demoTo !== undefined ? { ...b, back: false, to: demoTo as Href } : b, svc) : undefined}
       style={style}
     >
       {b.icon ? <Icon name={b.icon} size={t.btnIcon} color={fg} /> : null}

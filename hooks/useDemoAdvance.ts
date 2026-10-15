@@ -1,5 +1,5 @@
-import { router, useLocalSearchParams, usePathname, type Href } from 'expo-router';
-import { useCallback, useEffect } from 'react';
+import { router, useFocusEffect, useLocalSearchParams, usePathname, type Href } from 'expo-router';
+import { useCallback } from 'react';
 
 import { DEMO_AUTO_ADVANCE } from '../constants/dev';
 import { nextRoute } from '../data/flowMap';
@@ -35,9 +35,13 @@ export function useDemoAdvance() {
  */
 export function useDemoWait(waiting = true, then?: () => void) {
   const { advance } = useDemoAdvance();
-  useEffect(() => {
-    if (!DEMO_AUTO_ADVANCE || !waiting) return;
-    const id = setTimeout(() => (then ? then() : advance()), DEMO_WAIT_MS);
-    return () => clearTimeout(id);
-  }, [waiting, advance, then]);
+  // Focus, not mount: expo-router keeps earlier screens mounted, and their
+  // timers must not fire once another screen is on top.
+  useFocusEffect(
+    useCallback(() => {
+      if (!DEMO_AUTO_ADVANCE || !waiting) return;
+      const id = setTimeout(() => (then ? then() : advance()), DEMO_WAIT_MS);
+      return () => clearTimeout(id);
+    }, [waiting, advance, then]),
+  );
 }

@@ -56,7 +56,7 @@ export default function AdvocateCourtChatScreen() {
             </View>
           </View>
           {/* ⚠ UNSCOPED — no call is placed. DEMO: opens the call screen (369). */}
-          <Pressable accessibilityRole="button" disabled={!DEMO_AUTO_ADVANCE} onPress={() => router.push('/advocate/court/call' as Href)}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Call" disabled={!DEMO_AUTO_ADVANCE} onPress={() => advance('Call Client')}>
             <Phone size={t.phoneIcon} color={h.ink} strokeWidth={1.9} style={styles.phone} />
           </Pressable>
           <View style={styles.me}>

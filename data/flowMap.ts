@@ -357,6 +357,12 @@ export const FLOW_MAP: Record<string, string> = {
 export const BUTTON_TARGETS: Record<string, Record<string, string>> = {
   // design/364 (HC and DC): Chat with Client opens 365, Call Client 369.
   '/advocate/court/ai-summary': { 'Chat with Client': '/advocate/court/chat', 'Call Client': '/advocate/court/call' },
+  // design/365: the header phone opens the call (369).
+  '/advocate/court/chat': { 'Call Client': '/advocate/court/call' },
+  // design/381: Back to Case would return to 380; the flow goes on to 382.
+  '/advocate/court/court-fee/sent': { 'Back to Case': '/advocate/court/pre-filing-review' },
+  // design/392: the change-advocate branch (393–395) runs before the dashboard.
+  '/advocate/court/hearing/next': { 'Save Next Hearing': '/advocate/court/change-advocate' },
   // design/383: Close returns to the review it sits over.
   '/advocate/court/client-approved': { Close: '/advocate/court/court-filing' },
 };
