@@ -77,7 +77,8 @@ export type IconName =
   | 'calendarCheck'
   | 'badgeCheck'
   | 'scroll'
-  | 'inbox';
+  | 'inbox'
+  | 'paperclip';
 
 export type Tone =
   | 'green'
@@ -139,8 +140,8 @@ export type Head = {
   icon?: IconName;
   /** true: grey square tile; 'peach': peach square tile (364); 'disc': peach round disc (364's Next Step). */
   tile?: boolean | 'peach' | 'disc' | 'brown' | 'red';
-  /** A red caps title (373). */
-  tone?: 'red';
+  /** A red caps title (373); a brown one (378). */
+  tone?: 'red' | 'brown';
   /** The smaller caps of a nested panel (373's CLIENT NOTE). */
   small?: boolean;
   /** A pill above the title (371's RECOMMENDED NEXT STEP). */
@@ -164,12 +165,16 @@ export type Step = {
   title: string;
   sub?: string;
   /** accent: the green current step of 371. next: a grey disc with a brown dot, normal text (372). */
-  state: 'done' | 'current' | 'active' | 'accent' | 'next' | 'todo';
+  state: 'done' | 'current' | 'active' | 'accent' | 'next' | 'ring' | 'wait' | 'todo';
   right?: Right;
   /** Sub-line in green (378, 384 draw "Completed" green; 371 draws it grey). */
   subGreen?: boolean;
   /** A pill straight after the title (377's Current). */
   tag?: Pill;
+  /** The sub-line in brown (378's current step). */
+  subBrown?: boolean;
+  /** A grey title (378's later steps). */
+  muted?: boolean;
 };
 
 /**
@@ -201,7 +206,7 @@ type BlockBody =
   | { k: 'lead'; pill?: Pill; /** Text straight after the pill (377's Step 5 of 10). */ pillNote?: string; right?: Right; title?: string; text?: string }
   | { k: 'label'; text: string; right?: Right; pills?: Pill[]; /** The large ink caps of 374's section titles. */ strong?: boolean; /** A sentence-case section title (376). */ title?: boolean; /** A green dot before it (364). */ dot?: boolean; /** Inset from the gutter (364's MATTER BRIEFING). */ inset?: boolean }
   | { k: 'text'; t?: string; parts?: { t: string; bold?: boolean; muted?: boolean }[]; /** A pill after the text (371's Civil). */ pill?: Pill; /** Token for its type size. */ size?: string; /** Token for its icon size. */ iconSize?: string; tone?: 'body' | 'muted' | 'small' | 'quote' | 'center' | 'strong' | 'green' | 'title' | 'label'; icon?: IconName }
-  | { k: 'rows'; rows: [string, string, ('mono' | 'bold' | 'green' | 'quote')?][]; divided?: boolean }
+  | { k: 'rows'; rows: [string, string, ('mono' | 'monoBrown' | 'bold' | 'green' | 'quote')?][]; divided?: boolean }
   | {
       k: 'grid';
       cells: { label: string; value: string; sub?: string; tone?: 'green' | 'mono' | 'muted'; wide?: boolean; icon?: IconName; sideIcon?: IconName; iconRight?: IconName; /** tileGrey, not panel (376). */ shade?: boolean; /** A white disc with an icon at the right (376). */ iconDisc?: IconName }[];
@@ -245,6 +250,8 @@ type BlockBody =
       deep?: boolean;
       /** Pale green done discs on a green rail, a brown current disc (377). */
       light?: boolean;
+      /** Discs level with the title, not centred on title + sub (378). */
+      discTop?: boolean;
     }
   | {
       k: 'docs';
@@ -254,6 +261,8 @@ type BlockBody =
       /** Each a white card with a grey square icon tile (376). */
       cards?: boolean;
       tiles?: boolean;
+      /** The View buttons in helpGrey (378). */
+      btnTone?: 'help';
       /** The framed-PDF glyph with no tile behind it (363), and grey "View" pills. */
       pdf?: boolean;
     }
@@ -321,6 +330,7 @@ type BlockBody =
       bare?: boolean;
     }
   | { k: 'chip'; t: string }
+  | { k: 'empty'; icon: IconName; title: string; text: string; btn?: string }
   | { k: 'contact'; icon: IconName; t: string; btn?: string }
   | { k: 'iconRows'; rows: { icon: IconName; t: string; bold?: boolean }[] }
   | { k: 'footRow'; icon?: IconName; t: string; right?: Right }
@@ -344,6 +354,8 @@ export type CourtSpec = {
   footerStack?: boolean;
   /** A line under the footer's button (374). */
   footerNote?: string;
+  /** A second, quieter line under footerNote (378). */
+  footerNote2?: string;
   /** Two short lines under the footer's button (375). */
   footerLinks?: { icon?: IconName; t: string; tone?: 'red' }[];
   /** A plain chevron in place of the back arrow (372). */

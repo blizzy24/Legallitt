@@ -1155,3 +1155,137 @@ export const COURT_PREPARATION: CourtSpec = {
   footer: [{ label: 'Continue', variant: 'disabled' }],
   footerNote: 'Complete all preparation tasks first.',
 };
+
+// ── design/378 — court filing ────────────────────────────────────────────────
+// ⚠ No drawn control leads here: 377's Continue is drawn disabled. Reached
+// from Continue on 383 (Client Approved).
+// ⚠ UNSCOPED — Mark as Filed (both), the document View buttons, Complete
+// Filing First. Nothing is filed.
+// ⚠ CONFLICT 15 — "Continue to Hearing Update (Available after hearing)" here,
+// "Add First Hearing" on 384: two routes into the hearing step.
+// ⚠ CONFLICT 4 — the case number WP/2026/09876 already exists while the
+// filing is "Not Filed Yet".
+export const COURT_FILING: CourtSpec = {
+  title: 'Court Filing',
+  sub: CASE.hcRep,
+  headerRight: { pill: CASE.hcr, tone: 'help' },
+  blocks: [
+    {
+      k: 'card',
+      head: { title: 'Court Filing Status', right: { pill: 'Not Filed Yet', tone: 'peach' } },
+      blocks: [
+        { k: 'text', t: 'Add the filing details after you submit the case in court.', size: 'statusTextSize', top: 'statusTextTop' },
+        { k: 'button', btn: { label: 'Mark as Filed', icon: 'listChecks' }, top: 'markTop' },
+      ],
+    },
+    {
+      k: 'card',
+      head: { title: 'CASE DETAILS', caps: true, right: { pill: 'Civil', tone: 'help' } },
+      blocks: [
+        {
+          k: 'rows',
+          top: 'rowsTop',
+          bottom: 'rowsBottom',
+          rows: [
+            ['Client', CASE.client],
+            ['Case Title', CASE.title],
+            ['Court', CASE.court],
+            ['Bench', CASE.bench],
+            ['Case Number', CASE.caseNo, 'monoBrown'],
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      head: { title: 'Filing Details', size: 'bigHeadSize', right: { pill: 'Not Filed Yet', tone: 'peach' } },
+      blocks: [
+        {
+          k: 'grid',
+          boxed: 'panel',
+          top: 'filingGridTop',
+          cells: [
+            { label: 'Filing Date', value: 'Not Added' },
+            { label: 'Filing Number', value: 'Not Added' },
+          ],
+        },
+        { k: 'rows', top: 'caseNoTop', rows: [['Case Number', CASE.caseNo, 'mono']] },
+        { k: 'footRow', icon: 'info', t: 'Filing status awaiting advocate submission.', top: 'awaitTop', bottom: 'awaitBottom' },
+      ],
+    },
+    {
+      k: 'card',
+      head: { title: 'Filed Documents', size: 'bigHeadSize', right: '3 verified submissions' },
+      blocks: [
+        {
+          k: 'docs',
+          tiles: true,
+          btnTone: 'help',
+          top: 'filedTop',
+          items: [
+            { name: 'Petition.pdf', meta: '32 pages • PDF', icon: 'file', btn: 'View' },
+            { name: 'Affidavit.pdf', meta: '8 pages • PDF', icon: 'shield', btn: 'View' },
+            { name: 'Supporting Papers.pdf', meta: '18 pages • PDF', icon: 'paperclip', btn: 'View' },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      head: { icon: 'gavel', title: 'First Hearing', size: 'bigHeadSize', right: { pill: 'Locked', tone: 'help' } },
+      blocks: [
+        {
+          k: 'empty',
+          icon: 'lock',
+          title: 'Hearing date locked',
+          text: 'First file the case in court before adding a hearing date.',
+          btn: 'Complete Filing First',
+          top: 'emptyTop',
+        },
+      ],
+    },
+    {
+      k: 'card',
+      tone: 'tier',
+      top: 'whatTop',
+      head: { icon: 'info', title: 'What happens next?', tone: 'brown', size: 'whatSize' },
+      blocks: [
+        {
+          k: 'numbered',
+          top: 'numTop',
+          items: [
+            'After you add the filing details, the court filing step is marked complete.',
+            'Once the court provides your first hearing date, add it here to update tracking.',
+            'The client will see case tracking update automatically in their app.',
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      head: { title: 'Case Progress', size: 'bigHeadSize' },
+      blocks: [
+        {
+          k: 'timeline',
+          deep: true,
+          discTop: true,
+          top: 'stepsTop',
+          steps: [
+            { title: 'Documents Received', sub: 'Completed', state: 'done', subGreen: true },
+            { title: 'Client Accepted', sub: 'Completed', state: 'done', subGreen: true },
+            { title: 'Case Preparation', sub: 'Completed', state: 'done', subGreen: true },
+            { title: 'Court Filing', sub: 'Current step • Awaiting submission', state: 'ring', subBrown: true },
+            { title: 'First Hearing Scheduled', sub: 'Waiting for filing confirmation', state: 'wait' },
+            { title: 'First Hearing', sub: 'Waiting', state: 'wait', muted: true },
+            { title: 'Hearing Update', sub: 'Waiting', state: 'wait', muted: true },
+            { title: 'Next Hearing', sub: 'Waiting', state: 'wait', muted: true },
+            { title: 'Case Completed', sub: 'Waiting', state: 'wait', muted: true },
+          ],
+        },
+      ],
+    },
+  ],
+  footer: [{ label: 'Mark as Filed', icon: 'listChecks' }],
+  footerNote: 'Add the filing details after you submit the case in court.',
+  footerNote2: 'Continue to Hearing Update (Available after hearing)',
+};

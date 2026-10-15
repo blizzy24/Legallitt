@@ -43,6 +43,7 @@ import {
   MessageSquare,
   Mic,
   NotebookPen,
+  Paperclip,
   Pencil,
   Phone,
   Play,
@@ -85,6 +86,7 @@ import {
   advCourtPalette as q,
   advForensicRed,
   colors,
+  advWalletPalette,
   courierGreen,
   dcDecidePalette,
   dcDocsNeededPalette,
@@ -200,6 +202,7 @@ const ICONS: Record<IconName, LucideIcon> = {
   badgeCheck: BadgeCheck,
   scroll: ScrollIcon,
   inbox: Inbox,
+  paperclip: Paperclip,
 };
 
 export function Icon({ name, size, color, sw = 2 }: { name: IconName; size: number; color: string; sw?: number }) {
@@ -319,7 +322,7 @@ function HeadRow({ h }: { h: Head }) {
           ) : null}
           <View style={[s.row, s.wrap]}>
             {h.title ? (
-              <Text style={[h.caps ? s.caps : s.headTitle, h.small && s.capsSmall, h.tone === 'red' && s.red, h.size !== undefined && { fontSize: t[h.size] }]}>
+              <Text style={[h.caps ? s.caps : s.headTitle, h.small && s.capsSmall, h.tone === 'red' && s.red, h.tone === 'brown' && s.brownText, h.size !== undefined && { fontSize: t[h.size] }]}>
                 {h.title}
               </Text>
             ) : null}
@@ -422,6 +425,18 @@ function Disc({ state, deep, light }: { state: Step['state']; deep?: boolean; li
         <View style={[s.discDot, { backgroundColor: c.brownInk }]} />
       </View>
     );
+  if (state === 'ring')
+    return (
+      <View style={[s.disc, s.discRingBrown]}>
+        <View style={[s.discDot, { backgroundColor: c.brown }]} />
+      </View>
+    );
+  if (state === 'wait')
+    return (
+      <View style={[s.disc, s.discWait]}>
+        <View style={[s.discDot, s.discWaitDot]} />
+      </View>
+    );
   if (state === 'next')
     return (
       <View style={[s.disc, s.discTodo]}>
@@ -441,12 +456,14 @@ function Timeline({
   noRail,
   deep,
   light,
+  discTop,
 }: {
   steps: Step[];
   boxed?: boolean;
   noRail?: boolean;
   deep?: boolean;
   light?: boolean;
+  discTop?: boolean;
 }) {
   const { t, s } = useK();
   // Each row is padded by half the row gap above and below, so the disc centres
@@ -458,7 +475,14 @@ function Timeline({
         <View key={st.title} style={[s.step, boxed ? s.stepBoxed : s.stepRow]}>
           <View style={s.stepLeft}>
             {/* light (377): the rail is green between done steps. */}
-            <View style={[s.railHalf, light && i > 0 && steps[i - 1].state === 'done' && st.state === 'done' && s.railDone, (boxed || noRail || i === 0) && s.railHidden]} />
+            <View
+              style={[
+                s.railHalf,
+                discTop && s.railTop,
+                light && i > 0 && steps[i - 1].state === 'done' && st.state === 'done' && s.railDone,
+                (boxed || noRail || i === 0) && s.railHidden,
+              ]}
+            />
             <Disc state={st.state} deep={deep} light={light} />
             <View
               style={[
@@ -471,10 +495,22 @@ function Timeline({
           <View style={[s.flex, s.stepText, s.between]}>
             <View style={s.flex}>
               <View style={[s.row, s.wrap, s.stepTitleRow]}>
-                <Text style={[s.stepTitle, st.state === 'todo' && deep && s.muted, st.state === 'accent' && s.accentTitle]}>{st.title}</Text>
+                <Text style={[s.stepTitle, st.state === 'todo' && deep && s.muted, st.state === 'accent' && s.accentTitle, st.muted && s.stepMuted]}>{st.title}</Text>
                 {st.tag ? <PillTag p={st.tag} /> : null}
               </View>
-              {st.sub ? <Text style={[s.stepSub, st.subGreen && s.green, st.state === 'todo' && deep && s.mutedSub]}>{st.sub}</Text> : null}
+              {st.sub ? (
+                <Text
+                  style={[
+                    s.stepSub,
+                    st.subGreen && s.stepSubGreen,
+                    st.subBrown && s.stepSubBrown,
+                    st.state === 'todo' && deep && s.mutedSub,
+                    st.muted && s.stepSubMuted,
+                  ]}
+                >
+                  {st.sub}
+                </Text>
+              ) : null}
             </View>
             <RightPart r={st.right} />
           </View>
@@ -685,7 +721,7 @@ export function BlockView({ b }: { b: Block }): ReactNode {
           {b.rows.map(([l, v, m]) => (
             <View key={l} style={[s.between, s.kv, b.divided && s.divided]}>
               <Text style={s.kvLabel}>{l}</Text>
-              <Text style={[s.kvValue, m === 'mono' && s.mono, m === 'green' && s.green, m === 'quote' && s.quoteInline]}>{v}</Text>
+              <Text style={[s.kvValue, (m === 'mono' || m === 'monoBrown') && s.mono, m === 'monoBrown' && s.monoBrown, m === 'green' && s.green, m === 'quote' && s.quoteInline]}>{v}</Text>
             </View>
           ))}
         </View>
@@ -779,7 +815,7 @@ export function BlockView({ b }: { b: Block }): ReactNode {
         </View>
       );
     case 'timeline':
-      return <Timeline steps={b.steps} boxed={b.boxed} noRail={b.noRail} deep={b.deep} light={b.light} />;
+      return <Timeline steps={b.steps} boxed={b.boxed} noRail={b.noRail} deep={b.deep} light={b.light} discTop={b.discTop} />;
     case 'docs':
       return (
         <View style={s.docList}>
@@ -789,7 +825,7 @@ export function BlockView({ b }: { b: Block }): ReactNode {
                 {b.pdf ? (
                   <PdfStackIcon size={t.pdfIcon} color={advForensicRed.declineColour} />
                 ) : b.tiles ? (
-                  <View style={s.docSquare}>
+                  <View style={[s.docSquare, !b.cards && s.docSquarePanel]}>
                     <Icon name={d.icon ?? 'file'} size={t.docIcon} color={c.brownInk} />
                   </View>
                 ) : b.discs ? (
@@ -818,7 +854,7 @@ export function BlockView({ b }: { b: Block }): ReactNode {
                 )}
                 {/* ⚠ UNSCOPED — no document viewer. */}
                 {d.btn ? (
-                  <View style={[s.docBtn, b.pdf && s.docBtnGrey]}>
+                  <View style={[s.docBtn, b.pdf && s.docBtnGrey, b.btnTone === 'help' && s.docBtnHelp]}>
                     <Text style={s.docBtnText}>{d.btn}</Text>
                   </View>
                 ) : null}
@@ -1115,6 +1151,22 @@ export function BlockView({ b }: { b: Block }): ReactNode {
           </View>
         </View>
       );
+    case 'empty':
+      return (
+        <View style={s.empty}>
+          <View style={s.emptyDisc}>
+            <Icon name={b.icon} size={t.emptyIcon} color={c.inkWarm} />
+          </View>
+          <Text style={s.emptyTitle}>{b.title}</Text>
+          <Text style={s.emptyText}>{b.text}</Text>
+          {b.btn ? (
+            // ⚠ UNSCOPED — opens nothing.
+            <View style={s.emptyBtn}>
+              <Text style={s.emptyBtnText}>{b.btn}</Text>
+            </View>
+          ) : null}
+        </View>
+      );
     case 'chip':
       return (
         <View style={s.textChip}>
@@ -1364,6 +1416,7 @@ function ScreenBody({ spec, state, onState, overlay }: ScreenProps) {
             <Button key={x.label} b={x} flex={!spec.footerStack && !spec.footerNote && !spec.footerLinks} footer />
           ))}
           {spec.footerNote ? <Text style={s.footerNote}>{spec.footerNote}</Text> : null}
+          {spec.footerNote2 ? <Text style={[s.footerNote, s.footerNote2]}>{spec.footerNote2}</Text> : null}
           {spec.footerLinks ? (
             <View style={s.footerLinks}>
               {spec.footerLinks.map((l) => (
@@ -1434,6 +1487,7 @@ function makeStyles(t: CourtTokens) {
   linkChipText: { color: c.inkWarm },
   linkMuted: { color: c.inkWarm },
   linkGreen: { color: status.active },
+  brownText: { color: c.brownInk },
   labelInset: { paddingHorizontal: t.labelInset },
   labelDot: { width: t.labelDot, height: t.labelDot, borderRadius: t.labelDot / 2 },
   partBold: { fontFamily: font.appSemi, color: c.ink },
@@ -1472,6 +1526,8 @@ function makeStyles(t: CourtTokens) {
   docDisc: { width: t.docDisc, height: t.docDisc, borderRadius: t.docDisc / 2, backgroundColor: c.tileGrey, alignItems: 'center', justifyContent: 'center' },
   docRow: { minHeight: t.docRowH, justifyContent: 'center' },
   docCard: { backgroundColor: c.card, borderRadius: t.docCardRadius, paddingHorizontal: t.docCardPadX, paddingVertical: t.docCardPadY },
+  docSquarePanel: { backgroundColor: c.tileGrey },
+  docBtnHelp: { backgroundColor: c.helpGrey },
   docSquare: { width: t.docSquare, height: t.docSquare, borderRadius: t.docSquareRadius, backgroundColor: c.helpGrey, alignItems: 'center', justifyContent: 'center' },
   iconRows: { borderRadius: t.panelRadius, paddingHorizontal: t.panelPad, paddingVertical: t.iconRowsPadY, backgroundColor: c.panel, gap: t.iconRowsGap },
   iconRowText: { fontFamily: font.appBody, fontSize: t.iconRowSize, color: c.inkWarm },
@@ -1490,11 +1546,18 @@ function makeStyles(t: CourtTokens) {
   noteRowText: { fontFamily: font.appBody, fontSize: t.noteRowSize, lineHeight: t.noteRowLine, color: c.inkWarm },
   noteBtn: { minHeight: t.noteBtnH, borderRadius: t.noteBtnRadius, paddingHorizontal: t.noteBtnPadX, backgroundColor: c.brown, justifyContent: 'center' },
   noteBtnText: { fontFamily: font.appSemi, fontSize: t.noteBtnSize, lineHeight: t.noteBtnLine, color: ink.onBrand, textAlign: 'center' },
+  empty: { alignItems: 'center' },
+  emptyDisc: { width: t.emptyDisc, height: t.emptyDisc, borderRadius: t.emptyDisc / 2, backgroundColor: c.helpGrey, alignItems: 'center', justifyContent: 'center' },
+  emptyTitle: { marginTop: t.emptyTitleTop, fontFamily: font.appSemi, fontSize: t.emptyTitleSize, color: c.ink, textAlign: 'center' },
+  emptyText: { marginTop: t.emptyTextTop, maxWidth: t.emptyTextMax, fontFamily: font.appBody, fontSize: t.emptyTextSize, lineHeight: t.emptyTextLine, color: c.inkWarm, textAlign: 'center' },
+  emptyBtn: { marginTop: t.emptyBtnTop, minHeight: t.emptyBtnH, borderRadius: t.emptyBtnRadius, paddingHorizontal: t.emptyBtnPadX, backgroundColor: c.helpGrey, justifyContent: 'center' },
+  emptyBtnText: { fontFamily: font.appSemi, fontSize: t.emptyBtnSize, color: c.ink },
   textChip: { alignSelf: 'flex-start', borderRadius: t.textChipRadius, paddingHorizontal: t.textChipPadX, paddingVertical: t.textChipPadY, backgroundColor: c.helpGrey },
   textChipText: { fontFamily: font.appSemi, fontSize: t.textChipSize, color: c.ink },
   headTileRow: { gap: t.headTileGap },
   rightDisc: { width: t.rightDisc, height: t.rightDisc, borderRadius: t.rightDisc / 2, backgroundColor: c.tileGrey, alignItems: 'center', justifyContent: 'center' },
   footerStack: { flexDirection: 'column', gap: t.footerStackGap },
+  footerNote2: { marginTop: t.footerNote2Top, fontSize: t.footerNote2Size, color: dcStepperPalette.muted },
   footerNote: { paddingHorizontal: t.footerNotePadX, fontFamily: font.appBody, fontSize: t.footerNoteSize, lineHeight: t.footerNoteLine, color: c.inkWarm, textAlign: 'center' },
   titleBadge: { width: t.titleIconSize, height: t.titleIconSize, borderRadius: t.titleIconSize / 2, backgroundColor: status.active, alignItems: 'center', justifyContent: 'center' },
   labelTitle: { fontSize: t.labelTitleSize },
@@ -1517,6 +1580,9 @@ function makeStyles(t: CourtTokens) {
     borderRadius: t.heroBadge / 2,
     backgroundColor: c.brownInk,
   },
+  discRingBrown: { backgroundColor: c.card, borderWidth: t.stepRingW, borderColor: c.brown },
+  discWait: { backgroundColor: c.tileGrey },
+  discWaitDot: { width: t.waitDot, height: t.waitDot, borderRadius: t.waitDot / 2, backgroundColor: c.inkMuted },
   discAccent: { backgroundColor: status.active },
   discTodo: { backgroundColor: c.helpGrey },
   discDotLight: { backgroundColor: q.todoDot },
@@ -1581,11 +1647,12 @@ function makeStyles(t: CourtTokens) {
   quoteInline: { fontStyle: 'italic' },
 
   rows: { gap: t.rowGap },
-  kv: { alignItems: 'flex-start' },
+  kv: { alignItems: t.kvCenter ? 'center' : 'flex-start' },
   divided: { paddingBottom: t.rowGap, borderBottomWidth: 1, borderBottomColor: c.rail },
   kvLabel: { fontFamily: font.appBody, fontSize: t.kvSize, color: c.inkWarm },
   kvValue: { flexShrink: 1, fontFamily: t.kvValueBold ? font.appSemi : font.appBody, fontSize: t.kvValueSize, color: c.ink, textAlign: 'right' },
   mono: { fontFamily: font.mono, fontWeight: '700', fontSize: t.monoSize },
+  monoBrown: { color: c.brown },
 
   grid: { flexDirection: 'row', flexWrap: 'wrap', columnGap: t.gridGap, rowGap: t.gridRowGap },
   cell: { flexBasis: '45%', flexGrow: 1 },
@@ -1622,6 +1689,11 @@ function makeStyles(t: CourtTokens) {
   railHalf: { flex: 1, width: t.stepRail, backgroundColor: c.helpGrey },
   railHidden: { backgroundColor: 'transparent' },
   railDone: { backgroundColor: q.railDone },
+  railTop: { flexGrow: 0, flexShrink: 0, flexBasis: t.discTopOffset, height: t.discTopOffset },
+  stepMuted: { color: advWalletPalette.muted },
+  stepSubMuted: { color: dcStepperPalette.muted },
+  stepSubGreen: { color: c.greenInk, fontFamily: t.stepSubGreenBold ? font.appSemi : font.appBody },
+  stepSubBrown: { color: c.brown, fontFamily: t.stepSubGreenBold ? font.appSemi : font.appBody },
   stepTitleRow: { gap: t.stepTagGap },
   mutedSub: { color: c.inkMuted },
   disc: { width: t.stepDisc, height: t.stepDisc, borderRadius: t.stepDisc / 2, alignItems: 'center', justifyContent: 'center' },
