@@ -97,7 +97,10 @@ export type IconName =
   | 'calendarPen'
   | 'checkCheck'
   | 'playCircle'
-  | 'landmark';
+  | 'landmark'
+  | 'calendarPlus'
+  | 'folderCog'
+  | 'squareUser';
 
 export type Tone =
   | 'green'
@@ -190,6 +193,8 @@ export type Btn = {
   start?: boolean;
   /** Less side padding, so a long label keeps one line (391). */
   tight?: boolean;
+  /** Content width, at the end of its column (392's Send). */
+  end?: boolean;
   /** Token for this button's type size (389). */
   size?: string;
 };
@@ -356,6 +361,10 @@ type BlockBody =
         inlineIcons?: IconName[];
         /** A pill under the name (391's Pending). */
         pill?: Pill;
+        /** Muted text after that pill (392's Submission). */
+        pillNote?: string;
+        /** Pencil and red bin at the right (392). */
+        edit?: boolean;
         /** A green ticked note after the meta (380's Receipt Added). */
         metaGood?: string;
         /** A small button under the row, at the right (382). */
@@ -415,7 +424,7 @@ type BlockBody =
   | { k: 'choices'; items: { label: string; sub?: string; selected?: boolean; right?: Right; /** A green dot at the right (379). */ dot?: boolean }[] }
   | { k: 'segment'; label?: string; items: string[]; selected: number }
   | { k: 'check'; title: string; sub?: string; checked: boolean; blocks?: Block[]; /** Tapping it toggles the screen's gate (375). */ gate?: boolean; /** Token for the sub-line's max width (387). */ subMax?: string; /** A dark-green box (387). */ green?: boolean }
-  | { k: 'bars'; steps: { label: string; state: 'done' | 'current' | 'todo' | 'bad'; sub?: string; /** An icon in the tile's disc (385). */ icon?: IconName }[]; variant?: 'bars' | 'discs' | 'tiles' | 'chips' }
+  | { k: 'bars'; steps: { label: string; state: 'done' | 'current' | 'todo' | 'bad'; sub?: string; /** An icon in the tile's disc (385). */ icon?: IconName; /** A brown number disc before the label (392). */ num?: string }[]; variant?: 'bars' | 'discs' | 'tiles' | 'chips' }
   | { k: 'numbered'; items: string[]; /** Grey number discs (384). */ grey?: boolean }
   | { k: 'banner'; icon?: IconName; title?: string; text: string; /** A brown dot at the right (373). */ dot?: boolean; center?: boolean; titleBrown?: boolean; strongText?: boolean; parts?: { t: string; bold?: boolean }[]; tone: 'grey' | 'cream' | 'green' | 'white' | 'none' | 'red' | 'help'; /** The icon white on a tan disc (389). */ disc?: boolean }
   | { k: 'pills'; items: Pill[]; /** Bordered chips (377's documents). */ outline?: boolean }

@@ -2840,3 +2840,164 @@ export const COURT_REVIEW_UPDATE: CourtSpec = {
   // ⚠ UNSCOPED — Save Draft draws as a text link and saves nothing.
   footerNote2: 'Save Draft',
 };
+
+// ── design/392 — next hearing ────────────────────────────────────────────────
+// Reached from Save & Send Update on 391. Save Next Hearing opens 396, the case
+// dashboard — navigation only, nothing is saved (no drawn screen confirms the
+// save). ⚠ UNSCOPED — every field, Add, edit / delete, the send toggle, Send,
+// Save as Draft. ⚠ Clipped in the export: the date reads "10 November 20";
+// stored whole. ⚠ CONFLICT 6 — a four-bar timeline (Scheduled · Hearing 1 ·
+// Updated · Next Date), unlike 388 / 390 / 391. ⚠ The export splits Last
+// Hearing's date / time / room into three narrow columns that wrap; built as one
+// row, so the cards below sit ~15pt higher.
+export const COURT_NEXT_HEARING: CourtSpec = {
+  title: 'Next Hearing',
+  headerPill: { pill: CASE.hcr, tone: 'peach' },
+  sub: CASE.hcRep,
+  avatar: true,
+  blocks: [
+    {
+      k: 'card',
+      pad: 'timelinePad',
+      blocks: [
+        { k: 'label', text: 'Case Timeline', title: true, dot: true, right: { pill: 'Case In Progress', tone: 'peach' } },
+        {
+          k: 'bars',
+          top: 'barsTop',
+          steps: [
+            { label: 'Scheduled', state: 'done' },
+            { label: 'Hearing 1', state: 'done' },
+            { label: 'Updated', state: 'done' },
+            { label: 'Next Date', state: 'current', num: '4' },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'sectionTop',
+      head: { icon: 'folderCog', tile: true, title: 'Case Details', size: 'secHeadSize', sub: 'Case details are already saved.', right: { pill: 'Saved & Locked', tone: 'help', icon: 'lock', maxW: 'lockedMax' } },
+      blocks: [
+        {
+          k: 'card',
+          tone: 'panel',
+          pad: 'innerPad',
+          top: 'innerTop',
+          blocks: [
+            {
+              k: 'rows',
+              rows: [
+                ['Client Name', CASE.client, 'bold'],
+                ['Case Name', CASE.title, 'bold'],
+                ['Court', 'MP High Court (Indore Bench)', 'bold'],
+                ['Case Number', CASE.caseNo, 'brown'],
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'sectionTop',
+      head: { icon: 'history', tile: true, title: 'Last Hearing', size: 'secHeadSize', right: { pill: 'Hearing Completed', tone: 'greenTile', icon: 'check' } },
+      blocks: [
+        {
+          k: 'card',
+          tone: 'panel',
+          pad: 'innerPad',
+          top: 'innerTop',
+          blocks: [
+            {
+              k: 'metaRow',
+              items: [
+                { icon: 'calendar', parts: [{ t: '25 October 2026', bold: true }] },
+                { icon: 'clock', parts: [{ t: '11:00 AM' }] },
+                { icon: 'door', parts: [{ t: 'Court Room 3' }] },
+              ],
+            },
+          ],
+        },
+        {
+          k: 'card',
+          tone: 'panel',
+          pad: 'innerPad',
+          top: 'innerGap',
+          blocks: [
+            { k: 'label', text: 'LAST UPDATE', right: 'Recorded on 25 Oct 2026' },
+            { k: 'text', t: 'The court heard the matter and asked us to file the previous order before the next date.', size: 'noteSize', top: 'noteTop' },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'sectionTop',
+      head: { icon: 'calendarPlus', tile: 'peach', title: 'Add Next Hearing', size: 'secHeadSize', sub: 'Enter the date given by the court.' },
+      blocks: [
+        { k: 'banner', tone: 'help', icon: 'calendarPen', parts: [{ t: 'Advocate manual entry · Court schedule', bold: true }], text: '', top: 'innerTop' },
+        {
+          k: 'fieldRow',
+          top: 'firstFieldTop',
+          fields: [
+            { label: 'Date', req: true, value: '10 November 2026', icon: 'calendar' },
+            { label: 'Time', req: true, value: '11:30 AM', icon: 'clock' },
+          ],
+        },
+        {
+          k: 'fieldRow',
+          top: 'fieldGap',
+          fields: [
+            { label: 'Court Room', req: true, value: 'Court Room 3', icon: 'door' },
+            { label: 'Bench / Court', req: true, value: CASE.bench, icon: 'scale' },
+          ],
+        },
+        { k: 'field', label: 'Judge Name', right: 'Optional', placeholder: "e.g. Hon'ble Justice Verma", icon: 'gavel', top: 'fieldGap' },
+        { k: 'field', label: 'Court Instructions / Public Note', right: 'Optional', placeholder: 'Add any important note for the next hearing.', multiline: true, top: 'fieldGap' },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'sectionTop',
+      head: { icon: 'clipboardCheck', tile: true, title: 'What Needs To Be Done Next?', size: 'secHeadSize', sub: 'Add the work that should be completed before the next hearing.' },
+      blocks: [{ k: 'field', label: '', value: 'File the previous court order before the next hearing.', multiline: true, top: 'innerTop' }],
+    },
+    {
+      k: 'card',
+      top: 'sectionTop',
+      head: { icon: 'file', tile: true, title: 'Documents Needed', size: 'secHeadSize', sub: 'Prepare or submit before the hearing.', right: { pill: 'Add', tone: 'peach', icon: 'plus', lg: true } },
+      blocks: [
+        { k: 'docs', tiles: true, top: 'innerTop', items: [{ name: 'Previous Court Order', icon: 'file', pill: { pill: 'Pending', tone: 'peach' }, pillNote: 'Submission', edit: true }] },
+        { k: 'text', icon: 'info', t: 'Optional · Advocate adds documents manually.', tone: 'small', top: 'innerTop' },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'sectionTop',
+      head: { icon: 'squareUser', tile: true, title: 'Client Update', size: 'secHeadSize', sub: `Keep ${CASE.client} informed.` },
+      blocks: [
+        {
+          k: 'card',
+          tone: 'panel',
+          pad: 'innerPad',
+          top: 'innerTop',
+          blocks: [{ k: 'check', checked: false, title: 'Send hearing details to client', sub: 'The client will see the date and time in their case tracking.', subMax: 'checkSubMax' }],
+        },
+        { k: 'button', btn: { label: 'Send', end: true, squat: true, h: 'sendH' }, top: 'innerTop' },
+      ],
+    },
+    {
+      k: 'card',
+      tone: 'cream',
+      top: 'sectionTop',
+      head: { icon: 'lock', tile: 'peach', title: 'Private Note', size: 'secHeadSize', sub: 'This note is only for you. The client will not see it.' },
+      blocks: [
+        { k: 'pills', items: [{ pill: 'ADVOCATE ONLY · NOT SHOWN TO CLIENT', tone: 'peach', icon: 'lock' }], top: 'innerTop' },
+        { k: 'card', pad: 'innerPad', top: 'innerTop', blocks: [{ k: 'text', t: 'Need to check the property papers before the next hearing.', size: 'noteSize' }] },
+      ],
+    },
+  ],
+  footer: [{ label: 'Save Next Hearing', icon: 'checkCircle', to: R('dashboard') }],
+  // ⚠ UNSCOPED — Save as Draft draws as text and saves nothing.
+  footerLinks: [{ t: 'Updates case record & alerts client' }, { t: 'Save as Draft' }],
+};

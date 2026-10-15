@@ -63,6 +63,9 @@ import {
   Phone,
   Play,
   CirclePlay,
+  CalendarPlus,
+  FolderCog,
+  SquareUser,
   Landmark,
   Plus,
   Quote,
@@ -203,6 +206,9 @@ const ICONS: Record<IconName, LucideIcon> = {
   swap: ArrowLeftRight,
   play: Play,
   playCircle: CirclePlay,
+  calendarPlus: CalendarPlus,
+  folderCog: FolderCog,
+  squareUser: SquareUser,
   landmark: Landmark,
   dashboard: LayoutGrid,
   bookmark: Bookmark,
@@ -447,6 +453,7 @@ export function Button({ b, flex, footer, pill }: { b: Btn; flex?: boolean; foot
     b.centered && s.btnCentered,
     b.start && s.btnStart,
     b.tight && s.btnTight,
+    b.end && s.btnEnd,
   ];
   return (
     <Pressable
@@ -1005,8 +1012,9 @@ export function BlockView({ b }: { b: Block }): ReactNode {
                 <View style={s.flex}>
                   <Text style={s.docName}>{d.name}</Text>
                   {d.pill ? (
-                    <View style={s.docPill}>
+                    <View style={[s.docPill, s.row]}>
                       <PillTag p={d.pill} />
+                      {d.pillNote ? <Text style={[s.docMeta, s.docPillNote]}>{d.pillNote}</Text> : null}
                     </View>
                   ) : null}
                   {d.meta ? (
@@ -1036,6 +1044,13 @@ export function BlockView({ b }: { b: Block }): ReactNode {
                 ) : (
                   <RightPart r={d.right} />
                 )}
+                {d.edit ? (
+                  // ⚠ UNSCOPED — edit / delete draw only.
+                  <View style={[s.row, s.editIcons]}>
+                    <Pencil size={t.editIcon} color={c.inkWarm} strokeWidth={2} />
+                    <Trash2 size={t.editIcon} color={advForensicRed.declineColour} strokeWidth={2} />
+                  </View>
+                ) : null}
                 {d.inline ? (
                   // ⚠ UNSCOPED — no viewer, nothing uploads.
                   <View style={s.docInline}>
@@ -1216,6 +1231,11 @@ export function BlockView({ b }: { b: Block }): ReactNode {
               <View style={s.barLabelRow}>
                 {b.variant === undefined && st.state === 'done' ? <Check size={t.barIcon} color={c.greenInk} strokeWidth={2.4} /> : null}
                 {b.variant === undefined && st.state === 'bad' ? <X size={t.barIcon} color={advForensicRed.declineColour} strokeWidth={2.4} /> : null}
+                {st.num ? (
+                  <View style={s.barNum}>
+                    <Text style={s.barNumText}>{st.num}</Text>
+                  </View>
+                ) : null}
                 <Text
                   style={[
                     s.barLabel,
@@ -2069,6 +2089,10 @@ function makeStyles(t: CourtTokens) {
   btnCentered: { alignSelf: 'center', paddingHorizontal: t.hugPadX },
   btnStart: { alignSelf: 'flex-start', paddingHorizontal: t.hugPadX },
   btnTight: { paddingHorizontal: t.tightPadX },
+  btnEnd: { alignSelf: 'flex-end', paddingHorizontal: t.hugPadX },
+  barNum: { width: t.barIcon + 4, height: t.barIcon + 4, borderRadius: (t.barIcon + 4) / 2, backgroundColor: c.brown, alignItems: 'center', justifyContent: 'center' },
+  barNumText: { fontFamily: font.appSemi, fontSize: t.barIcon - 2, color: ink.onBrand },
+  docPillNote: { marginTop: 0 },
   headRight2: { marginLeft: t.headGap },
   docPill: { flexDirection: 'row', marginTop: t.docMetaTop },
   sideTile: { width: t.sideTile, height: t.sideTile, borderRadius: t.sideTileRadius, backgroundColor: c.peachSoft, alignItems: 'center', justifyContent: 'center' },
