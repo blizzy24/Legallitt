@@ -117,7 +117,7 @@ import {
   dcPricingPalette,
   dcShipmentPalette,
   dcStepperPalette,
-  firStep2, font, hcPalette as c, ink, status } from '../../constants/theme';
+  firStep2, font, hcPalette as c, ink, legalittAi, status } from '../../constants/theme';
 import type { Block, Btn, CourtSpec, Head, IconName, Pill, Right, Step, Tone } from './types';
 
 // The section kit of the advocate court batch (designs 362–396). One renderer
@@ -279,7 +279,8 @@ const TONES: Record<Tone, { bg: string; fg: string }> = {
   red: { bg: status.redContainer, fg: status.onRedContainer },
   brown: { bg: c.brown, fg: ink.onBrand },
   blue: { bg: c.blueTile, fg: c.blueInk },
-  violet: { bg: c.tileGrey, fg: c.brown },
+  // design/410's AI suggestion pills: legalittAi's tint with a quarantined ink.
+  violet: { bg: legalittAi.purpleTint, fg: q.suggestedInk },
   white: { bg: c.card, fg: c.inkWarm },
   dark: { bg: c.ink, fg: ink.onBrand },
 };
@@ -2052,7 +2053,8 @@ function makeStyles(t: CourtTokens) {
   tickDisc: { width: t.tickDisc, height: t.tickDisc, borderRadius: t.tickDisc / 2, backgroundColor: status.active, marginTop: t.tickDiscTop },
   tickText: { fontFamily: font.appBody, fontSize: t.tickSize, lineHeight: t.tickLine, color: c.ink },
   stages: { flexDirection: 'row', flexWrap: 'wrap', gap: t.stageGap },
-  stage: { flexBasis: '45%', flexGrow: 1, minHeight: t.stageH, borderRadius: t.stageRadius, paddingHorizontal: t.stagePadX, backgroundColor: c.page, flexDirection: 'row', alignItems: 'center', gap: t.pillGap },
+  // stageOneRow: content width, one row at 390 (399); wraps below it, never overflows.
+  stage: { flexBasis: t.stageOneRow ? 'auto' : '45%', flexGrow: t.stageOneRow ? 0 : 1, minHeight: t.stageH, borderRadius: t.stageRadius, paddingHorizontal: t.stagePadX, backgroundColor: c.page, flexDirection: 'row', alignItems: 'center', gap: t.pillGap },
   stageOn: { backgroundColor: advWalletPalette.tile },
   stageDotOn: { backgroundColor: advWalletPalette.tileInk },
   stageDot: { width: t.stageDot, height: t.stageDot, borderRadius: t.stageDot / 2, backgroundColor: advWalletPalette.muted },

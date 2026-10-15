@@ -24,6 +24,10 @@
 // status set or the promoted red pair. Kept here, named for what they draw,
 // until the client confirms them.
 export const advCourtPalette = {
+  /** ⚠ OFF-PALETTE — design/410's "SUGGESTED" / "3 Suggestions" pill text, sampled
+   *  #5020D5. Not legalittAi.purpleDeep (#7F48FE) or #6B3FE8; the pill fill
+   *  (#EFEAFB) is within 4 of legalittAi.purpleTint and uses it. */
+  suggestedInk: '#5020D5',
   /** design/383's scrim over 382's body (page #FCF9F8 → #A1A09F): black at 0.36. Also behind 366's sheet. */
   scrim: 'rgba(0, 0, 0, 0.36)',
   /** design/383 dims the header far less (→ #EEECEB): black at 0.055. */
@@ -161,6 +165,8 @@ export const advCourt = {
   checkBareGap: 8,
   /** The least width a heading's title keeps beside its right part (391). */
   headTitleMin: 0,
+  /** 1 = the stage chips hold one row at content width (399). */
+  stageOneRow: 0,
   /** The upload disc; 0 = headTile + 8 (393 draws it larger). */
   uploadDisc: 0,
   /** A tight button's side padding (391). */
@@ -1426,6 +1432,9 @@ export const advCourtFiling = {
 } as const;
 
 /** design/379 — confirm court filing. Measured at 1.000 px/pt (2x upscale). */
+// ⚠ design/415, this screen's District Court variant (?service=dc), is a
+// low-resolution JPEG; its metrics and copy are unverifiable, as with 289 and
+// 348. These tokens are measured from design/379.
 export const advCourtConfirmFiling = {
   headerPadTop: 10,
   headerSubSize: 11.5,
@@ -1923,6 +1932,9 @@ export const advCourtProcessFee = {
 } as const;
 
 /** design/386 — process fee completed. Measured at 1.000 px/pt (2x upscale). */
+// ⚠ design/422, this screen's District Court variant (?service=dc), is a
+// low-resolution JPEG; its metrics and copy are unverifiable, as with 289 and
+// 348. These tokens are measured from design/386.
 export const advCourtProcessFeeDone = {
   ...advCourtProcessFee,
   docPadX: 12,
@@ -2423,4 +2435,12 @@ export const advCourtDcDocuments = {
   rowHeadSize: 15,
   innerTop: 10,
   innerGap: 6,
+  // Shrunk to hold one row at 390; the export's row runs off the right edge.
+  stageOneRow: 1,
+  stageSize: 10,
+  stagePadX: 5,
+  stageGap: 3,
+  stageIcon: 10,
+  stageDot: 4,
+  pillGap: 3,
 };
