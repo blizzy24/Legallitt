@@ -256,3 +256,135 @@ const requestAccepted: CourtSpec = {
 };
 
 export const COURT_REQUEST = [requestBefore, requestAccepted];
+
+// ── design/364 — AI case summary ─────────────────────────────────────────────
+// ⚠⚠ UNSCOPED — ALL AI. The summary, AI Refresh, "Synthesized Brief", Read PDFs
+// and the semantic citation index are drawn copy: nothing is generated, read
+// or indexed. Download / Share / Copy, Call Client and Chat with Client do
+// nothing. ⚠ CONFLICT 13 — this matter is a software IP agreement, not 363's
+// property dispute, and is billed ₹28,500 / 45 min (363: ₹25,000).
+
+export const COURT_AI_SUMMARY: CourtSpec = {
+  // Drawn "Ai Case Summary" — stored as drawn.
+  title: 'Ai Case Summary',
+  headerRight: { pill: 'AI', tone: 'peach' },
+  blocks: [
+    { k: 'label', text: 'ANALYSIS COMPLETE', dot: true, right: { pill: 'Verified Sync', tone: 'panel', icon: 'shieldCheck', lg: true } },
+    {
+      k: 'card',
+      top: 'firstCardTop',
+      head: { title: 'CASE DETAILS', caps: true, right: { pill: CASE.hcr, tone: 'grey', mono: true } },
+      blocks: [
+        { k: 'text', t: CASE.title, tone: 'title', top: 'titleTop' },
+        { k: 'text', icon: 'user', parts: [{ t: 'Client: ' }, { t: CASE.client, bold: true }], top: 'clientTop' },
+        {
+          k: 'grid',
+          boxed: 'cells',
+          top: 'gridTop',
+          cells: [
+            { label: 'Court', value: 'MP High Court' },
+            { label: 'Bench', value: CASE.bench },
+            { label: 'Matter Type', value: 'Civil Dispute (Property Ownership)', wide: true, iconRight: 'gavel' },
+          ],
+        },
+      ],
+    },
+    { k: 'label', text: 'MATTER BRIEFING', right: 'Ref #2024-88C', inset: true, top: 'briefLabelTop' },
+    {
+      k: 'card',
+      top: 'briefCardTop',
+      blocks: [
+        { k: 'pills', items: [{ pill: 'Corporate & Commercial', tone: 'peach' }, { pill: 'Video • 45m', tone: 'grey', icon: 'video' }] },
+        { k: 'amount', tone: 'none', label: '', value: '₹28,500', suffix: '/ 45 min', top: 'priceTop' },
+        { k: 'info', icon: 'calendar', label: 'Requested Time Window', value: 'Today, Oct 24 • 4:00 PM – 4:45 PM (GMT+1)', top: 'windowTop' },
+        { k: 'label', text: 'ADVOCATE SUMMARY', top: 'summaryLabelTop' },
+        {
+          k: 'scrollText',
+          top: 'summaryTop',
+          box: 'summaryH',
+          large: true,
+          paras: [
+            'I have a business agreement with an international company for software and intellectual property. I need legal help to review the agreement before signing it. I am mainly concerned about the contract terms, responsibility for losses, and payment or damage claims. I also want to understand which court will handle any dispute. The agreement needs to be finalized soon.',
+          ],
+        },
+        {
+          k: 'chips',
+          spread: true,
+          top: 'actionsTop',
+          items: [
+            { label: 'Download', icon: 'download' },
+            { label: 'Share', icon: 'share' },
+            { label: 'Copy', icon: 'copy' },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'refreshCardTop',
+      head: {
+        // The drawn tile is an empty peach square.
+        tile: 'peach',
+        title: 'AI Refresh',
+        pills: [{ pill: 'Executive', tone: 'grey' }],
+        sub: 'Clear summary for quick review',
+        right: { link: 'Refresh', icon: 'refresh', chip: true },
+      },
+      blocks: [
+        { k: 'text', t: 'Original description has been simplified and organized for easier reading.', top: 'refreshTextTop' },
+        {
+          k: 'card',
+          tone: 'panel',
+          pad: 'refreshPanelPad',
+          top: 'refreshPanelTop',
+          head: { icon: 'file', title: 'AI REFRESHED SUMMARY', caps: true, right: { link: 'Synthesized Brief' }, rule: true },
+          blocks: [
+            {
+              k: 'scrollText',
+              box: 'refreshH',
+              bare: true,
+              top: 'refreshBoxTop',
+              paras: [
+                { label: 'Issue', text: 'Review of an international IP assignment and software licensing agreement before signing.', stack: true },
+                { label: 'Background:', text: ' Urgent legal review of the agreement, with focus on important contract terms, possible risks, and steps to reduce those risks before the board meeting tomorrow morning.' },
+                { label: 'What Client Needs :', text: ' Urgent advisory and risk mitigation before final board execution tomorrow morning.', bullet: true },
+                { label: 'Legal View:', text: ' Related laws, rules, and important cases.', bullet: true },
+              ],
+            },
+          ],
+        },
+        { k: 'footRow', icon: 'info', t: 'AI generated • Review before use', right: { link: 'View Original', iconAfter: 'arrowUp' }, top: 'footRowTop' },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'docsCardTop',
+      head: { title: 'Documents Read', sub: 'Indexed for semantic citation', right: { pill: '5 Files • 46 Pages', tone: 'peach' } },
+      blocks: [
+        {
+          k: 'docs',
+          top: 'docsTop',
+          // ⚠ CONFLICT 3 — "ID Proof.pdf" (Aadhaar) is listed as read by the AI.
+          items: [
+            { name: 'Case Papers.pdf', meta: '12 Pages • ✓ Read', right: 'circleTick' },
+            { name: 'Previous Order.pdf', meta: '8 Pages • ✓ Read', right: 'circleTick' },
+            { name: 'Sale Deed.pdf', meta: '14 Pages • ✓ Read', right: 'circleTick' },
+            { name: 'ID Proof.pdf', meta: '2 Pages • ✓ Read', right: 'circleTick' },
+            { name: 'Property Documents.pdf', meta: '10 Pages • ✓ Read', right: 'circleTick' },
+          ],
+        },
+        { k: 'button', btn: { label: 'Read PDFs', icon: 'eye', variant: 'soft' }, top: 'readTop' },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'nextCardTop',
+      head: { icon: 'arrowRight', tile: 'disc', title: 'Next Step' },
+      blocks: [{ k: 'text', t: 'Talk to the client before you continue. Confirm physical registry documents for filing.', top: 'nextTextTop', size: 'nextTextSize' }],
+    },
+  ],
+  footer: [
+    { label: 'Call Client', icon: 'phone', variant: 'panel', hug: true },
+    { label: 'Chat with Client', icon: 'chat' },
+  ],
+};

@@ -66,27 +66,41 @@ export type IconName =
   | 'mic'
   | 'speaker'
   | 'headset'
-  | 'mail';
+  | 'mail'
+  | 'arrowUp';
 
 export type Tone = 'green' | 'peach' | 'cream' | 'grey' | 'panel' | 'help' | 'mint' | 'red' | 'brown' | 'blue' | 'violet' | 'white' | 'dark';
 
 /** A small rounded tag. */
-export type Pill = { pill: string; tone: Tone; dot?: boolean; icon?: IconName; /** The taller header / lead pill (363). */ lg?: boolean };
+export type Pill = { pill: string; tone: Tone; dot?: boolean; icon?: IconName; /** The taller header / lead pill (363). */ lg?: boolean; mono?: boolean };
 
 /** What sits at the right of a heading or row: plain text, a pill or a small link. */
-export type Right = string | Pill | { link: string; icon?: IconName; to?: Href };
+export type Right = string | Pill | { link: string; icon?: IconName; iconAfter?: IconName; to?: Href; /** Drawn as a small grey button (364's Refresh). */ chip?: boolean };
 
 export type Btn = {
   label: string;
-  variant?: 'primary' | 'soft' | 'outline' | 'ghost' | 'disabled' | 'green' | 'danger' | 'link';
+  variant?: 'primary' | 'soft' | 'panel' | 'outline' | 'ghost' | 'disabled' | 'green' | 'danger' | 'link';
   icon?: IconName;
   iconRight?: IconName;
   /** Navigation only. A button without `to` draws and does nothing (see the data file). */
   to?: Href;
   back?: boolean;
+  /** Content width in a footer, the other button taking the rest (364). */
+  hug?: boolean;
 };
 
-export type Head = { icon?: IconName; tile?: boolean; title: string; caps?: boolean; sub?: string; right?: Right; pills?: Pill[] };
+export type Head = {
+  icon?: IconName;
+  /** true: grey square tile; 'peach': peach square tile (364); 'disc': peach round disc (364's Next Step). */
+  tile?: boolean | 'peach' | 'disc';
+  title: string;
+  caps?: boolean;
+  sub?: string;
+  right?: Right;
+  pills?: Pill[];
+  /** A hairline under the heading (364's AI summary panel). */
+  rule?: boolean;
+};
 
 export type Step = {
   title: string;
@@ -107,15 +121,15 @@ export type Spaced = { top?: string; /** A token added below the block (may be n
 export type Block = Spaced & BlockBody;
 
 type BlockBody =
-  | { k: 'card'; tone?: 'white' | 'panel' | 'cream' | 'peach' | 'green' | 'outline' | 'payPeach'; head?: Head; blocks: Block[] }
+  | { k: 'card'; tone?: 'white' | 'panel' | 'cream' | 'peach' | 'green' | 'outline' | 'payPeach'; head?: Head; blocks: Block[]; /** Token for its padding. */ pad?: string }
   | { k: 'hero'; icon: IconName; tone: 'green' | 'peach' | 'red' | 'grey'; pill?: Pill; title: string; sub?: string; left?: boolean }
   | { k: 'lead'; pill?: Pill; right?: Right; title?: string; text?: string }
-  | { k: 'label'; text: string; right?: Right; pills?: Pill[] }
-  | { k: 'text'; t: string; tone?: 'body' | 'muted' | 'small' | 'quote' | 'center' | 'strong' | 'green' | 'title'; icon?: IconName }
+  | { k: 'label'; text: string; right?: Right; pills?: Pill[]; /** A green dot before it (364). */ dot?: boolean; /** Inset from the gutter (364's MATTER BRIEFING). */ inset?: boolean }
+  | { k: 'text'; t?: string; parts?: { t: string; bold?: boolean }[]; /** Token for its type size. */ size?: string; tone?: 'body' | 'muted' | 'small' | 'quote' | 'center' | 'strong' | 'green' | 'title'; icon?: IconName }
   | { k: 'rows'; rows: [string, string, ('mono' | 'bold' | 'green' | 'quote')?][]; divided?: boolean }
   | {
       k: 'grid';
-      cells: { label: string; value: string; sub?: string; tone?: 'green' | 'mono' | 'muted'; wide?: boolean; icon?: IconName; sideIcon?: IconName }[];
+      cells: { label: string; value: string; sub?: string; tone?: 'green' | 'mono' | 'muted'; wide?: boolean; icon?: IconName; sideIcon?: IconName; iconRight?: IconName }[];
       /** 'cells': a panel per cell. 'columns': one panel per column (363). 'panel': one panel round all (363's phone/email). */
       boxed?: 'cells' | 'columns' | 'panel';
     }
@@ -183,10 +197,23 @@ type BlockBody =
       big?: boolean;
       /** The value at the right of its labels (363's "YOUR PAYMENT"). */
       valueRight?: boolean;
+      /** Smaller text after the value (364's "/ 45 min"). */
+      suffix?: string;
     }
   | { k: 'upload'; title: string; sub?: string; btn?: Btn; icon?: IconName }
   | { k: 'quote'; t: string }
-  | { k: 'chips'; items: Btn[]; tiles?: boolean }
+  | { k: 'chips'; items: Btn[]; tiles?: boolean; /** Grey buttons spread across the row (364). */ spread?: boolean }
+  | { k: 'info'; icon: IconName; label: string; value: string }
+  | {
+      k: 'scrollText';
+      paras: (string | { label: string; text: string; bullet?: boolean; stack?: boolean })[];
+      /** The token holding the box's drawn height. */
+      box: string;
+      large?: boolean;
+      /** No box of its own: the text scrolls inside the panel around it (364). */
+      bare?: boolean;
+    }
+  | { k: 'footRow'; icon?: IconName; t: string; right?: Right }
   | { k: 'gap'; h: number };
 
 export type Deadline = { label: string; value: string; btn: Btn };
@@ -197,6 +224,8 @@ export type CourtSpec = {
   chip?: string;
   centerTitle?: boolean;
   avatar?: boolean;
+  /** A pill at the right of the header, before the avatar (364's "AI"). */
+  headerRight?: Pill;
   /** A status pill straight after the header title (363's "Under Review"). */
   headerPill?: Pill;
   /** Buttons pinned in a bar at the foot of the screen (363). */

@@ -2,6 +2,7 @@ import { router, type Href } from 'expo-router';
 import {
   ArrowLeftRight,
   ArrowRight,
+  ArrowUp,
   Bell,
   Bookmark,
   Building2,
@@ -68,7 +69,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import CourierHeader from '../CourierHeader';
 import PdfStackIcon from '../PdfStackIcon';
-import { advCourt, advCourtPalette as q, advForensicRed, courierGreen, font, hcPalette as c, ink, status } from '../../constants/theme';
+import { advCourt, advCourtPalette as q, advForensicRed, colors, courierGreen, dcDocumentsPalette, font, hcPalette as c, ink, status } from '../../constants/theme';
 import type { Block, Btn, CourtSpec, Head, IconName, Pill, Right, Step, Tone } from './types';
 
 // The section kit of the advocate court batch (designs 362–396). One renderer
@@ -137,6 +138,7 @@ const ICONS: Record<IconName, LucideIcon> = {
   copy: Copy,
   refresh: RefreshCw,
   arrowRight: ArrowRight,
+  arrowUp: ArrowUp,
   chevronRight: ChevronRight,
   send: Send,
   save: Save,
@@ -172,7 +174,7 @@ export function Icon({ name, size, color, sw = 2 }: { name: IconName; size: numb
 const TONES: Record<Tone, { bg: string; fg: string }> = {
   green: { bg: c.greenSoft, fg: c.greenInk },
   peach: { bg: c.peach, fg: c.brownInk },
-  cream: { bg: q.cream, fg: c.brownInk },
+  cream: { bg: c.peachSoft, fg: c.brownInk },
   grey: { bg: c.tileGrey, fg: c.inkWarm },
   panel: { bg: c.panel, fg: c.inkWarm },
   help: { bg: c.helpGrey, fg: c.inkWarm },
@@ -194,7 +196,7 @@ export function PillTag({ p }: { p: Pill }) {
     <View style={[s.pill, p.lg && s.pillLg, { backgroundColor: tone.bg }]}>
       {p.dot ? <View style={[s.pillDot, { backgroundColor: p.tone === 'green' ? status.active : tone.fg }]} /> : null}
       {p.icon ? <Icon name={p.icon} size={t.pillSize} color={tone.fg} /> : null}
-      <Text style={[s.pillText, { color: tone.fg }]}>{p.pill}</Text>
+      <Text style={[s.pillText, p.mono && s.mono, p.mono && s.pillMono, { color: tone.fg }]}>{p.pill}</Text>
     </View>
   );
 }
@@ -210,9 +212,10 @@ function RightPart({ r }: { r?: Right }) {
   if (typeof r === 'string') return <Text style={s.rightText}>{r}</Text>;
   if (isPill(r)) return <PillTag p={r} />;
   const content = (
-    <View style={s.link}>
-      {r.icon ? <Icon name={r.icon} size={t.chipIcon} color={c.brown} /> : null}
-      <Text style={s.linkText}>{r.link}</Text>
+    <View style={[s.link, r.chip && s.linkChip]}>
+      {r.icon ? <Icon name={r.icon} size={t.chipIcon} color={r.chip ? c.inkWarm : c.brown} /> : null}
+      <Text style={[s.linkText, r.chip && s.linkChipText]}>{r.link}</Text>
+      {r.iconAfter ? <Icon name={r.iconAfter} size={t.chipIcon} color={c.brown} /> : null}
     </View>
   );
   return r.to ? (
@@ -227,14 +230,14 @@ function RightPart({ r }: { r?: Right }) {
 function HeadRow({ h }: { h: Head }) {
   const { t, s } = useK();
   return (
-    <View style={s.between}>
+    <View style={[s.between, h.rule && s.headRule]}>
       <View style={[s.row, s.flex]}>
-        {h.icon ? (
-          h.tile ? (
-            <View style={s.headTile}>
-              <Icon name={h.icon} size={t.headIcon} color={c.brown} />
-            </View>
-          ) : (
+        {h.tile ? (
+          <View style={[s.headTile, h.tile === 'peach' && s.headTilePeach, h.tile === 'disc' && s.headDisc]}>
+            {h.icon ? <Icon name={h.icon} size={h.tile === 'disc' ? t.headDiscIcon : t.headIcon} color={c.brown} /> : null}
+          </View>
+        ) : h.icon ? (
+          (
             <Icon name={h.icon} size={t.headIcon} color={c.ink} />
           )
         ) : null}
@@ -255,7 +258,7 @@ export function Button({ b, flex, footer }: { b: Btn; flex?: boolean; footer?: b
   const { t, s } = useK();
   const v = b.variant ?? 'primary';
   const bg: string =
-    v === 'primary' ? c.brown : v === 'green' ? c.greenInk : v === 'disabled' ? q.disabled : v === 'soft' ? c.helpGrey : v === 'outline' ? c.card : 'transparent';
+    v === 'primary' ? c.brown : v === 'green' ? c.greenInk : v === 'disabled' ? q.disabled : v === 'soft' ? c.tileGrey : v === 'panel' ? c.panel : v === 'outline' ? c.card : 'transparent';
   const fg: string = v === 'primary' || v === 'green' || v === 'disabled' ? ink.onBrand : v === 'danger' ? advForensicRed.declineColour : c.ink;
   const nav = b.to !== undefined || b.back === true;
   const style: StyleProp<ViewStyle> = [
@@ -264,7 +267,8 @@ export function Button({ b, flex, footer }: { b: Btn; flex?: boolean; footer?: b
     v === 'outline' && s.btnOutline,
     v === 'danger' && s.btnDanger,
     footer && s.btnFooter,
-    flex && s.flex,
+    flex && !b.hug && s.flex,
+    b.hug && s.btnHug,
   ];
   return (
     <Pressable
@@ -366,16 +370,16 @@ export function BlockView({ b }: { b: Block }): ReactNode {
         b.tone === 'panel'
           ? c.panel
           : b.tone === 'cream'
-            ? q.cream
+            ? c.peachSoft
             : b.tone === 'peach'
               ? c.peachNote
               : b.tone === 'green'
                 ? c.greenSoft
                 : b.tone === 'payPeach'
-                  ? q.payPeach
+                  ? dcDocumentsPalette.tilePeach
                   : c.card;
       return (
-        <View style={[s.card, { backgroundColor: bg }, b.tone === 'outline' && s.outline]}>
+        <View style={[s.card, { backgroundColor: bg }, b.tone === 'outline' && s.outline, b.pad !== undefined && { padding: t[b.pad] }]}>
           {b.head ? <HeadRow h={b.head} /> : null}
           {b.blocks.map((x, i) => (
             <View
@@ -428,8 +432,9 @@ export function BlockView({ b }: { b: Block }): ReactNode {
       );
     case 'label':
       return (
-        <View style={s.between}>
+        <View style={[s.between, b.inset && s.labelInset]}>
           <View style={[s.row, s.flex]}>
+            {b.dot ? <View style={[s.labelDot, { backgroundColor: status.active }]} /> : null}
             <Text style={s.caps}>{b.text}</Text>
             {b.pills?.map((p) => <PillTag key={p.pill} p={p} />)}
           </View>
@@ -439,7 +444,7 @@ export function BlockView({ b }: { b: Block }): ReactNode {
     case 'text':
       return (
         <View style={s.row}>
-          {b.icon ? <Icon name={b.icon} size={t.chipIcon} color={b.tone === 'green' ? c.greenInk : c.inkWarm} /> : null}
+          {b.icon ? <Icon name={b.icon} size={t.textIcon} color={b.tone === 'green' ? c.greenInk : c.brownInk} /> : null}
           <Text
             style={[
               s.text,
@@ -451,9 +456,10 @@ export function BlockView({ b }: { b: Block }): ReactNode {
               b.tone === 'strong' && s.strong,
               b.tone === 'green' && s.greenText,
               b.tone === 'title' && s.titleText,
+              b.size !== undefined && { fontSize: t[b.size], lineHeight: t[b.size + 'Line'] },
             ]}
           >
-            {b.t}
+            {b.parts ? b.parts.map((x) => (x.bold ? <Text key={x.t} style={s.partBold}>{x.t}</Text> : x.t)) : b.t}
           </Text>
         </View>
       );
@@ -470,9 +476,9 @@ export function BlockView({ b }: { b: Block }): ReactNode {
       );
     case 'grid': {
       const cellView = (cell: (typeof b.cells)[number], style?: StyleProp<ViewStyle>) => (
-        <View key={cell.label + cell.value} style={[style, cell.sideIcon && s.sideIconCell]}>
+        <View key={cell.label + cell.value} style={[style, (cell.sideIcon || cell.iconRight) && s.sideIconCell]}>
           {cell.sideIcon ? <Icon name={cell.sideIcon} size={t.sideIcon} color={c.inkWarm} /> : null}
-          <View style={cell.sideIcon && s.flex}>
+          <View style={(cell.sideIcon || cell.iconRight) && s.flex}>
           <View style={s.row}>
             {cell.icon ? <Icon name={cell.icon} size={t.labelSize} color={c.inkMuted} /> : null}
             <Text style={s.cellLabel}>{cell.label}</Text>
@@ -482,6 +488,11 @@ export function BlockView({ b }: { b: Block }): ReactNode {
           </Text>
           {cell.sub ? <Text style={s.cellSub}>{cell.sub}</Text> : null}
           </View>
+          {cell.iconRight ? (
+            <View style={s.cellIconRight}>
+              <Icon name={cell.iconRight} size={t.headIcon} color={c.inkWarm} />
+            </View>
+          ) : null}
         </View>
       );
       if (b.boxed === 'columns') {
@@ -542,7 +553,7 @@ export function BlockView({ b }: { b: Block }): ReactNode {
       return <Timeline steps={b.steps} boxed={b.boxed} />;
     case 'docs':
       return (
-        <View style={s.docs}>
+        <View style={s.docList}>
           {b.items.map((d) => (
             <View key={d.name} style={[s.doc, b.pdf && s.docPdf]}>
               <View style={[s.row, b.pdf && s.docPdfRow]}>
@@ -709,7 +720,7 @@ export function BlockView({ b }: { b: Block }): ReactNode {
         </View>
       );
     case 'banner': {
-      const bg: string = b.tone === 'grey' ? c.panel : b.tone === 'cream' ? q.cream : b.tone === 'green' ? c.greenSoft : b.tone === 'white' ? c.card : b.tone === 'red' ? status.redContainer : 'transparent';
+      const bg: string = b.tone === 'grey' ? c.panel : b.tone === 'cream' ? c.peachSoft : b.tone === 'green' ? c.greenSoft : b.tone === 'white' ? c.card : b.tone === 'red' ? status.redContainer : 'transparent';
       return (
         <View style={[s.row, s.top, s.banner, { backgroundColor: bg }, b.tone === 'none' && s.bannerBare]}>
           {b.icon ? <Icon name={b.icon} size={t.chipIcon} color={b.tone === 'green' ? c.greenInk : b.tone === 'red' ? status.onRedContainer : c.inkWarm} /> : null}
@@ -740,7 +751,7 @@ export function BlockView({ b }: { b: Block }): ReactNode {
       );
     case 'amount':
       return (
-        <View style={[s.amountBox, b.tone === 'payPeach' && { backgroundColor: q.payPeach }, b.tone === 'none' && s.amountBare]}>
+        <View style={[s.amountBox, b.tone === 'payPeach' && { backgroundColor: dcDocumentsPalette.tilePeach }, b.tone === 'none' && s.amountBare]}>
           {b.valueRight ? (
             <View style={s.between}>
               <View style={s.flex}>
@@ -752,8 +763,11 @@ export function BlockView({ b }: { b: Block }): ReactNode {
           ) : (
             <View style={s.between}>
               <View style={s.flex}>
-                <Text style={s.cellLabel}>{b.label}</Text>
-                <Text style={[s.amount, b.big && s.amountBig]}>{b.value}</Text>
+                {b.label ? <Text style={s.cellLabel}>{b.label}</Text> : null}
+                <Text style={[s.amount, b.big && s.amountBig]}>
+                  {b.value}
+                  {b.suffix ? <Text style={s.amountSuffix}> {b.suffix}</Text> : null}
+                </Text>
                 {b.sub ? <Text style={s.cellSub}>{b.sub}</Text> : null}
               </View>
               {b.side ? (
@@ -792,8 +806,32 @@ export function BlockView({ b }: { b: Block }): ReactNode {
       );
     case 'chips':
       return (
-        <View style={[s.row, s.wrap, b.tiles && s.tiles]}>
-          {b.items.map((x) => (b.tiles ? <Tile key={x.label} b={x} /> : <SmallChip key={x.label} b={x} />))}
+        <View style={[s.row, s.wrap, b.tiles && s.tiles, b.spread && s.spread]}>
+          {b.items.map((x) => (b.tiles ? <Tile key={x.label} b={x} /> : <SmallChip key={x.label} b={x} grey={b.spread} />))}
+        </View>
+      );
+    case 'info':
+      return (
+        <View style={[s.row, s.info]}>
+          <View style={s.infoDisc}>
+            <Icon name={b.icon} size={t.infoIcon} color={c.ink} />
+          </View>
+          <View style={s.flex}>
+            <Text style={s.infoLabel}>{b.label}</Text>
+            <Text style={s.infoValue}>{b.value}</Text>
+          </View>
+        </View>
+      );
+    case 'scrollText':
+      return <ScrollText b={b} />;
+    case 'footRow':
+      return (
+        <View style={[s.between, s.footRow]}>
+          <View style={[s.row, s.flex]}>
+            {b.icon ? <Icon name={b.icon} size={t.footRowIcon} color={c.inkWarm} /> : null}
+            <Text style={s.footRowText}>{b.t}</Text>
+          </View>
+          <RightPart r={b.right} />
         </View>
       );
     case 'gap':
@@ -801,13 +839,47 @@ export function BlockView({ b }: { b: Block }): ReactNode {
   }
 }
 
-function SmallChip({ b }: { b: Btn }) {
+/**
+ * A fixed-height box whose text scrolls, with the drawn track and thumb (364).
+ * The export clips its text under the thumb; here it wraps short of it.
+ */
+function ScrollText({ b }: { b: Extract<Block, { k: 'scrollText' }> }) {
+  const { t, s } = useK();
+  return (
+    <View style={[s.scrollBox, b.bare && s.scrollBare, { height: t[b.box] }]}>
+      <ScrollView style={s.flex} contentContainerStyle={s.scrollBody} showsVerticalScrollIndicator={false} nestedScrollEnabled>
+        {b.paras.map((p, i) =>
+          typeof p === 'string' ? (
+            <Text key={i} style={[s.scrollText, b.large && s.scrollLarge]}>
+              {p}
+            </Text>
+          ) : (
+            <View key={i} style={i > 0 && s.scrollParaGap}>
+              {/* The bullet sits in the line: wrapped lines return to the left edge, as drawn. */}
+              <Text style={[s.scrollText, p.stack && s.scrollStack, p.bullet && s.scrollBulletText]}>
+                {p.bullet ? <Text style={s.scrollBulletMark}>{'  •  '}</Text> : null}
+                <Text style={s.scrollLabel}>{p.label}</Text>
+                {p.stack ? '\n' : ''}
+                {p.text}
+              </Text>
+            </View>
+          ),
+        )}
+      </ScrollView>
+      <View style={s.scrollTrack}>
+        <View style={s.scrollThumb} />
+      </View>
+    </View>
+  );
+}
+
+function SmallChip({ b, grey }: { b: Btn; grey?: boolean }) {
   const { t, s } = useK();
   const nav = b.to !== undefined || b.back === true;
   return (
-    <Pressable accessibilityRole="button" onPress={nav ? () => go(b) : undefined} style={s.chip}>
+    <Pressable accessibilityRole="button" onPress={nav ? () => go(b) : undefined} style={[s.chip, grey && s.chipGrey]}>
       {b.icon ? <Icon name={b.icon} size={t.chipIcon} color={c.ink} /> : null}
-      <Text style={s.chipText}>{b.label}</Text>
+      <Text style={[s.chipText, grey && s.chipGreyText]}>{b.label}</Text>
     </Pressable>
   );
 }
@@ -891,6 +963,7 @@ function ScreenBody({ spec, state, onState, overlay }: ScreenProps) {
         sub={spec.sub}
         titleChip={spec.headerPill ? <PillTag p={spec.headerPill} /> : spec.chip}
         padTop={t.headerPadTop}
+        right={spec.headerRight ? <View style={s.headerRight}><PillTag p={spec.headerRight} /></View> : undefined}
         avatar={spec.avatar ?? true}
         center={spec.centerTitle}
         backHref={'/matters' as Href}
@@ -976,6 +1049,40 @@ function makeStyles(t: CourtTokens) {
   caps: { fontFamily: font.appSemi, fontSize: t.capsSize, letterSpacing: t.capsSpacing, color: c.inkWarm, textTransform: 'uppercase' },
   rightText: { fontFamily: font.appSemi, fontSize: t.smallSize, color: c.inkWarm, textAlign: 'right', flexShrink: 1 },
   link: { flexDirection: 'row', alignItems: 'center', gap: t.pillGap },
+  linkChip: { minHeight: t.linkChipH, paddingHorizontal: t.linkChipPadX, borderRadius: t.linkChipRadius, backgroundColor: c.panel },
+  linkChipText: { color: c.inkWarm },
+  labelInset: { paddingHorizontal: t.labelInset },
+  labelDot: { width: t.labelDot, height: t.labelDot, borderRadius: t.labelDot / 2 },
+  partBold: { fontFamily: font.appSemi, color: c.ink },
+  cellIconRight: { justifyContent: 'center' },
+  amountSuffix: { fontFamily: font.appBody, fontSize: t.amountSuffixSize, color: c.inkWarm },
+  spread: { justifyContent: 'space-between' },
+  chipGrey: { minHeight: t.greyChipH, paddingHorizontal: t.greyChipPadX, borderRadius: t.greyChipRadius, backgroundColor: c.tileGrey, borderWidth: 0 },
+  chipGreyText: { fontSize: t.greyChipSize },
+  info: { gap: t.infoGap, borderRadius: t.panelRadius, paddingHorizontal: t.panelPad, paddingVertical: t.infoPadY, backgroundColor: c.tileGrey },
+  infoDisc: { width: t.infoDisc, height: t.infoDisc, borderRadius: t.infoDisc / 2, backgroundColor: c.card, alignItems: 'center', justifyContent: 'center' },
+  infoLabel: { fontFamily: font.appBody, fontSize: t.infoLabelSize, color: c.inkWarm },
+  infoValue: { marginTop: t.infoValueTop, fontFamily: font.appSemi, fontSize: t.infoValueSize, lineHeight: t.infoValueLine, color: c.ink },
+  scrollBox: { flexDirection: 'row', borderRadius: t.panelRadius, backgroundColor: c.panel, paddingLeft: t.scrollPadX, paddingRight: t.scrollTrackInset },
+  scrollBare: { paddingLeft: 0, paddingRight: 0, backgroundColor: 'transparent', gap: t.scrollBareGap },
+  scrollBody: { paddingVertical: t.scrollPadY, paddingRight: t.scrollGap },
+  scrollText: { fontFamily: font.appBody, fontSize: t.scrollSize, lineHeight: t.scrollLine, color: c.ink },
+  scrollStack: { lineHeight: t.scrollStackLine },
+  scrollBulletText: { lineHeight: t.scrollBulletLine },
+  scrollLarge: { fontSize: t.scrollLargeSize, lineHeight: t.scrollLargeLine },
+  scrollLabel: { fontFamily: font.appSemi, color: c.brownInk },
+  scrollParaGap: { marginTop: t.scrollParaGap },
+  scrollBulletMark: { color: c.brownInk },
+  scrollTrack: { width: t.scrollTrackW, marginVertical: t.scrollTrackY, borderRadius: t.scrollTrackW / 2, backgroundColor: colors.appBg },
+  scrollThumb: { height: t.scrollThumbH, borderRadius: t.scrollTrackW / 2, backgroundColor: q.thumb },
+  footRow: { paddingTop: t.footRowPadTop, borderTopWidth: 1, borderTopColor: c.panel },
+  footRowText: { flexShrink: 1, fontFamily: font.appSemi, fontSize: t.footRowSize, color: c.inkWarm },
+  headRule: { paddingBottom: t.headRulePad, borderBottomWidth: 1, borderBottomColor: c.rail },
+  headTilePeach: { backgroundColor: c.peach },
+  headDisc: { width: t.headDisc, height: t.headDisc, borderRadius: t.headDisc / 2, backgroundColor: dcDocumentsPalette.tilePeach },
+  pillMono: { fontSize: t.pillMonoSize },
+  headerRight: { marginRight: t.headerRightGap },
+  btnHug: { paddingHorizontal: t.hugPadX },
   linkText: { fontFamily: font.appSemi, fontSize: t.smallSize, color: c.brown },
 
   pill: {
@@ -1022,7 +1129,7 @@ function makeStyles(t: CourtTokens) {
   kvValue: { flexShrink: 1, fontFamily: t.kvValueBold ? font.appSemi : font.appBody, fontSize: t.kvValueSize, color: c.ink, textAlign: 'right' },
   mono: { fontFamily: font.mono, fontWeight: '700', fontSize: t.monoSize },
 
-  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: t.gridGap },
+  grid: { flexDirection: 'row', flexWrap: 'wrap', columnGap: t.gridGap, rowGap: t.gridRowGap },
   cell: { flexBasis: '45%', flexGrow: 1 },
   cellWide: { flexBasis: '100%' },
   colGrid: {},
@@ -1031,7 +1138,7 @@ function makeStyles(t: CourtTokens) {
   colCellTop: { borderTopLeftRadius: t.panelRadius, borderTopRightRadius: t.panelRadius, paddingTop: t.colPadTop },
   colCellBottom: { borderBottomLeftRadius: t.panelRadius, borderBottomRightRadius: t.panelRadius, paddingBottom: t.colPadBottom },
   gridPanel: { borderRadius: t.panelRadius, paddingHorizontal: t.panelPad, paddingVertical: t.gridPanelPadY, backgroundColor: c.panel },
-  cellBoxed: { borderRadius: t.panelRadius, padding: t.panelPad, backgroundColor: c.panel },
+  cellBoxed: { borderRadius: t.panelRadius, paddingHorizontal: t.panelPad, paddingVertical: t.cellPadY, backgroundColor: c.panel },
   cellLabel: { fontFamily: font.appBody, fontSize: t.labelSize, color: c.inkWarm },
   cellValue: { marginTop: t.valueTop, fontFamily: font.appSemi, fontSize: t.valueSize, color: c.ink },
   mutedValue: { fontFamily: font.appBody, fontStyle: 'italic', color: c.inkWarm },
@@ -1062,7 +1169,8 @@ function makeStyles(t: CourtTokens) {
   stepSub: { marginTop: t.headSubTop, fontFamily: font.appBody, fontSize: t.stepSubSize, color: c.inkWarm },
 
   docs: { gap: t.gridGap },
-  doc: { borderRadius: t.panelRadius, padding: t.panelPad, backgroundColor: c.panel },
+  docList: { gap: t.docsGap },
+  doc: { borderRadius: t.panelRadius, paddingHorizontal: t.docPadX, paddingVertical: t.docPadY, backgroundColor: c.panel },
   docTile: { width: t.docTile, height: t.docTile, borderRadius: t.headTileRadius, backgroundColor: status.redContainer, alignItems: 'center', justifyContent: 'center' },
   docName: { fontFamily: font.appSemi, fontSize: t.docNameSize, color: c.ink },
   docMeta: { marginTop: t.docMetaTop, fontFamily: font.appBody, fontSize: t.docMetaSize, color: c.inkWarm },
@@ -1142,7 +1250,7 @@ function makeStyles(t: CourtTokens) {
     justifyContent: 'center',
     gap: t.headGap,
   },
-  btnFooter: { minHeight: t.footerBtnH, borderRadius: t.footerBtnH / 2, borderWidth: 0, paddingHorizontal: t.footerBtnPadX },
+  btnFooter: { minHeight: t.footerBtnH, borderRadius: t.footerBtnRadius, borderWidth: 0, paddingHorizontal: t.footerBtnPadX },
   btnFooterText: { fontSize: t.footerBtnSize },
   btnOutline: { borderWidth: 1, borderColor: c.rail },
   btnDanger: { backgroundColor: c.tileGrey },
