@@ -2998,6 +2998,8 @@ export const ADV_CASES: AdvCaseMatter[] = [
   {
     id: 'hc-2026-1048',
     service: 'HIGH COURT REPRESENTATION',
+    /** The advocate court flow starts at design/363's request. */
+    href: '/advocate/court/request',
     serviceKey: 'other',
     urgency: 'URGENT',
     title: 'Rahul Sharma vs. ABC Enterprises',
@@ -3012,6 +3014,9 @@ export const ADV_CASES: AdvCaseMatter[] = [
   {
     id: 'dc-2026-1048',
     service: 'DISTRICT COURT REPRESENTATION',
+    // ⚠ No District Court request is drawn: 363 is the High Court request, and
+    // the batch mixes the two dockets throughout (data/advocateCourt.ts, conflict 4).
+    href: '/advocate/court/request',
     serviceKey: 'other',
     urgency: 'ORDINARY',
     title: 'Ananya Singh vs. Verma Group',

@@ -32,6 +32,7 @@ export default function CourierHeader({
   online = false,
   titleGap,
   titleStyle,
+  titleChip,
 }: {
   title: string;
   sub?: string;
@@ -58,6 +59,8 @@ export default function CourierHeader({
   titleGap?: number;
   /** Overrides the title's size (design/342). */
   titleStyle?: TextStyle;
+  /** A case-reference chip (string) or any node, right after the title (the advocate court batch, 363–394). */
+  titleChip?: React.ReactNode;
 }) {
   const insets = useSafeAreaInsets();
   return (
@@ -86,9 +89,24 @@ export default function CourierHeader({
               {kicker}
             </Text>
           ) : null}
-          <Text style={[styles.title, center && styles.centered, titleStyle]} {...shrinkToFit(0.8)}>
-            {title}
-          </Text>
+          {titleChip ? (
+            <View style={styles.titleRow}>
+              <Text style={[styles.title, styles.titleShrink, titleStyle]} {...shrinkToFit(0.8)}>
+                {title}
+              </Text>
+              {typeof titleChip === 'string' ? (
+                <View style={styles.chip}>
+                  <Text style={styles.chipText}>{titleChip}</Text>
+                </View>
+              ) : (
+                titleChip
+              )}
+            </View>
+          ) : (
+            <Text style={[styles.title, center && styles.centered, titleStyle]} {...shrinkToFit(0.8)}>
+              {title}
+            </Text>
+          )}
           {sub ? (
             <Text style={[styles.sub, center && styles.centered, subStyle]} {...shrinkToFit(0.8)}>
               {sub}
@@ -128,6 +146,10 @@ const styles = StyleSheet.create({
   titleCol: { flex: 1, marginLeft: h.titleGap },
   title: { fontFamily: font.appSemi, fontSize: h.titleSize, color: h.ink },
   centered: { textAlign: 'center' },
+  titleRow: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: h.chipGap },
+  titleShrink: { flexShrink: 1 },
+  chip: { paddingHorizontal: h.chipPadX, paddingVertical: h.chipPadY, borderRadius: h.chipRadius, backgroundColor: h.chipBg },
+  chipText: { fontFamily: font.mono, fontWeight: '700', fontSize: h.chipSize, color: h.chipInk },
   kicker: {
     fontFamily: font.appSemi,
     fontSize: h.kickerSize,

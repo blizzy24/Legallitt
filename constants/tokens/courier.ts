@@ -65,6 +65,14 @@ export const courierHeader = {
   kickerInk: '#4D463D',
   onlineDot: 9,
   onlineBorder: 1.5,
+  /** The case-reference chip after the title (advocate court batch, 373–394). */
+  chipGap: 6,
+  chipPadX: 6,
+  chipPadY: 3,
+  chipRadius: 6,
+  chipSize: 10,
+  chipBg: '#F6DCBD',
+  chipInk: '#1B1C1C',
 };
 
 /** designs 275 + 284 — choose how to send. Measured at 2.1231 px/pt from 828×2204. */
