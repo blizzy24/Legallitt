@@ -1,6 +1,6 @@
 import type { Href } from 'expo-router';
 
-import type { Block, CourtSpec } from '../components/court/types';
+import type { Block, CourtSpec, Pill, Right } from '../components/court/types';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ADVOCATE HIGH COURT / DISTRICT COURT — designs 362–396, the advocate side of
@@ -2533,4 +2533,310 @@ export const COURT_HEARING_UPDATE: CourtSpec = {
   ],
   footer: [{ label: 'Save Hearing Update', icon: 'save', to: R('hearing/review-update') }],
   footerNote: 'Next Hearing date can be added after saving this update',
+};
+
+// ── design/391 — review client update ────────────────────────────────────────
+// Reached from Save Hearing Update on 390. Save & Send Update opens 392 —
+// navigation only, nothing is saved or sent. ⚠ UNSCOPED — every Edit / Edit
+// Hearing chip, the attendance and outcome selectors, Upload Additional Hearing
+// Document, View / Replace / View Document, Add Next Hearing Reminder, Add
+// Document, the delete icon, the send toggle, Preview Client View, Save Draft.
+// ⚠ The export draws this screen at a larger type scale than 390 / 392; it is
+// measured as drawn. ⚠ CONFLICT 6 — a third progress list (six steps, from
+// Court Filing); no step counter. ⚠ "Court_Order" is clipped in the export
+// ("Court_Ord‹", "Court,"); stored whole. Its file name wraps the meta a word per line, so
+// the export's preview Court Order row is ~46pt taller than the one built here.
+/** The drawn pill wraps differently per card; `maxW` names the token holding its width. */
+const clientSees = (maxW: string): Pill => ({ pill: 'CLIENT WILL SEE THIS', tone: 'greenTile', icon: 'eye', maxW });
+const EDIT_CHIP: Right = { link: 'Edit', icon: 'edit', chip: true };
+
+export const COURT_REVIEW_UPDATE: CourtSpec = {
+  title: 'Review Client Update',
+  sub: 'Client will see this update',
+  avatar: false,
+  blocks: [
+    {
+      k: 'card',
+      tone: 'panel',
+      outline: true,
+      pad: 'stripPad',
+      blocks: [{ k: 'label', text: 'ADVOCATE REVIEW & EDIT', dot: true, right: { link: 'Ready for Client Sharing', icon: 'shieldCheck', green: true } }],
+    },
+    {
+      k: 'card',
+      top: 'sectionTop',
+      head: { icon: 'gavel', tile: true, title: 'Hearing Details', size: 'secHeadSize', right: clientSees('pillTwoLine'), right2: EDIT_CHIP },
+      blocks: [
+        {
+          k: 'card',
+          tone: 'panel',
+          outline: true,
+          pad: 'innerPad',
+          top: 'innerTop',
+          blocks: [
+            {
+              k: 'grid',
+              cells: [
+                { label: 'Hearing Date & Time', value: '25 Oct 2026, 11:00 AM' },
+                { label: 'Status', value: 'Hearing Completed', pill: { pill: 'Hearing Completed', tone: 'greenTile', dot: true } },
+                { label: 'Court Room', value: 'Court Room 3' },
+                { label: 'Client', value: CASE.client },
+                { label: 'Court / Bench', value: `${CASE.court} · ${CASE.bench}`, wide: true },
+                { label: 'Case Number', value: CASE.caseNo, wide: true },
+              ],
+            },
+          ],
+        },
+        { k: 'text', icon: 'shieldCheck', iconGreen: true, t: 'Details verified from court roster. Pre-formatted for client view.', tone: 'small', top: 'innerTop' },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'sectionTop',
+      head: { icon: 'user', tile: true, title: 'Attendance', size: 'secHeadSize' },
+      blocks: [
+        {
+          k: 'card',
+          tone: 'panel',
+          pad: 'innerPad',
+          top: 'innerTop',
+          head: { icon: 'idCard', title: 'Advocate Attended', sub: 'Primary legal counsel appearance', size: 'rowHeadSize', right: { pill: 'Yes', tone: 'greenTile', icon: 'check' } },
+          blocks: [],
+        },
+        {
+          k: 'card',
+          tone: 'panel',
+          pad: 'segPad',
+          top: 'innerGap',
+          blocks: [
+            { k: 'text', t: 'Client Present in Court?', tone: 'strong', size: 'rowHeadSize' },
+            { k: 'segment', items: ['Yes', 'No', 'Not Required'], selected: 1, top: 'segTop' },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'sectionTop',
+      head: { icon: 'scale', tile: true, title: 'Hearing Status', size: 'secHeadSize' },
+      blocks: [
+        { k: 'text', t: 'Select the official outcome recorded by the court bench.', tone: 'small', top: 'askTop' },
+        {
+          k: 'choices',
+          top: 'innerTop',
+          items: [
+            { label: 'Hearing Completed', selected: true, right: 'Selected' },
+            { label: 'Matter Adjourned' },
+            { label: 'Order Passed' },
+            { label: 'Matter Not Taken Up' },
+            { label: 'Other Outcome' },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'sectionTop',
+      head: { icon: 'note', tile: true, title: 'What Happened?', size: 'secHeadSize', right: clientSees('pillTwoLine'), right2: EDIT_CHIP },
+      blocks: [
+        { k: 'text', t: 'Write what happened in court in simple words for the client.', tone: 'small', top: 'askTop' },
+        {
+          k: 'card',
+          outline: true,
+          pad: 'innerPad',
+          top: 'innerTop',
+          blocks: [
+            { k: 'text', t: 'The court heard the matter and asked us to file the previous order before the next date.', size: 'noteSize' },
+            // ⚠ UNSCOPED — nothing checks or counts the words.
+            { k: 'footRow', icon: 'smile', green: true, t: 'Simple client-friendly words used', right: '87 characters', top: 'footTop' },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'sectionTop',
+      head: { icon: 'clipboardCheck', tile: true, title: 'Court Direction / Order', titleMin: 'directionTitleMin', size: 'secHeadSize', right: clientSees('pillThreeLine'), right2: EDIT_CHIP },
+      blocks: [
+        { k: 'text', t: 'Write what the court asked or ordered in clear terms.', tone: 'small', top: 'askTop' },
+        {
+          k: 'card',
+          outline: true,
+          pad: 'innerPad',
+          top: 'innerTop',
+          blocks: [
+            { k: 'text', t: 'File the previous court order before the next hearing.', size: 'noteSize' },
+            { k: 'footRow', t: 'Specific formal directive issued by bench', right: '53 characters', top: 'footTop' },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'sectionTop',
+      head: { icon: 'fileUp', tile: true, title: 'Court Order Document', size: 'secHeadSize', right: clientSees('pillWide') },
+      blocks: [
+        { k: 'text', t: 'Court order file uploaded and approved for client download.', tone: 'small', top: 'askTop' },
+        { k: 'docs', tiles: true, tileTone: 'red', inlineWhite: true, top: 'innerTop', items: [{ name: 'Court_Order', meta: '8 pages · PDF', metaGood: 'Uploaded', icon: 'pdf', inline: ['View', 'Replace'], inlineIcons: ['eye', 'refresh'] }] },
+        { k: 'button', btn: { label: 'Upload Additional Hearing Document', icon: 'plusCircle', variant: 'help', h: 'actionH', tight: true }, top: 'innerGap' },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'sectionTop',
+      head: { icon: 'share', tile: true, title: 'Next Step', size: 'secHeadSize', right: clientSees('pillWide'), right2: EDIT_CHIP },
+      blocks: [
+        { k: 'text', t: 'Write what needs to be prepared before the next hearing.', tone: 'small', top: 'askTop' },
+        {
+          k: 'card',
+          outline: true,
+          pad: 'innerPad',
+          top: 'innerTop',
+          blocks: [
+            { k: 'text', t: 'File the previous court order before the next hearing.', size: 'noteSize' },
+            { k: 'footRow', t: 'Visible on client case progress dashboard', right: '53 characters', top: 'footTop' },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'sectionTop',
+      head: { icon: 'calendar', tile: true, title: 'Next Hearing', size: 'secHeadSize', right: clientSees('pillTwoLine'), right2: { link: 'Edit Hearing', icon: 'edit', chip: true } },
+      blocks: [
+        {
+          k: 'card',
+          tone: 'cream',
+          outline: true,
+          pad: 'innerPad',
+          top: 'innerTop',
+          blocks: [
+            { k: 'label', text: '', right: { pill: 'Scheduled', tone: 'greenTile', dot: true }, pills: [], bottom: 'whenBottom' },
+            { k: 'text', t: '10 Nov 2026, 11:30 AM', tone: 'title', size: 'whenSize', maxW: 'whenMax' },
+            { k: 'text', t: `Court Room 3 · ${CASE.court} · ${CASE.bench}`, tone: 'small', maxW: 'whereMax', top: 'whereTop' },
+          ],
+        },
+        { k: 'text', t: 'Next hearing date confirmed with court roster. Automatically adds to client calendar upon sending.', tone: 'small', top: 'innerGap' },
+        { k: 'button', btn: { label: '+ Add Next Hearing Reminder for Advocate', icon: 'bell', variant: 'help', h: 'actionH', tight: true }, top: 'innerGap' },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'sectionTop',
+      head: { icon: 'listChecks', tile: true, title: 'Documents Needed', size: 'secHeadSize', right: { pill: 'Optional', tone: 'help' } },
+      blocks: [
+        { k: 'text', t: 'Add any document that must be prepared or submitted next.', tone: 'small', top: 'askTop' },
+        { k: 'docs', tiles: true, top: 'innerTop', items: [{ name: 'Previous Court Order', icon: 'file', pill: { pill: 'Pending', tone: 'peach' }, right: { iconDisc: 'trash' } }] },
+        { k: 'button', btn: { label: '+ Add Document', icon: 'plus', variant: 'help', h: 'actionH', tight: true }, top: 'innerGap' },
+      ],
+    },
+    {
+      k: 'card',
+      tone: 'cream',
+      outline: true,
+      top: 'sectionTop',
+      head: { icon: 'lock', tile: true, title: 'Private Advocate Note', size: 'secHeadSize', right: { pill: 'PRIVATE — ADVOCATE ONLY · NOT SHOWN TO CLIENT', tone: 'peach', icon: 'lock', maxW: 'privatePillMax' } },
+      blocks: [
+        { k: 'text', t: 'This note is never shared with the client. Visible only to you and authorized legal counsel.', tone: 'small', top: 'askTop' },
+        {
+          k: 'card',
+          outline: true,
+          pad: 'innerPad',
+          top: 'innerTop',
+          blocks: [
+            { k: 'text', t: 'Need to discuss the property papers before the next hearing.', size: 'noteSize' },
+            { k: 'footRow', icon: 'shieldCheck', t: 'Encrypted and strictly hidden from client tracking, client app, and exports.', top: 'footTop' },
+          ],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      tone: 'panel',
+      top: 'sectionTop',
+      blocks: [
+        {
+          k: 'check',
+          checked: true,
+          title: 'Send this update to client',
+          sub: 'The client will see only the sections marked "Client will see this" below. Private advocate notes will be completely excluded.',
+          blocks: [{ k: 'button', btn: { label: 'Preview Client View', icon: 'eye', variant: 'help', start: true, h: 'previewBtnH' }, top: 'innerGap' }],
+        },
+      ],
+    },
+    {
+      k: 'card',
+      outline: true,
+      top: 'previewTop',
+      head: { icon: 'eye', tile: 'greenCheck', title: 'Client Preview', size: 'secHeadSize', pills: [{ pill: 'READ-ONLY', tone: 'greenTile', icon: 'badgeCheck' }] },
+      blocks: [
+        // The line breaks are the export's own, kept as drawn.
+        { k: 'text', t: 'This is exactly how the client will see the\nupdate\nin their tracking portal.', tone: 'small', top: 'askTop' },
+        {
+          k: 'card',
+          tone: 'panel',
+          outline: true,
+          pad: 'previewPad',
+          top: 'previewPanelTop',
+          blocks: [
+            { k: 'text', t: 'HEARING DATE & TIME', tone: 'kicker', size: 'previewKickerSize' },
+            { k: 'text', t: '25 Oct 2026, 11:00 AM', tone: 'title', size: 'previewValueSize', top: 'kickerGap' },
+            { k: 'text', t: 'LOCATION', tone: 'kicker', size: 'previewKickerSize', top: 'previewRowTop' },
+            { k: 'text', t: `Court Room 3 · ${CASE.court}\n${CASE.bench}`, size: 'noteSize', top: 'kickerGap' },
+            { k: 'text', t: 'HEARING STATUS', tone: 'kicker', size: 'previewKickerSize', top: 'previewRowTop' },
+            { k: 'pills', items: [{ pill: 'Hearing Completed', tone: 'greenTile', lg: true }], top: 'kickerGap' },
+          ],
+        },
+        { k: 'card', outline: true, pad: 'previewPad', top: 'innerTop', blocks: [{ k: 'text', t: 'What Happened', tone: 'strong', size: 'previewTitleSize' }, { k: 'text', t: 'The court heard the matter and asked us to file the previous order before the next date.', size: 'noteSize', top: 'kickerGap' }] },
+        { k: 'card', outline: true, pad: 'previewPad', top: 'innerTop', blocks: [{ k: 'text', t: 'Court Direction / Order', tone: 'strong', size: 'previewTitleSize' }, { k: 'text', t: 'File the previous court order before the next hearing.', size: 'noteSize', top: 'kickerGap' }] },
+        { k: 'card', outline: true, pad: 'previewPad', top: 'innerTop', blocks: [{ k: 'text', t: 'Next Step', tone: 'strong', size: 'previewTitleSize' }, { k: 'text', t: 'File the previous court order before the next hearing.', size: 'noteSize', top: 'kickerGap' }] },
+        {
+          k: 'card',
+          outline: true,
+          pad: 'previewPad',
+          top: 'innerTop',
+          blocks: [
+            { k: 'text', t: 'Court Order', tone: 'strong', size: 'previewTitleSize' },
+            { k: 'docs', tiles: true, tileTone: 'red', inlineWhite: true, top: 'innerTop', items: [{ name: 'Court_Order', meta: '8 pages · PDF', icon: 'pdf', inline: ['View Document'] }] },
+          ],
+        },
+        {
+          k: 'card',
+          tone: 'cream',
+          outline: true,
+          pad: 'previewPad',
+          top: 'innerTop',
+          blocks: [
+            { k: 'text', t: 'NEXT HEARING', tone: 'kicker', size: 'previewKickerSize' },
+            { k: 'text', t: '10 Nov 2026, 11:30 AM', tone: 'title', size: 'previewValueSize', top: 'kickerGap' },
+            { k: 'text', t: `Court Room 3 · ${CASE.bench}`, tone: 'muted', size: 'previewMutedSize', top: 'kickerGap' },
+          ],
+        },
+        { k: 'banner', tone: 'green', icon: 'shield', text: 'Private notes and internal comments are not shown to the client.', top: 'innerTop' },
+      ],
+    },
+    {
+      k: 'card',
+      top: 'progTop',
+      head: { icon: 'trend', tile: true, title: 'Case Progress', size: 'secHeadSize' },
+      blocks: [
+        {
+          k: 'timeline',
+          top: 'stepsTop',
+          steps: [
+            { title: 'Court Filing', state: 'done', deep: true, right: { link: 'Done', green: true } },
+            { title: 'First Hearing Scheduled', state: 'done', deep: true, right: { link: 'Done', green: true } },
+            { title: 'First Hearing', state: 'done', deep: true, right: { link: 'Completed', green: true } },
+            { title: 'Hearing Update', state: 'ring', right: { pill: 'Current · Ready', tone: 'peach' } },
+            { title: 'Next Hearing', state: 'next', right: '10 Nov 2026' },
+            { title: 'Case Completed', state: 'wait', muted: true, right: 'Waiting' },
+          ],
+        },
+      ],
+    },
+  ],
+  footer: [{ label: 'Save & Send Update', icon: 'send', to: R('hearing/next') }],
+  footerNote: `Updates court case record ${CASE.caseNo} and sends client notification to ${CASE.client}`,
+  // ⚠ UNSCOPED — Save Draft draws as a text link and saves nothing.
+  footerNote2: 'Save Draft',
 };

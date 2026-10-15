@@ -142,6 +142,8 @@ export type Pill = {
   mono?: boolean;
   /** The icon after the text (382's Verified ✓). */
   iconAfter?: boolean;
+  /** Token for a max width; the text wraps inside it (391). */
+  maxW?: string;
 };
 
 /** What sits at the right of a heading or row: plain text, a pill or a small link. */
@@ -184,6 +186,10 @@ export type Btn = {
   h?: string;
   /** Content width, centred in its column (389's Preview Live Hearing Mode). */
   centered?: boolean;
+  /** Content width, at the start of its column (391's Preview Client View). */
+  start?: boolean;
+  /** Less side padding, so a long label keeps one line (391). */
+  tight?: boolean;
   /** Token for this button's type size (389). */
   size?: string;
 };
@@ -202,6 +208,10 @@ export type Head = {
   caps?: boolean;
   sub?: string;
   right?: Right;
+  /** Token for the least width the title keeps (391); default headTitleMin. */
+  titleMin?: string;
+  /** A second item after `right` (391's Edit chip beside the client pill). */
+  right2?: Right;
   pills?: Pill[];
   /** A hairline under the heading (364's AI summary panel). */
   rule?: boolean;
@@ -277,7 +287,7 @@ type BlockBody =
   | { k: 'rows'; rows: [string, string, ('mono' | 'monoBrown' | 'brown' | 'bold' | 'green' | 'quote')?][]; divided?: boolean }
   | {
       k: 'grid';
-      cells: { label: string; value: string; sub?: string; tone?: 'green' | 'mono' | 'muted' | 'brown'; wide?: boolean; icon?: IconName; sideIcon?: IconName; iconRight?: IconName; /** tileGrey, not panel (376). */ shade?: boolean; alignRight?: boolean; small?: boolean; /** A regular-weight value (385). */ plain?: boolean; /** The larger value of 388's date / time. */ big?: boolean; /** A white disc with an icon at the right (376). */ iconDisc?: IconName }[];
+      cells: { label: string; value: string; sub?: string; tone?: 'green' | 'mono' | 'muted' | 'brown'; wide?: boolean; icon?: IconName; sideIcon?: IconName; iconRight?: IconName; /** tileGrey, not panel (376). */ shade?: boolean; alignRight?: boolean; small?: boolean; /** A regular-weight value (385). */ plain?: boolean; /** The larger value of 388's date / time. */ big?: boolean; /** A white disc with an icon at the right (376). */ iconDisc?: IconName; /** A pill in place of the value (391). */ pill?: Pill }[];
       /** 'cells': a panel per cell. 'columns': one panel per column (363). 'panel': one panel round all (363's phone/email). */
       boxed?: 'cells' | 'columns' | 'panel';
       /** Capitalised labels (370). */
@@ -344,6 +354,8 @@ type BlockBody =
         inline?: string[];
         /** An icon before each inline button's label (390). */
         inlineIcons?: IconName[];
+        /** A pill under the name (391's Pending). */
+        pill?: Pill;
         /** A green ticked note after the meta (380's Receipt Added). */
         metaGood?: string;
         /** A small button under the row, at the right (382). */
@@ -454,7 +466,7 @@ type BlockBody =
   | { k: 'empty'; icon: IconName; title: string; text: string; btn?: string; /** A primary button (384). */ cta?: Btn; /** On a panel (384). */ panel?: boolean }
   | { k: 'contact'; icon: IconName; t: string; btn?: string }
   | { k: 'iconRows'; rows: { icon: IconName; t: string; bold?: boolean }[] }
-  | { k: 'footRow'; icon?: IconName; t: string; right?: Right }
+  | { k: 'footRow'; icon?: IconName; t: string; right?: Right; /** Green icon and text (391). */ green?: boolean }
   | { k: 'gap'; h: number };
 
 export type Deadline = { label: string; value: string; btn: Btn };

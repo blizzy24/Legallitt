@@ -283,10 +283,10 @@ export function PillTag({ p, outline }: { p: Pill; outline?: boolean }) {
   const { t, s } = useK();
   const tone = TONES[p.tone];
   return (
-    <View style={[s.pill, p.lg && s.pillLg, outline && s.pillOutline, { backgroundColor: tone.bg }]}>
+    <View style={[s.pill, p.lg && s.pillLg, outline && s.pillOutline, p.maxW !== undefined && { maxWidth: t[p.maxW] }, { backgroundColor: tone.bg }]}>
       {p.dot ? <View style={[s.pillDot, { backgroundColor: p.tone === 'green' || p.dotGreen ? status.active : tone.fg }]} /> : null}
       {p.icon && !p.iconAfter ? <Icon name={p.icon} size={t.pillSize} color={p.iconGreen ? status.active : tone.fg} /> : null}
-      <Text style={[s.pillText, p.mono && s.mono, p.mono && s.pillMono, { color: tone.fg }]}>{p.pill}</Text>
+      <Text style={[s.pillText, p.mono && s.mono, p.mono && s.pillMono, p.maxW !== undefined && s.pillWrap, { color: tone.fg }]}>{p.pill}</Text>
       {p.icon && p.iconAfter ? <Icon name={p.icon} size={t.pillSize} color={tone.fg} /> : null}
     </View>
   );
@@ -341,7 +341,15 @@ function HeadRow({ h }: { h: Head }) {
   const { t, s } = useK();
   return (
     <View style={[s.between, h.rule && s.headRule, h.rightTop && s.top]}>
-      <View style={[s.row, s.flex, (h.kicker || h.topAlign) && s.top, h.tile && s.headTileRow]}>
+      <View
+        style={[
+          s.row,
+          s.flex,
+          (h.kicker || h.topAlign) && s.top,
+          h.tile && s.headTileRow,
+          { minWidth: t[h.titleMin ?? 'headTitleMin'] + (h.tile ? t.headTile + t.headTileGap : 0) },
+        ]}
+      >
         {h.tile ? (
           <View
             style={[
@@ -377,7 +385,7 @@ function HeadRow({ h }: { h: Head }) {
           ) : null}
           <View style={[s.row, s.wrap]}>
             {h.title ? (
-              <Text style={[h.caps ? s.caps : s.headTitle, h.small && s.capsSmall, h.tone === 'red' && s.red, h.tone === 'brown' && s.brownText, h.size !== undefined && { fontSize: t[h.size] }]}>
+              <Text style={[h.caps ? s.caps : s.headTitle, h.small && s.capsSmall, h.tone === 'red' && s.red, h.tone === 'brown' && s.brownText, h.size !== undefined && { fontSize: t[h.size], lineHeight: t[h.size + 'Line'] }]}>
                 {h.title}
               </Text>
             ) : null}
@@ -391,7 +399,18 @@ function HeadRow({ h }: { h: Head }) {
           {h.sub ? <Text style={[s.headSub, h.subSize !== undefined && { fontSize: t[h.subSize], lineHeight: t[h.subSize + 'Line'] }]}>{h.sub}</Text> : null}
         </View>
       </View>
-      <RightPart r={h.right} />
+      {h.right2 !== undefined ? (
+        <View style={s.shrink}>
+          <RightPart r={h.right} />
+        </View>
+      ) : (
+        <RightPart r={h.right} />
+      )}
+      {h.right2 !== undefined ? (
+        <View style={[s.headRight2, s.shrink]}>
+          <RightPart r={h.right2} />
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -426,6 +445,8 @@ export function Button({ b, flex, footer, pill }: { b: Btn; flex?: boolean; foot
     flex && !b.hug && s.flex,
     b.hug && s.btnHug,
     b.centered && s.btnCentered,
+    b.start && s.btnStart,
+    b.tight && s.btnTight,
   ];
   return (
     <Pressable
@@ -865,9 +886,15 @@ export function BlockView({ b }: { b: Block }): ReactNode {
             {cell.icon ? <Icon name={cell.icon} size={t.labelSize} color={c.inkMuted} /> : null}
             <Text style={[s.cellLabel, b.caps && s.cellCaps]}>{cell.label}</Text>
           </View>
-          <Text style={[s.cellValue, cell.tone === 'green' && s.green, cell.tone === 'mono' && s.mono, cell.tone === 'muted' && s.mutedValue, cell.small && s.cellValueSmall, cell.plain && s.cellPlain, cell.tone === 'brown' && s.monoBrown, cell.big && s.cellBig]}>
-            {cell.value}
-          </Text>
+          {cell.pill ? (
+            <View style={s.docPill}>
+              <PillTag p={cell.pill} />
+            </View>
+          ) : (
+            <Text style={[s.cellValue, cell.tone === 'green' && s.green, cell.tone === 'mono' && s.mono, cell.tone === 'muted' && s.mutedValue, cell.small && s.cellValueSmall, cell.plain && s.cellPlain, cell.tone === 'brown' && s.monoBrown, cell.big && s.cellBig]}>
+              {cell.value}
+            </Text>
+          )}
           {cell.sub ? <Text style={s.cellSub}>{cell.sub}</Text> : null}
           </View>
           {cell.iconRight ? (
@@ -977,6 +1004,11 @@ export function BlockView({ b }: { b: Block }): ReactNode {
                 )}
                 <View style={s.flex}>
                   <Text style={s.docName}>{d.name}</Text>
+                  {d.pill ? (
+                    <View style={s.docPill}>
+                      <PillTag p={d.pill} />
+                    </View>
+                  ) : null}
                   {d.meta ? (
                     <View style={[s.row, s.wrap]}>
                       <Text style={[s.docMeta, s.shrink]}>{d.meta}</Text>
@@ -1515,8 +1547,8 @@ export function BlockView({ b }: { b: Block }): ReactNode {
       return (
         <View style={[s.between, s.footRow]}>
           <View style={[s.row, s.flex]}>
-            {b.icon ? <Icon name={b.icon} size={t.footRowIcon} color={c.inkWarm} /> : null}
-            <Text style={s.footRowText}>{b.t}</Text>
+            {b.icon ? <Icon name={b.icon} size={t.footRowIcon} color={b.green ? c.greenInk : c.inkWarm} /> : null}
+            <Text style={[s.footRowText, b.green && s.greenText]}>{b.t}</Text>
           </View>
           <RightPart r={b.right} />
         </View>
@@ -1846,8 +1878,8 @@ function makeStyles(t: CourtTokens) {
   caps: { fontFamily: font.appSemi, fontSize: t.capsSize, letterSpacing: t.capsSpacing, color: c.inkWarm, textTransform: 'uppercase' },
   rightText: { fontFamily: font.appSemi, fontSize: t.rightSize, color: c.inkWarm, textAlign: 'right', flexShrink: 1 },
   link: { flexDirection: 'row', alignItems: 'center', gap: t.pillGap },
-  linkChip: { minHeight: t.linkChipH, paddingHorizontal: t.linkChipPadX, borderRadius: t.linkChipRadius, backgroundColor: c.panel },
-  linkChipText: { color: c.inkWarm },
+  linkChip: { flexShrink: 1, minHeight: t.linkChipH, paddingHorizontal: t.linkChipPadX, borderRadius: t.linkChipRadius, backgroundColor: c.panel },
+  linkChipText: { flexShrink: 1, textAlign: 'center', color: c.inkWarm },
   linkMuted: { color: c.inkWarm },
   linkGreen: { color: status.active },
   linkGreenInk: { color: c.greenInk },
@@ -2035,6 +2067,10 @@ function makeStyles(t: CourtTokens) {
   headerRight: { marginRight: t.headerRightGap },
   btnHug: { paddingHorizontal: t.hugPadX },
   btnCentered: { alignSelf: 'center', paddingHorizontal: t.hugPadX },
+  btnStart: { alignSelf: 'flex-start', paddingHorizontal: t.hugPadX },
+  btnTight: { paddingHorizontal: t.tightPadX },
+  headRight2: { marginLeft: t.headGap },
+  docPill: { flexDirection: 'row', marginTop: t.docMetaTop },
   sideTile: { width: t.sideTile, height: t.sideTile, borderRadius: t.sideTileRadius, backgroundColor: c.peachSoft, alignItems: 'center', justifyContent: 'center' },
   amountSideBig: { marginTop: t.sideBigTop, fontFamily: font.appSemi, fontSize: t.amountSize, color: c.ink },
   bannerDisc: { width: t.bannerDisc, height: t.bannerDisc, borderRadius: t.bannerDisc / 2, backgroundColor: c.avatarTan, alignItems: 'center', justifyContent: 'center' },
@@ -2113,7 +2149,7 @@ function makeStyles(t: CourtTokens) {
   gridPanel: { borderRadius: t.panelRadius, paddingHorizontal: t.panelPad, paddingVertical: t.gridPanelPadY, backgroundColor: c.panel },
   cellBoxed: { borderRadius: t.panelRadius, paddingHorizontal: t.cellPadX, paddingVertical: t.cellPadY, backgroundColor: c.panel },
   cellLabel: { fontFamily: font.appBody, fontSize: t.labelSize, color: c.inkWarm },
-  cellValue: { marginTop: t.valueTop, fontFamily: font.appSemi, fontSize: t.valueSize, color: c.ink },
+  cellValue: { marginTop: t.valueTop, fontFamily: font.appSemi, fontSize: t.valueSize, lineHeight: t.valueSizeLine, color: c.ink },
   mutedValue: { fontFamily: font.appBody, fontStyle: 'italic', fontSize: t.mutedValueSize, color: c.inkWarm },
   cellSub: { marginTop: t.valueTop, fontFamily: font.appBody, fontSize: t.labelSize, color: c.inkWarm },
 
@@ -2207,7 +2243,8 @@ function makeStyles(t: CourtTokens) {
   hint: { fontFamily: font.appBody, fontSize: t.hintSize, color: c.inkWarm },
   hintRow: { marginTop: t.hintTop },
 
-  choice: { flexDirection: 'row', alignItems: 'center', gap: t.stepGap, borderRadius: t.panelRadius, padding: t.panelPad, backgroundColor: c.panel },
+  choice: { flexDirection: 'row', alignItems: 'center', gap: t.stepGap, borderRadius: t.panelRadius, paddingHorizontal: t.panelPad, paddingVertical: t.choicePadY, backgroundColor: c.panel },
+  pillWrap: { flexShrink: 1, textAlign: 'center' },
   choiceOn: { backgroundColor: dcDocsNeededPalette.halo },
   radio: { width: t.stepDisc, height: t.stepDisc, borderRadius: t.stepDisc / 2, backgroundColor: c.radioGrey, alignItems: 'center', justifyContent: 'center' },
   radioOn: { backgroundColor: c.brown },
