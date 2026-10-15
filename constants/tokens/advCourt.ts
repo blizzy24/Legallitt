@@ -24,6 +24,10 @@
 // status set or the promoted red pair. Kept here, named for what they draw,
 // until the client confirms them.
 export const advCourtPalette = {
+  /** design/383's scrim over 382's body (page #FCF9F8 → #A1A09F): black at 0.36. Also behind 366's sheet. */
+  scrim: 'rgba(0, 0, 0, 0.36)',
+  /** design/383 dims the header far less (→ #EEECEB): black at 0.055. */
+  scrimHeader: 'rgba(0, 0, 0, 0.055)',
   /** The scroll thumbs of 364's summary boxes — not hcPalette.brown (#6C5C45). */
   thumb: '#7A6345',
   /** The disabled button (377 "Continue", 375 "Confirm Received"). */
