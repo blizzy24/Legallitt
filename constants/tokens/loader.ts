@@ -24,6 +24,4 @@ export const loader = {
   // 250 ms, then back to one letter — never to blank.
   letterMs: 115,
   wordHoldMs: 250,
-  /** The compact spinner (components/Spinner.tsx) — the mark alone. */
-  spinner: 44,
 };

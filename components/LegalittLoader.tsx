@@ -9,7 +9,7 @@ import { font, loader as l } from '../constants/theme';
 // every 1.5 s — and "LEGALITT" typing beneath it on its own 1.17 s loop. The two
 // loops are deliberately not synced.
 
-/** The mark alone, stepping. Also the compact Spinner. */
+/** The mark alone, stepping. */
 export function SteppingMark({ size = l.mark }: { size?: number }) {
   const turn = useRef(new Animated.Value(0)).current;
   useEffect(() => {
