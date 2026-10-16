@@ -267,7 +267,7 @@ export default function DocumentViewerScreen() {
               Share
             </Text>
           </Pressable>
-          <DemoPressable accessibilityRole="button" style={[styles.action, styles.actionFilled]}>
+          <DemoPressable accessibilityRole="button" accessibilityLabel="Download" style={[styles.action, styles.actionFilled]}>
             <Download size={t.actionGlyph} color={ink.onBrand} />
             <Text style={[styles.actionLabel, styles.actionLabelOn]} {...shrinkToFit(0.8)}>
               Download
