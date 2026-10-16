@@ -387,7 +387,7 @@ export const COURT_AI_SUMMARY: CourtSpec = {
     },
   ],
   footer: [
-    { label: 'Call Client', icon: 'phone', variant: 'panel', hug: true },
+    { label: 'Call Client', icon: 'phone', variant: 'panel', hug: true, to: R('call') },
     { label: 'Chat with Client', icon: 'chat', to: R('chat') },
   ],
 };
@@ -405,9 +405,9 @@ export const COURT_CHAT = {
   matterSub: 'Civil Case',
   matterId: CASE.hcr,
   actions: [
-    { label: 'Call Client', icon: 'phone' },
+    { label: 'Call Client', icon: 'phone', to: R('call') },
     { label: 'View Case', icon: 'briefcase', to: R('ai-summary') },
-    { label: 'View Documents', icon: 'folder' },
+    { label: 'View Documents', icon: 'folder', to: R('dc/client-documents') },
   ] as { label: string; icon: 'phone' | 'briefcase' | 'folder'; to?: Href }[],
   today: 'TODAY',
   messages: [
@@ -520,7 +520,7 @@ export const COURT_WAITING: CourtSpec = {
       ],
     },
     { k: 'button', btn: { label: 'View Case Notes', icon: 'file', variant: 'white' }, top: 'notesTop' },
-    { k: 'button', btn: { label: 'Need Help? Contact Support', icon: 'headset', variant: 'link' }, top: 'helpTop' },
+    { k: 'button', btn: { label: 'Need Help? Contact Support', icon: 'headset', variant: 'link', to: '/support-chat' as Href }, top: 'helpTop' },
   ],
 };
 
@@ -1543,8 +1543,8 @@ export const COURT_FEE_SENT: CourtSpec = {
           name: CASE.client,
           chipsGrey: true,
           chips: [
-            { label: 'Chat', icon: 'chat' },
-            { label: 'Call', icon: 'phone' },
+            { label: 'Chat', icon: 'chat', to: R('chat') },
+            { label: 'Call', icon: 'phone', to: R('call') },
           ],
         },
       ],
@@ -1690,8 +1690,8 @@ export const COURT_PRE_FILING: CourtSpec = {
               name: CASE.client,
               chipsGrey: true,
               chips: [
-                { label: 'Chat', icon: 'chat' },
-                { label: 'Call', icon: 'phone' },
+                { label: 'Chat', icon: 'chat', to: R('chat') },
+                { label: 'Call', icon: 'phone', to: R('call') },
               ],
             },
           ],
@@ -1881,7 +1881,7 @@ export const COURT_CASE_FILED: CourtSpec = {
     },
     {
       k: 'card',
-      head: { title: 'Filing Details', size: 'bigHeadSize', right: { link: 'Edit Details', icon: 'edit', muted: true, mutedIcon: true } },
+      head: { title: 'Filing Details', size: 'bigHeadSize', right: { link: 'Edit Details', icon: 'edit', muted: true, mutedIcon: true, to: R('confirm-filing') } },
       blocks: [
         {
           k: 'grid',
@@ -2263,7 +2263,7 @@ export const COURT_HEARING_SCHEDULED: CourtSpec = {
             { label: 'Judge', labelIcon: 'gavel', value: "Hon'ble Justice Verma" },
           ],
         },
-        { k: 'button', btn: { label: 'Edit Hearing Details', icon: 'calendarPen', variant: 'help' }, top: 'editTop' },
+        { k: 'button', btn: { label: 'Edit Hearing Details', icon: 'calendarPen', variant: 'help', to: R('hearing/add') }, top: 'editTop' },
       ],
     },
     {
@@ -2549,7 +2549,7 @@ export const COURT_HEARING_UPDATE: CourtSpec = {
 // the export's preview Court Order row is ~46pt taller than the one built here.
 /** The drawn pill wraps differently per card; `maxW` names the token holding its width. */
 const clientSees = (maxW: string): Pill => ({ pill: 'CLIENT WILL SEE THIS', tone: 'greenTile', icon: 'eye', maxW });
-const EDIT_CHIP: Right = { link: 'Edit', icon: 'edit', chip: true };
+const EDIT_CHIP: Right = { link: 'Edit', icon: 'edit', chip: true, to: R('hearing/update') };
 
 export const COURT_REVIEW_UPDATE: CourtSpec = {
   title: 'Review Client Update',
@@ -2703,7 +2703,7 @@ export const COURT_REVIEW_UPDATE: CourtSpec = {
     {
       k: 'card',
       top: 'sectionTop',
-      head: { icon: 'calendar', tile: true, title: 'Next Hearing', size: 'secHeadSize', right: clientSees('pillTwoLine'), right2: { link: 'Edit Hearing', icon: 'edit', chip: true } },
+      head: { icon: 'calendar', tile: true, title: 'Next Hearing', size: 'secHeadSize', right: clientSees('pillTwoLine'), right2: { link: 'Edit Hearing', icon: 'edit', to: R('hearing/next'), chip: true } },
       blocks: [
         {
           k: 'card',
@@ -3237,7 +3237,7 @@ export const COURT_CHANGE_ADVOCATE_NOC: CourtSpec = {
           top: 'innerTop',
           btns: [
             { label: 'Chat with Client', icon: 'chat', variant: 'soft', to: R('chat'), h: 'pairH', size: 'pairSize' },
-            { label: 'Call Client', icon: 'phone', variant: 'soft', h: 'pairH', size: 'pairSize' },
+            { label: 'Call Client', icon: 'phone', variant: 'soft', to: R('call'), h: 'pairH', size: 'pairSize' },
           ],
         },
       ],
@@ -3373,10 +3373,10 @@ export const COURT_DASHBOARD: CourtSpec = {
       tiles: true,
       top: 'innerTop',
       items: [
-        { label: 'Documents', icon: 'folder' },
-        { label: 'Hearings', icon: 'gavel' },
-        { label: 'Updates', icon: 'bell' },
-        { label: 'Messages', icon: 'chat' },
+        { label: 'Documents', icon: 'folder', to: R('dc/client-documents') },
+        { label: 'Hearings', icon: 'gavel', to: '/advocate/calendar' as Href },
+        { label: 'Updates', icon: 'bell', to: '/advocate/notifications' as Href },
+        { label: 'Messages', icon: 'chat', to: R('chat') },
       ],
     },
     {
@@ -3444,6 +3444,12 @@ export const DC_VALUES: { all: readonly (readonly [string, string])[]; route: Re
   route: {
     // 406: the case information reads District Court Representation.
     '/advocate/court/client-accepted': [['High Court Representation', 'District Court Representation']],
+    // 365's chat header (a custom screen): the District Court service and docket
+    // drawn on 398 / 399. The five drawn messages are court-generic and stay.
+    '/advocate/court/chat': [
+      ['High Court Representation', 'District Court Representation'],
+      [CASE.hcr, CASE.dc],
+    ],
   },
 };
 // ⚠ CONFLICT (DC 2) — docket mixing is kept as drawn: 415, 423–427 and 432

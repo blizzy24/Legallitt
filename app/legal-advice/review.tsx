@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { router, type Href } from 'expo-router';
 import {
   ChevronLeft,
   CircleMinus,
@@ -48,7 +48,7 @@ import { useLegalAdvice } from '../../context/legalAdvice';
 
 function EditChip() {
   return (
-    <Pressable accessibilityRole="button" accessibilityLabel="Edit" hitSlop={6} style={styles.edit}>
+    <Pressable onPress={() => router.push('/legal-advice/details' as Href)} accessibilityRole="button" accessibilityLabel="Edit" hitSlop={6} style={styles.edit}>
       <Pencil size={t.editIcon} color={t.editColour} />
       <Text style={styles.editText} {...shrinkToFit(0.8)}>
         Edit
@@ -160,7 +160,7 @@ export default function LegalAdviceReviewScreen() {
                 {form.date && form.time ? `${form.date} / ${form.time}` : 'DD/MM/YYYY / Time'}
               </Text>
             </View>
-            <Pressable accessibilityRole="button" accessibilityLabel="Edit time" hitSlop={8}>
+            <Pressable onPress={() => router.push('/legal-advice/details' as Href)} accessibilityRole="button" accessibilityLabel="Edit time" hitSlop={8}>
               <Pencil size={t.pencil} color={colors.textPrimary} />
             </Pressable>
           </View>

@@ -24,9 +24,8 @@ import { courierReceived as t, courierGreen as g, font, ink } from '../../../con
 //   [Document Count], [Document Name] x3, [Courier Name], [Waybill Number],
 //   [Date] and [Advocate Name]. Sample values rendered; all in PLACEHOLDERS.
 //
-// STATIC, NOT WIRED: "Open Case" opens nothing from here, and "Chat with
-// Client" is not wired — messaging exists elsewhere in the app and this screen
-// deliberately does not reach into it.
+// "Open Case" opens the court case preparation (design/377) and "Chat with
+// Client" the advocate↔client chat (design/365) — navigation only.
 export default function AdvocateCourierReceivedScreen() {
   const insets = useSafeAreaInsets();
   const d = CO_RECEIVED;
@@ -130,6 +129,7 @@ export default function AdvocateCourierReceivedScreen() {
 
       <View style={[styles.bar, { paddingBottom: insets.bottom + t.barPadBottom }]}>
         <DemoPressable
+          onPress={() => router.push('/advocate/court/case-preparation' as Href)}
           accessibilityRole="button"
           accessibilityLabel={d.cta}
           style={({ pressed }) => [styles.btn, pressed && styles.pressed]}

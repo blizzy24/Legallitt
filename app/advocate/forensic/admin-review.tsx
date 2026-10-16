@@ -249,8 +249,8 @@ export default function AdvocateForensicAdminReviewScreen() {
           </View>
         </View>
 
-        {/* Static. Messaging exists in the client app; not wired here. */}
-        <View style={styles.chat}>
+        {/* Opens the support chat (design/35). */}
+        <Pressable accessibilityRole="button" onPress={() => router.push('/support-chat' as Href)} style={styles.chat}>
           <View style={styles.chatIcon}>
             <Headset size={t.chatIconGlyph} color={colors.textPrimary} />
           </View>
@@ -265,7 +265,7 @@ export default function AdvocateForensicAdminReviewScreen() {
               {r.chat.button}
             </Text>
           </View>
-        </View>
+        </Pressable>
       </ScrollView>
     </View>
   );

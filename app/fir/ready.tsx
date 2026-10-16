@@ -142,6 +142,7 @@ export default function FirReadyScreen() {
         <View style={styles.spacer} />
 
         <DemoPressable
+          onPress={() => router.push(clientDocHref(file.name, 'doc-fir-draft') as Href)}
           accessibilityRole="button"
           style={({ pressed }) => [styles.button, pressed && styles.pressed]}
         >

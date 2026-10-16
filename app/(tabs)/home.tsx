@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { router, type Href } from 'expo-router';
 import { Bell, Search } from 'lucide-react-native';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -152,7 +152,7 @@ function MemberHeader() {
         <Text style={styles.greeting}>Hello, Rahul</Text>
         <Text style={styles.subtitle}>How can we help you today?</Text>
       </View>
-      <Pressable accessibilityRole="button" accessibilityLabel="Notifications" style={styles.bell}>
+      <Pressable onPress={() => router.push('/notifications' as Href)} accessibilityRole="button" accessibilityLabel="Notifications" style={styles.bell}>
         <Bell size={home.bellIcon} color={ink.accent} />
         <View style={styles.dot} />
       </Pressable>

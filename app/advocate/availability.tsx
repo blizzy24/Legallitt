@@ -1,5 +1,5 @@
 import DemoPressable from '../../components/DemoPressable';
-import { router } from 'expo-router';
+import { router, type Href } from 'expo-router';
 import { CalendarDays, Check, ChevronLeft, ChevronRight, Settings } from 'lucide-react-native';
 import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -103,7 +103,7 @@ export default function AdvocateAvailabilityScreen() {
           <Text style={styles.title} numberOfLines={1}>
             Schedule &amp; Availability
           </Text>
-          <Pressable accessibilityRole="button" accessibilityLabel="Settings" style={styles.gear}>
+          <Pressable onPress={() => router.push('/advocate/settings' as Href)} accessibilityRole="button" accessibilityLabel="Settings" style={styles.gear}>
             <Settings size={t.gearIcon} color={colors.brandDark} />
           </Pressable>
         </View>
@@ -257,7 +257,7 @@ export default function AdvocateAvailabilityScreen() {
                 {ADV_SELECTED_DATE.sub}
               </Text>
             </View>
-            <Pressable accessibilityRole="button" style={styles.edit}>
+            <Pressable onPress={() => router.push('/advocate/calendar/availability' as Href)} accessibilityRole="button" style={styles.edit}>
               <Text style={styles.editText} {...shrinkToFit(0.8)}>
                 Edit Hours
               </Text>

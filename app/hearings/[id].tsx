@@ -1,5 +1,5 @@
 import DemoPressable from '../../components/DemoPressable';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
   Building2,
   Check,
@@ -128,7 +128,7 @@ export default function HearingDetailsScreen() {
                 </Text>
               </View>
               {/* Message has no destination yet. */}
-              <Pressable accessibilityRole="button" style={styles.messageButton}>
+              <Pressable onPress={() => router.push('/chat/advocate' as Href)} accessibilityRole="button" style={styles.messageButton}>
                 <MessageSquare size={h.bodySize} color={ink.accent} />
                 <Text style={styles.messageText}>Message</Text>
               </Pressable>
@@ -192,7 +192,7 @@ export default function HearingDetailsScreen() {
 
       <View style={[styles.bar, { paddingBottom: h.barPadBottom + insets.bottom }]}>
         {/* Contact Advocate has no destination yet. */}
-        <DemoPressable accessibilityRole="button" style={[styles.barButton, styles.barButtonLight]}>
+        <DemoPressable onPress={() => router.push('/chat/advocate' as Href)} accessibilityRole="button" style={[styles.barButton, styles.barButtonLight]}>
           <Text style={styles.barButtonLightText}>Contact Advocate</Text>
         </DemoPressable>
         <Pressable accessibilityRole="button" onPress={openCase} style={[styles.barButton, styles.barButtonBrand]}>

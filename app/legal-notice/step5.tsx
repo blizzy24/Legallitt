@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { router, type Href } from 'expo-router';
 import { ChevronRight } from 'lucide-react-native';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -43,7 +43,7 @@ export default function Step5Screen() {
         <Row label="Notice Details" value={(noticee.length ? noticee : SAMPLE.noticee).join('\n')} />
         <Row label="Issue Summary" value={SAMPLE.summary} paragraph />
 
-        <Pressable accessibilityRole="button" style={styles.box}>
+        <Pressable onPress={() => router.push('/legal-notice/step4-review' as Href)} accessibilityRole="button" style={styles.box}>
           <View style={styles.boxText}>
             <Text style={styles.boxTitle}>Uploaded Documents</Text>
             <Text style={styles.boxSub}>{docCount} Documents Uploaded</Text>

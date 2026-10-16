@@ -62,7 +62,7 @@ export default function RequestDetailScreen() {
         <Text style={styles.topTitle} numberOfLines={1}>
           Requests
         </Text>
-        <Pressable accessibilityRole="button" accessibilityLabel="Notifications" hitSlop={10} style={styles.bell}>
+        <Pressable onPress={() => router.push('/notifications' as Href)} accessibilityRole="button" accessibilityLabel="Notifications" hitSlop={10} style={styles.bell}>
           <Bell size={t.bellIcon} color={colors.textPrimary} />
           <View style={styles.bellDot} />
         </Pressable>

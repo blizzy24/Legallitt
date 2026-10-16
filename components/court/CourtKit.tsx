@@ -1,6 +1,7 @@
 import { router, useLocalSearchParams, usePathname, type Href } from 'expo-router';
 import { DC_VALUES } from '../../data/advocateCourt';
 import { BUTTON_TARGETS, nextRoute } from '../../data/flowMap';
+import { advDocHref } from '../../data/docLinks';
 import { DEMO_AUTO_ADVANCE } from '../../constants/dev';
 import {
   Archive,
@@ -317,6 +318,19 @@ function dcSpec<T>(x: T, pairs: readonly (readonly [string, string])[]): T {
   if (Array.isArray(x)) return x.map((v) => dcSpec(v, pairs)) as T;
   if (x && typeof x === 'object') return Object.fromEntries(Object.entries(x).map(([k, v]) => [k, k === 'to' ? v : dcSpec(v, pairs)])) as T;
   return x;
+}
+
+/**
+ * For the custom court screens (365's chat) that sit outside CourtScreen: the
+ * District Court variant's copy swap, and its service param on court pushes.
+ */
+export function useCourtService() {
+  const svc = useLocalSearchParams<{ service?: string }>().service;
+  const path = usePathname();
+  return {
+    swap: <T,>(x: T): T => (svc === 'dc' ? dcSpec(x, [...DC_VALUES.all, ...(DC_VALUES.route[path] ?? [])]) : x),
+    href: (to: Href) => withService(to, svc),
+  };
 }
 
 function go(b: Btn, svc?: string) {
@@ -1090,47 +1104,44 @@ export function BlockView({ b }: { b: Block }): ReactNode {
                   </View>
                 ) : null}
                 {d.inline ? (
-                  // ⚠ UNSCOPED — no viewer, nothing uploads.
+                  // View opens the documents viewer; Replace uploads nothing.
                   <View style={s.docInline}>
                     {d.inline.map((x, j) => (
-                      <View key={x} style={[s.docInlineBtn, s.row, { backgroundColor: b.inlineWhite ? c.card : j === 0 ? c.tileGrey : c.helpGrey }]}>
+                      <DocAction key={x} label={x} name={d.name} style={[s.docInlineBtn, s.row, { backgroundColor: b.inlineWhite ? c.card : j === 0 ? c.tileGrey : c.helpGrey }]}>
                         {d.inlineIcons?.[j] ? <Icon name={d.inlineIcons[j]} size={t.docInlineIcon} color={c.ink} /> : null}
                         <Text style={s.docInlineText}>{x}</Text>
-                      </View>
+                      </DocAction>
                     ))}
                   </View>
                 ) : null}
-                {/* ⚠ UNSCOPED — no document viewer. */}
                 {d.btn ? (
-                  <View style={[s.docBtn, b.pdf && s.docBtnGrey, b.btnTone === 'help' && s.docBtnHelp, b.btnTone === 'tile' && s.docBtnTile]}>
+                  <DocAction label={d.btn} name={d.name} style={[s.docBtn, b.pdf && s.docBtnGrey, b.btnTone === 'help' && s.docBtnHelp, b.btnTone === 'tile' && s.docBtnTile]}>
                     <Text style={s.docBtnText}>{d.btn}</Text>
-                  </View>
+                  </DocAction>
                 ) : null}
               </View>
               {d.bigActions ? (
-                // ⚠ UNSCOPED — no viewer, nothing uploads.
                 <View style={[s.row, s.bigActions]}>
                   {d.bigActions.map((x, j) => (
-                    <View key={x} style={[s.bigAction, s.flex]}>
+                    <DocAction key={x} label={x} name={d.name} style={[s.bigAction, s.flex]}>
                       <Icon name={j === 0 ? 'eye' : 'refresh'} size={t.bigActionIcon} color={c.ink} />
                       <Text style={s.bigActionText}>{x}</Text>
-                    </View>
+                    </DocAction>
                   ))}
                 </View>
               ) : null}
               {d.btnBelow ? (
-                // ⚠ UNSCOPED — no document viewer.
-                <View style={s.docBelow}>
+                <DocAction label={d.btnBelow} name={d.name} style={s.docBelow}>
                   <Eye size={t.docBelowSize} color={c.ink} strokeWidth={2} />
                   <Text style={s.docBelowText}>{d.btnBelow}</Text>
-                </View>
+                </DocAction>
               ) : null}
               {d.actions ? (
                 <View style={[s.row, s.docActions]}>
                   {d.actions.map((a) => (
-                    <View key={a} style={[s.docBtn, s.flex]}>
+                    <DocAction key={a} label={a} name={d.name} style={[s.docBtn, s.flex]}>
                       <Text style={s.docBtnText}>{a}</Text>
-                    </View>
+                    </DocAction>
                   ))}
                 </View>
               ) : null}
@@ -1675,11 +1686,26 @@ function ScrollText({ b }: { b: Extract<Block, { k: 'scrollText' }> }) {
   );
 }
 
+/**
+ * A document row's action. "View…" opens the documents viewer on that file
+ * (design/261); the others draw as before.
+ */
+function DocAction({ label, name, style, children }: { label: string; name: string; style: StyleProp<ViewStyle>; children: ReactNode }) {
+  if (/^View\b/.test(label))
+    return (
+      <Pressable accessibilityRole="button" accessibilityLabel={`${label} ${name}`} onPress={() => router.push(advDocHref(name) as Href)} style={style}>
+        {children}
+      </Pressable>
+    );
+  return <View style={style}>{children}</View>;
+}
+
 function SmallChip({ b, grey }: { b: Btn; grey?: boolean }) {
   const { t, s } = useK();
+  const svc = useContext(Service);
   const nav = b.to !== undefined || b.back === true;
   return (
-    <Pressable accessibilityRole="button" onPress={nav ? () => go(b) : undefined} style={[s.chip, grey && s.chipGrey]}>
+    <Pressable accessibilityRole="button" onPress={nav ? () => go(b, svc) : undefined} style={[s.chip, grey && s.chipGrey]}>
       {b.icon ? <Icon name={b.icon} size={t.chipIcon} color={c.ink} /> : null}
       <Text style={[s.chipText, grey && s.chipGreyText]}>{b.label}</Text>
     </Pressable>
@@ -1688,12 +1714,12 @@ function SmallChip({ b, grey }: { b: Btn; grey?: boolean }) {
 
 function Tile({ b }: { b: Btn }) {
   const { t, s } = useK();
+  const svc = useContext(Service);
   return (
-    // ⚠ UNSCOPED — quick actions draw only.
-    <View style={s.tile}>
+    <Pressable accessibilityRole="button" disabled={b.to === undefined} onPress={() => go(b, svc)} style={s.tile}>
       <View style={s.uploadDisc}>{b.icon ? <Icon name={b.icon} size={t.headIcon} color={c.inkWarm} /> : null}</View>
       <Text style={s.checkTitle}>{b.label}</Text>
-    </View>
+    </Pressable>
   );
 }
 

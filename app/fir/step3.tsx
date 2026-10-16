@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { router, type Href } from 'expo-router';
 import {
   ArrowRight, BadgeCheck, ChevronDown, ChevronRight, Eye, Gavel, IdCard, Phone,
   SquarePen, Trash2, UserPlus, UserRoundCheck, UserRoundX, UsersRound,
@@ -121,7 +121,7 @@ export default function FirStep3Screen() {
               <Text style={[styles.actionText, styles.removeText]}>Remove</Text>
             </Pressable>
             <Text style={styles.actionSep}>•</Text>
-            <Pressable accessibilityRole="button" style={styles.action}>
+            <Pressable onPress={() => router.push('/fir/step1' as Href)} accessibilityRole="button" style={styles.action}>
               <SquarePen size={t.actionIcon} color={colors.textPrimary} />
               <Text style={styles.actionText}>Edit Details</Text>
             </Pressable>
@@ -161,7 +161,7 @@ export default function FirStep3Screen() {
           {/* design/44's witness card carries only Edit Statement Note — there is no
               Remove control on it, unlike the accused card. Left as drawn. */}
           <View style={styles.actions}>
-            <Pressable accessibilityRole="button" style={styles.action}>
+            <Pressable onPress={() => router.push('/fir/step2' as Href)} accessibilityRole="button" style={styles.action}>
               <SquarePen size={t.actionIcon} color={colors.textPrimary} />
               <Text style={styles.actionText}>Edit Statement Note</Text>
             </Pressable>

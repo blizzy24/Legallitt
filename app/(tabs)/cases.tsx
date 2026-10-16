@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { router, type Href } from 'expo-router';
 import { Bell, ChevronRight, Clock, FolderOpen } from 'lucide-react-native';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -52,7 +52,7 @@ export default function CasesScreen() {
             <Text style={styles.title}>My Cases</Text>
             <Text style={styles.subtitle}>Track and manage your legal matters in one place.</Text>
           </View>
-          <Pressable accessibilityRole="button" accessibilityLabel="Notifications" style={styles.bell}>
+          <Pressable onPress={() => router.push('/notifications' as Href)} accessibilityRole="button" accessibilityLabel="Notifications" style={styles.bell}>
             <Bell size={t.bellIcon} color={colors.textPrimary} />
             <View style={styles.bellDot} />
           </Pressable>
@@ -118,11 +118,10 @@ export default function CasesScreen() {
 function PendingSection({ requests, first }: { requests: PendingRequest[]; first?: boolean }) {
   return (
     <>
-      {/* The design shows "View All" here, but the destination is not designed yet, so it
-          renders without an action. */}
+      {/* "View All" opens the requests list (design/53). */}
       <SectionHeading
         title={`Pending Requests (${requests.length})`}
-        viewAllInert
+        onViewAll={() => router.push('/requests' as Href)}
         style={first ? styles.sectionFirst : styles.sectionSpaced}
       />
       {requests.map((request) => (

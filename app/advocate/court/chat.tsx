@@ -8,6 +8,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AiMark } from '../../../components/AiFlowerMark';
 import { advCourtChat as t, advWalletPalette as w, courierHeader as h, font, hcPalette as c, ink, status } from '../../../constants/theme';
+import { useCourtService } from '../../../components/court/CourtKit';
 import { COURT_CHAT } from '../../../data/advocateCourt';
 
 // Advocate — chat with the client (design/365). Measured at 1.000 px/pt on a
@@ -28,7 +29,10 @@ const ACTION_ICON = { phone: Phone, briefcase: BriefcaseBusiness, folder: Folder
 export default function AdvocateCourtChatScreen() {
   const { advance } = useDemoAdvance();
   const insets = useSafeAreaInsets();
-  const d = COURT_CHAT;
+  // District Court variant (?service=dc): the header's service and docket swap,
+  // and its links keep the service param.
+  const court = useCourtService();
+  const d = court.swap(COURT_CHAT);
   const [draft, setDraft] = useState('');
 
   return (
@@ -89,7 +93,7 @@ export default function AdvocateCourtChatScreen() {
               <Pressable
                 key={a.label}
                 accessibilityRole="button"
-                onPress={to === undefined ? undefined : () => router.push(to)}
+                onPress={to === undefined ? undefined : () => router.push(court.href(to))}
                 style={styles.action}
               >
                 <I size={t.actionIcon} color={c.ink} strokeWidth={1.9} />
@@ -121,7 +125,7 @@ export default function AdvocateCourtChatScreen() {
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={d.aiLabel}
-          onPress={() => router.push(d.copilot)}
+          onPress={() => router.push(court.href(d.copilot))}
           style={styles.ai}
         >
           <AiMark size={t.aiMark} />

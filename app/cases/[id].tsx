@@ -1,4 +1,4 @@
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
   Building2,
   Check,
@@ -129,8 +129,8 @@ export default function CaseDetailsScreen() {
             </View>
           )}
 
-          {/* Contact Advocate has no destination yet. */}
-          <Pressable accessibilityRole="button" style={styles.contact}>
+          {/* Contact Advocate opens the advocate chat (design/33). */}
+          <Pressable onPress={() => router.push('/chat/advocate' as Href)} accessibilityRole="button" style={styles.contact}>
             <MessageSquare size={d.contactTextSize} color={ink.onBrand} />
             <Text style={styles.contactText}>Contact Advocate</Text>
           </Pressable>

@@ -195,7 +195,7 @@ function AdvocateCard({
             View Profile
           </Text>
         </Pressable>
-        <DemoPressable accessibilityRole="button" style={[styles.action, styles.filled]}>
+        <DemoPressable onPress={() => router.push('/legal-advice' as Href)} accessibilityRole="button" style={[styles.action, styles.filled]}>
           <Text style={styles.filledLabel} {...shrinkToFit(0.8)}>
             Book Consultation
           </Text>

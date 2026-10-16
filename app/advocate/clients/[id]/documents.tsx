@@ -1,5 +1,5 @@
 import DemoPressable from '../../../../components/DemoPressable';
-import { router } from 'expo-router';
+import { router, type Href } from 'expo-router';
 import {
   ArrowRight,
   BadgeCheck,
@@ -27,6 +27,7 @@ import {
   type AdvDocument,
 } from '../../../../data/advocateSide';
 import { advClientSub as t, colors, font, ink } from '../../../../constants/theme';
+import { advDocHref } from '../../../../data/docLinks';
 
 // Client documents (design/154).
 //
@@ -189,7 +190,7 @@ export default function AdvocateClientDocumentsScreen() {
                     {d.meta}
                   </Text>
                 </View>
-                <Pressable accessibilityRole="button" style={styles.docView}>
+                <Pressable onPress={() => router.push(advDocHref(d.name) as Href)} accessibilityRole="button" style={styles.docView}>
                   <Text style={styles.docViewText} {...shrinkToFit(0.8)}>
                     View
                   </Text>

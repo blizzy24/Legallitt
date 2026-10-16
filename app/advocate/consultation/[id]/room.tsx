@@ -184,8 +184,8 @@ export default function AdvocateConsultationRoomScreen() {
           <Text style={styles.section} {...shrinkToFit(0.75)}>
             DOCUMENTS ({r.documents.length})
           </Text>
-          {/* Inert — View All has no designed destination. */}
-          <Pressable accessibilityRole="button">
+          {/* View All opens the documents viewer. */}
+          <Pressable onPress={() => router.push('/advocate/documents/viewer' as Href)} accessibilityRole="button">
             <Text style={styles.sectionLink} {...shrinkToFit(0.8)}>
               {r.documentsLink}
             </Text>

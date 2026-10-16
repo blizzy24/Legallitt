@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { router, type Href } from 'expo-router';
 import { ArrowRight, Bell, Check, ChevronLeft, FilePenLine, FileText, Headset, Lock, ShieldCheck, type LucideIcon } from 'lucide-react-native';
 import type { ReactNode } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -47,7 +47,7 @@ export default function LegalNoticeInfoScreen() {
           </View>
           <Text style={styles.brandSub}>Find. Connect. Consult. Resolve.</Text>
         </View>
-        <Pressable accessibilityRole="button" accessibilityLabel="Notifications" style={[styles.circle, styles.bell]}>
+        <Pressable onPress={() => router.push('/notifications' as Href)} accessibilityRole="button" accessibilityLabel="Notifications" style={[styles.circle, styles.bell]}>
           <Bell size={i.circleIcon} color={colors.textPrimary} />
         </Pressable>
         <View style={[styles.circle, styles.avatar]}>

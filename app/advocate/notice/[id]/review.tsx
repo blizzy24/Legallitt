@@ -186,7 +186,7 @@ export default function AdvocateNoticeReviewScreen() {
               </Text>
             </View>
           </View>
-          <Pressable accessibilityRole="button" style={styles.fileBtn}>
+          <Pressable onPress={() => router.push(`/advocate/notice/${id}/draft` as Href)} accessibilityRole="button" style={styles.fileBtn}>
             <Text style={styles.fileBtnText} {...shrinkToFit(0.8)}>
               {r.viewDraft}
             </Text>

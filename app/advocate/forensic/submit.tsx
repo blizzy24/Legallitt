@@ -106,7 +106,7 @@ export default function AdvocateForensicSubmitScreen() {
             {s.view}
           </Text>
         </Pressable>
-        <Pressable accessibilityRole="button" style={({ pressed }) => [styles.act, pressed && styles.pressed]}>
+        <Pressable onPress={() => router.push(`/advocate/forensic/affidavit?id=${id ?? ''}` as Href)} accessibilityRole="button" style={({ pressed }) => [styles.act, pressed && styles.pressed]}>
           <Pencil size={t.actIcon} color={colors.textPrimary} />
           <Text style={styles.actText} {...shrinkToFit(0.8)}>
             {s.edit}

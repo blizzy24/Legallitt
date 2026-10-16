@@ -1,3 +1,4 @@
+import { router, type Href } from 'expo-router';
 import { UserRound, Video } from 'lucide-react-native';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
@@ -69,7 +70,7 @@ export default function AdvocateAppointmentDetailsScreen() {
 
         <Text style={styles.actions}>{d.actions}</Text>
 
-        <Pressable accessibilityRole="button" style={({ pressed }) => [styles.join, pressed && styles.pressed]}>
+        <Pressable onPress={() => router.push('/advocate/consultation/la-2026-1048/video' as Href)} accessibilityRole="button" style={({ pressed }) => [styles.join, pressed && styles.pressed]}>
           <Video size={t.joinGlyph} color={ink.onBrand} strokeWidth={2} />
           <Text style={styles.joinText} {...shrinkToFit(0.8)}>
             {d.join}
