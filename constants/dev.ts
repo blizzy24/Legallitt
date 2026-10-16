@@ -35,7 +35,7 @@ export const DEV_PREVIEW_TOGGLES = true;
  * drawn differently — only the movement changes. The switchers the designs draw
  * are untouched. Set to false and the app behaves exactly as before.
  */
-export const DEMO_AUTO_ADVANCE = true;
+export const DEMO_AUTO_ADVANCE = false;
 
 // ── The animated splash (components/AnimatedSplash.tsx) ──────────────────────
 // Layered after the native splash; JS-only, so these tune without a native build.
