@@ -14,7 +14,7 @@ import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import AiFlowerMark from '../../../../components/AiFlowerMark';
+import { AiMark } from '../../../../components/AiFlowerMark';
 import { shrinkToFit } from '../../../../constants/textFit';
 import { ADV_NOTICE_DRAFTING } from '../../../../data/advocateSide';
 import {
@@ -137,7 +137,7 @@ export default function AdvocateNoticeDraftingScreen() {
               <View style={styles.mRow}>
                 <View style={[styles.tile, !isAi && styles.tileStd]}>
                   {isAi ? (
-                    <AiFlowerMark size={t.tileIcon} />
+                    <AiMark size={t.tileIcon} />
                   ) : (
                     <PencilLine size={t.tileIcon} color={colors.brandDark} />
                   )}

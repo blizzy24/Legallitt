@@ -23,7 +23,7 @@ import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import AiFlowerMark from '../../../../components/AiFlowerMark';
+import { AiMark } from '../../../../components/AiFlowerMark';
 import LegalAiCopilotPanel from '../../../../components/LegalAiCopilotPanel';
 import NoteLinesIcon from '../../../../components/NoteLinesIcon';
 import { DEV_PREVIEW_TOGGLES } from '../../../../constants/dev';
@@ -264,7 +264,7 @@ export default function AdvocateVideoScreen() {
           onPress={() => setPanel('ai')}
           style={styles.aiMark}
         >
-          <AiFlowerMark size={t.aiMark} />
+          <AiMark size={t.aiMark} />
         </Pressable>
         )}
       </View>

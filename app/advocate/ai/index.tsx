@@ -18,7 +18,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import AiFlowerMark from '../../../components/AiFlowerMark';
+import { AiMark } from '../../../components/AiFlowerMark';
 import { DEV_PREVIEW_TOGGLES } from '../../../constants/dev';
 import { shrinkToFit } from '../../../constants/textFit';
 import { ADV_AI_CHAT } from '../../../data/advocateSide';
@@ -77,7 +77,7 @@ export default function LegalittAiScreen() {
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.empty}>
-          <AiFlowerMark size={t.flower} colors={[t.purple, t.purpleDeep]} />
+          <AiMark size={t.flower} colors={[t.purple, t.purpleDeep]} />
           <Text style={styles.greet} {...shrinkToFit(0.75)}>
             {a.greeting}
           </Text>
@@ -130,7 +130,7 @@ export default function LegalittAiScreen() {
 
         <View style={styles.msgRow}>
           <View style={styles.aiMark}>
-            <AiFlowerMark size={t.aiMark} colors={[t.purple, t.purpleDeep]} />
+            <AiMark size={t.aiMark} colors={[t.purple, t.purpleDeep]} />
           </View>
           <View style={styles.bubble}>
             <Text style={styles.sender} {...shrinkToFit(0.75)}>

@@ -11,6 +11,8 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const legalittAi = {
+  /** The AI mark's gradient (components/AiFlowerMark AiMark), top to bottom. */
+  markGradient: ['#A763F2', '#6B3FE8'] as readonly string[],
   padX: 16,
   bg: '#FAF8F5',
 

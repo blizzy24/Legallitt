@@ -6,7 +6,7 @@ import { useDemoAdvance } from '../../../hooks/useDemoAdvance';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import AiFlowerMark from '../../../components/AiFlowerMark';
+import { AiMark } from '../../../components/AiFlowerMark';
 import { advCourtChat as t, advWalletPalette as w, courierHeader as h, font, hcPalette as c, ink, status } from '../../../constants/theme';
 import { COURT_CHAT } from '../../../data/advocateCourt';
 
@@ -124,7 +124,7 @@ export default function AdvocateCourtChatScreen() {
           onPress={() => router.push(d.copilot)}
           style={styles.ai}
         >
-          <AiFlowerMark size={t.aiMark} />
+          <AiMark size={t.aiMark} />
         </Pressable>
       </ScrollView>
 

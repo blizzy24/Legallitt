@@ -28,7 +28,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import AiFlowerMark from '../../../../components/AiFlowerMark';
+import { AiMark } from '../../../../components/AiFlowerMark';
 import { shrinkToFit } from '../../../../constants/textFit';
 import { ADV_CHAT } from '../../../../data/advocateSide';
 import { advChat as t, colors, font, ink } from '../../../../constants/theme';
@@ -250,7 +250,7 @@ export default function AdvocateChatScreen() {
         </View>
 
         <View style={styles.flower}>
-          <AiFlowerMark size={t.flower} />
+          <AiMark size={t.flower} />
         </View>
       </ScrollView>
 

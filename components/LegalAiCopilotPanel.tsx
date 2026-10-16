@@ -2,7 +2,7 @@ import { ArrowUp, BookmarkPlus, Copy, FileText, X } from 'lucide-react-native';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
-import AiFlowerMark from './AiFlowerMark';
+import { AiMark } from './AiFlowerMark';
 import { shrinkToFit } from '../constants/textFit';
 import { ADV_COPILOT } from '../data/advocateSide';
 import { legalAiCopilot as t, colors, font, ink } from '../constants/theme';
@@ -34,7 +34,7 @@ export default function LegalAiCopilotPanel({ onClose }: { onClose: () => void }
 
       <View style={styles.head}>
         <View style={styles.tile}>
-          <AiFlowerMark size={t.tileIcon} />
+          <AiMark size={t.tileIcon} />
         </View>
         <View style={styles.headText}>
           <View style={styles.titleRow}>
@@ -76,7 +76,7 @@ export default function LegalAiCopilotPanel({ onClose }: { onClose: () => void }
       <ScrollView style={styles.list} nestedScrollEnabled showsVerticalScrollIndicator={false}>
         <View style={styles.aiRow}>
           <View style={styles.mark}>
-            <AiFlowerMark size={t.markInner} />
+            <AiMark size={t.markInner} />
           </View>
           <View style={styles.aiBubble}>
             <Text style={styles.msg}>{a.greeting}</Text>
@@ -91,7 +91,7 @@ export default function LegalAiCopilotPanel({ onClose }: { onClose: () => void }
 
         <View style={styles.aiRow}>
           <View style={styles.mark}>
-            <AiFlowerMark size={t.markInner} />
+            <AiMark size={t.markInner} />
           </View>
           <View style={styles.aiBubble}>
             <Text style={styles.msg}>{a.answer}</Text>

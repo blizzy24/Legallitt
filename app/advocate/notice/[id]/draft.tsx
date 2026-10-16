@@ -3,7 +3,7 @@ import { ArrowLeft } from 'lucide-react-native';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import AiFlowerMark from '../../../../components/AiFlowerMark';
+import { AiMark } from '../../../../components/AiFlowerMark';
 import NoticeDraftSections from '../../../../components/NoticeDraftSections';
 import { shrinkToFit } from '../../../../constants/textFit';
 import { ADV_NOTICE_DRAFT } from '../../../../data/advocateSide';
@@ -68,7 +68,7 @@ export default function AdvocateNoticeDraftScreen() {
         </Text>
         {/* Inert — the assist chip has no designed destination. */}
         <Pressable accessibilityRole="button" style={styles.assist}>
-          <AiFlowerMark size={t.assistMark} />
+          <AiMark size={t.assistMark} />
           <Text style={styles.assistText} {...shrinkToFit(0.8)}>
             {d.assistChip}
           </Text>
@@ -80,7 +80,7 @@ export default function AdvocateNoticeDraftScreen() {
 
         <View style={styles.card}>
           <View style={styles.aiChip}>
-            <AiFlowerMark size={t.aiChipMark} />
+            <AiMark size={t.aiChipMark} />
             <Text style={styles.aiChipText} {...shrinkToFit(0.8)}>
               {d.ai.chip}
             </Text>

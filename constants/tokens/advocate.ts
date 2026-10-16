@@ -3233,7 +3233,10 @@ export const advNoticeResponse = {
   lhBg: '#0B0B0B',
   lhRule: '#C9A227',
   lhBrandSize: 16.5,
-  lhMark: 19,
+  lhMark: 22,
+  /** The supplied wordmark (assets/legalitt-wordmark-*.png, 1091 × 302): height and aspect. */
+  lhWordmarkH: 14,
+  wordmarkAspect: 1091 / 302,
   lhMarkGap: 6,
   lhFirmGap: 2,
   lhFirmSize: 5.7,

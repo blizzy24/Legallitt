@@ -1,10 +1,14 @@
 import { Globe, Mail } from 'lucide-react-native';
-import { StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, Text, View } from 'react-native';
+
 
 import AiFlowerMark from './AiFlowerMark';
 import { shrinkToFit } from '../constants/textFit';
 import { ADV_NOTICE_RESPONSE } from '../data/advocateSide';
 import { advNoticeResponse as t, colors, font } from '../constants/theme';
+
+/** The supplied Legalitt wordmark — the typeface is not in the project, so it is an image. */
+const WORDMARK = require('../assets/legalitt-wordmark-white.png');
 
 // The printed legal document page, shared by design/189 (Legal Notice) and
 // design/209 (Property Search Report).
@@ -36,10 +40,15 @@ export default function LegalDocumentPage({ title }: { title: string }) {
         <View style={styles.lh}>
           <View style={styles.lhLeft}>
             <View style={styles.lhBrandRow}>
-              <AiFlowerMark size={t.lhMark} colors={[t.lhGold, '#8A6E1A']} />
-              <Text style={styles.lhBrand} {...shrinkToFit(0.8)}>
-                {r.letterhead.brand}
-              </Text>
+              {/* The Legalitt mark in flat gold and the supplied wordmark, white on the
+                  letterhead's black band (the black wordmark would not show on it). */}
+              <AiFlowerMark size={t.lhMark} color={t.lhGold} />
+              <Image
+                source={WORDMARK}
+                accessibilityLabel={r.letterhead.brand}
+                style={styles.lhWordmark}
+                resizeMode="contain"
+              />
             </View>
             <Text style={styles.lhFirm} {...shrinkToFit(0.7)}>
               {r.letterhead.firm}
@@ -181,7 +190,7 @@ const styles = StyleSheet.create({
   lh: { backgroundColor: t.lhBg, flexDirection: 'row', padding: t.lhPadX },
   lhLeft: { flex: 1, minWidth: 0, paddingRight: 8 },
   lhBrandRow: { flexDirection: 'row', alignItems: 'center' },
-  lhBrand: { marginLeft: t.lhMarkGap, fontFamily: font.appHeading, fontSize: t.lhBrandSize, color: t.lhText },
+  lhWordmark: { marginLeft: t.lhMarkGap, width: t.lhWordmarkH * t.wordmarkAspect, height: t.lhWordmarkH },
   lhFirm: { marginTop: t.lhFirmGap, fontFamily: font.appBody, fontSize: t.lhFirmSize, color: t.lhGold },
   lhLine: { marginTop: t.lhLineGap, flexDirection: 'row', alignItems: 'center' },
   lhContact: {
