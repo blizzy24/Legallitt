@@ -171,7 +171,7 @@ export default function TrackingScreen() {
                 <Text style={styles.reviewDesc}>Please review the notice before approving it for dispatch.</Text>
               </View>
             </View>
-            <Pressable accessibilityRole="button" style={styles.review}>
+            <Pressable onPress={() => previewNotice("Review Draft")} accessibilityRole="button" style={styles.review}>
               <Eye size={t.reviewIcon} color={ink.onBrand} />
               <Text style={styles.reviewText}>Review Draft</Text>
               <ArrowRight size={t.reviewIcon} color={ink.onBrand} />

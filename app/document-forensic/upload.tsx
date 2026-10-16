@@ -121,7 +121,7 @@ export default function DocumentForensicUploadScreen() {
           </Pressable>
           <View style={styles.sources}>
             {SOURCES.map((s) => (
-              <Pressable
+              <Pressable onPress={() => previewNotice(s.label)}
                 key={s.label}
                 accessibilityRole="button"
                 style={({ pressed }) => [styles.source, pressed && styles.pressed]}
@@ -226,7 +226,7 @@ export default function DocumentForensicUploadScreen() {
           <Action icon={RefreshCw} label="Replace" compact />
         </View>
 
-        <Pressable accessibilityRole="button" hitSlop={8} style={styles.noSample}>
+        <Pressable onPress={() => previewNotice("I don't have a reference sample")} accessibilityRole="button" hitSlop={8} style={styles.noSample}>
           <CircleHelp size={t.noSampleIcon} color={colors.textMuted} />
           <Text style={styles.noSampleText} {...shrinkToFit(0.8)}>
             I don&apos;t have a reference sample

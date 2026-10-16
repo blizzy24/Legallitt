@@ -1,3 +1,4 @@
+import { previewNotice } from '../../components/PreviewNotice';
 import { router, type Href } from 'expo-router';
 import {
   ArrowRight, BadgeCheck, ChevronDown, ChevronRight, Eye, Gavel, IdCard, Phone,
@@ -54,7 +55,7 @@ export default function FirStep3Screen() {
             <View style={styles.primaryDot} />
             <Text style={styles.primaryChipText}>Primary (You)</Text>
           </View>
-          <Pressable accessibilityRole="button" style={styles.edit}>
+          <Pressable onPress={() => previewNotice("Edit")} accessibilityRole="button" style={styles.edit}>
             <SquarePen size={t.editIcon} color={ink.accent} />
             <Text style={styles.editText}>Edit</Text>
           </Pressable>

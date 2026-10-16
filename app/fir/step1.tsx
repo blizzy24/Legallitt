@@ -1,4 +1,3 @@
-import { previewNotice } from '../../components/PreviewNotice';
 import { router } from 'expo-router';
 import { ArrowRight, ChevronDown, Landmark, ShieldCheck } from 'lucide-react-native';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
@@ -8,6 +7,7 @@ import LabelledField from '../../components/LabelledField';
 import { colors, firStep as s, font, ink } from '../../constants/theme';
 import { useFir } from '../../context/fir';
 import { INCIDENT_TYPES, JURISDICTION_PLACEHOLDERS, incidentLabel } from '../../data/fir';
+import CountryCodePicker from '../../components/CountryCodePicker';
 
 // Step 1 — Quick Submission (design/42). Selects are inert pressables: there is no
 // picker in the designs, only the closed state.
@@ -33,10 +33,7 @@ export default function FirStep1Screen() {
         />
         <LabelledField label="Mobile Number" required>
           <View style={styles.mobileRow}>
-            <Pressable onPress={() => previewNotice("Country code")} accessibilityRole="button" accessibilityLabel="Country code" style={styles.prefix}>
-              <Text style={styles.prefixText}>+91</Text>
-              <ChevronDown size={s.prefixIcon} color={colors.textBody} />
-            </Pressable>
+            <CountryCodePicker style={styles.prefix} textStyle={styles.prefixText} chevronSize={s.prefixIcon} chevronColor={colors.textBody} />
             <TextInput
               value={contact.mobile}
               onChangeText={(t) => updateContact({ mobile: t })}

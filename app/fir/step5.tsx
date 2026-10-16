@@ -1,3 +1,4 @@
+import { previewNotice } from '../../components/PreviewNotice';
 import { router } from 'expo-router';
 import {
   ArrowRight,
@@ -214,8 +215,8 @@ function Card({
         <Text style={styles.headTitle} {...shrinkToFit(0.8)}>
           {title}
         </Text>
-        {/* Edit / Manage links are inert in the prototype. */}
-        <Pressable accessibilityRole="link" hitSlop={8}>
+        {/* Edit / Manage have no destination: the preview notice says so. */}
+        <Pressable onPress={() => previewNotice(link)} accessibilityRole="link" hitSlop={8}>
           <Text style={styles.link} {...shrinkToFit(0.8)}>
             {link}
           </Text>

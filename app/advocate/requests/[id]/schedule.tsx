@@ -1,3 +1,4 @@
+import { previewNotice } from '../../../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
   Bell,
@@ -234,7 +235,7 @@ export default function AdvocateScheduleScreen() {
               <Text style={styles.briefTitle} {...shrinkToFit(0.7)}>
                 {ADV_SCHEDULE.briefs.title}
               </Text>
-              <Pressable accessibilityRole="button">
+              <Pressable onPress={() => previewNotice(ADV_SCHEDULE.briefs.link)} accessibilityRole="button">
                 <Text style={styles.briefLink} {...shrinkToFit(0.8)}>
                   {ADV_SCHEDULE.briefs.link}
                 </Text>

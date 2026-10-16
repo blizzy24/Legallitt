@@ -106,13 +106,13 @@ export default function AdvocateNoticeDocumentsScreen() {
 
           <View style={styles.linkRule} />
           <View style={styles.links}>
-            <Pressable onPress={() => previewNotice(d.viewFull)} accessibilityRole="button" style={styles.link}>
+            <Pressable onPress={() => router.push(advDocHref(d.files[0].name) as Href)} accessibilityRole="button" style={styles.link}>
               <Eye size={t.linkIcon} color={colors.brandDark} />
               <Text style={styles.linkText} {...shrinkToFit(0.8)}>
                 {d.viewFull}
               </Text>
             </Pressable>
-            <Pressable onPress={() => previewNotice(d.viewSource)} accessibilityRole="button" style={styles.link}>
+            <Pressable onPress={() => router.push(advDocHref(d.files[0].name) as Href)} accessibilityRole="button" style={styles.link}>
               <FileText size={t.linkIcon} color={colors.textPrimary} />
               <Text style={[styles.linkText, styles.linkTextPlain]} {...shrinkToFit(0.8)}>
                 {d.viewSource}

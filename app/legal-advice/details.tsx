@@ -20,6 +20,13 @@ import StepIndicator5 from '../../components/StepIndicator5';
 import { shrinkToFit } from '../../constants/textFit';
 import { colors, font, ink, laDetails as t } from '../../constants/theme';
 import { useLegalAdvice } from '../../context/legalAdvice';
+import DatePickerSheet, { formatDdMmYyyy } from '../../components/DatePickerSheet';
+
+/** The form keeps DD/MM/YYYY; back to a Date for the sheet. */
+function parseDdMmYyyy(s: string) {
+  const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(s);
+  return m ? new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1])) : undefined;
+}
 
 // Legal Advice "Your details".
 //
@@ -60,6 +67,8 @@ const CONCERN_LIMIT = 1000;
 export default function LegalAdviceDetailsScreen() {
   const insets = useSafeAreaInsets();
   const { form, update } = useLegalAdvice();
+  // The date sheet; the picked date is kept with the rest of the booking form.
+  const [picking, setPicking] = useState(false);
   const [concern, setConcern] = useState(form.concern);
 
   return (
@@ -128,13 +137,19 @@ export default function LegalAdviceDetailsScreen() {
               Preferred Consultation Time
             </Text>
             <Text style={styles.fieldHint} {...shrinkToFit(0.8)}>
-              DD/MM/YYYY / Time
+              {form.date ? `${form.date} / Time` : 'DD/MM/YYYY / Time'}
             </Text>
           </View>
-          <Pressable onPress={() => previewNotice("Pick a date")} accessibilityRole="button" accessibilityLabel="Pick a date" hitSlop={8}>
+          <Pressable onPress={() => setPicking(true)} accessibilityRole="button" accessibilityLabel="Pick a date" hitSlop={8}>
             <CalendarDays size={t.fieldCalendar} color={colors.brandDark} />
           </Pressable>
         </View>
+        <DatePickerSheet
+          visible={picking}
+          value={parseDdMmYyyy(form.date)}
+          onPick={(d) => update({ date: formatDdMmYyyy(d) })}
+          onClose={() => setPicking(false)}
+        />
 
         <View style={styles.area}>
           <View style={styles.areaHead}>

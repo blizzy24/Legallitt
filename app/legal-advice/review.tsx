@@ -181,7 +181,7 @@ export default function LegalAdviceReviewScreen() {
                 Add any documents that can help expert understand your case better
               </Text>
 
-              <Pressable accessibilityRole="button" style={styles.view}>
+              <Pressable onPress={() => previewNotice("View")} accessibilityRole="button" style={styles.view}>
                 <Eye size={t.viewIcon} color={ink.onBrand} />
                 <Text style={styles.viewText} {...shrinkToFit(0.8)}>
                   View

@@ -356,7 +356,7 @@ export const COURT_AI_SUMMARY: CourtSpec = {
             },
           ],
         },
-        { k: 'footRow', icon: 'info', t: 'AI generated • Review before use', right: { link: 'View Original', iconAfter: 'arrowUp' }, top: 'footRowTop' },
+        { k: 'footRow', icon: 'info', t: 'AI generated • Review before use', right: { link: 'View Original', iconAfter: 'arrowUp', notice: true }, top: 'footRowTop' },
       ],
     },
     {
@@ -1087,7 +1087,7 @@ export const COURT_PREPARATION: CourtSpec = {
           ],
         },
         // ⚠ UNSCOPED — no document viewer.
-        { k: 'button', btn: { label: 'View Documents', icon: 'eye', variant: 'help' }, top: 'viewTop' },
+        { k: 'button', btn: { label: 'View Documents', icon: 'eye', variant: 'help', to: R('dc/client-documents') }, top: 'viewTop' },
       ],
     },
     { k: 'label', text: 'Preparation Tasks', title: true, right: '2 of 5 Tasks Done', top: 'tasksLabelTop' },

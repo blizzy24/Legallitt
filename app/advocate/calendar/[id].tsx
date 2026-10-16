@@ -1,3 +1,4 @@
+import { previewNotice } from '../../../components/PreviewNotice';
 import { router, type Href } from 'expo-router';
 import { UserRound, Video } from 'lucide-react-native';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -77,7 +78,7 @@ export default function AdvocateAppointmentDetailsScreen() {
           </Text>
         </Pressable>
 
-        <Pressable accessibilityRole="button" style={({ pressed }) => [styles.view, pressed && styles.pressed]}>
+        <Pressable onPress={() => previewNotice(d.viewCase)} accessibilityRole="button" style={({ pressed }) => [styles.view, pressed && styles.pressed]}>
           <Text style={styles.viewText} {...shrinkToFit(0.8)}>
             {d.viewCase}
           </Text>

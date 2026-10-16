@@ -222,11 +222,12 @@ function RequestCard({ request }: { request: PendingRequest }) {
       <View style={styles.footer}>
         <Text style={styles.footerText}>{request.progressNote}</Text>
         <View style={styles.spacer} />
-        {/* "View Request" has no destination yet — not designed. */}
-        <View style={styles.viewAll}>
+        {/* "View Request" opens the request (design/54). This pending request has no
+            record of its own; /requests/[id] shows District Representation DR-4402. */}
+        <Pressable accessibilityRole="link" onPress={() => router.push(`/requests/${request.id}` as Href)} style={styles.viewAll}>
           <Text style={styles.requestLink}>View Request</Text>
           <ChevronRight size={t.linkSize} color={colors.textBody} />
-        </View>
+        </Pressable>
       </View>
     </View>
   );

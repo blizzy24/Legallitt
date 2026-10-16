@@ -378,7 +378,7 @@ function RightPart({ r }: { r?: Right }) {
       </Pressable>
     );
   // A chip-shaped link reads as a button; a plain one is a status label (group c).
-  return r.chip ? (
+  return r.chip || r.notice ? (
     <Pressable accessibilityRole="button" onPress={() => previewNotice(r.link)}>
       {content}
     </Pressable>

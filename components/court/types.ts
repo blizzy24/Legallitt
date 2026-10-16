@@ -168,6 +168,8 @@ export type Right =
       dot?: boolean;
       /** With muted: the icon grey too (380's Pending). */
       mutedIcon?: boolean;
+      /** No destination: the preview notice (364's View Original). */
+      notice?: boolean;
     }
   | { /** A grey disc with an icon (372's next-step card). */ iconDisc: IconName; /** The darker rail grey (382). */ rail?: boolean };
 

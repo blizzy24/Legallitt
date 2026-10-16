@@ -172,7 +172,7 @@ export default function MessageThreadScreen() {
                     {m.size} • {m.type}
                   </Text>
                 </View>
-                <Pressable accessibilityRole="button" style={styles.docView}>
+                <Pressable onPress={() => previewNotice("View")} accessibilityRole="button" style={styles.docView}>
                   <Text style={styles.docViewText} {...shrinkToFit(0.8)}>
                     View
                   </Text>

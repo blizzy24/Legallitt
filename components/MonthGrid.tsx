@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { shrinkToFit } from '../constants/textFit';
 import { advCalendar as t, font, ink } from '../constants/theme';
@@ -29,11 +29,14 @@ export default function MonthGrid({
   month,
   selected,
   marked,
+  onSelect,
 }: {
   year: number;
   month: number; // 0-indexed
   selected: number;
   marked: number[];
+  /** Makes the month's own days tappable (the legal-advice date picker). */
+  onSelect?: (day: number) => void;
 }) {
   const firstDay = new Date(Date.UTC(year, month, 1)).getUTCDay();
   const daysInMonth = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
@@ -64,7 +67,13 @@ export default function MonthGrid({
             const isSelected = !c.muted && c.day === selected;
             const isMarked = !c.muted && marked.includes(c.day);
             return (
-              <View key={ci} style={styles.cell}>
+              <Pressable
+                key={ci}
+                accessibilityRole={onSelect && !c.muted ? 'button' : undefined}
+                disabled={!onSelect || c.muted}
+                onPress={() => onSelect?.(c.day)}
+                style={styles.cell}
+              >
                 <View style={[styles.pill, isSelected && styles.pillOn]}>
                   <Text
                     style={[styles.day, c.muted && styles.dayMuted, isSelected && styles.dayOn]}
@@ -76,7 +85,7 @@ export default function MonthGrid({
                 <View style={styles.dotSlot}>
                   {isMarked ? <View style={styles.dot} /> : null}
                 </View>
-              </View>
+              </Pressable>
             );
           })}
         </View>
