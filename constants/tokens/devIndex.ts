@@ -5,6 +5,7 @@ export const devIndex = {
   title: 'Dev screen index',
   routesSuffix: 'routes',
   designPrefix: 'design/',
+  splashCaption: 'Animated splash (design/motion/open.mp4) — add ?t=1.2 to hold a frame',
   bg: hcPalette.page,
   ink: hcPalette.ink,
   muted: hcPalette.inkMuted,
