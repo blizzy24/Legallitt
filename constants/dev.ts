@@ -36,3 +36,15 @@ export const DEV_PREVIEW_TOGGLES = true;
  * are untouched. Set to false and the app behaves exactly as before.
  */
 export const DEMO_AUTO_ADVANCE = true;
+
+// ── The animated splash (components/AnimatedSplash.tsx) ──────────────────────
+// Layered after the native splash; JS-only, so these tune without a native build.
+
+/** Show the animated splash at all. It only runs when the app opens at `/`. */
+export const SPLASH_ENABLED = true;
+/** The full measured timeline (design/motion/open.mp4): 4.565 s. A genuine cold start runs at least this long. */
+export const SPLASH_MIN_DURATION_MS = 4565;
+/** A warm start (the splash already ran in this session) skips to the final lockup and holds it this long. */
+export const SPLASH_WARM_HOLD_MS = 700;
+/** The fade from the splash into the app. */
+export const SPLASH_FADE_MS = 250;

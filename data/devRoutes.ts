@@ -3,6 +3,7 @@
 // with the sample value '1', as the smoke test does.
 
 export const DEV_ROUTES: { section: string; routes: { href: string; design?: number }[] }[] = [
+  { section: 'brand motion', routes: [{ href: '/dev/splash' }, { href: '/dev/loader' }] },
   { section: 'advocate/ai', routes: [
     { href: '/advocate/ai', design: 171 },
   ] },
