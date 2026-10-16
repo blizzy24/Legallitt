@@ -1,3 +1,4 @@
+import { previewNotice } from '../../../components/PreviewNotice';
 import { router, type Href } from 'expo-router';
 import {
   ArrowDown,
@@ -71,7 +72,7 @@ export default function AdvocateClientsScreen() {
               Manage your clients and their legal matters.
             </Text>
           </View>
-          <Pressable accessibilityRole="button" accessibilityLabel="Add client" style={styles.add}>
+          <Pressable onPress={() => previewNotice("Add client")} accessibilityRole="button" accessibilityLabel="Add client" style={styles.add}>
             <UserRoundPlus size={t.addIcon} color={colors.brandDark} />
           </Pressable>
         </View>
@@ -157,7 +158,7 @@ export default function AdvocateClientsScreen() {
             Active Clients{' '}
             <Text style={styles.listCount}>({ADV_CLIENT_STATS.active})</Text>
           </Text>
-          <Pressable accessibilityRole="button" hitSlop={6} style={styles.sort}>
+          <Pressable onPress={() => previewNotice("Recent Activity")} accessibilityRole="button" hitSlop={6} style={styles.sort}>
             <Text style={styles.sortText} {...shrinkToFit(0.8)}>
               Recent Activity
             </Text>

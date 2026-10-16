@@ -1,3 +1,4 @@
+import { previewNotice } from '../../components/PreviewNotice';
 import { router, type Href } from 'expo-router';
 import {
   ArrowLeft,
@@ -230,7 +231,7 @@ export default function LegalAdviceFollowupScreen() {
             <Text style={styles.section} {...shrinkToFit(0.8)}>
               Choose Date
             </Text>
-            <Pressable accessibilityRole="button" style={styles.calLink}>
+            <Pressable onPress={() => previewNotice("View Calendar")} accessibilityRole="button" style={styles.calLink}>
               <CalendarDays size={t.noteIcon} color={t.sectionNoteColour} />
               <Text style={styles.sectionNote} {...shrinkToFit(0.8)}>
                 View Calendar
@@ -382,7 +383,7 @@ export default function LegalAdviceFollowupScreen() {
             <Text style={styles.section} {...shrinkToFit(0.8)}>
               Payment Method
             </Text>
-            <Pressable accessibilityRole="button" hitSlop={6}>
+            <Pressable onPress={() => previewNotice("Change")} accessibilityRole="button" hitSlop={6}>
               <Text style={styles.sectionNote} {...shrinkToFit(0.8)}>
                 Change
               </Text>

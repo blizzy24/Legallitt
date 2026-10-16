@@ -1,3 +1,4 @@
+import { previewNotice } from '../../../components/PreviewNotice';
 import { router } from 'expo-router';
 import {
   ArrowRight,
@@ -104,7 +105,7 @@ export default function VideoKycVerifiedScreen() {
                     {row.value}
                   </Text>
                   {row.copy && (
-                    <Pressable
+                    <Pressable onPress={() => previewNotice("Copy reference ID")}
                       accessibilityRole="button"
                       accessibilityLabel="Copy reference ID"
                       hitSlop={8}

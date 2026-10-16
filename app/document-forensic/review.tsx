@@ -1,3 +1,4 @@
+import { previewNotice } from '../../components/PreviewNotice';
 import { router, type Href } from 'expo-router';
 import {
   ChevronLeft,
@@ -129,7 +130,7 @@ export default function DocumentForensicReviewScreen() {
 
         <Text style={styles.overage}>{PAGE_OVERAGE_NOTE}</Text>
 
-        <Pressable
+        <Pressable onPress={() => previewNotice("Upload More")}
           accessibilityRole="button"
           style={({ pressed }) => [styles.uploadMore, pressed && styles.pressed]}
         >

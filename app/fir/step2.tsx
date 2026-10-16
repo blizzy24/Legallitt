@@ -1,3 +1,4 @@
+import { previewNotice } from '../../components/PreviewNotice';
 import { router } from 'expo-router';
 import { ArrowRight, Calendar, ChevronsUpDown, Clock, List, MapPin, Mic, ShieldCheck, SquarePen } from 'lucide-react-native';
 import type { ReactNode } from 'react';
@@ -44,7 +45,7 @@ export default function FirStep2Screen() {
         />
 
         <Label text="Competent Police Station" required style={styles.labelSpaced} />
-        <Pressable accessibilityRole="button" accessibilityLabel="Competent Police Station" style={styles.select}>
+        <Pressable onPress={() => previewNotice("Competent Police Station")} accessibilityRole="button" accessibilityLabel="Competent Police Station" style={styles.select}>
           <ShieldCheck size={t.fieldIcon} color={ink.accent} />
           {/* design/43 clips this pre-filled value at the chevron too; on device it
               shrinks rather than ellipsising. */}
@@ -75,7 +76,7 @@ export default function FirStep2Screen() {
           <Text style={styles.counter}>
             {narrative.length} / {t.maxChars.toLocaleString('en-IN')} characters
           </Text>
-          <Pressable accessibilityRole="button" style={styles.dictate}>
+          <Pressable onPress={() => previewNotice("Dictate statement")} accessibilityRole="button" style={styles.dictate}>
             <Mic size={t.dictateIcon} color={ink.accent} />
             <Text style={styles.dictateText}>Dictate statement</Text>
           </Pressable>

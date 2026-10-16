@@ -1,3 +1,4 @@
+import { previewNotice } from '../../../../components/PreviewNotice';
 import DemoPressable from '../../../../components/DemoPressable';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
@@ -126,7 +127,7 @@ export default function AdvocateChatScreen() {
           </View>
 
           <View style={styles.tools}>
-            <Pressable accessibilityRole="button" style={styles.matterChip}>
+            <Pressable onPress={() => previewNotice(c.matterChip)} accessibilityRole="button" style={styles.matterChip}>
               <FolderClosed size={t.matterIcon} color={colors.textPrimary} />
               <Text style={styles.matterText} {...shrinkToFit(0.75)}>
                 {c.matterChip}
@@ -276,7 +277,7 @@ export default function AdvocateChatScreen() {
             ))}
           </ScrollView>
           {/* Inert — Add Note has no designed destination. */}
-          <Pressable accessibilityRole="button" style={styles.add}>
+          <Pressable onPress={() => previewNotice(c.notesPanel.add)} accessibilityRole="button" style={styles.add}>
             <Plus size={t.addIcon} color={ink.onBrand} />
             <Text style={styles.addText} {...shrinkToFit(0.8)}>
               {c.notesPanel.add}
@@ -287,7 +288,7 @@ export default function AdvocateChatScreen() {
 
       <View style={[styles.composer, { paddingBottom: insets.bottom + t.composerPadY }]}>
         {/* Inert — no upload flow is designed anywhere in the app. */}
-        <Pressable accessibilityRole="button" accessibilityLabel="Attach" style={styles.attach}>
+        <Pressable onPress={() => previewNotice("Attach")} accessibilityRole="button" accessibilityLabel="Attach" style={styles.attach}>
           <Paperclip size={t.composerBtnIcon} color={colors.textPrimary} />
         </Pressable>
         <TextInput

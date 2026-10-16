@@ -2052,7 +2052,7 @@ const processFee = (paid: boolean): CourtSpec => ({
       ],
     },
     paid
-      ? { k: 'button', btn: { label: 'Process Fee Completed ✓', icon: 'badgeCheck', variant: 'green' }, top: 'sendTop' }
+      ? { k: 'button', btn: { label: 'Process Fee Completed ✓', icon: 'badgeCheck', variant: 'green', inert: true }, top: 'sendTop' }
       : { k: 'button', btn: { label: 'Send Process Fee Request', iconRight: 'sendIcon' }, top: 'sendTop' },
     {
       k: 'text',

@@ -1,3 +1,4 @@
+import { previewNotice } from '../../components/PreviewNotice';
 import DemoPressable from '../../components/DemoPressable';
 import { router, type Href } from 'expo-router';
 import { ArrowRight, Check, Download, Eye, FileText, Gavel, ShieldCheck } from 'lucide-react-native';
@@ -92,7 +93,7 @@ export default function FirReadyScreen() {
             </Pressable>
           </View>
 
-          <Pressable accessibilityRole="button" style={styles.download}>
+          <Pressable onPress={() => previewNotice("Download PDF")} accessibilityRole="button" style={styles.download}>
             <Download size={t.downloadIcon} color={t.downloadColour} />
             <Text style={styles.downloadLabel} {...shrinkToFit(0.8)}>
               Download PDF

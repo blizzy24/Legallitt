@@ -2,6 +2,7 @@ import { router, useLocalSearchParams, usePathname, type Href } from 'expo-route
 import { DC_VALUES } from '../../data/advocateCourt';
 import { BUTTON_TARGETS, nextRoute } from '../../data/flowMap';
 import { advDocHref } from '../../data/docLinks';
+import { previewNotice } from '../PreviewNotice';
 import { DEMO_AUTO_ADVANCE } from '../../constants/dev';
 import {
   Archive,
@@ -370,8 +371,15 @@ function RightPart({ r }: { r?: Right }) {
       {r.iconAfter ? <Icon name={r.iconAfter} size={t.chipIcon} color={c.brown} /> : null}
     </View>
   );
-  return r.to ? (
-    <Pressable accessibilityRole="link" onPress={() => router.push(withService(r.to as Href, svc))}>
+  if (r.to)
+    return (
+      <Pressable accessibilityRole="link" onPress={() => router.push(withService(r.to as Href, svc))}>
+        {content}
+      </Pressable>
+    );
+  // A chip-shaped link reads as a button; a plain one is a status label (group c).
+  return r.chip ? (
+    <Pressable accessibilityRole="button" onPress={() => previewNotice(r.link)}>
       {content}
     </Pressable>
   ) : (
@@ -507,7 +515,14 @@ export function Button({ b, flex, footer, pill }: { b: Btn; flex?: boolean; foot
       accessibilityRole="button"
       aria-disabled={(demoTo === undefined && (v === 'disabled' || v === 'muted')) || undefined}
       disabled={demoTo === undefined && (v === 'disabled' || v === 'muted')}
-      onPress={nav ? () => go(demoTo !== undefined ? { ...b, back: false, to: demoTo as Href } : b, svc) : undefined}
+      onPress={
+        nav
+          ? () => go(demoTo !== undefined ? { ...b, back: false, to: demoTo as Href } : b, svc)
+          : // No destination in this build: say so, unless the design draws it greyed out or as a status.
+            v === 'disabled' || v === 'muted' || b.inert
+            ? undefined
+            : () => previewNotice(b.label)
+      }
       style={style}
     >
       {b.icon ? <Icon name={b.icon} size={t.btnIcon} color={fg} /> : null}
@@ -1442,10 +1457,10 @@ export function BlockView({ b }: { b: Block }): ReactNode {
           <Icon name={b.icon} size={t.contactIcon} color={c.inkWarm} />
           <Text style={[s.contactText, s.flex]}>{b.t}</Text>
           {b.btn ? (
-            // ⚠ UNSCOPED — no telephony.
-            <View style={s.contactBtn}>
+            // No telephony in this build: the preview notice says so.
+            <Pressable accessibilityRole="button" onPress={() => previewNotice(b.btn)} style={s.contactBtn}>
               <Text style={s.contactBtnText}>{b.btn}</Text>
-            </View>
+            </Pressable>
           ) : null}
         </View>
       );
@@ -1460,9 +1475,9 @@ export function BlockView({ b }: { b: Block }): ReactNode {
         <View style={s.row}>
           <Icon name={b.icon} size={t.noteRowIcon} color={c.inkWarm} />
           <Text style={[s.noteRowText, s.flex]}>{b.t}</Text>
-          <View style={s.noteBtn}>
+          <Pressable accessibilityRole="button" onPress={() => previewNotice(b.btn)} style={s.noteBtn}>
             <Text style={s.noteBtnText}>{b.btn}</Text>
-          </View>
+          </Pressable>
         </View>
       );
     case 'empty':
@@ -1724,7 +1739,11 @@ function DocAction({ label, name, style, children }: { label: string; name: stri
         {children}
       </Pressable>
     );
-  return <View style={style}>{children}</View>;
+  return (
+    <Pressable accessibilityRole="button" accessibilityLabel={`${label} ${name}`} onPress={() => previewNotice(label)} style={style}>
+      {children}
+    </Pressable>
+  );
 }
 
 function SmallChip({ b, grey }: { b: Btn; grey?: boolean }) {
@@ -1732,7 +1751,7 @@ function SmallChip({ b, grey }: { b: Btn; grey?: boolean }) {
   const svc = useContext(Service);
   const nav = b.to !== undefined || b.back === true;
   return (
-    <Pressable accessibilityRole="button" onPress={nav ? () => go(b, svc) : undefined} style={[s.chip, grey && s.chipGrey]}>
+    <Pressable accessibilityRole="button" onPress={nav ? () => go(b, svc) : () => previewNotice(b.label)} style={[s.chip, grey && s.chipGrey]}>
       {b.icon ? <Icon name={b.icon} size={t.chipIcon} color={c.ink} /> : null}
       <Text style={[s.chipText, grey && s.chipGreyText]}>{b.label}</Text>
     </Pressable>
@@ -1743,7 +1762,7 @@ function Tile({ b }: { b: Btn }) {
   const { t, s } = useK();
   const svc = useContext(Service);
   return (
-    <Pressable accessibilityRole="button" disabled={b.to === undefined} onPress={() => go(b, svc)} style={s.tile}>
+    <Pressable accessibilityRole="button" onPress={b.to === undefined ? () => previewNotice(b.label) : () => go(b, svc)} style={s.tile}>
       <View style={s.uploadDisc}>{b.icon ? <Icon name={b.icon} size={t.headIcon} color={c.inkWarm} /> : null}</View>
       <Text style={s.checkTitle}>{b.label}</Text>
     </Pressable>

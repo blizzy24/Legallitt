@@ -1,3 +1,4 @@
+import { previewNotice } from '../../components/PreviewNotice';
 import DemoPressable from '../../components/DemoPressable';
 import { useDemoWait } from '../../hooks/useDemoAdvance';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -50,7 +51,7 @@ export default function TrackingScreen() {
         </Pressable>
         <Text style={styles.headerTitle}>Legal Notice Tracking</Text>
         <View style={styles.headerRight}>
-          <Pressable accessibilityRole="button" accessibilityLabel="Share" hitSlop={10}>
+          <Pressable onPress={() => previewNotice("Share")} accessibilityRole="button" accessibilityLabel="Share" hitSlop={10}>
             <Share2 size={t.shareIcon} color={colors.textPrimary} />
           </Pressable>
           <View style={styles.avatar}>
@@ -90,7 +91,7 @@ export default function TrackingScreen() {
               <Text style={styles.idLabel}>REQUEST ID</Text>
               <Text style={styles.idValue}>#{INVOICE.requestId}</Text>
               <View style={styles.spacer} />
-              <Pressable accessibilityRole="button" accessibilityLabel="Copy request ID" style={styles.copy}>
+              <Pressable onPress={() => previewNotice("Copy request ID")} accessibilityRole="button" accessibilityLabel="Copy request ID" style={styles.copy}>
                 <Copy size={t.copyIcon} color={colors.textPrimary} />
                 <Text style={styles.copyText}>Copy</Text>
               </Pressable>
@@ -175,7 +176,7 @@ export default function TrackingScreen() {
               <Text style={styles.reviewText}>Review Draft</Text>
               <ArrowRight size={t.reviewIcon} color={ink.onBrand} />
             </Pressable>
-            <Pressable accessibilityRole="link" style={styles.download}>
+            <Pressable onPress={() => previewNotice("Download PDF")} accessibilityRole="link" style={styles.download}>
               <Download size={t.downloadIcon} color={ink.accent} />
               <Text style={styles.downloadText}>Download PDF</Text>
             </Pressable>

@@ -1,3 +1,4 @@
+import { previewNotice } from '../../../components/PreviewNotice';
 import { router, type Href } from 'expo-router';
 import {
   ArrowRight,
@@ -100,7 +101,7 @@ export default function LegalittAiScreen() {
         ) : (
           <>
         {/* Inert — no upload flow is designed anywhere in the app. */}
-        <Pressable accessibilityRole="button" style={styles.card}>
+        <Pressable onPress={() => previewNotice(a.upload.title)} accessibilityRole="button" style={styles.card}>
           <View style={styles.tile}>
             <UploadCloud size={t.tileIcon} color={t.purple} />
           </View>
@@ -138,7 +139,7 @@ export default function LegalittAiScreen() {
             </Text>
             <Text style={styles.msg}>{a.answer.text}</Text>
             {/* Inert — Copy has no designed destination. */}
-            <Pressable accessibilityRole="button" style={styles.copy}>
+            <Pressable onPress={() => previewNotice(a.answer.copy)} accessibilityRole="button" style={styles.copy}>
               <Copy size={t.copyIcon} color={colors.textPrimary} />
               <Text style={styles.copyText} {...shrinkToFit(0.8)}>
                 {a.answer.copy}
@@ -175,7 +176,7 @@ export default function LegalittAiScreen() {
       <View style={[styles.composer, { paddingBottom: insets.bottom + t.composerPadTop }]}>
         <View style={styles.bar}>
           {/* Inert — no upload flow is designed. */}
-          <Pressable accessibilityRole="button" accessibilityLabel="Attach">
+          <Pressable onPress={() => previewNotice("Attach")} accessibilityRole="button" accessibilityLabel="Attach">
             <Paperclip size={t.attachIcon} color={colors.textBody} />
           </Pressable>
           <TextInput

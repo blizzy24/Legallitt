@@ -1,3 +1,4 @@
+import { previewNotice } from '../../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
   ArrowLeft,
@@ -65,7 +66,7 @@ export default function AdvocateClientProfileScreen() {
         <Text style={styles.title} numberOfLines={1}>
           Client Profile
         </Text>
-        <Pressable accessibilityRole="button" accessibilityLabel="More" hitSlop={8}>
+        <Pressable onPress={() => previewNotice("More")} accessibilityRole="button" accessibilityLabel="More" hitSlop={8}>
           <EllipsisVertical size={t.kebab} color={colors.textPrimary} />
         </Pressable>
         <View style={styles.avatar}>
@@ -110,7 +111,7 @@ export default function AdvocateClientProfileScreen() {
               <Text style={styles.contactText} {...shrinkToFit(0.75)}>
                 {c.phone}
               </Text>
-              <Pressable accessibilityRole="button" hitSlop={8}>
+              <Pressable onPress={() => previewNotice(c.email)} accessibilityRole="button" hitSlop={8}>
                 <Text style={styles.copy} {...shrinkToFit(0.8)}>
                   Copy
                 </Text>
@@ -121,7 +122,7 @@ export default function AdvocateClientProfileScreen() {
               <Text style={styles.contactText} {...shrinkToFit(0.7)}>
                 {c.email}
               </Text>
-              <Pressable accessibilityRole="button" hitSlop={8}>
+              <Pressable onPress={() => previewNotice("Copy")} accessibilityRole="button" hitSlop={8}>
                 <Text style={styles.copy} {...shrinkToFit(0.8)}>
                   Copy
                 </Text>
@@ -138,7 +139,7 @@ export default function AdvocateClientProfileScreen() {
               <MessageSquareText size={t.actionIcon} color={ink.onBrand} />
               <Text style={[styles.actionText, styles.actionTextPrimary]}>Message</Text>
             </Pressable>
-            <Pressable
+            <Pressable onPress={() => previewNotice("Call")}
               accessibilityRole="button"
               style={({ pressed }) => [styles.action, styles.actionSecondary, pressed && styles.pressed]}
             >

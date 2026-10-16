@@ -1,3 +1,4 @@
+import { previewNotice } from '../../../../components/PreviewNotice';
 import { router } from 'expo-router';
 import {
   BadgeCheck,
@@ -79,7 +80,7 @@ export default function AdvocateClientMessagesScreen() {
         <Text style={styles.title} numberOfLines={1}>
           Client Messages
         </Text>
-        <Pressable accessibilityRole="button" accessibilityLabel="Filter" style={styles.iconBtn}>
+        <Pressable onPress={() => previewNotice("Filter")} accessibilityRole="button" accessibilityLabel="Filter" style={styles.iconBtn}>
           <SlidersHorizontal size={t.iconBtnGlyph} color={colors.textPrimary} />
         </Pressable>
         <View style={styles.avatar}>
@@ -148,7 +149,7 @@ export default function AdvocateClientMessagesScreen() {
         </ScrollView>
 
         {threads.map((th) => (
-          <Pressable key={th.id} accessibilityRole="button" style={styles.row}>
+          <Pressable onPress={() => previewNotice(th.initials)} key={th.id} accessibilityRole="button" style={styles.row}>
             <View style={styles.rowAvatarWrap}>
               <View style={[styles.rowAvatar, th.avatarTone === 'grey' && styles.rowAvatarGrey]}>
                 <Text style={styles.rowAvatarText}>{th.initials}</Text>
@@ -207,7 +208,7 @@ export default function AdvocateClientMessagesScreen() {
           </Pressable>
         ))}
 
-        <Pressable
+        <Pressable onPress={() => previewNotice("Initiate New Client Consultation")}
           accessibilityRole="button"
           style={({ pressed }) => [styles.initiate, pressed && styles.pressed]}
         >

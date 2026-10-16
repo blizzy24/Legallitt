@@ -1,3 +1,4 @@
+import { previewNotice } from '../../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
   ArrowRight,
@@ -155,7 +156,7 @@ export default function AdvocateFirGeneratorScreen() {
               </View>
             </View>
           ))}
-          <Pressable accessibilityRole="button" style={({ pressed }) => [styles.add, pressed && styles.pressed]}>
+          <Pressable onPress={() => previewNotice(f.people.add)} accessibilityRole="button" style={({ pressed }) => [styles.add, pressed && styles.pressed]}>
             <Plus size={t.addIcon} color={t.addColour} />
             <Text style={styles.addText} {...shrinkToFit(0.8)}>
               {f.people.add}

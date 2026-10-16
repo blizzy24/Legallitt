@@ -1,3 +1,4 @@
+import { previewNotice } from '../../components/PreviewNotice';
 import { router, type Href } from 'expo-router';
 import {
   ArrowRight,
@@ -170,7 +171,7 @@ export default function CourierShipmentScreen() {
           </Text>
           <ArrowRight size={t.btnGlyph} color={ink.onBrand} strokeWidth={2.2} />
         </Pressable>
-        <Pressable
+        <Pressable onPress={() => previewNotice(d.ctaAlt)}
           accessibilityRole="button"
           accessibilityLabel={d.ctaAlt}
           style={({ pressed }) => [styles.btn, styles.btnAlt, pressed && styles.pressed]}

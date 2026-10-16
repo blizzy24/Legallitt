@@ -12,6 +12,7 @@ import { useEffect, useState } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 
 import AnimatedSplash from '../components/AnimatedSplash';
+import { PreviewNoticeHost } from '../components/PreviewNotice';
 import { SPLASH_ENABLED } from '../constants/dev';
 
 import { DocumentForensicProvider } from '../context/documentForensic';
@@ -67,6 +68,7 @@ export default function RootLayout() {
   return (
     <View style={styles.root}>
       {ready ? <App /> : null}
+      {ready ? <PreviewNoticeHost /> : null}
       {splashDone ? null : (
         <AnimatedSplash ready={ready} warm={WARM} onMounted={() => SplashScreen.hideAsync()} onDone={() => setSplashDone(true)} />
       )}

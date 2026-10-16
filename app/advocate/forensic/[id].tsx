@@ -1,3 +1,4 @@
+import { previewNotice } from '../../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
   ArrowRight,
@@ -305,12 +306,12 @@ export default function AdvocateForensicRequestScreen() {
           <ArrowRight size={t.acceptArrow} color={ink.onBrand} style={styles.acceptArrow} />
         </Pressable>
         <View style={styles.secRow}>
-          <Pressable accessibilityRole="button" style={({ pressed }) => [styles.sec, pressed && styles.pressed]}>
+          <Pressable onPress={() => previewNotice(r.more)} accessibilityRole="button" style={({ pressed }) => [styles.sec, pressed && styles.pressed]}>
             <Text style={styles.secText} {...shrinkToFit(0.8)}>
               {r.more}
             </Text>
           </Pressable>
-          <Pressable accessibilityRole="button" style={({ pressed }) => [styles.sec, pressed && styles.pressed]}>
+          <Pressable onPress={() => previewNotice(r.decline)} accessibilityRole="button" style={({ pressed }) => [styles.sec, pressed && styles.pressed]}>
             <Text style={[styles.secText, styles.declineText]} {...shrinkToFit(0.8)}>
               {r.decline}
             </Text>

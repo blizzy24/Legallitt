@@ -1,3 +1,4 @@
+import { previewNotice } from '../../../../components/PreviewNotice';
 import DemoPressable from '../../../../components/DemoPressable';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
@@ -58,7 +59,7 @@ export default function AdvocatePropertySearchResponseScreen() {
         <Text style={styles.title} {...shrinkToFit(0.75)}>
           {r.title}
         </Text>
-        <Pressable accessibilityRole="button" accessibilityLabel="More" hitSlop={8}>
+        <Pressable onPress={() => previewNotice("More")} accessibilityRole="button" accessibilityLabel="More" hitSlop={8}>
           <EllipsisVertical size={t.kebab} color={colors.textBody} />
         </Pressable>
       </View>
@@ -78,7 +79,7 @@ export default function AdvocatePropertySearchResponseScreen() {
         <View style={styles.card}>
           {/* Inert — no rich-text editor is specified anywhere. */}
           <View style={styles.toolbar}>
-            <Pressable accessibilityRole="button" style={styles.toolBlock}>
+            <Pressable onPress={() => previewNotice(r.toolbar.block)} accessibilityRole="button" style={styles.toolBlock}>
               <Text style={styles.toolBlockText} {...shrinkToFit(0.8)}>
                 {r.toolbar.block}
               </Text>

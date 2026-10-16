@@ -1,3 +1,4 @@
+import { previewNotice } from '../../components/PreviewNotice';
 import { router } from 'expo-router';
 import { Check, ChevronLeft, Clock, Copy, FileText } from 'lucide-react-native';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -46,7 +47,7 @@ export default function DocumentForensicSubmittedScreen() {
               <Text style={styles.rowLabel} {...shrinkToFit(0.8)}>Request ID</Text>
               <Text style={styles.rowValue} {...shrinkToFit(0.75)}>{DF_REQUEST_ID}</Text>
             </View>
-            <Pressable accessibilityRole="button" accessibilityLabel="Copy request ID" hitSlop={10}>
+            <Pressable onPress={() => previewNotice("Copy request ID")} accessibilityRole="button" accessibilityLabel="Copy request ID" hitSlop={10}>
               <Copy size={t.copyIcon} color={colors.textBody} />
             </Pressable>
           </View>

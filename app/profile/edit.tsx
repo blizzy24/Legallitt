@@ -1,3 +1,4 @@
+import { previewNotice } from '../../components/PreviewNotice';
 import { router } from 'expo-router';
 import {
   Calendar,
@@ -91,7 +92,7 @@ export default function EditProfileScreen() {
               <Text style={styles.bigAvatarText}>{form.initials}</Text>
             </View>
             {/* Inert: the prototype has no image picker. */}
-            <Pressable accessibilityRole="button" accessibilityLabel="Change photo" style={styles.camera}>
+            <Pressable onPress={() => previewNotice("Change photo")} accessibilityRole="button" accessibilityLabel="Change photo" style={styles.camera}>
               <Camera size={t.cameraGlyph} color={ink.onBrand} />
             </Pressable>
           </View>

@@ -195,6 +195,8 @@ export type Btn = {
   tight?: boolean;
   /** Content width, at the end of its column (392's Send). */
   end?: boolean;
+  /** Drawn as a button but a status (386's Process Fee Completed ✓): no notice. */
+  inert?: boolean;
   /** Token for this button's type size (389). */
   size?: string;
 };

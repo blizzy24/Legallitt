@@ -1,3 +1,4 @@
+import { previewNotice } from '../../../components/PreviewNotice';
 import DemoPressable from '../../../components/DemoPressable';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
@@ -190,7 +191,7 @@ export default function AdvocateFirDraftScreen() {
                 ))}
               </View>
               {'add' in s && s.add && (
-                <Pressable accessibilityRole="button" style={({ pressed }) => [styles.add, pressed && styles.pressed]}>
+                <Pressable onPress={() => previewNotice(s.add)} accessibilityRole="button" style={({ pressed }) => [styles.add, pressed && styles.pressed]}>
                   <UserRoundPlus size={t.addIcon} color={t.addColour} />
                   <Text style={styles.addText} {...shrinkToFit(0.8)}>
                     {s.add}
@@ -213,7 +214,7 @@ export default function AdvocateFirDraftScreen() {
               </View>
             ))}
           </View>
-          <Pressable accessibilityRole="button" style={({ pressed }) => [styles.add, pressed && styles.pressed]}>
+          <Pressable onPress={() => previewNotice(d.legal.add)} accessibilityRole="button" style={({ pressed }) => [styles.add, pressed && styles.pressed]}>
             <Text style={styles.addText} {...shrinkToFit(0.8)}>
               {d.legal.add}
             </Text>
@@ -228,7 +229,7 @@ export default function AdvocateFirDraftScreen() {
             <Text style={styles.narrativeFootText} {...shrinkToFit(0.8)}>
               {d.facts.foot}
             </Text>
-            <Pressable accessibilityRole="button" style={styles.narrativeEdit}>
+            <Pressable onPress={() => previewNotice(d.facts.edit)} accessibilityRole="button" style={styles.narrativeEdit}>
               <Pencil size={t.narrativeEditIcon} color={t.narrativeEditColour} />
               <Text style={styles.narrativeEditText} {...shrinkToFit(0.8)}>
                 {d.facts.edit}
@@ -244,7 +245,7 @@ export default function AdvocateFirDraftScreen() {
               </View>
             ))}
           </View>
-          <Pressable accessibilityRole="button" style={({ pressed }) => [styles.add, pressed && styles.pressed]}>
+          <Pressable onPress={() => previewNotice(d.witnesses.add)} accessibilityRole="button" style={({ pressed }) => [styles.add, pressed && styles.pressed]}>
             <UsersRound size={t.addIcon} color={t.addColour} />
             <Text style={styles.addText} {...shrinkToFit(0.8)}>
               {d.witnesses.add}
@@ -277,7 +278,7 @@ export default function AdvocateFirDraftScreen() {
               </View>
             );
           })}
-          <Pressable accessibilityRole="button" style={({ pressed }) => [styles.add, pressed && styles.pressed]}>
+          <Pressable onPress={() => previewNotice(d.attached.add)} accessibilityRole="button" style={({ pressed }) => [styles.add, pressed && styles.pressed]}>
             <Paperclip size={t.addIcon} color={t.addColour} />
             <Text style={styles.addText} {...shrinkToFit(0.8)}>
               {d.attached.add}

@@ -1,3 +1,4 @@
+import { previewNotice } from '../../../../components/PreviewNotice';
 import { router, useLocalSearchParams } from 'expo-router';
 import {
   ArrowRight,
@@ -66,7 +67,7 @@ export default function AdvocateClientCasesScreen() {
             {c.name} • {c.clientId}
           </Text>
         </View>
-        <Pressable accessibilityRole="button" accessibilityLabel="Filter" style={styles.iconBtn}>
+        <Pressable onPress={() => previewNotice("Filter")} accessibilityRole="button" accessibilityLabel="Filter" style={styles.iconBtn}>
           <SlidersHorizontal size={t.iconBtnGlyph} color={colors.textPrimary} />
         </Pressable>
         <View style={styles.avatar}>
@@ -222,7 +223,7 @@ export default function AdvocateClientCasesScreen() {
               </View>
             )}
 
-            <Pressable
+            <Pressable onPress={() => previewNotice(k.action)}
               accessibilityRole="button"
               style={({ pressed }) => [
                 styles.action,

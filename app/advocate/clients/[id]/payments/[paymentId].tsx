@@ -1,3 +1,4 @@
+import { previewNotice } from '../../../../../components/PreviewNotice';
 import DemoPressable from '../../../../../components/DemoPressable';
 import { router, type Href } from 'expo-router';
 import {
@@ -82,7 +83,7 @@ export default function AdvocatePaymentDetailScreen() {
             {d.ref}
           </Text>
         </View>
-        <Pressable accessibilityRole="button" accessibilityLabel="Share" style={styles.iconBtn}>
+        <Pressable onPress={() => previewNotice("Share")} accessibilityRole="button" accessibilityLabel="Share" style={styles.iconBtn}>
           <Share2 size={t.iconBtnGlyph} color={colors.textPrimary} />
         </Pressable>
         <View style={styles.avatar}>

@@ -1,3 +1,4 @@
+import { previewNotice } from '../../../components/PreviewNotice';
 import DemoPressable from '../../../components/DemoPressable';
 import { router } from 'expo-router';
 import {
@@ -178,7 +179,7 @@ export default function DigilockerVerifiedScreen() {
                     {v.value}
                   </Text>
                   {v.copy && (
-                    <Pressable accessibilityRole="button" accessibilityLabel="Copy reference" hitSlop={8}>
+                    <Pressable onPress={() => previewNotice("Copy reference")} accessibilityRole="button" accessibilityLabel="Copy reference" hitSlop={8}>
                       <Copy size={t.gridCopy} color={colors.textBody} />
                     </Pressable>
                   )}

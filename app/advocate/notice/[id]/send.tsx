@@ -1,3 +1,4 @@
+import { previewNotice } from '../../../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
   ArrowLeft,
@@ -205,7 +206,7 @@ export default function AdvocateNoticeSendScreen() {
             <Text style={styles.sendLabel} {...shrinkToFit(0.8)}>
               {s.sendToLabel}
             </Text>
-            <Pressable accessibilityRole="button" style={styles.copyChip}>
+            <Pressable onPress={() => previewNotice(s.copy)} accessibilityRole="button" style={styles.copyChip}>
               <Copy size={t.copyIcon} color={colors.textPrimary} />
               <Text style={styles.copyText} {...shrinkToFit(0.8)}>
                 {s.copy}

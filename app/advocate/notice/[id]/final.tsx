@@ -1,3 +1,4 @@
+import { previewNotice } from '../../../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
   ArrowLeft,
@@ -145,7 +146,7 @@ export default function AdvocateNoticeFinalScreen() {
           </View>
 
           {/* Inert — the prototype has no file output. */}
-          <Pressable accessibilityRole="button" style={styles.dl}>
+          <Pressable onPress={() => previewNotice(f.download)} accessibilityRole="button" style={styles.dl}>
             <Download size={t.dlIcon} color={colors.textPrimary} />
             <Text style={styles.dlText} {...shrinkToFit(0.8)}>
               {f.download}

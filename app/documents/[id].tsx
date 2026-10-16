@@ -1,3 +1,4 @@
+import { previewNotice } from '../../components/PreviewNotice';
 import DemoPressable from '../../components/DemoPressable';
 import { router, useLocalSearchParams } from 'expo-router';
 import {
@@ -65,10 +66,10 @@ export default function DocumentViewerScreen() {
             </Text>
           </View>
         </View>
-        <Pressable accessibilityRole="button" accessibilityLabel="Share" style={styles.circle}>
+        <Pressable onPress={() => previewNotice("Share")} accessibilityRole="button" accessibilityLabel="Share" style={styles.circle}>
           <Share2 size={t.actionIcon} color={colors.textPrimary} />
         </Pressable>
-        <Pressable accessibilityRole="button" accessibilityLabel="Download" style={[styles.circle, styles.circleGap]}>
+        <Pressable onPress={() => previewNotice("Download")} accessibilityRole="button" accessibilityLabel="Download" style={[styles.circle, styles.circleGap]}>
           <Download size={t.actionIcon} color={colors.textPrimary} />
         </Pressable>
         <Pressable accessibilityRole="button" accessibilityLabel="Close" onPress={back} style={[styles.circle, styles.circleGap]}>
@@ -260,7 +261,7 @@ export default function DocumentViewerScreen() {
         </View>
 
         <View style={styles.actions}>
-          <Pressable accessibilityRole="button" style={[styles.action, styles.actionOutline]}>
+          <Pressable onPress={() => previewNotice("Share")} accessibilityRole="button" style={[styles.action, styles.actionOutline]}>
             <Share2 size={t.actionGlyph} color={colors.textPrimary} />
             <Text style={styles.actionLabel} {...shrinkToFit(0.8)}>
               Share

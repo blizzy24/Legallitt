@@ -1,3 +1,4 @@
+import { previewNotice } from '../../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
   ArrowRight,
@@ -164,19 +165,19 @@ export default function AdvocateForensicAffidavitScreen() {
 
           {/* Inert — no editor is specified for the affidavit text. */}
           <View style={styles.editRow}>
-            <Pressable accessibilityRole="button" style={({ pressed }) => [styles.editBtn, pressed && styles.pressed]}>
+            <Pressable onPress={() => previewNotice(a.edit)} accessibilityRole="button" style={({ pressed }) => [styles.editBtn, pressed && styles.pressed]}>
               <Pencil size={t.editIcon} color={colors.textPrimary} />
               <Text style={styles.editText} {...shrinkToFit(0.8)}>
                 {a.edit}
               </Text>
             </Pressable>
-            <Pressable accessibilityRole="button" style={({ pressed }) => [styles.editBtn, pressed && styles.pressed]}>
+            <Pressable onPress={() => previewNotice(a.add)} accessibilityRole="button" style={({ pressed }) => [styles.editBtn, pressed && styles.pressed]}>
               <CirclePlus size={t.editIcon} color={colors.textPrimary} />
               <Text style={styles.editText} {...shrinkToFit(0.8)}>
                 {a.add}
               </Text>
             </Pressable>
-            <Pressable accessibilityRole="button" style={({ pressed }) => [styles.editBtn, styles.saveBtn, pressed && styles.pressed]}>
+            <Pressable onPress={() => previewNotice(a.save)} accessibilityRole="button" style={({ pressed }) => [styles.editBtn, styles.saveBtn, pressed && styles.pressed]}>
               <Check size={t.editIcon} color={ink.onBrand} strokeWidth={3} />
               <Text style={[styles.editText, styles.saveText]} {...shrinkToFit(0.8)}>
                 {a.save}
@@ -231,7 +232,7 @@ export default function AdvocateForensicAffidavitScreen() {
             </View>
           </View>
 
-          <Pressable accessibilityRole="button" style={({ pressed }) => [styles.resign, pressed && styles.pressed]}>
+          <Pressable onPress={() => previewNotice(a.signature.resign)} accessibilityRole="button" style={({ pressed }) => [styles.resign, pressed && styles.pressed]}>
             <Signature size={t.resignIcon} color={colors.textPrimary} />
             <Text style={styles.resignText} {...shrinkToFit(0.8)}>
               {a.signature.resign}
@@ -269,7 +270,7 @@ export default function AdvocateForensicAffidavitScreen() {
 
       <View style={[styles.bar, { paddingBottom: insets.bottom + t.barPadBottom }]}>
         <View style={styles.barRow}>
-          <Pressable accessibilityRole="button" style={({ pressed }) => [styles.saveDraft, pressed && styles.pressed]}>
+          <Pressable onPress={() => previewNotice(a.saveDraft)} accessibilityRole="button" style={({ pressed }) => [styles.saveDraft, pressed && styles.pressed]}>
             <Text style={styles.saveDraftText} {...shrinkToFit(0.8)}>
               {a.saveDraft}
             </Text>

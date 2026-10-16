@@ -1,3 +1,4 @@
+import { previewNotice } from '../../components/PreviewNotice';
 import { router } from 'expo-router';
 import {
   ArrowLeft,
@@ -86,7 +87,7 @@ export default function PropertySearchRequestScreen() {
           PROPERTY SEARCH REPORT
         </Text>
         {/* Sliders opens nothing — no filter panel is designed. */}
-        <Pressable accessibilityRole="button" accessibilityLabel="Options" hitSlop={10}>
+        <Pressable onPress={() => previewNotice("Options")} accessibilityRole="button" accessibilityLabel="Options" hitSlop={10}>
           <SlidersHorizontal size={t.slidersIcon} color={colors.textPrimary} />
         </Pressable>
       </View>

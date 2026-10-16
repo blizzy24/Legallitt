@@ -1,3 +1,4 @@
+import { previewNotice } from '../../../components/PreviewNotice';
 import { router } from 'expo-router';
 import {
   BadgeCheck,
@@ -68,7 +69,7 @@ export default function AdvocateClientSearchScreen() {
         <Text style={styles.title} numberOfLines={1}>
           Search Clients
         </Text>
-        <Pressable accessibilityRole="button" accessibilityLabel="Filter" style={styles.iconBtn}>
+        <Pressable onPress={() => previewNotice("Filter")} accessibilityRole="button" accessibilityLabel="Filter" style={styles.iconBtn}>
           <SlidersHorizontal size={t.iconBtnGlyph} color={colors.textPrimary} />
         </Pressable>
         <View style={styles.avatar}>
@@ -232,7 +233,7 @@ export default function AdvocateClientSearchScreen() {
             Add a new individual client or corporate entity directly to initiate privileged docket
             assignments.
           </Text>
-          <Pressable
+          <Pressable onPress={() => previewNotice("+ Invite Client or Add Docket")}
             accessibilityRole="button"
             style={({ pressed }) => [styles.helpBtn, pressed && styles.pressed]}
           >

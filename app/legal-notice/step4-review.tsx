@@ -1,3 +1,4 @@
+import { previewNotice } from '../../components/PreviewNotice';
 import { router, type Href } from 'expo-router';
 import { BookText, Check, CirclePlus, Crop, Eye, File, FingerprintPattern, RefreshCw, Trash, type LucideIcon } from 'lucide-react-native';
 import { useEffect } from 'react';
@@ -68,7 +69,7 @@ export default function Step4ReviewScreen() {
         ))}
       </View>
 
-      <Pressable accessibilityRole="button" style={styles.add}>
+      <Pressable onPress={() => previewNotice("Add More Documents")} accessibilityRole="button" style={styles.add}>
         <CirclePlus size={r.addIcon} color={r.addText} />
         <Text style={styles.addText}>Add More Documents</Text>
         <View style={styles.chip}>
@@ -99,10 +100,10 @@ function DocRow({ doc }: { doc: Doc }) {
         >
           <Eye size={r.actionIcon + 2} color={colors.textPrimary} />
         </Pressable>
-        <Pressable accessibilityRole="button" accessibilityLabel={`Replace ${doc.title}`} hitSlop={8}>
+        <Pressable onPress={() => previewNotice(`Replace ${doc.title}`)} accessibilityRole="button" accessibilityLabel={`Replace ${doc.title}`} hitSlop={8}>
           <RefreshCw size={r.actionIcon} color={colors.textPrimary} />
         </Pressable>
-        <Pressable accessibilityRole="button" accessibilityLabel={`Delete ${doc.title}`} hitSlop={8}>
+        <Pressable onPress={() => previewNotice(`Delete ${doc.title}`)} accessibilityRole="button" accessibilityLabel={`Delete ${doc.title}`} hitSlop={8}>
           <Trash size={r.actionIcon} color={colors.textPrimary} />
         </Pressable>
       </View>

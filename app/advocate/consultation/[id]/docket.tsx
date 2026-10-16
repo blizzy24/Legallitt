@@ -1,3 +1,4 @@
+import { previewNotice } from '../../../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
   Bell,
@@ -176,7 +177,7 @@ export default function AdvocateDocketScreen() {
             {d.notesLabel} <Text style={styles.sectionNote}>{d.notesLabelNote}</Text>
           </Text>
           {/* Inert — speech input is implied but specified nowhere. */}
-          <Pressable accessibilityRole="button" style={styles.dictate}>
+          <Pressable onPress={() => previewNotice(d.dictate)} accessibilityRole="button" style={styles.dictate}>
             <Mic size={t.dictateIcon} color={t.textBrown} />
             <Text style={styles.dictateText} {...shrinkToFit(0.8)}>
               {d.dictate}
@@ -188,13 +189,13 @@ export default function AdvocateDocketScreen() {
           {/* Inert — a rich-text editor is implied but not specified. design/180
               sets B and I as plain letters, not the slanted italic glyph. */}
           <View style={styles.tools}>
-            <Pressable accessibilityRole="button" accessibilityLabel="Bold" style={styles.toolBtn}>
+            <Pressable onPress={() => previewNotice("Bold")} accessibilityRole="button" accessibilityLabel="Bold" style={styles.toolBtn}>
               <Text style={styles.toolBold}>B</Text>
             </Pressable>
-            <Pressable accessibilityRole="button" accessibilityLabel="Italic" style={styles.toolBtn}>
+            <Pressable onPress={() => previewNotice("Italic")} accessibilityRole="button" accessibilityLabel="Italic" style={styles.toolBtn}>
               <Text style={styles.toolText}>I</Text>
             </Pressable>
-            <Pressable accessibilityRole="button" accessibilityLabel="List" style={styles.toolBtn}>
+            <Pressable onPress={() => previewNotice("List")} accessibilityRole="button" accessibilityLabel="List" style={styles.toolBtn}>
               <List size={t.toolIcon} color={colors.textPrimary} />
             </Pressable>
             <Pressable accessibilityRole="button" style={styles.cite}>
@@ -295,7 +296,7 @@ export default function AdvocateDocketScreen() {
         </Pressable>
 
         {/* Inert — no export flow is designed. */}
-        <Pressable accessibilityRole="button" style={styles.export}>
+        <Pressable onPress={() => previewNotice(d.exportPdf)} accessibilityRole="button" style={styles.export}>
           <PdfStackIcon size={t.exportIcon} color={t.textWarm} />
           <Text style={styles.exportText} {...shrinkToFit(0.8)}>
             {d.exportPdf}

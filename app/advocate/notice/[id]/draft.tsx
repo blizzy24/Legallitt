@@ -1,3 +1,4 @@
+import { previewNotice } from '../../../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import { ArrowLeft } from 'lucide-react-native';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -67,7 +68,7 @@ export default function AdvocateNoticeDraftScreen() {
           {d.parties.client} <Text style={styles.partyVs}>vs</Text> {d.parties.opponent}
         </Text>
         {/* Inert — the assist chip has no designed destination. */}
-        <Pressable accessibilityRole="button" style={styles.assist}>
+        <Pressable onPress={() => previewNotice(d.assistChip)} accessibilityRole="button" style={styles.assist}>
           <AiMark size={t.assistMark} />
           <Text style={styles.assistText} {...shrinkToFit(0.8)}>
             {d.assistChip}

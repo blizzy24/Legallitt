@@ -1,3 +1,4 @@
+import { previewNotice } from '../../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
   ArrowRight,
@@ -140,7 +141,7 @@ function DocBlock({
               {view}
             </Text>
           </Pressable>
-          <Pressable accessibilityRole="button" style={({ pressed }) => [styles.act, pressed && styles.pressed]}>
+          <Pressable onPress={() => previewNotice(download)} accessibilityRole="button" style={({ pressed }) => [styles.act, pressed && styles.pressed]}>
             <Download size={t.actIcon} color={colors.textPrimary} />
             <Text style={styles.actText} {...shrinkToFit(0.8)}>
               {download}
@@ -288,7 +289,7 @@ export default function AdvocateForensicDocumentsScreen() {
           </Text>
           <ArrowRight size={t.continueArrow} color={ink.onBrand} style={styles.continueArrow} />
         </Pressable>
-        <Pressable accessibilityRole="button" style={({ pressed }) => [styles.more, pressed && styles.pressed]}>
+        <Pressable onPress={() => previewNotice(d.more)} accessibilityRole="button" style={({ pressed }) => [styles.more, pressed && styles.pressed]}>
           <CircleHelp size={t.moreIcon} color={colors.textPrimary} />
           <Text style={styles.moreText} {...shrinkToFit(0.8)}>
             {d.more}

@@ -1,3 +1,4 @@
+import { previewNotice } from '../../components/PreviewNotice';
 import { router } from 'expo-router';
 import {
   CalendarDays,
@@ -130,7 +131,7 @@ export default function LegalAdviceDetailsScreen() {
               DD/MM/YYYY / Time
             </Text>
           </View>
-          <Pressable accessibilityRole="button" accessibilityLabel="Pick a date" hitSlop={8}>
+          <Pressable onPress={() => previewNotice("Pick a date")} accessibilityRole="button" accessibilityLabel="Pick a date" hitSlop={8}>
             <CalendarDays size={t.fieldCalendar} color={colors.brandDark} />
           </Pressable>
         </View>
@@ -179,7 +180,7 @@ export default function LegalAdviceDetailsScreen() {
 
           <View style={styles.dash}>
             {UPLOAD_TILES.map((tile) => (
-              <Pressable
+              <Pressable onPress={() => previewNotice(tile.label)}
                 key={tile.label}
                 accessibilityRole="button"
                 style={styles.tile}

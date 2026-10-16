@@ -235,3 +235,4 @@ export * from './tokens/legalittMark';
 export * from './tokens/splash';
 export * from './tokens/loader';
 export * from './tokens/brand';
+export * from './tokens/previewNotice';

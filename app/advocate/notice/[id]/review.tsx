@@ -1,3 +1,4 @@
+import { previewNotice } from '../../../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
   BadgeCheck,
@@ -57,7 +58,7 @@ export default function AdvocateNoticeReviewScreen() {
         <Text style={styles.title} {...shrinkToFit(0.75)}>
           {r.title}
         </Text>
-        <Pressable accessibilityRole="button" accessibilityLabel="More" hitSlop={8}>
+        <Pressable onPress={() => previewNotice("More")} accessibilityRole="button" accessibilityLabel="More" hitSlop={8}>
           <EllipsisVertical size={t.kebab} color={colors.textPrimary} />
         </Pressable>
         <View style={styles.avatar}>
@@ -93,7 +94,7 @@ export default function AdvocateNoticeReviewScreen() {
             <Text style={styles.ref} {...shrinkToFit(0.75)}>
               {r.ref}
             </Text>
-            <Pressable accessibilityRole="button" accessibilityLabel="Copy reference" hitSlop={8}>
+            <Pressable onPress={() => previewNotice("Copy reference")} accessibilityRole="button" accessibilityLabel="Copy reference" hitSlop={8}>
               <Copy size={t.refCopy} color={colors.textPrimary} style={styles.refCopy} />
             </Pressable>
           </View>
@@ -284,7 +285,7 @@ export default function AdvocateNoticeReviewScreen() {
               {r.viewDraft}
             </Text>
           </Pressable>
-          <Pressable
+          <Pressable onPress={() => previewNotice(r.messageClient)}
             accessibilityRole="button"
             style={({ pressed }) => [styles.barBtn, styles.barLight, pressed && styles.pressed]}
           >

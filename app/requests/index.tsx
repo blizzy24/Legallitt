@@ -1,3 +1,4 @@
+import { previewNotice } from '../../components/PreviewNotice';
 import { router, type Href } from 'expo-router';
 import {
   CalendarDays,
@@ -68,7 +69,7 @@ export default function RequestsScreen() {
           My Requests
         </Text>
         {/* Filter panel is not designed. */}
-        <Pressable accessibilityRole="button" accessibilityLabel="Filter" style={styles.circle}>
+        <Pressable onPress={() => previewNotice("Filter")} accessibilityRole="button" accessibilityLabel="Filter" style={styles.circle}>
           <ListFilter size={t.rowIcon + 3} color={colors.textPrimary} />
         </Pressable>
       </View>

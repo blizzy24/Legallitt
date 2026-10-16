@@ -1,3 +1,4 @@
+import { previewNotice } from '../../../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
   ArrowLeft,
@@ -105,13 +106,13 @@ export default function AdvocateNoticeDocumentsScreen() {
 
           <View style={styles.linkRule} />
           <View style={styles.links}>
-            <Pressable accessibilityRole="button" style={styles.link}>
+            <Pressable onPress={() => previewNotice(d.viewFull)} accessibilityRole="button" style={styles.link}>
               <Eye size={t.linkIcon} color={colors.brandDark} />
               <Text style={styles.linkText} {...shrinkToFit(0.8)}>
                 {d.viewFull}
               </Text>
             </Pressable>
-            <Pressable accessibilityRole="button" style={styles.link}>
+            <Pressable onPress={() => previewNotice(d.viewSource)} accessibilityRole="button" style={styles.link}>
               <FileText size={t.linkIcon} color={colors.textPrimary} />
               <Text style={[styles.linkText, styles.linkTextPlain]} {...shrinkToFit(0.8)}>
                 {d.viewSource}
@@ -150,7 +151,7 @@ export default function AdvocateNoticeDocumentsScreen() {
                 View
               </Text>
             </Pressable>
-            <Pressable accessibilityRole="button" style={[styles.fileBtn, styles.fileBtnNext]}>
+            <Pressable onPress={() => previewNotice(d.additionalLabel)} accessibilityRole="button" style={[styles.fileBtn, styles.fileBtnNext]}>
               <Text style={styles.fileBtnText} {...shrinkToFit(0.8)}>
                 Download
               </Text>

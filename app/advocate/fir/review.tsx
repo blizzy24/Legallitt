@@ -1,3 +1,4 @@
+import { previewNotice } from '../../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
   BellRing,
@@ -162,7 +163,7 @@ export default function AdvocateFirReviewScreen() {
                 </Text>
               </View>
             </View>
-            <Pressable accessibilityRole="button" accessibilityLabel="Call client" style={styles.callBtn}>
+            <Pressable onPress={() => previewNotice("Call client")} accessibilityRole="button" accessibilityLabel="Call client" style={styles.callBtn}>
               <PhoneForwarded size={t.callGlyph} color={colors.textPrimary} />
             </Pressable>
           </View>
@@ -231,7 +232,7 @@ export default function AdvocateFirReviewScreen() {
                 {r.draft.view}
               </Text>
             </Pressable>
-            <Pressable accessibilityRole="button" accessibilityLabel="Share draft" style={styles.actShare}>
+            <Pressable onPress={() => previewNotice("Share draft")} accessibilityRole="button" accessibilityLabel="Share draft" style={styles.actShare}>
               <Share2 size={t.actIcon} color={colors.textPrimary} />
             </Pressable>
           </View>
@@ -288,7 +289,7 @@ export default function AdvocateFirReviewScreen() {
             <Info size={t.noteIcon} color={colors.textPrimary} style={styles.noteIcon} />
             <Text style={styles.noteText}>{r.alert.note}</Text>
           </View>
-          <Pressable accessibilityRole="button" style={({ pressed }) => [styles.resend, pressed && styles.pressed]}>
+          <Pressable onPress={() => previewNotice(r.alert.resend)} accessibilityRole="button" style={({ pressed }) => [styles.resend, pressed && styles.pressed]}>
             <MailPlus size={t.resendIcon} color={colors.textPrimary} />
             <Text style={styles.resendText} {...shrinkToFit(0.8)}>
               {r.alert.resend}

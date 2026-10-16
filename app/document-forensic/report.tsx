@@ -1,3 +1,4 @@
+import { previewNotice } from '../../components/PreviewNotice';
 import { router, type Href } from 'expo-router';
 import {
   BadgeCheck,
@@ -107,14 +108,14 @@ export default function DocumentForensicReportScreen() {
         </Pressable>
 
         <View style={styles.rowButtons}>
-          <Pressable
+          <Pressable onPress={() => previewNotice("Download PDF")}
             accessibilityRole="button"
             style={({ pressed }) => [styles.rowButton, pressed && styles.pressed]}
           >
             <Download size={t.rowButtonIcon} color={ink.onBrand} />
             <Text style={styles.rowButtonLabel} {...shrinkToFit(0.75)}>Download PDF</Text>
           </Pressable>
-          <Pressable
+          <Pressable onPress={() => previewNotice("Share Report")}
             accessibilityRole="button"
             style={({ pressed }) => [styles.rowButton, pressed && styles.pressed]}
           >

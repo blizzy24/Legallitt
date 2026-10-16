@@ -1,3 +1,4 @@
+import { previewNotice } from '../../components/PreviewNotice';
 import { router, type Href } from 'expo-router';
 import { ChevronLeft, Plus, Scale, Search, ShieldCheck, Upload } from 'lucide-react-native';
 import { useState } from 'react';
@@ -50,7 +51,7 @@ export default function CaseDocumentsScreen() {
           </Text>
         </View>
         {/* Upload is inert — no upload flow is designed. */}
-        <Pressable accessibilityRole="button" accessibilityLabel="Upload" style={styles.circle}>
+        <Pressable onPress={() => previewNotice("Upload")} accessibilityRole="button" accessibilityLabel="Upload" style={styles.circle}>
           <Upload size={t.uploadIcon} color={colors.textPrimary} />
         </Pressable>
       </View>
@@ -140,7 +141,7 @@ export default function CaseDocumentsScreen() {
           <Text style={styles.uploadBody}>
             Attach evidence, affidavits, petitions, or notices for advocate review.
           </Text>
-          <Pressable
+          <Pressable onPress={() => previewNotice("Upload New Document")}
             accessibilityRole="button"
             style={({ pressed }) => [styles.dash, pressed && styles.pressed]}
           >

@@ -1,3 +1,4 @@
+import { previewNotice } from '../../../../components/PreviewNotice';
 import DemoPressable from '../../../../components/DemoPressable';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
@@ -101,7 +102,7 @@ function Section({
           )}
         </View>
         {/* Inert — no editor is specified. */}
-        <Pressable accessibilityRole="button" accessibilityLabel={`Edit ${title}`} hitSlop={8}>
+        <Pressable onPress={() => previewNotice(`Edit ${title}`)} accessibilityRole="button" accessibilityLabel={`Edit ${title}`} hitSlop={8}>
           <Pencil size={t.pencil} color={colors.textPrimary} />
         </Pressable>
       </View>
@@ -153,7 +154,7 @@ export default function AdvocatePsrEditorScreen() {
               <Text style={styles.matterRef}>{e.matterRef}</Text>
             </View>
             {/* ⚠ design/208 draws this in brand brown with sparkles, not the purple mark. */}
-            <Pressable accessibilityRole="button" style={styles.assist}>
+            <Pressable onPress={() => previewNotice(e.assistChip)} accessibilityRole="button" style={styles.assist}>
               <Sparkles size={t.assistIcon} color={colors.brandDark} />
               <Text style={styles.assistText} {...shrinkToFit(0.8)}>
                 {e.assistChip}
@@ -230,7 +231,7 @@ export default function AdvocatePsrEditorScreen() {
             );
           })}
           {/* Inert — no add flow is designed. */}
-          <Pressable accessibilityRole="button" style={styles.add}>
+          <Pressable onPress={() => previewNotice(e.documents.add)} accessibilityRole="button" style={styles.add}>
             <CirclePlus size={t.addIcon} color={t.addColour} />
             <Text style={styles.addText} {...shrinkToFit(0.8)}>
               {e.documents.add}
@@ -372,13 +373,13 @@ export default function AdvocatePsrEditorScreen() {
             </View>
 
             <View style={styles.revBtns}>
-              <Pressable accessibilityRole="button" style={[styles.revBtn, styles.revApply]}>
+              <Pressable onPress={() => previewNotice(e.ai.apply)} accessibilityRole="button" style={[styles.revBtn, styles.revApply]}>
                 <Check size={t.revBtnIcon} color={ink.onBrand} />
                 <Text style={styles.revApplyText} {...shrinkToFit(0.8)}>
                   {e.ai.apply}
                 </Text>
               </Pressable>
-              <Pressable accessibilityRole="button" style={[styles.revBtn, styles.revKeep]}>
+              <Pressable onPress={() => previewNotice(e.ai.keep)} accessibilityRole="button" style={[styles.revBtn, styles.revKeep]}>
                 <Text style={styles.revKeepText} {...shrinkToFit(0.8)}>
                   {e.ai.keep}
                 </Text>

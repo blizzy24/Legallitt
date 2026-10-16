@@ -1,3 +1,4 @@
+import { previewNotice } from '../../components/PreviewNotice';
 import { router, type Href } from 'expo-router';
 import {
   Bell,
@@ -113,7 +114,7 @@ export default function ProfileScreen() {
       >
         <View style={styles.titleRow}>
           <Text style={styles.title}>Profile</Text>
-          <Pressable accessibilityRole="button" accessibilityLabel="Settings" hitSlop={8} style={styles.gear}>
+          <Pressable onPress={() => previewNotice("Settings")} accessibilityRole="button" accessibilityLabel="Settings" hitSlop={8} style={styles.gear}>
             <Settings size={t.gearIcon} color={colors.textPrimary} />
           </Pressable>
         </View>

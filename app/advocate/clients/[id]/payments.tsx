@@ -1,3 +1,4 @@
+import { previewNotice } from '../../../../components/PreviewNotice';
 import DemoPressable from '../../../../components/DemoPressable';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
@@ -78,10 +79,10 @@ export default function AdvocateClientPaymentsScreen() {
             {c.name} • {c.clientId}
           </Text>
         </View>
-        <Pressable accessibilityRole="button" accessibilityLabel="Filter" style={styles.iconBtn}>
+        <Pressable onPress={() => previewNotice("Filter")} accessibilityRole="button" accessibilityLabel="Filter" style={styles.iconBtn}>
           <SlidersHorizontal size={t.iconBtnGlyph} color={colors.textPrimary} />
         </Pressable>
-        <Pressable accessibilityRole="button" accessibilityLabel="More" style={styles.iconBtn}>
+        <Pressable onPress={() => previewNotice("More")} accessibilityRole="button" accessibilityLabel="More" style={styles.iconBtn}>
           <EllipsisVertical size={t.iconBtnGlyph} color={colors.textPrimary} />
         </Pressable>
         <View style={styles.avatar}>
@@ -250,7 +251,7 @@ export default function AdvocateClientPaymentsScreen() {
           <FilePlus2 size={17} color={ink.onBrand} />
           <Text style={styles.primaryText}>Generate New Invoice</Text>
         </DemoPressable>
-        <Pressable
+        <Pressable onPress={() => previewNotice("Download Statement (PDF)")}
           accessibilityRole="button"
           style={({ pressed }) => [styles.secondary, pressed && styles.pressed]}
         >

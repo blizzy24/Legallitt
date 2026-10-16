@@ -1,3 +1,4 @@
+import { previewNotice } from '../../components/PreviewNotice';
 import { router, type Href } from 'expo-router';
 import {
   ChevronLeft,
@@ -188,13 +189,13 @@ export default function LegalAdviceReviewScreen() {
               </Pressable>
 
               <View style={styles.actions}>
-                <Pressable accessibilityRole="button" style={[styles.action, styles.add]}>
+                <Pressable onPress={() => previewNotice("Add")} accessibilityRole="button" style={[styles.action, styles.add]}>
                   <Plus size={t.actionIcon} color={t.addColour} />
                   <Text style={[styles.actionText, styles.addText]} {...shrinkToFit(0.8)}>
                     Add
                   </Text>
                 </Pressable>
-                <Pressable accessibilityRole="button" style={[styles.action, styles.remove]}>
+                <Pressable onPress={() => previewNotice("Remove")} accessibilityRole="button" style={[styles.action, styles.remove]}>
                   <CircleMinus size={t.actionIcon} color={t.removeColour} />
                   <Text style={[styles.actionText, styles.removeText]} {...shrinkToFit(0.8)}>
                     Remove

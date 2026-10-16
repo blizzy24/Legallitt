@@ -1,3 +1,4 @@
+import { previewNotice } from '../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import { Check, ChevronRight, Copy, FileText } from 'lucide-react-native';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
@@ -42,7 +43,7 @@ export default function PaymentSuccessScreen() {
             <Text style={styles.idLabel}>Request ID</Text>
             <Text style={styles.idValue}>{requestId}</Text>
           </View>
-          <Pressable accessibilityRole="button" accessibilityLabel="Copy request ID" hitSlop={10}>
+          <Pressable onPress={() => previewNotice("Copy request ID")} accessibilityRole="button" accessibilityLabel="Copy request ID" hitSlop={10}>
             <Copy size={s.copyIcon} color={colors.brand} />
           </Pressable>
         </View>

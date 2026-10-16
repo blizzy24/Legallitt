@@ -1,3 +1,4 @@
+import { previewNotice } from '../../../components/PreviewNotice';
 import { router } from 'expo-router';
 import {
   ArrowRight,
@@ -67,7 +68,7 @@ export default function AdvocateClientsEmptyScreen() {
       >
         <View style={styles.topRow}>
           <Text style={styles.title}>Clients</Text>
-          <Pressable accessibilityRole="button" accessibilityLabel="Filter" style={styles.iconBtn}>
+          <Pressable onPress={() => previewNotice("Filter")} accessibilityRole="button" accessibilityLabel="Filter" style={styles.iconBtn}>
             <SlidersHorizontal size={t.iconBtnGlyph} color={colors.brandDark} />
           </Pressable>
           <View style={styles.avatar}>

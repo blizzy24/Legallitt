@@ -1,3 +1,4 @@
+import { previewNotice } from '../../../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
   AudioLines,
@@ -292,7 +293,7 @@ export default function AdvocateVideoScreen() {
               </View>
             </View>
             {/* Inert — Edit has no designed destination. */}
-            <Pressable accessibilityRole="button" style={styles.notesEdit}>
+            <Pressable onPress={() => previewNotice(v.notesEdit)} accessibilityRole="button" style={styles.notesEdit}>
               <SquarePen size={t.notesEditIcon} color={colors.textPrimary} />
               <Text style={styles.notesEditText} {...shrinkToFit(0.8)}>
                 {v.notesEdit}
@@ -308,10 +309,10 @@ export default function AdvocateVideoScreen() {
       {panel !== 'ai' && (
       <View style={[styles.controls, { marginBottom: insets.bottom + t.controlsBottom }]}>
         {/* All inert — there is no camera, microphone or audio route to control. */}
-        <Pressable accessibilityRole="button" accessibilityLabel="Camera" style={styles.ctrl}>
+        <Pressable onPress={() => previewNotice("Camera")} accessibilityRole="button" accessibilityLabel="Camera" style={styles.ctrl}>
           <Camera size={t.ctrlIcon} color={t.ctrlIconColour} />
         </Pressable>
-        <Pressable accessibilityRole="button" accessibilityLabel="Microphone" style={styles.ctrl}>
+        <Pressable onPress={() => previewNotice("Microphone")} accessibilityRole="button" accessibilityLabel="Microphone" style={styles.ctrl}>
           <Mic size={t.ctrlIcon} color={t.ctrlIconColour} />
         </Pressable>
         <Pressable
@@ -324,10 +325,10 @@ export default function AdvocateVideoScreen() {
             <Phone size={t.endIcon} color={ink.onBrand} />
           </View>
         </Pressable>
-        <Pressable accessibilityRole="button" accessibilityLabel="Speaker" style={styles.ctrl}>
+        <Pressable onPress={() => previewNotice("Speaker")} accessibilityRole="button" accessibilityLabel="Speaker" style={styles.ctrl}>
           <Volume2 size={t.ctrlIcon} color={t.ctrlIconColour} />
         </Pressable>
-        <Pressable accessibilityRole="button" accessibilityLabel="Switch camera" style={styles.ctrl}>
+        <Pressable onPress={() => previewNotice("Switch camera")} accessibilityRole="button" accessibilityLabel="Switch camera" style={styles.ctrl}>
           <VideoIcon size={t.ctrlIcon} color={t.ctrlIconColour} />
         </Pressable>
       </View>

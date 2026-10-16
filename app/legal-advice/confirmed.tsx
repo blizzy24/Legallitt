@@ -1,3 +1,4 @@
+import { previewNotice } from '../../components/PreviewNotice';
 import { router, type Href } from 'expo-router';
 import {
   CalendarDays,
@@ -94,7 +95,7 @@ export default function LegalAdviceConfirmedScreen() {
               {LA_REQUEST_ID}
             </Text>
           </View>
-          <Pressable accessibilityRole="button" accessibilityLabel="Copy request ID" style={styles.copy}>
+          <Pressable onPress={() => previewNotice("Copy request ID")} accessibilityRole="button" accessibilityLabel="Copy request ID" style={styles.copy}>
             <Copy size={t.copyIcon} color={colors.textBody} />
             <Text style={styles.copyText} {...shrinkToFit(0.8)}>
               Copy

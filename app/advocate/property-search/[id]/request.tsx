@@ -1,3 +1,4 @@
+import { previewNotice } from '../../../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
   ArrowRight,
@@ -76,7 +77,7 @@ export default function AdvocatePsrRequestScreen() {
         <Text style={styles.title} {...shrinkToFit(0.75)}>
           {r.title}
         </Text>
-        <Pressable accessibilityRole="button" accessibilityLabel="More" hitSlop={8}>
+        <Pressable onPress={() => previewNotice("More")} accessibilityRole="button" accessibilityLabel="More" hitSlop={8}>
           <EllipsisVertical size={t.kebab} color={colors.textPrimary} />
         </Pressable>
         <View style={styles.avatar}>

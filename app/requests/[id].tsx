@@ -1,3 +1,4 @@
+import { previewNotice } from '../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
   Bell,
@@ -56,7 +57,7 @@ export default function RequestDetailScreen() {
   return (
     <View style={styles.screen}>
       <View style={[styles.topBar, { paddingTop: insets.top + t.topTop }]}>
-        <Pressable accessibilityRole="button" accessibilityLabel="Menu" hitSlop={10}>
+        <Pressable onPress={() => previewNotice("Menu")} accessibilityRole="button" accessibilityLabel="Menu" hitSlop={10}>
           <Menu size={t.menuIcon} color={colors.textPrimary} />
         </Pressable>
         <Text style={styles.topTitle} numberOfLines={1}>
@@ -88,7 +89,7 @@ export default function RequestDetailScreen() {
             {item ? `DOCKET #${item.id}` : d.docket}
           </Text>
         </View>
-        <Pressable accessibilityRole="button" accessibilityLabel="More options" hitSlop={10}>
+        <Pressable onPress={() => previewNotice("More options")} accessibilityRole="button" accessibilityLabel="More options" hitSlop={10}>
           <MoreVertical size={t.kebabIcon} color={colors.textPrimary} />
         </Pressable>
       </View>
@@ -223,7 +224,7 @@ export default function RequestDetailScreen() {
           <Text style={styles.sectionLabel} {...shrinkToFit(0.8)}>
             DOCUMENTS ATTACHED ({d.documents.length})
           </Text>
-          <Pressable accessibilityRole="button" hitSlop={8} style={styles.addLink}>
+          <Pressable onPress={() => previewNotice("Add Document")} accessibilityRole="button" hitSlop={8} style={styles.addLink}>
             <Plus size={13} color={ink.accent} />
             <Text style={styles.addLinkText} {...shrinkToFit(0.8)}>
               Add Document
@@ -253,7 +254,7 @@ export default function RequestDetailScreen() {
               >
                 <Eye size={t.fileActionIcon} color={colors.textPrimary} />
               </Pressable>
-              <Pressable accessibilityRole="button" accessibilityLabel="Download" style={styles.fileAction}>
+              <Pressable onPress={() => previewNotice("Download")} accessibilityRole="button" accessibilityLabel="Download" style={styles.fileAction}>
                 <Download size={t.fileActionIcon} color={colors.textPrimary} />
               </Pressable>
             </View>

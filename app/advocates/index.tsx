@@ -1,3 +1,4 @@
+import { previewNotice } from '../../components/PreviewNotice';
 import DemoPressable from '../../components/DemoPressable';
 import { router, type Href } from 'expo-router';
 import { Check, ChevronLeft, Heart, MapPin, Search, Star } from 'lucide-react-native';
@@ -48,7 +49,7 @@ export default function AdvocatesScreen() {
           </Text>
         </View>
         {/* Search panel is not designed. */}
-        <Pressable accessibilityRole="button" accessibilityLabel="Search" style={styles.circle}>
+        <Pressable onPress={() => previewNotice("Search")} accessibilityRole="button" accessibilityLabel="Search" style={styles.circle}>
           <Search size={t.searchIcon} color={colors.textPrimary} />
         </Pressable>
       </View>

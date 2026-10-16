@@ -1,3 +1,4 @@
+import { previewNotice } from '../../components/PreviewNotice';
 import { router, useLocalSearchParams } from 'expo-router';
 import {
   BadgeCheck,
@@ -218,7 +219,7 @@ export default function MessageThreadScreen() {
       </ScrollView>
 
       <View style={[styles.composer, { paddingBottom: insets.bottom + 12 }]}>
-        <Pressable accessibilityRole="button" style={styles.docChip}>
+        <Pressable onPress={() => previewNotice("Document")} accessibilityRole="button" style={styles.docChip}>
           <Paperclip size={t.docChipIcon} color={colors.brandDark} />
           <Text style={styles.docChipText} {...shrinkToFit(0.8)}>
             Document
@@ -226,7 +227,7 @@ export default function MessageThreadScreen() {
         </Pressable>
 
         <View style={styles.inputRow}>
-          <Pressable accessibilityRole="button" accessibilityLabel="Attach" hitSlop={8}>
+          <Pressable onPress={() => previewNotice("Attach")} accessibilityRole="button" accessibilityLabel="Attach" hitSlop={8}>
             <Plus size={t.plusIcon} color={colors.textPrimary} />
           </Pressable>
           <TextInput

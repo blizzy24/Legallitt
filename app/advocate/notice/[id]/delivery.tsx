@@ -1,3 +1,4 @@
+import { previewNotice } from '../../../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
   ArrowLeft,
@@ -140,7 +141,7 @@ export default function AdvocateNoticeDeliveryScreen() {
             <Text style={styles.label} {...shrinkToFit(0.75)}>
               {d.pickup.label}
             </Text>
-            <Pressable accessibilityRole="button">
+            <Pressable onPress={() => previewNotice(d.pickup.link)} accessibilityRole="button">
               <Text style={styles.link} {...shrinkToFit(0.8)}>
                 {d.pickup.link}
               </Text>
@@ -155,7 +156,7 @@ export default function AdvocateNoticeDeliveryScreen() {
             <Text style={styles.label} {...shrinkToFit(0.75)}>
               {d.sendTo.label}
             </Text>
-            <Pressable accessibilityRole="button">
+            <Pressable onPress={() => previewNotice(d.sendTo.link)} accessibilityRole="button">
               <Text style={styles.link} {...shrinkToFit(0.8)}>
                 {d.sendTo.link}
               </Text>

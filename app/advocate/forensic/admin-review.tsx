@@ -1,3 +1,4 @@
+import { previewNotice } from '../../../components/PreviewNotice';
 import { router, type Href } from 'expo-router';
 import {
   BellRing,
@@ -124,7 +125,7 @@ export default function AdvocateForensicAdminReviewScreen() {
           </View>
 
           {/* Re-renders; nothing changes. A real status source is not scoped. */}
-          <Pressable accessibilityRole="button" style={({ pressed }) => [styles.refresh, pressed && styles.pressed]}>
+          <Pressable onPress={() => previewNotice(r.refresh)} accessibilityRole="button" style={({ pressed }) => [styles.refresh, pressed && styles.pressed]}>
             <RefreshCw size={t.refreshIcon} color={ink.onBrand} />
             <Text style={styles.refreshText} {...shrinkToFit(0.8)}>
               {r.refresh}

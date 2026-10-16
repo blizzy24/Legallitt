@@ -1,3 +1,4 @@
+import { previewNotice } from '../../components/PreviewNotice';
 import { router } from 'expo-router';
 import { ArrowRight, ChevronDown, Landmark, ShieldCheck } from 'lucide-react-native';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
@@ -32,7 +33,7 @@ export default function FirStep1Screen() {
         />
         <LabelledField label="Mobile Number" required>
           <View style={styles.mobileRow}>
-            <Pressable accessibilityRole="button" accessibilityLabel="Country code" style={styles.prefix}>
+            <Pressable onPress={() => previewNotice("Country code")} accessibilityRole="button" accessibilityLabel="Country code" style={styles.prefix}>
               <Text style={styles.prefixText}>+91</Text>
               <ChevronDown size={s.prefixIcon} color={colors.textBody} />
             </Pressable>

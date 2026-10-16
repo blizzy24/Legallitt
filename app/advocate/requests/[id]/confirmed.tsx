@@ -1,3 +1,4 @@
+import { previewNotice } from '../../../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
   Bell,
@@ -192,7 +193,7 @@ export default function AdvocateConfirmedScreen() {
                 </Text>
               </View>
               {/* Inert — Review has no designed destination. */}
-              <Pressable accessibilityRole="button" style={styles.review}>
+              <Pressable onPress={() => previewNotice(c.notes.label)} accessibilityRole="button" style={styles.review}>
                 <Text style={styles.reviewText} {...shrinkToFit(0.8)}>
                   Review
                 </Text>
@@ -206,7 +207,7 @@ export default function AdvocateConfirmedScreen() {
             <Text style={styles.section} {...shrinkToFit(0.7)}>
               {c.notes.label}
             </Text>
-            <Pressable accessibilityRole="button" style={styles.edit}>
+            <Pressable onPress={() => previewNotice(c.notes.edit)} accessibilityRole="button" style={styles.edit}>
               <SquarePen size={t.editIcon} color={colors.textPrimary} />
               <Text style={styles.editText} {...shrinkToFit(0.8)}>
                 {c.notes.edit}
@@ -233,7 +234,7 @@ export default function AdvocateConfirmedScreen() {
           </View>
 
           {/* Inert — see the note at the top of this file. */}
-          <Pressable accessibilityRole="button" style={styles.add}>
+          <Pressable onPress={() => previewNotice(c.notes.add)} accessibilityRole="button" style={styles.add}>
             <Plus size={t.addPlus} color={colors.brandDark} />
             <Text style={styles.addText} {...shrinkToFit(0.75)}>
               {c.notes.add}

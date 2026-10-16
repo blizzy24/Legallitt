@@ -1,3 +1,4 @@
+import { previewNotice } from '../../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
   AlarmClock,
@@ -298,7 +299,7 @@ export default function AdvocateRequestDetailScreen() {
               </Text>
             </View>
             {/* Inert — see the note at the top of this file. */}
-            <Pressable accessibilityRole="button" style={styles.aiBtn}>
+            <Pressable onPress={() => previewNotice(ADV_AI_REFRESH.explanation)} accessibilityRole="button" style={styles.aiBtn}>
               <Sparkles size={t.aiBtnIcon} color={colors.textPrimary} />
               <Text style={styles.aiBtnText} {...shrinkToFit(0.8)}>
                 Refresh
@@ -332,7 +333,7 @@ export default function AdvocateRequestDetailScreen() {
             <Text style={styles.aiFootText} {...shrinkToFit(0.75)}>
               {ADV_AI_REFRESH.footer}
             </Text>
-            <Pressable accessibilityRole="button" style={styles.linkRow}>
+            <Pressable onPress={() => previewNotice(ADV_AI_REFRESH.original)} accessibilityRole="button" style={styles.linkRow}>
               <Text style={styles.link} {...shrinkToFit(0.8)}>
                 {ADV_AI_REFRESH.original}
               </Text>
@@ -487,7 +488,7 @@ export default function AdvocateRequestDetailScreen() {
               </View>
             ))}
 
-            <Pressable
+            <Pressable onPress={() => previewNotice("View Full Summary")}
               accessibilityRole="button"
               style={({ pressed }) => [styles.viewFull, pressed && styles.pressed]}
             >
@@ -620,7 +621,7 @@ export default function AdvocateRequestDetailScreen() {
                 <Text style={styles.infoRowText} {...shrinkToFit(0.7)}>
                   {item}
                 </Text>
-                <Pressable accessibilityRole="button" style={styles.infoBtn}>
+                <Pressable onPress={() => previewNotice("Request Info")} accessibilityRole="button" style={styles.infoBtn}>
                   <Text style={styles.infoBtnText} {...shrinkToFit(0.75)}>
                     Request Info
                   </Text>

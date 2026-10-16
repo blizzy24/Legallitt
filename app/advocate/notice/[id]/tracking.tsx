@@ -1,3 +1,4 @@
+import { previewNotice } from '../../../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
   ArrowLeft,
@@ -86,7 +87,7 @@ export default function AdvocateNoticeTrackingScreen() {
                 {k.waybill}
               </Text>
             </View>
-            <Pressable accessibilityRole="button" accessibilityLabel="Copy waybill" style={styles.waybillCopy}>
+            <Pressable onPress={() => previewNotice("Copy waybill")} accessibilityRole="button" accessibilityLabel="Copy waybill" style={styles.waybillCopy}>
               <Copy size={t.waybillCopyIcon} color={colors.textPrimary} />
             </Pressable>
           </View>

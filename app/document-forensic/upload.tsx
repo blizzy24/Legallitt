@@ -1,3 +1,4 @@
+import { previewNotice } from '../../components/PreviewNotice';
 import { router, type Href } from 'expo-router';
 import {
   ArrowLeft,
@@ -111,7 +112,7 @@ export default function DocumentForensicUploadScreen() {
           <Text style={styles.dropText}>
             Upload a high-resolution scan or photo of the questioned document.
           </Text>
-          <Pressable
+          <Pressable onPress={() => previewNotice("Browse Files")}
             accessibilityRole="button"
             style={({ pressed }) => [styles.browse, pressed && styles.pressed]}
           >
@@ -198,7 +199,7 @@ export default function DocumentForensicUploadScreen() {
           </Text>
         </View>
 
-        <Pressable
+        <Pressable onPress={() => previewNotice("Upload Reference Document")}
           accessibilityRole="button"
           style={({ pressed }) => [styles.refButton, pressed && styles.pressed]}
         >

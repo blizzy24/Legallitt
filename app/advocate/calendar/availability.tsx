@@ -1,3 +1,4 @@
+import { previewNotice } from '../../../components/PreviewNotice';
 import { ChevronRight, Plus } from 'lucide-react-native';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
@@ -71,7 +72,7 @@ export default function AdvocateAvailabilityScreen() {
             </View>
           ))}
 
-          <Pressable
+          <Pressable onPress={() => previewNotice(d.addSlot)}
             accessibilityRole="button"
             style={({ pressed }) => [styles.add, pressed && styles.pressed]}
           >

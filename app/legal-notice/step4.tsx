@@ -1,3 +1,4 @@
+import { previewNotice } from '../../components/PreviewNotice';
 import { router } from 'expo-router';
 import {
   ArrowRight,
@@ -104,7 +105,7 @@ export default function Step4Screen() {
 
       <View style={styles.rows}>
         {ROWS.map((r, i) => (
-          <Pressable
+          <Pressable onPress={() => previewNotice(`Upload ${r.title}`)}
             key={r.title}
             accessibilityRole="button"
             accessibilityLabel={`Upload ${r.title}`}
@@ -124,7 +125,7 @@ export default function Step4Screen() {
         ))}
       </View>
 
-      <Pressable
+      <Pressable onPress={() => previewNotice("Add More Documents")}
         accessibilityRole="button"
         style={({ pressed }) => [styles.add, pressed && styles.pressed]}
       >

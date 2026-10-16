@@ -1,3 +1,4 @@
+import { previewNotice } from '../components/PreviewNotice';
 import { router } from 'expo-router';
 import { Check, Clock, Info, Paperclip, Send, ShieldCheck } from 'lucide-react-native';
 import { useRef, useState } from 'react';
@@ -61,7 +62,7 @@ export default function SupportChatScreen() {
             <Text style={[styles.subtitle, styles.online]}>Available to assist</Text>
           </View>
         </View>
-        <Pressable accessibilityRole="button" accessibilityLabel="About this chat" hitSlop={10}>
+        <Pressable onPress={() => previewNotice("About this chat")} accessibilityRole="button" accessibilityLabel="About this chat" hitSlop={10}>
           <Info size={c.infoIcon} color={colors.textPrimary} />
         </Pressable>
       </View>
@@ -120,7 +121,7 @@ export default function SupportChatScreen() {
           <Text style={styles.cautionText}>Please avoid sharing unnecessary sensitive information.</Text>
         </View>
         <View style={styles.composerRow}>
-          <Pressable accessibilityRole="button" accessibilityLabel="Attach a file" style={styles.attach}>
+          <Pressable onPress={() => previewNotice("Attach a file")} accessibilityRole="button" accessibilityLabel="Attach a file" style={styles.attach}>
             <Paperclip size={c.controlIcon} color={ink.accent} />
           </Pressable>
           <TextInput

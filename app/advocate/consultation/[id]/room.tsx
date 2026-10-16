@@ -1,3 +1,4 @@
+import { previewNotice } from '../../../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
   Bell,
@@ -205,7 +206,7 @@ export default function AdvocateConsultationRoomScreen() {
                 {d.meta}
               </Text>
             </View>
-            <Pressable accessibilityRole="button" style={styles.review}>
+            <Pressable onPress={() => previewNotice(r.notesLabel)} accessibilityRole="button" style={styles.review}>
               <Text style={styles.reviewText} {...shrinkToFit(0.8)}>
                 Review
               </Text>
@@ -229,13 +230,13 @@ export default function AdvocateConsultationRoomScreen() {
           </View>
           <View style={styles.noteBtns}>
             {/* Both inert — neither has a designed destination. */}
-            <Pressable accessibilityRole="button" style={styles.noteBtn}>
+            <Pressable onPress={() => previewNotice("Edit")} accessibilityRole="button" style={styles.noteBtn}>
               <SquarePen size={t.noteBtnIcon} color={colors.textPrimary} />
               <Text style={styles.noteBtnText} {...shrinkToFit(0.8)}>
                 Edit
               </Text>
             </Pressable>
-            <Pressable accessibilityRole="button" style={styles.noteBtn}>
+            <Pressable onPress={() => previewNotice("Save")} accessibilityRole="button" style={styles.noteBtn}>
               <Download size={t.noteBtnIcon} color={colors.textPrimary} />
               <Text style={styles.noteBtnText} {...shrinkToFit(0.8)}>
                 Save

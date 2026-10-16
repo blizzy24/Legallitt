@@ -1,3 +1,4 @@
+import { previewNotice } from '../../components/PreviewNotice';
 import { router, type Href } from 'expo-router';
 import { Check, ChevronLeft, Download, Eye, FileText, House, Share2 } from 'lucide-react-native';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -80,7 +81,7 @@ export default function PropertySearchCompletedScreen() {
         </Pressable>
 
         <View style={styles.row}>
-          <Pressable
+          <Pressable onPress={() => previewNotice("Download PDF")}
             accessibilityRole="button"
             style={({ pressed }) => [styles.rowButton, pressed && styles.pressed]}
           >
@@ -89,7 +90,7 @@ export default function PropertySearchCompletedScreen() {
               Download PDF
             </Text>
           </Pressable>
-          <Pressable
+          <Pressable onPress={() => previewNotice("Share Report")}
             accessibilityRole="button"
             style={({ pressed }) => [styles.rowButton, pressed && styles.pressed]}
           >

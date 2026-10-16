@@ -1,3 +1,4 @@
+import { previewNotice } from '../../components/PreviewNotice';
 import { router, type Href } from 'expo-router';
 import {
   ArrowRight,
@@ -66,7 +67,7 @@ export default function FirStep4Screen() {
             />
           )}
           {s.n === 4 && (
-            <Pressable accessibilityRole="button" style={styles.attach}>
+            <Pressable onPress={() => previewNotice(PER_PAGE_NOTE)} accessibilityRole="button" style={styles.attach}>
               <FileUp size={t.attachIcon} color={colors.textPrimary} />
               <Text style={styles.attachLabel} {...shrinkToFit(0.8)}>
                 Attach Additional Documentation
@@ -80,7 +81,7 @@ export default function FirStep4Screen() {
           pricing is unconfirmed. Drawn here because design/45 draws it. */}
       <Text style={styles.perPage}>{PER_PAGE_NOTE}</Text>
 
-      <Pressable accessibilityRole="button" style={styles.slot}>
+      <Pressable onPress={() => previewNotice("Add Custom Category Slot")} accessibilityRole="button" style={styles.slot}>
         <Plus size={t.slotIcon} color={colors.textPrimary} />
         <Text style={styles.slotLabel} {...shrinkToFit(0.8)}>
           Add Custom Category Slot
@@ -206,7 +207,7 @@ function FileRow({
       >
         <Eye size={t.fileActionIcon} color={colors.textPrimary} />
       </Pressable>
-      <Pressable
+      <Pressable onPress={() => previewNotice("Remove file")}
         accessibilityRole="button"
         accessibilityLabel="Remove file"
         style={[styles.fileAction, styles.fileActionLast]}
@@ -219,7 +220,7 @@ function FileRow({
 
 function DropArea() {
   return (
-    <Pressable accessibilityRole="button" style={styles.drop}>
+    <Pressable onPress={() => previewNotice("Tap to Add Photo or Incident Media")} accessibilityRole="button" style={styles.drop}>
       <View style={styles.dropCircle}>
         <ImagePlus size={t.dropCircleIcon} color={colors.textBody} />
       </View>

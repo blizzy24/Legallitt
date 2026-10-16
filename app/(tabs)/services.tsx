@@ -1,3 +1,4 @@
+import { previewNotice } from '../../components/PreviewNotice';
 import { router } from 'expo-router';
 import { ChevronLeft, ListFilter, Search } from 'lucide-react-native';
 import {
@@ -49,7 +50,7 @@ export default function ServicesScreen() {
             <ChevronLeft size={services.backIcon} color={colors.textPrimary} />
           </Pressable>
           <Text style={styles.title}>All Services</Text>
-          <Pressable accessibilityRole="button" accessibilityLabel="Filter" style={styles.circleButton}>
+          <Pressable onPress={() => previewNotice("Filter")} accessibilityRole="button" accessibilityLabel="Filter" style={styles.circleButton}>
             <ListFilter size={services.filterIcon} color={colors.textPrimary} />
           </Pressable>
         </View>

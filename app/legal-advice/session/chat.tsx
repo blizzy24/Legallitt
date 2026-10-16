@@ -1,3 +1,4 @@
+import { previewNotice } from '../../../components/PreviewNotice';
 import DemoPressable from '../../../components/DemoPressable';
 import { router } from 'expo-router';
 import { BadgeCheck, ChevronLeft, Clock, Mic, Plus, Send } from 'lucide-react-native';
@@ -112,7 +113,7 @@ export default function LegalAdviceChatSessionScreen() {
 
       <View style={[styles.composerWrap, { paddingBottom: insets.bottom + t.composerGap }]}>
         <View style={styles.composer}>
-          <Pressable accessibilityRole="button" accessibilityLabel="Attach" style={styles.plus}>
+          <Pressable onPress={() => previewNotice("Attach")} accessibilityRole="button" accessibilityLabel="Attach" style={styles.plus}>
             <Plus size={t.plusGlyph} color={ink.onBrand} />
           </Pressable>
           <View style={styles.divider} />
@@ -123,7 +124,7 @@ export default function LegalAdviceChatSessionScreen() {
             value={draft}
             onChangeText={setDraft}
           />
-          <Pressable accessibilityRole="button" accessibilityLabel="Voice message" hitSlop={6}>
+          <Pressable onPress={() => previewNotice("Voice message")} accessibilityRole="button" accessibilityLabel="Voice message" hitSlop={6}>
             <Mic size={t.micSize} color={colors.textPrimary} />
           </Pressable>
           <DemoPressable

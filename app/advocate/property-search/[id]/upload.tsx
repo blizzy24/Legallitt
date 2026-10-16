@@ -1,3 +1,4 @@
+import { previewNotice } from '../../../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
   ArrowLeft,
@@ -73,7 +74,7 @@ export default function AdvocatePropertySearchUploadScreen() {
         <Text style={styles.title} {...shrinkToFit(0.75)}>
           {u.title}
         </Text>
-        <Pressable accessibilityRole="button" accessibilityLabel="About this step" hitSlop={8}>
+        <Pressable onPress={() => previewNotice("About this step")} accessibilityRole="button" accessibilityLabel="About this step" hitSlop={8}>
           <Info size={t.infoIcon} color={colors.textPrimary} />
         </Pressable>
         <View style={styles.avatar}>
@@ -174,7 +175,7 @@ export default function AdvocatePropertySearchUploadScreen() {
                 {u.upload.view}
               </Text>
             </Pressable>
-            <Pressable accessibilityRole="button" style={({ pressed }) => [styles.vr, pressed && styles.pressed]}>
+            <Pressable onPress={() => previewNotice(u.upload.replace)} accessibilityRole="button" style={({ pressed }) => [styles.vr, pressed && styles.pressed]}>
               <RefreshCw size={t.vrIcon} color={colors.textPrimary} />
               <Text style={styles.vrText} {...shrinkToFit(0.8)}>
                 {u.upload.replace}

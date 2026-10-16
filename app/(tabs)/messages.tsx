@@ -1,3 +1,4 @@
+import { previewNotice } from '../../components/PreviewNotice';
 import { router, type Href } from 'expo-router';
 import { BadgeCheck, ChevronRight, Lock, Search, SquarePen } from 'lucide-react-native';
 import { useMemo, useState } from 'react';
@@ -66,7 +67,7 @@ export default function MessagesScreen() {
               Chat with your advocates
             </Text>
           </View>
-          <Pressable
+          <Pressable onPress={() => previewNotice("New conversation")}
             accessibilityRole="button"
             accessibilityLabel="New conversation"
             style={styles.compose}

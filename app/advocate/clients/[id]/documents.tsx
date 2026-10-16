@@ -1,3 +1,4 @@
+import { previewNotice } from '../../../../components/PreviewNotice';
 import DemoPressable from '../../../../components/DemoPressable';
 import { router, type Href } from 'expo-router';
 import {
@@ -88,7 +89,7 @@ export default function AdvocateClientDocumentsScreen() {
             {c.name} • {c.clientId}
           </Text>
         </View>
-        <Pressable accessibilityRole="button" accessibilityLabel="Upload" style={styles.iconBtn}>
+        <Pressable onPress={() => previewNotice("Upload")} accessibilityRole="button" accessibilityLabel="Upload" style={styles.iconBtn}>
           <Upload size={t.iconBtnGlyph} color={colors.textPrimary} />
         </Pressable>
         <View style={styles.avatar}>
@@ -122,7 +123,7 @@ export default function AdvocateClientDocumentsScreen() {
                 Client Ref: {c.clientId} • Individual Petitioner
               </Text>
             </View>
-            <Pressable accessibilityRole="button" accessibilityLabel="Share" hitSlop={8}>
+            <Pressable onPress={() => previewNotice("Share")} accessibilityRole="button" accessibilityLabel="Share" hitSlop={8}>
               <Share2 size={16} color={colors.textBody} />
             </Pressable>
           </View>
@@ -233,7 +234,7 @@ export default function AdvocateClientDocumentsScreen() {
           <Upload size={t.actionIcon} color={ink.onBrand} />
           <Text style={styles.primaryText}>Upload Document</Text>
         </DemoPressable>
-        <Pressable
+        <Pressable onPress={() => previewNotice("Request New Document from Client")}
           accessibilityRole="button"
           style={({ pressed }) => [styles.secondary, pressed && styles.pressed]}
         >
