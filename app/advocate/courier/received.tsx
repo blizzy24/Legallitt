@@ -1,3 +1,5 @@
+import { router, type Href } from 'expo-router';
+
 import DemoPressable from '../../../components/DemoPressable';
 import { ArrowRight, BadgeCheck, Check, FileText, MessageSquare, ShieldCheck } from 'lucide-react-native';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -137,9 +139,11 @@ export default function AdvocateCourierReceivedScreen() {
           </Text>
           <ArrowRight size={t.btnGlyph} color={ink.onBrand} strokeWidth={2.2} />
         </DemoPressable>
+        {/* The advocate↔client chat is design/365 (app/advocate/court/chat) — navigation only. */}
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={d.ctaAlt}
+          onPress={() => router.push('/advocate/court/chat' as Href)}
           style={({ pressed }) => [styles.btn, styles.btnAlt, pressed && styles.pressed]}
         >
           <MessageSquare size={t.btnGlyph} color={t.ink} strokeWidth={2} />

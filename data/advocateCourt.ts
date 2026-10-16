@@ -18,7 +18,8 @@ import type { Block, CourtSpec, Pill, Right } from '../components/court/types';
 //   • Send Court Fee Request, Send Process Fee Request, Send to Client, Send NOC
 //     to Client, Send Revised Documents, Mark as Filed, Save Note, Commence
 //     Session, Start Hearing.
-//   • Every Chat with Client / Call Client button.
+//   • Every Call Client button. (Chat with Client opens 365, the advocate↔client
+//     chat — navigation only; nothing is sent.)
 //   • The live client-preview cards on 380 and 385 show static sample content;
 //     they do not reflect typed input.
 // Buttons that navigate are navigation only: they move between drawn screens.
@@ -262,7 +263,7 @@ export const COURT_REQUEST = [requestBefore, requestAccepted];
 // ── design/364 — AI case summary ─────────────────────────────────────────────
 // ⚠⚠ UNSCOPED — ALL AI. The summary, AI Refresh, "Synthesized Brief", Read PDFs
 // and the semantic citation index are drawn copy: nothing is generated, read
-// or indexed. Download / Share / Copy, Call Client and Chat with Client do
+// or indexed. Download / Share / Copy, Call Client and Chat with Client (now opens 365) do
 // nothing. ⚠ CONFLICT 13 — this matter is a software IP agreement, not 363's
 // property dispute, and is billed ₹28,500 / 45 min (363: ₹25,000).
 
@@ -387,7 +388,7 @@ export const COURT_AI_SUMMARY: CourtSpec = {
   ],
   footer: [
     { label: 'Call Client', icon: 'phone', variant: 'panel', hug: true },
-    { label: 'Chat with Client', icon: 'chat' },
+    { label: 'Chat with Client', icon: 'chat', to: R('chat') },
   ],
 };
 
@@ -526,7 +527,7 @@ export const COURT_WAITING: CourtSpec = {
 // ── design/371 — client accepted ─────────────────────────────────────────────
 // Reached as 370's second switcher state, and as its own route. ⚠ Its header
 // still reads "Waiting For Client" — kept as drawn.
-// ⚠ UNSCOPED — Chat with Client and the call disc do nothing; the checklist is
+// ⚠ UNSCOPED — Chat with Client (now opens 365) and the call disc do nothing; the checklist is
 // not pushed to the client.
 export const COURT_ACCEPTED: CourtSpec = {
   title: 'Waiting For Client',
@@ -595,7 +596,7 @@ export const COURT_ACCEPTED: CourtSpec = {
       ],
     },
     { k: 'button', btn: { label: 'Recommend Documents', iconRight: 'arrowRight', to: R('recommend-documents') }, top: 'ctaTop' },
-    { k: 'button', btn: { label: 'Chat with Client', icon: 'chat', variant: 'white' }, top: 'chatTop' },
+    { k: 'button', btn: { label: 'Chat with Client', icon: 'chat', variant: 'white', to: R('chat') }, top: 'chatTop' },
   ],
 };
 
@@ -675,7 +676,7 @@ export const COURT_ACCEPTED_2: CourtSpec = {
   ],
   footer: [
     { label: 'Recommend Documents', iconRight: 'arrowRight', to: R('recommend-documents') },
-    { label: 'Chat with Client', icon: 'chat', variant: 'white' },
+    { label: 'Chat with Client', icon: 'chat', variant: 'white', to: R('chat') },
   ],
   footerStack: true,
 };
@@ -950,7 +951,7 @@ export const COURT_CONFIRM_DOCS: CourtSpec = {
 
 // ── design/376 — documents received ──────────────────────────────────────────
 // Reached from Confirm Received on 375. Open Case opens Case Preparation
-// (377). ⚠ UNSCOPED — Call, the copy icon, Chat with Client; "Client Rahul
+// (377). ⚠ UNSCOPED — Call, the copy icon, Chat with Client (now opens 365); "Client Rahul
 // Sharma has been notified" is drawn copy, no notification is sent.
 // ⚠ CONFLICT 8 — "Verified by Adv. Gurneet Chawla"; the advocate is Abhishek
 // Verma elsewhere. ⚠ CONFLICT 3 — Aadhaar again. ⚠ The waybill number is
@@ -1036,7 +1037,7 @@ export const COURT_DOCS_RECEIVED: CourtSpec = {
   ],
   footer: [
     { label: 'Open Case', iconRight: 'arrowRight', to: R('case-preparation') },
-    { label: 'Chat with Client', icon: 'chat', variant: 'help' },
+    { label: 'Chat with Client', icon: 'chat', variant: 'help', to: R('chat') },
   ],
   footerStack: true,
 };
@@ -3005,7 +3006,7 @@ export const COURT_NEXT_HEARING: CourtSpec = {
 // ── design/393 — client changed advocate ─────────────────────────────────────
 // ⚠ No drawn control leads here (dev preview). ⚠ UNSCOPED — both Upload NOC
 // buttons (uploads are static per scope, so 394 has no drawn way in either),
-// Chat with Client. ⚠ CONFLICT 4 — DC-2026-1048 and District Court
+// Chat with Client (now opens 365). ⚠ CONFLICT 4 — DC-2026-1048 and District Court
 // Representation on the WP/2026/09876 High Court matter. ⚠ CONFLICT 8 — the
 // current advocate is "Abhishek Verma"; 388 names the judge "Justice Verma".
 export const COURT_CHANGE_ADVOCATE: CourtSpec = {
@@ -3107,7 +3108,7 @@ export const COURT_CHANGE_ADVOCATE: CourtSpec = {
         { k: 'card', tone: 'panel', pad: 'innerPad', blocks: [{ k: 'rows', rows: [['Client Status', 'Waiting for Advocate Change', 'bold']] }] },
         { k: 'text', t: 'Case communication remains open during handover transition:', tone: 'small', top: 'innerTop' },
         // ⚠ UNSCOPED — no chat.
-        { k: 'button', btn: { label: 'Chat with Client', icon: 'chat', variant: 'help' }, top: 'innerGap' },
+        { k: 'button', btn: { label: 'Chat with Client', icon: 'chat', variant: 'help', to: R('chat') }, top: 'innerGap' },
       ],
     },
   ],
@@ -3235,7 +3236,7 @@ export const COURT_CHANGE_ADVOCATE_NOC: CourtSpec = {
           k: 'buttonRow',
           top: 'innerTop',
           btns: [
-            { label: 'Chat with Client', icon: 'chat', variant: 'soft', h: 'pairH', size: 'pairSize' },
+            { label: 'Chat with Client', icon: 'chat', variant: 'soft', to: R('chat'), h: 'pairH', size: 'pairSize' },
             { label: 'Call Client', icon: 'phone', variant: 'soft', h: 'pairH', size: 'pairSize' },
           ],
         },
