@@ -101,7 +101,7 @@ function Section({
             </Text>
           )}
         </View>
-        {/* Inert — no editor is specified. */}
+        {/* No editor is specified: the preview notice says so. */}
         <Pressable onPress={() => previewNotice(`Edit ${title}`)} accessibilityRole="button" accessibilityLabel={`Edit ${title}`} hitSlop={8}>
           <Pencil size={t.pencil} color={colors.textPrimary} />
         </Pressable>
@@ -230,7 +230,7 @@ export default function AdvocatePsrEditorScreen() {
               </View>
             );
           })}
-          {/* Inert — no add flow is designed. */}
+          {/* No add flow is designed: the preview notice says so. */}
           <Pressable onPress={() => previewNotice(e.documents.add)} accessibilityRole="button" style={styles.add}>
             <CirclePlus size={t.addIcon} color={t.addColour} />
             <Text style={styles.addText} {...shrinkToFit(0.8)}>

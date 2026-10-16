@@ -77,7 +77,7 @@ export default function AdvocatePropertySearchResponseScreen() {
         </View>
 
         <View style={styles.card}>
-          {/* Inert — no rich-text editor is specified anywhere. */}
+          {/* No rich-text editor is specified: the preview notice says so. */}
           <View style={styles.toolbar}>
             <Pressable onPress={() => previewNotice(r.toolbar.block)} accessibilityRole="button" style={styles.toolBlock}>
               <Text style={styles.toolBlockText} {...shrinkToFit(0.8)}>

@@ -31,8 +31,8 @@ import { advAvailability as t, colors, font, ink } from '../../constants/theme';
 // INTERACTION — the design answers its own question in the card's sub-line, "Tap a
 // date to inspect or update slots". So a tap SELECTS a date and the card below shows
 // that date's slots; it does NOT cycle the date's state. Cycling would need an
-// editor, and none is drawn — "Edit Hours" is the affordance the design gives, and
-// it has no destination.
+// editor, and none is drawn — "Edit Hours" is the affordance the design gives; it
+// opens the availability editor (design/274).
 //
 // Month navigation, date selection and the seven day toggles are real. Nothing is
 // saved: "Save Availability" is inert.

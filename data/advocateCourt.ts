@@ -177,7 +177,7 @@ const requestBefore: CourtSpec = {
           k: 'docs',
           pdf: true,
           bottom: 'docsBottom',
-          // ⚠ UNSCOPED — View PDF opens nothing (no document viewer).
+          // ⚠ UNSCOPED — View PDF opens the documents viewer (design/261).
           items: [
             { name: 'Case Papers.pdf', meta: '12 Pages • 6.2 MB', btn: 'View PDF' },
             { name: 'Previous Court Order.pdf', meta: '8 Pages • 3.4 MB', btn: 'View PDF' },
@@ -1294,7 +1294,7 @@ export const COURT_FILING: CourtSpec = {
 // ── design/379 — confirm court filing ────────────────────────────────────────
 // ⚠ No drawn control leads here: Mark as Filed (378) is unscoped. Save Filing
 // Details opens Case Filed (384) — navigation only, nothing is saved; Cancel
-// goes back. ⚠ UNSCOPED — the receipt upload, View / Replace, the date picker.
+// goes back. ⚠ UNSCOPED — the receipt upload, Replace (View opens the documents viewer), the date picker.
 // ⚠ CONFLICT 7 — "Confirm Court Filin" clipped in the export; stored whole.
 // ⚠ (?) The receipt's name is clipped to "Filing_Receipt.p"; the base name is
 // drawn whole, the extension is read as .pdf.
@@ -1511,7 +1511,7 @@ export const COURT_FEE_CREATE: CourtSpec = {
 
 // ── design/381 — court fee request sent (District Court) ─────────────────────
 // ⚠ No drawn control leads here: Send Court Fee Request (380) is unscoped.
-// Back to Case goes back. ⚠ UNSCOPED — Chat, Call, View / Replace; the
+// Back to Case goes back. ⚠ UNSCOPED — Replace (Chat / Call open 365 / 369, View the documents viewer); the
 // payment tracking is drawn state, no payment is watched.
 // ⚠ CONFLICT 7 — "Court Fee Reques" clipped in the export; stored whole.
 export const COURT_FEE_SENT: CourtSpec = {
@@ -1838,7 +1838,7 @@ export const COURT_CLIENT_APPROVED: Block[] = [
 
 // ── design/384 — case filed ──────────────────────────────────────────────────
 // Reached from Save Filing Details on 379. Add First Hearing (both) opens
-// 387 — navigation only. ⚠ UNSCOPED — Edit Details, View.
+// 387 — navigation only. Edit Details opens 379 and View the documents viewer.
 // ⚠ CONFLICT 4 — the case number and the High Court filing number side by side.
 // ⚠ The footer button draws a plus icon AND a "+" in its label ("+ + Add
 // First Hearing"); kept as drawn.
@@ -2223,7 +2223,7 @@ export const COURT_HEARING_ADD: CourtSpec = {
 
 // ── design/388 — first hearing scheduled ─────────────────────────────────────
 // Reached from Save First Hearing on 387. View First Hearing opens 389 —
-// navigation only. ⚠ UNSCOPED — Edit Hearing Details, Commence Session; the
+// navigation only. Edit Hearing Details opens 387. ⚠ UNSCOPED — Commence Session; the
 // client notification is drawn copy. ⚠ CONFLICT 5 — "25 Oct 2026, Sunday".
 // ⚠ CONFLICT 6 — "Step 6 of 9". ⚠ The banner's faint corner circle is decoration
 // and is not drawn.
@@ -2538,7 +2538,7 @@ export const COURT_HEARING_UPDATE: CourtSpec = {
 
 // ── design/391 — review client update ────────────────────────────────────────
 // Reached from Save Hearing Update on 390. Save & Send Update opens 392 —
-// navigation only, nothing is saved or sent. ⚠ UNSCOPED — every Edit / Edit
+// navigation only, nothing is saved or sent. Every Edit chip opens 390 and Edit Hearing 392. ⚠ UNSCOPED — the
 // Hearing chip, the attendance and outcome selectors, Upload Additional Hearing
 // Document, View / Replace / View Document, Add Next Hearing Reminder, Add
 // Document, the delete icon, the send toggle, Preview Client View, Save Draft.

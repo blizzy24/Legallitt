@@ -184,7 +184,7 @@ export default function LegalAdviceDetailsScreen() {
                 key={tile.label}
                 accessibilityRole="button"
                 style={styles.tile}
-                // Inert: no picker, no upload, nothing stored.
+                // No picker or upload in this build: the preview notice says so.
               >
                 <tile.icon size={t.tileGlyph} color={colors.textPrimary} />
                 <Text style={styles.tileLabel} {...shrinkToFit(0.7)}>

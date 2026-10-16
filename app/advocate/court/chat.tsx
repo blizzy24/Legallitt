@@ -1,3 +1,4 @@
+import { previewNotice } from '../../../components/PreviewNotice';
 import { router, type Href } from 'expo-router';
 import { BriefcaseBusiness, CheckCheck, ChevronLeft, CirclePlus, Folder, Gavel, Mic, Phone, SendHorizontal, UserRound } from 'lucide-react-native';
 import { useState } from 'react';
@@ -59,8 +60,8 @@ export default function AdvocateCourtChatScreen() {
               <Text style={styles.statusText}>{d.status}</Text>
             </View>
           </View>
-          {/* ⚠ UNSCOPED — no call is placed. DEMO: opens the call screen (369). */}
-          <Pressable accessibilityRole="button" accessibilityLabel="Call" disabled={!DEMO_AUTO_ADVANCE} onPress={() => advance('Call Client')}>
+          {/* Opens the call screen (369) — no call is placed. */}
+          <Pressable accessibilityRole="button" accessibilityLabel="Call" onPress={() => router.push(court.href('/advocate/court/call' as Href))}>
             <Phone size={t.phoneIcon} color={h.ink} strokeWidth={1.9} style={styles.phone} />
           </Pressable>
           <View style={styles.me}>
@@ -146,8 +147,8 @@ export default function AdvocateCourtChatScreen() {
           {/* ⚠ UNSCOPED — no voice input. */}
           <Mic size={t.micIcon} color={c.inkMuted} strokeWidth={1.9} />
         </View>
-        {/* ⚠ UNSCOPED — nothing is sent. DEMO: moves on to the copilot (366). */}
-        <Pressable accessibilityRole="button" disabled={!DEMO_AUTO_ADVANCE} onPress={() => advance()} style={styles.send}>
+        {/* Nothing is sent: demo mode moves on to the copilot (366); otherwise the preview notice. */}
+        <Pressable accessibilityRole="button" accessibilityLabel="Send" onPress={() => (DEMO_AUTO_ADVANCE ? advance() : previewNotice('Send'))} style={styles.send}>
           <SendHorizontal size={t.sendIcon} color={ink.onBrand} strokeWidth={2} />
         </Pressable>
       </View>

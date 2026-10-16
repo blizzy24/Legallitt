@@ -86,7 +86,7 @@ export default function PropertySearchRequestScreen() {
         <Text style={styles.headerTitle} numberOfLines={1}>
           PROPERTY SEARCH REPORT
         </Text>
-        {/* Sliders opens nothing — no filter panel is designed. */}
+        {/* No filter panel is designed: the preview notice says so. */}
         <Pressable onPress={() => previewNotice("Options")} accessibilityRole="button" accessibilityLabel="Options" hitSlop={10}>
           <SlidersHorizontal size={t.slidersIcon} color={colors.textPrimary} />
         </Pressable>

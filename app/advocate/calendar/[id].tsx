@@ -18,8 +18,8 @@ import { advApptDetails as t, font, ink } from '../../../constants/theme';
 //   this prototype, so the house convention is used — a brand circle with the
 //   UserRound glyph, as components/AdvocateCasesList already does.
 //
-// STATIC, NOT WIRED: "Join Consultation" has no calling vendor behind it (none
-// is scoped) and "View Case" opens nothing from here.
+// "Join Consultation" opens the consultation video screen (no calling vendor
+// behind it — none is scoped). "View Case" has no destination here.
 export default function AdvocateAppointmentDetailsScreen() {
   const d = AT_APPT_DETAILS;
 

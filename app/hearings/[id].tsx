@@ -127,7 +127,7 @@ export default function HearingDetailsScreen() {
                   {advocate.barCouncil} • {advocate.experience}
                 </Text>
               </View>
-              {/* Message has no destination yet. */}
+              {/* Message opens the advocate chat (design/33). */}
               <Pressable onPress={() => router.push('/chat/advocate' as Href)} accessibilityRole="button" style={styles.messageButton}>
                 <MessageSquare size={h.bodySize} color={ink.accent} />
                 <Text style={styles.messageText}>Message</Text>
@@ -191,7 +191,7 @@ export default function HearingDetailsScreen() {
       </ScrollView>
 
       <View style={[styles.bar, { paddingBottom: h.barPadBottom + insets.bottom }]}>
-        {/* Contact Advocate has no destination yet. */}
+        {/* Contact Advocate opens the advocate chat (design/33). */}
         <DemoPressable onPress={() => router.push('/chat/advocate' as Href)} accessibilityRole="button" style={[styles.barButton, styles.barButtonLight]}>
           <Text style={styles.barButtonLightText}>Contact Advocate</Text>
         </DemoPressable>

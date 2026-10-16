@@ -91,7 +91,7 @@ export default function EditProfileScreen() {
             <View style={styles.bigAvatar}>
               <Text style={styles.bigAvatarText}>{form.initials}</Text>
             </View>
-            {/* Inert: the prototype has no image picker. */}
+            {/* No image picker in this build: the preview notice says so. */}
             <Pressable onPress={() => previewNotice("Change photo")} accessibilityRole="button" accessibilityLabel="Change photo" style={styles.camera}>
               <Camera size={t.cameraGlyph} color={ink.onBrand} />
             </Pressable>
