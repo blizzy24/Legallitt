@@ -100,7 +100,7 @@ import {
   type LucideIcon,
 } from 'lucide-react-native';
 import { createContext, Fragment, useContext, useMemo, useState, type ReactNode } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View, type StyleProp, type ViewStyle } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, useWindowDimensions, View, type StyleProp, type ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import CourierHeader from '../CourierHeader';
@@ -693,7 +693,14 @@ function Field({ b }: { b: Extract<Block, { k: 'field' }> }) {
         <View style={[s.field, b.multiline && s.area, b.bordered && s.fieldBordered, !b.label && s.fieldBare, b.big && s.fieldBoxBig]}>
           {b.icon ? <Icon name={b.icon} size={t.fieldIcon} color={c.inkWarm} /> : null}
           {b.prefix ? <Text style={[s.fieldText, b.big && s.fieldBig]}>{b.prefix}</Text> : null}
-          <Text style={[s.fieldText, s.flex, !b.value && s.placeholder, b.big && s.fieldBig]}>{b.value ?? b.placeholder}</Text>
+          {/* Entry works within the screen; nothing is saved. */}
+          <TextInput
+            defaultValue={b.value}
+            placeholder={b.placeholder}
+            placeholderTextColor={StyleSheet.flatten(s.placeholder).color as string}
+            multiline={b.multiline}
+            style={[s.fieldText, s.flex, s.fieldInput, b.big && s.fieldBig]}
+          />
           {b.iconRight ? <Icon name={b.iconRight} size={t.fieldIcon} color={c.inkWarm} /> : null}
         </View>
       ) : null}
@@ -1213,34 +1220,9 @@ export function BlockView({ b }: { b: Block }): ReactNode {
         </View>
       );
     case 'choices':
-      return (
-        <View style={s.docs}>
-          {b.items.map((ch) => (
-            <View key={ch.label} style={[s.choice, ch.selected && s.choiceOn]}>
-              <View style={[s.radio, ch.selected && s.radioOn]}>{ch.selected ? <Check size={t.stepGlyph} color={ink.onBrand} strokeWidth={3} /> : null}</View>
-              <View style={s.flex}>
-                <Text style={s.checkTitle}>{ch.label}</Text>
-                {ch.sub ? <Text style={s.checkSub}>{ch.sub}</Text> : null}
-              </View>
-              <RightPart r={ch.right} />
-              {ch.dot ? <View style={[s.labelDot, { backgroundColor: status.active }]} /> : null}
-            </View>
-          ))}
-        </View>
-      );
+      return <Choices b={b} />;
     case 'segment':
-      return (
-        <View>
-          {b.label ? <Text style={s.fieldLabel}>{b.label}</Text> : null}
-          <View style={[s.segment, b.label && s.fieldTop]}>
-            {b.items.map((x, i) => (
-              <View key={x} style={[s.segItem, i === b.selected && s.segOn]}>
-                <Text style={[s.segText, i === b.selected && s.segTextOn]}>{x}</Text>
-              </View>
-            ))}
-          </View>
-        </View>
-      );
+      return <Segment b={b} />;
     case 'check':
       return <CheckBlock b={b} />;
     case 'iconRows':
@@ -1627,10 +1609,57 @@ export function BlockView({ b }: { b: Block }): ReactNode {
   }
 }
 
+/** A radio list: selection works within the screen; the drawn choice starts selected. */
+function Choices({ b }: { b: Extract<Block, { k: 'choices' }> }) {
+  const { t, s } = useK();
+  const [sel, setSel] = useState(() => b.items.findIndex((x) => x.selected));
+  // A right part drawn only on the selected row ("Selected") follows the selection.
+  const drawn = b.items.find((x) => x.selected)?.right;
+  return (
+    <View style={s.docs}>
+      {b.items.map((ch, i) => {
+        const on = i === sel;
+        const right = drawn !== undefined && ch.right === drawn ? (on ? drawn : undefined) : on && ch.right === undefined ? drawn : ch.right;
+        return (
+          <Pressable key={ch.label} accessibilityRole="radio" aria-checked={on} onPress={() => setSel(i)} style={[s.choice, on && s.choiceOn]}>
+            <View style={[s.radio, on && s.radioOn]}>{on ? <Check size={t.stepGlyph} color={ink.onBrand} strokeWidth={3} /> : null}</View>
+            <View style={s.flex}>
+              <Text style={s.checkTitle}>{ch.label}</Text>
+              {ch.sub ? <Text style={s.checkSub}>{ch.sub}</Text> : null}
+            </View>
+            <RightPart r={right} />
+            {ch.dot && on ? <View style={[s.labelDot, { backgroundColor: status.active }]} /> : null}
+          </Pressable>
+        );
+      })}
+    </View>
+  );
+}
+
+/** A segmented control: selection works within the screen. */
+function Segment({ b }: { b: Extract<Block, { k: 'segment' }> }) {
+  const { s } = useK();
+  const [sel, setSel] = useState(b.selected);
+  return (
+    <View>
+      {b.label ? <Text style={s.fieldLabel}>{b.label}</Text> : null}
+      <View style={[s.segment, b.label && s.fieldTop]}>
+        {b.items.map((x, i) => (
+          <Pressable key={x} accessibilityRole="radio" aria-checked={i === sel} onPress={() => setSel(i)} style={[s.segItem, i === sel && s.segOn]}>
+            <Text style={[s.segText, i === sel && s.segTextOn]}>{x}</Text>
+          </Pressable>
+        ))}
+      </View>
+    </View>
+  );
+}
+
 function CheckBlock({ b }: { b: Extract<Block, { k: 'check' }> }) {
   const { t, s } = useK();
   const gate = useContext(Gate);
-  const on = b.gate ? gate.on : b.checked;
+  // A gating box drives the screen's gate (375); any other box toggles locally.
+  const [local, setLocal] = useState(b.checked);
+  const on = b.gate ? gate.on : local;
   const body = (
     <>
       <View style={[s.box, on && s.boxOn, on && b.green && s.boxGreen]}>{on ? <Check size={t.stepGlyph} color={ink.onBrand} strokeWidth={3} /> : null}</View>
@@ -1643,12 +1672,10 @@ function CheckBlock({ b }: { b: Extract<Block, { k: 'check' }> }) {
       </View>
     </>
   );
-  return b.gate ? (
-    <Pressable accessibilityRole="checkbox" aria-checked={on} onPress={gate.toggle} style={[s.row, s.top]}>
+  return (
+    <Pressable accessibilityRole="checkbox" aria-checked={on} onPress={b.gate ? gate.toggle : () => setLocal((v) => !v)} style={[s.row, s.top]}>
       {body}
     </Pressable>
-  ) : (
-    <View style={[s.row, s.top]}>{body}</View>
   );
 }
 
@@ -2346,6 +2373,8 @@ function makeStyles(t: CourtTokens) {
   fieldBordered: { borderWidth: 1, borderColor: firStep2.selectBorder },
   fieldBare: { marginTop: 0 },
   area: { minHeight: t.areaMinH, alignItems: 'flex-start', paddingVertical: t.areaPadY },
+  // TextInput resets: no web focus ring, no native padding.
+  fieldInput: { padding: 0, outlineWidth: 0 },
   fieldText: { fontFamily: font.appBody, fontSize: t.fieldSize, lineHeight: t.fieldLine, color: c.ink },
   placeholder: { color: c.inkMuted },
   hint: { fontFamily: font.appBody, fontSize: t.hintSize, color: c.inkWarm },
