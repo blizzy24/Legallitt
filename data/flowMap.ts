@@ -129,7 +129,9 @@ export const FLOW_MAP: Record<string, string> = {
   '/advocate/notice/[id]/dispatch': '/advocate/notice/[id]/send', // 193 → 194
   '/advocate/notice/[id]/send': '/advocate/notice/[id]/delivery', // 194 → 195
   '/advocate/notice/[id]/delivery': '/advocate/notice/[id]/payment', // 195 → 196
-  '/advocate/notice/[id]/payment': '/advocate/notice/[id]/shipment', // 196 → 199
+  '/advocate/notice/[id]/payment': '/advocate/notice/[id]/scan-pay', // 196 → 197
+  '/advocate/notice/[id]/scan-pay': '/advocate/notice/[id]/paid', // 197 → 198
+  '/advocate/notice/[id]/paid': '/advocate/notice/[id]/shipment', // 198 → 199
   '/advocate/notice/[id]/shipment': '/advocate/notice/[id]/tracking', // 199 → 200
   '/advocate/notice/[id]/tracking': '/advocate/notice/[id]/confirm', // 200 → 201
   '/advocate/notice/[id]/confirm': '/advocate/notice/[id]/received', // 201 → 202

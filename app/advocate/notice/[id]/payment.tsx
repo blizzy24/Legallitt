@@ -29,16 +29,9 @@ export default function AdvocateNoticePaymentScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const p = ADV_NOTICE_PAYMENT;
 
-  const payHref = (() => {
-    const q = new URLSearchParams({
-      service: 'document delivery',
-      amount: String(p.totalAmount),
-      ref: p.ref,
-      success: '/legal-notice/success',
-      next: `/advocate/notice/${id}/shipment`,
-    });
-    return `/legal-notice/scan-pay?${q}` as Href;
-  })();
+  // design/197 → 198, the advocate's own Scan & Pay and success (not the client
+  // Legal Notice screens 29–30).
+  const payHref = `/advocate/notice/${id}/scan-pay` as Href;
 
   return (
     <View style={styles.screen}>
