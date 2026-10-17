@@ -198,7 +198,7 @@ export default function HighCourtPricingScreen() {
       <View style={[styles.bar, { paddingBottom: insets.bottom + t.footPadBottom }]}>
         <Pressable
           accessibilityRole="button"
-          onPress={() => router.push('/services/high-court/payment' as Href)}
+          onPress={() => router.push(`/services/high-court/payment?tier=${tier}` as Href)}
           style={styles.btn}
         >
           <Text style={styles.btnText}>{d.cta}</Text>

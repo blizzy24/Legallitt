@@ -1,3 +1,4 @@
+import { DC_CHANGE_PAY } from '../../../data/courtFees';
 import CourtPaymentFlow from '../../../components/CourtPaymentFlow';
 
 // District Court — change-advocate fee payment. The batch draws no payment
@@ -11,6 +12,7 @@ import CourtPaymentFlow from '../../../components/CourtPaymentFlow';
 export default function DistrictCourtChangeAdvocatePaymentScreen() {
   return (
     <CourtPaymentFlow
+      fee={DC_CHANGE_PAY}
       base="/services/district-court/change-advocate-payment"
       next="/services/district-court/case-completed"
       backHref="/services/district-court/change-advocate"

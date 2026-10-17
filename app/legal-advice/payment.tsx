@@ -1,3 +1,4 @@
+import { useDemoWait } from '../../hooks/useDemoAdvance';
 import { StyleSheet, Text, View } from 'react-native';
 
 import ServiceHeader from '../../components/ServiceHeader';
@@ -44,6 +45,9 @@ const BLOCKERS = [
 ];
 
 export default function LegalAdvicePaymentScreen() {
+  // DEMO: pricing is unresolved, so no payment is built; demo mode moves on to the
+  // next drawn screen after the shared wait (data/flowMap.ts).
+  useDemoWait();
   return (
     <View style={styles.screen}>
       <ServiceHeader title="Payment" />

@@ -1,7 +1,7 @@
 import { useLocalSearchParams, type Href } from 'expo-router';
 
 import PaymentSuccessScreen from '../../components/PaymentSuccessScreen';
-import { CO_SUCCESS } from '../../data/courier';
+import { CO_PAYMENT, CO_PAYMENT_HCR, CO_SUCCESS } from '../../data/courier';
 
 // Client — payment success (design/279).
 //
@@ -41,5 +41,14 @@ export default function CourierSuccessScreen() {
       : flow === 'dcr'
         ? '/services/district-court/courier/shipment'
         : '/courier/shipment';
-  return <PaymentSuccessScreen d={CO_SUCCESS} ctaHref={next as Href} />;
+  // The success copy carries the courier payment's own total and reference
+  // (the entering flow's, 17 Oct) instead of the ₹1377 / #PSR739482 template.
+  const pay = flow === 'hcr' || flow === 'dcr' ? CO_PAYMENT_HCR : CO_PAYMENT;
+  const d = {
+    ...CO_SUCCESS,
+    refValue: pay.ref.replace(/^Ref ID:\s*/, '').replace(/\s*·\s*$/, ''),
+    successBody: CO_SUCCESS.successBody.replace(/₹[\d,]+/, pay.total.replace(/\/-$/, '')),
+    successBody2: CO_SUCCESS.successBody2.replace('forensic analysis', 'courier'),
+  };
+  return <PaymentSuccessScreen d={d} ctaHref={next as Href} />;
 }

@@ -38,7 +38,14 @@ export default function CourierPaymentScreen() {
     <CompletePaymentScreen
       d={flow === 'hcr' || flow === 'dcr' ? CO_PAYMENT_HCR : CO_PAYMENT}
       payHref={`/courier/scan-pay${q}` as Href}
-      backHref={'/courier/choose' as Href}
+      // Back, without history, returns to the screen that entered this payment.
+      backHref={
+        (flow === 'hcr'
+          ? '/services/high-court/courier/confirm'
+          : flow === 'dcr'
+            ? '/services/district-court/courier/book'
+            : '/courier/delivery-details') as Href
+      }
     />
   );
 }

@@ -1,3 +1,4 @@
+import { useDemoWait } from '../../hooks/useDemoAdvance';
 import { router } from 'expo-router';
 import { CircleAlert } from 'lucide-react-native';
 import { StyleSheet, Text, View } from 'react-native';
@@ -13,6 +14,9 @@ import { colors, firLanding as l, firShell as f, font, ink, space } from '../../
 // has been provided, so no FIR payment flow is built. Step 5 routes here instead.
 // Replace this screen once the client confirms FIR pricing (see data/fir.ts).
 export default function FirPayPlaceholderScreen() {
+  // DEMO: pricing is unresolved, so no payment is built; demo mode moves on to the
+  // next drawn screen after the shared wait (data/flowMap.ts).
+  useDemoWait();
   return (
     <View style={styles.screen}>
       <ServiceHeader title="FIR Draft" />

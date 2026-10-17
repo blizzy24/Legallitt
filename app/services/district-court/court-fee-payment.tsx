@@ -1,3 +1,4 @@
+import { DC_COURT_FEE_PAY } from '../../../data/courtFees';
 import CourtPaymentFlow from '../../../components/CourtPaymentFlow';
 
 // District Court — court fee payment (designs 315 → 316 → 317, pixel-identical
@@ -10,6 +11,7 @@ import CourtPaymentFlow from '../../../components/CourtPaymentFlow';
 export default function DistrictCourtCourtFeePaymentScreen() {
   return (
     <CourtPaymentFlow
+      fee={DC_COURT_FEE_PAY}
       base="/services/district-court/court-fee-payment"
       next="/services/high-court/review-filing"
       backHref="/services/district-court/court-fee"

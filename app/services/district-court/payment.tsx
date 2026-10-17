@@ -1,3 +1,4 @@
+import { DC_SERVICE_PAY } from '../../../data/courtFees';
 import CourtPaymentFlow from '../../../components/CourtPaymentFlow';
 
 // District Court — service fee payment after Submit Request (design/344).
@@ -11,6 +12,7 @@ import CourtPaymentFlow from '../../../components/CourtPaymentFlow';
 export default function DistrictCourtPaymentScreen() {
   return (
     <CourtPaymentFlow
+      fee={DC_SERVICE_PAY}
       base="/services/district-court/payment"
       next="/services/district-court/request-submitted"
       backHref="/services/district-court/review"

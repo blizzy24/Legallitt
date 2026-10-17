@@ -1,3 +1,4 @@
+import { DC_PROCESS_FEE_PAY } from '../../../data/courtFees';
 import CourtPaymentFlow from '../../../components/CourtPaymentFlow';
 
 // District Court — process fee payment (designs 322 → 323 → 324). The body is
@@ -7,6 +8,7 @@ import CourtPaymentFlow from '../../../components/CourtPaymentFlow';
 export default function DistrictCourtProcessFeePaymentScreen() {
   return (
     <CourtPaymentFlow
+      fee={DC_PROCESS_FEE_PAY}
       base="/services/district-court/process-fee-payment"
       next="/services/district-court/process-fee-receipt"
       receipt

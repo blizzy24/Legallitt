@@ -10,8 +10,10 @@ import { HC_PAYMENT, HC_SCAN_PAY, HC_SUCCESS, SERVICE_PAYMENT } from '../data/hi
 // again as 315/316/317, 322/323/324 and 331/332/333, pixel-identical apart from
 // 324's button.
 //
-// ⚠⚠ CONFLICT 2 — BUILT EXACTLY AS DRAWN, AWAITING CLIENT CORRECTION. Do NOT
-// "fix" this by wiring real fees. Every caller lands on Service Fee ₹34,999,
+// CONFLICT 2 — RESOLVED BY CLIENT INSTRUCTION (17 Oct): fees, references and
+// amounts come from the entering flow. A caller passes `fee` (data/courtFees.ts)
+// with its own screen's values; only a caller whose screen draws no fee (the
+// pending case, 330) keeps the template. As drawn, every caller landed on Service Fee ₹34,999,
 // GST 18% ₹379, Total ₹40,680:
 //  · 18% of ₹34,999 is ₹6,300, not ₹379;
 //  · ₹34,999 + ₹379 = ₹35,378, not ₹40,680;
@@ -39,12 +41,29 @@ import { HC_PAYMENT, HC_SCAN_PAY, HC_SUCCESS, SERVICE_PAYMENT } from '../data/hi
 // "View Receipt" label) through the query.
 // ─────────────────────────────────────────────────────────────────────────────
 
+/**
+ * The entering flow's own fee, as that screen draws it (client instruction, 17
+ * Oct): the payment and success steps show this service's lines, total and
+ * reference instead of the 296 template. A caller whose screen draws no fee
+ * passes none and keeps the template.
+ */
+export type CourtFee = {
+  service: string;
+  /** The matter reference the entering flow draws, e.g. DC-2026-1048. */
+  ref: string;
+  lines: { label: string; value: string }[];
+  total: string;
+  /** The same total as a number, for the Scan & Pay step. */
+  amount: number;
+};
+
 export default function CourtPaymentFlow({
   base,
   next,
   receipt = false,
   hero = false,
   backHref,
+  fee,
 }: {
   /** This caller's payment route, e.g. /services/high-court/payment. */
   base: string;
@@ -56,22 +75,38 @@ export default function CourtPaymentFlow({
    *  replacement 298 success layout. Every other caller keeps HC_PAYMENT. */
   hero?: boolean;
   backHref: string;
+  fee?: CourtFee;
 }) {
-  const { step } = useLocalSearchParams<{ step?: string }>();
+  const params = useLocalSearchParams<{ step?: string; tier?: string }>();
+  const { step } = params;
+  /** step=… plus whatever else the entering screen put on the query. */
+  const carry = (to: string) => new URLSearchParams({ ...(params.tier ? { tier: params.tier } : {}), step: to }).toString();
+  const template = hero ? SERVICE_PAYMENT : HC_PAYMENT;
+  const pay = fee ? { ...template, service: fee.service, ref: `Ref ID: #${fee.ref}`, lines: fee.lines, total: fee.total, barAmount: fee.total } : template;
+  // The success step's drawn sentences, with this payment's amount, service and reference.
+  const done = fee
+    ? {
+        ...HC_SUCCESS,
+        refValue: `#${fee.ref}`,
+        successBody: HC_SUCCESS.successBody.replace(/₹[\d,]+/, fee.total.replace(/\/-$/, '')),
+        successBody2: HC_SUCCESS.successBody2.replace('forensic analysis', fee.service.toLowerCase()),
+      }
+    : HC_SUCCESS;
 
   if (step === 'scan') {
     return (
       <ScanPayScreen
-        service={HC_SCAN_PAY.service}
-        amount={HC_SCAN_PAY.amount}
+        service={fee?.service ?? HC_SCAN_PAY.service}
+        amount={fee?.amount ?? HC_SCAN_PAY.amount}
         successHref={base as Href}
-        query="step=done"
+        query={carry('done')}
       />
     );
   }
   if (step === 'done') {
-    const d = receipt ? { ...HC_SUCCESS, cta: HC_SUCCESS.ctaReceipt } : HC_SUCCESS;
+    const d = receipt ? { ...done, cta: HC_SUCCESS.ctaReceipt } : done;
     return <PaymentSuccessScreen d={d} ctaHref={next as Href} tick hero={hero} />;
   }
-  return <CompletePaymentScreen d={hero ? SERVICE_PAYMENT : HC_PAYMENT} payHref={`${base}?step=scan` as Href} backHref={backHref as Href} />;
+  // The query (e.g. ?tier=) rides along to the Scan & Pay step.
+  return <CompletePaymentScreen d={pay} payHref={`${base}?${carry('scan')}` as Href} backHref={backHref as Href} />;
 }

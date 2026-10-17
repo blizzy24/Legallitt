@@ -21,7 +21,7 @@ export const FLOW_MAP: Record<string, string> = {
   '/cases/[id]': '/documents/case', // the case's documents
   '/earnings': '/advocate/wallet/withdraw', // Withdraw Money
   '/fir/info': '/fir/step1', // Start
-  '/fir/pay-placeholder': TERMINAL, // a placeholder that only returns home
+  '/fir/pay-placeholder': '/fir/submitted', // FIR has no payment design (pricing pending): demo mode moves on to 47
   '/hearings': '/hearings/[id]', // a hearing card
   '/hearings/[id]': '/cases/[id]', // its case
   '/property-search/request': '/property-search/review', // Continue
@@ -29,7 +29,7 @@ export const FLOW_MAP: Record<string, string> = {
   '/services/district-court/case-details': '/services/district-court/documents', // Continue
   '/services/district-court/documents': '/services/district-court/pricing', // Continue
   '/services/district-court/documents-needed': '/services/district-court/courier/details', // Send documents
-  '/services/district-court/review': TERMINAL, // the review's actions are edits back into the form
+  '/services/district-court/review': '/services/district-court/payment', // 344's Send Request → the service-fee payment
   // ── advocate/ai ──
   // last: /advocate/ai (171)
   // ── advocate/analytics ──
@@ -252,7 +252,7 @@ export const FLOW_MAP: Record<string, string> = {
   '/legal-advice/details': '/legal-advice/matter', // 105 → 106
   '/legal-advice/matter': '/legal-advice/review', // 106 → 107
   '/legal-advice/review': '/legal-advice/payment', // 107 → 108
-  '/legal-advice/payment': '/legal-advice/confirmed', // 108 → 111
+  '/legal-advice/payment': '/legal-advice/confirmed', // 108 (pricing blocked) → 111: demo mode moves on
   '/legal-advice/confirmed': '/legal-advice/track', // 111 → 112
   '/legal-advice/track': '/legal-advice/session/chat', // 112 → 113
   '/legal-advice/session/chat': '/legal-advice/session/video', // 113 → 114
@@ -310,7 +310,7 @@ export const FLOW_MAP: Record<string, string> = {
   '/services/district-court/advocate-assigned': '/services/district-court/case-preparation', // 300 → 313
   '/services/district-court/case-preparation': '/services/district-court/court-fee', // 313 → 314
   '/services/district-court/court-fee': '/services/district-court/court-fee-payment', // 314 → 314
-  '/services/district-court/court-fee-payment': '/services/district-court/court-filing', // 314 → 320
+  '/services/district-court/court-fee-payment': '/services/high-court/review-filing', // 315–317 → 318, as the screen routes
   '/services/district-court/court-filing': '/services/district-court/process-fee', // 320 → 321
   '/services/district-court/process-fee': '/services/district-court/process-fee-payment', // 321 → 321
   '/services/district-court/process-fee-payment': '/services/district-court/process-fee-receipt', // 321 → 325
@@ -325,7 +325,7 @@ export const FLOW_MAP: Record<string, string> = {
   '/services/district-court/learn-more': '/services/district-court/case-type', // 339 → 340
   '/services/district-court/case-type': '/services/district-court/pricing', // 340 → 343
   '/services/district-court/pricing': '/services/district-court/payment', // 343 → 344
-  '/services/district-court/payment': '/services/district-court/advocate/decide', // 344 → 345
+  '/services/district-court/payment': '/services/district-court/request-submitted', // 296–298 → 299, as the screen routes
   '/services/district-court/advocate/decide': '/services/district-court/advocate/accepted', // 345 → 346
   '/services/district-court/advocate/accepted': '/services/district-court/documents-needed', // 346 → its held Waiting for Advocate bar's own screen
   '/services/district-court/advocate/change': '/services/district-court/advocate/change-sent', // 347 → 348
@@ -344,7 +344,7 @@ export const FLOW_MAP: Record<string, string> = {
   '/services/high-court/case-details': '/services/high-court/documents', // 293 → 294
   '/services/high-court/documents': '/services/high-court/pricing', // 294 → 295
   '/services/high-court/pricing': '/services/high-court/payment', // 295 → 298
-  '/services/high-court/payment': '/services/high-court/chat', // 298 → 301
+  '/services/high-court/payment': '/services/district-court/request-submitted', // 298 → 299, as the screen routes
   '/services/high-court/chat': '/services/high-court/confirm-advocate', // 301 → 302
   '/services/high-court/confirm-advocate': '/services/high-court/documents-needed', // 302 → 303
   '/services/high-court/documents-needed': '/services/high-court/send-documents', // 303 → 304
