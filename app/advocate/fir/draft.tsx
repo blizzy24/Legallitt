@@ -1,8 +1,8 @@
 import { previewNotice } from '../../../components/PreviewNotice';
-import DemoPressable from '../../../components/DemoPressable';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
   ArrowRight,
+  Check,
   Bookmark,
   ChevronLeft,
   Copy,
@@ -23,8 +23,8 @@ import {
   UsersRound,
   X,
 } from 'lucide-react-native';
-import { Fragment } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Fragment, useEffect, useRef, useState } from 'react';
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { shrinkToFit } from '../../../constants/textFit';
@@ -54,8 +54,9 @@ import { advDocHref } from '../../../data/docLinks';
 // ⚠ "4 Included" documents, with a fourth set of names — and Case Papers.pdf is
 // subtitled "Lease agreement executed copy", which does not match its name.
 //
-// The form is static: no field is editable, the × and + controls are inert, and
-// nothing generates. No AI call is wired anywhere in this flow.
+// design/447 is pixel-identical to218. Fields, chips, inclusion and add controls
+// now use local state. The session cache lets View Draft reopen these edits;
+// it is frontend memory only, not a backend save or AI generation.
 
 const ICONS = { id: IdCard, copy: Copy, doc: FileText, image: ImageIcon, person: UserRoundPlus };
 
@@ -79,25 +80,63 @@ function Section({ n, title, note, noteGreen }: { n: string; title: string; note
   );
 }
 
-function Field({ label, value, tint, icon }: { label: string; value: string; tint?: boolean; icon?: keyof typeof ICONS }) {
+type DraftDocument = {name: string; sub: string; icon: keyof typeof ICONS};
+type DraftState = {
+  fields: Record<string, string>;
+  tags: string[];
+  narrative: string;
+  witnesses: string[];
+  accused: string[];
+  included: string[];
+  documents: DraftDocument[];
+};
+const sessionDrafts = new Map<string, DraftState>();
+function initialDraft(): DraftState {
+  return {
+    fields: Object.fromEntries(FIR_DRAFT.sections.flatMap(section => section.fields.map(field => [`${section.n}:${field.label}`, field.value]))),
+    tags: [...FIR_DRAFT.legal.tags], narrative: FIR_DRAFT.facts.body,
+    witnesses: FIR_DRAFT.witnesses.fields.map(field => field.value), accused: [],
+    included: FIR_DRAFT.attached.rows.map(row => row.name), documents: [...FIR_DRAFT.attached.rows],
+  };
+}
+function Field({ label, value, onChange, tint, icon }: { label: string; value: string; onChange: (value: string) => void; tint?: boolean; icon?: keyof typeof ICONS }) {
   const Icon = icon ? ICONS[icon] : null;
-  return (
-    <View style={styles.field}>
-      <Text style={styles.fieldLabel} {...shrinkToFit(0.8)}>
-        {label}
-      </Text>
-      <View style={[styles.fieldBox, tint && styles.fieldBoxTint]}>
-        {Icon && <Icon size={t.tintBoxIcon} color={colors.brandDark} style={styles.tintIcon} />}
-        <Text style={styles.fieldValue}>{value}</Text>
-      </View>
+  return <View style={styles.field}>
+    <Text style={styles.fieldLabel} {...shrinkToFit(0.8)}>{label}</Text>
+    <View style={[styles.fieldBox, tint && styles.fieldBoxTint]}>
+      {Icon && <Icon size={t.tintBoxIcon} color={colors.brandDark} style={styles.tintIcon}/>}
+      <TextInput accessibilityLabel={label} value={value} onChangeText={onChange} multiline={label === 'Home & Present Address'} style={[styles.fieldValue, {padding:0}]} />
     </View>
-  );
+  </View>;
 }
 
 export default function AdvocateFirDraftScreen() {
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id?: string }>();
   const d = FIR_DRAFT;
+  const sessionKey = id || d.docket;
+  const [draft, setDraft] = useState<DraftState>(() => sessionDrafts.get(sessionKey) ?? initialDraft());
+  const [addingSection, setAddingSection] = useState(false);
+  const [sectionText, setSectionText] = useState('');
+  const [saved, setSaved] = useState(false);
+  const narrativeInput = useRef<TextInput>(null);
+  useEffect(() => { sessionDrafts.set(sessionKey, draft); setSaved(false); }, [draft, sessionKey]);
+  const fieldChange = (key: string, value: string) => setDraft(current => ({...current, fields: {...current.fields, [key]: value}}));
+  const addSection = () => {
+    if (!addingSection) { setAddingSection(true); return; }
+    const value = sectionText.trim();
+    if (value && !draft.tags.includes(value)) setDraft(current => ({...current, tags: [...current.tags, value]}));
+    if (value) { setSectionText(''); setAddingSection(false); }
+  };
+  const attachDocument = () => {
+    if (typeof document === 'undefined') { previewNotice(d.attached.add); return; }
+    const input = document.createElement('input'); input.type = 'file'; input.multiple = true;
+    input.onchange = () => {
+      const rows = Array.from(input.files ?? []).map(file => ({name:file.name, sub:'', icon:'doc' as const}));
+      setDraft(current => ({...current, documents:[...current.documents, ...rows.filter(row => !current.documents.some(doc => doc.name === row.name))], included:[...new Set([...current.included, ...rows.map(row => row.name)])]}));
+    };
+    input.click();
+  };
 
   return (
     <View style={styles.screen}>
@@ -126,7 +165,7 @@ export default function AdvocateFirDraftScreen() {
         </View>
       </View>
 
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
         <View style={styles.statusRow}>
           <View style={styles.status}>
             <View style={styles.statusDot} />
@@ -186,12 +225,13 @@ export default function AdvocateFirDraftScreen() {
               <View style={styles.fields}>
                 {s.fields.map((f) => (
                   <View key={f.label} style={'half' in f && f.half ? styles.half : styles.full}>
-                    <Field label={f.label} value={f.value} tint={'tint' in f ? f.tint : undefined} icon={'icon' in f ? f.icon : undefined} />
+                    <Field label={f.label} value={draft.fields[`${s.n}:${f.label}`]} onChange={value => fieldChange(`${s.n}:${f.label}`, value)} tint={'tint' in f ? f.tint : undefined} icon={'icon' in f ? f.icon : undefined} />
                   </View>
                 ))}
               </View>
+              {s.n === '4' && draft.accused.map((value, i) => <View key={i} style={styles.fields}><Field label="Main Accused Name" value={value} onChange={value => setDraft(current => ({...current, accused: current.accused.map((old, n) => n === i ? value : old)}))}/></View>)}
               {'add' in s && s.add && (
-                <Pressable onPress={() => previewNotice(s.add)} accessibilityRole="button" style={({ pressed }) => [styles.add, pressed && styles.pressed]}>
+                <Pressable onPress={() => setDraft(current => ({...current, accused:[...current.accused, '']}))} accessibilityRole="button" style={({ pressed }) => [styles.add, pressed && styles.pressed]}>
                   <UserRoundPlus size={t.addIcon} color={t.addColour} />
                   <Text style={styles.addText} {...shrinkToFit(0.8)}>
                     {s.add}
@@ -201,20 +241,20 @@ export default function AdvocateFirDraftScreen() {
             </Fragment>
           ))}
 
-          <Section n={d.legal.n} title={d.legal.title} note={d.legal.note} />
+          <Section n={d.legal.n} title={d.legal.title} note={`${draft.tags.length} Sections`} />
           <Text style={styles.hint}>{d.legal.hint}</Text>
           <View style={styles.tags}>
-            {d.legal.tags.map((tag) => (
+            {draft.tags.map((tag) => (
               <View key={tag} style={styles.tag}>
                 <Text style={styles.tagText} {...shrinkToFit(0.75)}>
                   {tag}
                 </Text>
-                {/* Inert. */}
-                <X size={t.tagX} color={t.tagColour} style={styles.tagX} />
+                <Pressable accessibilityRole="button" accessibilityLabel={`Remove ${tag}`} hitSlop={8} onPress={() => setDraft(current => ({...current, tags: current.tags.filter(value => value !== tag)}))}><X size={t.tagX} color={t.tagColour} style={styles.tagX}/></Pressable>
               </View>
             ))}
           </View>
-          <Pressable onPress={() => previewNotice(d.legal.add)} accessibilityRole="button" style={({ pressed }) => [styles.add, pressed && styles.pressed]}>
+          {addingSection && <TextInput autoFocus accessibilityLabel="Add Legal Section" value={sectionText} onChangeText={setSectionText} onSubmitEditing={addSection} placeholder={d.legal.add} style={[styles.fieldBox, styles.fieldValue]}/>}
+          <Pressable onPress={addSection} accessibilityRole="button" style={({ pressed }) => [styles.add, pressed && styles.pressed]}>
             <Text style={styles.addText} {...shrinkToFit(0.8)}>
               {d.legal.add}
             </Text>
@@ -223,13 +263,13 @@ export default function AdvocateFirDraftScreen() {
           <Section n={d.facts.n} title={d.facts.title} note={d.facts.note} />
           <View style={styles.narrative}>
             {/* ⚠ Cut off in the export at "...along with two". Nothing invented. */}
-            <Text style={styles.narrativeText}>{d.facts.body}</Text>
+            <TextInput ref={narrativeInput} accessibilityLabel={d.facts.title} multiline value={draft.narrative} onChangeText={value => setDraft(current => ({...current,narrative:value}))} style={[styles.narrativeText, {height:t.narrativeMaxHeight-t.narrativePad*2,padding:0,textAlignVertical:'top'}]}/>
           </View>
           <View style={styles.narrativeFoot}>
             <Text style={styles.narrativeFootText} {...shrinkToFit(0.8)}>
-              {d.facts.foot}
+              {draft.narrative === d.facts.body ? d.facts.foot : `${draft.narrative.trim().split(/\s+/).filter(Boolean).length} Words • Editable`}
             </Text>
-            <Pressable onPress={() => previewNotice(d.facts.edit)} accessibilityRole="button" style={styles.narrativeEdit}>
+            <Pressable onPress={() => narrativeInput.current?.focus()} accessibilityRole="button" style={styles.narrativeEdit}>
               <Pencil size={t.narrativeEditIcon} color={t.narrativeEditColour} />
               <Text style={styles.narrativeEditText} {...shrinkToFit(0.8)}>
                 {d.facts.edit}
@@ -239,25 +279,16 @@ export default function AdvocateFirDraftScreen() {
 
           <Section n={d.witnesses.n} title={d.witnesses.title} />
           <View style={styles.fields}>
-            {d.witnesses.fields.map((f) => (
-              <View key={f.label} style={styles.full}>
-                <Field label={f.label} value={f.value} />
-              </View>
-            ))}
+            {draft.witnesses.map((value, i) => <View key={i} style={styles.full}><Field label={`Witness ${i+1}`} value={value} onChange={value => setDraft(current => ({...current, witnesses:current.witnesses.map((old,n) => n===i ? value : old)}))}/></View>)}
           </View>
-          <Pressable onPress={() => previewNotice(d.witnesses.add)} accessibilityRole="button" style={({ pressed }) => [styles.add, pressed && styles.pressed]}>
-            <UsersRound size={t.addIcon} color={t.addColour} />
-            <Text style={styles.addText} {...shrinkToFit(0.8)}>
-              {d.witnesses.add}
-            </Text>
-          </Pressable>
+          <Pressable onPress={() => setDraft(current => ({...current, witnesses:[...current.witnesses,'']}))} accessibilityRole="button" style={({pressed}) => [styles.add, pressed && styles.pressed]}><UsersRound size={t.addIcon} color={t.addColour}/><Text style={styles.addText}>{d.witnesses.add}</Text></Pressable>
 
-          <Section n={d.attached.n} title={d.attached.title} note={d.attached.note} noteGreen />
-          {d.attached.rows.map((row, i) => {
+          <Section n={d.attached.n} title={d.attached.title} note={`${draft.included.length} Included`} noteGreen />
+          {draft.documents.map((row, i) => {
             const Icon = ICONS[row.icon];
             return (
               <View key={row.name} style={[styles.doc, i === 0 ? styles.docFirst : null]}>
-                <View style={styles.docCheck} />
+                <Pressable accessibilityRole="checkbox" accessibilityLabel={row.name} accessibilityState={{checked:draft.included.includes(row.name)}} onPress={() => setDraft(current => ({...current,included:current.included.includes(row.name)?current.included.filter(name=>name!==row.name):[...current.included,row.name]}))} style={[styles.docCheck,!draft.included.includes(row.name)&&{backgroundColor:'transparent',borderWidth:1,borderColor:t.docCheckBg}]}/>
                 <Icon size={t.docIcon} color={colors.textPrimary} style={styles.docIcon} />
                 <View style={styles.docText}>
                   <Text style={styles.docName} {...shrinkToFit(0.75)}>
@@ -278,7 +309,7 @@ export default function AdvocateFirDraftScreen() {
               </View>
             );
           })}
-          <Pressable onPress={() => previewNotice(d.attached.add)} accessibilityRole="button" style={({ pressed }) => [styles.add, pressed && styles.pressed]}>
+          <Pressable onPress={attachDocument} accessibilityRole="button" style={({ pressed }) => [styles.add, pressed && styles.pressed]}>
             <Paperclip size={t.addIcon} color={t.addColour} />
             <Text style={styles.addText} {...shrinkToFit(0.8)}>
               {d.attached.add}
@@ -289,12 +320,12 @@ export default function AdvocateFirDraftScreen() {
 
       <View style={[styles.bar, { paddingBottom: insets.bottom + t.barPadBottom }]}>
         <View style={styles.barRow}>
-          <DemoPressable accessibilityRole="button" style={({ pressed }) => [styles.btn, styles.save, pressed && styles.pressed]}>
-            <Save size={t.btnIcon} color={t.saveColour} />
+          <Pressable accessibilityRole="button" accessibilityState={{selected:saved}} onPress={() => {sessionDrafts.set(sessionKey,draft);setSaved(true);}} style={({ pressed }) => [styles.btn, styles.save, pressed && styles.pressed]}>
+            {saved ? <Check size={t.btnIcon} color={t.saveColour}/> : <Save size={t.btnIcon} color={t.saveColour}/>}
             <Text style={styles.saveText} {...shrinkToFit(0.8)}>
               {d.save}
             </Text>
-          </DemoPressable>
+          </Pressable>
           <Pressable
             accessibilityRole="button"
             onPress={() => router.push(`/advocate/fir/review?id=${id ?? ''}` as Href)}

@@ -48,3 +48,9 @@ Local production browser walk passed approval→decision→delivery→delivered�
 448 reuses219 at /advocate/fir/review. New449 is /advocate/fir/review-compact. Both are Waiting; Approved and Changes keep their preview notice. In demo mode full Waiting advances to compact Waiting, whose drawn Continue leads to450 (/advocate/fir/completed). Outside demo mode no approval or submission is fabricated. Remind Client no longer submits the FIR.
 
 Browser verification passed both Waiting layouts, both preview tabs, and the demo landing at FIR Submitted Successfully. The walk exposed a flowMap precedence bug: the dynamic /advocate/fir/[id] entry shadowed exact screen routes. Exact entries now resolve first.
+
+## Editable FIR proforma — built last
+
+447 reuses218 at /advocate/fir/draft. All fields and the narrative are editable. Legal-section chips remove and add typed values; counts update. Add Accused and Add Witness append empty editable fields. Document inclusion toggles, and the browser picker adds only user-selected filenames. Save Draft stays on the form. Frontend session memory retains edits when review's View Draft reopens it; no backend or AI generation is claimed.
+
+Browser walk passed request215/444 → documents216/445 → generator217/446 → draft218/447 → review219/448 → compact449 → completed220/450. Verified replacement typing, narrative editing, remove/add legal section, extra witness/accused, document inclusion, Save Draft, and retained values after review→View Draft. Terminal screen: FIR Submitted Successfully. No browser exceptions.
