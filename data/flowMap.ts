@@ -21,7 +21,6 @@ export const FLOW_MAP: Record<string, string> = {
   '/cases/[id]': '/documents/case', // the case's documents
   '/earnings': '/advocate/wallet/withdraw', // Withdraw Money
   '/fir/info': '/fir/step1', // Start
-  '/fir/pay-placeholder': '/fir/payment', // legacy preview link
   '/hearings': '/hearings/[id]', // a hearing card
   '/hearings/[id]': '/cases/[id]', // its case
   '/property-search/request': '/property-search/review', // Continue

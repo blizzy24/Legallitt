@@ -10,6 +10,7 @@ import { useState, type ReactNode } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { LEGAL_NOTICE_ADVOCATE } from '../../data/advocates';
 import SegmentedControl from '../../components/SegmentedControl';
 import { DEV_PREVIEW_TOGGLES } from '../../constants/dev';
 import { colors, font, ink, tracking as t } from '../../constants/theme';
@@ -147,7 +148,7 @@ export default function TrackingScreen() {
             </View>
           </View>
           <View style={styles.buttons}>
-            <Pressable accessibilityRole="button" style={[styles.button, styles.buttonOutline]}>
+            <Pressable accessibilityRole="button" onPress={() => router.push(`/advocates/${LEGAL_NOTICE_ADVOCATE.id}`)} style={[styles.button, styles.buttonOutline]}>
               <CircleUser size={t.buttonIcon} color={colors.textPrimary} />
               <Text style={styles.buttonText}>View Profile</Text>
             </Pressable>

@@ -1,3 +1,17 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/" }]
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/"
+    }
+  ],
+  "buildCommand": "npx expo export --platform web",
+  "outputDirectory": "dist",
+  "redirects": [
+    {
+      "source": "/fir/pay-placeholder",
+      "destination": "/fir/payment",
+      "permanent": false
+    }
+  ]
 }

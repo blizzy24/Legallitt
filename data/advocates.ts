@@ -168,8 +168,8 @@ export const advocateById = (id: string) => SAVED_ADVOCATES.find((a) => a.id ===
  * full records, or a court advocate's record holding only what that advocate's
  * own screen draws — the screen leaves out every section it has no values for.
  */
-export type AdvocateProfileView = Pick<SavedAdvocate, 'id' | 'initials' | 'name' | 'verified' | 'experience' | 'location' | 'practiceAreas' | 'about'> &
-  Partial<Omit<SavedAdvocate, 'id' | 'initials' | 'name' | 'verified' | 'experience' | 'location' | 'practiceAreas' | 'about'>>;
+export type AdvocateProfileView = Pick<SavedAdvocate, 'id' | 'initials' | 'name' | 'verified'> &
+  Partial<Omit<SavedAdvocate, 'id' | 'initials' | 'name' | 'verified'>>;
 
 /**
  * The District Court advocate, from design/300 (Advocate Assigned): name,
@@ -190,8 +190,22 @@ export const COURT_ADVOCATES: AdvocateProfileView[] = [
   },
 ];
 
+// Legal Notice tracking (31–32) assigns Arjun at 4.9 / 142 reviews.
+// The rate screen disagrees: 4.8 / "120+ reviews". Use tracking's figures.
+// Only the requested drawn identity, verification and rating are supplied;
+// missing profile sections must stay hidden, never borrowed from saved counsel.
+export const LEGAL_NOTICE_ADVOCATE: AdvocateProfileView = {
+  id: 'adv-arjun-sharma',
+  initials: 'AS',
+  name: 'Adv. Arjun Sharma',
+  verified: true,
+  rating: '4.9',
+  reviewCount: 142,
+};
+
 export const advocateProfileById = (id: string): AdvocateProfileView | undefined =>
-  advocateById(id) ?? COURT_ADVOCATES.find((a) => a.id === id);
+  advocateById(id) ?? COURT_ADVOCATES.find((a) => a.id === id) ??
+  (id === LEGAL_NOTICE_ADVOCATE.id ? LEGAL_NOTICE_ADVOCATE : undefined);
 
 /**
  * design/81's profile screen names the advocate "Adv. Rahul Sharma" and carries a

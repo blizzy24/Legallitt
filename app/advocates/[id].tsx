@@ -125,17 +125,19 @@ export default function AdvocateProfileScreen() {
             </View>
           )}
 
-          <View style={styles.metaRow}>
-            <Award size={t.metaIcon} color={ink.accent} />
-            <Text style={styles.metaText} {...shrinkToFit(0.8)}>
-              {advocate.experience} Exp.
-            </Text>
-            <Text style={styles.metaDot}>·</Text>
-            <MapPin size={t.metaIcon} color={ink.accent} />
-            <Text style={styles.metaText} {...shrinkToFit(0.8)}>
-              {advocate.location}
-            </Text>
-          </View>
+          {(advocate.experience || advocate.location) && (
+            <View style={styles.metaRow}>
+              {advocate.experience && <>
+                <Award size={t.metaIcon} color={ink.accent} />
+                <Text style={styles.metaText} {...shrinkToFit(0.8)}>{advocate.experience} Exp.</Text>
+              </>}
+              {advocate.experience && advocate.location && <Text style={styles.metaDot}>·</Text>}
+              {advocate.location && <>
+                <MapPin size={t.metaIcon} color={ink.accent} />
+                <Text style={styles.metaText} {...shrinkToFit(0.8)}>{advocate.location}</Text>
+              </>}
+            </View>
+          )}
 
           {advocate.rating ? (
           <View style={styles.rating}>
@@ -167,6 +169,7 @@ export default function AdvocateProfileScreen() {
         </View>
         ) : null}
 
+        {!!advocate.practiceAreas?.length && <>
         <View style={styles.sectionRow}>
           <Text style={styles.sectionLabel} {...shrinkToFit(0.8)}>
             PRACTICE AREAS
@@ -186,6 +189,9 @@ export default function AdvocateProfileScreen() {
           ))}
         </View>
 
+        </>}
+
+        {!!advocate.about && <>
         <Text style={[styles.sectionLabel, styles.soloLabel]} {...shrinkToFit(0.8)}>
           ABOUT
         </Text>
@@ -202,6 +208,9 @@ export default function AdvocateProfileScreen() {
           <Text style={styles.readMoreText}>{expanded ? 'Read less' : 'Read more'}</Text>
         </Pressable>
 
+        </>}
+
+        {details.length > 0 && <>
         <Text style={[styles.sectionLabel, styles.soloLabel]} {...shrinkToFit(0.8)}>
           PROFESSIONAL DETAILS
         </Text>
@@ -220,6 +229,8 @@ export default function AdvocateProfileScreen() {
             </View>
           ))}
         </View>
+
+        </>}
 
         {advocate.availabilityLabel ? (
         <>
