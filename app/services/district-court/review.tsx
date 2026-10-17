@@ -1,3 +1,5 @@
+import IdentityVerification from '../../../components/IdentityVerification';
+import { useKyc } from '../../../context/kyc';
 import { router, type Href } from 'expo-router';
 import {
   ArrowRight,
@@ -111,6 +113,7 @@ function Box({ on, onPress, label }: { on: boolean; onPress: () => void; label: 
 }
 
 export default function DistrictReviewScreen() {
+  const { kyc, begin } = useKyc();
   const insets = useSafeAreaInsets();
   const d = DC_REVIEW;
   const [confirm, setConfirm] = useState(false);
@@ -242,7 +245,7 @@ export default function DistrictReviewScreen() {
         </Section>
 
         <Section icon={FolderOpen} title={d.docsHead} edit="docs">
-          {d.docs.map((doc, i) => (
+          {d.docs.map((doc, i) => doc.id ? <IdentityVerification key={doc.name} returnTo="/services/district-court/review" /> : (
             <View key={doc.name} style={[styles.doc, i > 0 && styles.docNext]}>
               <CircleCheck size={t.docCheck} color={ink.onBrand} fill={c.greenInk} strokeWidth={2.2} />
               <View style={styles.flex}>
@@ -258,7 +261,7 @@ export default function DistrictReviewScreen() {
           ))}
           <View style={styles.docsFoot}>
             <Text style={styles.docsFootText} {...shrinkToFit(0.75)}>
-              {d.docsFoot}
+              {kyc.completed ? 'Identity verification reused with your case documents' : 'Identity verification required before payment'}
             </Text>
             <Pressable
               accessibilityRole="link"
@@ -349,7 +352,7 @@ export default function DistrictReviewScreen() {
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={d.cta}
-          onPress={() => router.push('/services/district-court/payment' as Href)}
+          onPress={() => kyc.completed ? router.push('/services/district-court/payment') : begin('/services/district-court/review')}
           style={styles.btn}
         >
           <Text style={styles.btnText} {...shrinkToFit(0.8)}>

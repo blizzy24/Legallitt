@@ -39,11 +39,11 @@ const DETAILS = [
 
 export default function VideoKycVerifiedScreen() {
   const insets = useSafeAreaInsets();
-  const { complete } = useKyc();
+  const { complete, returnTo } = useKyc();
 
   const finish = () => {
     complete();
-    router.replace('/legal-notice/step4-review');
+    router.replace(returnTo);
   };
 
   return (
@@ -51,7 +51,7 @@ export default function VideoKycVerifiedScreen() {
       <KycHeader
         title="Verification Complete"
         leading="close"
-        onLeading={() => router.replace('/legal-notice/step4')}
+        onLeading={() => router.replace(returnTo)}
       />
 
       <ScrollView

@@ -1,3 +1,5 @@
+import IdentityVerification from '../../components/IdentityVerification';
+import { useKyc } from '../../context/kyc';
 import { previewNotice } from '../../components/PreviewNotice';
 import { router, type Href } from 'expo-router';
 import { BookText, Check, CirclePlus, Crop, Eye, File, FingerprintPattern, RefreshCw, Trash, type LucideIcon } from 'lucide-react-native';
@@ -23,7 +25,6 @@ type Doc = { title: string; subtitle: string; icon: LucideIcon };
 // Aadhaar Card, because design/39 still draws it. The two screens now disagree about
 // whether an Aadhaar document is collected at all. Left as drawn, per instruction.
 const SAMPLE_DOCS: Doc[] = [
-  { title: 'Aadhaar Card', subtitle: 'Upload Aadhaar', icon: FingerprintPattern },
   { title: 'Property Papers', subtitle: 'Sales Deed, Khata, etc', icon: File },
   { title: 'Agreement', subtitle: 'Any agreement document', icon: BookText },
   { title: 'Screenshots', subtitle: 'WhatsApp, Email, etc', icon: Crop },
@@ -38,6 +39,7 @@ const SAMPLE_DOCS: Doc[] = [
 // design/39 each draw the stepper on 4, so the wizard's six steps are unchanged and
 // step 4 simply spans two screens.
 export default function Step4ReviewScreen() {
+  const { kyc, begin } = useKyc();
   const { form, update } = useLegalNotice();
 
   useEffect(() => {
@@ -49,7 +51,7 @@ export default function Step4ReviewScreen() {
   const count = form.documents.length || SAMPLE_DOCS.length;
 
   return (
-    <WizardShell step={4} align="top" background="tinted" buttonLabel="Continue" onContinue={() => router.push('/legal-notice/step5')}>
+    <WizardShell step={4} align="top" background="tinted" buttonLabel="Continue" onContinue={() => kyc.completed ? router.push('/legal-notice/step5') : begin('/legal-notice/step4-review')}>
       <Text style={styles.title}>Review Your Documents</Text>
       <Text style={styles.subtitle}>Your documents have been uploaded successfully. Review them before continuing.</Text>
 
@@ -63,6 +65,7 @@ export default function Step4ReviewScreen() {
         </View>
       </View>
 
+      <IdentityVerification returnTo="/legal-notice/step4-review" />
       <View style={styles.list}>
         {SAMPLE_DOCS.map((d) => (
           <DocRow key={d.title} doc={d} />

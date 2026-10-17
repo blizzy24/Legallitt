@@ -1,13 +1,10 @@
-import { createContext, useContext, useMemo, useState, type ReactNode } from 'react';
+import { router, type Href } from 'expo-router';
+import { useSession } from './session';
+import { createContext, useContext, useMemo, useState, useEffect, type ReactNode } from 'react';
 
-// KYC sub-flow state (design/92-99). In memory only; nothing is verified and no
-// identity document is ever read or stored.
-//
-// REPORTED — design/91 removed the Aadhaar Card UPLOAD row and replaced it with this
-// flow. Identity now goes through DigiLocker or a video check rather than a document
-// the user hands over, which changes what the app would hold: a verification result
-// rather than a copy of an ID. The review screen (design/39) still lists an Aadhaar
-// Card document, so the two screens disagree.
+// Session-scoped reuse of the existing preview KYC result. This is not an identity
+// provider integration: a production verification result must come from the server.
+// Never reuse the client's identity as an advocate's professional verification.
 
 export type KycMethod = 'digilocker' | 'video';
 
@@ -24,22 +21,26 @@ type Ctx = {
   setMethod: (method: KycMethod) => void;
   complete: () => void;
   reset: () => void;
+  returnTo: Href;
+  begin: (returnTo: Href) => void;
 };
 
 const KycContext = createContext<Ctx | null>(null);
 
 export function KycProvider({ children }: { children: ReactNode }) {
+  const { role, isLoggedIn } = useSession();
+  const [returnTo, setReturnTo] = useState<Href>('/legal-notice/step4-review');
+  useEffect(() => { setKyc(EMPTY_KYC); }, [role, isLoggedIn]);
   const [kyc, setKyc] = useState<KycState>(EMPTY_KYC);
 
-  const value = useMemo<Ctx>(
-    () => ({
+  const value: Ctx = {
       kyc,
+      returnTo,
+      begin: (destination) => { setReturnTo(destination); router.push('/kyc/choose'); },
       setMethod: (method) => setKyc((k) => ({ ...k, method })),
       complete: () => setKyc((k) => ({ ...k, completed: true })),
       reset: () => setKyc(EMPTY_KYC),
-    }),
-    [kyc]
-  );
+    };
 
   return <KycContext.Provider value={value}>{children}</KycContext.Provider>;
 }

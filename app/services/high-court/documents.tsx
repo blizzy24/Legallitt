@@ -1,3 +1,5 @@
+import IdentityVerification from '../../../components/IdentityVerification';
+import { useKyc } from '../../../context/kyc';
 import { router, type Href } from 'expo-router';
 import {
   Check,
@@ -46,6 +48,7 @@ const ICONS: Record<DocIcon, LucideIcon> = {
 };
 
 export default function HighCourtDocumentsScreen() {
+  const { kyc, begin } = useKyc();
   const insets = useSafeAreaInsets();
   const d = HC_DOCUMENTS;
 
@@ -83,10 +86,10 @@ export default function HighCourtDocumentsScreen() {
             </Text>
             <View style={styles.addedPill}>
               <Text style={styles.addedPillText} {...shrinkToFit(0.8)}>
-                {d.addedPill}
+                {kyc.completed ? 'Required checks ready (2/2)' : 'Identity verification pending (1/2)'}
               </Text>
             </View>
-            <Text style={styles.addedBody}>{d.addedBody}</Text>
+            <Text style={styles.addedBody}>{kyc.completed ? 'Case papers added • Identity verification reused' : 'Case papers added • Complete identity verification to continue'}</Text>
           </View>
         </View>
 
@@ -101,6 +104,7 @@ export default function HighCourtDocumentsScreen() {
         </View>
 
         {d.docs.map((doc) => {
+            if (doc.icon === 'id') return <IdentityVerification key="identity" returnTo="/services/high-court/documents" />;
           const Icon = ICONS[doc.icon];
           return (
             <View key={doc.id} style={styles.card}>
@@ -177,12 +181,12 @@ export default function HighCourtDocumentsScreen() {
         <View style={styles.ready}>
           <CircleCheckBig size={t.readyIcon} color={ink.onBrand} fill={c.greenInk} strokeWidth={2.4} />
           <Text style={styles.readyText} {...shrinkToFit(0.8)}>
-            {d.ready}
+            {kyc.completed ? 'Required checks ready (2/2)' : 'Identity verification required'}
           </Text>
         </View>
         <Pressable
           accessibilityRole="button"
-          onPress={() => router.push('/services/high-court/pricing' as Href)}
+          onPress={() => kyc.completed ? router.push('/services/high-court/pricing') : begin('/services/high-court/documents')}
           style={styles.btn}
         >
           <Text style={styles.btnText}>{d.cta}</Text>

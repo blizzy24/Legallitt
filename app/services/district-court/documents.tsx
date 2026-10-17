@@ -1,3 +1,5 @@
+import IdentityVerification from '../../../components/IdentityVerification';
+import { useKyc } from '../../../context/kyc';
 import { router, type Href } from 'expo-router';
 import {
   Check,
@@ -61,6 +63,7 @@ const FILE_ICON = { file: FileText, id: IdCard } as const;
 const SLOT_ICON = { court: Landmark, mail: Mail, files: Files } as const;
 
 export default function DistrictDocumentsScreen() {
+  const { kyc, begin } = useKyc();
   const insets = useSafeAreaInsets();
   const d = DC_DOCUMENTS;
   const [skipped, setSkipped] = useState<Record<string, boolean>>({});
@@ -121,10 +124,11 @@ export default function DistrictDocumentsScreen() {
           <Text style={styles.sec} {...shrinkToFit(0.75)}>
             {d.sec}
           </Text>
-          <Text style={styles.ready}>{d.ready}</Text>
+          <Text style={styles.ready}>{kyc.completed ? 'Case papers ready • Identity verified' : 'Case papers ready • Identity verification pending'}</Text>
         </View>
 
         {d.files.map((f, i) => {
+            if (f.icon === 'id') return <IdentityVerification key="identity" returnTo="/services/district-court/documents" />;
           const Icon = FILE_ICON[f.icon];
           return (
             <View key={f.name} style={[styles.card, i === 0 ? styles.listFirst : styles.cardNext]}>
@@ -265,7 +269,7 @@ export default function DistrictDocumentsScreen() {
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={d.cta}
-          onPress={() => router.push('/services/district-court/pricing' as Href)}
+          onPress={() => kyc.completed ? router.push('/services/district-court/pricing') : begin('/services/district-court/documents')}
           style={styles.btn}
         >
           <FileUp size={t.btnIcon} color={ink.onBrand} strokeWidth={2} />

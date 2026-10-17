@@ -1,3 +1,5 @@
+import IdentityVerification from '../../../components/IdentityVerification';
+import { useKyc } from '../../../context/kyc';
 import { router, type Href } from 'expo-router';
 import {
   Archive,
@@ -53,6 +55,7 @@ const STILL_ICON = { id: Contact, house: House } as const;
 const breakable = (name: string) => name.replace(/_/g, '_​');
 
 export default function DistrictDocsNeededScreen() {
+  const { kyc, begin } = useKyc();
   const insets = useSafeAreaInsets();
   const d = DC_DOCS_NEEDED;
 
@@ -169,6 +172,7 @@ export default function DistrictDocsNeededScreen() {
         <Text style={styles.secSub}>{d.secSub}</Text>
 
         {d.docs.map((doc, i) => {
+            if (doc.title === 'Identity Proof') return <IdentityVerification key="identity" returnTo="/services/district-court/documents-needed" />;
           const has = 'file' in doc;
           return (
             <View key={doc.title} style={[styles.card, styles.white, i === 0 ? styles.docsFirst : styles.docNext]}>
@@ -289,7 +293,7 @@ export default function DistrictDocsNeededScreen() {
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={d.cta}
-          onPress={() => router.push('/services/district-court/courier/details' as Href)}
+          onPress={() => kyc.completed ? router.push('/services/district-court/courier/details') : begin('/services/district-court/documents-needed')}
           style={styles.btn}
         >
           <Text style={styles.btnText} {...shrinkToFit(0.8)}>

@@ -1,3 +1,5 @@
+import IdentityVerification from '../../components/IdentityVerification';
+import { useKyc } from '../../context/kyc';
 import { previewNotice } from '../../components/PreviewNotice';
 import { router } from 'expo-router';
 import {
@@ -50,58 +52,18 @@ const ROWS: { icon: LucideIcon; title: string; subtitle: string }[] = [
 ];
 
 export default function Step4Screen() {
+  const { kyc, begin } = useKyc();
   return (
     <WizardShell
       step={4}
       align="top"
       background="tinted"
       buttonLabel="Continue"
-      onContinue={() => router.push('/legal-notice/step4-review')}
+      onContinue={() => kyc.completed ? router.push('/legal-notice/step4-review') : begin('/legal-notice/step4')}
     >
       <Text style={styles.heading}>Upload Supporting Documents</Text>
 
-      <View style={styles.identity}>
-        <View style={styles.identityHead}>
-          <View style={styles.identityIcon}>
-            <ShieldCheck size={t.identityIconGlyph} color={ink.accent} />
-          </View>
-          <Text style={styles.identityTitle} {...shrinkToFit(0.8)}>
-            Identity Verification
-          </Text>
-          <View style={styles.kycChip}>
-            <Text style={styles.kycChipText} {...shrinkToFit(0.8)}>
-              KYC REQUIRED
-            </Text>
-          </View>
-        </View>
-
-        <Text style={styles.identityBody}>
-          Complete your KYC to securely verify your identity and proceed with your legal notice.
-        </Text>
-
-        <View style={styles.identityDivider} />
-
-        <View style={styles.identityRow}>
-          <View style={styles.identityRowText}>
-            <Text style={styles.identityRowTitle} {...shrinkToFit(0.8)}>
-              Primary Aadhaar / PAN
-            </Text>
-            <Text style={styles.identityRowSub} {...shrinkToFit(0.8)}>
-              Required before notice attestation
-            </Text>
-          </View>
-          <Pressable
-            accessibilityRole="button"
-            onPress={() => router.push('/kyc/choose')}
-            style={({ pressed }) => [styles.kycButton, pressed && styles.pressed]}
-          >
-            <Text style={styles.kycButtonLabel} {...shrinkToFit(0.75)}>
-              Complete KYC
-            </Text>
-            <ArrowRight size={t.kycButtonIcon} color={ink.onBrand} style={styles.kycButtonIcon} />
-          </Pressable>
-        </View>
-      </View>
+      <IdentityVerification returnTo="/legal-notice/step4" />
 
       <View style={styles.rows}>
         {ROWS.map((r, i) => (

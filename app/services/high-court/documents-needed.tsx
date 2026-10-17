@@ -1,3 +1,5 @@
+import IdentityVerification from '../../../components/IdentityVerification';
+import { useKyc } from '../../../context/kyc';
 import { router, type Href } from 'expo-router';
 import {
   ArrowRight,
@@ -38,6 +40,7 @@ import { HC_DOCS_NEEDED } from '../../../data/highCourt';
 const DOC_ICON = { folder: FolderOpen, scale: Scale, id: IdCard, briefcase: Briefcase } as const;
 
 export default function HighCourtDocumentsNeededScreen() {
+  const { kyc, begin } = useKyc();
   const insets = useSafeAreaInsets();
   const d = HC_DOCS_NEEDED;
 
@@ -68,7 +71,7 @@ export default function HighCourtDocumentsNeededScreen() {
             </Text>
           </View>
           <Text style={styles.count} {...shrinkToFit(0.75)}>
-            {d.count}
+            {kyc.completed ? '3 of 3 Required Ready' : '2 of 3 Required Ready'}
           </Text>
         </View>
 
@@ -94,6 +97,7 @@ export default function HighCourtDocumentsNeededScreen() {
 
         <View style={styles.list}>
           {d.docs.map((doc) => {
+            if (doc.icon === 'id') return <IdentityVerification key="identity" returnTo="/services/high-court/documents-needed" />;
             const Icon = DOC_ICON[doc.icon];
             return (
               <View key={doc.title} style={styles.card}>
@@ -189,7 +193,7 @@ export default function HighCourtDocumentsNeededScreen() {
       <View style={[styles.bar, { paddingBottom: insets.bottom + t.barPadBottom }]}>
         <Pressable
           accessibilityRole="button"
-          onPress={() => router.push('/services/high-court/send-documents' as Href)}
+          onPress={() => kyc.completed ? router.push('/services/high-court/send-documents') : begin('/services/high-court/documents-needed')}
           style={styles.btn}
         >
           <Text style={styles.btnText}>{d.cta}</Text>

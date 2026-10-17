@@ -68,7 +68,7 @@ const BEFORE = [
 
 export default function KycChooseScreen() {
   const insets = useSafeAreaInsets();
-  const { kyc, setMethod } = useKyc();
+  const { kyc, setMethod, returnTo } = useKyc();
   const selected = METHODS.find((m) => m.id === kyc.method) ?? METHODS[0];
 
   return (
@@ -78,7 +78,7 @@ export default function KycChooseScreen() {
           accessibilityRole="button"
           accessibilityLabel="Back"
           hitSlop={10}
-          onPress={() => (router.canGoBack() ? router.back() : router.replace('/legal-notice/step4'))}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace(returnTo))}
         >
           <ChevronLeft size={t.backIcon} color={colors.textPrimary} />
         </Pressable>
