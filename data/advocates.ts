@@ -191,7 +191,7 @@ export const COURT_ADVOCATES: AdvocateProfileView[] = [
 ];
 
 // Legal Notice tracking (31–32) assigns Arjun at 4.9 / 142 reviews.
-// The rate screen disagrees: 4.8 / "120+ reviews". Use tracking's figures.
+// Client confirmed this rating and count for all Arjun Sharma screens.
 // Only the requested drawn identity, verification and rating are supplied;
 // missing profile sections must stay hidden, never borrowed from saved counsel.
 export const LEGAL_NOTICE_ADVOCATE: AdvocateProfileView = {

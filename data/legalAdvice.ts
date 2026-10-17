@@ -343,8 +343,8 @@ export const LA_ADVOCATE = {
   name: 'Adv. Arjun Sharma',
   practice: 'Property Law',
   experience: '8+ Years Experience',
-  rating: '4.8',
-  reviews: '120+ Reviews',
+  rating: '4.9',
+  reviews: '142 Reviews',
 };
 
 /**
