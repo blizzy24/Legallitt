@@ -1432,15 +1432,14 @@ export const advCourtFiling = {
 } as const;
 
 /** design/379 — confirm court filing. Measured at 1.000 px/pt (2x upscale). */
-// ⚠ design/415, this screen's District Court variant (?service=dc), is a
-// low-resolution JPEG; its metrics and copy are unverifiable, as with 289 and
-// 348. These tokens are measured from design/379.
+// Remeasured against 415-reexport-2x, content x40..819 (2px/pt).
+// The supplied export still names High Court; service-specific copy remains separate.
 export const advCourtConfirmFiling = {
   headerPadTop: 10,
   headerSubSize: 11.5,
   top: 22,
-  headTile: 38,
-  headTileGap: 14,
+  headTile: 40,
+  headTileGap: 12,
   introTitleSize: 17.7,
   headSubSize: 14,
   headSubLine: 20,
@@ -1490,7 +1489,7 @@ export const advCourtConfirmFiling = {
   footerPadX: 20,
   footerPadY: 12,
   footerPadBottom: 58,
-  footerBtnH: 50,
+  footerBtnH: 52,
   footerBtnRadius: 12,
   footerBtnSize: 16,
   footerStackGap: 12,
@@ -1932,14 +1931,13 @@ export const advCourtProcessFee = {
 } as const;
 
 /** design/386 — process fee completed. Measured at 1.000 px/pt (2x upscale). */
-// ⚠ design/422, this screen's District Court variant (?service=dc), is a
-// low-resolution JPEG; its metrics and copy are unverifiable, as with 289 and
-// 348. These tokens are measured from design/386.
+// Remeasured against 422-reexport-2x, content x16..795 (2px/pt).
+// Receipt icon is 64px = 32pt; other inherited dimensions were checked individually.
 export const advCourtProcessFeeDone = {
   ...advCourtProcessFee,
   docPadX: 12,
   docPadY: 12,
-  docSquare: 40,
+  docSquare: 32,
   docSquareRadius: 8,
   docGap: 12,
   docNameSize: 14.5,

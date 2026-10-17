@@ -5,9 +5,7 @@
 // out of its device frame (16–76px wide, plus a 7pt strip above). Values are
 // measured element by element from the cropped PNGs, never by a factor.
 //
-// ⚠ design/289 is a 228×1023 JPEG thumbnail: 206px of screen for 390pt, 0.528
-// px/pt. Its block (hcLanding) is read off that thumbnail and is good to ±2pt;
-// shared values are taken from the 2.000 px/pt screens wherever they agree.
+// design/289 now has a clean 2× re-export; hcLanding was remeasured from it.
 // ─────────────────────────────────────────────────────────────────────────────
 
 // ⚠⚠ QUARANTINED PALETTE — colours this batch draws that are NOT in the shared
@@ -129,17 +127,18 @@ export const hcPalette = {
   // and use those tokens.
 };
 
-/** design/289 — service landing. ⚠ Read off a 0.528 px/pt thumbnail; ±2pt. */
+/** design/289-reexport-2x — content x40..819 (780px / 390pt).
+ * Element bounds measured independently; see reports/batch-433-454/measurements.md. */
 export const hcLanding = {
   padX: 20,
   helpIcon: 18,
   helpGap: 14,
 
   heroTop: 15,
-  heroH: 221,
-  heroRadius: 14,
+  heroH: 220,
+  heroRadius: 12,
   heroInsetX: 28,
-  heroInsetTop: 20,
+  heroInsetTop: 19,
   heroArtRadius: 10,
   badgeH: 22,
   badgeRadius: 11,
@@ -159,9 +158,9 @@ export const hcLanding = {
   chipIconGap: 4,
   chipSize: 10,
   h1Top: 10,
-  h1Size: 25,
+  h1Size: 28,
   bodyTop: 8,
-  bodySize: 15,
+  bodySize: 16,
   bodyLineHeight: 24.5,
   checkTop: 8,
   checkIcon: 12,
@@ -187,8 +186,8 @@ export const hcLanding = {
   gridCardBasis: '40%' as const,
   cardRadius: 12,
   cardPad: 14,
-  gridCardH: 123,
-  tile: 34,
+  gridCardH: 125,
+  tile: 36,
   tileRadius: 8,
   tileIcon: 17,
   cardTitleTop: 12,
@@ -232,7 +231,7 @@ export const hcLanding = {
   speedTop: 12,
   speedGap: 8,
   speedPad: 14,
-  speedH: 159,
+  speedH: 160,
   speedPillH: 17,
   speedPillRadius: 6,
   speedPillPadX: 6,
@@ -261,7 +260,7 @@ export const hcLanding = {
   barPriceSize: 17.5,
   barNoteSize: 10,
   barBtnTop: 12,
-  barBtnH: 51,
+  barBtnH: 52,
   barBtnRadius: 12,
   barBtnSize: 15,
 };

@@ -1,0 +1,260 @@
+[
+  {
+    "file": "design/289-reexport-2x.png",
+    "width": 860,
+    "height": 4034,
+    "matches": [],
+    "changedPixels": null,
+    "classification": "comparison pending"
+  },
+  {
+    "file": "design/348-reexport-2x.png",
+    "width": 430,
+    "height": 1986,
+    "matches": [
+      "design/381-adv-dc-court-fee-sent.png"
+    ],
+    "changedPixels": 0
+  },
+  {
+    "file": "design/415-reexport-2x.png",
+    "width": 860,
+    "height": 3222,
+    "matches": [],
+    "changedPixels": null,
+    "comparison": {
+      "old": 379,
+      "oldWidth": 430,
+      "oldHeight": 1611,
+      "changedPixels": 234333,
+      "over20Pixels": 149728,
+      "meanMaxChannelError": 4.694124695047132,
+      "method": "nearest-neighbour dimension-normalized comparison; compression/frame differences included"
+    }
+  },
+  {
+    "file": "design/422-reexport-2x.png",
+    "width": 812,
+    "height": 3933,
+    "matches": [],
+    "changedPixels": null,
+    "comparison": {
+      "old": 386,
+      "oldWidth": 406,
+      "oldHeight": 1967,
+      "changedPixels": 281501,
+      "over20Pixels": 181369,
+      "meanMaxChannelError": 3.949710295228326,
+      "method": "nearest-neighbour dimension-normalized comparison; compression/frame differences included"
+    }
+  },
+  {
+    "file": "design/433-advocate-profile-full.png",
+    "width": 812,
+    "height": 2958,
+    "matches": [],
+    "changedPixels": null,
+    "comparison": {
+      "old": 118,
+      "oldWidth": 812,
+      "oldHeight": 2958,
+      "changedPixels": 156,
+      "over20Pixels": 10,
+      "meanMaxChannelError": 0.0007822986507325879,
+      "method": "nearest-neighbour dimension-normalized comparison; compression/frame differences included"
+    }
+  },
+  {
+    "file": "design/434-ln-complete-payment.png",
+    "width": 780,
+    "height": 2236,
+    "matches": [],
+    "changedPixels": null,
+    "comparison": {
+      "old": 28,
+      "oldWidth": 624,
+      "oldHeight": 1568,
+      "changedPixels": 1384385,
+      "over20Pixels": 256490,
+      "meanMaxChannelError": 17.64519402779689,
+      "method": "nearest-neighbour dimension-normalized comparison; compression/frame differences included"
+    }
+  },
+  {
+    "file": "design/435-ln-scan-pay.png",
+    "width": 780,
+    "height": 1796,
+    "matches": [],
+    "changedPixels": null,
+    "comparison": {
+      "old": 29,
+      "oldWidth": 681,
+      "oldHeight": 1568,
+      "changedPixels": 823279,
+      "over20Pixels": 40272,
+      "meanMaxChannelError": 2.634619667637485,
+      "method": "nearest-neighbour dimension-normalized comparison; compression/frame differences included"
+    }
+  },
+  {
+    "file": "design/436-payment-success-psr.png",
+    "width": 780,
+    "height": 1796,
+    "matches": [],
+    "changedPixels": null,
+    "comparison": {
+      "old": 30,
+      "oldWidth": 681,
+      "oldHeight": 1568,
+      "changedPixels": 1366322,
+      "over20Pixels": 23652,
+      "meanMaxChannelError": 2.1531166124150536,
+      "method": "nearest-neighbour dimension-normalized comparison; compression/frame differences included"
+    }
+  },
+  {
+    "file": "design/437-ln-request-submitted.png",
+    "width": 780,
+    "height": 3262,
+    "matches": [],
+    "changedPixels": null,
+    "comparison": {
+      "old": 31,
+      "oldWidth": 386,
+      "oldHeight": 1568,
+      "changedPixels": 2120185,
+      "over20Pixels": 482767,
+      "meanMaxChannelError": 21.6121787011272,
+      "method": "nearest-neighbour dimension-normalized comparison; compression/frame differences included"
+    }
+  },
+  {
+    "file": "design/438-ln-draft-ready-decision.png",
+    "width": 780,
+    "height": 1576,
+    "matches": [],
+    "changedPixels": null,
+    "comparison": {
+      "old": 32,
+      "oldWidth": 390,
+      "oldHeight": 1444,
+      "changedPixels": 1210167,
+      "over20Pixels": 284966,
+      "meanMaxChannelError": 28.607479988285824,
+      "method": "nearest-neighbour dimension-normalized comparison; compression/frame differences included"
+    }
+  },
+  {
+    "file": "design/439-ln-client-advocate-chat.png",
+    "width": 780,
+    "height": 1688,
+    "matches": [],
+    "changedPixels": null,
+    "comparison": {
+      "old": 33,
+      "oldWidth": 725,
+      "oldHeight": 1568,
+      "changedPixels": 506645,
+      "over20Pixels": 35929,
+      "meanMaxChannelError": 2.847159436140479,
+      "method": "nearest-neighbour dimension-normalized comparison; compression/frame differences included"
+    }
+  },
+  {
+    "file": "design/440-ln-notice-delivery.png",
+    "width": 812,
+    "height": 3226,
+    "matches": [],
+    "changedPixels": null,
+    "classification": "new design"
+  },
+  {
+    "file": "design/441-ln-notice-delivered.png",
+    "width": 860,
+    "height": 2557,
+    "matches": [],
+    "changedPixels": null,
+    "classification": "new design"
+  },
+  {
+    "file": "design/442-adv-cases-long.png",
+    "width": 812,
+    "height": 4798,
+    "matches": [
+      "design/213-adv-cases-full.png",
+      "design/221-adv-cases-full-2.png"
+    ],
+    "changedPixels": 0
+  },
+  {
+    "file": "design/443-adv-cases-list.png",
+    "width": 812,
+    "height": 2476,
+    "matches": [
+      "design/214-adv-cases-fir.png"
+    ],
+    "changedPixels": 0
+  },
+  {
+    "file": "design/444-adv-client-case-detail.png",
+    "width": 860,
+    "height": 3465,
+    "matches": [
+      "design/215-adv-fir-request.png"
+    ],
+    "changedPixels": 0
+  },
+  {
+    "file": "design/445-adv-review-documents.png",
+    "width": 812,
+    "height": 2527,
+    "matches": [
+      "design/216-adv-fir-documents.png"
+    ],
+    "changedPixels": 0
+  },
+  {
+    "file": "design/446-adv-fir-draft-generator.png",
+    "width": 812,
+    "height": 4813,
+    "matches": [
+      "design/217-adv-fir-generator.png"
+    ],
+    "changedPixels": 0
+  },
+  {
+    "file": "design/447-adv-fir-draft-proforma.png",
+    "width": 860,
+    "height": 6348,
+    "matches": [
+      "design/218-adv-fir-draft.png"
+    ],
+    "changedPixels": 0
+  },
+  {
+    "file": "design/448-adv-fir-review-waiting-full.png",
+    "width": 812,
+    "height": 2994,
+    "matches": [
+      "design/219-adv-fir-review.png"
+    ],
+    "changedPixels": 0
+  },
+  {
+    "file": "design/449-adv-fir-review-waiting-compact.png",
+    "width": 812,
+    "height": 2668,
+    "matches": [],
+    "changedPixels": null,
+    "classification": "comparison pending"
+  },
+  {
+    "file": "design/450-adv-fir-completed.png",
+    "width": 860,
+    "height": 2201,
+    "matches": [
+      "design/220-adv-fir-completed.png"
+    ],
+    "changedPixels": 0
+  }
+]
