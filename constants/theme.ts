@@ -237,3 +237,4 @@ export * from './tokens/loader';
 export * from './tokens/brand';
 export * from './tokens/previewNotice';
 export * from './tokens/pickers';
+export * from './tokens/previewStep';

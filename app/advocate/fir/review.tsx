@@ -27,7 +27,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { shrinkToFit } from '../../../constants/textFit';
 import { FIR_REVIEW } from '../../../data/advocateFir';
-import { advFirReview as t, colors, font, ink } from '../../../constants/theme';
+import { advFirReview as t, colors, font, ink, previewStep } from '../../../constants/theme';
 
 // FIR review & status (design/219).
 //
@@ -107,10 +107,11 @@ export default function AdvocateFirReviewScreen() {
             </Pressable>
           ))}
         </View>
-        {/* Kept: the other two states have no design. See data/advocateFir.ts. */}
+        {/* The other two states have no design (data/advocateFir.ts devNote — a code
+            note, never rendered); they show the drawn content with a neutral line. */}
         {state !== r.switcher.states[0] && (
           <View style={styles.devNote}>
-            <Text style={styles.devNoteText}>{r.switcher.devNote}</Text>
+            <Text style={styles.devNoteText}>{previewStep.line}</Text>
           </View>
         )}
 

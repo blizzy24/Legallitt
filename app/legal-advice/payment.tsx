@@ -1,8 +1,5 @@
+import PreviewStep from '../../components/PreviewStep';
 import { useDemoWait } from '../../hooks/useDemoAdvance';
-import { StyleSheet, Text, View } from 'react-native';
-
-import ServiceHeader from '../../components/ServiceHeader';
-import { colors, font, profile as t, space } from '../../constants/theme';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // DELIBERATE PLACEHOLDER — NOT AN UNFINISHED SCREEN.
@@ -35,47 +32,18 @@ import { colors, font, profile as t, space } from '../../constants/theme';
 // Every figure is recorded in data/legalAdvice.ts. Nothing computes a total, here
 // or anywhere else in this flow.
 // ─────────────────────────────────────────────────────────────────────────────
-
-const BLOCKERS = [
-  'Which price table is correct — the landing’s or the choose screen’s?',
-  'How do consultation type and advocate experience combine into one amount?',
-  'What is the bare “Standard Fee ₹999” on the date screen the fee for?',
-  'Is the follow-up platform fee ₹99 or ₹199, as everywhere else?',
-  'Is chat a 30-minute call or a 7-day thread? The designs say both.',
-];
-
+//
+// The open pricing questions (kept here, never rendered):
+//  · Which price table is correct — the landing’s or the choose screen’s?
+//  · How do consultation type and advocate experience combine into one amount?
+//  · What is the bare “Standard Fee ₹999” on the date screen the fee for?
+//  · Is the follow-up platform fee ₹99 or ₹199, as everywhere else?
+//  · Is chat a 30-minute call or a 7-day thread? The designs say both.
+//
+// What renders is the neutral preview step: the service, one line, and Continue
+// to the confirmation (design/111). No amount is shown — none is settled.
 export default function LegalAdvicePaymentScreen() {
-  // DEMO: pricing is unresolved, so no payment is built; demo mode moves on to the
-  // next drawn screen after the shared wait (data/flowMap.ts).
+  // Demo mode moves on by itself after the shared wait; Continue works either way.
   useDemoWait();
-  return (
-    <View style={styles.screen}>
-      <ServiceHeader title="Payment" />
-      <View style={styles.body}>
-        <Text style={styles.title}>Payment is blocked pending pricing</Text>
-        <Text style={styles.text}>
-          This screen is deliberately not built. The designs carry two contradictory price
-          tables for the same three consultation types, plus a second pricing axis
-          (advocate experience) that no screen reconciles with the first.
-        </Text>
-        {BLOCKERS.map((b) => (
-          <Text key={b} style={styles.item}>
-            •  {b}
-          </Text>
-        ))}
-        <Text style={styles.text}>
-          Every figure from the designs is recorded in data/legalAdvice.ts. Nothing in this
-          flow computes a total.
-        </Text>
-      </View>
-    </View>
-  );
+  return <PreviewStep header="Payment" service="Legal Advice" next="/legal-advice/confirmed" />;
 }
-
-const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.appBg },
-  body: { paddingHorizontal: space.screenX, paddingTop: t.sectionGap, gap: 10 },
-  title: { fontFamily: font.appHeading, fontSize: t.rowTitleSize + 3, color: colors.textPrimary },
-  text: { fontFamily: font.appBody, fontSize: t.rowSubSize, lineHeight: 20, color: colors.textBody },
-  item: { fontFamily: font.appBody, fontSize: t.rowSubSize, lineHeight: 20, color: colors.textPrimary },
-});
