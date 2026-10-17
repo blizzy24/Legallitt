@@ -121,8 +121,10 @@ export const DC_ASSIGNED = {
   timeline: [
     { title: 'Request Submitted', desc: 'Details and payment completed', state: 'done' },
     { title: 'Under Review', desc: 'Legalitt reviewed court jurisdiction', state: 'done' },
-    // ⚠ CONFLICT 4 — Gurpreet Chawla, not the Abhishek Verma assigned above.
-    { title: 'Advocate Assigned', desc: 'Matched with Advocate Gurpreet Chawla', state: 'done' },
+    // ⚠ CONFLICT 4 — design/300 draws "Matched with Advocate Gurpreet Chawla" under a
+    // card for Adv Abhishek Verma. Client review (17 Oct): one screen, one name — the
+    // card's, which is the assignment.
+    { title: 'Advocate Assigned', desc: 'Matched with Advocate Abhishek Verma', state: 'done' },
     { title: 'Talk to Advocate', desc: 'You can chat or call directly with the advocate', state: 'active', chip: 'Active Step' },
     { title: 'Client Decision', desc: 'Accept or request another advocate', state: 'waiting' },
     { title: 'Documents', desc: 'Upload required evidence and ID', state: 'waiting' },
@@ -1295,7 +1297,9 @@ export const DC_ACCEPTED = {
     'You can review the list and then send the documents.',
   ] as const,
   wait: '[ Waiting for Advocate ]',
-  caption: 'You will be notified once Advocate Gurpreet Chawla shares the document checklist.',
+  // ⚠ CONFLICT 4 — design/346 draws "Advocate Gurpreet Chawla" here, under the card's
+  // Adv Abhishek Verma. Client review (17 Oct): the card's name.
+  caption: 'You will be notified once Advocate Abhishek Verma shares the document checklist.',
 };
 
 /**

@@ -41,8 +41,7 @@ import { DC_ACCEPTED } from '../../../../data/districtCourt';
 // documents-needed screen (design/350). Flagged.
 //
 // Chat opens the existing advocate chat (301). STATIC, NOT WIRED: Call dials
-// nothing, Copy copies nothing, View Profile opens nothing (no profile is
-// drawn), the progress list is a drawing. The photo is an initials avatar, as
+// nothing, Copy copies nothing, the progress list is a drawing. The photo is an initials avatar, as
 // on 300 and 345; the header avatar is the standard one.
 
 export default function DistrictAcceptedScreen() {
@@ -113,12 +112,13 @@ export default function DistrictAcceptedScreen() {
               <Text style={styles.loc}>{d.loc}</Text>
             </View>
           </View>
-          <View style={styles.profile}>
+          {/* The profile screen (design/81) with only design/300's drawn values. */}
+          <Pressable accessibilityRole="button" onPress={() => router.push('/advocates/adv-abhishek-verma' as Href)} style={styles.profile}>
             <Text style={styles.profileText} {...shrinkToFit(0.8)}>
               {d.profile}
             </Text>
             <ArrowRight size={t.profileIcon} color={c.brown} strokeWidth={2.2} />
-          </View>
+          </Pressable>
         </View>
 
         <View style={[styles.card, styles.next]}>

@@ -38,8 +38,8 @@ import { DC_ASSIGNED } from '../../../data/districtCourt';
 // tiny screenshot thumbnail, not a person — rendered as the standard avatar.
 //
 // STATIC, NOT WIRED: Call Advocate dials nothing; Copy copies nothing; the
-// timeline is a drawing. View Advocate Profile is inert — no profile is drawn
-// for Adv Abhishek Verma and the /advocates/[id] records do not include him.
+// timeline is a drawing. View Advocate Profile opens the profile screen (design/81) with only the values
+// this screen draws for him.
 
 const CHIP_ICON = { award: Award, pin: MapPin, gavel: Gavel } as const;
 
@@ -113,13 +113,13 @@ export default function DistrictCourtAdvocateAssignedScreen() {
             <Text style={styles.descText}>{d.bio}</Text>
           </View>
 
-          {/* Inert — no profile is drawn for this advocate. */}
-          <View style={styles.profile}>
+          {/* The profile screen (design/81) with only this screen's drawn values. */}
+          <Pressable accessibilityRole="button" onPress={() => router.push('/advocates/adv-abhishek-verma' as Href)} style={styles.profile}>
             <Text style={styles.profileText} {...shrinkToFit(0.8)}>
               {d.profile}
             </Text>
             <ArrowRight size={t.btnIcon} color={c.ink} strokeWidth={2.2} />
-          </View>
+          </Pressable>
         </View>
 
         <View style={[styles.card, styles.caseCard]}>

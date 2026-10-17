@@ -164,6 +164,36 @@ export const ADVOCATES_HEADER = {
 export const advocateById = (id: string) => SAVED_ADVOCATES.find((a) => a.id === id);
 
 /**
+ * A profile as app/advocates/[id].tsx (design/81) shows it: the saved advocates'
+ * full records, or a court advocate's record holding only what that advocate's
+ * own screen draws — the screen leaves out every section it has no values for.
+ */
+export type AdvocateProfileView = Pick<SavedAdvocate, 'id' | 'initials' | 'name' | 'verified' | 'experience' | 'location' | 'practiceAreas' | 'about'> &
+  Partial<Omit<SavedAdvocate, 'id' | 'initials' | 'name' | 'verified' | 'experience' | 'location' | 'practiceAreas' | 'about'>>;
+
+/**
+ * The District Court advocate, from design/300 (Advocate Assigned): name,
+ * verified, 8+ years, Indore, Civil & Property and the drawn bio. No rating,
+ * reviews, bar number, education, courts, languages or availability is drawn for
+ * him, so none is given.
+ */
+export const COURT_ADVOCATES: AdvocateProfileView[] = [
+  {
+    id: 'adv-abhishek-verma',
+    initials: 'AV',
+    name: 'Adv Abhishek Verma',
+    verified: true,
+    experience: '8+ Years',
+    location: 'Indore, Madhya Pradesh',
+    practiceAreas: ['Civil & Property'],
+    about: 'Experienced in civil, property and family matters with extensive trial appearance record in Indore District Courts.',
+  },
+];
+
+export const advocateProfileById = (id: string): AdvocateProfileView | undefined =>
+  advocateById(id) ?? COURT_ADVOCATES.find((a) => a.id === id);
+
+/**
  * design/81's profile screen names the advocate "Adv. Rahul Sharma" and carries a
  * photograph. Neither matches the two saved advocates on design/55, so the profile
  * renders whichever advocate was tapped and uses its own fields; the file's own name

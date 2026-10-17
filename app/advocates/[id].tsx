@@ -20,7 +20,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { shrinkToFit } from '../../constants/textFit';
 import { advocateProfile as t, colors, font, ink } from '../../constants/theme';
-import { SAVED_ADVOCATES, advocateById, type AdvocateReview } from '../../data/advocates';
+import { SAVED_ADVOCATES, advocateProfileById, type AdvocateProfileView, type AdvocateReview } from '../../data/advocates';
 
 // Advocate Profile (design/81).
 //
@@ -64,15 +64,19 @@ import { SAVED_ADVOCATES, advocateById, type AdvocateReview } from '../../data/a
 export default function AdvocateProfileScreen() {
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const advocate = advocateById(String(id)) ?? SAVED_ADVOCATES[0];
+  // A court advocate's record carries only what its screen draws; every section
+  // below whose values it lacks is left out rather than filled from another advocate.
+  const advocate: AdvocateProfileView = advocateProfileById(String(id)) ?? SAVED_ADVOCATES[0];
   const [expanded, setExpanded] = useState(false);
 
-  const details: { label: string; icon: LucideIcon; value: string }[] = [
-    { label: 'EXPERIENCE', icon: Award, value: advocate.experience },
-    { label: 'EDUCATION', icon: GraduationCap, value: advocate.education },
-    { label: 'COURTS', icon: Scale, value: advocate.courts },
-    { label: 'LANGUAGES', icon: Languages, value: advocate.languages },
-  ];
+  const details = (
+    [
+      { label: 'EXPERIENCE', icon: Award, value: advocate.experience },
+      { label: 'EDUCATION', icon: GraduationCap, value: advocate.education },
+      { label: 'COURTS', icon: Scale, value: advocate.courts },
+      { label: 'LANGUAGES', icon: Languages, value: advocate.languages },
+    ] as { label: string; icon: LucideIcon; value?: string }[]
+  ).filter((d): d is { label: string; icon: LucideIcon; value: string } => !!d.value);
 
   return (
     <View style={styles.screen}>
@@ -133,6 +137,7 @@ export default function AdvocateProfileScreen() {
             </Text>
           </View>
 
+          {advocate.rating ? (
           <View style={styles.rating}>
             <Star size={t.ratingIcon} color={t.star} fill={t.star} />
             <Text style={styles.ratingValue} {...shrinkToFit(0.8)}>
@@ -142,8 +147,10 @@ export default function AdvocateProfileScreen() {
               ({advocate.reviewCount} Reviews)
             </Text>
           </View>
+          ) : null}
         </View>
 
+        {advocate.barCouncil ? (
         <View style={styles.enrol}>
           <View style={styles.enrolIcon}>
             <ShieldCheck size={t.enrolIconGlyph} color={ink.accent} />
@@ -158,6 +165,7 @@ export default function AdvocateProfileScreen() {
           </View>
           <ShieldCheck size={t.enrolShield} color={colors.textMuted} />
         </View>
+        ) : null}
 
         <View style={styles.sectionRow}>
           <Text style={styles.sectionLabel} {...shrinkToFit(0.8)}>
@@ -213,6 +221,8 @@ export default function AdvocateProfileScreen() {
           ))}
         </View>
 
+        {advocate.availabilityLabel ? (
+        <>
         <Text style={[styles.sectionLabel, styles.soloLabel]} {...shrinkToFit(0.8)}>
           AVAILABILITY
         </Text>
@@ -240,7 +250,11 @@ export default function AdvocateProfileScreen() {
             </Text>
           </View>
         </View>
+        </>
+        ) : null}
 
+        {advocate.reviews?.length ? (
+        <>
         <View style={styles.sectionRow}>
           <Text style={styles.sectionLabel} {...shrinkToFit(0.8)}>
             CLIENT REVIEWS
@@ -259,6 +273,8 @@ export default function AdvocateProfileScreen() {
         {advocate.reviews.map((r) => (
           <ReviewCard key={r.name} review={r} />
         ))}
+        </>
+        ) : null}
       </ScrollView>
     </View>
   );
