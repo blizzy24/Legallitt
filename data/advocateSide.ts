@@ -2883,7 +2883,7 @@ export type AdvCaseMatter = {
   id: string;
   service: string;
   /** Routes Review Request; see the screen. */
-  serviceKey: 'legal-notice' | 'fir' | 'property-search' | 'forensic' | 'other';
+  serviceKey: 'legal-notice' | 'fir' | 'property-search' | 'forensic' | 'legal-advice' | 'high-court' | 'district-court' | 'other';
   /** Where Review opens, for a service whose flow is not keyed by serviceKey. */
   href?: string;
   urgency: 'URGENT' | 'ORDINARY';
@@ -2916,6 +2916,12 @@ export const ADV_CASES_SERVICES = [
    *  service, the card chip and every other screen read "Document Forensic". */
   'Documents Forensic',
   'Property Search',
+  // Added for the services built after designs 204 / 222 / 362, whose chip row
+  // runs off the screen edge before any of them (client review, 17 Oct). The
+  // labels are the cards' own service names, in the chips' title case.
+  'Legal Advice',
+  'High Court Representation',
+  'District Court Representation',
 ];
 
 /**
@@ -2928,6 +2934,9 @@ export const ADV_CASES_SERVICE_KEYS: Record<string, AdvCaseMatter['serviceKey']>
   'FIR Draft': 'fir',
   'Documents Forensic': 'forensic',
   'Property Search': 'property-search',
+  'Legal Advice': 'legal-advice',
+  'High Court Representation': 'high-court',
+  'District Court Representation': 'district-court',
 };
 
 export const ADV_CASES: AdvCaseMatter[] = [
@@ -3000,7 +3009,7 @@ export const ADV_CASES: AdvCaseMatter[] = [
     service: 'HIGH COURT REPRESENTATION',
     /** The advocate court flow starts at design/363's request. */
     href: '/advocate/court/request',
-    serviceKey: 'other',
+    serviceKey: 'high-court',
     urgency: 'URGENT',
     title: 'Rahul Sharma vs. ABC Enterprises',
     ref: 'HC-2026-1048',
@@ -3017,7 +3026,7 @@ export const ADV_CASES: AdvCaseMatter[] = [
     // ⚠ No District Court request is drawn: 363 is the High Court request, and
     // the batch mixes the two dockets throughout (data/advocateCourt.ts, conflict 4).
     href: '/advocate/court/dc/request',
-    serviceKey: 'other',
+    serviceKey: 'district-court',
     urgency: 'ORDINARY',
     title: 'Ananya Singh vs. Verma Group',
     ref: 'DC-2026-1048',
@@ -3031,7 +3040,7 @@ export const ADV_CASES: AdvCaseMatter[] = [
   {
     id: 'la-2026-1048',
     service: 'LEGAL ADVICE',
-    serviceKey: 'other',
+    serviceKey: 'legal-advice',
     /** The Legal Advice advocate flow starts at design/163's request detail. */
     href: '/advocate/requests/la-2026-1048',
     urgency: 'ORDINARY',
