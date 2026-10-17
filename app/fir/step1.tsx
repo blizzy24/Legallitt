@@ -1,3 +1,4 @@
+import PoliceStationPicker from '../../components/PoliceStationPicker';
 import { router } from 'expo-router';
 import { ArrowRight, ChevronDown, Landmark, ShieldCheck } from 'lucide-react-native';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
@@ -89,7 +90,7 @@ export default function FirStep1Screen() {
           <Select value={jurisdiction.district} placeholder={JURISDICTION_PLACEHOLDERS.district} />
         </LabelledField>
         <LabelledField label="Police Station" required>
-          <Select value={jurisdiction.policeStation} placeholder={JURISDICTION_PLACEHOLDERS.policeStation} />
+          <PoliceStationPicker value={jurisdiction.policeStation} onChange={(policeStation) => updateJurisdiction({ policeStation })} />
         </LabelledField>
       </View>
 

@@ -1,0 +1,162 @@
+CLIENT DECISIONS — 18 OCTOBER 2026
+
+1. ADVOCATE NAME
+The 1048 case journey now names Adv. Abhishek Verma, including the conflicting
+High Court document-request/delivery screens and the case-specific Legal Notice
+letterhead. Other cases keep their advocates; the shared Property Search/document
+template is not globally renamed.
+Files changed for this decision:
+- data/highCourt.ts
+- data/districtCourt.ts
+- data/courier.ts
+- data/advocateSide.ts
+- data/advocateCourt.ts
+- components/LegalDocumentPage.tsx
+- components/NoticeResponseScreen.tsx
+Historical design discrepancies remain in comments. Firm names and contact details
+were not invented: the old courier email remains a separate client-data question.
+
+2. ARJUN SHARMA
+4.9 stars and 142 reviews across his shared consultation/rating and Legal Notice
+profile/tracking data. The 4.8 / 120+ variant has been removed for Arjun.
+Other advocates' ratings are unchanged.
+
+3. GST AND TOTALS THAT DIFFER FROM THE ARTWORK
+GST is 18% of the displayed service base, added on top. Paise are retained to two
+decimal places. Existing flat platform fees remain separate; their rates were not
+changed. No tax was added to an explicitly excluded/pending price.
+
+Service                    Base        GST         Platform    Payable
+Legal Notice ordinary      699         125.82      199         1,023.82
+Legal Notice urgent        999         179.82      199         1,377.82
+Property Search ordinary   499          89.82      199           787.82
+Property Search urgent     999         179.82      199         1,377.82
+Document Forensic ordinary 1,499       269.82      199         1,967.82
+Document Forensic urgent   2,999       539.82      199         3,737.82
+Courier service            250          45.00        0           295.00
+High Court ordinary        24,999    4,499.82        0        29,498.82
+High Court urgent          34,999    6,299.82        0        41,298.82
+All figures above are rupees. Base prices are existing prices, not new placeholders.
+
+Screens whose payable total differs from the drawn total:
+- Legal Notice 28 (/legal-notice/step6), 29 (/legal-notice/scan-pay),
+  30 (/legal-notice/success), 31–32 (/legal-notice/tracking states): selected
+  tier gives 1,023.82 or 1,377.82; the drawn checkout template is 1,377.
+- Property Search 77 (/property-search/payment) and its shared Scan & Pay and
+  success screens: 787.82 or 1,377.82 instead of the drawn 1,377.
+- Document Forensic 86 (/document-forensic/payment) and its shared Scan & Pay
+  and success screens: 1,967.82 or 3,737.82. Design 86 draws 3,939 with a
+  mismatched 3,167 base; that unresolved base conflict is still recorded.
+- Generic courier 276 (/courier/delivery-details), 277 (/courier/payment),
+  278 (/courier/scan-pay): 295 instead of 290. Its existing success route
+  (/courier/success) continues to show the actual paid amount, now 295.
+- Advocate notice delivery 196 (/advocate/notice/[id]/payment),
+  197 (/advocate/notice/[id]/scan-pay), 198 (/advocate/notice/[id]/paid):
+  295. The payment artwork draws 290; the reused success template draws 1,377.
+- High Court 295 (/services/high-court/pricing): 29,498.82 or 41,298.82
+  instead of the displayed base total 24,999 or 34,999. The selected amount
+  continues through /services/high-court/payment, /services/high-court/payment?step=scan,
+  and /services/high-court/payment?step=done (shared 296–298 screens). The separate
+  pending-case 34,999 / 379 / 40,680 template remains untouched.
+- High Court courier 305–306 (/services/high-court/courier/booking and
+  /services/high-court/courier/confirm): payable footer 295 instead of 250;
+  the fee line remains the 250 base, labelled exclusive of GST.
+- High Court courier 307 (/courier/payment?flow=hcr): 295 instead of the
+  revised drawing's 249 total / 290 footer. 308 (/courier/scan-pay?flow=hcr):
+  295 instead of 249. 309 (/courier/success?flow=hcr): actual paid amount 295.
+
+Pending exceptions explicitly retained:
+- District Court prices, including the courier variant's conflicting 250 + 40,
+  total 249, footer 290. Correcting those would change the excluded DC prices.
+- Legal Advice pricing and its recorded design-108 1,377 question.
+- The separate 34,999 / 379 / 40,680 payment record.
+- Design 279's literal 1,377 success-template data. Runtime courier success
+  already substituted the transaction amount before this change; that behavior
+  continues. The literal has not been corrected or deleted.
+- Commission rates and commission-policy questions.
+
+4. COUNTER SCHEME
+One-based numbering. A form says Step n of N; an ongoing case says Stage n of N.
+Payment/success are outside intake numbering. Review screens inside an intake
+count as a step. Subprocesses (delivery, manual verification, fee requests) have
+separate, explicitly scoped counters; they do not reset the main case stages.
+Changed flows:
+- Legal Advice intake: five steps; review is step 5, not a sixth step.
+- FIR status/ready: the same five lifecycle stages on both screens; status 2/5,
+  ready 5/5. FIR's existing five-step intake stays five.
+- Advocate enrollment: Personal, Professional, Bar Council, Practice,
+  Documents, Review — steps 1–6. Incomplete documents return to step 5.
+- District Court intake: Case Type, Details, Documents, Service, Review — 1–5.
+- High Court new-case intake: Case Type, Matter Type, Details, Documents,
+  Pricing — 1–5. Pending-case intake is its shorter two-screen branch — 1–2.
+- Client and advocate court lifecycle: Request Submitted, Under Review,
+  Advocate Assigned, Client Decision, Documents, Case Preparation, Court Filing,
+  First Hearing, Hearing Update, Next Hearing, Case Completed — eleven stages.
+  Court progress lists and their numbered badges now use this sequence.
+  Change-advocate review returns to Under Review; its separate three-action
+  change-request checklist remains separate from the case timeline.
+- High Court courier form labels explicitly say Delivery step 2/3 and 3/3;
+  delivered-docket confirmation is step 3/4, matching its active row.
+- KYC method choice is unnumbered; DigiLocker connect/check/result are 1/2/3.
+  Video introduction is 1/3, capture 2/3, result 3/3. The device-check screen's
+  requested pending copy is preserved, rather than silently edited.
+Existing Legal Notice six-step intake, Property Search/Forensic three-step intake,
+consistent service status lists, and separate fee/manual-verification checklists
+retain their own totals.
+
+5. BOTTOM NAVIGATION
+Client: Home / Cases / Advocates / Profile, four icon tabs.
+Advocate: Dashboard / Matters / Clients / Earnings, four icon tabs.
+The four-icon client set is drawn on 11, 12, 50 and 142; designs 14 and 21 disagree
+with five tabs. The advocate four-icon set is drawn on 148 and 151; the previous
+implementation added a fifth Profile tab that those designs do not draw.
+All existing role tab bars now use their role's common set. The duplicate bar on
+Messages was removed. Advocate settings remains reachable from the dashboard
+avatar. Services and Messages remain routes reachable through existing app links.
+
+6. SEVEN CLIENT IDENTITY CHECKPOINTS
+- Legal Notice document upload, design 91: /legal-notice/step4
+- Legal Notice document review, design 39: /legal-notice/step4-review
+- High Court initial documents, design 294: /services/high-court/documents
+- High Court requested documents, design 303: /services/high-court/documents-needed
+- District Court initial documents, design 342: /services/district-court/documents
+- District Court review, design 344: /services/district-court/review
+- District Court requested documents, design 350: /services/district-court/documents-needed
+Whichever checkpoint is entered first opens the existing KYC flow. Completing it
+returns to that checkpoint. Later checkpoints show Identity verified, reuse the
+result, and remove the repeated identity upload. Forward actions require that
+result. Leaving verification without completing it does not mark it verified.
+The result is session-scoped and clears on login/role changes; it is not persisted
+across reloads, matching the app's current session model.
+
+Genuine re-verification among these seven: none. No supplied process requirement
+requires collecting the same client's Aadhaar again. Advocate enrollment's own ID,
+Sanad/COP and missing-document submission remain: they concern a different person's
+identity/professional credentials. Court physical-document receipt/manual checks
+remain separate evidence/custody checks, not a new client Aadhaar upload.
+
+Production limitation: the pre-existing DigiLocker/video implementation simulates
+verification and has no identity-provider/backend integration. This work implements
+reuse and routing, not real identity validation. Production verification still
+requires a provider-issued, server-validated result; no provider credentials or
+backend contract are present in this repository.
+
+7. POLICE STATION SELECTION
+Searchable picker on FIR steps 1 and 2, with selection shared through review.
+Seeded ONLY from drawn names:
+- Sector 20 Police Station, Gautam Buddha Nagar (43).
+- Central Kotwali, Zone 2, Indore (M.P.) (215/218/219).
+data/policeStations.ts explicitly records that the full station list and
+jurisdiction mapping are pending from the client. Search includes an empty state;
+closing the picker without choosing preserves the previous selection.
+
+UNCHANGED
+Logo and splash hexagon arrangements, KYC device-check copy, and all pending
+pricing/commission exceptions listed above.
+
+VALIDATION
+TypeScript passed; production web export passed. Browser smoke: 315 routes, zero
+blank/unmatched routes or uncaught browser exceptions. Targeted browser checks
+passed: all seven first-use KYC prompts, completing KYC and reusing it in document
+review, station search/filter/empty state/selection carried to step 2, both role
+navigation sets, and Legal Notice/courier/High Court GST totals.

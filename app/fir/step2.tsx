@@ -1,3 +1,4 @@
+import PoliceStationPicker from '../../components/PoliceStationPicker';
 import { previewNotice } from '../../components/PreviewNotice';
 import { router } from 'expo-router';
 import { ArrowRight, Calendar, ChevronsUpDown, Clock, List, MapPin, Mic, ShieldCheck, SquarePen } from 'lucide-react-native';
@@ -9,13 +10,12 @@ import { shrinkToOneLine } from '../../constants/textFit';
 import { colors, firStep2 as t, font, ink } from '../../constants/theme';
 import { useFir } from '../../context/fir';
 
-const POLICE_STATION_PREFILL = 'Sector 20 Police Station, Gautam Buddha Nagar';
 
 // Step 2 — Incident Details (design/43). Date, time and the police station are
 // pre-filled sample values as drawn; the two textareas are live and the character
 // counter tracks the narrative.
 export default function FirStep2Screen() {
-  const { form, updateIncident } = useFir();
+  const { form, updateIncident, updateJurisdiction } = useFir();
   const { incident } = form;
   const narrative = incident.description;
 
@@ -45,15 +45,7 @@ export default function FirStep2Screen() {
         />
 
         <Label text="Competent Police Station" required style={styles.labelSpaced} />
-        <Pressable onPress={() => previewNotice("Competent Police Station")} accessibilityRole="button" accessibilityLabel="Competent Police Station" style={styles.select}>
-          <ShieldCheck size={t.fieldIcon} color={ink.accent} />
-          {/* design/43 clips this pre-filled value at the chevron too; on device it
-              shrinks rather than ellipsising. */}
-          <Text style={styles.selectText} numberOfLines={1} {...shrinkToOneLine(0.8)}>
-            {POLICE_STATION_PREFILL}
-          </Text>
-          <ChevronsUpDown size={t.fieldIcon} color={colors.textBody} />
-        </Pressable>
+        <PoliceStationPicker value={form.jurisdiction.policeStation} onChange={(policeStation) => updateJurisdiction({ policeStation })} />
         <Text style={styles.note}>Pre-filled from basic details jurisdiction. You can edit if different.</Text>
       </Card>
 

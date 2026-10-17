@@ -1,3 +1,4 @@
+import { useFir } from '../../context/fir';
 import { previewNotice } from '../../components/PreviewNotice';
 import { router } from 'expo-router';
 import {
@@ -35,6 +36,7 @@ const TAG_STYLE = {
 };
 
 export default function FirStep5Screen() {
+  const { form } = useFir();
   const [expanded, setExpanded] = useState(false);
 
   return (
@@ -45,6 +47,7 @@ export default function FirStep5Screen() {
       </Text>
 
       <Card icon={UserRound} title="Basic Details" link="Edit" first>
+        <Field label="POLICE STATION" value={form.jurisdiction.policeStation || 'Not selected'} />
         <View style={styles.panel}>
           <View style={styles.labelRow}>
             <Text style={styles.label} {...shrinkToFit(0.8)}>
