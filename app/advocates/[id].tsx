@@ -15,7 +15,7 @@ import {
   type LucideIcon,
 } from 'lucide-react-native';
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { shrinkToFit } from '../../constants/textFit';
@@ -61,12 +61,12 @@ import { SAVED_ADVOCATES, advocateProfileById, type AdvocateProfileView, type Ad
 // off-palette decision above is unchanged by it.
 // ─────────────────────────────────────────────────────────────────────────────
 
-export default function AdvocateProfileScreen() {
+export default function AdvocateProfileScreen({ profileId }: { profileId?: string }) {
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
   // A court advocate's record carries only what its screen draws; every section
   // below whose values it lacks is left out rather than filled from another advocate.
-  const advocate: AdvocateProfileView = advocateProfileById(String(id)) ?? SAVED_ADVOCATES[0];
+  const advocate: AdvocateProfileView = advocateProfileById(profileId ?? String(id)) ?? SAVED_ADVOCATES[0];
   const [expanded, setExpanded] = useState(false);
 
   const details = (
@@ -104,12 +104,8 @@ export default function AdvocateProfileScreen() {
         <View style={styles.hero}>
           <View style={styles.photoWrap}>
             {/* Placeholder for design/81's photograph, sized to the file's circle. */}
-            <View style={styles.photo}>
-              <Text style={styles.photoText}>{advocate.initials}</Text>
-            </View>
-            <View style={styles.badge}>
-              <BadgeCheck size={t.badgeGlyph} color={ink.onBrand} />
-            </View>
+            {advocate.id === 'adv-rahul-sharma' ? <Image source={require('../../assets/advocate-rahul-profile.png')} accessibilityLabel={advocate.name} style={styles.photo}/> : <View style={styles.photo}><Text style={styles.photoText}>{advocate.initials}</Text></View>}
+            {advocate.id !== 'adv-rahul-sharma' && <View style={styles.badge}><BadgeCheck size={t.badgeGlyph} color={ink.onBrand} /></View>}
           </View>
 
           <Text style={styles.name} {...shrinkToFit(0.75)}>

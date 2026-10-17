@@ -186,6 +186,7 @@ export const FLOW_MAP: Record<string, string> = {
   '/advocate/wallet/bank': '/advocate/wallet/utr', // 360 → 361
   // last: /advocate/wallet/utr (361)
   // ── advocates ──
+  '/advocates/rahul-sharma': '/advocates', // 433: standalone; identity confirmation pending
   '/advocates': '/advocates/[id]', // 55 → 81
   // last: /advocates/[id] (81)
   // ── callback ──

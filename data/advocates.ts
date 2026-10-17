@@ -203,9 +203,27 @@ export const LEGAL_NOTICE_ADVOCATE: AdvocateProfileView = {
   reviewCount: 142,
 };
 
+// design/433 repeats 118, naming Rahul Sharma. Identity is pending client
+// confirmation: this record is deliberately NOT used by Legal Notice's button.
+export const DESIGN_433_ADVOCATE: AdvocateProfileView = {
+  id: 'adv-rahul-sharma', initials: 'RS', name: 'Adv. Rahul Sharma', verified: true,
+  experience: '8+ Years', location: 'Indore, MP', rating: '4.8', reviewCount: 126,
+  barCouncil: 'MP/1234/2018',
+  practiceAreas: ['Criminal Law', 'Civil Law', 'Property Law', 'Family Law'],
+  about: "Adv. Rahul Sharma is an experienced legal professional with expertise in civil, criminal, and property matters. He focuses on providing clear legal guidance and professional representation tailored to each client's needs.",
+  education: 'LL.B., LL.M.', courts: 'District & High Court', languages: 'Hindi, English',
+  availabilityLabel: 'Available for Consultation', availabilityChip: 'Slots open',
+  days: 'Mon – Sat', hours: '10:00 AM – 7:00 PM',
+  reviews: [
+    {initials: 'PS', name: 'Priya S.', stars: 5, quote: 'Very professional and explained the legal process clearly.'},
+    {initials: 'AK', name: 'Amit K.', stars: 5, quote: 'Helpful consultation and clear guidance.'},
+  ],
+};
+
 export const advocateProfileById = (id: string): AdvocateProfileView | undefined =>
   advocateById(id) ?? COURT_ADVOCATES.find((a) => a.id === id) ??
-  (id === LEGAL_NOTICE_ADVOCATE.id ? LEGAL_NOTICE_ADVOCATE : undefined);
+  (id === LEGAL_NOTICE_ADVOCATE.id ? LEGAL_NOTICE_ADVOCATE : undefined) ??
+  (id === DESIGN_433_ADVOCATE.id ? DESIGN_433_ADVOCATE : undefined);
 
 /**
  * design/81's profile screen names the advocate "Adv. Rahul Sharma" and carries a

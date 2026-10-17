@@ -38,3 +38,7 @@ Both 448 and 449 visibly select Waiting and say WAITING FOR CLIENT. These are ad
 Client subsequently authorised correcting 434's arithmetic. Service + delivery179 + platform199 are exclusive base fees; GST is18% on their sum. Urgent:999 +179 +199 +247.86 =1,624.86. Ordinary:699 +179 +199 +193.86 =1,270.86. These replace the static1,377 in434–436 and the inconsistent1,178.82 in437. The same calculation feeds checkout, QR, success and tracking.
 
 Local production browser walk passed approval→decision→delivery→delivered→case list, request-changes→chat with typed message, chat sending, proof viewer, existing Arjun profile, and calculated checkout row/total. No browser exceptions. `tsc --noEmit` passed before this stage.
+
+## Supplied profile
+
+/advocates/rahul-sharma renders433 using the existing conditional profile component, the PNG's photograph, and its literal Rahul-specific record. Browser checked name, bar enrollment, rating/review count and both reviews. No Legal Notice profile button changed; Arjun remains the assigned profile. Ready to wire after identity confirmation.
