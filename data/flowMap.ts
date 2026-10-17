@@ -274,7 +274,12 @@ export const FLOW_MAP: Record<string, string> = {
   '/legal-notice/step6': '/legal-notice/scan-pay', // 28 → 29
   '/legal-notice/scan-pay': '/legal-notice/success', // 29 → 30
   '/legal-notice/success': '/legal-notice/tracking', // 30 → 31
-  '/legal-notice/tracking': '/legal-notice/step4-review', // 31 → 39
+  '/legal-notice/tracking': '/legal-notice/request-submitted', // 32 → 437
+  '/legal-notice/request-submitted': '/legal-notice/delivery', // 437 → 440
+  '/legal-notice/request-changes': '/chat/advocate', // 438 → 439
+  '/legal-notice/delivery': '/legal-notice/delivered', // 440 → 441
+  '/legal-notice/delivered': '/cases', // terminal delivery → case list
+  '/legal-notice/delivery-proof': '/legal-notice/delivered',
   '/legal-notice/step4-review': '/legal-notice/step4', // 39 → 91
   // last: /legal-notice/step4 (91)
   // ── login ──

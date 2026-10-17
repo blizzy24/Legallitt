@@ -1,6 +1,7 @@
-import { router } from 'expo-router';
+import { useState } from 'react';
+import { router, useLocalSearchParams } from 'expo-router';
 import { BadgeCheck, CheckCheck, ChevronLeft, Clock3, Plus, Send, UserRound } from 'lucide-react-native';
-import { ScrollView, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { previewNotice } from './PreviewNotice';
@@ -40,6 +41,9 @@ export default function NoticeChatScreen({
   validTime?: string;
 }) {
   const insets = useSafeAreaInsets();
+  const params = useLocalSearchParams<{message?: string}>();
+  const [draft, setDraft] = useState('');
+  const [thread, setThread] = useState<ChatMessage[]>(() => [...messages, ...(variant === 'client' && params.message ? [{from: 'me' as const, text: params.message}] : [])]);
   const adv = variant === 'advocate';
   const fg = adv ? t.brand : t.white;
   return (
@@ -68,7 +72,7 @@ export default function NoticeChatScreen({
             <Text style={styles.pillText}>{validTime}</Text>
           </View>
         ) : null}
-        {messages.map((m, i) =>
+        {thread.map((m, i) =>
           m.from === 'them' ? (
             <View key={i} style={[styles.inRow, i > 0 ? styles.rowGap : null]}>
               <Avatar size={t.msgAvatar} r={t.msgAvatar / 2} />
@@ -102,8 +106,8 @@ export default function NoticeChatScreen({
           <Plus size={t.plusIcon} color={t.white} strokeWidth={2.2} />
         </Pressable>
         <View style={styles.divider} />
-        <Text style={styles.placeholder}>{placeholder}</Text>
-        <Pressable accessibilityRole="button" accessibilityLabel="Send" onPress={() => previewNotice('Send')}>
+        <TextInput accessibilityLabel={placeholder} value={draft} onChangeText={setDraft} placeholder={placeholder} style={styles.placeholder}/>
+        <Pressable accessibilityRole="button" accessibilityLabel="Send" onPress={() => { if (draft.trim()) { setThread([...thread, {from: 'me', text: draft.trim()}]); setDraft(''); } }}>
           <Send size={t.send} color={t.brand} fill={t.brand} strokeWidth={1.6} />
         </Pressable>
       </View>

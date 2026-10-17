@@ -30,3 +30,11 @@ The client confirmed 451–454 were renamed to the four re-export filenames. All
 Both 448 and 449 visibly select Waiting and say WAITING FOR CLIENT. These are advocate-side views of the client's review status. Neither supplies the missing Approved or Changes state.
 
 434 draws 999 + 179 delivery + 199 GST + 199 platform, but totals 1,377. Its step subtitle also contradicts its six-step rail. Previously confirmed GST and step-counter decisions take precedence pending fee clarification.
+
+## Legal Notice implementation and validation
+
+32 → /legal-notice/request-submitted (437) → /legal-notice/delivery (440) → /legal-notice/delivered (441). Request Changes opens /legal-notice/request-changes (438), then /chat/advocate (439) with the entered message. Delivery proof is a supporting viewer using the actual supplied thumbnail, with no invented document body.
+
+Client subsequently authorised correcting 434's arithmetic. Service + delivery179 + platform199 are exclusive base fees; GST is18% on their sum. Urgent:999 +179 +199 +247.86 =1,624.86. Ordinary:699 +179 +199 +193.86 =1,270.86. These replace the static1,377 in434–436 and the inconsistent1,178.82 in437. The same calculation feeds checkout, QR, success and tracking.
+
+Local production browser walk passed approval→decision→delivery→delivered→case list, request-changes→chat with typed message, chat sending, proof viewer, existing Arjun profile, and calculated checkout row/total. No browser exceptions. `tsc --noEmit` passed before this stage.

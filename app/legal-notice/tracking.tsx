@@ -31,7 +31,7 @@ const BAR_HEIGHT = t.barPadTop + t.homeHeight + t.barGap + 16 + t.barPadBottom;
 // Legal Notice Tracking (design/31 "Drafting in Progress", design/32 "Awaiting Your
 // Approval"). Both states live here behind a prototype-only toggle at the foot of
 // the page (or ?state=approval). Everything is inert except Chat with Advocate.
-export default function TrackingScreen() {
+export default function TrackingScreen({ decision = false }: { decision?: boolean }) {
   const params = useLocalSearchParams<{ state?: string }>();
   const [state, setState] = useState<TrackingState>(params.state === 'approval' ? 'approval' : 'drafting');
   const insets = useSafeAreaInsets();
@@ -40,7 +40,7 @@ export default function TrackingScreen() {
   const paid = invoiceTotal(invoiceLines(form.tier));
   const approval = state === 'approval';
   // DEMO: Drafting in Progress waits on the advocate; it moves to Awaiting Your Approval.
-  useDemoWait(!approval, () => setState('approval'));
+  useDemoWait(!approval && !decision, () => setState('approval'));
   const current = TRACKING_CURRENT[state];
   const statusLabel = TRACKING_STEPS[current - 1].title;
 
@@ -117,7 +117,7 @@ export default function TrackingScreen() {
           <TableRow label="Current Status">
             <View style={styles.statusPill}>
               <View style={styles.pillDot} />
-              <Text style={styles.statusPillText}>{statusLabel}</Text>
+              <Text style={styles.statusPillText}>{decision ? "Awaiting Your Approval" : statusLabel}</Text>
             </View>
           </TableRow>
         </View>
@@ -160,7 +160,7 @@ export default function TrackingScreen() {
         </View>
 
         <SectionRow label="REQUEST STATUS" right="Live Updates" />
-        {approval ? (
+        {approval && !decision ? (
           <View style={[styles.card, styles.draft]}>
             <View style={styles.draftRow}>
               <View style={styles.draftTile}>
@@ -190,41 +190,26 @@ export default function TrackingScreen() {
           </View>
         )}
 
-        <SectionRow label="LEGAL NOTICE DRAFT" right="PDF Document" />
+        <SectionRow label="LEGAL NOTICE DRAFT" right="PDF Document Updates" />
         <View style={[styles.card, styles.draft]}>
           <View style={styles.draftRow}>
-            <View style={styles.draftTile}>
-              <FileText size={t.draftTileIcon} color={colors.brand} strokeWidth={1.5} />
-            </View>
+            <View style={styles.draftTile}><FileText size={t.draftTileIcon} color={colors.brand} /></View>
             <View style={styles.draftText}>
               <Text style={styles.draftTitle}>{TRACKING.draftFile}</Text>
-              <View style={styles.draftChip}>
-                <Text style={styles.draftChipText}>Being prepared by your advocate</Text>
-              </View>
-              <Text style={styles.draftNote}>Available after drafting is complete</Text>
+              <Text style={styles.draftNote}>{decision ? `Prepared by ${TRACKING.advocate.name}` : 'Being prepared by your advocate'}</Text>
+              <Text style={styles.reviewDesc}>{decision ? 'Please review the notice before approving it for dispatch.' : 'Available after drafting is complete'}</Text>
             </View>
           </View>
-          <View style={styles.view}>
-            <Lock size={t.viewIcon} color={t.disabledText} />
-            <Text style={styles.viewText}>View Draft</Text>
-          </View>
+          {decision ? <>
+            <Pressable accessibilityRole="button" style={styles.review} onPress={() => router.push('/documents/file?name=Legal_Notice_Draft_v1.pdf')}><Eye size={t.reviewIcon} color={ink.onBrand}/><Text style={styles.reviewText}>Review Draft →</Text></Pressable>
+            <Pressable accessibilityRole="button" style={styles.download} onPress={() => router.push('/documents/file?name=Legal_Notice_Draft_v1.pdf')}><Download size={t.downloadIcon} color={ink.accent}/><Text style={styles.downloadText}>Download PDF</Text></Pressable>
+          </> : <View style={styles.view}><Lock size={t.viewIcon} color={t.disabledText}/><Text style={styles.viewText}>View Draft</Text></View>}
         </View>
-
-        {approval ? (
-          <TextInput
-            multiline
-            placeholder="Describe what you would like to change"
-            placeholderTextColor={t.placeholder}
-            textAlignVertical="top"
-            accessibilityLabel="Describe what you would like to change"
-            style={styles.change}
-          />
-        ) : (
-          <Pressable accessibilityRole="button" onPress={() => router.replace('/(tabs)/home')} style={styles.home}>
-            <Target size={t.homeIcon} color={ink.onBrand} />
-            <Text style={styles.homeText}>Back To Home</Text>
-          </Pressable>
-        )}
+        {decision ? <>
+          <Text style={[styles.title, { marginTop: t.sectionGap }]}>Your Decision</Text>
+          <Pressable accessibilityRole="button" style={styles.home} onPress={() => router.push('/legal-notice/delivery')}><BadgeCheck size={t.homeIcon} color={ink.onBrand}/><Text style={styles.homeText}>Approve & Proceed</Text></Pressable>
+          <Pressable accessibilityRole="button" style={[styles.button, { marginTop: t.cardGap, backgroundColor: colors.card }]} onPress={() => router.push('/legal-notice/request-changes')}><PenLine size={t.buttonIcon} color={ink.accent}/><Text style={styles.buttonText}>Request Changes</Text></Pressable>
+        </> : approval ? <TextInput multiline placeholder="Describe what you would like to change" placeholderTextColor={t.placeholder} textAlignVertical="top" accessibilityLabel="Describe what you would like to change" style={styles.change}/> : <Pressable accessibilityRole="button" onPress={() => router.replace('/(tabs)/home')} style={styles.home}><Target size={t.homeIcon} color={ink.onBrand}/><Text style={styles.homeText}>Back To Home</Text></Pressable>}
 
         {/* Development only — hidden by DEV_PREVIEW_TOGGLES in constants/dev.ts. */}
         {DEV_PREVIEW_TOGGLES && (
@@ -237,7 +222,7 @@ export default function TrackingScreen() {
 
       {approval && (
         <View style={[styles.fixedBar, { paddingBottom: insets.bottom + t.barPadBottom }]}>
-          <DemoPressable accessibilityRole="button" style={[styles.home, styles.barButton]}>
+          <DemoPressable accessibilityRole="button" onPress={() => router.push('/legal-notice/request-submitted')} style={[styles.home, styles.barButton]}>
             <FileCheck size={t.homeIcon} color={ink.onBrand} />
             <Text style={styles.homeText}>Review & Approve Draft</Text>
             <ArrowRight size={t.buttonIcon} color={ink.onBrand} />

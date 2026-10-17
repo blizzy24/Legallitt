@@ -22,6 +22,8 @@ export const INVOICE = {
 export const GST_RATE = 0.18;
 /** design/28 draws a flat ₹199 with no percentage, so it does not scale with the fee. */
 export const PLATFORM_FEE = 199;
+/** design/434 draws this base fee. Client authorised correcting the arithmetic. */
+export const NOTICE_DELIVERY_FEE = 179;
 
 /**
  * The invoice for a given service tier. The Service Fee is the tier's price, so
@@ -31,10 +33,10 @@ export function invoiceLines(tierId: ServiceTier['id']): InvoiceLine[] {
   const fee = tierFor(tierId).price;
   return [
     { label: 'Service Fee', amount: fee },
-    // design/28 prints ₹179 against a ₹999 fee. 18% of 999 is 179.82, so the file
-    // truncates; the confirmed 18% rule now retains paise instead.
-    { label: 'Goods & Services Tax (GST 18%)', amount: gst18(fee) },
-    // design/28 reads "Plat form fees"; rendered as "Platform fees".
+    { label: 'Legal Notice Delivery Fee', amount: NOTICE_DELIVERY_FEE },
+    // 434's static ₹199 GST and ₹1,377 total do not add up. All displayed fees
+    // are exclusive of GST; client approved computing 18% on their sum.
+    { label: 'Goods & Services Tax (GST 18%)', amount: gst18(moneyTotal(fee, NOTICE_DELIVERY_FEE, PLATFORM_FEE)) },
     { label: 'Platform fees', amount: PLATFORM_FEE },
   ];
 }
@@ -48,16 +50,15 @@ export function rupees(n: number, grouped = true) {
   return '₹' + (grouped ? n.toLocaleString('en-IN') : String(n));
 }
 
-// Tracking screen (design/31, 32). Dates are September 2026 to sit with
-// data/cases.ts (the files say 23 / 25 May 2026).
+// Tracking screens 31, 32 and 437: dates follow the supplied May 2026 design.
 export type TrackingState = 'drafting' | 'approval';
 
 export const TRACKING = {
   // design/31 reads "Ref: LN-2026/05" while the invoice's Ref ID is #LGT-849204.
   ref: 'LN-2026/05',
-  submittedOn: '2026-09-19',
+  submittedOn: '2026-05-23',
   submittedAt: '10:30 AM',
-  estimate: { date: '2026-09-21', time: '6 PM' },
+  estimate: { date: '2026-05-25', time: '6 PM' },
   // Near-duplicate of data/cases.ts's "Adv. Arjun Nair" — the file names Sharma.
   advocate: {
     name: 'Adv. Arjun Sharma',
