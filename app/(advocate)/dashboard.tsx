@@ -89,9 +89,9 @@ export default function AdvocateDashboardScreen() {
             <Bell size={t.bellIcon} color={colors.textPrimary} />
             <View style={styles.bellDot} />
           </Pressable>
-          <View style={styles.avatar}>
+          <Pressable accessibilityLabel="Advocate settings" onPress={() => router.push('/advocate/settings')} style={styles.avatar}>
             <Text style={styles.avatarText}>{ADVOCATE_SELF.initials}</Text>
-          </View>
+          </Pressable>
         </View>
 
         <Text style={styles.greet}>Good Morning, {ADVOCATE_SELF.firstName}</Text>

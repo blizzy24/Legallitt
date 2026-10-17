@@ -5,7 +5,6 @@ import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import TabBar from '../../components/TabBar';
 import { shrinkToFit } from '../../constants/textFit';
 import {
   CONVERSATIONS,
@@ -193,7 +192,6 @@ export default function MessagesScreen() {
         </View>
       </ScrollView>
 
-      <TabBar />
     </View>
   );
 }

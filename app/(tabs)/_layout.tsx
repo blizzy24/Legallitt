@@ -6,7 +6,7 @@ import { colors } from '../../constants/theme';
 export default function TabsLayout() {
   return (
     <Tabs
-      tabBar={() => <TabBar variant="labelled" />}
+      tabBar={() => <TabBar />}
       screenOptions={{
         headerShown: false,
         sceneStyle: { backgroundColor: colors.screenBg },

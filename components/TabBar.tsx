@@ -1,6 +1,7 @@
 import { router, usePathname, type Href } from 'expo-router';
 import {
-  FileText,
+  Scale,
+  UsersRound,
   House,
   LayoutGrid,
   MessageSquareText,
@@ -21,35 +22,20 @@ type TabConfig = {
 
 type TabBarVariant = 'labelled' | 'iconOnly';
 
-// Five-tab bar from design/14 (labelled) and design/21 (icon only). Outline icons; the
-// active tab sits in a filled brand pill with a white icon (and label, when labelled).
-// TODO: labels are the design's wording — "Cases" and "Messages" not yet client-confirmed.
+// Confirmed role-wide navigation: majority four-icon client design (11, 12, 50, 142).
 const TABS: TabConfig[] = [
   { key: 'home', label: 'Home', icon: House, route: '/(tabs)/home' },
-  { key: 'services', label: 'Services', icon: LayoutGrid, route: '/(tabs)/services' },
-  { key: 'cases', label: 'Cases', icon: FileText, route: '/(tabs)/cases' },
-  { key: 'messages', label: 'Messages', icon: MessageSquareText, route: '/(tabs)/messages' },
+  { key: 'cases', label: 'Cases', icon: Scale, route: '/(tabs)/cases' },
+  { key: 'advocates', label: 'Advocates', icon: UsersRound, route: '/advocates' },
   { key: 'profile', label: 'Profile', icon: UserRound, route: '/(tabs)/profile' },
 ];
-
-// Earlier four-tab bar from design/11 + 12, kept in case the client prefers it. It used
-// FILLED MaterialCommunityIcons glyphs (import MaterialCommunityIcons from
-// '@expo/vector-icons/MaterialCommunityIcons') at 32pt, with the `iconOnly` layout but the
-// larger `home.tab*` metrics of that design (68 tall, 74×47 pill, ink.accent fill):
-//
-// const LEGACY_TABS = [
-//   { key: 'home',    label: 'Home',    icon: 'home',          route: '/(tabs)/home' },
-//   { key: 'tab2',    label: 'Cases',   icon: 'scale-balance', route: '/(tabs)/tab2' },
-//   { key: 'tab3',    label: 'Lawyers', icon: 'account-group', route: '/(tabs)/tab3' },
-//   { key: 'profile', label: 'Profile', icon: 'account',       route: '/(tabs)/profile' },
-// ];
 
 type Props = {
   variant?: TabBarVariant;
   items?: TabConfig[];
 };
 
-export default function TabBar({ variant = 'labelled', items = TABS }: Props) {
+export default function TabBar({ variant = 'iconOnly', items = TABS }: Props) {
   const pathname = usePathname();
   // The scrolling tab screens reserve `tabs.bottom + height + insets.bottom`, so the
   // bar has to float above the gesture bar too or the two disagree on a device.
