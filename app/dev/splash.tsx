@@ -1,4 +1,4 @@
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, Redirect } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
 import AnimatedSplash from '../../components/AnimatedSplash';
@@ -10,7 +10,8 @@ import { devIndex as d, font } from '../../constants/theme';
 // with a dev caption (the splash itself has no text: the wordmark is an image).
 export default function DevSplashScreen() {
   const { t } = useLocalSearchParams<{ t?: string }>();
-  if (!DEV_PREVIEW_TOGGLES) return null;
+  // With the dev toggles off (client builds) this route is not a screen: go home.
+  if (!DEV_PREVIEW_TOGGLES) return <Redirect href="/" />;
   return (
     <View style={styles.fill}>
       <AnimatedSplash ready={false} warm={false} freezeAt={t === undefined ? undefined : Number(t)} onMounted={() => {}} onDone={() => {}} />

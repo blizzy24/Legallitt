@@ -1,4 +1,4 @@
-import { router, type Href } from 'expo-router';
+import { router, type Href, Redirect } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -13,7 +13,8 @@ import { DEV_ROUTES } from '../../data/devRoutes';
 
 export default function DevIndexScreen() {
   const insets = useSafeAreaInsets();
-  if (!DEV_PREVIEW_TOGGLES) return null;
+  // With the dev toggles off (client builds) this route is not a screen: go home.
+  if (!DEV_PREVIEW_TOGGLES) return <Redirect href="/" />;
   return (
     <View style={styles.page}>
       <CourierHeader title={d.title} sub={`${DEV_ROUTES.reduce((n, g) => n + g.routes.length, 0)} ${d.routesSuffix}`} />
