@@ -120,7 +120,7 @@ export const PLACEHOLDERS: { field: string; screens: string }[] = [
 
 /** The recipient every screen but design/281 uses. */
 export const ADVOCATE = {
-  name: 'Adv. Gurneeet Chawla',
+  name: 'Adv. Abhishek Verma',
   office: 'Chamber No. 14, High Court Bar Building',
   address: 'High Court Bar Building, Chamber No. 14',
   area: 'Sudama Nagar',
@@ -145,7 +145,7 @@ export const MATTER = {
   ref: 'Matter #HCR-2026-1048',
   title: 'Rahul Sharma vs Amit Verma',
   advocateLabel: 'Assigned Advocate:',
-  advocateName: 'Adv. Gurneeet Chawla',
+  advocateName: 'Adv. Abhishek Verma',
 };
 
 /** designs 275 + 284 — one screen, two selection states. */
@@ -503,7 +503,7 @@ export const CO_RECEIVED = {
     { label: 'Courier', value: 'Blue Dart' },
     { label: 'Waybill', value: 'BD-4471-8820', mono: true },
     { label: 'Delivered On', value: '25 Oct 2026' },
-    { label: 'Received By', value: 'Adv. Gurneeet Chawla' },
+    { label: 'Received By', value: 'Adv. Abhishek Verma' },
   ],
 
   bannerTitle: 'Receipt Confirmed',

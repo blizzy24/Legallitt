@@ -124,7 +124,7 @@ export default function NoticeResponseScreen({
             <Redo2 size={t.toolUndo} color={colors.textPrimary} style={styles.toolIcon} />
           </View>
 
-          <LegalDocumentPage title={r.docTitle} />
+          <LegalDocumentPage title={r.docTitle} advocateName={caseId.toLowerCase().includes('1048') ? 'ABHISHEK VERMA ADVOCATE' : undefined} />
 
           <View style={styles.btns}>
             <Pressable

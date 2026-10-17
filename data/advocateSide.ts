@@ -2451,7 +2451,7 @@ export const ADV_NOTICE_SEND = {
   parties: 'Rahul Sharma vs Amit Verma',
   assignedLabel: 'Assigned Advocate:',
   /** ⚠ "Gurneeet" as drawn. */
-  advocate: 'Adv. Gurneeet Chawla',
+  advocate: 'Adv. Abhishek Verma',
   docsTitle: 'Documents Ready',
   docsChip: '5 Documents',
   docsLink: 'View',
@@ -2478,7 +2478,7 @@ export const ADV_NOTICE_SEND = {
   sendToLabel: 'Send To',
   copy: 'Copy',
   sendTo: {
-    name: 'Adv. Gurneeet Chawla',
+    name: 'Adv. Abhishek Verma',
     lines: ['Chamber No. 14, High Court Bar Building', 'Indore, Madhya Pradesh • 452001'],
   },
   note: {

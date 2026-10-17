@@ -33,7 +33,7 @@ function Blank({ flex, width }: { flex?: number; width?: number }) {
   return <View style={[styles.blank, flex ? { flex } : null, width ? { width } : null]} />;
 }
 
-export default function LegalDocumentPage({ title }: { title: string }) {
+export default function LegalDocumentPage({ title, advocateName }: { title: string; advocateName?: string }) {
   const r = ADV_NOTICE_RESPONSE;
   return (
       <View style={styles.page}>
@@ -69,7 +69,7 @@ export default function LegalDocumentPage({ title }: { title: string }) {
           <View style={styles.lhDivider} />
           <View style={styles.lhRight}>
             <Text style={styles.lhAdv} {...shrinkToFit(0.65)}>
-              {r.letterhead.advocate}
+              {advocateName ?? r.letterhead.advocate}
             </Text>
             <Text style={styles.lhQual} {...shrinkToFit(0.75)}>
               {r.letterhead.quals}

@@ -1514,7 +1514,7 @@ export const DC_DOCS_NEEDED = {
   subId: ' · DC-2026-1048',
   pill: 'District Court Representation • Case ID: DC-2026-1048',
   h1: 'Recommended Documents',
-  lead: 'Advocate Gurpreet Chawla has reviewed your case and requested the documents below.',
+  lead: 'Advocate Abhishek Verma has reviewed your case and requested the documents below.',
   caseTitle: 'Your Case',
   caseChip: 'Active Case',
   grid: [
@@ -1525,13 +1525,13 @@ export const DC_DOCS_NEEDED = {
     [['Matter Title', 'Rahul Sharma vs Amit Verma']],
     [
       ['Court', 'District Court'],
-      ['Assigned Advocate', 'Adv. Gurpreet Chawla'],
+      ['Assigned Advocate', 'Adv. Abhishek Verma'],
     ],
   ] as const,
   msgTitle: 'Message From Your Advocate',
   quote:
     '“Please keep the original case papers and clear copies ready. I may ask for more documents if needed.”',
-  sig: '— Advocate Gurpreet Chawla',
+  sig: '— Advocate Abhishek Verma',
   senior: 'Senior Counsel',
   progTitle: 'Document Checklist Progress',
   progSub: '3 of 5 total documents attached',

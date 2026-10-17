@@ -1016,7 +1016,7 @@ export const COURT_DOCS_RECEIVED: CourtSpec = {
             { label: 'Waybill Number', value: '8492 0419\n5821', wide: true, shade: true, iconDisc: 'copy' },
           ],
         },
-        { k: 'text', icon: 'shieldCheck', iconSize: 'verifyIcon', t: 'Today, 11:45 AM • Verified by Adv. Gurneet Chawla', tone: 'small', top: 'verifyTop' },
+        { k: 'text', icon: 'shieldCheck', iconSize: 'verifyIcon', t: 'Today, 11:45 AM • Verified by Adv. Abhishek Verma', tone: 'small', top: 'verifyTop' },
       ],
     },
     {
