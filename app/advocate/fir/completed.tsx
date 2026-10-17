@@ -1,4 +1,4 @@
-import { router, type Href } from 'expo-router';
+import { router, useLocalSearchParams, type Href } from 'expo-router';
 import { BadgeCheck, Check, UserRound, X } from 'lucide-react-native';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -29,6 +29,7 @@ import { advFirCompleted as t, advFirGreen, colors, font, ink } from '../../../c
 export default function AdvocateFirCompletedScreen() {
   const insets = useSafeAreaInsets();
   const c = FIR_COMPLETED;
+  const { id } = useLocalSearchParams<{id?: string}>();
 
   return (
     <View style={styles.screen}>
@@ -147,7 +148,7 @@ export default function AdvocateFirCompletedScreen() {
         </Pressable>
         <Pressable
           accessibilityRole="button"
-          onPress={() => router.push('/advocate/fir/draft' as Href)}
+          onPress={() => router.push({ pathname: '/advocate/fir/draft', params: { id: id ?? '' } })}
           style={({ pressed }) => [styles.secondary, pressed && styles.pressed]}
         >
           <Text style={styles.secondaryText} {...shrinkToFit(0.8)}>

@@ -65,7 +65,10 @@ export default function AdvocateFirReviewScreen({ compact = false }: { compact?:
   const r = FIR_REVIEW;
   const [state, setState] = useState(r.switcher.states[0]);
   // Both exports are Waiting. Only demo mode simulates the next external event.
-  useDemoWait(!compact && state === r.switcher.states[0]);
+  useDemoWait(!compact && state === r.switcher.states[0], () => {
+    // Keep this case's local draft when the demo advances to the compact view.
+    router.push({ pathname: '/advocate/fir/review-compact', params: { id: id ?? '' } });
+  });
 
   return (
     <View style={styles.screen}>

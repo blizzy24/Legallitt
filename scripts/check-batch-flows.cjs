@@ -5,6 +5,8 @@ const ts = require('typescript');
 require.extensions['.ts'] = (module, filename) => module._compile(ts.transpileModule(fs.readFileSync(filename, 'utf8'), {compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText, filename);
 const {nextRoute} = require('../data/flowMap.ts');
 const {invoiceLines,invoiceTotal} = require('../data/legalNotice.ts');
+assert.equal(nextRoute('/cases/all'), '/cases/1');
+assert.equal(nextRoute('/advocates'), '/advocates/1');
 assert.equal(nextRoute('/advocate/fir/review'), '/advocate/fir/review-compact');
 assert.equal(nextRoute('/advocate/fir/review-compact'), '/advocate/fir/completed');
 assert.equal(nextRoute('/advocate/fir/completed'), undefined);

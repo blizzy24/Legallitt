@@ -407,7 +407,7 @@ export function nextRoute(path: string, label?: string): string | undefined {
   // Static screens must win over parameter routes such as /advocate/fir/[id].
   // Otherwise Waiting's timer returns to documents instead of the next review.
   const exact = FLOW_MAP[path];
-  if (exact !== undefined) return exact === TERMINAL ? undefined : exact;
+  if (exact !== undefined) return exact === TERMINAL ? undefined : exact.replace(/\[[^\]]+\]/g, '1');
   for (const [from, to] of Object.entries(FLOW_MAP)) {
     const m = path.match(toRe(from));
     if (!m) continue;

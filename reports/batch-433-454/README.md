@@ -70,3 +70,5 @@ New route files: /legal-notice/request-submitted, /legal-notice/request-changes,
 The complete Legal Notice browser walk also passed from /legal-notice through all six wizard steps, first DigiLocker verification and reuse, Ordinary checkout→QR→success (₹1,270.86 at each step), tracking→decision→courier→Notice Delivered. The Urgent invoice is ₹1,624.86. The separate changes/chat branch passed as well.
 
 All feature groups were completed and committed before the 50-minute gate. The final visual pass restored 433's full drawn biography and verified badge, aligned 441's hero spacing/status fills, and made 450 explicitly terminal in flowMap. Remaining supplied-design questions are limited to 348's export, 433's identity, and 219's missing Approved/Changes mapping.
+
+Final round-trip check: completion's View FIR now preserves the case ID and reopens that case's edited draft. Both the full→compact demo transition and completion→draft link carry it. Routing regression checks also preserve the existing default parameter substitution (/cases/all→/cases/1 and /advocates→/advocates/1) while exact routes take precedence.
