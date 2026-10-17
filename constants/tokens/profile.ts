@@ -877,6 +877,8 @@ export const advocateProfile = {
 
   aboutGap: 5,
   aboutSize: 14,
+  // 433: full six-line bio, 32px glyph size at 2x.
+  suppliedAboutSize: 16,
   aboutLineHeight: 24,
   aboutLines: 4,
   readMoreGap: 10,

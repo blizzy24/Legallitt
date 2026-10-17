@@ -105,7 +105,7 @@ export const FLOW_MAP: Record<string, string> = {
   '/advocate/fir/draft': '/advocate/fir/review', // 218 → 219
   '/advocate/fir/review': '/advocate/fir/review-compact', // 219/448 → 449, Waiting only
   '/advocate/fir/review-compact': '/advocate/fir/completed', // demo external approval → 450/220
-  // last: /advocate/fir/completed (220)
+  '/advocate/fir/completed': TERMINAL, // 220/450; must not match /advocate/fir/[id]
   // ── advocate/forensic ──
   '/advocate/forensic/requests': '/advocate/forensic/[id]', // 222 → 223
   '/advocate/forensic/[id]': '/advocate/forensic/documents', // 223 → 224

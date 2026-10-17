@@ -10,8 +10,8 @@ import type { ChatMessage } from '../data/noticeChat';
 
 // The Legal Notice chats, as drawn: design/33 (`client`, the tan header) and
 // design/183 (`advocate`, the light header, the "Chat Valid" strip, timestamps
-// and read ticks). Both threads are static — the drawn messages only; the input
-// bar sends nothing (the preview notice says so). The designs draw photographs;
+// and read ticks). Initial messages are exactly the drawn messages; typed
+// messages are held locally, without fabricating a response. The designs draw photographs;
 // no asset ships, so the house convention stands in: a brand disc with the user
 // glyph.
 

@@ -22,44 +22,11 @@ import { shrinkToFit } from '../../constants/textFit';
 import { advocateProfile as t, colors, font, ink } from '../../constants/theme';
 import { SAVED_ADVOCATES, advocateProfileById, type AdvocateProfileView, type AdvocateReview } from '../../data/advocates';
 
-// Advocate Profile (design/81).
-//
-// ⚠ OFF-PALETTE — REPORTED, NOT RESTYLED. This screen is drawn in a lavender-grey
-// (#F0F3FA) where the rest of the app is warm beige, uses a photograph instead of
-// the app's initials avatars, and uses flat tinted blocks instead of bordered cards.
-// It is built exactly as the file draws it; the colours live in their own token
-// block (advocateProfile) rather than in `colors`, so nothing else can pick them up.
-// The client decides whether this screen is restyled or the palette is extended.
-//
-// The photograph is replaced by an initials avatar sized to the file's circle, so a
-// real image drops in without moving anything.
-//
-// design/81 names its subject "Adv. Rahul Sharma", who is neither saved advocate on
-// design/55. The screen renders whichever advocate was tapped instead.
-//
-// Book Consultation is not here because design/81 does not draw it — and no booking
-// flow exists anywhere in the batch. Still the outstanding gap.
-//
-// ─────────────────────────────────────────────────────────────────────────────
-// A SECOND COPY OF THIS SCREEN EXISTS: design/118-la-review-empty.png (the file
-// name is wrong; the Legal Advice batch's numbering is shifted by one). It was
-// compared against design/81 rather than built, and the two are the SAME SCREEN.
-//
-// Identical in both: the name "Adv. Rahul Sharma", "Verified Advocate",
-// "8+ Years Exp. • Indore, MP", "4.8 (126 Reviews)", enrollment MP/1234/2018, the
-// four practice areas, the ABOUT copy, all four Professional Details tiles, the
-// availability block, and both client reviews down to their quotes. Neither draws a
-// Book Consultation button. The lavender-grey palette is the same family in both.
-//
-// What actually differs is the EXPORT, not the design: design/81 is a 281x1024 JPEG
-// (about 0.72 px/pt, visibly compressed) and design/118 is a 780x2958 PNG at a clean
-// 2x. design/118 is a higher-fidelity re-export of design/81, so it is the better
-// measuring reference — this screen was built from the low-resolution one.
-//
-// The brief's expectation that the second file is "named differently" does not hold:
-// both say Rahul Sharma. The open question is only which file is current, and the
-// off-palette decision above is unchanged by it.
-// ─────────────────────────────────────────────────────────────────────────────
+// Advocate Profile — designs 81/118/433 share the same layout. 433 differs from
+// 118 by 156 pixels and names Adv. Rahul Sharma. Its dedicated route supplies only
+// that PNG's record and photograph; Legal Notice still opens its assigned Arjun.
+// Optional sections remain hidden when a selected advocate has no supplied values.
+// The lavender-grey palette is local to advocateProfile, as drawn.
 
 export default function AdvocateProfileScreen({ profileId }: { profileId?: string }) {
   const insets = useSafeAreaInsets();
@@ -103,9 +70,9 @@ export default function AdvocateProfileScreen({ profileId }: { profileId?: strin
       >
         <View style={styles.hero}>
           <View style={styles.photoWrap}>
-            {/* Placeholder for design/81's photograph, sized to the file's circle. */}
+            {/* 433 supplies Rahul's photo; other advocates retain their own initials. */}
             {advocate.id === 'adv-rahul-sharma' ? <Image source={require('../../assets/advocate-rahul-profile.png')} accessibilityLabel={advocate.name} style={styles.photo}/> : <View style={styles.photo}><Text style={styles.photoText}>{advocate.initials}</Text></View>}
-            {advocate.id !== 'adv-rahul-sharma' && <View style={styles.badge}><BadgeCheck size={t.badgeGlyph} color={ink.onBrand} /></View>}
+            <View style={styles.badge}><BadgeCheck size={t.badgeGlyph} color={ink.onBrand} /></View>
           </View>
 
           <Text style={styles.name} {...shrinkToFit(0.75)}>
@@ -191,7 +158,7 @@ export default function AdvocateProfileScreen({ profileId }: { profileId?: strin
         <Text style={[styles.sectionLabel, styles.soloLabel]} {...shrinkToFit(0.8)}>
           ABOUT
         </Text>
-        <Text style={styles.about} numberOfLines={expanded ? undefined : t.aboutLines}>
+        <Text style={[styles.about, advocate.id === 'adv-rahul-sharma' && {fontSize:t.suppliedAboutSize}]} numberOfLines={expanded || advocate.id === 'adv-rahul-sharma' ? undefined : t.aboutLines}>
           {advocate.about}
         </Text>
         <Pressable

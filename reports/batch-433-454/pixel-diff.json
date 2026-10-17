@@ -5,7 +5,35 @@
     "height": 4034,
     "matches": [],
     "changedPixels": null,
-    "classification": "comparison pending"
+    "sourceComparison": {
+      "file": "design/289-hcr-service.jpeg",
+      "method": "decoded RGBA; nearest-neighbour normalization for differing export sizes; compression and frames included",
+      "width": 228,
+      "height": 1023,
+      "pixels": 233244,
+      "changedPixels": 212282,
+      "over20Pixels": 99614,
+      "over20Percent": 42.708,
+      "meanMaxChannelError": 57.9231
+    },
+    "preBatchBrowserComparison": {
+      "commit": "95b08ce",
+      "route": "/services/high-court",
+      "method": "cropped design content sampled by nearest-neighbour at browser resolution; full design-height viewport, demo timers disabled; runtime content and font rasterization also differ",
+      "crop": {
+        "x": 40,
+        "y": 14,
+        "w": 780,
+        "h": 4020
+      },
+      "width": 390,
+      "height": 2010,
+      "pixels": 783900,
+      "changedPixels": 489388,
+      "over20Pixels": 262576,
+      "over20Percent": 33.496,
+      "meanMaxChannelError": 35.1099
+    }
   },
   {
     "file": "design/348-reexport-2x.png",
@@ -14,7 +42,8 @@
     "matches": [
       "design/381-adv-dc-court-fee-sent.png"
     ],
-    "changedPixels": 0
+    "changedPixels": 0,
+    "note": "Exact pixel duplicate of381, wrong 1× export. No token measurements or browser fidelity comparison performed."
   },
   {
     "file": "design/415-reexport-2x.png",
@@ -30,6 +59,35 @@
       "over20Pixels": 149728,
       "meanMaxChannelError": 4.694124695047132,
       "method": "nearest-neighbour dimension-normalized comparison; compression/frame differences included"
+    },
+    "sourceComparison": {
+      "file": "design/415-adv-dc-confirm-filing.jpeg",
+      "method": "decoded RGBA; nearest-neighbour normalization for differing export sizes; compression and frames included",
+      "width": 273,
+      "height": 1024,
+      "pixels": 279552,
+      "changedPixels": 205475,
+      "over20Pixels": 49897,
+      "over20Percent": 17.849,
+      "meanMaxChannelError": 38.3016
+    },
+    "preBatchBrowserComparison": {
+      "commit": "95b08ce",
+      "route": "/advocate/court/confirm-filing?service=dc",
+      "method": "cropped design content sampled by nearest-neighbour at browser resolution; full design-height viewport, demo timers disabled; runtime content and font rasterization also differ",
+      "crop": {
+        "x": 40,
+        "y": 14,
+        "w": 780,
+        "h": 3128
+      },
+      "width": 390,
+      "height": 1564,
+      "pixels": 609960,
+      "changedPixels": 260074,
+      "over20Pixels": 93888,
+      "over20Percent": 15.392,
+      "meanMaxChannelError": 23.5524
     }
   },
   {
@@ -46,6 +104,35 @@
       "over20Pixels": 181369,
       "meanMaxChannelError": 3.949710295228326,
       "method": "nearest-neighbour dimension-normalized comparison; compression/frame differences included"
+    },
+    "sourceComparison": {
+      "file": "design/422-adv-dc-process-fee-done.jpeg",
+      "method": "decoded RGBA; nearest-neighbour normalization for differing export sizes; compression and frames included",
+      "width": 211,
+      "height": 1023,
+      "pixels": 215853,
+      "changedPixels": 170109,
+      "over20Pixels": 29641,
+      "over20Percent": 13.732,
+      "meanMaxChannelError": 23.4771
+    },
+    "preBatchBrowserComparison": {
+      "commit": "95b08ce",
+      "route": "/advocate/court/process-fee/done?service=dc",
+      "method": "cropped design content sampled by nearest-neighbour at browser resolution; full design-height viewport, demo timers disabled; runtime content and font rasterization also differ",
+      "crop": {
+        "x": 16,
+        "y": 14,
+        "w": 780,
+        "h": 3919
+      },
+      "width": 390,
+      "height": 1960,
+      "pixels": 764400,
+      "changedPixels": 272803,
+      "over20Pixels": 131524,
+      "over20Percent": 17.206,
+      "meanMaxChannelError": 27.2543
     }
   },
   {
@@ -62,6 +149,35 @@
       "over20Pixels": 10,
       "meanMaxChannelError": 0.0007822986507325879,
       "method": "nearest-neighbour dimension-normalized comparison; compression/frame differences included"
+    },
+    "sourceComparison": {
+      "file": "design/118-la-review-empty.png",
+      "method": "decoded RGBA; nearest-neighbour normalization for differing export sizes; compression and frames included",
+      "width": 812,
+      "height": 2958,
+      "pixels": 2401896,
+      "changedPixels": 156,
+      "over20Pixels": 10,
+      "over20Percent": 0,
+      "meanMaxChannelError": 0.0008
+    },
+    "preBatchBrowserComparison": {
+      "commit": "95b08ce",
+      "route": "/advocates/adv-priya-sharma",
+      "method": "cropped design content sampled by nearest-neighbour at browser resolution; full design-height viewport, demo timers disabled; runtime content and font rasterization also differ",
+      "crop": {
+        "x": 16,
+        "y": 14,
+        "w": 780,
+        "h": 2944
+      },
+      "width": 390,
+      "height": 1472,
+      "pixels": 574080,
+      "changedPixels": 301370,
+      "over20Pixels": 56930,
+      "over20Percent": 9.917,
+      "meanMaxChannelError": 16.8591
     }
   },
   {
@@ -78,6 +194,35 @@
       "over20Pixels": 256490,
       "meanMaxChannelError": 17.64519402779689,
       "method": "nearest-neighbour dimension-normalized comparison; compression/frame differences included"
+    },
+    "sourceComparison": {
+      "file": "design/28-ln-step6-payment.webp",
+      "method": "decoded RGBA; nearest-neighbour normalization for differing export sizes; compression and frames included",
+      "width": 624,
+      "height": 1568,
+      "pixels": 978432,
+      "changedPixels": 775945,
+      "over20Pixels": 144514,
+      "over20Percent": 14.77,
+      "meanMaxChannelError": 17.6987
+    },
+    "preBatchBrowserComparison": {
+      "commit": "95b08ce",
+      "route": "/legal-notice/step6",
+      "method": "cropped design content sampled by nearest-neighbour at browser resolution; full design-height viewport, demo timers disabled; runtime content and font rasterization also differ",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "w": 780,
+        "h": 2236
+      },
+      "width": 390,
+      "height": 1118,
+      "pixels": 436020,
+      "changedPixels": 210306,
+      "over20Pixels": 63120,
+      "over20Percent": 14.476,
+      "meanMaxChannelError": 17.827
     }
   },
   {
@@ -94,6 +239,35 @@
       "over20Pixels": 40272,
       "meanMaxChannelError": 2.634619667637485,
       "method": "nearest-neighbour dimension-normalized comparison; compression/frame differences included"
+    },
+    "sourceComparison": {
+      "file": "design/29-ln-scan-pay.webp",
+      "method": "decoded RGBA; nearest-neighbour normalization for differing export sizes; compression and frames included",
+      "width": 681,
+      "height": 1568,
+      "pixels": 1067808,
+      "changedPixels": 627722,
+      "over20Pixels": 33274,
+      "over20Percent": 3.116,
+      "meanMaxChannelError": 2.8818
+    },
+    "preBatchBrowserComparison": {
+      "commit": "95b08ce",
+      "route": "/legal-notice/scan-pay",
+      "method": "cropped design content sampled by nearest-neighbour at browser resolution; full design-height viewport, demo timers disabled; runtime content and font rasterization also differ",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "w": 780,
+        "h": 1796
+      },
+      "width": 390,
+      "height": 898,
+      "pixels": 350220,
+      "changedPixels": 55666,
+      "over20Pixels": 27565,
+      "over20Percent": 7.871,
+      "meanMaxChannelError": 9.7686
     }
   },
   {
@@ -110,6 +284,35 @@
       "over20Pixels": 23652,
       "meanMaxChannelError": 2.1531166124150536,
       "method": "nearest-neighbour dimension-normalized comparison; compression/frame differences included"
+    },
+    "sourceComparison": {
+      "file": "design/30-ln-payment-success.webp",
+      "method": "decoded RGBA; nearest-neighbour normalization for differing export sizes; compression and frames included",
+      "width": 681,
+      "height": 1568,
+      "pixels": 1067808,
+      "changedPixels": 1041652,
+      "over20Pixels": 18693,
+      "over20Percent": 1.751,
+      "meanMaxChannelError": 2.3283
+    },
+    "preBatchBrowserComparison": {
+      "commit": "95b08ce",
+      "route": "/legal-notice/success",
+      "method": "cropped design content sampled by nearest-neighbour at browser resolution; full design-height viewport, demo timers disabled; runtime content and font rasterization also differ",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "w": 780,
+        "h": 1796
+      },
+      "width": 390,
+      "height": 898,
+      "pixels": 350220,
+      "changedPixels": 55322,
+      "over20Pixels": 13374,
+      "over20Percent": 3.819,
+      "meanMaxChannelError": 3.9055
     }
   },
   {
@@ -126,6 +329,35 @@
       "over20Pixels": 482767,
       "meanMaxChannelError": 21.6121787011272,
       "method": "nearest-neighbour dimension-normalized comparison; compression/frame differences included"
+    },
+    "sourceComparison": {
+      "file": "design/31-ln-tracking-drafting.webp",
+      "method": "decoded RGBA; nearest-neighbour normalization for differing export sizes; compression and frames included",
+      "width": 386,
+      "height": 1568,
+      "pixels": 605248,
+      "changedPixels": 503788,
+      "over20Pixels": 113088,
+      "over20Percent": 18.685,
+      "meanMaxChannelError": 21.2718
+    },
+    "preBatchBrowserComparison": {
+      "commit": "95b08ce",
+      "route": "/legal-notice/tracking",
+      "method": "cropped design content sampled by nearest-neighbour at browser resolution; full design-height viewport, demo timers disabled; runtime content and font rasterization also differ",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "w": 780,
+        "h": 3262
+      },
+      "width": 390,
+      "height": 1631,
+      "pixels": 636090,
+      "changedPixels": 329459,
+      "over20Pixels": 126202,
+      "over20Percent": 19.84,
+      "meanMaxChannelError": 22.793
     }
   },
   {
@@ -142,6 +374,35 @@
       "over20Pixels": 284966,
       "meanMaxChannelError": 28.607479988285824,
       "method": "nearest-neighbour dimension-normalized comparison; compression/frame differences included"
+    },
+    "sourceComparison": {
+      "file": "design/32-ln-tracking-approval.webp",
+      "method": "decoded RGBA; nearest-neighbour normalization for differing export sizes; compression and frames included",
+      "width": 390,
+      "height": 1444,
+      "pixels": 563160,
+      "changedPixels": 554363,
+      "over20Pixels": 131419,
+      "over20Percent": 23.336,
+      "meanMaxChannelError": 28.7303
+    },
+    "preBatchBrowserComparison": {
+      "commit": "95b08ce",
+      "route": "/legal-notice/tracking?state=approval",
+      "method": "cropped design content sampled by nearest-neighbour at browser resolution; full design-height viewport, demo timers disabled; runtime content and font rasterization also differ",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "w": 780,
+        "h": 1576
+      },
+      "width": 390,
+      "height": 788,
+      "pixels": 307320,
+      "changedPixels": 200491,
+      "over20Pixels": 55351,
+      "over20Percent": 18.011,
+      "meanMaxChannelError": 22.9058
     }
   },
   {
@@ -158,6 +419,35 @@
       "over20Pixels": 35929,
       "meanMaxChannelError": 2.847159436140479,
       "method": "nearest-neighbour dimension-normalized comparison; compression/frame differences included"
+    },
+    "sourceComparison": {
+      "file": "design/33-chat-advocate.webp",
+      "method": "decoded RGBA; nearest-neighbour normalization for differing export sizes; compression and frames included",
+      "width": 725,
+      "height": 1568,
+      "pixels": 1136800,
+      "changedPixels": 436867,
+      "over20Pixels": 31701,
+      "over20Percent": 2.789,
+      "meanMaxChannelError": 2.8323
+    },
+    "preBatchBrowserComparison": {
+      "commit": "95b08ce",
+      "route": "/chat/advocate",
+      "method": "cropped design content sampled by nearest-neighbour at browser resolution; full design-height viewport, demo timers disabled; runtime content and font rasterization also differ",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "w": 780,
+        "h": 1688
+      },
+      "width": 390,
+      "height": 844,
+      "pixels": 329160,
+      "changedPixels": 87771,
+      "over20Pixels": 25246,
+      "over20Percent": 7.67,
+      "meanMaxChannelError": 10.2317
     }
   },
   {
@@ -166,7 +456,35 @@
     "height": 3226,
     "matches": [],
     "changedPixels": null,
-    "classification": "new design"
+    "sourceComparison": {
+      "file": "design/311-hcr-delivery-tracking.png",
+      "method": "decoded RGBA; nearest-neighbour normalization for differing export sizes; compression and frames included",
+      "width": 812,
+      "height": 2742,
+      "pixels": 2226504,
+      "changedPixels": 1216255,
+      "over20Pixels": 452002,
+      "over20Percent": 20.301,
+      "meanMaxChannelError": 31.2963
+    },
+    "preBatchBrowserComparison": {
+      "commit": "95b08ce",
+      "route": "/services/high-court/courier/tracking",
+      "method": "cropped design content sampled by nearest-neighbour at browser resolution; full design-height viewport, demo timers disabled; runtime content and font rasterization also differ",
+      "crop": {
+        "x": 16,
+        "y": 14,
+        "w": 780,
+        "h": 3212
+      },
+      "width": 390,
+      "height": 1606,
+      "pixels": 626340,
+      "changedPixels": 417848,
+      "over20Pixels": 162728,
+      "over20Percent": 25.981,
+      "meanMaxChannelError": 39.2625
+    }
   },
   {
     "file": "design/441-ln-notice-delivered.png",
@@ -174,7 +492,35 @@
     "height": 2557,
     "matches": [],
     "changedPixels": null,
-    "classification": "new design"
+    "sourceComparison": {
+      "file": "design/312-hcr-documents-delivered.png",
+      "method": "decoded RGBA; nearest-neighbour normalization for differing export sizes; compression and frames included",
+      "width": 844,
+      "height": 2644,
+      "pixels": 2231536,
+      "changedPixels": 1164209,
+      "over20Pixels": 410874,
+      "over20Percent": 18.412,
+      "meanMaxChannelError": 29.8507
+    },
+    "preBatchBrowserComparison": {
+      "commit": "95b08ce",
+      "route": "/services/high-court/courier/delivered",
+      "method": "cropped design content sampled by nearest-neighbour at browser resolution; full design-height viewport, demo timers disabled; runtime content and font rasterization also differ",
+      "crop": {
+        "x": 40,
+        "y": 14,
+        "w": 780,
+        "h": 2516
+      },
+      "width": 390,
+      "height": 1258,
+      "pixels": 490620,
+      "changedPixels": 269842,
+      "over20Pixels": 90707,
+      "over20Percent": 18.488,
+      "meanMaxChannelError": 27.4458
+    }
   },
   {
     "file": "design/442-adv-cases-long.png",
@@ -184,7 +530,25 @@
       "design/213-adv-cases-full.png",
       "design/221-adv-cases-full-2.png"
     ],
-    "changedPixels": 0
+    "changedPixels": 0,
+    "preBatchBrowserComparison": {
+      "commit": "95b08ce",
+      "route": "/matters",
+      "method": "cropped design content sampled by nearest-neighbour at browser resolution; full design-height viewport, demo timers disabled; runtime content and font rasterization also differ",
+      "crop": {
+        "x": 16,
+        "y": 14,
+        "w": 780,
+        "h": 4784
+      },
+      "width": 390,
+      "height": 2392,
+      "pixels": 932880,
+      "changedPixels": 539976,
+      "over20Pixels": 171679,
+      "over20Percent": 18.403,
+      "meanMaxChannelError": 22.7376
+    }
   },
   {
     "file": "design/443-adv-cases-list.png",
@@ -193,7 +557,25 @@
     "matches": [
       "design/214-adv-cases-fir.png"
     ],
-    "changedPixels": 0
+    "changedPixels": 0,
+    "preBatchBrowserComparison": {
+      "commit": "95b08ce",
+      "route": "/matters",
+      "method": "cropped design content sampled by nearest-neighbour at browser resolution; full design-height viewport, demo timers disabled; runtime content and font rasterization also differ",
+      "crop": {
+        "x": 16,
+        "y": 14,
+        "w": 780,
+        "h": 2462
+      },
+      "width": 390,
+      "height": 1231,
+      "pixels": 480090,
+      "changedPixels": 393277,
+      "over20Pixels": 43495,
+      "over20Percent": 9.06,
+      "meanMaxChannelError": 14.8061
+    }
   },
   {
     "file": "design/444-adv-client-case-detail.png",
@@ -202,7 +584,25 @@
     "matches": [
       "design/215-adv-fir-request.png"
     ],
-    "changedPixels": 0
+    "changedPixels": 0,
+    "preBatchBrowserComparison": {
+      "commit": "95b08ce",
+      "route": "/advocate/fir/fir-2026-1048",
+      "method": "cropped design content sampled by nearest-neighbour at browser resolution; full design-height viewport, demo timers disabled; runtime content and font rasterization also differ",
+      "crop": {
+        "x": 40,
+        "y": 14,
+        "w": 780,
+        "h": 3392
+      },
+      "width": 390,
+      "height": 1696,
+      "pixels": 661440,
+      "changedPixels": 333697,
+      "over20Pixels": 130828,
+      "over20Percent": 19.779,
+      "meanMaxChannelError": 23.7462
+    }
   },
   {
     "file": "design/445-adv-review-documents.png",
@@ -211,7 +611,25 @@
     "matches": [
       "design/216-adv-fir-documents.png"
     ],
-    "changedPixels": 0
+    "changedPixels": 0,
+    "preBatchBrowserComparison": {
+      "commit": "95b08ce",
+      "route": "/advocate/fir/documents",
+      "method": "cropped design content sampled by nearest-neighbour at browser resolution; full design-height viewport, demo timers disabled; runtime content and font rasterization also differ",
+      "crop": {
+        "x": 16,
+        "y": 14,
+        "w": 780,
+        "h": 2513
+      },
+      "width": 390,
+      "height": 1257,
+      "pixels": 490230,
+      "changedPixels": 166203,
+      "over20Pixels": 70771,
+      "over20Percent": 14.436,
+      "meanMaxChannelError": 22.4761
+    }
   },
   {
     "file": "design/446-adv-fir-draft-generator.png",
@@ -220,7 +638,25 @@
     "matches": [
       "design/217-adv-fir-generator.png"
     ],
-    "changedPixels": 0
+    "changedPixels": 0,
+    "preBatchBrowserComparison": {
+      "commit": "95b08ce",
+      "route": "/advocate/fir/generator",
+      "method": "cropped design content sampled by nearest-neighbour at browser resolution; full design-height viewport, demo timers disabled; runtime content and font rasterization also differ",
+      "crop": {
+        "x": 16,
+        "y": 14,
+        "w": 780,
+        "h": 4799
+      },
+      "width": 390,
+      "height": 2400,
+      "pixels": 936000,
+      "changedPixels": 354853,
+      "over20Pixels": 119409,
+      "over20Percent": 12.757,
+      "meanMaxChannelError": 19.7413
+    }
   },
   {
     "file": "design/447-adv-fir-draft-proforma.png",
@@ -229,7 +665,25 @@
     "matches": [
       "design/218-adv-fir-draft.png"
     ],
-    "changedPixels": 0
+    "changedPixels": 0,
+    "preBatchBrowserComparison": {
+      "commit": "95b08ce",
+      "route": "/advocate/fir/draft",
+      "method": "cropped design content sampled by nearest-neighbour at browser resolution; full design-height viewport, demo timers disabled; runtime content and font rasterization also differ",
+      "crop": {
+        "x": 40,
+        "y": 14,
+        "w": 780,
+        "h": 6272
+      },
+      "width": 390,
+      "height": 3136,
+      "pixels": 1223040,
+      "changedPixels": 506908,
+      "over20Pixels": 173967,
+      "over20Percent": 14.224,
+      "meanMaxChannelError": 21.5127
+    }
   },
   {
     "file": "design/448-adv-fir-review-waiting-full.png",
@@ -238,7 +692,25 @@
     "matches": [
       "design/219-adv-fir-review.png"
     ],
-    "changedPixels": 0
+    "changedPixels": 0,
+    "preBatchBrowserComparison": {
+      "commit": "95b08ce",
+      "route": "/advocate/fir/review",
+      "method": "cropped design content sampled by nearest-neighbour at browser resolution; full design-height viewport, demo timers disabled; runtime content and font rasterization also differ",
+      "crop": {
+        "x": 16,
+        "y": 14,
+        "w": 780,
+        "h": 2980
+      },
+      "width": 390,
+      "height": 1490,
+      "pixels": 581100,
+      "changedPixels": 281292,
+      "over20Pixels": 103498,
+      "over20Percent": 17.811,
+      "meanMaxChannelError": 22.8703
+    }
   },
   {
     "file": "design/449-adv-fir-review-waiting-compact.png",
@@ -246,7 +718,35 @@
     "height": 2668,
     "matches": [],
     "changedPixels": null,
-    "classification": "comparison pending"
+    "sourceComparison": {
+      "file": "design/219-adv-fir-review.png",
+      "method": "decoded RGBA; nearest-neighbour normalization for differing export sizes; compression and frames included",
+      "width": 812,
+      "height": 2994,
+      "pixels": 2431128,
+      "changedPixels": 1171166,
+      "over20Pixels": 483127,
+      "over20Percent": 19.873,
+      "meanMaxChannelError": 22.3654
+    },
+    "preBatchBrowserComparison": {
+      "commit": "95b08ce",
+      "route": "/advocate/fir/review",
+      "method": "cropped design content sampled by nearest-neighbour at browser resolution; full design-height viewport, demo timers disabled; runtime content and font rasterization also differ",
+      "crop": {
+        "x": 16,
+        "y": 14,
+        "w": 780,
+        "h": 2654
+      },
+      "width": 390,
+      "height": 1327,
+      "pixels": 517530,
+      "changedPixels": 246749,
+      "over20Pixels": 90592,
+      "over20Percent": 17.505,
+      "meanMaxChannelError": 22.1632
+    }
   },
   {
     "file": "design/450-adv-fir-completed.png",
@@ -255,6 +755,24 @@
     "matches": [
       "design/220-adv-fir-completed.png"
     ],
-    "changedPixels": 0
+    "changedPixels": 0,
+    "preBatchBrowserComparison": {
+      "commit": "95b08ce",
+      "route": "/advocate/fir/completed",
+      "method": "cropped design content sampled by nearest-neighbour at browser resolution; full design-height viewport, demo timers disabled; runtime content and font rasterization also differ",
+      "crop": {
+        "x": 40,
+        "y": 14,
+        "w": 780,
+        "h": 2144
+      },
+      "width": 390,
+      "height": 1072,
+      "pixels": 418080,
+      "changedPixels": 127394,
+      "over20Pixels": 41544,
+      "over20Percent": 9.937,
+      "meanMaxChannelError": 15.3088
+    }
   }
 ]

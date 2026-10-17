@@ -30,7 +30,8 @@ const BAR_HEIGHT = t.barPadTop + t.homeHeight + t.barGap + 16 + t.barPadBottom;
 
 // Legal Notice Tracking (design/31 "Drafting in Progress", design/32 "Awaiting Your
 // Approval"). Both states live here behind a prototype-only toggle at the foot of
-// the page (or ?state=approval). Everything is inert except Chat with Advocate.
+// the page (or ?state=approval). The decision route adds design/437 and proceeds
+// through delivery; the existing Arjun profile assignment is preserved.
 export default function TrackingScreen({ decision = false }: { decision?: boolean }) {
   const params = useLocalSearchParams<{ state?: string }>();
   const [state, setState] = useState<TrackingState>(params.state === 'approval' ? 'approval' : 'drafting');
