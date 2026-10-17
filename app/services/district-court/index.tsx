@@ -120,7 +120,14 @@ export default function DistrictCourtLandingScreen() {
           {d.options.map((o) => {
             const Icon = PROC_ICON[o.icon];
             return (
-              <View key={o.badge} style={[styles.card, styles.opt]}>
+              // Opens the price screen (design/343), which draws the real prices; 338
+              // draws no selected state, so none is added here.
+              <Pressable
+                key={o.badge}
+                accessibilityRole="button"
+                onPress={() => router.push('/services/district-court/pricing' as Href)}
+                style={[styles.card, styles.opt]}
+              >
                 <View style={[styles.badge, o.tone === 'peach' ? styles.badgePeach : styles.badgeGrey]}>
                   <Text style={[styles.badgeText, o.tone === 'peach' && styles.brownText]}>{o.badge}</Text>
                 </View>
@@ -134,7 +141,7 @@ export default function DistrictCourtLandingScreen() {
                     {o.proc}
                   </Text>
                 </View>
-              </View>
+              </Pressable>
             );
           })}
         </View>

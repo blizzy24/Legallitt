@@ -1,3 +1,4 @@
+import { useDemoWait } from '../../../../hooks/useDemoAdvance';
 import { previewNotice } from '../../../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
@@ -15,7 +16,7 @@ import {
   SquarePen,
   UserRound,
 } from 'lucide-react-native';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -43,6 +44,12 @@ export default function AdvocateNoticeReviewScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const r = ADV_NOTICE_REVIEW;
   const [changesRequested, setChangesRequested] = useState(false);
+  // DEMO: the drawn states in order, each on the shared wait — awaiting client
+  // review (190) → changes requested (191) → the final notice ready (192).
+  const toChanges = useCallback(() => setChangesRequested(true), []);
+  const toFinal = useCallback(() => router.push(`/advocate/notice/${id}/final` as Href), [id]);
+  useDemoWait(!changesRequested, toChanges);
+  useDemoWait(changesRequested, toFinal);
 
   return (
     <View style={styles.screen}>

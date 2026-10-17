@@ -2883,7 +2883,7 @@ export type AdvCaseMatter = {
   id: string;
   service: string;
   /** Routes Review Request; see the screen. */
-  serviceKey: 'legal-notice' | 'fir' | 'property-search' | 'forensic' | 'legal-advice' | 'high-court' | 'district-court' | 'other';
+  serviceKey: 'legal-notice' | 'fir' | 'property-search' | 'forensic' | 'legal-advice' | 'high-court' | 'district-court' | 'court-marriage' | 'other';
   /** Where Review opens, for a service whose flow is not keyed by serviceKey. */
   href?: string;
   urgency: 'URGENT' | 'ORDINARY';
@@ -2922,6 +2922,7 @@ export const ADV_CASES_SERVICES = [
   'Legal Advice',
   'High Court Representation',
   'District Court Representation',
+  'Court Marriage',
 ];
 
 /**
@@ -2937,6 +2938,7 @@ export const ADV_CASES_SERVICE_KEYS: Record<string, AdvCaseMatter['serviceKey']>
   'Legal Advice': 'legal-advice',
   'High Court Representation': 'high-court',
   'District Court Representation': 'district-court',
+  'Court Marriage': 'court-marriage',
 };
 
 export const ADV_CASES: AdvCaseMatter[] = [
@@ -2995,7 +2997,7 @@ export const ADV_CASES: AdvCaseMatter[] = [
   {
     id: 'cm-2026-1048',
     service: 'COURT MARRIAGE',
-    serviceKey: 'other',
+    serviceKey: 'court-marriage',
     urgency: 'ORDINARY',
     title: 'Rahul Sharma & Priya Sharma',
     ref: 'CM-2026-1048',
