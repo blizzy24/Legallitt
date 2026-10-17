@@ -61,7 +61,7 @@ export default function AdvocateVerifyDocumentsScreen() {
     <View style={styles.screen}>
       <View style={[styles.header, { paddingTop: insets.top + t.headerTop }]}>
         <View style={styles.progress}>
-          {Array.from({ length: 4 }, (_, i) => (
+          {Array.from({ length: 6 }, (_, i) => (
             <View
               key={i}
               style={[

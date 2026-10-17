@@ -48,7 +48,7 @@ export default function HighCourtCaseTypeScreen() {
         <View style={styles.step}>
           <Gavel size={t.stepIcon} color={c.brownInk} strokeWidth={2} />
           <Text style={styles.stepText} {...shrinkToFit(0.8)}>
-            {d.step}
+            {choice === 'pending' ? 'STEP 1 OF 2 • PENDING CASE INTAKE' : d.step}
           </Text>
         </View>
         <Text style={styles.h1}>{d.h1}</Text>

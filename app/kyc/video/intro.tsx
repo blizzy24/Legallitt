@@ -52,7 +52,7 @@ export default function VideoKycIntroScreen() {
         <View style={styles.pill}>
           <Video size={t.pillIcon} color={t.pillText} />
           <Text style={styles.pillText} {...shrinkToFit(0.8)}>
-            STEP 2 OF 3
+            STEP 1 OF 3
           </Text>
         </View>
 

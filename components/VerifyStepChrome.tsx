@@ -22,7 +22,7 @@ export default function VerifyStepChrome({
   eyebrow,
   step,
   filled,
-  segments = 4,
+  segments = 6,
   cta,
   onContinue,
   secondary,

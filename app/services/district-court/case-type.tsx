@@ -98,7 +98,7 @@ export default function DistrictCaseTypeScreen() {
           </Text>
         </View>
         <View style={styles.stepper}>
-          <DistrictStepper labels={d.steps} done={1} />
+          <DistrictStepper labels={d.steps} done={0} current={0} />
         </View>
 
         <Text style={styles.h1}>{d.h1}</Text>

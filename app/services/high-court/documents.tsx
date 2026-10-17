@@ -68,8 +68,8 @@ export default function HighCourtDocumentsScreen() {
           </View>
         </View>
         <View style={styles.bar}>
-          <View style={[styles.barFill, { flex: t.barPct }]} />
-          <View style={{ flex: 1 - t.barPct }} />
+          <View style={[styles.barFill, { flex: 0.8 }]} />
+          <View style={{ flex: 0.2 }} />
         </View>
         <Text style={styles.intro}>{d.intro}</Text>
 

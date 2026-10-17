@@ -40,8 +40,8 @@ export default function HighCourtPricingScreen() {
             <Text style={styles.stepText}>{d.step}</Text>
           </View>
           <View style={styles.segs}>
-            {Array.from({ length: t.segCount }, (_, i) => (
-              <View key={i} style={[styles.seg, i < t.segOn && styles.segOn]} />
+            {Array.from({ length: 5 }, (_, i) => (
+              <View key={i} style={[styles.seg, i < 5 && styles.segOn]} />
             ))}
           </View>
         </View>

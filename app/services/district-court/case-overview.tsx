@@ -201,12 +201,12 @@ export default function DistrictCourtCaseOverviewScreen() {
                 <View
                   style={[
                     styles.disc,
-                    (s.state === 'done' || s.state === 'doneGreen') && styles.discDone,
+                    (s.state === 'done') && styles.discDone,
                     s.state === 'current' && styles.discCurrent,
                     s.state === 'waiting' && styles.discWait,
                   ]}
                 >
-                  {s.state === 'done' || s.state === 'doneGreen' ? (
+                  {s.state === 'done' ? (
                     <Check size={t.discGlyph} color={ink.onBrand} strokeWidth={3} />
                   ) : (
                     <Text style={[styles.num, s.state === 'current' && styles.numCurrent]}>{i + 1}</Text>
@@ -217,7 +217,7 @@ export default function DistrictCourtCaseOverviewScreen() {
                   <Text
                     style={[
                       styles.stepDesc,
-                      s.state === 'doneGreen' && styles.greenDesc,
+                      s.state === 'done' && styles.greenDesc,
                       s.state === 'current' && styles.currentDesc,
                     ]}
                   >

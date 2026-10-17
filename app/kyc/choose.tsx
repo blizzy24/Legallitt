@@ -97,7 +97,7 @@ export default function KycChooseScreen() {
         <View style={styles.pill}>
           <ShieldCheck size={t.footIcon} color={ink.accent} />
           <Text style={styles.pillText} {...shrinkToFit(0.75)}>
-            STEP 1 OF 3 • IDENTITY VERIFICATION
+            IDENTITY VERIFICATION
           </Text>
         </View>
 

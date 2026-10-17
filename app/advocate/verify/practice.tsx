@@ -124,7 +124,7 @@ export default function AdvocateVerifyPracticeScreen() {
         </View>
 
         <View style={styles.progress}>
-          {Array.from({ length: 4 }, (_, i) => (
+          {Array.from({ length: 6 }, (_, i) => (
             <View
               key={i}
               style={[

@@ -19,7 +19,7 @@ import {
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import StepIndicator5, { STEP6_LABELS } from '../../components/StepIndicator5';
+import StepIndicator5 from '../../components/StepIndicator5';
 import { shrinkToFit } from '../../constants/textFit';
 import { LA_MATTERS, laConsultType } from '../../data/legalAdvice';
 import { colors, font, ink, laReview as t } from '../../constants/theme';
@@ -85,7 +85,7 @@ export default function LegalAdviceReviewScreen() {
           <ChevronLeft size={t.backIcon} color={colors.textPrimary} />
         </Pressable>
 
-        <StepIndicator5 active={2} labels={STEP6_LABELS} />
+        <StepIndicator5 active={2} />
 
         <View style={styles.intro}>
           <Text style={styles.introTitle}>Review</Text>

@@ -54,7 +54,7 @@ export const AV_INTRO = {
 
   stepsLabel: 'VERIFICATION STEPS',
   // Four names for six screens — see note 1.
-  steps: ['Personal Details', 'Professional Details', 'Documents', 'Review & Submit'],
+  steps: ['Personal Details', 'Professional Details', 'Bar Council', 'Practice', 'Documents', 'Review & Submit'],
 
   note: "Verification requirements may vary based on your professional details and Legalitt's verification process.",
 
@@ -65,7 +65,7 @@ export const AV_INTRO = {
 export const AV_PERSONAL = {
   title: 'Personal Details',
   eyebrow: 'ADVOCATE ENROLLMENT',
-  step: 'Step 1 of 4',
+  step: 'Step 1 of 6',
   filled: 1,
 
   note: 'Please enter your details as they appear on your professional records.',
@@ -93,7 +93,7 @@ export const AV_PERSONAL = {
 export const AV_PROFESSIONAL = {
   title: 'Professional Details',
   eyebrow: 'ADVOCATE ENROLLMENT',
-  step: 'Step 2 of 4',
+  step: 'Step 2 of 6',
   filled: 2,
 
   note: 'These details help Legalitt create your verified professional profile.',
@@ -163,7 +163,7 @@ export const AV_BAR_COUNCIL = {
   // ⚠ Note 1 again, and this is where it breaks: design/235 said "Step 2 of 4"
   // and design/237 says "Step 4 of 4". This screen and design/237 therefore
   // skip nothing and overlap nothing — but design/238 ALSO says "Step 3 of 4".
-  step: 'Step 3 of 4',
+  step: 'Step 3 of 6',
   filled: 3,
 
   note: {
@@ -198,7 +198,7 @@ export const AV_PRACTICE = {
   eyebrow: 'ADVOCATE ENROLLMENT',
   // ⚠ Note 1. "Step 4 of 4" with all four segments filled — and design/239,
   // the review screen, is still ahead of it.
-  step: 'Step 4 of 4',
+  step: 'Step 4 of 6',
   filled: 4,
 
   note: {
@@ -275,8 +275,8 @@ type VerifyDoc = {
 export const AV_DOCUMENTS = {
   title: 'Verification Documents',
   // ⚠ Note 1, and this is the duplicate: design/236 ALSO says "Step 3 of 4".
-  step: 'STEP 3 OF 4',
-  filled: 3,
+  step: 'Step 5 of 6',
+  filled: 5,
 
   lead: 'Upload clear and valid documents for verification.',
   accepted: 'Accepted: PDF, JPG, PNG (Max 10MB per file)',
@@ -345,8 +345,8 @@ export const AV_REVIEW = {
   eyebrow: 'ADVOCATE ENROLLMENT',
   title: 'Review & Submit',
   sub: 'Check your information before submitting for verification.',
-  pill: 'Final Step • 4 of 4 Completed',
-  filled: 4,
+  pill: 'Step 6 of 6 • Review & Submit',
+  filled: 6,
 
   sections: [
     {
@@ -466,7 +466,7 @@ export const AV_INCOMPLETE = {
   title: 'Complete Verification',
   // ⚠ Note 1 again — a third "Step 3 of 4" (design/236 and design/238 both say
   // it too), on a screen that is not a wizard step at all.
-  step: 'Step 3 of 4',
+  step: 'Step 5 of 6',
 
   h1: 'Verification Almost Complete',
   sub: 'A few details are still required before you can submit your advocate profile.',

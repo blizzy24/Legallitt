@@ -192,12 +192,10 @@ export default function DistrictChangeSentScreen() {
                     style={[
                       styles.disc,
                       s.state === 'done' && styles.discDone,
-                      s.state === 'past' && styles.discPast,
                       cur && styles.discCur,
                     ]}
                   >
                     {s.state === 'done' && <Check size={t.tlGlyph} color={c.greenInk} strokeWidth={3} />}
-                    {s.state === 'past' && <History size={t.tlGlyph} color={c.inkMuted} strokeWidth={2} />}
                     {wait && <View style={styles.waitDot} />}
                   </View>
                   {cur ? (

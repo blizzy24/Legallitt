@@ -163,7 +163,7 @@ export const HC_CASE_TYPE = {
   title: 'Choose Case Type',
   // ⚠ CONFLICT 6: "Step 1 of 4 • Intake" here; design/292 reads "Step 1 •
   // High Court", 294 "Step 3 of 4", 295 "Step 2 of 6". Each as drawn.
-  step: 'STEP 1 OF 4 \u2022 INTAKE',
+  step: 'STEP 1 OF 5 • INTAKE',
   h1: 'Tell us about your legal matter',
   body: 'Select an option below so we can pair you with the best advocate and prepare the right court paperwork.',
   options: [
@@ -199,7 +199,7 @@ export const HC_CASE_TYPE = {
 export const HC_MATTER_TYPE = {
   title: 'Case Verification',
   // ⚠ CONFLICT 6: "Step 1 • High Court" — design/291 already called itself Step 1 of 4.
-  step: 'STEP 1 \u2022 HIGH COURT',
+  step: 'STEP 2 OF 5 • MATTER TYPE',
   verified: 'Verified Legal Desk',
   h1: 'Choose your case type',
   body: 'Pick the matter you want to file or review in the High Court.',
@@ -228,8 +228,8 @@ export const HC_MATTER_TYPE = {
 export const HC_CASE_DETAILS = {
   title: 'Case Details',
   selected: 'Selected: Civil',
-  progress: '50% Completed',
-  progressPct: 0.5,
+  progress: 'Step 3 of 5 • 60% Completed',
+  progressPct: 0.6,
   h1: 'Tell us about your case',
   body: 'Share simple facts so your High Court counsel can review the dispute.',
   caseTitle: { label: 'Case Title', placeholder: 'Example: Rahul Sharma vs Amit Verma', hint: 'Give your case a clear name or mention both parties.' },
@@ -259,7 +259,7 @@ export const HC_CASE_DETAILS = {
 export const HC_DOCUMENTS = {
   title: 'Upload Documents',
   // ⚠ CONFLICT 6: "Step 3 of 4" — design/293 had no step, 295 is "Step 2 of 6".
-  step: 'STEP 3 OF 4',
+  step: 'STEP 4 OF 5',
   matter: 'Selected Matter: Civil',
   intro: 'Upload the documents you have for your case.',
   addedTitle: 'Documents Added',
@@ -291,7 +291,7 @@ export const HC_DOCUMENTS = {
 export const HC_PRICING = {
   title: 'Choose Service Price',
   // ⚠ CONFLICT 6: "Step 2 of 6", after 294's "Step 3 of 4".
-  step: 'STEP 2 OF 6 \u2022 SERVICE & PRICING',
+  step: 'STEP 5 OF 5 • SERVICE & PRICING',
   h1: 'Choose Service & Price',
   body: 'Choose how quickly you need help with your legal matter.',
   matterLabel: 'SELECTED MATTER',
@@ -461,7 +461,7 @@ export const HC_CHAT = {
  */
 export const HC_CONFIRM = {
   title: 'Confirm Advocate',
-  step: 'STEP 4 OF 6 \u2022 ADVOCATE CONFIRMATION',
+  step: 'Stage 4 of 11 • ADVOCATE CONFIRMATION',
   h1: 'Confirm Your Advocate',
   sub: 'Please review your advocate before we proceed to documents.',
   name: 'Adv. Abhishek Verma',
@@ -507,7 +507,7 @@ export const HC_CONFIRM = {
  */
 export const HC_DOCS_NEEDED = {
   title: 'Documents You Need',
-  step: 'STEP 5 OF 6 \u2022 DOCUMENTS LIST',
+  step: 'Stage 5 of 11 • DOCUMENTS',
   count: '2 of 3 Required',
   advName: 'Adv. Abhishek Verma',
   advSub: 'High Court Representation \u2022 HCR-2026-1048',
@@ -599,7 +599,7 @@ export const HC_SEND_DOCS = {
  */
 export const HC_BOOKING = {
   title: 'Blue Dart Delivery',
-  step: 'Step 2 \u2022 Document Shipping',
+  step: 'Delivery step 2 of 3',
   powered: 'Powered by Blue Dart Express',
   h1: 'Courier Booking',
   sub: 'We will send your documents to your advocate.',
@@ -661,7 +661,7 @@ export const HC_BOOKING = {
  */
 export const HC_COURIER_CONFIRM = {
   title: 'Confirm Delivery',
-  step: 'Step 3 of 3 \u2022 Final Confirmation',
+  step: 'Delivery step 3 of 3 • Final Confirmation',
   verified: 'Pre-verified',
   intro: 'Check your delivery details before booking your Blue Dart pickup.',
   route: 'Direct Transit Route',
@@ -841,7 +841,7 @@ export const HC_DELIVERED = {
   waitBody: 'Your advocate will confirm when the documents are received.',
   waitPill: 'Confirmation pending chamber check-in',
   docketTitle: 'Docket Status',
-  docketStep: 'Step 2 of 4',
+  docketStep: 'Docket step 3 of 4',
   steps: [
     { title: 'Sent from Central Registry', desc: 'Dispatched via secure air courier', state: 'done' },
     { title: 'Delivered to Chamber', desc: 'Signed at reception desk \u2022 Today, 11:30 AM', state: 'done' },
@@ -959,7 +959,7 @@ export const HC_CHANGE = {
  */
 export const HC_PENDING = {
   title: 'Pending Case',
-  step: 'STEP 2 OF 4 \u2022 CASE DETAILS',
+  step: 'STEP 2 OF 2 \u2022 PENDING CASE DETAILS',
   h1: 'Pending Case Details',
   sub: 'Add your current case details.',
   transTitle: 'Seamless Advocate Transition',

@@ -187,7 +187,7 @@ export type TimelineItem = {
  * rendered as drawn; the chip text is data so it is a one-line change once the client
  * says which is right (five stages, or four with one of these merged).
  */
-export const STATUS_STAGE_CHIP = 'Stage 2 of 4';
+export const STATUS_STAGE_CHIP = 'Stage 2 of 5';
 
 export const STATUS_TIMELINE: TimelineItem[] = [
   {
@@ -226,33 +226,13 @@ export const STATUS_TIMELINE: TimelineItem[] = [
   },
 ];
 
-export const READY_STAGE_CHIP = 'Stage 4 of 4';
+export const READY_STAGE_CHIP = 'Stage 5 of 5';
 
-export const READY_TIMELINE: TimelineItem[] = [
-  {
-    title: 'Request Submitted',
-    description: 'Incident details & statements securely logged',
-    state: '',
-    tone: 'done',
-  },
-  {
-    title: 'Information Reviewed',
-    description: 'Examined by specialized legal drafting panel',
-    state: '',
-    tone: 'done',
-  },
-  {
-    title: 'FIR Draft Prepared',
-    description: 'Statutory sections mapped under BNSS / IPC framework',
-    state: '',
-    tone: 'done',
-  },
-  {
-    title: 'Ready for Your Review',
-    description: 'Inspect facts, examine particulars, and download official PDF',
-    state: 'ACTIVE',
-    tone: 'active',
-  },
-];
+export const READY_TIMELINE: TimelineItem[] = STATUS_TIMELINE.map((item, index) => ({
+  ...item,
+  state: index === STATUS_TIMELINE.length - 1 ? 'ACTIVE' : 'Completed',
+  tone: index === STATUS_TIMELINE.length - 1 ? 'active' : 'done',
+  footnote: undefined,
+}));
 
 export const FIR_STEPS = 5;

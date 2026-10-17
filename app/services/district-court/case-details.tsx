@@ -145,7 +145,7 @@ export default function DistrictCaseDetailsScreen() {
           </View>
         </View>
         <View style={styles.stepper}>
-          <DistrictStepper labels={d.steps} done={2} current={2} />
+          <DistrictStepper labels={d.steps} done={1} current={1} />
         </View>
 
         <View style={[styles.card, styles.cardFirst]}>
