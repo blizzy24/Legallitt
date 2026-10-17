@@ -238,3 +238,4 @@ export * from './tokens/brand';
 export * from './tokens/previewNotice';
 export * from './tokens/pickers';
 export * from './tokens/previewStep';
+export * from './tokens/noticeChat';

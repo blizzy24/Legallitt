@@ -285,7 +285,7 @@ export default function AdvocateNoticeReviewScreen() {
               {r.viewDraft}
             </Text>
           </Pressable>
-          <Pressable onPress={() => previewNotice(r.messageClient)}
+          <Pressable onPress={() => router.push(`/advocate/notice/${id}/chat` as Href)}
             accessibilityRole="button"
             style={({ pressed }) => [styles.barBtn, styles.barLight, pressed && styles.pressed]}
           >
