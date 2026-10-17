@@ -14,9 +14,8 @@ import { useLegalAdvice } from '../../context/legalAdvice';
 // REPORTED — "Standard Fee ₹999" in the bottom bar is a figure that does not
 // identify itself. ₹999 is VIDEO on the landing and AUDIO on the choose screen, so
 // the bar is either contradicting one of them or quoting a third, flat price. It is
-// rendered exactly as drawn and nothing computes it, in line with the rest of this
-// flow — but it is one more reason the pricing has to be settled before the payment
-// screens can be built.
+// rendered exactly as drawn. Checkout uses the consultation selector price; this
+// ambiguous label does not add a fee.
 //
 // REPORTED — the design rings 22 September 2026 as "Today" and fills 24 September as
 // "Selected". Elsewhere the app treats 24 September 2026 as today (the KYC and

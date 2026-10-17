@@ -6,7 +6,7 @@ import type { LaConsultTypeId, LaExperienceId } from '../data/legalAdvice';
 //
 // consultType and experience are deliberately INDEPENDENT. The designs price both
 // axes and never say how they combine, so this context records each selection and
-// derives no amount from either. See the pricing note in data/legalAdvice.ts.
+// lets checkout use consultType's selector price without an experience surcharge. See the pricing note in data/legalAdvice.ts.
 
 export type LegalAdviceForm = {
   /** chat / audio / video. The landing and choose screens disagree on its price. */

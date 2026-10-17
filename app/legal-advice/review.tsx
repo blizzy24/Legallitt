@@ -238,7 +238,7 @@ export default function LegalAdviceReviewScreen() {
 
         <Pressable
           accessibilityRole="button"
-          onPress={() => router.push('/legal-advice/payment')}
+          onPress={() => router.push({ pathname: '/legal-advice/payment', params: { consultType: form.consultType } })}
           style={({ pressed }) => [styles.button, pressed && styles.pressed]}
         >
           <Text style={styles.buttonLabel}>Continue</Text>

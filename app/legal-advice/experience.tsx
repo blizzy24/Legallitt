@@ -59,8 +59,8 @@ import { useLegalAdvice } from '../../context/legalAdvice';
 // REPORTED — design/123's first card carries the page-allowance lines and
 // design/122's does not, for the same card in the same position.
 //
-// Tier prices are a separate, unreconciled axis. Checkout uses the fixed
-// design/108 total; these selections do not add a surcharge.
+// Tier prices are a separate, unreconciled axis. Checkout uses the selected
+// consultation's choosePrice; these tiers do not add a surcharge.
 // ─────────────────────────────────────────────────────────────────────────────
 
 const ICONS: Record<LaConsultTypeId, typeof Video> = {

@@ -23,9 +23,10 @@
 // ─────────────────────────────────────────────────────────────────────────────
 //
 // ─────────────────────────────────────────────────────────────────────────────
-// PAYMENT: use the ₹1,377 total drawn on design/108, explicitly selected by
-// the client after verifying design/107 has no total. Earlier price tables remain
-// as drawn below; they do not modify this fixed checkout total.
+// PAYMENT: the consultation selected on design/104 sets the checkout amount via
+// its choosePrice. Design/107 draws no platform fee, GST or other checkout line
+// item, so charge the consultation alone. Its ₹25/page upload note is conditional
+// overage copy, not a checkout line item or a flat surcharge.
 //
 // There are two contradictory price tables for the same three consultation types:
 //
@@ -47,14 +48,13 @@
 //                             other service in the app charges ₹199
 //     design/116 (completed)  a "Written Legal Advice & Action Plan" upsell at ₹100
 //
-// The shared Scan & Pay / success screens use LA_PAYMENT_TOTAL. No consultation
-// or experience surcharge is inferred from the contradictory tables above.
+// Shared Scan & Pay / success carry the selected consultation and its price.
+// Experience tiers do not add a surcharge.
 
-/** Design-sourced: design/108-la-payment-b.png (also repeated in 109–110).
- * Review design/107 draws no total. Client explicitly selected this fallback.
- * Drawn breakdown: ₹999 service + ₹179 GST + ₹199 platform = ₹1,377.
+/** Client question: design/108 draws ₹1,377 (₹999 service + ₹179 GST + ₹199
+ * platform). It matches the forensic template on design/279 and is probably a
+ * copy error. Retained here for review only; it is NOT the checkout amount.
  */
-export const LA_PAYMENT_TOTAL = 1377;
 export const LA_PAYMENT_SERVICE = 'Legal Advice';
 
 export type LaConsultTypeId = 'chat' | 'audio' | 'video';

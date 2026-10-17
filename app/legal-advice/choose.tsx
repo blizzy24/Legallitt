@@ -34,8 +34,7 @@ import { useLegalAdvice } from '../../context/legalAdvice';
 //     this screen            Chat ₹499   Audio ₹999    Video ₹1,499
 //
 // Audio and video swap rank and video nearly doubles. Each screen renders its own
-// figures exactly as drawn. Checkout uses the fixed design/108 total selected by
-// the client; see LA_PAYMENT_TOTAL in data/legalAdvice.ts.
+// figures exactly as drawn. Checkout uses this selector's choosePrice for the selected consultation.
 //
 // REPORTED — this screen is drawn OUTSIDE THE MAIN PALETTE, in green / lavender /
 // peach with dark-green headings. Third such divergence after the advocate profile
