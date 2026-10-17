@@ -1,7 +1,7 @@
 import { useLocalSearchParams, type Href } from 'expo-router';
 
 import PaymentSuccessScreen from '../../components/PaymentSuccessScreen';
-import { CO_PAYMENT, CO_PAYMENT_HCR, CO_SUCCESS } from '../../data/courier';
+import { CO_PAYMENT, CO_PAYMENT_DCR, CO_PAYMENT_HCR, CO_SUCCESS } from '../../data/courier';
 
 // Client — payment success (design/279).
 //
@@ -43,7 +43,7 @@ export default function CourierSuccessScreen() {
         : '/courier/shipment';
   // The success copy carries the courier payment's own total and reference
   // (the entering flow's, 17 Oct) instead of the ₹1377 / #PSR739482 template.
-  const pay = flow === 'hcr' || flow === 'dcr' ? CO_PAYMENT_HCR : CO_PAYMENT;
+  const pay = flow === 'dcr' ? CO_PAYMENT_DCR : flow === 'hcr' ? CO_PAYMENT_HCR : CO_PAYMENT;
   const d = {
     ...CO_SUCCESS,
     refValue: pay.ref.replace(/^Ref ID:\s*/, '').replace(/\s*·\s*$/, ''),

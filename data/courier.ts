@@ -245,10 +245,8 @@ export const CO_PAYMENT = {
   // ⚠ Note 11: drawn "High Court Represantative" — misspelt, and a different
   // label from "High Court Representation" on designs 275 and 284.
   service: 'High Court Represantative',
-  // ⚠ Note 18: the reference is #LGT-849204 — the LEGAL NOTICE prefix, on a
-  // courier payment for matter #HCR-2026-1048. design/86 carried the same wrong
-  // reference. The trailing "·" has nothing after it; it is drawn and kept.
-  ref: 'Ref ID: #LGT-849204 \u00B7',
+  // Use the existing courier matter reference, not the artwork's Legal Notice ID.
+  ref: 'Ref ID: #HCR-2026-1048',
   // ⚠ Note 2: 18% of ₹250 is ₹45, not ₹40, and the total would be ₹295.
   lines: [
     { label: 'Service Fee', value: '\u20B9250/-' },
@@ -282,6 +280,12 @@ export const CO_PAYMENT_HCR: typeof CO_PAYMENT = {
   total: '\u20B9249/-',
 };
 
+/** District Court courier: preserve its existing DC reference convention. */
+export const CO_PAYMENT_DCR: typeof CO_PAYMENT = {
+  ...CO_PAYMENT_HCR,
+  ref: 'Ref ID: #DC-2026-1048',
+};
+
 /** design/278 — Scan & Pay. */
 export const CO_SCAN_PAY = {
   // ⚠ Note 3: the QR is labelled "Legal Notice" on a High Court Representation
@@ -312,8 +316,8 @@ export const CO_SUCCESS = {
   intro: 'Scan the QR code using any UPI app to complete your payment.',
 
   refLabel: 'Request ID',
-  // ⚠ PSR- is the PROPERTY SEARCH prefix. The matter is #HCR-2026-1048.
-  refValue: '#PSR739482',
+  // Match the matter reference used at courier payment.
+  refValue: '#HCR-2026-1048',
 
   successTitle: 'Payment Successful',
   // ⚠ A fourth amount in one flow: 277 and 278 both say ₹290.

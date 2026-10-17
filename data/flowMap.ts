@@ -21,7 +21,7 @@ export const FLOW_MAP: Record<string, string> = {
   '/cases/[id]': '/documents/case', // the case's documents
   '/earnings': '/advocate/wallet/withdraw', // Withdraw Money
   '/fir/info': '/fir/step1', // Start
-  '/fir/pay-placeholder': '/fir/submitted', // FIR has no payment design (pricing pending): demo mode moves on to 47
+  '/fir/pay-placeholder': '/fir/payment', // legacy preview link
   '/hearings': '/hearings/[id]', // a hearing card
   '/hearings/[id]': '/cases/[id]', // its case
   '/property-search/request': '/property-search/review', // Continue
@@ -227,7 +227,7 @@ export const FLOW_MAP: Record<string, string> = {
   '/fir/step2': '/fir/step3', // 43 → 44
   '/fir/step3': '/fir/step4', // 44 → 45
   '/fir/step4': '/fir/step5', // 45 → 46
-  '/fir/step5': '/fir/submitted', // 46 → 47
+  '/fir/step5': '/fir/payment', // 46 → shared payment → success → 47
   '/fir/submitted': '/fir/status', // 47 → 48
   '/fir/status': '/fir/ready', // 48 → 49
   // last: /fir/ready (49)
@@ -254,7 +254,7 @@ export const FLOW_MAP: Record<string, string> = {
   '/legal-advice/details': '/legal-advice/matter', // 105 → 106
   '/legal-advice/matter': '/legal-advice/review', // 106 → 107
   '/legal-advice/review': '/legal-advice/payment', // 107 → 108
-  '/legal-advice/payment': '/legal-advice/confirmed', // 108 (pricing blocked) → 111: demo mode moves on
+  // Payment routes supply their service-specific success query to ScanPayScreen.
   '/legal-advice/confirmed': '/legal-advice/track', // 111 → 112
   '/legal-advice/track': '/legal-advice/session/chat', // 112 → 113
   '/legal-advice/session/chat': '/legal-advice/session/video', // 113 → 114

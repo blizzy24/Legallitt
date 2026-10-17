@@ -1,14 +1,12 @@
 // FIR Draft service data.
 //
-// ─────────────────────────────────────────────────────────────────────────────
-// TODO — PRICING IS UNKNOWN AND DELIBERATELY ABSENT.
-// The FIR batch shipped no payment designs of its own: the payment screens in the
-// source batch were the Legal Notice ones verbatim (they read "Legal Notice",
-// Ref #LGT-849204, ₹999). There is no FIR fee, tier or invoice here, and step 5's
-// "Proceed To Pay" routes to app/fir/pay-placeholder.tsx instead of a payment flow.
-// When the client confirms FIR pricing, add it here — next to the service tiers in
-// data/legalNotice.ts for consistency — and replace that placeholder route.
-// ─────────────────────────────────────────────────────────────────────────────
+// Audited every design/40–47: no base service fee or total is drawn.
+// design/45 DOES draw ₹25 per page above 25 pages (PER_PAGE_NOTE below);
+// that conditional overage is not a base fee and the preview has no page count.
+// UNCONFIRMED PLACEHOLDER, chosen for the client walkthrough: ₹1,000 flat total
+// for FIR drafting. Replace after pricing confirmation; no tax/fee is inferred.
+export const FIR_PAYMENT_TOTAL = 1000;
+export const FIR_PAYMENT_SERVICE = 'FIR Draft';
 
 export type IncidentType =
   | 'theft'

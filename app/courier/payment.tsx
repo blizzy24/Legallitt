@@ -1,7 +1,7 @@
 import { useLocalSearchParams, type Href } from 'expo-router';
 
 import CompletePaymentScreen from '../../components/CompletePaymentScreen';
-import { CO_PAYMENT, CO_PAYMENT_HCR } from '../../data/courier';
+import { CO_PAYMENT, CO_PAYMENT_DCR, CO_PAYMENT_HCR } from '../../data/courier';
 
 // Client — complete payment for the courier booking (design/277).
 //
@@ -22,8 +22,7 @@ import { CO_PAYMENT, CO_PAYMENT_HCR } from '../../data/courier';
 //   "Total Payable ₹290". 18% of ₹250 is ₹45 and the total would be ₹295.
 // ⚠ Note 11 — the title is drawn "High Court Represantative", misspelt and
 //   different from "High Court Representation" on designs 275 and 284.
-// ⚠ Note 18 — the reference is #LGT-849204, the Legal Notice prefix, and its
-//   trailing "·" has nothing after it.
+// The copied Legal Notice reference is corrected to the existing HCR matter ID.
 //
 // STATIC, NOT WIRED: all payment. No Razorpay, no UPI intent, no deep link.
 // "Pay" advances to the Scan & Pay screen and charges nothing.
@@ -36,7 +35,7 @@ export default function CourierPaymentScreen() {
   const q = flow ? `?flow=${flow}` : '';
   return (
     <CompletePaymentScreen
-      d={flow === 'hcr' || flow === 'dcr' ? CO_PAYMENT_HCR : CO_PAYMENT}
+      d={flow === 'dcr' ? CO_PAYMENT_DCR : flow === 'hcr' ? CO_PAYMENT_HCR : CO_PAYMENT}
       payHref={`/courier/scan-pay${q}` as Href}
       // Back, without history, returns to the screen that entered this payment.
       backHref={

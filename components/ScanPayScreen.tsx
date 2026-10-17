@@ -1,8 +1,8 @@
-import { router, type Href } from 'expo-router';
+import { router, useFocusEffect, type Href } from 'expo-router';
 import { DEMO_AUTO_ADVANCE } from '../constants/dev';
 import { DEMO_WAIT_MS } from '../hooks/useDemoAdvance';
 import { Clock, QrCode, Smartphone } from 'lucide-react-native';
-import { useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -23,7 +23,7 @@ function mmss(total: number) {
 /**
  * Scan & Pay — the screen design/29 draws, reused verbatim by Property Search
  * (design/77), Document Forensic (design/87) and now the courier flow
- * (design/278).
+ * (design/278), Legal Advice and FIR Draft.
  *
  * The QR is a stylised drawing, not a payable code.
  *
@@ -41,40 +41,52 @@ export default function ScanPayScreen({
   successHref,
   query,
   hold = false,
+  backHref,
+  requestId,
 }: {
   service: string;
   amount: number;
   successHref: Href;
   query?: string;
   hold?: boolean;
+  backHref?: Href;
+  requestId?: string;
 }) {
   const insets = useSafeAreaInsets();
   const [left, setLeft] = useState(s.validSeconds);
   // successHref is widened to string first: with every route typed, the
   // template literal over the Href union is too large for tsc to represent.
   const base = successHref as string;
-  const successTarget = (query ? `${base}?${query}` : base) as Href;
+  const successTarget = query ? `${base}?${query}` : base;
 
-  useEffect(() => {
+  useFocusEffect(useCallback(() => {
     if (hold) return;
     const tick = setInterval(() => setLeft((t) => Math.max(0, t - 1)), 1000);
-    const done = setTimeout(() => router.replace(successTarget), s.autoAdvanceMs);
+    const done = setTimeout(() => router.replace(successTarget as Href), s.autoAdvanceMs);
     return () => {
       clearInterval(tick);
       clearTimeout(done);
     };
-  }, [hold]);
+  }, [hold, successTarget]));
 
   // DEMO: a held screen still moves on, after the shared demo wait.
-  useEffect(() => {
+  useFocusEffect(useCallback(() => {
     if (!hold || !DEMO_AUTO_ADVANCE) return;
-    const done = setTimeout(() => router.replace(successTarget), DEMO_WAIT_MS);
+    const done = setTimeout(() => router.replace(successTarget as Href), DEMO_WAIT_MS);
     return () => clearTimeout(done);
-  }, [hold]);
+  }, [hold, successTarget]));
 
   return (
     <View style={styles.screen}>
-      <PayHeader padX={s.padX} title="Scan & Pay" subtitle="UPI Dynamic QR" intro="Scan the QR code using any UPI app to complete your payment." />
+      <PayHeader
+        padX={s.padX}
+        title="Scan & Pay"
+        subtitle="UPI Dynamic QR"
+        intro="Scan the QR code using any UPI app to complete your payment."
+        onBack={backHref
+          ? () => router.canGoBack() ? router.back() : router.replace(backHref)
+          : undefined}
+      />
       <ScrollView contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + s.cardGap }]} showsVerticalScrollIndicator={false}>
         <View style={styles.card}>
           <View style={styles.chips}>
@@ -96,6 +108,7 @@ export default function ScanPayScreen({
 
           <Text style={styles.amount}>{rupees(amount)}</Text>
           <Text style={styles.service}>{service}</Text>
+          {requestId && <Text style={styles.service}>Request ID: {requestId}</Text>}
           <Text style={styles.instr}>Open your UPI app and scan the QR code to complete the payment.</Text>
 
           <View style={styles.wait}>
@@ -121,7 +134,7 @@ export default function ScanPayScreen({
               charged. Callers that auto-advance leave it inert, as before. */}
           <Pressable
             accessibilityRole="button"
-            onPress={hold ? () => router.replace(successTarget) : undefined}
+            onPress={hold ? () => router.replace(successTarget as Href) : undefined}
             style={styles.altButton}
           >
             <Smartphone size={s.altIcon} color={ink.accent} />

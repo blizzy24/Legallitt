@@ -23,7 +23,9 @@
 // ─────────────────────────────────────────────────────────────────────────────
 //
 // ─────────────────────────────────────────────────────────────────────────────
-// PRICING IS BLOCKED. NOTHING HERE COMPUTES A TOTAL.
+// PAYMENT: use the ₹1,377 total drawn on design/108, explicitly selected by
+// the client after verifying design/107 has no total. Earlier price tables remain
+// as drawn below; they do not modify this fixed checkout total.
 //
 // There are two contradictory price tables for the same three consultation types:
 //
@@ -45,10 +47,15 @@
 //                             other service in the app charges ₹199
 //     design/116 (completed)  a "Written Legal Advice & Action Plan" upsell at ₹100
 //
-// Consequently app/legal-advice/payment.tsx is a PLACEHOLDER. The payment screens
-// (the brief's designs 107-109) are not built, and must not be built until the
-// client picks one price table and says how the two axes combine.
-// ─────────────────────────────────────────────────────────────────────────────
+// The shared Scan & Pay / success screens use LA_PAYMENT_TOTAL. No consultation
+// or experience surcharge is inferred from the contradictory tables above.
+
+/** Design-sourced: design/108-la-payment-b.png (also repeated in 109–110).
+ * Review design/107 draws no total. Client explicitly selected this fallback.
+ * Drawn breakdown: ₹999 service + ₹179 GST + ₹199 platform = ₹1,377.
+ */
+export const LA_PAYMENT_TOTAL = 1377;
+export const LA_PAYMENT_SERVICE = 'Legal Advice';
 
 export type LaConsultTypeId = 'chat' | 'audio' | 'video';
 

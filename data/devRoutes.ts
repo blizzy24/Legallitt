@@ -234,7 +234,7 @@ export const DEV_ROUTES: { section: string; routes: { href: string; design?: num
   ] },
   { section: 'fir', routes: [
     { href: '/fir/info' },
-    { href: '/fir/pay-placeholder' },
+    { href: '/fir/payment' },
     { href: '/fir', design: 40 },
     { href: '/fir/step1', design: 42 },
     { href: '/fir/step2', design: 43 },

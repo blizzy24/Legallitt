@@ -59,8 +59,8 @@ import { useLegalAdvice } from '../../context/legalAdvice';
 // REPORTED — design/123's first card carries the page-allowance lines and
 // design/122's does not, for the same card in the same position.
 //
-// Pricing stays blocked: the tier prices are a second axis that no screen reconciles
-// with the consultation-type prices. Nothing here computes a total.
+// Tier prices are a separate, unreconciled axis. Checkout uses the fixed
+// design/108 total; these selections do not add a surcharge.
 // ─────────────────────────────────────────────────────────────────────────────
 
 const ICONS: Record<LaConsultTypeId, typeof Video> = {

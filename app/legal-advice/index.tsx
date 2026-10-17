@@ -52,7 +52,7 @@ import { useLegalAdvice } from '../../context/legalAdvice';
 //
 // REPORTED — the landing prices (Chat ₹499 / Video ₹999 / Audio ₹699) contradict the
 // choose screen's (Chat ₹499 / Audio ₹999 / Video ₹1,499). This screen renders the
-// landing's, exactly as drawn. Nothing computes a total anywhere in the flow.
+// landing's, exactly as drawn. Checkout uses the fixed total from design/108.
 // ─────────────────────────────────────────────────────────────────────────────
 
 const TICKS = [

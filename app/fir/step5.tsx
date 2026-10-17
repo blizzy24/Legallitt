@@ -183,7 +183,7 @@ export default function FirStep5Screen() {
 
       <Pressable
         accessibilityRole="button"
-        onPress={() => router.push('/fir/pay-placeholder')}
+        onPress={() => router.push('/fir/payment')}
         style={({ pressed }) => [styles.button, pressed && styles.pressed]}
       >
         <Text style={styles.buttonLabel}>Proceed To Pay</Text>
