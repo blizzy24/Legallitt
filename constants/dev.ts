@@ -26,7 +26,7 @@
  * Set to false to hide both. The screens still accept `?state=` in the URL, so the
  * states stay reachable for review without the on-screen control.
  */
-export const DEV_PREVIEW_TOGGLES = true;
+export const DEV_PREVIEW_TOGGLES = false;
 
 /**
  * DEMO MODE. Every static primary control, every control disabled on work a demo
