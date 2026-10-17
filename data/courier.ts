@@ -1,3 +1,5 @@
+import { gst18, withGst18 } from './tax';
+
 // ─────────────────────────────────────────────────────────────────────────────
 // COURIER / DOCUMENT DELIVERY — copy and fixtures for designs 275–287.
 //
@@ -229,7 +231,7 @@ export const CO_DETAILS = {
   ],
 
   feeTitle: 'Delivery Fee',
-  feeAmount: '\u20B9290/-',
+  feeAmount: `₹${withGst18(250)}/-`,
   feeNote: 'This is the delivery fee only. It is separate from any legal service fees.',
 
   bannerTitle: 'Please check both addresses before booking.',
@@ -250,10 +252,10 @@ export const CO_PAYMENT = {
   // ⚠ Note 2: 18% of ₹250 is ₹45, not ₹40, and the total would be ₹295.
   lines: [
     { label: 'Service Fee', value: '\u20B9250/-' },
-    { label: 'Goods & Services Tax (GST 18%)', value: '\u20B940/-' },
+    { label: 'Goods & Services Tax (GST 18%)', value: `₹${gst18(250)}/-` },
   ],
   totalLabel: 'Total Payable',
-  total: '\u20B9290/-',
+  total: `₹${withGst18(250)}/-`,
   note: 'Inclusive of all legal taxes',
 
   methodLabel: 'SELECT PAYMENT METHOD',
@@ -263,7 +265,7 @@ export const CO_PAYMENT = {
   barLabel: 'Amount to pay',
   /** The sticky bar's amount. Drawn separately from `total`; they diverge on
    *  the corrected exports (see CO_PAYMENT_HCR, SERVICE_PAYMENT). */
-  barAmount: '\u20B9290/-',
+  barAmount: `₹${withGst18(250)}/-`,
   pay: 'Pay',
 };
 
@@ -277,13 +279,17 @@ export const CO_PAYMENT = {
  */
 export const CO_PAYMENT_HCR: typeof CO_PAYMENT = {
   ...CO_PAYMENT,
-  total: '\u20B9249/-',
+  total: CO_PAYMENT.total,
 };
 
 /** District Court courier: preserve its existing DC reference convention. */
 export const CO_PAYMENT_DCR: typeof CO_PAYMENT = {
   ...CO_PAYMENT_HCR,
   ref: 'Ref ID: #DC-2026-1048',
+  // District Court prices remain pending: preserve this variant exactly.
+  lines: [{ label: 'Service Fee', value: '₹250/-' }, { label: 'Goods & Services Tax (GST 18%)', value: '₹40/-' }],
+  total: '₹249/-',
+  barAmount: '₹290/-',
 };
 
 /** design/278 — Scan & Pay. */
@@ -292,7 +298,7 @@ export const CO_SCAN_PAY = {
   // matter. Drawn that way.
   service: 'Legal Notice',
   // ⚠ Note 2: ₹290 is ₹250 + ₹40 of "GST 18%", which should be ₹45 for ₹295.
-  amount: 290,
+  amount: withGst18(250),
   // ⚠ Static string, no timer. See app/courier/scan-pay.tsx.
   valid: '10:00',
 };
@@ -301,8 +307,10 @@ export const CO_SCAN_PAY = {
  *  (still labelled "Legal Notice"). The generic courier (278) keeps ₹290. */
 export const CO_SCAN_PAY_HCR = {
   ...CO_SCAN_PAY,
-  amount: 249,
+  amount: withGst18(250),
 };
+
+export const CO_SCAN_PAY_DCR = { ...CO_SCAN_PAY_HCR, amount: 249 };
 
 /**
  * design/279 — THE BIG ONE. Three other services collided on one courier

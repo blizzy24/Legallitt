@@ -91,7 +91,7 @@ export const HC_LANDING = {
 
   barTitle: 'High Court Representation',
   barSub: { ordinary: 'Ordinary • Standard', urgent: 'Urgent • Priority' },
-  barNote: 'Inclusive of GST',
+  barNote: 'Base fee + 18% GST',
   cta: 'Continue → Choose Case Type',
 };
 
@@ -637,13 +637,13 @@ export const HC_BOOKING = {
   tracking: 'Real-time tracking link will be sent via SMS upon pickup.',
   feeLabel: 'Delivery Fee',
   fee: '\u20B9250',
-  feeTag: 'All-Inclusive Rate',
+  feeTag: 'Base fee + 18% GST',
   feeLead: 'This is only the document delivery fee.',
   feeNote: 'Separate from legal case fee \u2022 Inclusive of tamper-proof packing & transit insurance.',
   custodyTitle: 'Legalitt Chain of Custody',
   custodyBody: "Documents are securely sealed in a tamper-evident pouch and hand-delivered directly to your advocate's office with signature verification.",
   barLabel: 'Total to pay for courier',
-  barTotal: 'Delivery Total: \u20B9250',
+  barTotal: 'Delivery Total: ₹295',
   secured: 'Secured Pouch',
   cta: 'Continue \u2192 Confirm Delivery',
   foot: 'Safe & contactless courier pickup',
@@ -690,7 +690,7 @@ export const HC_COURIER_CONFIRM = {
   etaSub: 'Standard advocate courier protocol',
   eta: '1\u20132 Business\nDays',
   feeTitle: 'Delivery Fee',
-  feeTag: 'All-Inclusive',
+  feeTag: 'Base fee + 18% GST',
   fee: '\u20B9250',
   feeBody: 'This covers secure tamper-evident envelope, doorstep pickup, and insured transit directly to your advocate.',
   warn: 'Please check the address before placing the delivery order.',
@@ -698,7 +698,7 @@ export const HC_COURIER_CONFIRM = {
   // Drawn with "24" alone on its own line — line breaks kept as drawn.
   checkSub: 'Blue Dart will arrive at your pickup address within\n24\nhours of booking.',
   barLabel: 'Total Delivery Fee',
-  barTotal: '\u20B9250',
+  barTotal: '₹295',
   cta: 'Book Delivery',
   foot: '100% Sealed Transit \u2022 Direct to Advocate Chamber',
 };

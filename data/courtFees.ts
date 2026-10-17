@@ -1,3 +1,5 @@
+import { gst18, withGst18 } from './tax';
+import { rupees as formatRupees } from './legalNotice';
 import type { CourtFee } from '../components/CourtPaymentFlow';
 import { DC_CHANGE, DC_COURT_FEE, DC_PROCESS_FEE, DC_REVIEW, DC_SUBMITTED } from './districtCourt';
 import { HC_CHAT, HC_PRICING } from './highCourt';
@@ -54,8 +56,11 @@ export function hcServicePay(tierId?: string): CourtFee {
   return {
     service: HC_PRICING.feeRows.service[1],
     ref: HC_CHAT.ctxId,
-    lines: [{ label: HC_PRICING.feeRows.base, value: tier.price }],
-    total: tier.price,
-    amount: rupees(tier.price),
+    lines: [
+      { label: HC_PRICING.feeRows.base, value: tier.price },
+      { label: 'GST (18%)', value: formatRupees(gst18(rupees(tier.price))) },
+    ],
+    total: formatRupees(withGst18(rupees(tier.price))),
+    amount: withGst18(rupees(tier.price)),
   };
 }

@@ -1,3 +1,5 @@
+import { gst18, moneyTotal } from './tax';
+
 // Property Search Report service data.
 //
 // ─────────────────────────────────────────────────────────────────────────────
@@ -158,13 +160,13 @@ export function psInvoiceLines(tierId: PropertyTierId): PsInvoiceLine[] {
   const fee = tierFor(tierId).price;
   return [
     { label: 'Service Fee', amount: fee },
-    { label: 'Goods & Services Tax (GST 18%)', amount: Math.floor(fee * PS_GST_RATE) },
+    { label: 'Goods & Services Tax (GST 18%)', amount: gst18(fee) },
     { label: 'Platform fees', amount: PS_PLATFORM_FEE },
   ];
 }
 
 export function psInvoiceTotal(tierId: PropertyTierId) {
-  return psInvoiceLines(tierId).reduce((sum, l) => sum + l.amount, 0);
+  return moneyTotal(...psInvoiceLines(tierId).map((l) => l.amount));
 }
 
 // ── Track (design/78) ──

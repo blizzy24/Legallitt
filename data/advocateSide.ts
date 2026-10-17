@@ -1,3 +1,5 @@
+import { gst18, withGst18 } from './tax';
+
 // Advocate-side data (designs 148-159).
 //
 // One consistent set for every advocate screen, the way data/cases.ts works for the
@@ -2584,11 +2586,11 @@ export const ADV_NOTICE_PAYMENT = {
   /** ⚠ Drawn figures, not computed — the label and the arithmetic disagree. */
   lines: [
     { label: 'Service Fee', amount: '₹250/-' },
-    { label: 'Goods & Services Tax (GST 18%)', amount: '₹40/-' },
+    { label: 'Goods & Services Tax (GST 18%)', amount: `₹${gst18(250)}/-` },
   ],
   totalLabel: 'Total Payable',
-  total: '₹290/-',
-  totalAmount: 290,
+  total: `₹${withGst18(250)}/-`,
+  totalAmount: withGst18(250),
   totalNote: 'Inclusive of all legal taxes',
   methodsLabel: 'SELECT PAYMENT METHOD',
   methodsMeta: 'Fast & Secure',

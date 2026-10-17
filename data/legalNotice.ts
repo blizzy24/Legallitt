@@ -1,3 +1,5 @@
+import { gst18, moneyTotal } from './tax';
+
 // Legal Notice service data: prices and the payment invoice. Everything money-related
 // on the detail, payment, scan-pay and success screens reads from here.
 
@@ -30,15 +32,15 @@ export function invoiceLines(tierId: ServiceTier['id']): InvoiceLine[] {
   return [
     { label: 'Service Fee', amount: fee },
     // design/28 prints ₹179 against a ₹999 fee. 18% of 999 is 179.82, so the file
-    // truncates rather than rounds; Math.floor reproduces the drawn figure exactly.
-    { label: 'Goods & Services Tax (GST 18%)', amount: Math.floor(fee * GST_RATE) },
+    // truncates; the confirmed 18% rule now retains paise instead.
+    { label: 'Goods & Services Tax (GST 18%)', amount: gst18(fee) },
     // design/28 reads "Plat form fees"; rendered as "Platform fees".
     { label: 'Platform fees', amount: PLATFORM_FEE },
   ];
 }
 
 export function invoiceTotal(lines: InvoiceLine[]) {
-  return lines.reduce((sum, l) => sum + l.amount, 0);
+  return moneyTotal(...lines.map((l) => l.amount));
 }
 
 /** "₹1,377" — Indian grouping for the amounts this app shows. */

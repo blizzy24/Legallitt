@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { hcServicePay } from '../../../data/courtFees';
 import CourierHeader from '../../../components/CourierHeader';
 import { shrinkToFit } from '../../../constants/textFit';
 import { HC_PRICING } from '../../../data/highCourt';
@@ -25,6 +26,7 @@ export default function HighCourtPricingScreen() {
   const insets = useSafeAreaInsets();
   const d = HC_PRICING;
   const [tier, setTier] = useState<TierId>(d.initial);
+  const payment = hcServicePay(tier);
   const chosen = d.tiers.find((x) => x.id === tier)!;
 
   return (
@@ -168,6 +170,10 @@ export default function HighCourtPricingScreen() {
             <Text style={styles.feeLabel}>{d.feeRows.base}</Text>
             <Text style={styles.feeValue}>{chosen.price}</Text>
           </View>
+          <View style={styles.feeRow}>
+            <Text style={styles.feeLabel}>GST (18%)</Text>
+            <Text style={styles.feeValue}>{payment.lines[1].value}</Text>
+          </View>
           <View style={styles.rule} />
           <View style={styles.totalRow}>
             <View style={styles.flex}>
@@ -175,7 +181,7 @@ export default function HighCourtPricingScreen() {
               <Text style={styles.totalSub}>{d.totalSub}</Text>
             </View>
             <Text style={styles.total} {...shrinkToFit(0.75)}>
-              {chosen.price}
+              {payment.total}
             </Text>
           </View>
         </View>

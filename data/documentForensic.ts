@@ -1,3 +1,5 @@
+import { gst18, moneyTotal } from './tax';
+
 // Document Forensic service data.
 //
 // ─────────────────────────────────────────────────────────────────────────────
@@ -68,15 +70,15 @@ export function dfInvoiceLines(tierId: DfTierId): DfInvoiceLine[] {
   const fee = dfTierFor(tierId).price;
   return [
     { label: 'Service Fee', amount: fee },
-    // Truncated, not rounded — design/28 and design/86 both truncate.
-    { label: 'Goods & Services Tax (GST 18%)', amount: Math.floor(fee * DF_GST_RATE) },
+    // Confirmed GST rule retains paise, unlike the truncated artwork.
+    { label: 'Goods & Services Tax (GST 18%)', amount: gst18(fee) },
     // design/86 prints "Plat form fees"; rendered as "Platform fees".
     { label: 'Platform fees', amount: DF_PLATFORM_FEE },
   ];
 }
 
 export function dfInvoiceTotal(tierId: DfTierId) {
-  return dfInvoiceLines(tierId).reduce((sum, l) => sum + l.amount, 0);
+  return moneyTotal(...dfInvoiceLines(tierId).map((l) => l.amount));
 }
 
 /**
