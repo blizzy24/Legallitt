@@ -935,3 +935,11 @@ export const advFirCompleted = {
   secondarySize: 14,
   secondaryColour: '#6C5C45',
 };
+
+// design/449: x16..795 content (780px / 390pt). Same measured cards as 219/448;
+// reminder panel omitted, Continue occupies y2274..2366 (92px) after a 36px gap.
+export const advFirReviewCompact = {
+  continueTop: 18,
+  continueH: 46,
+  continueRadius: 12,
+} as const;

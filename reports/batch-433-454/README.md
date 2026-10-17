@@ -42,3 +42,9 @@ Local production browser walk passed approval→decision→delivery→delivered�
 ## Supplied profile
 
 /advocates/rahul-sharma renders433 using the existing conditional profile component, the PNG's photograph, and its literal Rahul-specific record. Browser checked name, bar enrollment, rating/review count and both reviews. No Legal Notice profile button changed; Arjun remains the assigned profile. Ready to wire after identity confirmation.
+
+## FIR review states
+
+448 reuses219 at /advocate/fir/review. New449 is /advocate/fir/review-compact. Both are Waiting; Approved and Changes keep their preview notice. In demo mode full Waiting advances to compact Waiting, whose drawn Continue leads to450 (/advocate/fir/completed). Outside demo mode no approval or submission is fabricated. Remind Client no longer submits the FIR.
+
+Browser verification passed both Waiting layouts, both preview tabs, and the demo landing at FIR Submitted Successfully. The walk exposed a flowMap precedence bug: the dynamic /advocate/fir/[id] entry shadowed exact screen routes. Exact entries now resolve first.

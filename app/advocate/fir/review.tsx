@@ -1,3 +1,6 @@
+import { useDemoWait } from '../../../hooks/useDemoAdvance';
+import { DEMO_AUTO_ADVANCE } from '../../../constants/dev';
+import { advFirReviewCompact as compactTokens } from '../../../constants/tokens/advFir';
 import { previewNotice } from '../../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
@@ -56,11 +59,13 @@ import { advFirReview as t, colors, font, ink, previewStep } from '../../../cons
 
 const TL_ICONS = { check: Check, hourglass: Hourglass, checkcheck: CheckCheck, send: Send };
 
-export default function AdvocateFirReviewScreen() {
+export default function AdvocateFirReviewScreen({ compact = false }: { compact?: boolean }) {
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id?: string }>();
   const r = FIR_REVIEW;
   const [state, setState] = useState(r.switcher.states[0]);
+  // Both exports are Waiting. Only demo mode simulates the next external event.
+  useDemoWait(!compact && state === r.switcher.states[0]);
 
   return (
     <View style={styles.screen}>
@@ -74,7 +79,7 @@ export default function AdvocateFirReviewScreen() {
           <ChevronLeft size={t.backIcon} color={colors.textPrimary} />
         </Pressable>
         <Text style={styles.title} {...shrinkToFit(0.75)}>
-          {r.title}
+          {compact ? 'Fir Review' : r.title}
         </Text>
         <View style={styles.avatar}>
           <UserRound size={t.avatarGlyph} color={ink.onBrand} />
@@ -274,7 +279,7 @@ export default function AdvocateFirReviewScreen() {
           </View>
         </View>
 
-        <View style={styles.card}>
+        {!compact && <View style={styles.card}>
           <View style={styles.row}>
             <View style={styles.alertIcon}>
               <Mail size={t.alertIconGlyph} color={colors.brandDark} />
@@ -298,7 +303,7 @@ export default function AdvocateFirReviewScreen() {
           </Pressable>
           <Pressable
             accessibilityRole="button"
-            onPress={() => router.push(`/advocate/fir/completed?id=${id ?? ''}` as Href)}
+            onPress={() => previewNotice(r.alert.remind)}
             style={({ pressed }) => [styles.remind, pressed && styles.pressed]}
           >
             <BellRing size={t.remindIcon} color={ink.onBrand} />
@@ -306,7 +311,7 @@ export default function AdvocateFirReviewScreen() {
               {r.alert.remind}
             </Text>
           </Pressable>
-        </View>
+        </View>}
 
         <View style={styles.card}>
           <View style={styles.row}>
@@ -327,6 +332,10 @@ export default function AdvocateFirReviewScreen() {
             </View>
           ))}
         </View>
+        {compact && <Pressable accessibilityRole="button" onPress={() => {
+          if (DEMO_AUTO_ADVANCE && state === r.switcher.states[0]) router.push(`/advocate/fir/completed?id=${id ?? ''}` as Href);
+          else previewNotice('Continue');
+        }} style={[styles.remind, {marginTop:compactTokens.continueTop,minHeight:compactTokens.continueH,borderRadius:compactTokens.continueRadius}]}><Text style={styles.remindText}>Continue</Text></Pressable>}
       </ScrollView>
     </View>
   );

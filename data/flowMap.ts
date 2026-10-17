@@ -103,7 +103,8 @@ export const FLOW_MAP: Record<string, string> = {
   '/advocate/fir/documents': '/advocate/fir/generator', // 216 → 217
   '/advocate/fir/generator': '/advocate/fir/draft', // 217 → 218
   '/advocate/fir/draft': '/advocate/fir/review', // 218 → 219
-  '/advocate/fir/review': '/advocate/fir/completed', // 219 → 220
+  '/advocate/fir/review': '/advocate/fir/review-compact', // 219/448 → 449, Waiting only
+  '/advocate/fir/review-compact': '/advocate/fir/completed', // demo external approval → 450/220
   // last: /advocate/fir/completed (220)
   // ── advocate/forensic ──
   '/advocate/forensic/requests': '/advocate/forensic/[id]', // 222 → 223
@@ -403,6 +404,10 @@ const toRe = (p: string) => new RegExp('^' + p.replace(/\[[^\]]+\]/g, '([^/]+)')
 export function nextRoute(path: string, label?: string): string | undefined {
   const own = BUTTON_TARGETS[path]?.[label ?? ''];
   if (own) return own;
+  // Static screens must win over parameter routes such as /advocate/fir/[id].
+  // Otherwise Waiting's timer returns to documents instead of the next review.
+  const exact = FLOW_MAP[path];
+  if (exact !== undefined) return exact === TERMINAL ? undefined : exact;
   for (const [from, to] of Object.entries(FLOW_MAP)) {
     const m = path.match(toRe(from));
     if (!m) continue;
