@@ -1,3 +1,4 @@
+import { useDemoWait } from '../../hooks/useDemoAdvance';
 import { router } from 'expo-router';
 import { ChevronLeft, CircleCheck, House } from 'lucide-react-native';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -16,6 +17,8 @@ import { PS_CHECKING, PS_CHECKING_NOTE } from '../../data/propertySearch';
 // as drawn under the file's heading; see data/propertySearch.ts.
 
 export default function PropertySearchCheckingScreen() {
+  // DEMO: the check runs; demo mode moves on to the completed report (80).
+  useDemoWait();
   const insets = useSafeAreaInsets();
 
   return (

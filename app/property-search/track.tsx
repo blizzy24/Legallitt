@@ -1,3 +1,4 @@
+import { useDemoWait } from '../../hooks/useDemoAdvance';
 import { router } from 'expo-router';
 import { Check, ChevronLeft, FileText, Headset } from 'lucide-react-native';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -14,6 +15,8 @@ import { PS_REQUEST_ID, PS_STAGES, PS_TRACK_STATUS } from '../../data/propertySe
 // times and the day-apart spacing are kept. See data/propertySearch.ts.
 
 export default function PropertySearchTrackScreen() {
+  // DEMO: In Progress waits on the search; demo mode moves on to what we are checking (79).
+  useDemoWait();
   const insets = useSafeAreaInsets();
 
   return (

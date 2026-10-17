@@ -1,3 +1,4 @@
+import { useDemoWait } from '../../hooks/useDemoAdvance';
 import { router } from 'expo-router';
 import { Check, ChevronLeft, FileText, Headset, Lock, MessageSquare } from 'lucide-react-native';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -18,6 +19,8 @@ import { DF_REQUEST_ID, DF_STAGES, DF_TRACK as d } from '../../data/documentFore
 // internal actor. Flagged as a whole missing surface, not a copy issue.
 
 export default function DocumentForensicTrackScreen() {
+  // DEMO: In Progress waits on the analysis; demo mode moves on to the report (90).
+  useDemoWait();
   const insets = useSafeAreaInsets();
 
   return (
