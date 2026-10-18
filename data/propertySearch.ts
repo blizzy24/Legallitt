@@ -8,7 +8,7 @@ import { gst18, moneyTotal } from './tax';
 // design/72 draws two tiers: Ordinary ₹499 and Urgent ₹999, with Ordinary selected.
 // design/77's payment screen draws a total of ₹1,377.
 //
-// Applying the Legal Notice formula (fee + 18% GST truncated + ₹199 platform fee)
+// Historically, applying the formula (fee + 18% GST truncated + ₹199 platform fee)
 // gives ₹787 for Ordinary and ₹1,377 for Urgent. So design/77's figure is NOT
 // arbitrary — it is the URGENT total. It is also, exactly, the Legal Notice total,
 // because both services price their top tier at ₹999 and share the same formula.
@@ -144,10 +144,10 @@ export const PS_SERVICE = 'Property Search Report';
 export const PS_REQUEST_ID = '#PSR739482';
 
 /**
- * Invoice, computed the same way data/legalNotice.ts computes its own: the tier fee,
- * 18% GST truncated (not rounded), and a flat platform fee.
+ * Invoice: the selected tier fee,
+ * 18% GST rounded to whole rupees, and a flat platform fee.
  *
- * design/77 prints ₹1,377, which this formula produces for the URGENT tier — but
+ * design/77 prints ₹1,377, which the old truncated formula produced for the URGENT tier — but
  * design/72 pre-selects ORDINARY (₹787). The figure is not hardcoded; the invoice is
  * computed from whichever tier the user actually picked. See the header note.
  */

@@ -14,7 +14,7 @@ assert.equal(nextRoute('/advocate/fir/fir-2026-1048'), '/advocate/fir/documents'
 assert.equal(nextRoute('/legal-notice/tracking'), '/legal-notice/request-submitted');
 assert.equal(nextRoute('/legal-notice/delivery'), '/legal-notice/delivered');
 assert.equal(nextRoute('/advocate/notice/case-123/scan-pay'), '/advocate/notice/case-123/paid');
-for(const [tier,base,gst,total] of [['urgent',999,247.86,1624.86],['ordinary',699,193.86,1270.86]]) {
+for(const [tier,base,gst,total] of [['urgent',999,248,1625],['ordinary',699,194,1271]]) {
   const lines=invoiceLines(tier);
   assert.deepEqual(lines.map(line=>line.amount),[base,179,gst,199]);
   assert.equal(invoiceTotal(lines),total);

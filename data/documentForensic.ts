@@ -17,10 +17,10 @@ import { gst18, moneyTotal } from './tax';
 // through at least one copy-paste.
 //
 // The invoice below is computed from the tiers instead, using the method the other
-// services use (fee + 18% GST truncated + ₹199 platform fee):
+// services use (fee + 18% GST rounded to whole rupees + ₹199 platform fee):
 //
-//     Ordinary  ₹1,499 + ₹269 + ₹199 = ₹1,967
-//     Urgent    ₹2,999 + ₹539 + ₹199 = ₹3,737
+//     Ordinary  ₹1,499 + ₹270 + ₹199 = ₹1,968
+//     Urgent    ₹2,999 + ₹540 + ₹199 = ₹3,738
 //
 // Neither is ₹3,939, design/86's drawn total. Nothing here reproduces ₹3,167.
 // ─────────────────────────────────────────────────────────────────────────────
@@ -70,7 +70,7 @@ export function dfInvoiceLines(tierId: DfTierId): DfInvoiceLine[] {
   const fee = dfTierFor(tierId).price;
   return [
     { label: 'Service Fee', amount: fee },
-    // Confirmed GST rule retains paise, unlike the truncated artwork.
+    // Confirmed GST rate, rounded to whole rupees for payment.
     { label: 'Goods & Services Tax (GST 18%)', amount: gst18(fee) },
     // design/86 prints "Plat form fees"; rendered as "Platform fees".
     { label: 'Platform fees', amount: DF_PLATFORM_FEE },

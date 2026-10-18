@@ -21,15 +21,14 @@ import {
 //
 // PRICING — design/86's ₹3,167 Service Fee and ₹3,939 total are NOT reproduced. The
 // invoice is computed from the tier chosen on design/82 by the established method
-// (fee + 18% GST truncated + ₹199 platform fee):
+// (fee + 18% GST rounded to whole rupees + ₹199 platform fee):
 //
-//     Ordinary  ₹1,499 + ₹269 + ₹199 = ₹1,967
-//     Urgent    ₹2,999 + ₹539 + ₹199 = ₹3,737
+//     Ordinary  ₹1,499 + ₹270 + ₹199 = ₹1,968
+//     Urgent    ₹2,999 + ₹540 + ₹199 = ₹3,738
 //
 // REPORTED — design/87 draws the scan-pay screen AND a success card in one frame,
 // and the two disagree: the QR reads ₹3,939 while the success card reads ₹3,737 — a
-// third figure on top of design/86's. ₹3,737 is exactly the Urgent total this
-// formula produces, so that one is right and the other two are not. The computed
+// third figure on top of design/86's. ₹3,737 matches the old truncated Urgent total; whole-rupee rounding now gives ₹3,738. The computed
 // amount is used throughout the flow.
 //
 // REPORTED — design/86's Ref ID reads "#LGT-849204", the Legal Notice reference. A

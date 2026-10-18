@@ -7,6 +7,10 @@ export type InvoiceLine = { label: string; amount: number };
 
 // Two price points from design/22 (service detail). Which is which is confirmed
 // there; the payment invoice charges the standard fee.
+// UNCONFIRMED: the current urgent taxable base is ₹1,377 (₹999 service +
+// ₹179 delivery + ₹199 platform), derived from design/279’s unconfirmed figure.
+// Keep these values pending client confirmation; update the fee constants here
+// when confirmed, and all Notice invoices/payment totals will follow.
 export const LEGAL_NOTICE_PRICES = {
   standard: 999,
   express: 699,

@@ -21,7 +21,7 @@ import {
 //
 // PRICING — design/77 prints ₹1,377 and that figure is NOT reproduced. The total is
 // computed from the tier chosen on design/72 using the Legal Notice method (fee +
-// 18% GST truncated + ₹199 platform fee): ₹787 for Ordinary, ₹1,377 for Urgent.
+// 18% GST rounded + ₹199 platform fee): ₹788 for Ordinary, ₹1,378 for Urgent.
 // design/77's figure happens to be the Urgent total, but the landing screen it
 // follows pre-selects Ordinary — so the two screens disagree about which tier is
 // being paid for. See the header note in data/propertySearch.ts.
