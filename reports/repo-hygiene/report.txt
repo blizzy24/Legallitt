@@ -1,0 +1,41 @@
+Repository hygiene — chore/monorepo
+
+Changes
+- Added root .vercelignore. Excludes design, reports, docs, scripts, infra,
+  apps/api, agent instructions, dependency installs, all dist/web-build output,
+  Expo/Turbo/build caches, native generated projects and local/editor state.
+- Preserved mobile source/assets, packages/shared and the root workspace,
+  lockfile, package and TypeScript/Turbo configuration needed by the build.
+- Deleted the stale, untracked root dist directory: 15,380,260 bytes.
+- Existing .gitignore rule dist/ covers both root dist and apps/mobile/dist.
+  git ls-files confirms neither output directory is tracked.
+- .node-version now selects Node 22, matching Vercel 22.x. Root and mobile
+  package.json declare engines.node=22.x; api/shared/infra have no engine
+  overrides. Validation used Node 22.23.3.
+
+Size measurements (uncompressed regular-file bytes; symlinks not followed)
+- Entire local repo before: 785,826,924 bytes.
+- Entire local repo after root dist deletion: 770,447,709 bytes.
+  Includes .git and installed dependencies; this is NOT an upload size.
+- Tracked source before exclusions: 140,388,578 bytes.
+- Filtered source copy after exclusions: 6,885,569 bytes,
+  531 files. Includes the new ignore file and local Expo type declaration.
+- Approximate source reduction: 95.10%.
+- du allocated disk size: 897 MiB before / 883 MiB after deletion.
+
+These are local source-payload measurements, not an observed Vercel network
+transfer. Git clone objects, compression, Vercel defaults and build caches can
+change transfer sizes. No CLI login or deployment was performed.
+
+Validation method
+- Copied only files allowed by .vercelignore into a fresh temporary workspace.
+- pnpm install --frozen-lockfile --offline succeeded with api/infra absent.
+- Expo web export --clear succeeded there; no excluded source directories or
+  existing node_modules/build output were available to the build.
+- Added only the smoke harness AFTER building, then tested the filtered export.
+- TypeScript passed across all four original workspaces.
+- Browser smoke: 322 routes, zero failures (smoke.log).
+
+Sources checked
+https://vercel.com/docs/deployments/vercel-ignore
+https://vercel.com/docs/builds/build-features

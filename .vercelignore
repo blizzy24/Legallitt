@@ -1,0 +1,32 @@
+# Only mobile and shared workspace sources are needed for the web build.
+# Keep root package.json, pnpm lock/workspace files, tsconfig and turbo config.
+/design/
+/reports/
+/docs/
+/scripts/
+/infra/
+/apps/api/
+/AGENTS.md
+/CLAUDE.md
+
+# Dependencies and build output are recreated by Vercel.
+node_modules/
+dist/
+web-build/
+.expo/
+.turbo/
+.cache/
+.vercel/
+cdk.out/
+coverage/
+/apps/mobile/ios/
+/apps/mobile/android/
+
+# Local repository/editor state and machine-specific files.
+.git/
+.idea/
+.vscode/
+.DS_Store
+*.tsbuildinfo
+*.log
+.env*.local
