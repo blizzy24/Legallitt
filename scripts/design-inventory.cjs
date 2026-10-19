@@ -5,12 +5,12 @@ const ts = require('typescript'), { PNG } = require('pngjs');
 const root = process.cwd();
 const ocr = process.argv[2] ? new Map(fs.readFileSync(process.argv[2], 'utf8').trim().split('\n').map(line => { const row = JSON.parse(line); return [path.relative(root, row.file), row]; })) : new Map();
 const walk = dir => fs.readdirSync(dir, { withFileTypes: true }).flatMap(e => e.isDirectory() ? walk(path.join(dir, e.name)) : [path.join(dir, e.name)]);
-const routes = walk('app').filter(f => /\.tsx?$/.test(f) && !path.basename(f).startsWith('_'));
-const sources = [...walk('app'), ...walk('components'), ...walk('constants'), ...walk('context'), ...walk('data'), ...walk('hooks')].filter(f => /\.tsx?$/.test(f));
+const routes = walk('apps/mobile/app').filter(f => /\.tsx?$/.test(f) && !path.basename(f).startsWith('_'));
+const sources = [...walk('apps/mobile/app'), ...walk('apps/mobile/components'), ...walk('apps/mobile/constants'), ...walk('apps/mobile/context'), ...walk('apps/mobile/data'), ...walk('apps/mobile/hooks')].filter(f => /\.tsx?$/.test(f));
 const texts = new Map(sources.map(f => [f, fs.readFileSync(f, 'utf8')]));
 function resolve(from, spec) {
   if (!spec.startsWith('.') && !spec.startsWith('@/')) return;
-  const base = spec.startsWith('@/') ? spec.slice(2) : path.normalize(path.join(path.dirname(from), spec));
+  const base = spec.startsWith('@/') ? path.join('apps/mobile', spec.slice(2)) : path.normalize(path.join(path.dirname(from), spec));
   return [base, base+'.ts', base+'.tsx', path.join(base,'index.ts'), path.join(base,'index.tsx')].find(f => texts.has(f));
 }
 const edges = new Map(sources.map(f => [f, ts.preProcessFile(texts.get(f), true, true).importedFiles.map(x => resolve(f,x.fileName)).filter(Boolean)]));
@@ -30,7 +30,7 @@ for(const route of routes) {
   const seen = new Set(), todo = [route];
   // Shared route layouts supply tab bars/providers whose sources can also cite designs.
   let dir=path.dirname(route);
-  while(dir.startsWith('app')) { const layout=path.join(dir,'_layout.tsx');if(texts.has(layout))todo.push(layout);if(dir==='app')break;dir=path.dirname(dir); }
+  while(dir.startsWith('apps/mobile/app')) { const layout=path.join(dir,'_layout.tsx');if(texts.has(layout))todo.push(layout);if(dir==='apps/mobile/app')break;dir=path.dirname(dir); }
   while(todo.length) { const f=todo.pop();if(seen.has(f))continue;seen.add(f);todo.push(...(edges.get(f)||[])); }
   reach.set(route,seen);
 }

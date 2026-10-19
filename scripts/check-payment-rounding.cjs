@@ -2,11 +2,11 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const ts = require('typescript');
 require.extensions['.ts'] = (module, filename) => module._compile(ts.transpileModule(fs.readFileSync(filename, 'utf8'), {compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText, filename);
-const {gst18, withGst18} = require('../data/tax.ts');
-const {invoiceLines, invoiceTotal} = require('../data/legalNotice.ts');
-const {psInvoiceLines, psInvoiceTotal} = require('../data/propertySearch.ts');
-const {dfInvoiceLines, dfInvoiceTotal} = require('../data/documentForensic.ts');
-const {hcServicePay} = require('../data/courtFees.ts');
+const {gst18, withGst18} = require('../apps/mobile/data/tax.ts');
+const {invoiceLines, invoiceTotal} = require('../apps/mobile/data/legalNotice.ts');
+const {psInvoiceLines, psInvoiceTotal} = require('../apps/mobile/data/propertySearch.ts');
+const {dfInvoiceLines, dfInvoiceTotal} = require('../apps/mobile/data/documentForensic.ts');
+const {hcServicePay} = require('../apps/mobile/data/courtFees.ts');
 // Both sides of the half-rupee boundary, plus exactly 50 paise.
 assert.equal(gst18(24), 4);
 assert.equal(gst18(25), 5);

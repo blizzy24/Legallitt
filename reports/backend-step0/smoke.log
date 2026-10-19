@@ -1,0 +1,14 @@
+
+> legalitt@0.0.0 test:mobile /Users/riya/Documents/14
+> node scripts/mobile-smoke.mjs
+
+50/322
+100/322
+150/322
+200/322
+250/322
+300/322
+{
+  "routes": 322,
+  "failures": []
+}

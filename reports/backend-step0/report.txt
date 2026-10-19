@@ -1,0 +1,51 @@
+Step 0 — Monorepo restructure
+Specification: docs/LEGALITT-BACKEND-ARCHITECTURE.md v2.0, §6 and §10.
+
+Changes
+- Moved 514 app source/asset files, byte-for-byte, into apps/mobile.
+- Moved app.json unchanged. Its ./assets paths remain correct because assets
+  moved with it. Preserved the existing EAS project UUID. No eas.json existed;
+  none was invented. Run Expo/EAS commands from apps/mobile.
+- Renamed the package @legalitt/mobile; added build/typecheck scripts and the
+  specified Node 22 engine. Application dependencies and UI source unchanged.
+- Converted the npm lockfile to pnpm, then checked a clean frozen-lockfile
+  install without the old npm node_modules directory.
+- Added pnpm workspaces, Turborepo tasks, root TypeScript configuration and
+  @legalitt/shared alias. Mobile retains Expo's TypeScript configuration.
+- Added empty api/shared/infra workspaces. Their src/index.ts files contain
+  only an empty export so tsc can validate the scaffolds.
+- Moved Vercel configuration into apps/mobile. Build: pnpm build; output: dist;
+  install: pnpm install --frozen-lockfile. Existing rewrites/redirects preserved.
+- Updated fixture checks, design inventory paths and generated-directory ignores.
+- Added a portable 322-route smoke runner; supports CHROME_PATH and
+  SMOKE_BASE_URL, otherwise serves apps/mobile/dist locally.
+- Added the supplied architecture document unchanged to version control.
+
+Every moved, changed and added file is listed in files.tsv.
+
+Implementation details not specified by the document
+- Tool versions pinned: Node 22.23.3, pnpm 10.34.7, Turborepo 2.11.9.
+- Retained pnpm's isolated dependency layout; SDK 57 handles the monorepo
+  without a custom Metro configuration.
+- Kept design/, reports/, docs/ and repository-wide scripts at the root.
+- Workspace scaffolds contain no backend implementation before the gate.
+
+Validation
+- Clean pnpm install --frozen-lockfile: passed.
+- pnpm build: passed (mobile web export).
+- TypeScript: all four workspaces passed with cache bypassed.
+- Existing flow/invoice regressions: passed.
+- 322-route smoke: passed, 322 routes and zero failures (smoke.log).
+- Dependency warning: Expo modules' react-native-worklets peer range does not
+  include the resolved 0.12.2. Preserved the existing app dependencies rather
+  than changing them during the move; build and runtime checks cover the move.
+
+Outstanding gate
+- Vercel project Root Directory must be apps/mobile; enable access to files
+  outside that directory for workspace dependencies, use Node 22, pnpm build,
+  output dist and pnpm install --frozen-lockfile.
+- No authenticated Vercel CLI session, connector or deployment token is
+  available in this workspace. Project setting changes and successful remote
+  deployment cannot yet be verified. User has been asked to authenticate the
+  CLI or update those settings.
+- Steps 1–3 must not begin until the deployment gate passes. No AWS action taken.
