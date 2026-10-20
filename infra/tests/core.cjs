@@ -26,8 +26,11 @@ for (const [stage, env] of [
     template.resourceCountIs("AWS::Cognito::UserPool", 1);
     template.resourceCountIs("AWS::Cognito::UserPoolClient", 1);
     template.resourceCountIs("AWS::S3::Bucket", 1);
-    template.resourceCountIs("AWS::SecretsManager::Secret", 2);
-    template.resourceCountIs("AWS::Lambda::Function", 4);
+    template.resourceCountIs(
+      "AWS::SecretsManager::Secret",
+      env === "dev" ? 3 : 2,
+    );
+    template.resourceCountIs("AWS::Lambda::Function", 1);
     assert.equal(core.dependencies.length, 0);
     const json = template.toJSON();
     assert.ok(!JSON.stringify(json).includes("Fn::ImportValue"));
@@ -58,76 +61,32 @@ for (const [stage, env] of [
     ))
       assert.deepEqual(fn.Properties.Environment.Variables, {
         ENVIRONMENT: env,
-        SMS_ENABLED: "false",
       });
   });
 }
-test("fixed OTP is dev-only, expires, and cannot grant public admin signup", async () => {
-  const oldEnv = process.env.ENVIRONMENT,
-    oldSms = process.env.SMS_ENABLED;
-  try {
-    const attempt = () => ({
-      request: {
-        challengeAnswer: "123456",
-        privateChallengeParameters: { issuedAt: String(Date.now()) },
-      },
-      response: {},
-    });
-    process.env.ENVIRONMENT = "dev";
-    process.env.SMS_ENABLED = "false";
-    assert.equal(
-      (await handlers.verify(attempt())).response.answerCorrect,
-      true,
-    );
-    const expired = attempt();
-    expired.request.privateChallengeParameters.issuedAt = String(
-      Date.now() - 300001,
-    );
-    assert.equal(
-      (await handlers.verify(expired)).response.answerCorrect,
-      false,
-    );
-    for (const env of ["prod", "production", "", undefined]) {
-      if (env === undefined) delete process.env.ENVIRONMENT;
-      else process.env.ENVIRONMENT = env;
-      assert.equal(
-        (await handlers.verify(attempt())).response.answerCorrect,
-        false,
-      );
-      assert.equal(
-        (
-          await handlers.define({
-            request: {
-              session: [
-                { challengeName: "CUSTOM_CHALLENGE", challengeResult: true },
-              ],
-            },
-            response: {},
-          })
-        ).response.issueTokens,
-        false,
-      );
-    }
-    process.env.ENVIRONMENT = "dev";
-    process.env.SMS_ENABLED = "true";
-    assert.equal(
-      (await handlers.verify(attempt())).response.answerCorrect,
-      false,
-    );
-    await assert.rejects(
-      handlers.preSignup({
-        triggerSource: "PreSignUp_SignUp",
-        request: { userAttributes: { "custom:role": "admin" } },
-      }),
-    );
-    await handlers.preSignup({
+test("public signup cannot grant admin; Cognito has no custom OTP handlers", async () => {
+  assert.deepEqual(Object.keys(handlers), ["preSignup"]);
+  await assert.rejects(
+    handlers.preSignup({
       triggerSource: "PreSignUp_SignUp",
-      request: { userAttributes: { "custom:role": "advocate" } },
-    });
-  } finally {
-    if (oldEnv === undefined) delete process.env.ENVIRONMENT;
-    else process.env.ENVIRONMENT = oldEnv;
-    if (oldSms === undefined) delete process.env.SMS_ENABLED;
-    else process.env.SMS_ENABLED = oldSms;
+      request: { userAttributes: { "custom:role": "admin" } },
+    }),
+  );
+  await handlers.preSignup({
+    triggerSource: "PreSignUp_SignUp",
+    request: { userAttributes: { "custom:role": "advocate" } },
+  });
+  for (const stage of ["LegalittDev", "LegalittProd"]) {
+    const template = Template.fromStack(
+      app.node.findChild(stage).node.findChild("Core"),
+    );
+    const pool = Object.values(
+      template.findResources("AWS::Cognito::UserPool"),
+    )[0].Properties;
+    assert.deepEqual(Object.keys(pool.LambdaConfig), ["PreSignUp"]);
+    const client = Object.values(
+      template.findResources("AWS::Cognito::UserPoolClient"),
+    )[0].Properties;
+    assert.ok(!client.ExplicitAuthFlows.includes("ALLOW_CUSTOM_AUTH"));
   }
 });

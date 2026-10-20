@@ -15,6 +15,7 @@ export class CoreStack extends Stack {
   readonly secret: CfnResource;
   readonly authConfig: CfnResource;
   readonly userPool: CfnResource;
+  readonly demoCredentials?: CfnResource;
   constructor(
     scope: Construct,
     id: string,
@@ -177,7 +178,7 @@ export class CoreStack extends Stack {
     });
     const code = readFileSync(join(__dirname, "../lambda/auth.cjs"), "utf8");
     const triggers: Record<string, CfnResource> = {};
-    for (const name of ["define", "create", "verify", "preSignup"]) {
+    for (const name of ["preSignup"]) {
       const logs = resource(`${name}Logs`, "AWS::Logs::LogGroup", {
         LogGroupName: `/aws/lambda/${prefix}-auth-${name}`,
       });
@@ -189,7 +190,7 @@ export class CoreStack extends Stack {
         Role: arn(role),
         Code: { ZipFile: code },
         Environment: {
-          Variables: { ENVIRONMENT: environment, SMS_ENABLED: "false" },
+          Variables: { ENVIRONMENT: environment },
         },
       });
       fn.addResourceDependency(logs);
@@ -197,7 +198,10 @@ export class CoreStack extends Stack {
     }
     const pool = resource("UserPool", "AWS::Cognito::UserPool", {
       UserPoolName: `${prefix}-users`,
-      UsernameAttributes: ["email", "phone_number"],
+      // The deployed dev pool has immutable username attributes from v3.0.
+      // Retain it without replacement; no phone lookup or custom auth remains.
+      UsernameAttributes:
+        environment === "dev" ? ["email", "phone_number"] : ["email"],
       UsernameConfiguration: { CaseSensitive: false },
       AutoVerifiedAttributes: ["email"],
       Schema: [
@@ -211,9 +215,6 @@ export class CoreStack extends Stack {
       ],
       UserPoolTags: { environment, application: "legalitt" },
       LambdaConfig: {
-        DefineAuthChallenge: arn(triggers.define),
-        CreateAuthChallenge: arn(triggers.create),
-        VerifyAuthChallengeResponse: arn(triggers.verify),
         PreSignUp: arn(triggers.preSignup),
       },
     });
@@ -233,7 +234,6 @@ export class CoreStack extends Stack {
       GenerateSecret: false,
       ExplicitAuthFlows: [
         "ALLOW_USER_PASSWORD_AUTH",
-        "ALLOW_CUSTOM_AUTH",
         "ALLOW_REFRESH_TOKEN_AUTH",
       ],
       PreventUserExistenceErrors: "ENABLED",
@@ -259,6 +259,27 @@ export class CoreStack extends Stack {
       }),
     });
     config.applyRemovalPolicy(RemovalPolicy.RETAIN);
+    if (environment === "dev") {
+      this.demoCredentials = resource(
+        "DemoCredentials",
+        "AWS::SecretsManager::Secret",
+        {
+          Name: `${prefix}/demo-auth`,
+          KmsKeyId: arn(key),
+          GenerateSecretString: {
+            SecretStringTemplate: "{}",
+            GenerateStringKey: "password",
+            PasswordLength: 32,
+            ExcludeCharacters: '"@/\\',
+            RequireEachIncludedType: true,
+          },
+        },
+      );
+      this.demoCredentials.applyRemovalPolicy(RemovalPolicy.RETAIN);
+      new CfnOutput(this, "DemoCredentialsSecretArn", {
+        value: this.demoCredentials.ref,
+      });
+    }
     this.authConfig = config;
     this.userPool = pool;
     new CfnOutput(this, "UserPoolId", { value: pool.ref });

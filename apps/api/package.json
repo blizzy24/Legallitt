@@ -9,7 +9,8 @@
     "test": "pnpm build && node --test tests/*.cjs",
     "db:validate": "prisma validate",
     "db:migrate": "prisma migrate deploy",
-    "db:seed": "pnpm build && prisma db seed"
+    "db:seed": "pnpm build && prisma db seed",
+    "db:seed-demo": "pnpm build && node --env-file-if-exists=.env.local dist/prisma/seed-demo.js"
   },
   "devDependencies": {
     "@types/node": "^22.20.3",

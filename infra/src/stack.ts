@@ -232,7 +232,7 @@ export class ComputeStack extends Stack {
         },
       ],
     });
-    const { key, bucket, secret, authConfig, userPool } = core;
+    const { key, bucket, secret, authConfig } = core;
     const objects = Fn.join("", [arn(bucket), "/*"]);
     const dbSubnets = resource("DatabaseSubnets", "AWS::RDS::DBSubnetGroup", {
       DBSubnetGroupDescription: "Private database subnets",
@@ -295,7 +295,6 @@ export class ComputeStack extends Stack {
       Resource: resources,
     });
     const runtimeStatements = [
-      allow(["cognito-idp:ListUsers"], [arn(userPool)]),
       allow(["s3:ListBucket"], [arn(bucket)]),
       allow(["s3:GetObject", "s3:PutObject", "s3:DeleteObject"], [objects]),
       allow(
@@ -309,7 +308,11 @@ export class ComputeStack extends Stack {
       ),
       allow(
         ["secretsmanager:GetSecretValue", "secretsmanager:DescribeSecret"],
-        [secret.ref, authConfig.ref],
+        [
+          secret.ref,
+          authConfig.ref,
+          ...(core.demoCredentials ? [core.demoCredentials.ref] : []),
+        ],
       ),
       allow(
         [
@@ -432,7 +435,18 @@ export class ComputeStack extends Stack {
               Name: "NODE_ENV",
               Value: environment === "prod" ? "production" : "development",
             },
-            { Name: "SMS_ENABLED", Value: "false" },
+            {
+              Name: "PHONE_AUTH_MODE",
+              Value: environment === "dev" ? "demo" : "live",
+            },
+            ...(core.demoCredentials
+              ? [
+                  {
+                    Name: "DEMO_AUTH_SECRET_ARN",
+                    Value: core.demoCredentials.ref,
+                  },
+                ]
+              : []),
             { Name: "AUTH_CONFIG_SECRET_ARN", Value: authConfig.ref },
             { Name: "AWS_REGION", Value: "ap-south-1" },
             { Name: "DATABASE_SECRET_ARN", Value: secret.ref },

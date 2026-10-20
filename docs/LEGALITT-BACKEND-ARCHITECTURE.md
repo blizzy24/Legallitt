@@ -1,6 +1,6 @@
 # Legalitt — Backend & Cloud Architecture
 
-Version 3.0 · 20 October 2026
+Version 3.2 · 20 October 2026
 Status: steps 0–3 complete. Step 4 is executable as written; §10 governs how.
 
 This document is the specification for the backend phase. It is written to be
@@ -133,13 +133,38 @@ that the advocate must review before sending.
 Real SMS in India needs DLT registration, which has not been started. The
 client needs the full sign-in flow working for demos in the meantime.
 
-- **Email and password** is the real sign-in path, through Cognito.
-- **The phone OTP screens stay exactly as designed.** No SMS is sent. A fixed
-  code (`123456`) is accepted.
-- A single flag, `SMS_ENABLED`, controls this. `false` simulates; `true` calls
-  the provider. Nothing else changes when it flips.
-- The simulated path must be **impossible to reach in production**. Gate it on
-  the environment as well as the flag.
+- **Email and password is the only real sign-in path.** Cognito handles it.
+  Registration, verification and role assignment all happen here.
+- **The phone OTP screens stay exactly as designed**, so the flow demos
+  correctly. No SMS is sent and `123456` is accepted.
+- **Phone sign-in creates nothing and looks nothing up.** The phone number
+  entered is ignored. Verifying the fake code signs the user into a seeded
+  demo account, so no role has to be inferred from a number.
+
+**The demo accounts are real accounts.** `/auth/otp/verify` still returns real
+Cognito tokens, exactly as §5 describes — it simply signs in a known user
+instead of the one matching the phone number. There is no second kind of
+session, and no screen behaves differently afterwards. A local-only session
+would work today, while the app uses fixtures, and break on every screen once
+those screens call the API.
+
+**Two demo accounts are seeded**, because the client demos both sides:
+
+| Account | Role | Email |
+|---|---|---|
+| Demo client | `client` | `demo-client@legalitt.invalid` |
+| Demo advocate | `advocate` | `demo-advocate@legalitt.invalid` |
+
+Create them with the Cognito admin API, email pre-verified, so no mail is sent.
+The role picker already in onboarding chooses which one the demo path signs
+into. Both also have passwords, so they double as test accounts for the normal
+email path.
+- A single flag, `PHONE_AUTH_MODE`, controls this: `demo` or `live`. Only
+  `demo` is implemented now. `live` is built when DLT registration clears, and
+  that is when sign-up by phone — including how the role is chosen — gets
+  designed properly.
+- `demo` must be **impossible to reach in production**. Gate it on the
+  environment as well as the flag.
 
 Google and other social sign-in are **out of scope**. Cognito supports them,
 but the designs draw no such button, and adding one changes a screen the
@@ -620,8 +645,8 @@ as integers.
 
 ### Auth
 ```
-POST   /auth/otp/request              { phone }
-POST   /auth/otp/verify               { phone, code } → tokens
+POST   /auth/otp/request              { phone }        # demo: §2.9
+POST   /auth/otp/verify               { phone, code } → tokens   # demo: §2.9
 POST   /auth/register                 { email, password, name, role }
 POST   /auth/login                    { email, password }
 POST   /auth/refresh
@@ -821,8 +846,9 @@ Restructure `infra` into two stacks per stage, per §2.10:
 The Cognito user pool needs:
 - email and password sign-in, email verification on
 - a `role` custom attribute: `client` | `advocate` | `admin`
-- a custom auth flow for phone OTP, stubbed per §2.9 — the Lambda triggers
-  exist but accept the fixed code while `SMS_ENABLED` is false
+- two seeded demo users per §2.9, created with the admin API and
+  email pre-verified, one `client` and one `advocate`
+- no phone number is stored on them and no SMS configuration is needed
 
 Then `cdk deploy LegalittDev-Core` only. **Do not deploy Compute.**
 
@@ -836,7 +862,7 @@ Commit: `feat(infra): split core and compute stacks`
 - `apps/api`: Cognito JWT verification, a guard reading the `role` claim,
   `/auth/*` endpoints per §5, `/me`
 - `apps/mobile`: replace the role picker with real sign-in. Email and password
-  works for real; the OTP screens behave as designed but accept `123456`
+  works for real; the OTP screens behave as designed and sign into the seeded demo account per §2.9
 - Role drives which tab bar and screens load, as the designs already split
   client and advocate
 

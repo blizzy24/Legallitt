@@ -1,0 +1,32 @@
+Step 4a update — architecture v3.2
+
+Changed:
+- Removed the three custom Cognito OTP challenge triggers and CUSTOM_AUTH.
+  Retained the pre-signup role validation trigger; public signup cannot set admin.
+- Added a KMS-encrypted Secrets Manager demo-auth credential in Dev Core only.
+- Added an explicit, repeatable db:seed-demo operator command. It checks the
+  target pool is tagged dev, provisions the two specified accounts via the admin
+  API with email pre-verified and MessageAction SUPPRESS, sets permanent passwords,
+  and seeds their local Postgres rows. Neither account has a phone number.
+- Removed ListUsers from the future Compute runtime role. Dev Compute references
+  the demo secret; prod has no demo secret and uses PHONE_AUTH_MODE=live, which is
+  deliberately unimplemented. Compute was synthesized only.
+
+Implementation choices beyond the product contract:
+- Both demo-only test accounts use the generated password in the dev demo-auth
+  secret. Passwords, tokens and deployed identifiers are not in source control.
+- Kept the existing dev pool's immutable email/phone username attributes rather
+  than replacing the pool. No custom phone flow, phone lookup or demo phone
+  attributes remain. New prod pools are configured for email alone.
+  AWS reference: https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pool-updating.html
+- Removed custom-auth Lambda resources; their existing logs retain the established
+  retention policy. No log contents were deleted.
+
+Gate:
+- All workspace TypeScript checks passed.
+- Infrastructure: 9 tests passed; strict CloudFormation schema synthesis passed.
+- Reviewed Core-only diff; LegalittDev-Core update succeeded without replacing the
+  user pool, app client, bucket or encryption key. Outputs remain in Secrets
+  Manager and an ignored private outputs file, not in this report.
+- Seed completed and repeated successfully with no notifications sent.
+- Compute and prod were not deployed. No step 5 work started.
