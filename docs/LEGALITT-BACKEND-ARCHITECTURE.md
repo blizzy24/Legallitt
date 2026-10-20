@@ -1,6 +1,6 @@
 # Legalitt — Backend & Cloud Architecture
 
-Version 2.0 · 19 October 2026
+Version 2.1 · 20 October 2026
 Status: build-ready. §6 steps 0–3 are executable as written; §10 governs how.
 
 This document is the specification for the backend phase. It is written to be
@@ -189,6 +189,35 @@ draft
 `cases.sub_status` (text, nullable) carries service-specific position — e.g.
 `awaiting_court_fee`, `hearing_scheduled`, `sample_received`. Validated per
 service in application code, not by a database constraint.
+
+**Lifecycle status is not the same as the UI bucket.** The mobile app already
+has `'active' | 'pending' | 'closed'`, which drives tabs, filters and counts.
+That is a display grouping, not a state. Both exist, under different names:
+
+- `CaseStatus` — the lifecycle enum above. Canonical. Lives in
+  `packages/shared`, mirrored by the Prisma enum.
+- `CaseBucket` — `'active' | 'pending' | 'closed'`, for display only. Also in
+  `packages/shared`.
+
+One function in `packages/shared` converts between them, and it is the only
+place the rule is written:
+
+```ts
+export function bucketFor(status: CaseStatus): CaseBucket {
+  // pending  — waiting on someone: draft, submitted, payment_pending, assigning,
+  //            assigned, advocate_declined, client_review
+  // active   — work under way: paid, advocate_accepted, in_progress,
+  //            changes_requested, approved, dispatching, dispatched
+  // closed   — finished: completed, cancelled, refunded
+}
+```
+
+The mapping is one-way. A bucket cannot be turned back into a lifecycle
+status, because several statuses share a bucket.
+
+Existing fixtures keep their bucket values for now. They gain real lifecycle
+values in step 5, when cases come from the database rather than from fixtures.
+Do not rewrite the fixtures during step 1.
 
 ### 4.3 Tables
 

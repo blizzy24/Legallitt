@@ -1,0 +1,19 @@
+Step 1 — Shared types
+
+Canonical CaseStatus (17 values), CaseBucket and bucketFor live in packages/shared.
+The client confirmed draft and advocate_declined map to pending; §4.2 records it.
+Nine service codes and eight core entity schemas mirror §4.3's fields/nullability.
+Mobile imports CaseBucket and re-exports the shared lifecycle enum. All fixture
+values remain byte-for-byte unchanged; only their type declaration changed.
+
+Technical choices: schemas describe loaded domain entities, with Date timestamps
+and bigint monetary/sequence fields. They are not create DTOs or JSON serializers.
+JSONB's JSON null is distinct from SQL NULL. Existing SQL text fields remain text;
+no extra enum constraints were invented from comments. Numeric precision follows
+SQL BIGINT/INT/NUMERIC(2,1). Service codes use snake_case equivalents of §1 names.
+No pricing, lifecycle fixtures or API integration added.
+
+Validation: all workspace TypeScript checks passed; four shared tests passed;
+mobile web export passed; 322-route browser smoke passed with zero failures.
+Step 0 deployment gate previously verified: production bundle SHA256 matched the
+locally built monorepo bundle f16753370be3a9e80afe028ea9baf8abbe4028778a97b804cc96ee6097a7d8e0.

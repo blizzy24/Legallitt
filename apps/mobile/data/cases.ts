@@ -5,7 +5,9 @@
 // used and every variant is listed in a comment next to it. Nothing is confirmed by the
 // client yet.
 
-export type CaseStatus = 'active' | 'pending' | 'closed';
+import type { CaseBucket } from '@legalitt/shared';
+export { CaseStatus } from '@legalitt/shared';
+export type { CaseBucket } from '@legalitt/shared';
 export type HearingStatus = 'upcoming' | 'completed' | 'cancelled';
 export type RequestStatus = 'awaiting-review';
 
@@ -36,7 +38,7 @@ export type Case = {
   court: string;
   city: string;
   state: string;
-  status: CaseStatus;
+  status: CaseBucket;
   /** Status as printed on Case Details' info table (design/18). */
   statusLabel: string;
   filedDate: string; // ISO yyyy-mm-dd
