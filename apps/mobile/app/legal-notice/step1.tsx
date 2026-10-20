@@ -1,3 +1,5 @@
+import ApiLegalNotice from "../../components/api/LegalNotice";
+import { DATA_SOURCE } from "../../lib/data-source";
 import { router } from 'expo-router';
 import { Mail, MapPin, User, Users } from 'lucide-react-native';
 import { StyleSheet, View } from 'react-native';
@@ -10,7 +12,7 @@ import { useLegalNotice } from '../../context/legalNotice';
 
 // Step 1 — the client's own details (design/24). The mobile field's two-person icon is
 // as drawn.
-export default function Step1Screen() {
+function FixtureStep1Screen() {
   const { form, updateClient } = useLegalNotice();
   const c = form.client;
 
@@ -33,3 +35,8 @@ const styles = StyleSheet.create({
     gap: f.gap,
   },
 });
+
+// The deployed fixture path remains unchanged; API mode is explicit.
+export default function Step1Screen() {
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="step1" /> : <FixtureStep1Screen />;
+}

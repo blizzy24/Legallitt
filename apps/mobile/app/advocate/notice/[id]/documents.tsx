@@ -1,3 +1,5 @@
+import ApiLegalNotice from "../../../../components/api/LegalNotice";
+import { DATA_SOURCE } from "../../../../lib/data-source";
 import { previewNotice } from '../../../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
@@ -31,7 +33,7 @@ import { advDocHref } from '../../../../data/docLinks';
 // View opens the document viewer on that file. The Download chips, the edit pencil
 // and the text area are inert — there is no download and no text entry.
 
-export default function AdvocateNoticeDocumentsScreen() {
+function FixtureAdvocateNoticeDocumentsScreen() {
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
   const d = ADV_NOTICE_DOCS;
@@ -368,3 +370,8 @@ const styles = StyleSheet.create({
   sendText: { fontFamily: font.appHeading, fontSize: t.sendSize, color: ink.onBrand },
   pressed: { opacity: 0.85 },
 });
+
+// The deployed fixture path remains unchanged; API mode is explicit.
+export default function AdvocateNoticeDocumentsScreen() {
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="request" /> : <FixtureAdvocateNoticeDocumentsScreen />;
+}

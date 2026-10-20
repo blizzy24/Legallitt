@@ -1,3 +1,5 @@
+import ApiLegalNotice from "../../components/api/LegalNotice";
+import { DATA_SOURCE } from "../../lib/data-source";
 import { previewNotice } from '../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import { Check, ChevronRight, Copy, FileText } from 'lucide-react-native';
@@ -14,7 +16,7 @@ import { INVOICE, invoiceLines, invoiceTotal, rupees } from '../../data/legalNot
 // SHARED BY TWO SERVICES — see the note in scan-pay.tsx. Service name, amount,
 // reference and the onward route all come from search params; with none it behaves
 // exactly as the Legal Notice flow always did.
-export default function PaymentSuccessScreen() {
+function FixturePaymentSuccessScreen() {
   const { form } = useLegalNotice();
   const params = useLocalSearchParams<{
     service?: string;
@@ -171,3 +173,8 @@ const styles = StyleSheet.create({
     color: ink.onBrand,
   },
 });
+
+// The deployed fixture path remains unchanged; API mode is explicit.
+export default function PaymentSuccessScreen() {
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="tracking" /> : <FixturePaymentSuccessScreen />;
+}

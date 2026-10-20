@@ -1,3 +1,5 @@
+import ApiLegalNotice from "../../components/api/LegalNotice";
+import { DATA_SOURCE } from "../../lib/data-source";
 import { useLocalSearchParams, type Href } from 'expo-router';
 
 import ScanPayScreen from '../../components/ScanPayScreen';
@@ -11,7 +13,7 @@ import { useLegalNotice } from '../../context/legalNotice';
 // so the body lives in components/ScanPayScreen and each caller passes its own
 // service name, amount, reference and onward route. With no params this route
 // behaves exactly as the Legal Notice flow always did.
-export default function LegalNoticeScanPayScreen() {
+function FixtureLegalNoticeScanPayScreen() {
   const { form } = useLegalNotice();
   const params = useLocalSearchParams<{
     service?: string;
@@ -39,4 +41,9 @@ export default function LegalNoticeScanPayScreen() {
       query={query.toString()}
     />
   );
+}
+
+// The deployed fixture path remains unchanged; API mode is explicit.
+export default function LegalNoticeScanPayScreen() {
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="payment" /> : <FixtureLegalNoticeScanPayScreen />;
 }

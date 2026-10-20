@@ -245,3 +245,70 @@ in the existing Dev bucket. It checks private/KMS storage, page counting, access
 URL replay protection, deletion, false MIME labels and the actual 25 MB S3 limit.
 It removes its synthetic rows and object versions and does not print signed URLs
 or tokens. It refuses non-dev settings and a non-local database. No AWS deploy.
+
+Legal Notice end to end — step 7 (architecture v3.8)
+----------------------------------------------------
+Mobile DATA_SOURCE defaults to fixtures. Expo exposes this flag as
+EXPO_PUBLIC_DATA_SOURCE; it must equal api to enable the real-data path. Leave
+it unset on Vercel. No deployed frontend settings have been changed.
+
+Local API mode:
+  Keep Docker Desktop and the PostgreSQL 16 container running.
+  pnpm --filter @legalitt/api start
+  EXPO_PUBLIC_DATA_SOURCE=api EXPO_PUBLIC_API_URL=http://localhost:3001 pnpm --filter @legalitt/mobile web
+Use http://localhost:8081 (not 127.0.0.1 for browser-to-S3 uploads).
+The authorized Dev Core CORS update allows that exact origin only. Compute
+and production remain undeployed/untouched. API still runs locally.
+To return to the deployed fixture behaviour, unset EXPO_PUBLIC_DATA_SOURCE.
+Expo embeds these variables at build time; changing one requires restarting
+Metro or rebuilding the export, not just refreshing the page.
+
+The shared ApiClient owns API transport, Cognito token attachment/refresh,
+timeouts and visible error messages. Mutation timeouts are not automatically
+retried. Intake stays in local component state on failure; Continue retries the
+save. Saved intake and a case UUID in the route survive reloads. My Cases/My
+Matters list real permitted cases in API mode. No API failure falls back to
+sample data. Session restoration retains credentials on connection failure and
+offers Retry. An in-flight refresh cannot restore credentials after sign-out.
+Native uses SecureStore; web session storage remains scoped to the browser tab.
+
+Additional routes:
+  GET  /api/v1/services
+  GET  /api/v1/services/:code          current effective price versions
+  GET  /api/v1/advocate/requests       assigned requests
+  POST /api/v1/cases/:id/accept        {}
+  POST /api/v1/cases/:id/decline       {reason}
+  POST /api/v1/cases/:id/drafts        {kind:"legal_notice",content,generated_by:"manual"}
+  GET  /api/v1/cases/:id/drafts
+  POST /api/v1/cases/:id/drafts/:draftId/send             {}
+  POST /api/v1/cases/:id/drafts/:draftId/approve          {}
+  POST /api/v1/cases/:id/drafts/:draftId/request-changes  {comment}
+  POST /api/v1/admin/cases/:id/assign  {advocate_id}
+  POST /api/v1/cases/:id/dispatch      {carrier,waybill}
+  POST /api/v1/admin/cases/:id/deliver {pod_document_id}
+  POST /api/v1/dev/cases/:id/pay       {} DEVELOPMENT ONLY
+
+Submit now atomically records submitted then payment_pending. The dev payment
+route requires ENVIRONMENT=dev AND NODE_ENV=development/test, plus the owning
+client. It returns 404 outside those environments. It creates no payment,
+ledger or payout row and charges no money. Pricing calculations and Razorpay
+remain step 8; API mode displays seeded base tier prices, never fixture totals.
+
+Draft content has the six structured editor fields drawn on 188:
+  sender, recipient, subject, facts, demand, closing
+Every save creates a numbered version and a draft_saved event. Only the
+assigned advocate may save/send. AI drafting remains unimplemented (step 11).
+Client reads hide each draft version until its advocate send event exists.
+Reviews only accept the latest version in client_review. Draft saves, reviews,
+assignment and courier actions lock the case and write their related records
+and events atomically through CaseStateMachine. Unsent revisions cannot replace
+an approved draft. No general HTTP status setter is exposed.
+
+The advocate supplies carrier and waybill and records dispatching/dispatched.
+Admin completion requires an uploaded document on the same case, attaches it to
+the shipment as proof of delivery, records delivered/completed and an admin
+Action. It does not release funds; actual money movement is a later step.
+Admin has API endpoints, no invented admin screens or permanent new accounts.
+
+Export API and fixture modes sequentially. The mobile build clears Metro
+transforms to avoid reusing a previous mode's inlined environment values.

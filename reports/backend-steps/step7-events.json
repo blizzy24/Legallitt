@@ -1,0 +1,152 @@
+{
+  "reference": "LN-2026-0006",
+  "caseId": "ae1275e1-afa7-480e-9670-c1f7c5e6bdd0",
+  "clientLands": "/legal-notice/delivered",
+  "advocateLands": "/advocate/notice/ae1275e1-afa7-480e-9670-c1f7c5e6bdd0/tracking",
+  "events": [
+    {
+      "id": "7",
+      "type": "case_created",
+      "from": null,
+      "to": "draft",
+      "actor": "client",
+      "at": "2026-10-20T17:58:56.892Z"
+    },
+    {
+      "id": "8",
+      "type": "status_changed",
+      "from": "draft",
+      "to": "submitted",
+      "actor": "client",
+      "at": "2026-10-20T17:58:59.292Z"
+    },
+    {
+      "id": "9",
+      "type": "status_changed",
+      "from": "submitted",
+      "to": "payment_pending",
+      "actor": "client",
+      "at": "2026-10-20T17:58:59.297Z"
+    },
+    {
+      "id": "10",
+      "type": "development_payment",
+      "from": "payment_pending",
+      "to": "paid",
+      "actor": "client",
+      "at": "2026-10-20T17:58:59.397Z"
+    },
+    {
+      "id": "11",
+      "type": "status_changed",
+      "from": "paid",
+      "to": "assigning",
+      "actor": "admin",
+      "at": "2026-10-20T17:58:59.545Z"
+    },
+    {
+      "id": "12",
+      "type": "status_changed",
+      "from": "assigning",
+      "to": "assigned",
+      "actor": "admin",
+      "at": "2026-10-20T17:58:59.550Z"
+    },
+    {
+      "id": "13",
+      "type": "status_changed",
+      "from": "assigned",
+      "to": "advocate_accepted",
+      "actor": "advocate",
+      "at": "2026-10-20T17:59:00.626Z"
+    },
+    {
+      "id": "14",
+      "type": "status_changed",
+      "from": "advocate_accepted",
+      "to": "in_progress",
+      "actor": "advocate",
+      "at": "2026-10-20T17:59:02.140Z"
+    },
+    {
+      "id": "15",
+      "type": "draft_saved",
+      "from": "in_progress",
+      "to": "in_progress",
+      "actor": "advocate",
+      "at": "2026-10-20T17:59:02.145Z"
+    },
+    {
+      "id": "16",
+      "type": "status_changed",
+      "from": "in_progress",
+      "to": "client_review",
+      "actor": "advocate",
+      "at": "2026-10-20T17:59:02.255Z"
+    },
+    {
+      "id": "17",
+      "type": "status_changed",
+      "from": "client_review",
+      "to": "changes_requested",
+      "actor": "client",
+      "at": "2026-10-20T17:59:04.706Z"
+    },
+    {
+      "id": "18",
+      "type": "status_changed",
+      "from": "changes_requested",
+      "to": "in_progress",
+      "actor": "advocate",
+      "at": "2026-10-20T17:59:07.876Z"
+    },
+    {
+      "id": "19",
+      "type": "draft_saved",
+      "from": "in_progress",
+      "to": "in_progress",
+      "actor": "advocate",
+      "at": "2026-10-20T17:59:07.880Z"
+    },
+    {
+      "id": "20",
+      "type": "status_changed",
+      "from": "in_progress",
+      "to": "client_review",
+      "actor": "advocate",
+      "at": "2026-10-20T17:59:07.987Z"
+    },
+    {
+      "id": "21",
+      "type": "status_changed",
+      "from": "client_review",
+      "to": "approved",
+      "actor": "client",
+      "at": "2026-10-20T17:59:09.887Z"
+    },
+    {
+      "id": "22",
+      "type": "status_changed",
+      "from": "approved",
+      "to": "dispatching",
+      "actor": "advocate",
+      "at": "2026-10-20T17:59:13.348Z"
+    },
+    {
+      "id": "23",
+      "type": "status_changed",
+      "from": "dispatching",
+      "to": "dispatched",
+      "actor": "advocate",
+      "at": "2026-10-20T17:59:13.354Z"
+    },
+    {
+      "id": "24",
+      "type": "status_changed",
+      "from": "dispatched",
+      "to": "completed",
+      "actor": "admin",
+      "at": "2026-10-20T17:59:15.898Z"
+    }
+  ]
+}

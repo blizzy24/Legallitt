@@ -1,8 +1,10 @@
+import ApiLegalNotice from "../../components/api/LegalNotice";
+import { DATA_SOURCE } from "../../lib/data-source";
 import { Image, ScrollView, StyleSheet } from "react-native";
 import { NoticeHeader } from "../../components/NoticeDeliveryScreen";
 import { noticeDelivery as t } from "../../constants/tokens/noticeDelivery";
 // Only the supplied proof image is available; do not fabricate a document body.
-export default function DeliveryProof() {
+function FixtureDeliveryProof() {
   return (
     <>
       <NoticeHeader title="Signed Proof of Delivery (POD)" />
@@ -20,3 +22,8 @@ const s = StyleSheet.create({
   content: { padding: t.pad, backgroundColor: t.bg, flexGrow: 1 },
   image: { width: "100%", height: t.proofPreviewH },
 });
+
+// The deployed fixture path remains unchanged; API mode is explicit.
+export default function DeliveryProof() {
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="delivery" /> : <FixtureDeliveryProof />;
+}

@@ -1,3 +1,5 @@
+import ApiLegalNotice from "../../components/api/LegalNotice";
+import { DATA_SOURCE } from "../../lib/data-source";
 import { previewNotice } from '../../components/PreviewNotice';
 import DemoPressable from '../../components/DemoPressable';
 import { useDemoWait } from '../../hooks/useDemoAdvance';
@@ -32,7 +34,7 @@ const BAR_HEIGHT = t.barPadTop + t.homeHeight + t.barGap + 16 + t.barPadBottom;
 // Approval"). Both states live here behind a prototype-only toggle at the foot of
 // the page (or ?state=approval). The decision route adds design/437 and proceeds
 // through delivery; the existing Arjun profile assignment is preserved.
-export default function TrackingScreen({ decision = false }: { decision?: boolean }) {
+function FixtureTrackingScreen({ decision = false }: { decision?: boolean }) {
   const params = useLocalSearchParams<{ state?: string }>();
   const [state, setState] = useState<TrackingState>(params.state === 'approval' ? 'approval' : 'drafting');
   const insets = useSafeAreaInsets();
@@ -916,3 +918,8 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
   },
 });
+
+// The deployed fixture path remains unchanged; API mode is explicit.
+export default function TrackingScreen({ decision = false }: { decision?: boolean } = {}) {
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="tracking" /> : <FixtureTrackingScreen decision={decision} />;
+}

@@ -1,62 +1,73 @@
 import { Platform } from "react-native";
 import * as SecureStore from "expo-secure-store";
-export type AuthUser = {
-  id: string;
-  role: "client" | "advocate" | "admin";
-  name: string;
-  email: string | null;
-  phone: string | null;
-};
-export type Tokens = {
-  idToken: string;
-  accessToken: string;
-  refreshToken?: string;
-  expiresIn: number;
-};
-export type AuthResult = { user: AuthUser; tokens: Tokens };
+import {
+  ApiClient,
+  type ApiUser,
+  type ApiTokens,
+  type ApiAuthResult,
+} from "@legalitt/shared";
+export type AuthUser = ApiUser;
+export type Tokens = ApiTokens;
+export type AuthResult = ApiAuthResult;
 export const SESSION_KEY = "legalitt.auth.tokens";
-export async function api<T>(
+let memory: Tokens | null = null;
+let tokensLoaded = false;
+export const backend = new ApiClient({
+  baseUrl: process.env.EXPO_PUBLIC_API_URL ?? "",
+  getTokens: async () => (tokensLoaded ? memory : storedTokens()),
+  setTokens: storeTokens,
+});
+// Existing auth screens use this adapter; transport, timeout/error handling and
+// refresh are centralized in packages/shared, not hand-written fetch calls.
+export function api<T>(
   path: string,
   body?: unknown,
   token?: string,
   method?: string,
-): Promise<T> {
-  const base = process.env.EXPO_PUBLIC_API_URL;
-  if (!base) throw new Error("Sign-in service is not configured");
-  const response = await fetch(`${base.replace(/\/$/, "")}/api/v1${path}`, {
-    method: method ?? (body ? "POST" : "GET"),
-    headers: {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
-    ...(body ? { body: JSON.stringify(body) } : {}),
-  });
-  const value = await response.json();
-  if (!response.ok)
-    throw new Error(
-      typeof value.message === "string" ? value.message : "Request failed",
-    );
-  return value as T;
+) {
+  return backend.request<T>(
+    path,
+    body,
+    method ?? (body === undefined ? "GET" : "POST"),
+    token,
+  );
 }
 export async function storedTokens(): Promise<Tokens | null> {
+  if (tokensLoaded) return memory;
   const value =
     Platform.OS === "web"
       ? globalThis.sessionStorage?.getItem(SESSION_KEY)
       : await SecureStore.getItemAsync(SESSION_KEY);
-  if (!value) return null;
+  if (!value) {
+    tokensLoaded = true;
+    return null;
+  }
   // Native storage contains only the refresh credential, avoiding a multi-KB
   // JSON bundle that some Keychain versions reject. Identity is reverified.
   if (Platform.OS !== "web") {
-    return (await api<AuthResult>("/auth/refresh", { refreshToken: value }))
-      .tokens;
+    const result = await api<AuthResult>("/auth/refresh", {
+      refreshToken: value,
+    });
+    await storeTokens(result.tokens);
+    return memory;
   }
   try {
-    return JSON.parse(value);
+    memory = JSON.parse(value);
   } catch {
-    return null;
+    memory = null;
   }
+  tokensLoaded = true;
+  return memory;
 }
 export async function storeTokens(tokens: Tokens | null) {
+  tokens = tokens
+    ? {
+        ...tokens,
+        expiresAt: tokens.expiresAt ?? Date.now() + tokens.expiresIn * 1000,
+      }
+    : null;
+  memory = tokens;
+  tokensLoaded = true;
   if (Platform.OS === "web") {
     if (tokens)
       globalThis.sessionStorage?.setItem(SESSION_KEY, JSON.stringify(tokens));

@@ -56,7 +56,7 @@ export class CaseController {
   ) {
     parse(z.strictObject({}), body ?? {});
     return json(
-      this.state.transition(req.user!, id(value), CaseStatus.submitted),
+      this.state.submitForPayment(req.user!, id(value)),
     );
   }
   @Post(":id/cancel") cancel(

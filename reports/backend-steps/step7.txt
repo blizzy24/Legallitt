@@ -1,0 +1,165 @@
+Step 7 — Legal Notice end to end (architecture v3.8, stopped after 7e)
+
+7a: deployed demo preserved
+DATA_SOURCE defaults to fixtures. Expo's build-time environment variable is
+EXPO_PUBLIC_DATA_SOURCE. Only the exact value api enables backend case screens;
+unset, fixtures, empty and unknown values all keep fixtures. Existing fixture
+screen bodies and data remain intact. No Vercel settings or deployed frontend
+were changed, and nothing has been pushed. API errors never fall back to sample
+case data. Web builds now clear Metro transform caches: switching build modes
+reused API-mode transforms in the initial fixture export, which the smoke guard
+caught. A clean export is verified below. The final fixture smoke run also checks that no case/document API
+requests occur in fixture mode.
+
+7b: shared client
+packages/shared owns typed case, draft, review, document and auth transport.
+Mobile has no hand-written API fetch calls. API HTTP tests and the browser-walk
+harness also consume this client. It attaches Cognito tokens, refreshes on expiry
+or 401 with a single concurrent refresh, and protects against refresh finishing
+after sign-out. JSON request timeouts are 15 seconds, direct uploads 120 seconds.
+Errors have visible messages; requests that could mutate data are not blindly
+retried on network failures. Mobile keeps entered intake on failure, persists
+saved intake in Postgres, and carries case UUIDs through URLs for reload/resume.
+API-mode session restoration preserves credentials on connection failures and temporary server errors,
+shows Retry, and persists refreshed tokens without restoring an old snapshot. Native credential storage stays in SecureStore; web stays in
+sessionStorage. Direct S3 uploads are signed multipart POST, with file last.
+
+7c: client Legal Notice
+- Seeded, versioned base tier prices load from /services/legal_notice. No new
+  monetary values or financial calculations are hard-coded. Unconfirmed seed
+  flags remain unchanged. Real pricing/payment calculations remain step 8.
+- Intake, selected tier, uploaded files and page counts come from the API.
+  No fixture names, document filenames, dates, advocate details or legal prose
+  are inserted into live cases. Empty/unavailable values stay absent.
+- Submit records submitted and payment_pending atomically. The explicitly named
+  /dev/cases/:id/pay action records paid only for the owning client with
+  ENVIRONMENT=dev and NODE_ENV=development/test. Otherwise it returns 404.
+  API-mode payment says development only; no money, payment or ledger row exists.
+- Tracking, review/changes, delivery and delivered views use persisted state,
+  versions, reviews, shipments and events. My Cases reloads real permitted cases.
+- ID proof is optional evidence, with PAN/passport/driving-licence/voter-ID
+  alternatives and masked-Aadhaar-only guidance. Uploads use kind=id_proof and
+  structural page counting, never OCR/text/identity extraction or simulated KYC.
+
+7d: advocate and admin
+- Assigned requests appear in the advocate workspace. Only the assigned
+  advocate accepts/declines, edits manual draft versions, sends for review, or
+  dispatches. Decline records its supplied reason.
+- The six structured editor fields come from design 188: sender, recipient,
+  subject, facts, demand, closing. Each save makes a new version and draft_saved
+  event. AI generation is not implemented. Client reads hide each unsent draft
+  version until an explicit advocate-send event exists.
+- Only the case client reviews the latest sent version in client_review. Old
+  versions and edits after approval are rejected. Changes and approval records
+  commit atomically with status/events. Version ordering uses version numbers.
+- Admin assigns an active advocate. The advocate supplies carrier/waybill and
+  marks dispatching/dispatched. Admin completion requires an uploaded document
+  from the same case, attaches delivery proof, and records delivered/completed.
+- Assignment/delivery also create admin_actions. No admin UI was invented.
+  All case and event mutations remain in CaseStateMachine, under row locks.
+  No generic HTTP status setter or production payment bypass was added.
+
+Authorized infrastructure change
+The reviewed Core diff contained only the Dev S3 bucket CORS rule. Deployed
+LegalittDev/Core (physical stack LegalittDev-Core) through CDK with --exclusively.
+Allowed origin: http://localhost:8081 only. Methods: POST, GET, HEAD; request
+header: Content-Type; exposed header: ETag; max age: 300 seconds. Core update
+completed successfully. No console/CLI bucket mutation, no Compute deployment,
+and no production change. Infra tests assert exact dev origin and no prod CORS.
+
+7e: real browser and database walk
+Retained synthetic development case: LN-2026-0006
+Case UUID: ae1275e1-afa7-480e-9670-c1f7c5e6bdd0
+Client landed: /legal-notice/delivered?caseId=ae1275e1-afa7-480e-9670-c1f7c5e6bdd0
+Advocate landed: /advocate/notice/ae1275e1-afa7-480e-9670-c1f7c5e6bdd0/tracking
+Both show Delivery Confirmed.
+
+Chrome used real Cognito demo-client/demo-advocate tokens and local Postgres 16.
+The client entered intake and uploaded a synthetic two-page PDF directly to Dev
+S3 from the browser, submitted and used dev payment. A temporary real Cognito
+admin called assignment. Advocate and client completed both review rounds in
+separate browser tabs. Advocate entered the manual courier details and marked
+sent. Admin uploaded synthetic delivery proof and completed the case.
+The manual draft's test text came from design 188's existing fixture; the test
+revision changed paragraph spacing. These are synthetic test inputs, not live
+customer data or generated legal advice.
+
+Direct PostgreSQL verification matched all 18 event IDs against the API report,
+confirmed versions 1 and 2, two reviews, completed status and an uploaded
+2-page delivery proof. No payment, ledger or payout rows were created. Exact
+IDs, actors and timestamps are in step7-events.json:
+  1  client   null -> draft                  case_created
+  2  client   draft -> submitted
+  3  client   submitted -> payment_pending
+  4  client   payment_pending -> paid        development_payment
+  5  admin    paid -> assigning
+  6  admin    assigning -> assigned
+  7  advocate assigned -> advocate_accepted
+  8  advocate advocate_accepted -> in_progress
+  9  advocate in_progress -> in_progress     draft_saved (version 1)
+ 10  advocate in_progress -> client_review
+ 11  client   client_review -> changes_requested
+ 12  advocate changes_requested -> in_progress
+ 13  advocate in_progress -> in_progress     draft_saved (version 2)
+ 14  advocate in_progress -> client_review
+ 15  client   client_review -> approved
+ 16  advocate approved -> dispatching
+ 17  advocate dispatching -> dispatched
+ 18  admin    dispatched -> completed
+
+The completed case and its synthetic documents remain available for inspection.
+The temporary Cognito admin was removed and its local identity disabled; its
+actor row remains for audit foreign keys. Two abandoned browser-test drafts were
+removed. No new permanent administrator account was left behind.
+
+Validation
+- Workspace tsc: all workspaces clean (5 Turbo tasks).
+- API: 33 tests passed on PostgreSQL 16, zero failures/skips.
+- Shared: 9 tests passed, including refresh concurrency, sign-out races,
+  offline/timeout handling and direct upload transport.
+- Infra: 9 tests passed, including the exact CORS origin and prod separation.
+- Both API-mode and default fixture-mode mobile web exports build.
+- Full fixture smoke: 322 routes, zero failures; also asserts no case/document
+  API calls. See step7-smoke.log for the final run.
+- Real browser flow plus direct DB audit: passed (step7-browser.log,
+  step7-db-check.log and step7-events.json).
+- Browser recovery: blocked API access mid-intake, saw the error with input
+  retained, restored connectivity and saved successfully. Reloaded with API
+  unavailable, verified credentials remained, and Retry restored the screen.
+- Browser session recovery: HTTP 503 retained credentials; Retry recovered.
+  Expired credentials refreshed once successfully and the fresh token persisted
+  (step7-server-recovery.log).
+- No physical iOS/Android device test is claimed.
+
+Choices beyond the document's exact endpoint/UI details
+- DATA_SOURCE maps to EXPO_PUBLIC_DATA_SOURCE for Expo build-time substitution.
+- Web build uses --clear so a cached local API-mode transform cannot carry into
+  a fixture export. Build modes must be exported sequentially.
+- API-mode routes use the existing wizard/field components, drawn draft-section
+  labels and tokens; fixture route bodies are a separate unchanged branch.
+- /cases/:id/dispatch and /admin/cases/:id/deliver implement the v3.8 role split;
+  the latter accepts pod_document_id. Neither action moves money.
+- Submit and assign may record adjacent required lifecycle transitions together
+  in one transaction; every intermediate transition still has its own event.
+- Manual draft saves create immutable versions; send/review only use the latest.
+  At least one draft section must contain text before sending for review.
+- Poll every 5 seconds while focused. Polling does not overwrite dirty inputs.
+  No background/offline mutation queue or automatic network retry is introduced.
+- The two fixture-backed roles were used for the walk; admin had a temporary
+  authenticated test identity because no admin screen/account is specified.
+
+Remaining / stop point
+Stopped after 7e. No Razorpay, real charges, payout release, AI generation,
+DigiLocker verification, other-service backend flow, admin UI, Compute deployment
+or frontend deployment. ID evidence is not verification. Missing real profile
+fields, per-flow identity acceptance and retention policy remain absent/open.
+Pending upload-object retention follows step 6; no new deletion policy invented.
+After an uncertain creation timeout, check My Cases before creating another case;
+requests do not automatically retry potentially committed mutations.
+
+Local handoff
+The usual API on port 3001 was updated to the completed build. The temporary API
+on port 3002 was stopped. Local web preview is restored to the fixture build on
+http://localhost:8081. To use API mode, run the commands in apps/api/README.txt;
+keep Docker/PostgreSQL 16 and the local API running. Leave the data-source flag
+unset in Vercel. One step-7 commit; not pushed.

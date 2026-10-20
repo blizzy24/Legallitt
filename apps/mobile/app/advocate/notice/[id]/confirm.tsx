@@ -1,3 +1,5 @@
+import ApiLegalNotice from "../../../../components/api/LegalNotice";
+import { DATA_SOURCE } from "../../../../lib/data-source";
 import { DEMO_AUTO_ADVANCE } from '../../../../constants/dev';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
@@ -30,7 +32,7 @@ import { advNoticeReceipt as t, colors, font, ink } from '../../../../constants/
 // Confirm Received is disabled until the checkbox is ticked, as design/201 draws it
 // in a muted state.
 
-export default function AdvocateNoticeConfirmScreen() {
+function FixtureAdvocateNoticeConfirmScreen() {
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
   const c = ADV_NOTICE_CONFIRM;
@@ -447,3 +449,8 @@ const styles = StyleSheet.create({
   capText: { fontFamily: font.appSemi, fontSize: t.capSize, color: colors.textBody },
   pressed: { opacity: 0.85 },
 });
+
+// The deployed fixture path remains unchanged; API mode is explicit.
+export default function AdvocateNoticeConfirmScreen() {
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="tracking" /> : <FixtureAdvocateNoticeConfirmScreen />;
+}

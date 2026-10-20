@@ -72,6 +72,8 @@ test(
               "advocate_declined",
               "in_progress",
               "client_review",
+              "dispatching",
+              "dispatched",
             ].includes(to)
           ? advocate
           : admin;
@@ -428,7 +430,7 @@ test(
             );
             assert.equal(
               (await call("GET", path + "/events", client)).body.items.length,
-              3,
+              4,
             );
             assert.equal(
               (await call("GET", "?role=admin", client)).body.items.length,

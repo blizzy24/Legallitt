@@ -9,6 +9,7 @@
     "@legalitt/shared": "workspace:*",
     "expo": "~57.0.23",
     "expo-constants": "~57.0.18",
+    "expo-document-picker": "~57.0.3",
     "expo-font": "~57.0.4",
     "expo-linking": "~57.0.10",
     "expo-router": "~57.0.21",
@@ -34,7 +35,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "build": "expo export --platform web",
+    "build": "expo export --platform web --clear",
     "typecheck": "tsc --noEmit"
   },
   "private": true,

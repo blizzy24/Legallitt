@@ -1,3 +1,5 @@
+import ApiLegalNotice from "../../components/api/LegalNotice";
+import { DATA_SOURCE } from "../../lib/data-source";
 import IdentityVerification from '../../components/IdentityVerification';
 import { useKyc } from '../../context/kyc';
 import { previewNotice } from '../../components/PreviewNotice';
@@ -51,7 +53,7 @@ const ROWS: { icon: LucideIcon; title: string; subtitle: string }[] = [
   { icon: Crop, title: 'Screenshots', subtitle: 'WhatsApp, Email, etc' },
 ];
 
-export default function Step4Screen() {
+function FixtureStep4Screen() {
   const { kyc, begin } = useKyc();
   return (
     <WizardShell
@@ -270,3 +272,8 @@ const styles = StyleSheet.create({
     opacity: 0.85,
   },
 });
+
+// The deployed fixture path remains unchanged; API mode is explicit.
+export default function Step4Screen() {
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="upload" /> : <FixtureStep4Screen />;
+}

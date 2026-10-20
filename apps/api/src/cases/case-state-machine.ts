@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   ForbiddenException,
   Injectable,
@@ -9,6 +10,9 @@ import {
   LegalNoticeIntakeSchema,
   LegalNoticeSubmissionSchema,
   LegalNoticeTierSchema,
+  NoticeDraftInputSchema,
+  NoticeCommentSchema,
+  NoticeDeclineSchema,
 } from "@legalitt/shared";
 import { z } from "zod";
 import { parse } from "../auth/auth.service";
@@ -119,6 +123,8 @@ function permit(actor: CaseActor, from: CaseStatus, to: CaseStatus) {
       CaseStatus.advocate_declined,
       CaseStatus.in_progress,
       CaseStatus.client_review,
+      CaseStatus.dispatching,
+      CaseStatus.dispatched,
     ].includes(to)
   ) {
     // §2.8: sending for client review always requires an explicit advocate action.
@@ -198,36 +204,335 @@ export class CaseStateMachine {
     });
   }
 
-  // Internal domain method, NOT a generic HTTP status endpoint. Later service
-  // actions must use this method, never write status through their own Prisma calls.
+  private async advance(
+    tx: Prisma.TransactionClient,
+    actor: CaseActor,
+    record: {
+      id: string;
+      status: string;
+      details: unknown;
+      tier: string | null;
+    },
+    to: CaseStatus,
+    payload: Prisma.InputJsonObject = {},
+    devPayment = false,
+  ) {
+    const from = record.status as CaseStatus;
+    if (devPayment) {
+      if (
+        from !== CaseStatus.payment_pending ||
+        to !== CaseStatus.paid ||
+        actor.role !== "client"
+      )
+        throw new ConflictException("Invalid development payment");
+    } else permit(actor, from, to);
+    if (to === CaseStatus.submitted) {
+      parse(LegalNoticeSubmissionSchema, record.details);
+      parse(LegalNoticeTierSchema, record.tier);
+    }
+    const updated = await tx.case.update({
+      where: { id: record.id },
+      data: {
+        status: to,
+        updated_at: new Date(),
+        ...(to === CaseStatus.completed ? { completed_at: new Date() } : {}),
+      },
+    });
+    await tx.caseEvent.create({
+      data: {
+        case_id: record.id,
+        type: devPayment ? "development_payment" : "status_changed",
+        actor_id: actor.id,
+        actor_role: actor.role,
+        from_status: from,
+        to_status: to,
+        payload,
+      },
+    });
+    return updated;
+  }
+  // Every operational action shares this transaction-local status/event writer.
   async transition(actor: CaseActor, id: string, to: CaseStatus) {
+    const db = await this.prisma.getClient();
+    return db.$transaction(async (tx) =>
+      this.advance(tx, actor, await lockedCase(tx, actor, id), to),
+    );
+  }
+  async submitForPayment(actor: CaseActor, id: string) {
+    const db = await this.prisma.getClient();
+    return db.$transaction(async (tx) => {
+      let record = await lockedCase(tx, actor, id);
+      if (actor.role !== "client")
+        throw new ForbiddenException("Only clients submit");
+      if (record.status === "payment_pending") return record;
+      if (record.status === "draft")
+        record = await this.advance(tx, actor, record, CaseStatus.submitted);
+      return this.advance(tx, actor, record, CaseStatus.payment_pending);
+    });
+  }
+  async devPay(actor: CaseActor, id: string) {
+    // Deliberately no production route to paid without a verified payment.
+    if (
+      process.env.ENVIRONMENT !== "dev" ||
+      !["development", "test"].includes(process.env.NODE_ENV ?? "")
+    )
+      throw new NotFoundException();
+    if (actor.role !== "client")
+      throw new ForbiddenException("Only the case client can simulate payment");
     const db = await this.prisma.getClient();
     return db.$transaction(async (tx) => {
       const record = await lockedCase(tx, actor, id);
-      const from = record.status as CaseStatus;
-      permit(actor, from, to);
-      if (to === CaseStatus.submitted) {
-        parse(LegalNoticeSubmissionSchema, record.details);
-        parse(LegalNoticeTierSchema, record.tier);
-      }
-      const updated = await tx.case.update({
-        where: { id },
+      if (record.status === "paid") return record;
+      return this.advance(
+        tx,
+        actor,
+        record,
+        CaseStatus.paid,
+        { development_only: true },
+        true,
+      );
+    });
+  }
+  async assign(actor: CaseActor, id: string, body: unknown) {
+    if (actor.role !== "admin") throw new ForbiddenException("Admin required");
+    const { advocate_id } = parse(
+      z.strictObject({ advocate_id: z.uuid() }),
+      body,
+    );
+    const db = await this.prisma.getClient();
+    return db.$transaction(async (tx) => {
+      let record = await lockedCase(tx, actor, id);
+      const advocate = await tx.user.findFirst({
+        where: { id: advocate_id, role: "advocate", status: "active" },
+      });
+      if (!advocate) throw new BadRequestException("Advocate not found");
+      if (record.status === "paid" || record.status === "advocate_declined")
+        record = await this.advance(tx, actor, record, CaseStatus.assigning);
+      if (record.status !== "assigning")
+        throw new ConflictException("Case is not awaiting assignment");
+      record = await tx.case.update({ where: { id }, data: { advocate_id } });
+      const updated = await this.advance(
+        tx,
+        actor,
+        record,
+        CaseStatus.assigned,
+        { advocate_id },
+      );
+      await tx.adminAction.create({
         data: {
-          status: to,
-          updated_at: new Date(),
-          ...(to === CaseStatus.completed ? { completed_at: new Date() } : {}),
+          admin_id: actor.id,
+          action: "assign_advocate",
+          subject_type: "case",
+          subject_id: id,
+          payload: { advocate_id },
+        },
+      });
+      return updated;
+    });
+  }
+  async decline(actor: CaseActor, id: string, body: unknown) {
+    const input = parse(NoticeDeclineSchema, body);
+    const db = await this.prisma.getClient();
+    return db.$transaction(async (tx) =>
+      this.advance(
+        tx,
+        actor,
+        await lockedCase(tx, actor, id),
+        CaseStatus.advocate_declined,
+        input,
+      ),
+    );
+  }
+  async saveNoticeDraft(actor: CaseActor, id: string, body: unknown) {
+    const input = parse(NoticeDraftInputSchema, body);
+    if (actor.role !== "advocate")
+      throw new ForbiddenException("Assigned advocate required");
+    const db = await this.prisma.getClient();
+    return db.$transaction(async (tx) => {
+      let record = await lockedCase(tx, actor, id);
+      if (
+        record.status === "advocate_accepted" ||
+        record.status === "changes_requested"
+      )
+        record = await this.advance(tx, actor, record, CaseStatus.in_progress);
+      if (record.status !== "in_progress")
+        throw new ConflictException("Draft cannot be edited in this state");
+      const previous = await tx.draft.findFirst({
+        where: { case_id: id, kind: "legal_notice" },
+        orderBy: { version: "desc" },
+      });
+      const draft = await tx.draft.create({
+        data: {
+          case_id: id,
+          kind: input.kind,
+          content: input.content,
+          generated_by: input.generated_by,
+          created_by: actor.id,
+          version: (previous?.version ?? 0) + 1,
         },
       });
       await tx.caseEvent.create({
         data: {
           case_id: id,
-          type: "status_changed",
+          type: "draft_saved",
           actor_id: actor.id,
           actor_role: actor.role,
-          from_status: from,
-          to_status: to,
+          from_status: record.status,
+          to_status: record.status,
+          payload: { draft_id: draft.id, version: draft.version },
         },
       });
+      return draft;
+    });
+  }
+  private async latestDraft(
+    tx: Prisma.TransactionClient,
+    id: string,
+    draftId: string,
+  ) {
+    const latest = await tx.draft.findFirst({
+      where: { case_id: id, kind: "legal_notice" },
+      orderBy: { version: "desc" },
+    });
+    if (!latest || latest.id !== draftId)
+      throw new ConflictException("Refresh to use the latest draft");
+    return latest;
+  }
+  async sendNoticeDraft(actor: CaseActor, id: string, draftId: string) {
+    if (actor.role !== "advocate")
+      throw new ForbiddenException("Assigned advocate required");
+    const db = await this.prisma.getClient();
+    return db.$transaction(async (tx) => {
+      const record = await lockedCase(tx, actor, id);
+      const draft = await this.latestDraft(tx, id, draftId);
+      const content = parse(
+        NoticeDraftInputSchema.shape.content,
+        draft.content,
+      );
+      if (!Object.values(content).some((v) => v.trim()))
+        throw new BadRequestException("Enter the draft before sending it");
+      return this.advance(tx, actor, record, CaseStatus.client_review, {
+        draft_id: draftId,
+        version: draft.version,
+      });
+    });
+  }
+  async reviewNoticeDraft(
+    actor: CaseActor,
+    id: string,
+    draftId: string,
+    decision: "approved" | "changes_requested",
+    body: unknown,
+  ) {
+    if (actor.role !== "client")
+      throw new ForbiddenException("Case client required");
+    const comment =
+      decision === "changes_requested"
+        ? parse(NoticeCommentSchema, body).comment
+        : (parse(z.strictObject({}), body), null);
+    const db = await this.prisma.getClient();
+    return db.$transaction(async (tx) => {
+      const record = await lockedCase(tx, actor, id);
+      await this.latestDraft(tx, id, draftId);
+      const updated = await this.advance(
+        tx,
+        actor,
+        record,
+        decision === "approved"
+          ? CaseStatus.approved
+          : CaseStatus.changes_requested,
+        { draft_id: draftId },
+      );
+      await tx.draftReview.create({
+        data: { draft_id: draftId, reviewer_id: actor.id, decision, comment },
+      });
+      return updated;
+    });
+  }
+  async dispatch(actor: CaseActor, id: string, body: unknown) {
+    if (actor.role !== "advocate")
+      throw new ForbiddenException("Assigned advocate required");
+    const input = parse(
+      z.strictObject({
+        carrier: z.string().trim().min(1).max(200),
+        waybill: z.string().trim().min(1).max(200),
+      }),
+      body,
+    );
+    const db = await this.prisma.getClient();
+    return db.$transaction(async (tx) => {
+      let record = await lockedCase(tx, actor, id);
+      if (record.status === "approved")
+        record = await this.advance(tx, actor, record, CaseStatus.dispatching);
+      if (record.status !== "dispatching")
+        throw new ConflictException(
+          "Only an approved notice may be dispatched",
+        );
+      const shipment = await tx.shipment.create({
+        data: {
+          case_id: id,
+          direction: "to_recipient",
+          carrier: input.carrier,
+          waybill: input.waybill,
+          status: "dispatched",
+          booked_at: new Date(),
+          recipient: parse(LegalNoticeSubmissionSchema, record.details).noticee,
+        },
+      });
+      return this.advance(tx, actor, record, CaseStatus.dispatched, {
+        shipment_id: shipment.id,
+        carrier: input.carrier,
+        waybill: input.waybill,
+      });
+    });
+  }
+  async deliver(actor: CaseActor, id: string, body: unknown) {
+    if (actor.role !== "admin") throw new ForbiddenException("Admin required");
+    const { pod_document_id } = parse(
+      z.strictObject({ pod_document_id: z.uuid() }),
+      body,
+    );
+    const db = await this.prisma.getClient();
+    return db.$transaction(async (tx) => {
+      const record = await lockedCase(tx, actor, id);
+      const proof = await tx.document.findFirst({
+        where: { id: pod_document_id, case_id: id, status: "uploaded" },
+      });
+      if (!proof)
+        throw new BadRequestException(
+          "Upload proof of delivery for this case first",
+        );
+      const shipment = await tx.shipment.findFirst({
+        where: { case_id: id, direction: "to_recipient", status: "dispatched" },
+        orderBy: { booked_at: "desc" },
+      });
+      if (!shipment)
+        throw new ConflictException("Dispatched shipment not found");
+      const updated = await this.advance(
+        tx,
+        actor,
+        record,
+        CaseStatus.completed,
+        { shipment_id: shipment.id, pod_document_id },
+      );
+      await tx.shipment.update({
+        where: { id: shipment.id },
+        data: {
+          status: "delivered",
+          delivered_at: new Date(),
+          pod_document_id,
+        },
+      });
+      await tx.adminAction.create({
+        data: {
+          admin_id: actor.id,
+          action: "confirm_delivery",
+          subject_type: "case",
+          subject_id: id,
+          payload: { shipment_id: shipment.id, pod_document_id },
+        },
+      });
+      // Completion is recorded; releasing money belongs to the payments phase.
       return updated;
     });
   }

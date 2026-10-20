@@ -1,3 +1,5 @@
+import ApiLegalNotice from "../../components/api/LegalNotice";
+import { DATA_SOURCE } from "../../lib/data-source";
 import { router } from 'expo-router';
 import { ArrowRight, FileText } from 'lucide-react-native';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
@@ -15,7 +17,7 @@ const BAR_HEIGHT = p.barPadTop + 20 + p.barButtonGap + 52 + p.captionGap + 16 + 
 // Final Step" against a "Step 6 of 6" stepper; both say 6 of 6 here. The UPI parent
 // and its "Scan QR Code" child are both selected in the file: modelled as method +
 // sub-option.
-export default function Step6Screen() {
+function FixtureStep6Screen() {
   const insets = useSafeAreaInsets();
   const { form } = useLegalNotice();
   const lines = invoiceLines(form.tier);
@@ -256,3 +258,8 @@ const styles = StyleSheet.create({
     color: p.rowLabel,
   },
 });
+
+// The deployed fixture path remains unchanged; API mode is explicit.
+export default function Step6Screen() {
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="payment" /> : <FixtureStep6Screen />;
+}

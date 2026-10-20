@@ -1,7 +1,7 @@
 # Legalitt — Backend & Cloud Architecture
 
-Version 3.6 · 20 October 2026
-Status: steps 0–5 complete. Step 6 is executable as written; §10 governs how.
+Version 3.8 · 20 October 2026
+Status: steps 0–6 complete. Step 7 is executable as written; §10 governs how.
 
 This document is the specification for the backend phase. It is written to be
 handed to a coding agent as the source of truth. Where something is undecided,
@@ -1042,7 +1042,77 @@ the client's decision, not ours. Added to §8.
 
 Commit: `feat(api): document upload, download and page counting`
 
-### Steps 7 onwards — summary only
+### Step 7 — Legal Notice, end to end
+
+The first flow where the app talks to the API instead of fixtures.
+
+**7a — The deployed demo must not break.**
+
+The API runs on a laptop. `legalitt-5.vercel.app` cannot reach it, and the
+client demos from that URL.
+
+So the app gets a flag, `DATA_SOURCE`:
+
+- `fixtures` — current behaviour. **The default, and what deployed builds
+  use.**
+- `api` — calls the real API. Used in local development.
+
+Both paths must work for the whole of step 7. The deployed demo keeps showing
+fixtures and keeps working exactly as it does today. Nothing the client sees
+changes in this step.
+
+The switch to `api` in deployed builds happens when Compute is deployed, after
+payments work (§2.10). Until then, never default to `api`.
+
+**7b — API client.**
+
+In `packages/shared`, a typed client generated from or matching §5. Both apps
+use it; neither hand-writes a fetch call.
+
+- Attaches the Cognito token; refreshes it when it expires.
+- Turns API errors into something the UI can show. A failed request must
+  surface as a visible message, not a blank screen.
+- Offline and timeout handling: these are legal matters on Indian mobile
+  networks. Assume the connection drops mid-flow.
+
+**7c — Client side of Legal Notice.**
+
+Intake (22–28) → submit → tracking (31) → draft ready decision (438) →
+approve or request changes → delivery (440) → delivered (441).
+
+Document uploads use step 6's presigned flow.
+
+**Payment is not built yet.** The case reaches `payment_pending` and a
+development-only endpoint moves it to `paid`. The real Razorpay flow is step
+8. Mark that endpoint clearly and gate it on the environment.
+
+**7d — Advocate side.**
+
+Request appears → accept or decline → draft (188) → send for review (190) →
+changes requested (191) → final (192) → dispatch.
+
+The advocate marks dispatched and enters carrier and waybill. Admin marks
+delivered and attaches proof of delivery — see §9.
+
+Status changes go through the step 5 state machine. No endpoint writes
+`cases.status` directly.
+
+**7e — Walk it.**
+
+One case, start to finish, across both roles, with real data in Postgres:
+
+client creates → pays (dev endpoint) → admin assigns → advocate accepts →
+advocate drafts → sends to client → client requests changes → advocate revises
+→ client approves → dispatched → delivered.
+
+Check `case_events` afterwards. Every step above should appear, in order. That
+is the timeline the app draws, so if a row is missing the screens are wrong.
+
+Report the event list.
+
+Commit: `feat: legal notice end to end against the api`
+
+### Steps 8 onwards — summary only
 
 Each is expanded in this document before it starts.
 5. **Cases and events** — create, submit, read, timeline. One service only.
@@ -1150,7 +1220,8 @@ is re-litigated mid-build.
 | Scope and price for this phase | Agreed with the client | 2026-10-19 |
 | AWS accounts | One account, two CDK stages (§2.6) | 2026-10-19 |
 | Repo layout | Monorepo, pnpm + Turborepo (§2.7) | 2026-10-19 |
-| Courier integration | **Manual in v1.** Admin enters carrier and waybill; the `shipments` table is unchanged when real integration lands later | 2026-10-19 |
+| Courier integration | **Manual in v1.** No carrier API; the `shipments` table is unchanged when real integration lands later | 2026-10-19 |
+| Who dispatches and delivers | **Advocate** marks dispatched and enters carrier and waybill — the designs put courier booking on the advocate side (197–199), so they hold the slip. **Admin** marks delivered and attaches proof of delivery, because delivery means the work is complete, and completion is what releases the advocate's payment | 2026-10-20 |
 | AI model | Claude on Bedrock, Sonnet-tier for drafting, Haiku-tier for summaries and chat, subject to in-region availability (§2.8) | 2026-10-19 |
 | AI human approval | Enforced in the state machine, not the UI. Screens already exist — 446 → 447 → advocate review → client (§2.8) | 2026-10-19 |
 

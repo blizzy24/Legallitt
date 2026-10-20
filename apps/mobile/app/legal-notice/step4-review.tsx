@@ -1,3 +1,5 @@
+import ApiLegalNotice from "../../components/api/LegalNotice";
+import { DATA_SOURCE } from "../../lib/data-source";
 import IdentityVerification from '../../components/IdentityVerification';
 import { useKyc } from '../../context/kyc';
 import { previewNotice } from '../../components/PreviewNotice';
@@ -38,7 +40,7 @@ const SAMPLE_DOCS: Doc[] = [
 // Both this screen and the upload screen sit at "Step 4 of 6": design/91 and
 // design/39 each draw the stepper on 4, so the wizard's six steps are unchanged and
 // step 4 simply spans two screens.
-export default function Step4ReviewScreen() {
+function FixtureStep4ReviewScreen() {
   const { kyc, begin } = useKyc();
   const { form, update } = useLegalNotice();
 
@@ -229,3 +231,8 @@ const styles = StyleSheet.create({
     color: r.chipText,
   },
 });
+
+// The deployed fixture path remains unchanged; API mode is explicit.
+export default function Step4ReviewScreen() {
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="upload" /> : <FixtureStep4ReviewScreen />;
+}

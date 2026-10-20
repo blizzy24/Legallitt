@@ -48,8 +48,14 @@ export class CaseRepository {
           where: { status: "uploaded" },
           orderBy: [{ created_at: "asc" }, { id: "asc" }],
         },
+        shipments_case_id_relations: true,
         drafts_case_id_relations: {
-          orderBy: [{ created_at: "asc" }, { id: "asc" }],
+          include: {
+            draft_reviews_draft_id_relations: {
+              orderBy: { created_at: "asc" },
+            },
+          },
+          orderBy: { version: "asc" },
         },
       },
     });
@@ -58,10 +64,25 @@ export class CaseRepository {
     const {
       case_events_case_id_relations: events,
       documents_case_id_relations: documents,
-      drafts_case_id_relations: drafts,
+      drafts_case_id_relations: allDrafts,
+      shipments_case_id_relations: shipments,
       ...caseRecord
     } = record;
-    return { ...caseRecord, events, documents, drafts };
+    // A client's first access to any draft version requires the advocate's
+    // explicit send event. Unsaved/unsent revisions never leak through GET.
+    const sent = new Set(
+      events
+        .filter(
+          (e) =>
+            e.to_status === "client_review" && e.from_status !== e.to_status,
+        )
+        .map((e) => (e.payload as { draft_id?: string }).draft_id),
+    );
+    const drafts = allDrafts.filter(
+      (d) => actor.role !== "client" || sent.has(d.id),
+    );
+    const reviews = drafts.flatMap((d) => d.draft_reviews_draft_id_relations);
+    return { ...caseRecord, events, documents, drafts, reviews, shipments };
   }
 
   async list(actor: CaseActor, query: unknown) {

@@ -1,3 +1,5 @@
+import { ApiError } from "@legalitt/shared";
+import { DATA_SOURCE } from "../lib/data-source";
 import { router } from "expo-router";
 import {
   createContext,
@@ -22,6 +24,8 @@ type Pending =
 type Session = {
   isLoggedIn: boolean;
   ready: boolean;
+  sessionError: string | null;
+  retrySession: () => void;
   role: Role | null;
   user: AuthUser | null;
   registrationRole: Role | null;
@@ -37,6 +41,8 @@ const Context = createContext<Session | null>(null);
 export function SessionProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [ready, setReady] = useState(false);
+  const [sessionError, setSessionError] = useState<string | null>(null);
+  const [attempt, setAttempt] = useState(0);
   const [registrationRole, setRegistrationRole] = useState<Role | null>(null);
   const [pending, setPending] = useState<Pending | null>(null);
   const [hasSeenOnboarding, setHasSeenOnboarding] = useState(false);
@@ -50,25 +56,28 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   };
   useEffect(() => {
     let alive = true;
+    setSessionError(null);
+    setReady(false);
     (async () => {
       try {
         const tokens = await storedTokens();
         if (!tokens) return;
-        let result: AuthResult;
-        try {
-          result = {
-            tokens,
-            user: await api<AuthUser>("/me", undefined, tokens.idToken),
-          };
-        } catch {
-          if (!tokens.refreshToken) throw new Error("Session expired");
-          result = await api<AuthResult>("/auth/refresh", {
-            refreshToken: tokens.refreshToken,
-          });
-        }
+        const identity = await api<AuthUser>("/me");
+        // The shared client may have refreshed while reading /me. Do not
+        // overwrite its fresh credentials with the original stored snapshot.
+        const result = {
+          user: identity,
+          tokens: (await storedTokens()) ?? tokens,
+        };
         if (alive) await accept(result);
-      } catch {
-        await storeTokens(null);
+      } catch (error) {
+        if (
+          DATA_SOURCE === "api" &&
+          error instanceof ApiError &&
+          (error.status === 0 || error.status >= 500)
+        ) {
+          if (alive) setSessionError(error.message);
+        } else await storeTokens(null);
       } finally {
         if (alive) setReady(true);
       }
@@ -76,11 +85,13 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     return () => {
       alive = false;
     };
-  }, []);
+  }, [attempt]);
   const value = useMemo<Session>(
     () => ({
       isLoggedIn: !!user,
       ready,
+      sessionError,
+      retrySession: () => setAttempt((value) => value + 1),
       user,
       role:
         user?.role === "advocate"
@@ -102,7 +113,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         router.replace("/(auth)/login");
       },
     }),
-    [user, ready, registrationRole, pending, hasSeenOnboarding],
+    [user, ready, registrationRole, pending, hasSeenOnboarding, sessionError],
   );
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }

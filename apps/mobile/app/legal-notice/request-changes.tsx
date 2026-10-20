@@ -1,3 +1,5 @@
+import ApiLegalNotice from "../../components/api/LegalNotice";
+import { DATA_SOURCE } from "../../lib/data-source";
 import { router } from "expo-router";
 import { useState } from "react";
 import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
@@ -11,7 +13,7 @@ import { INVOICE, TRACKING, tierFor } from "../../data/legalNotice";
 import { formatDate } from "../../data/cases";
 import { useLegalNotice } from "../../context/legalNotice";
 // design/438 — request changes, not a second approval step.
-export default function RequestChanges() {
+function FixtureRequestChanges() {
   const [message, setMessage] = useState("");
   const { form } = useLegalNotice();
   const tier = tierFor(form.tier);
@@ -140,3 +142,8 @@ const s = StyleSheet.create({
     color: t.ink,
   },
 });
+
+// The deployed fixture path remains unchanged; API mode is explicit.
+export default function RequestChanges() {
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="changes" /> : <FixtureRequestChanges />;
+}

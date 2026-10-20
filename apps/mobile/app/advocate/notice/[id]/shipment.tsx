@@ -1,3 +1,5 @@
+import ApiLegalNotice from "../../../../components/api/LegalNotice";
+import { DATA_SOURCE } from "../../../../lib/data-source";
 import { previewNotice } from '../../../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
@@ -29,7 +31,7 @@ import { advNoticeShipment as t, colors, font, ink } from '../../../../constants
 //
 // ⚠ FIVE status steps here against design/200's SEVEN, for the same shipment.
 
-export default function AdvocateNoticeShipmentScreen() {
+function FixtureAdvocateNoticeShipmentScreen() {
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
   const s = ADV_NOTICE_SHIPMENT;
@@ -408,3 +410,8 @@ const styles = StyleSheet.create({
   secondaryText: { fontFamily: font.appHeading, fontSize: t.btnSize, color: colors.textPrimary },
   pressed: { opacity: 0.85 },
 });
+
+// The deployed fixture path remains unchanged; API mode is explicit.
+export default function AdvocateNoticeShipmentScreen() {
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="tracking" /> : <FixtureAdvocateNoticeShipmentScreen />;
+}

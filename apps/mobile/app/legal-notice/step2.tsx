@@ -1,3 +1,5 @@
+import ApiLegalNotice from "../../components/api/LegalNotice";
+import { DATA_SOURCE } from "../../lib/data-source";
 import { router } from 'expo-router';
 import { MapPin, User, Users } from 'lucide-react-native';
 import { StyleSheet, Text, View } from 'react-native';
@@ -10,7 +12,7 @@ import { useLegalNotice } from '../../context/legalNotice';
 
 // Step 2 — who receives the notice (design/25). Icons follow the file: the mobile,
 // email and relationship fields all carry the two-person glyph.
-export default function Step2Screen() {
+function FixtureStep2Screen() {
   const { form, updateNoticee } = useLegalNotice();
   const n = form.noticee;
 
@@ -41,3 +43,8 @@ const styles = StyleSheet.create({
     gap: f.gap,
   },
 });
+
+// The deployed fixture path remains unchanged; API mode is explicit.
+export default function Step2Screen() {
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="step2" /> : <FixtureStep2Screen />;
+}

@@ -57,6 +57,10 @@ try {
       const page = await browser.newPage();
       const errors = [];
       page.on('pageerror', error => errors.push(error.message));
+      if (process.env.SMOKE_ASSERT_FIXTURES === '1') page.on('request', request => {
+        if (/\/api\/v1\/(cases|documents|advocate\/requests)(?:[/?]|$)/.test(request.url()))
+          errors.push('Fixture build called a case/document API: ' + new URL(request.url()).pathname);
+      });
       try {
         await page.evaluateOnNewDocument(tokens => { if (window === window.top && ['http:', 'https:'].includes(location.protocol)) sessionStorage.setItem('legalitt.auth.tokens', JSON.stringify(tokens)); }, sessions[roles.get(route)].tokens);
         await page.setViewport({ width: 390, height: 900, isMobile: true });

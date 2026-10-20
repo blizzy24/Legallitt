@@ -1,0 +1,3 @@
+Direct PostgreSQL check: LN-2026-0006 completed; all 18 event IDs match report; versions 1/2, two reviews and uploaded 2-page delivery proof; no money rows
+Two abandoned browser-test drafts removed; completed walkthrough case retained
+Temporary Cognito admin removed and local identity disabled; audit actor row retained

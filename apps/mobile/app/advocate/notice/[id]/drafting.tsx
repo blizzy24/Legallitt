@@ -1,3 +1,5 @@
+import ApiLegalNotice from "../../../../components/api/LegalNotice";
+import { DATA_SOURCE } from "../../../../lib/data-source";
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
   ArrowRight,
@@ -41,7 +43,7 @@ import {
 //
 // The purple is the quarantined Legalitt AI palette (constants/tokens/legalittAi.ts).
 
-export default function AdvocateNoticeDraftingScreen() {
+function FixtureAdvocateNoticeDraftingScreen() {
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
   const d = ADV_NOTICE_DRAFTING;
@@ -387,3 +389,8 @@ const styles = StyleSheet.create({
   },
   pressed: { opacity: 0.85 },
 });
+
+// The deployed fixture path remains unchanged; API mode is explicit.
+export default function AdvocateNoticeDraftingScreen() {
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="draft" /> : <FixtureAdvocateNoticeDraftingScreen />;
+}

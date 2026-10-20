@@ -1,0 +1,2 @@
+HTTP 503 during restore: visible error, credentials retained, Retry recovered
+Expired token refreshed once after recovery; fresh credentials persisted without being overwritten

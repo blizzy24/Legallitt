@@ -1,3 +1,5 @@
+import ApiLegalNotice from "../../components/api/LegalNotice";
+import { DATA_SOURCE } from "../../lib/data-source";
 import { router } from 'expo-router';
 import { ArrowRight, Check, ChevronRight, Clock, FileSearch, Lock, MapPin, MessageCircle, ShieldCheck, Zap, type LucideIcon } from 'lucide-react-native';
 import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
@@ -24,7 +26,7 @@ const REASONS: { icon: LucideIcon; title: string; caption: string; tint: string 
 
 // Legal Notice detail / pricing (design/22). Prices come from data/legalNotice.ts so
 // they match the payment screen's Service Fee.
-export default function LegalNoticeDetailScreen() {
+function FixtureLegalNoticeDetailScreen() {
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   // The tier cards are half the screen, so the speed line runs out of room before
@@ -510,3 +512,8 @@ const styles = StyleSheet.create({
     color: d.noteText,
   },
 });
+
+// The deployed fixture path remains unchanged; API mode is explicit.
+export default function LegalNoticeDetailScreen() {
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="detail" /> : <FixtureLegalNoticeDetailScreen />;
+}

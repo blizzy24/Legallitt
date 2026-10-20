@@ -1,3 +1,5 @@
+import ApiLegalNotice from "../../components/api/LegalNotice";
+import { DATA_SOURCE } from "../../lib/data-source";
 import { router, type Href } from 'expo-router';
 import { Bell, ChevronRight, Clock, FolderOpen } from 'lucide-react-native';
 import { useState } from 'react';
@@ -26,7 +28,7 @@ const SEGMENTS: Segment<Tab>[] = [
   { key: 'closed', label: 'Closed' },
 ];
 
-export default function CasesScreen() {
+function FixtureCasesScreen() {
   const insets = useSafeAreaInsets();
   const [tab, setTab] = useState<Tab>('active');
 
@@ -470,3 +472,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
+
+// The deployed fixture path remains unchanged; API mode is explicit.
+export default function CasesScreen() {
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="list" /> : <FixtureCasesScreen />;
+}

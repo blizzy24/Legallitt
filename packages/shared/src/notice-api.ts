@@ -1,0 +1,118 @@
+import { z } from "zod";
+import { CaseStatus } from "./lifecycle";
+import { LegalNoticeIntake, LegalNoticeTierSchema } from "./legal-notice";
+import { DocumentPresignSchema } from "./documents";
+
+const evidenceText = z
+  .string()
+  .max(50_000)
+  .refine(
+    (value) => !/(?:^|[^\d])\d{4}[ -]?\d{4}[ -]?\d{4}(?!\d)/.test(value),
+    "Do not include a full identity number",
+  );
+// The six editor sections drawn in design 188; no generated sample prose.
+export const NoticeDraftContentSchema = z.strictObject({
+  sender: evidenceText,
+  recipient: evidenceText,
+  subject: evidenceText,
+  facts: evidenceText,
+  demand: evidenceText,
+  closing: evidenceText,
+});
+export type NoticeDraftContent = z.infer<typeof NoticeDraftContentSchema>;
+export const NoticeDraftInputSchema = z.strictObject({
+  kind: z.literal("legal_notice"),
+  content: NoticeDraftContentSchema,
+  generated_by: z.literal("manual"),
+});
+export const NoticeCommentSchema = z.strictObject({
+  comment: evidenceText.trim().min(1),
+});
+export const NoticeDeclineSchema = z.strictObject({
+  reason: evidenceText.trim().min(1),
+});
+export type ApiTokens = {
+  idToken: string;
+  accessToken: string;
+  refreshToken?: string;
+  expiresIn: number;
+  expiresAt?: number;
+};
+export type ApiUser = {
+  id: string;
+  role: "client" | "advocate" | "admin";
+  name: string;
+  email: string | null;
+  phone: string | null;
+};
+export type ApiAuthResult = { user: ApiUser; tokens: ApiTokens };
+export type ApiEvent = {
+  id: string;
+  type: string;
+  actor_role: string | null;
+  from_status: CaseStatus | null;
+  to_status: CaseStatus | null;
+  payload: Record<string, unknown>;
+  created_at: string;
+};
+export type ApiDocument = {
+  id: string;
+  case_id: string;
+  kind: string;
+  filename: string;
+  mime_type: string;
+  size_bytes: string;
+  page_count: number | null;
+  status: string;
+  identity_notice?: string;
+};
+export type ApiDraft = {
+  id: string;
+  case_id: string;
+  version: number;
+  kind: string;
+  content: NoticeDraftContent;
+  generated_by: string;
+  created_at: string;
+};
+export type ApiReview = {
+  id: string;
+  draft_id: string;
+  decision: "approved" | "changes_requested";
+  comment: string | null;
+  created_at: string;
+};
+export type ApiCase = {
+  id: string;
+  reference: string;
+  service_code: "legal_notice";
+  client_id: string;
+  advocate_id: string | null;
+  status: CaseStatus;
+  tier: z.infer<typeof LegalNoticeTierSchema> | null;
+  details: LegalNoticeIntake;
+  created_at: string;
+  updated_at: string;
+  events?: ApiEvent[];
+  documents?: ApiDocument[];
+  drafts?: ApiDraft[];
+  reviews?: ApiReview[];
+  shipments?: {
+    carrier: string | null;
+    waybill: string | null;
+    status: string;
+    delivered_at: string | null;
+  }[];
+};
+export type ApiPage<T> = { items: T[]; next_cursor: string | null };
+export type UploadTicket = {
+  document: ApiDocument;
+  upload: {
+    url: string;
+    fields: Record<string, string>;
+    method: "POST";
+    expires_in: number;
+    max_bytes: number;
+  };
+};
+export type PresignInput = z.infer<typeof DocumentPresignSchema>;

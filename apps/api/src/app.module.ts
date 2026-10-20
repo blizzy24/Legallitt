@@ -1,3 +1,5 @@
+import { ServicesController } from "./cases/services.controller";
+import { NoticeController } from "./cases/notice.controller";
 import { DocumentController } from "./documents/document.controller";
 import { DocumentService } from "./documents/document.service";
 import { DocumentStorage } from "./documents/document-storage";
@@ -29,6 +31,8 @@ export class HealthController {
     AuthController,
     MeController,
     CaseController,
+    NoticeController,
+    ServicesController,
     DocumentController,
   ],
   providers: [

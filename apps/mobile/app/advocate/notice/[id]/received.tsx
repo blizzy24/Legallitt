@@ -1,3 +1,5 @@
+import ApiLegalNotice from "../../../../components/api/LegalNotice";
+import { DATA_SOURCE } from "../../../../lib/data-source";
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
   ArrowLeft,
@@ -27,7 +29,7 @@ import { advNoticeReceipt as t, colors, font, ink } from '../../../../constants/
 // flow. Both route to the report screen for now so the journey completes; this is a
 // placeholder decision, not a drawn one.
 
-export default function AdvocateNoticeReceivedScreen() {
+function FixtureAdvocateNoticeReceivedScreen() {
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
   const r = ADV_NOTICE_RECEIVED;
@@ -349,3 +351,8 @@ const styles = StyleSheet.create({
   },
   pressed: { opacity: 0.85 },
 });
+
+// The deployed fixture path remains unchanged; API mode is explicit.
+export default function AdvocateNoticeReceivedScreen() {
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="tracking" /> : <FixtureAdvocateNoticeReceivedScreen />;
+}

@@ -36,6 +36,11 @@ for (const [stage, env] of [
     assert.ok(!JSON.stringify(json).includes("Fn::ImportValue"));
     const bucket = Object.values(template.findResources("AWS::S3::Bucket"))[0]
       .Properties;
+    if (env === "dev")
+      assert.deepEqual(bucket.CorsConfiguration.CorsRules[0].AllowedOrigins, [
+        "http://localhost:8081",
+      ]);
+    else assert.equal(bucket.CorsConfiguration, undefined);
     assert.ok(
       Object.values(bucket.PublicAccessBlockConfiguration).every(Boolean),
     );

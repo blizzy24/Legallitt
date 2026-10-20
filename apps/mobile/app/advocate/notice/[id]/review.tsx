@@ -1,3 +1,5 @@
+import ApiLegalNotice from "../../../../components/api/LegalNotice";
+import { DATA_SOURCE } from "../../../../lib/data-source";
 import { useDemoWait } from '../../../../hooks/useDemoAdvance';
 import { previewNotice } from '../../../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
@@ -39,7 +41,7 @@ import { advNoticeReview as t, colors, font, ink } from '../../../../constants/t
 // Every control is inert except the state toggle and navigation (including the
 // two outcome rows).
 
-export default function AdvocateNoticeReviewScreen() {
+function FixtureAdvocateNoticeReviewScreen() {
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
   const r = ADV_NOTICE_REVIEW;
@@ -635,3 +637,8 @@ const styles = StyleSheet.create({
   barLinkText: { fontFamily: font.appSemi, fontSize: t.barLinkSize, color: colors.textPrimary },
   pressed: { opacity: 0.85 },
 });
+
+// The deployed fixture path remains unchanged; API mode is explicit.
+export default function AdvocateNoticeReviewScreen() {
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="tracking" /> : <FixtureAdvocateNoticeReviewScreen />;
+}

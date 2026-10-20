@@ -1,3 +1,5 @@
+import ApiLegalNotice from "../../../../components/api/LegalNotice";
+import { DATA_SOURCE } from "../../../../lib/data-source";
 import { previewNotice } from '../../../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
@@ -32,7 +34,7 @@ import { advDocHref } from '../../../../data/docLinks';
 // Dates normalised from October to September 2026, as the rest of the advocate flow
 // already was. Refresh Status, the copy button and View are inert.
 
-export default function AdvocateNoticeTrackingScreen() {
+function FixtureAdvocateNoticeTrackingScreen() {
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
   const k = ADV_NOTICE_TRACKING;
@@ -449,3 +451,8 @@ const styles = StyleSheet.create({
   },
   pressed: { opacity: 0.85 },
 });
+
+// The deployed fixture path remains unchanged; API mode is explicit.
+export default function AdvocateNoticeTrackingScreen() {
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="tracking" /> : <FixtureAdvocateNoticeTrackingScreen />;
+}

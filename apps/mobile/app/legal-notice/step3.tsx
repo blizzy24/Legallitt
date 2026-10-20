@@ -1,3 +1,5 @@
+import ApiLegalNotice from "../../components/api/LegalNotice";
+import { DATA_SOURCE } from "../../lib/data-source";
 import { router } from 'expo-router';
 import { Ellipsis, FilePenLine, House, IndianRupee, ShoppingCart, Users, type LucideIcon } from 'lucide-react-native';
 import { Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
@@ -31,7 +33,7 @@ const ROWS: Action[][] = [
 
 // Step 3 — issue type (design/26). The file shows a timestamp with no bubble above the
 // heading; drawn as is. No selected state is designed: brand border + brand chip here.
-export default function Step3Screen() {
+function FixtureStep3Screen() {
   const { form, update } = useLegalNotice();
   // The two-column pairing is fixed, so on narrow screens the pills have to give up
   // a little size rather than re-wrap or ellipsize. 390 and wider are untouched.
@@ -134,3 +136,8 @@ const styles = StyleSheet.create({
     color: b.text,
   },
 });
+
+// The deployed fixture path remains unchanged; API mode is explicit.
+export default function Step3Screen() {
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="step3" /> : <FixtureStep3Screen />;
+}

@@ -1,3 +1,5 @@
+import ApiLegalNotice from "../../../../components/api/LegalNotice";
+import { DATA_SOURCE } from "../../../../lib/data-source";
 import { previewNotice } from '../../../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import { ArrowLeft } from 'lucide-react-native';
@@ -30,7 +32,7 @@ import {
 // ⚠ design/188 names the advocate "Adv. Abhishek Sahu" where design/148 has
 // "Abhishek Chouhan", and spells its own chip "Fix Grammer". Both kept as drawn.
 
-export default function AdvocateNoticeDraftScreen() {
+function FixtureAdvocateNoticeDraftScreen() {
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
   const d = ADV_NOTICE_DRAFT;
@@ -278,3 +280,8 @@ const styles = StyleSheet.create({
   genText: { fontFamily: font.appHeading, fontSize: t.genSize, color: ink.onBrand },
   pressed: { opacity: 0.85 },
 });
+
+// The deployed fixture path remains unchanged; API mode is explicit.
+export default function AdvocateNoticeDraftScreen() {
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="draft" /> : <FixtureAdvocateNoticeDraftScreen />;
+}

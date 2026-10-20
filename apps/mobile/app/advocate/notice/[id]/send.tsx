@@ -1,3 +1,5 @@
+import ApiLegalNotice from "../../../../components/api/LegalNotice";
+import { DATA_SOURCE } from "../../../../lib/data-source";
 import { previewNotice } from '../../../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
@@ -42,7 +44,7 @@ import { advDocHref } from '../../../../data/docLinks';
 
 const CHIP_ICONS = [FileText, Gavel, IdCard];
 
-export default function AdvocateNoticeSendScreen() {
+function FixtureAdvocateNoticeSendScreen() {
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
   const s = ADV_NOTICE_SEND;
@@ -508,3 +510,8 @@ const styles = StyleSheet.create({
   },
   pressed: { opacity: 0.85 },
 });
+
+// The deployed fixture path remains unchanged; API mode is explicit.
+export default function AdvocateNoticeSendScreen() {
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="send" /> : <FixtureAdvocateNoticeSendScreen />;
+}

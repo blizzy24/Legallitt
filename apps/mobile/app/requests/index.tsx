@@ -1,3 +1,5 @@
+import ApiLegalNotice from "../../components/api/LegalNotice";
+import { DATA_SOURCE } from "../../lib/data-source";
 import { previewNotice } from '../../components/PreviewNotice';
 import { router, type Href } from 'expo-router';
 import {
@@ -39,7 +41,7 @@ const ROW_ICONS: Record<string, LucideIcon> = {
   'Requested Date': CalendarDays,
 };
 
-export default function RequestsScreen() {
+function FixtureRequestsScreen() {
   const insets = useSafeAreaInsets();
   const [filter, setFilter] = useState<RequestFilter>('all');
 
@@ -439,3 +441,8 @@ const styles = StyleSheet.create({
     color: colors.textBody,
   },
 });
+
+// The deployed fixture path remains unchanged; API mode is explicit.
+export default function RequestsScreen() {
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="list" /> : <FixtureRequestsScreen />;
+}

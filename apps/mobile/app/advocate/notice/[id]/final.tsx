@@ -1,3 +1,5 @@
+import ApiLegalNotice from "../../../../components/api/LegalNotice";
+import { DATA_SOURCE } from "../../../../lib/data-source";
 import { previewNotice } from '../../../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
@@ -30,7 +32,7 @@ import { advNoticeFinal as t, colors, font, ink } from '../../../../constants/th
 //
 // Download PDF is inert — the prototype has no file output.
 
-export default function AdvocateNoticeFinalScreen() {
+function FixtureAdvocateNoticeFinalScreen() {
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
   const f = ADV_NOTICE_FINAL;
@@ -405,3 +407,8 @@ const styles = StyleSheet.create({
   },
   pressed: { opacity: 0.85 },
 });
+
+// The deployed fixture path remains unchanged; API mode is explicit.
+export default function AdvocateNoticeFinalScreen() {
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="final" /> : <FixtureAdvocateNoticeFinalScreen />;
+}

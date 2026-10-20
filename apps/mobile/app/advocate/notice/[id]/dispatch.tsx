@@ -1,3 +1,5 @@
+import ApiLegalNotice from "../../../../components/api/LegalNotice";
+import { DATA_SOURCE } from "../../../../lib/data-source";
 import { previewNotice } from '../../../../components/PreviewNotice';
 import DemoPressable from '../../../../components/DemoPressable';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
@@ -38,7 +40,7 @@ import { advNoticeDispatch as t, colors, font, ink } from '../../../../constants
 // completing them. The pending rows are made tappable here, since a checklist you
 // cannot check is not a checklist — the design shows states but not the transition.
 
-export default function AdvocateNoticeDispatchScreen() {
+function FixtureAdvocateNoticeDispatchScreen() {
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
   const d = ADV_NOTICE_DISPATCH;
@@ -482,3 +484,8 @@ const styles = StyleSheet.create({
   },
   pressed: { opacity: 0.85 },
 });
+
+// The deployed fixture path remains unchanged; API mode is explicit.
+export default function AdvocateNoticeDispatchScreen() {
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="dispatch" /> : <FixtureAdvocateNoticeDispatchScreen />;
+}

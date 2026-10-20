@@ -1,0 +1,72 @@
+
+> @legalitt/shared@0.0.0 test /Users/riya/Documents/14/packages/shared
+> pnpm build && node --test tests/*.cjs
+
+
+> @legalitt/shared@0.0.0 build /Users/riya/Documents/14/packages/shared
+> tsc
+
+TAP version 13
+# Subtest: shared client refreshes once for concurrent expired sessions and attaches refreshed Cognito token
+ok 1 - shared client refreshes once for concurrent expired sessions and attaches refreshed Cognito token
+  ---
+  duration_ms: 25.38125
+  type: 'test'
+  ...
+# Subtest: 401 retries once after refresh; expired refresh clears credentials; offline mutations are never retried
+ok 2 - 401 retries once after refresh; expired refresh clears credentials; offline mutations are never retried
+  ---
+  duration_ms: 1.689125
+  type: 'test'
+  ...
+# Subtest: timeout and validation errors are visible; signed upload uses S3 directly with file last
+ok 3 - timeout and validation errors are visible; signed upload uses S3 directly with file last
+  ---
+  duration_ms: 7.73075
+  type: 'test'
+  ...
+# Subtest: a refresh finishing after sign-out cannot restore the old session
+ok 4 - a refresh finishing after sign-out cannot restore the old session
+  ---
+  duration_ms: 1.001042
+  type: 'test'
+  ...
+# Subtest: all lifecycle values match the authoritative DDL and have the confirmed bucket
+ok 5 - all lifecycle values match the authoritative DDL and have the confirmed bucket
+  ---
+  duration_ms: 0.980542
+  type: 'test'
+  ...
+# Subtest: core schemas preserve every DDL column and nullable flag
+ok 6 - core schemas preserve every DDL column and nullable flag
+  ---
+  duration_ms: 2.013375
+  type: 'test'
+  ...
+# Subtest: money retains integer paise and rejects floats and unsafe coercion
+ok 7 - money retains integer paise and rejects floats and unsafe coercion
+  ---
+  duration_ms: 0.236542
+  type: 'test'
+  ...
+# Subtest: nine distinct services and lifecycle/bucket separation
+ok 8 - nine distinct services and lifecycle/bucket separation
+  ---
+  duration_ms: 0.068834
+  type: 'test'
+  ...
+# Subtest: Legal Notice intake permits draft fields but rejects arbitrary JSON and identity uploads
+ok 9 - Legal Notice intake permits draft fields but rejects arbitrary JSON and identity uploads
+  ---
+  duration_ms: 3.591291
+  type: 'test'
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 145.515042

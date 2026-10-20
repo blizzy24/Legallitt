@@ -1,3 +1,5 @@
+import ApiLegalNotice from "../../components/api/LegalNotice";
+import { DATA_SOURCE } from "../../lib/data-source";
 import { router, type Href } from 'expo-router';
 import { ChevronRight } from 'lucide-react-native';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
@@ -29,7 +31,7 @@ const NOTICE_TYPE: Record<IssueType, string> = {
 
 // Step 5 — case summary (design/27). The file's card is 353pt wide (inset 18.6) against
 // the shell's 346; drawn at the shell width.
-export default function Step5Screen() {
+function FixtureStep5Screen() {
   const { form } = useLegalNotice();
   const noticee = [form.noticee.fullName, form.noticee.relationship, form.noticee.address].filter(Boolean);
   const docCount = form.documents.length || SAMPLE.documents;
@@ -130,3 +132,8 @@ const styles = StyleSheet.create({
     color: s.value,
   },
 });
+
+// The deployed fixture path remains unchanged; API mode is explicit.
+export default function Step5Screen() {
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="summary" /> : <FixtureStep5Screen />;
+}

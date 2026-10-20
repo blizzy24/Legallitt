@@ -99,6 +99,21 @@ export class CoreStack extends Stack {
         Rules: [{ ObjectOwnership: "BucketOwnerEnforced" }],
       },
       VersioningConfiguration: { Status: "Enabled" },
+      ...(environment === "dev"
+        ? {
+            CorsConfiguration: {
+              CorsRules: [
+                {
+                  AllowedOrigins: ["http://localhost:8081"],
+                  AllowedMethods: ["POST", "GET", "HEAD"],
+                  AllowedHeaders: ["Content-Type"],
+                  ExposedHeaders: ["ETag"],
+                  MaxAge: 300,
+                },
+              ],
+            },
+          }
+        : {}),
     });
     bucket.applyRemovalPolicy(RemovalPolicy.RETAIN);
     const objects = Fn.join("", [arn(bucket), "/*"]);
