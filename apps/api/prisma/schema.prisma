@@ -1,0 +1,472 @@
+// Transcribed from architecture §4.3. SQL names, types, defaults and FKs preserved.
+// CHECK, CITEXT installation and array NOT NULL are preserved in the SQL migration:
+// Prisma's generated SQL omits NOT NULL on lists despite non-optional list fields.
+generator client {
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  moduleFormat        = "cjs"
+  importFileExtension = ""
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  client
+  advocate
+  admin
+
+  @@map("user_role")
+}
+
+enum VerificationStatus {
+  not_started
+  in_review
+  approved
+  rejected
+  needs_update
+
+  @@map("verification_status")
+}
+
+enum CaseStatus {
+  draft
+  submitted
+  payment_pending
+  paid
+  assigning
+  assigned
+  advocate_accepted
+  advocate_declined
+  in_progress
+  client_review
+  changes_requested
+  approved
+  dispatching
+  dispatched
+  completed
+  cancelled
+  refunded
+
+  @@map("case_status")
+}
+
+enum PaymentStatus {
+  created
+  pending
+  captured
+  failed
+  refunded
+
+  @@map("payment_status")
+}
+
+enum PayoutStatus {
+  pending
+  released
+  processing
+  paid
+  failed
+  reversed
+
+  @@map("payout_status")
+}
+
+model User {
+  id                                  String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  cognito_sub                         String            @unique
+  role                                UserRole
+  full_name                           String
+  email                               String?           @unique @db.Citext
+  phone                               String?           @unique
+  phone_verified                      Boolean           @default(false)
+  email_verified                      Boolean           @default(false)
+  status                              String            @default("active")
+  created_at                          DateTime          @default(now()) @db.Timestamptz(6)
+  updated_at                          DateTime          @default(now()) @db.Timestamptz(6)
+  advocate_profiles_user_id_relations AdvocateProfile?  @relation("advocate_profiles_user_id_users")
+  cases_client_id_relations           Case[]            @relation("cases_client_id_users")
+  cases_advocate_id_relations         Case[]            @relation("cases_advocate_id_users")
+  case_events_actor_id_relations      CaseEvent[]       @relation("case_events_actor_id_users")
+  documents_owner_id_relations        Document[]        @relation("documents_owner_id_users")
+  drafts_created_by_relations         Draft[]           @relation("drafts_created_by_users")
+  draft_reviews_reviewer_id_relations DraftReview[]     @relation("draft_reviews_reviewer_id_users")
+  messages_sender_id_relations        Message[]         @relation("messages_sender_id_users")
+  payouts_advocate_id_relations       Payout[]          @relation("payouts_advocate_id_users")
+  payouts_released_by_relations       Payout[]          @relation("payouts_released_by_users")
+  hearings_created_by_relations       Hearing[]         @relation("hearings_created_by_users")
+  kyc_verifications_user_id_relations KycVerification[] @relation("kyc_verifications_user_id_users")
+  notifications_user_id_relations     Notification[]    @relation("notifications_user_id_users")
+  admin_actions_admin_id_relations    AdminAction[]     @relation("admin_actions_admin_id_users")
+
+  @@map("users")
+}
+
+model AdvocateProfile {
+  user_id                String             @id @db.Uuid
+  bar_council_state      String?
+  bar_council_number     String?
+  enrolment_year         Int?
+  practice_areas         String[]           @default([])
+  languages              String[]           @default([])
+  courts                 String[]           @default([])
+  city                   String?
+  state                  String?
+  years_experience       Int?
+  bio                    String?
+  consultation_fee_paise BigInt?
+  verification           VerificationStatus @default(not_started)
+  verified_at            DateTime?          @db.Timestamptz(6)
+  rating_avg             Decimal?           @db.Decimal(2, 1)
+  rating_count           Int                @default(0)
+  rzp_linked_account_id  String?
+  rzp_account_status     String?
+  created_at             DateTime           @default(now()) @db.Timestamptz(6)
+  updated_at             DateTime           @default(now()) @db.Timestamptz(6)
+  user_id_relation       User               @relation("advocate_profiles_user_id_users", fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("advocate_profiles")
+}
+
+model Service {
+  code                                    String           @id
+  name                                    String
+  active                                  Boolean          @default(true)
+  config                                  Json             @default("{}") @db.JsonB
+  service_pricing_service_code_relations  ServicePricing[] @relation("service_pricing_service_code_services")
+  commission_rates_service_code_relations CommissionRate[] @relation("commission_rates_service_code_services")
+  cases_service_code_relations            Case[]           @relation("cases_service_code_services")
+
+  @@map("services")
+}
+
+model ServicePricing {
+  id                         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  service_code               String
+  tier                       String?
+  variant                    String?
+  base_amount_paise          BigInt
+  gst_bps                    Int       @default(1800)
+  confirmed                  Boolean   @default(false)
+  source_note                String?
+  effective_from             DateTime  @default(now()) @db.Timestamptz(6)
+  effective_to               DateTime? @db.Timestamptz(6)
+  service_code_relation      Service   @relation("service_pricing_service_code_services", fields: [service_code], references: [code], onDelete: NoAction, onUpdate: NoAction)
+  cases_pricing_id_relations Case[]    @relation("cases_pricing_id_service_pricing")
+
+  @@map("service_pricing")
+}
+
+model CommissionRate {
+  id                    String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  service_code          String
+  rate_bps              Int
+  confirmed             Boolean   @default(false)
+  effective_from        DateTime  @default(now()) @db.Timestamptz(6)
+  effective_to          DateTime? @db.Timestamptz(6)
+  service_code_relation Service   @relation("commission_rates_service_code_services", fields: [service_code], references: [code], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("commission_rates")
+}
+
+model Case {
+  id                                String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  reference                         String          @unique
+  service_code                      String
+  client_id                         String          @db.Uuid
+  advocate_id                       String?         @db.Uuid
+  status                            CaseStatus      @default(draft)
+  sub_status                        String?
+  tier                              String?
+  title                             String?
+  details                           Json            @default("{}") @db.JsonB
+  pricing_id                        String?         @db.Uuid
+  created_at                        DateTime        @default(now()) @db.Timestamptz(6)
+  updated_at                        DateTime        @default(now()) @db.Timestamptz(6)
+  completed_at                      DateTime?       @db.Timestamptz(6)
+  service_code_relation             Service         @relation("cases_service_code_services", fields: [service_code], references: [code], onDelete: NoAction, onUpdate: NoAction)
+  client_id_relation                User            @relation("cases_client_id_users", fields: [client_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  advocate_id_relation              User?           @relation("cases_advocate_id_users", fields: [advocate_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  pricing_id_relation               ServicePricing? @relation("cases_pricing_id_service_pricing", fields: [pricing_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  case_events_case_id_relations     CaseEvent[]     @relation("case_events_case_id_cases")
+  case_parties_case_id_relations    CaseParty[]     @relation("case_parties_case_id_cases")
+  documents_case_id_relations       Document[]      @relation("documents_case_id_cases")
+  drafts_case_id_relations          Draft[]         @relation("drafts_case_id_cases")
+  message_threads_case_id_relations MessageThread[] @relation("message_threads_case_id_cases")
+  payments_case_id_relations        Payment[]       @relation("payments_case_id_cases")
+  payouts_case_id_relations         Payout[]        @relation("payouts_case_id_cases")
+  ledger_entries_case_id_relations  LedgerEntry[]   @relation("ledger_entries_case_id_cases")
+  shipments_case_id_relations       Shipment[]      @relation("shipments_case_id_cases")
+  hearings_case_id_relations        Hearing[]       @relation("hearings_case_id_cases")
+  consultations_case_id_relations   Consultation[]  @relation("consultations_case_id_cases")
+  notifications_case_id_relations   Notification[]  @relation("notifications_case_id_cases")
+
+  @@index([client_id, status])
+  @@index([advocate_id, status])
+  @@index([service_code, status])
+  @@map("cases")
+}
+
+model CaseEvent {
+  id                BigInt      @id @default(autoincrement())
+  case_id           String      @db.Uuid
+  type              String
+  actor_id          String?     @db.Uuid
+  actor_role        UserRole?
+  from_status       CaseStatus?
+  to_status         CaseStatus?
+  payload           Json        @default("{}") @db.JsonB
+  created_at        DateTime    @default(now()) @db.Timestamptz(6)
+  case_id_relation  Case        @relation("case_events_case_id_cases", fields: [case_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  actor_id_relation User?       @relation("case_events_actor_id_users", fields: [actor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([case_id, created_at])
+  @@map("case_events")
+}
+
+model CaseParty {
+  id               String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  case_id          String @db.Uuid
+  kind             String
+  name             String
+  details          Json   @default("{}") @db.JsonB
+  case_id_relation Case   @relation("case_parties_case_id_cases", fields: [case_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("case_parties")
+}
+
+model Document {
+  id                                  String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  case_id                             String?    @db.Uuid
+  owner_id                            String     @db.Uuid
+  kind                                String
+  filename                            String
+  s3_key                              String
+  mime_type                           String
+  size_bytes                          BigInt
+  page_count                          Int?
+  status                              String     @default("uploaded")
+  created_at                          DateTime   @default(now()) @db.Timestamptz(6)
+  case_id_relation                    Case?      @relation("documents_case_id_cases", fields: [case_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  owner_id_relation                   User       @relation("documents_owner_id_users", fields: [owner_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  messages_document_id_relations      Message[]  @relation("messages_document_id_documents")
+  shipments_pod_document_id_relations Shipment[] @relation("shipments_pod_document_id_documents")
+
+  @@map("documents")
+}
+
+model Draft {
+  id                               String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  case_id                          String        @db.Uuid
+  kind                             String
+  version                          Int
+  content                          Json          @db.JsonB
+  generated_by                     String?
+  created_by                       String        @db.Uuid
+  created_at                       DateTime      @default(now()) @db.Timestamptz(6)
+  case_id_relation                 Case          @relation("drafts_case_id_cases", fields: [case_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  created_by_relation              User          @relation("drafts_created_by_users", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  draft_reviews_draft_id_relations DraftReview[] @relation("draft_reviews_draft_id_drafts")
+
+  @@unique([case_id, kind, version])
+  @@map("drafts")
+}
+
+model DraftReview {
+  id                   String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  draft_id             String   @db.Uuid
+  reviewer_id          String   @db.Uuid
+  decision             String
+  comment              String?
+  created_at           DateTime @default(now()) @db.Timestamptz(6)
+  draft_id_relation    Draft    @relation("draft_reviews_draft_id_drafts", fields: [draft_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  reviewer_id_relation User     @relation("draft_reviews_reviewer_id_users", fields: [reviewer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("draft_reviews")
+}
+
+model MessageThread {
+  id                           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  case_id                      String?   @db.Uuid
+  kind                         String
+  created_at                   DateTime  @default(now()) @db.Timestamptz(6)
+  case_id_relation             Case?     @relation("message_threads_case_id_cases", fields: [case_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  messages_thread_id_relations Message[] @relation("messages_thread_id_message_threads")
+
+  @@map("message_threads")
+}
+
+model Message {
+  id                   String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  thread_id            String        @db.Uuid
+  sender_id            String        @db.Uuid
+  body                 String?
+  document_id          String?       @db.Uuid
+  created_at           DateTime      @default(now()) @db.Timestamptz(6)
+  read_at              DateTime?     @db.Timestamptz(6)
+  thread_id_relation   MessageThread @relation("messages_thread_id_message_threads", fields: [thread_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  sender_id_relation   User          @relation("messages_sender_id_users", fields: [sender_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  document_id_relation Document?     @relation("messages_document_id_documents", fields: [document_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([thread_id, created_at])
+  @@map("messages")
+}
+
+model Payment {
+  id                                  String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  case_id                             String        @db.Uuid
+  purpose                             String
+  base_amount_paise                   BigInt
+  gst_paise                           BigInt
+  total_paise                         BigInt
+  status                              PaymentStatus @default(created)
+  rzp_order_id                        String?       @unique
+  rzp_payment_id                      String?       @unique
+  idempotency_key                     String        @unique
+  created_at                          DateTime      @default(now()) @db.Timestamptz(6)
+  captured_at                         DateTime?     @db.Timestamptz(6)
+  case_id_relation                    Case          @relation("payments_case_id_cases", fields: [case_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  payouts_payment_id_relations        Payout[]      @relation("payouts_payment_id_payments")
+  ledger_entries_payment_id_relations LedgerEntry[] @relation("ledger_entries_payment_id_payments")
+
+  @@map("payments")
+}
+
+model Payout {
+  id                                 String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  case_id                            String        @db.Uuid
+  advocate_id                        String        @db.Uuid
+  payment_id                         String        @db.Uuid
+  gross_paise                        BigInt
+  commission_rate_bps                Int
+  commission_paise                   BigInt
+  net_paise                          BigInt
+  status                             PayoutStatus  @default(pending)
+  rzp_transfer_id                    String?
+  utr                                String?
+  released_by                        String?       @db.Uuid
+  released_at                        DateTime?     @db.Timestamptz(6)
+  created_at                         DateTime      @default(now()) @db.Timestamptz(6)
+  case_id_relation                   Case          @relation("payouts_case_id_cases", fields: [case_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  advocate_id_relation               User          @relation("payouts_advocate_id_users", fields: [advocate_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  payment_id_relation                Payment       @relation("payouts_payment_id_payments", fields: [payment_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  released_by_relation               User?         @relation("payouts_released_by_users", fields: [released_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  ledger_entries_payout_id_relations LedgerEntry[] @relation("ledger_entries_payout_id_payouts")
+
+  @@map("payouts")
+}
+
+model LedgerEntry {
+  id                  BigInt   @id @default(autoincrement())
+  account             String
+  case_id             String?  @db.Uuid
+  payment_id          String?  @db.Uuid
+  payout_id           String?  @db.Uuid
+  direction           String
+  amount_paise        BigInt
+  memo                String?
+  created_at          DateTime @default(now()) @db.Timestamptz(6)
+  case_id_relation    Case?    @relation("ledger_entries_case_id_cases", fields: [case_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  payment_id_relation Payment? @relation("ledger_entries_payment_id_payments", fields: [payment_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  payout_id_relation  Payout?  @relation("ledger_entries_payout_id_payouts", fields: [payout_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("ledger_entries")
+}
+
+model Shipment {
+  id                       String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  case_id                  String    @db.Uuid
+  direction                String
+  carrier                  String?
+  waybill                  String?
+  status                   String    @default("booked")
+  recipient                Json      @default("{}") @db.JsonB
+  booked_at                DateTime? @db.Timestamptz(6)
+  delivered_at             DateTime? @db.Timestamptz(6)
+  pod_document_id          String?   @db.Uuid
+  case_id_relation         Case      @relation("shipments_case_id_cases", fields: [case_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  pod_document_id_relation Document? @relation("shipments_pod_document_id_documents", fields: [pod_document_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("shipments")
+}
+
+model Hearing {
+  id                  String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  case_id             String    @db.Uuid
+  court               String?
+  scheduled_at        DateTime? @db.Timestamptz(6)
+  purpose             String?
+  outcome             String?
+  attendance          String?
+  next_date           DateTime? @db.Timestamptz(6)
+  notes               String?
+  created_by          String?   @db.Uuid
+  created_at          DateTime  @default(now()) @db.Timestamptz(6)
+  case_id_relation    Case      @relation("hearings_case_id_cases", fields: [case_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  created_by_relation User?     @relation("hearings_created_by_users", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("hearings")
+}
+
+model Consultation {
+  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  case_id          String   @db.Uuid
+  mode             String
+  scheduled_at     DateTime @db.Timestamptz(6)
+  duration_min     Int
+  room_id          String?
+  status           String   @default("scheduled")
+  rating           Int?
+  review           String?
+  case_id_relation Case     @relation("consultations_case_id_cases", fields: [case_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("consultations")
+}
+
+model KycVerification {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id          String    @db.Uuid
+  method           String
+  provider         String?
+  provider_ref     String?
+  verified_name    String?
+  verified_address String?
+  id_last4         String?
+  verified_at      DateTime? @db.Timestamptz(6)
+  expires_at       DateTime? @db.Timestamptz(6)
+  created_at       DateTime  @default(now()) @db.Timestamptz(6)
+  user_id_relation User      @relation("kyc_verifications_user_id_users", fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("kyc_verifications")
+}
+
+model Notification {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id          String    @db.Uuid
+  case_id          String?   @db.Uuid
+  kind             String
+  title            String
+  body             String?
+  data             Json      @default("{}") @db.JsonB
+  channels         String[]  @default([])
+  read_at          DateTime? @db.Timestamptz(6)
+  created_at       DateTime  @default(now()) @db.Timestamptz(6)
+  user_id_relation User      @relation("notifications_user_id_users", fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  case_id_relation Case?     @relation("notifications_case_id_cases", fields: [case_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("notifications")
+}
+
+model AdminAction {
+  id                BigInt   @id @default(autoincrement())
+  admin_id          String   @db.Uuid
+  action            String
+  subject_type      String
+  subject_id        String   @db.Uuid
+  payload           Json     @default("{}") @db.JsonB
+  created_at        DateTime @default(now()) @db.Timestamptz(6)
+  admin_id_relation User     @relation("admin_actions_admin_id_users", fields: [admin_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("admin_actions")
+}

@@ -44,3 +44,6 @@ yarn-error.*
 .turbo/
 cdk.out/
 .vercel/
+
+# Prisma client is generated from the checked-in schema.
+/apps/api/src/generated/prisma/

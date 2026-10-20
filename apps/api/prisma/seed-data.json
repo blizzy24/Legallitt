@@ -1,0 +1,642 @@
+{
+  "prices": [
+    {
+      "service_code": "legal_notice",
+      "tier": "ordinary",
+      "variant": null,
+      "base_amount_paise": "69900",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/22"
+    },
+    {
+      "service_code": "legal_notice",
+      "tier": "urgent",
+      "variant": null,
+      "base_amount_paise": "99900",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/22"
+    },
+    {
+      "service_code": "legal_notice",
+      "tier": null,
+      "variant": "platform_fee",
+      "base_amount_paise": "19900",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/28"
+    },
+    {
+      "service_code": "legal_notice",
+      "tier": null,
+      "variant": "delivery_fee",
+      "base_amount_paise": "17900",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/434"
+    },
+    {
+      "service_code": "legal_notice",
+      "tier": null,
+      "variant": "advocate_request_fee",
+      "base_amount_paise": "350000",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/185; Advocate-facing client fee conflicts with client tiers."
+    },
+    {
+      "service_code": "property_search",
+      "tier": "ordinary",
+      "variant": null,
+      "base_amount_paise": "49900",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/72"
+    },
+    {
+      "service_code": "property_search",
+      "tier": "urgent",
+      "variant": null,
+      "base_amount_paise": "99900",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/72"
+    },
+    {
+      "service_code": "property_search",
+      "tier": null,
+      "variant": "platform_fee",
+      "base_amount_paise": "19900",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/77"
+    },
+    {
+      "service_code": "property_search",
+      "tier": null,
+      "variant": "advocate_request_fee",
+      "base_amount_paise": "450000",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/206"
+    },
+    {
+      "service_code": "document_forensic",
+      "tier": "ordinary",
+      "variant": null,
+      "base_amount_paise": "149900",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/82"
+    },
+    {
+      "service_code": "document_forensic",
+      "tier": "urgent",
+      "variant": null,
+      "base_amount_paise": "299900",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/82"
+    },
+    {
+      "service_code": "document_forensic",
+      "tier": null,
+      "variant": "payment_base",
+      "base_amount_paise": "316700",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/86; Conflicts with both selection tiers."
+    },
+    {
+      "service_code": "document_forensic",
+      "tier": null,
+      "variant": "platform_fee",
+      "base_amount_paise": "19900",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/86"
+    },
+    {
+      "service_code": "document_forensic",
+      "tier": null,
+      "variant": "additional_page",
+      "base_amount_paise": "2500",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/85; Per page above 25; inclusion in invoice unconfirmed."
+    },
+    {
+      "service_code": "document_forensic",
+      "tier": null,
+      "variant": "advocate_request_fee",
+      "base_amount_paise": "1500000",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/223"
+    },
+    {
+      "service_code": "fir_draft",
+      "tier": null,
+      "variant": "placeholder",
+      "base_amount_paise": "100000",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "apps/mobile/data/fir.ts; design/40–47 draw no base; Chosen frontend placeholder, not a design price; architecture §8.4 still unconfirmed."
+    },
+    {
+      "service_code": "fir_draft",
+      "tier": null,
+      "variant": "additional_page",
+      "base_amount_paise": "2500",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/45; Per page above 25; inclusion in invoice unconfirmed."
+    },
+    {
+      "service_code": "fir_draft",
+      "tier": null,
+      "variant": "advocate_case_fee",
+      "base_amount_paise": "450000",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/204; design/214"
+    },
+    {
+      "service_code": "fir_draft",
+      "tier": null,
+      "variant": "advocate_request_fee",
+      "base_amount_paise": "350000",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/215"
+    },
+    {
+      "service_code": "legal_advice",
+      "tier": null,
+      "variant": "chat",
+      "base_amount_paise": "49900",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/102; Conflicting price tables; schema GST default retained, no backend checkout policy selected."
+    },
+    {
+      "service_code": "legal_advice",
+      "tier": null,
+      "variant": "audio",
+      "base_amount_paise": "69900",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/102; Conflicting price tables; schema GST default retained, no backend checkout policy selected."
+    },
+    {
+      "service_code": "legal_advice",
+      "tier": null,
+      "variant": "video",
+      "base_amount_paise": "99900",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/102; Conflicting price tables; schema GST default retained, no backend checkout policy selected."
+    },
+    {
+      "service_code": "legal_advice",
+      "tier": null,
+      "variant": "chat",
+      "base_amount_paise": "49900",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/104; Conflicting price tables; schema GST default retained, no backend checkout policy selected."
+    },
+    {
+      "service_code": "legal_advice",
+      "tier": null,
+      "variant": "audio",
+      "base_amount_paise": "99900",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/104; Conflicting price tables; schema GST default retained, no backend checkout policy selected."
+    },
+    {
+      "service_code": "legal_advice",
+      "tier": null,
+      "variant": "video",
+      "base_amount_paise": "149900",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/104; Conflicting price tables; schema GST default retained, no backend checkout policy selected."
+    },
+    {
+      "service_code": "legal_advice",
+      "tier": null,
+      "variant": "experience_veteran",
+      "base_amount_paise": "99900",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/122; design/123; design/124; Starting-at price; combination with consultation mode unspecified."
+    },
+    {
+      "service_code": "legal_advice",
+      "tier": null,
+      "variant": "experience_highly-experienced",
+      "base_amount_paise": "79900",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/122; design/123; design/124; Starting-at price; combination with consultation mode unspecified."
+    },
+    {
+      "service_code": "legal_advice",
+      "tier": null,
+      "variant": "experience_experienced",
+      "base_amount_paise": "59900",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/122; design/123; design/124; Starting-at price; combination with consultation mode unspecified."
+    },
+    {
+      "service_code": "legal_advice",
+      "tier": null,
+      "variant": "experience_emerging",
+      "base_amount_paise": "49900",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/122; design/123; design/124; Starting-at price; combination with consultation mode unspecified."
+    },
+    {
+      "service_code": "legal_advice",
+      "tier": null,
+      "variant": "follow_up",
+      "base_amount_paise": "150000",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/117"
+    },
+    {
+      "service_code": "legal_advice",
+      "tier": null,
+      "variant": "follow_up_platform_fee",
+      "base_amount_paise": "9900",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/117"
+    },
+    {
+      "service_code": "legal_advice",
+      "tier": null,
+      "variant": "written_advice",
+      "base_amount_paise": "10000",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/116"
+    },
+    {
+      "service_code": "legal_advice",
+      "tier": null,
+      "variant": "consultation_retainer",
+      "base_amount_paise": "2850000",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/164"
+    },
+    {
+      "service_code": "legal_advice",
+      "tier": null,
+      "variant": "completed_consultation_fee",
+      "base_amount_paise": "3200000",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/181"
+    },
+    {
+      "service_code": "high_court",
+      "tier": "ordinary",
+      "variant": null,
+      "base_amount_paise": "1850000",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/289; Conflicting designs; client confirmation pending."
+    },
+    {
+      "service_code": "high_court",
+      "tier": "urgent",
+      "variant": null,
+      "base_amount_paise": "2850000",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/289; Conflicting designs; client confirmation pending."
+    },
+    {
+      "service_code": "high_court",
+      "tier": "ordinary",
+      "variant": null,
+      "base_amount_paise": "2499900",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/295; Conflicting designs; client confirmation pending."
+    },
+    {
+      "service_code": "high_court",
+      "tier": "urgent",
+      "variant": null,
+      "base_amount_paise": "3499900",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/295; Conflicting designs; client confirmation pending."
+    },
+    {
+      "service_code": "high_court",
+      "tier": null,
+      "variant": "payment_base",
+      "base_amount_paise": "3499900",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/296 original; Template also draws GST 379 and total 40680, inconsistent; no tax/total seeded as a base."
+    },
+    {
+      "service_code": "high_court",
+      "tier": null,
+      "variant": "payment_base",
+      "base_amount_paise": "2963100",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/296 reissue; Reissued template conflicts with tiers and its own total."
+    },
+    {
+      "service_code": "high_court",
+      "tier": null,
+      "variant": "advocate_matter_fee",
+      "base_amount_paise": "3500000",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/157"
+    },
+    {
+      "service_code": "district_court",
+      "tier": "ordinary",
+      "variant": null,
+      "base_amount_paise": "2500000",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/343; Unconfirmed; design/338 shows XX,XXX."
+    },
+    {
+      "service_code": "district_court",
+      "tier": "urgent",
+      "variant": null,
+      "base_amount_paise": "3500000",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/343; Unconfirmed; design/338 shows XX,XXX."
+    },
+    {
+      "service_code": "district_court",
+      "tier": null,
+      "variant": "advocate_request_fee",
+      "base_amount_paise": "2500000",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/363"
+    },
+    {
+      "service_code": "district_court",
+      "tier": null,
+      "variant": "consultation_retainer",
+      "base_amount_paise": "2850000",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/364; Advocate consultation card conflicts with design/363; verify service pricing applicability."
+    },
+    {
+      "service_code": "district_court",
+      "tier": null,
+      "variant": "court_fee",
+      "base_amount_paise": "350000",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/314; design/380; Case-specific filing request, not a universal court tariff; tax treatment pending."
+    },
+    {
+      "service_code": "district_court",
+      "tier": null,
+      "variant": "process_fee",
+      "base_amount_paise": "85000",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/321; design/385; Case-specific statutory request; tax treatment pending."
+    },
+    {
+      "service_code": "district_court",
+      "tier": null,
+      "variant": "portal_fee",
+      "base_amount_paise": "0",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/321"
+    },
+    {
+      "service_code": "district_court",
+      "tier": null,
+      "variant": "change_advocate_fee",
+      "base_amount_paise": "1200000",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/329 reissue"
+    },
+    {
+      "service_code": "courier",
+      "tier": null,
+      "variant": null,
+      "base_amount_paise": "25000",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/277; design/196; design/305; design/306; Base only; confirmed 18% GST is not stored as a rounded total."
+    },
+    {
+      "service_code": "courier",
+      "tier": null,
+      "variant": "district_court_delivery_fee",
+      "base_amount_paise": "24900",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/352; Drawn delivery fee; conflicts with courier payment base 250. Not resolved."
+    },
+    {
+      "service_code": "legal_notice",
+      "tier": null,
+      "variant": "historical_client_fee",
+      "base_amount_paise": "350000",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/356; Observed transaction gross; tax inclusion and applicability as a tariff are unconfirmed."
+    },
+    {
+      "service_code": "legal_advice",
+      "tier": null,
+      "variant": "historical_client_fee",
+      "base_amount_paise": "200000",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/356; Observed transaction gross; tax inclusion and applicability as a tariff are unconfirmed."
+    },
+    {
+      "service_code": "property_search",
+      "tier": null,
+      "variant": "historical_client_fee",
+      "base_amount_paise": "450000",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/356; Observed transaction gross; tax inclusion and applicability as a tariff are unconfirmed."
+    },
+    {
+      "service_code": "legal_notice",
+      "tier": null,
+      "variant": "historical_client_fee",
+      "base_amount_paise": "400000",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/357; Observed transaction gross; tax inclusion and applicability as a tariff are unconfirmed."
+    },
+    {
+      "service_code": "property_search",
+      "tier": null,
+      "variant": "historical_client_fee",
+      "base_amount_paise": "500000",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/357; Observed transaction gross; tax inclusion and applicability as a tariff are unconfirmed."
+    },
+    {
+      "service_code": "legal_advice",
+      "tier": null,
+      "variant": "historical_client_fee",
+      "base_amount_paise": "300000",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/357; Observed transaction gross; tax inclusion and applicability as a tariff are unconfirmed."
+    },
+    {
+      "service_code": "legal_notice",
+      "tier": null,
+      "variant": "historical_client_fee",
+      "base_amount_paise": "450000",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/358; Observed transaction gross; tax inclusion and applicability as a tariff are unconfirmed."
+    },
+    {
+      "service_code": "fir_draft",
+      "tier": null,
+      "variant": "historical_client_fee",
+      "base_amount_paise": "600000",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/361; Observed transaction gross; tax inclusion and applicability as a tariff are unconfirmed."
+    },
+    {
+      "service_code": "property_search",
+      "tier": null,
+      "variant": "historical_client_fee",
+      "base_amount_paise": "550000",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/358; Observed transaction gross; tax inclusion and applicability as a tariff are unconfirmed."
+    },
+    {
+      "service_code": "high_court",
+      "tier": null,
+      "variant": "historical_client_fee",
+      "base_amount_paise": "4500000",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/152; Retainer escrow observation, conflicts with design/157. Tax inclusion and applicability as a tariff unconfirmed."
+    },
+    {
+      "service_code": "high_court",
+      "tier": null,
+      "variant": "historical_client_fee",
+      "base_amount_paise": "3500000",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/156; Historical client payment. Tax inclusion and applicability as a tariff unconfirmed."
+    },
+    {
+      "service_code": "district_court",
+      "tier": null,
+      "variant": "historical_client_fee",
+      "base_amount_paise": "2000000",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/156; Historical pending invoice. Tax inclusion and applicability as a tariff unconfirmed."
+    },
+    {
+      "service_code": "document_forensic",
+      "tier": null,
+      "variant": "historical_client_fee",
+      "base_amount_paise": "1500000",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/156; Historical client payment. Tax inclusion and applicability as a tariff unconfirmed."
+    },
+    {
+      "service_code": "property_search",
+      "tier": null,
+      "variant": "historical_client_fee",
+      "base_amount_paise": "1000000",
+      "gst_bps": 1800,
+      "confirmed": false,
+      "source_note": "design/156; Historical title-search advance. Tax inclusion and applicability as a tariff unconfirmed."
+    }
+  ],
+  "commissions": [
+    {
+      "service_code": "high_court",
+      "rate_bps": 600,
+      "confirmed": false,
+      "source_note": "design/157: 5% platform + 1% escrow/regulatory; combined deduction"
+    },
+    {
+      "service_code": "legal_advice",
+      "rate_bps": 1000,
+      "confirmed": false,
+      "source_note": "design/164; design/181; design/361"
+    },
+    {
+      "service_code": "legal_notice",
+      "rate_bps": 1000,
+      "confirmed": false,
+      "source_note": "design/185; design/361"
+    },
+    {
+      "service_code": "fir_draft",
+      "rate_bps": 1000,
+      "confirmed": false,
+      "source_note": "design/361"
+    },
+    {
+      "service_code": "property_search",
+      "rate_bps": 1000,
+      "confirmed": false,
+      "source_note": "design/361"
+    },
+    {
+      "service_code": "district_court",
+      "rate_bps": 2000,
+      "confirmed": false,
+      "source_note": "design/363; design/395; design/396: 5000 of 25000, exact implied 20%, not confirmed"
+    }
+  ],
+  "unresolved": [
+    "Court Marriage: no drawn fee found; service seeded without a price.",
+    "design/108 and design/279: 1377 is a disputed total, not a base. Legal Notice derived 1377 consists of separately recorded 999 + 179 + 199; do not double-charge it.",
+    "design/296: 379 GST / 40680 total are inconsistent template observations, not prices to insert as base amounts.",
+    "design/215 FIR fixed deduction 500 of 3500 has no exact integer-bps rate. No rounded commission invented.",
+    "design/206 Property Search fixed deduction 700 of 4500 has no exact integer-bps rate. No rounded commission invented.",
+    "design/223 and design/232 forensic fee 15000 versus payout 4500 does not establish a commission rate for the same transaction.",
+    "design/359 withdrawal processing 0% is not a service commission; commission_rates has no payout-processing category.",
+    "An old data comment mentions admin commission 15%, without a supplied design or service mapping; not seeded.",
+    "Historical wallet balances, dispute sums, payouts and gross aggregates are not service prices. Only service-labelled transaction fees are retained as unconfirmed observations.",
+    "commission_rates has no source_note in authoritative DDL. Citations remain in this manifest, not an invented database column.",
+    "All GST fields retain the authoritative 1800-bps default. Whether statutory court charges, historical gross figures or consultation prices include tax needs confirmation before backend checkout. No pricing endpoint is implemented in this step.",
+    "Advocate-profile individual consultation fees (apps/mobile/data/advocates.ts) belong to advocate_profiles, not a universal service tariff; no identity fixtures seeded in step 3.",
+    "design/156 also draws Legal Consultation Strategy 5000 and Pre-litigation Mediation Fee 2500; those service labels are outside the nine canonical names, so no service-code mapping was invented."
+  ]
+}

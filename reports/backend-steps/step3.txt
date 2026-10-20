@@ -1,0 +1,61 @@
+Step 3 — API, schema, migration and seed
+
+NestJS /health liveness endpoint; lazy Prisma database provider; Secrets Manager
+runtime credentials in ap-south-1; required PORT supplied by the operator/CDK.
+No database or AWS access is required for /health. No step-4 endpoints were built.
+
+The Prisma schema mirrors all 22 tables and five enums in architecture §4.3.
+The migration installs CITEXT, preserves the ledger amount > 0 CHECK, and restores
+NOT NULL on four array columns that Prisma's SQL generator omits.
+Those are Prisma expressiveness/generation limitations, not changes to the DDL.
+All foreign keys explicitly preserve SQL's NO ACTION behavior.
+
+Seed: nine services, 65 price observations and six commission observations.
+Every price and commission is confirmed=false. 18% GST is represented as 1800 bps;
+money is BIGINT paise, without rounding or floats. Conflicting sources coexist,
+with design citations and no automatic choice of a current tariff.
+Source manifest: apps/api/prisma/seed-data.json.
+Commission source_note is absent from the authoritative table: citations are
+retained in the manifest rather than adding a column.
+Deterministic content-derived IDs make reruns idempotent; changed records become
+new versions. Existing prices, effective dates and confirmation flags are never
+rewritten by seed reruns. Service names come from packages/shared.
+
+Left absent/pending:
+- Court Marriage price; no amount supplied.
+- Full pricing decisions for the conflicting court/advice/FIR/template figures.
+- A mapping for design/156's Consultation Strategy 5000 and Mediation Fee 2500
+  to canonical services; retained as unresolved observations.
+- FIR/property fixed deductions that do not define an exact integer-bps rate;
+  forensic payout comparisons do not establish a commission rate.
+- Withdrawal processing and an uncited 15% admin comment are not service rates.
+- Individual advocate profile prices require identities; no user fixtures seeded.
+- Historical totals/payouts/claim sums are not seeded as service base prices.
+- Tax applicability to statutory requests/historical gross amounts is unconfirmed.
+- RDS CA trust configuration and actual deployment parameters remain operator
+  inputs; there are no invented credentials, capacity defaults or AWS resources.
+
+Validation:
+- TypeScript clean across mobile, shared, infra and API.
+- Prisma validate, generation and initial migrate deploy passed.
+- Six API tests passed, including lifecycle parity, HTTP /health, integer money,
+  idempotent seed reruns and database enforcement of the ledger CHECK.
+- Seed CLI passed: nine services, 65 prices and six commission rows.
+- Applied migration compared against the specification DDL in a second isolated
+  database: all 208 columns, 38 FK/CHECK definitions, 35 indexes and 36 enum labels
+  matched. Equivalent timestamp precision/default spellings were normalized.
+- Local SQL validation used the installed PostgreSQL 14.18. PostgreSQL 16 runtime
+  validation remains outstanding; CDK explicitly targets version 16.
+- Temporary databases were isolated from existing databases and AWS.
+- Step 3 changes no mobile source; step 1's 322-route smoke remains the gate result.
+
+Technical choices outside the product specification:
+- /health is liveness only; no readiness promise or database startup dependency.
+- Required PORT; no guessed production port.
+- Lazy Secrets Manager access; local-only transient DATABASE_URL for test tooling.
+- Stable UUIDv5 seed identities and internal variant names distinguish source
+  observations. These identifiers are not customer-facing text or tariff policy.
+- Prisma 7.10.1 needs a datasource URL even for schema-only migration diff; supplied
+  an isolated local test URL. Generated SQL was checked rather than trusting exit 0.
+
+Stopped after step 3. No AWS synth deployment, bootstrap or API publication.

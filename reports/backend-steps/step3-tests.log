@@ -1,0 +1,57 @@
+
+> @legalitt/api@0.0.0 test /Users/riya/Documents/14/apps/api
+> pnpm build && node --test tests/*.cjs
+
+
+> @legalitt/api@0.0.0 build /Users/riya/Documents/14/apps/api
+> prisma generate && tsc
+
+
+✔ Generated Prisma Client (7.10.1) to ./src/generated/prisma in 130ms
+
+TAP version 13
+# Subtest: database seed is idempotent and ledger rejects non-positive amounts
+ok 1 - database seed is idempotent and ledger rejects non-positive amounts
+  ---
+  duration_ms: 232.881583
+  type: 'test'
+  ...
+# Subtest: Prisma lifecycle exactly mirrors canonical shared lifecycle
+ok 2 - Prisma lifecycle exactly mirrors canonical shared lifecycle
+  ---
+  duration_ms: 1.010167
+  type: 'test'
+  ...
+# Subtest: migration includes every authoritative table and SQL-only constraints
+ok 3 - migration includes every authoritative table and SQL-only constraints
+  ---
+  duration_ms: 1.09575
+  type: 'test'
+  ...
+# Subtest: seed uses integer paise, source citations and unconfirmed observations
+ok 4 - seed uses integer paise, source citations and unconfirmed observations
+  ---
+  duration_ms: 1.440625
+  type: 'test'
+  ...
+# Subtest: seed reruns never update existing price versions
+ok 5 - seed reruns never update existing price versions
+  ---
+  duration_ms: 1.742917
+  type: 'test'
+  ...
+# Subtest: /health answers HTTP without AWS/database configuration
+ok 6 - /health answers HTTP without AWS/database configuration
+  ---
+  duration_ms: 328.005959
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 461.348584

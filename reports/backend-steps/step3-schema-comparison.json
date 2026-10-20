@@ -1,0 +1,18 @@
+{
+  "columns": {
+    "matched": true,
+    "count": 208
+  },
+  "foreign_keys_and_checks": {
+    "matched": true,
+    "count": 38
+  },
+  "indexes": {
+    "matched": true,
+    "count": 35
+  },
+  "enums": {
+    "matched": true,
+    "count": 36
+  }
+}
