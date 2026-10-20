@@ -15,7 +15,7 @@ for (const [stage, environment] of [
   ["LegalittDev", "dev"],
   ["LegalittProd", "prod"],
 ]) {
-  const stack = app.node.findChild(stage).node.findChild("Foundation");
+  const stack = app.node.findChild(stage).node.findChild("Compute");
   const template = Template.fromStack(stack);
   const json = template.toJSON();
   test(`${stage}: requested resources, isolated networking and encryption`, () => {
@@ -24,9 +24,6 @@ for (const [stage, environment] of [
       "AWS::EC2::VPC",
       "AWS::RDS::DBInstance",
       "AWS::ECS::Service",
-      "AWS::S3::Bucket",
-      "AWS::KMS::Key",
-      "AWS::SecretsManager::Secret",
       "AWS::SQS::Queue",
       "AWS::ElasticLoadBalancingV2::LoadBalancer",
     ])
@@ -46,16 +43,6 @@ for (const [stage, environment] of [
       Protocol: "HTTPS",
       Port: 443,
     });
-    const bucket = Object.values(template.findResources("AWS::S3::Bucket"))[0]
-      .Properties;
-    assert.ok(
-      Object.values(bucket.PublicAccessBlockConfiguration).every(Boolean),
-    );
-    assert.equal(
-      bucket.BucketEncryption.ServerSideEncryptionConfiguration[0]
-        .ServerSideEncryptionByDefault.SSEAlgorithm,
-      "aws:kms",
-    );
     for (const resource of Object.values(json.Resources)) {
       assert.equal(resource.Metadata.environment, environment);
       if (resource.Properties?.Tags)

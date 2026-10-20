@@ -1,7 +1,7 @@
 # Legalitt — Backend & Cloud Architecture
 
-Version 2.1 · 20 October 2026
-Status: build-ready. §6 steps 0–3 are executable as written; §10 governs how.
+Version 3.0 · 20 October 2026
+Status: steps 0–3 complete. Step 4 is executable as written; §10 governs how.
 
 This document is the specification for the backend phase. It is written to be
 handed to a coding agent as the source of truth. Where something is undecided,
@@ -128,6 +128,45 @@ designs already mandate this: 446 generates, 447 is the editable proforma the
 advocate corrects, and 446's own copy states the AI never invents facts and
 that the advocate must review before sending.
 
+### 2.9 Phone OTP is simulated until DLT clears
+
+Real SMS in India needs DLT registration, which has not been started. The
+client needs the full sign-in flow working for demos in the meantime.
+
+- **Email and password** is the real sign-in path, through Cognito.
+- **The phone OTP screens stay exactly as designed.** No SMS is sent. A fixed
+  code (`123456`) is accepted.
+- A single flag, `SMS_ENABLED`, controls this. `false` simulates; `true` calls
+  the provider. Nothing else changes when it flips.
+- The simulated path must be **impossible to reach in production**. Gate it on
+  the environment as well as the flag.
+
+Google and other social sign-in are **out of scope**. Cognito supports them,
+but the designs draw no such button, and adding one changes a screen the
+client has already reviewed.
+
+### 2.10 Deploy cheap services early, expensive ones late
+
+AWS costs split sharply:
+
+| Service | Cost at this size | When to deploy |
+|---|---|---|
+| Cognito | Free under 50k monthly users | Now |
+| S3 | Negligible | Now |
+| Secrets Manager | Cents | Now |
+| RDS | Runs 24/7 | When the app needs a real backend |
+| ALB | ~₹1,400/month idle | Same |
+| ECS Fargate | Runs 24/7 | Same |
+
+So the CDK is split into **two stacks per stage**:
+
+- **Core** — Cognito, S3, Secrets Manager. Deployed early.
+- **Compute** — VPC, RDS, ECS, ALB, SQS. Deployed only when the mobile app
+  stops using fixtures and starts calling a hosted API.
+
+Until then the API and Postgres run locally. All schema, queries and business
+logic are built and tested on a laptop.
+
 ---
 
 ## 3. Architecture
@@ -204,13 +243,18 @@ place the rule is written:
 
 ```ts
 export function bucketFor(status: CaseStatus): CaseBucket {
-  // pending  — waiting on someone: draft, submitted, payment_pending, assigning,
-  //            assigned, advocate_declined, client_review
-  // active   — work under way: paid, advocate_accepted, in_progress,
+  // pending  — nothing is being worked on; someone owes the next action:
+  //            draft, submitted, payment_pending, assigning, assigned,
+  //            advocate_declined, client_review
+  // active   — work is under way: paid, advocate_accepted, in_progress,
   //            changes_requested, approved, dispatching, dispatched
   // closed   — finished: completed, cancelled, refunded
 }
 ```
+
+All 17 lifecycle values are covered above. The function must be exhaustive —
+add a compile-time check so a future status cannot be added without being
+given a bucket.
 
 The mapping is one-way. A bucket cannot be turned back into a lifecycle
 status, because several statuses share a bucket.
@@ -761,10 +805,49 @@ In `apps/api`: NestJS, Prisma, a `/health` endpoint.
 
 Commit: `feat(api): prisma schema, migrations, seed`
 
-### Steps 4 onwards — summary only
+### Step 4 — Deploy Core, then build auth
 
-4. **Auth** — Cognito, both paths, role claims, guards. Replace the app's role
-   picker with real sign-in.
+Split into two halves. The first puts the cheap AWS services in the account;
+the second builds sign-in against them.
+
+**4a — Split the stacks and deploy Core to dev.**
+
+Restructure `infra` into two stacks per stage, per §2.10:
+
+- `LegalittDev-Core` — Cognito user pool and client, S3 bucket (private,
+  SSE-KMS), Secrets Manager
+- `LegalittDev-Compute` — VPC, RDS, ECS, ALB, SQS
+
+The Cognito user pool needs:
+- email and password sign-in, email verification on
+- a `role` custom attribute: `client` | `advocate` | `admin`
+- a custom auth flow for phone OTP, stubbed per §2.9 — the Lambda triggers
+  exist but accept the fixed code while `SMS_ENABLED` is false
+
+Then `cdk deploy LegalittDev-Core` only. **Do not deploy Compute.**
+
+Report the user pool id, client id and bucket name. Write them to Secrets
+Manager or `.env`, never into the repo.
+
+Commit: `feat(infra): split core and compute stacks`
+
+**4b — Auth in the API and the app.**
+
+- `apps/api`: Cognito JWT verification, a guard reading the `role` claim,
+  `/auth/*` endpoints per §5, `/me`
+- `apps/mobile`: replace the role picker with real sign-in. Email and password
+  works for real; the OTP screens behave as designed but accept `123456`
+- Role drives which tab bar and screens load, as the designs already split
+  client and advocate
+
+The 322 routes must still work. A signed-in client must not be able to reach
+advocate screens.
+
+Commit: `feat(auth): cognito sign-in, role guards, app integration`
+
+### Steps 5 onwards — summary only
+
+Each is expanded in this document before it starts.
 5. **Cases and events** — create, submit, read, timeline. One service only.
 6. **Documents** — presigned upload and download.
 7. **Legal Notice end to end** — the most complete flow in the app. Intake →

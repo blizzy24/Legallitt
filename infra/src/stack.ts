@@ -11,6 +11,7 @@ import {
   type StackProps,
 } from "aws-cdk-lib";
 import { Construct } from "constructs";
+import { CoreStack } from "./core";
 
 type Environment = "dev" | "prod";
 // CloudFormation has no resource-level tag API for routes, associations, policies,
@@ -39,11 +40,12 @@ const TAGGABLE = new Set([
   "AWS::ElasticLoadBalancingV2::TargetGroup",
 ]);
 
-export class FoundationStack extends Stack {
+export class ComputeStack extends Stack {
   constructor(
     scope: Construct,
     id: string,
     environment: Environment,
+    core: CoreStack,
     props: StackProps = {},
   ) {
     super(scope, id, props);
@@ -189,18 +191,16 @@ export class FoundationStack extends Stack {
       }
       return nat;
     });
-    const privateRoutes = tables
-      .slice(2)
-      .map((table, i) =>
-        resource(`PrivateRoute${i}`, "AWS::EC2::Route", {
-          RouteTableId: table.ref,
-          DestinationCidrBlock: "0.0.0.0/0",
-          NatGatewayId:
-            i === 0
-              ? nats[0].ref
-              : Fn.conditionIf(perAz.logicalId, nats[1].ref, nats[0].ref),
-        }),
-      );
+    const privateRoutes = tables.slice(2).map((table, i) =>
+      resource(`PrivateRoute${i}`, "AWS::EC2::Route", {
+        RouteTableId: table.ref,
+        DestinationCidrBlock: "0.0.0.0/0",
+        NatGatewayId:
+          i === 0
+            ? nats[0].ref
+            : Fn.conditionIf(perAz.logicalId, nats[1].ref, nats[0].ref),
+      }),
+    );
     const albSg = resource("AlbSecurityGroup", "AWS::EC2::SecurityGroup", {
       VpcId: vpc.ref,
       GroupDescription: "HTTPS ingress to Legalitt",
@@ -232,81 +232,8 @@ export class FoundationStack extends Stack {
         },
       ],
     });
-    const key = resource("EncryptionKey", "AWS::KMS::Key", {
-      EnableKeyRotation: true,
-      KeyPolicy: {
-        Version: "2012-10-17",
-        Statement: [
-          {
-            Effect: "Allow",
-            Principal: {
-              AWS: Fn.sub("arn:${AWS::Partition}:iam::${AWS::AccountId}:root"),
-            },
-            Action: "kms:*",
-            Resource: "*",
-          },
-        ],
-      },
-    });
-    key.applyRemovalPolicy(RemovalPolicy.RETAIN);
-    resource("KeyAlias", "AWS::KMS::Alias", {
-      AliasName: `alias/${prefix}`,
-      TargetKeyId: key.ref,
-    });
-    const bucket = resource("Documents", "AWS::S3::Bucket", {
-      BucketName: Fn.sub(
-        `${prefix}-documents-\${AWS::AccountId}-\${AWS::Region}`,
-      ),
-      BucketEncryption: {
-        ServerSideEncryptionConfiguration: [
-          {
-            ServerSideEncryptionByDefault: {
-              SSEAlgorithm: "aws:kms",
-              KMSMasterKeyID: arn(key),
-            },
-            BucketKeyEnabled: true,
-          },
-        ],
-      },
-      PublicAccessBlockConfiguration: {
-        BlockPublicAcls: true,
-        BlockPublicPolicy: true,
-        IgnorePublicAcls: true,
-        RestrictPublicBuckets: true,
-      },
-      OwnershipControls: {
-        Rules: [{ ObjectOwnership: "BucketOwnerEnforced" }],
-      },
-      VersioningConfiguration: { Status: "Enabled" },
-    });
-    bucket.applyRemovalPolicy(RemovalPolicy.RETAIN);
+    const { key, bucket, secret } = core;
     const objects = Fn.join("", [arn(bucket), "/*"]);
-    resource("DocumentsPolicy", "AWS::S3::BucketPolicy", {
-      Bucket: bucket.ref,
-      PolicyDocument: {
-        Version: "2012-10-17",
-        Statement: [
-          {
-            Effect: "Deny",
-            Principal: "*",
-            Action: "s3:*",
-            Resource: [arn(bucket), objects],
-            Condition: { Bool: { "aws:SecureTransport": "false" } },
-          },
-        ],
-      },
-    });
-    const secret = resource("DatabaseSecret", "AWS::SecretsManager::Secret", {
-      Name: `${prefix}/database`,
-      KmsKeyId: arn(key),
-      GenerateSecretString: {
-        SecretStringTemplate: JSON.stringify({ username: "legalitt" }),
-        GenerateStringKey: "password",
-        PasswordLength: 32,
-        ExcludeCharacters: '"@/\\',
-      },
-    });
-    secret.applyRemovalPolicy(RemovalPolicy.RETAIN);
     const dbSubnets = resource("DatabaseSubnets", "AWS::RDS::DBSubnetGroup", {
       DBSubnetGroupDescription: "Private database subnets",
       SubnetIds: subnets.slice(2).map((s) => s.ref),
@@ -593,8 +520,12 @@ export function createFoundation(app: App): void {
     const stage = new Stage(app, id, {
       env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: "ap-south-1" },
     });
-    new FoundationStack(stage, "Foundation", environment, {
-      stackName: `legalitt-${environment}`,
+    const core = new CoreStack(stage, "Core", environment, {
+      stackName: `${id}-Core`,
+      tags: { environment, application: "legalitt" },
+    });
+    new ComputeStack(stage, "Compute", environment, core, {
+      stackName: `${id}-Compute`,
       tags: { environment, application: "legalitt" },
     });
   }

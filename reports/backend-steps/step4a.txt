@@ -1,0 +1,26 @@
+Step 4a — Core / Compute split and Dev-Core deployment
+
+Two stacks per stage: Core (Cognito, private SSE-KMS S3, Secrets Manager,
+Cognito Lambda triggers and supporting roles/logs); Compute (VPC, RDS, ECS,
+ALB, SQS and compute support resources). Compute imports Core outputs.
+Core has no reverse dependency or Compute resources.
+
+Deployed only LegalittDev/Core, CloudFormation name LegalittDev-Core, with
+--exclusively. CREATE_COMPLETE. Existing bootstrap was reused, not modified.
+No Compute or production deployment. Pool/client/bucket identifiers were written
+by CloudFormation to the stage's app-config Secrets Manager secret, not this repo.
+
+Email verification enabled. Role is immutable; public signup accepts only client
+or advocate. Admin provisioning requires an IAM-authorized administrative action.
+Custom phone auth accepts 123456 only when ENVIRONMENT=dev and SMS_ENABLED=false.
+Production, missing environment and SMS_ENABLED=true all reject simulation.
+The unspecified SMS provider remains unimplemented and fails closed.
+Technical security choices: challenge expires after five minutes and allows at
+most three attempts; Lambda permissions are scoped to this pool/account, with a
+permission boundary and access only to the stage's own auth logs.
+
+Validation: nine infrastructure tests passed; synth and Dev-Core diff passed;
+all workspace TypeScript checks passed. No mobile files changed.
+
+Pending 4b clarification: unknown-phone registration/role rule, and an address
+for an actual email-verification test. These do not affect Core deployment.
