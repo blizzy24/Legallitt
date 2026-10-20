@@ -3,9 +3,18 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "build": "tsc",
+    "synth": "pnpm build && cdk synth --no-lookups",
+    "test": "pnpm build && node --test tests/*.cjs"
   },
   "devDependencies": {
+    "@types/node": "^22.20.3",
+    "aws-cdk": "2.1146.0",
     "typescript": "~6.0.3"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "2.273.0",
+    "constructs": "10.8.1"
   }
 }

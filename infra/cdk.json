@@ -1,0 +1,6 @@
+{
+  "app": "node dist/index.js",
+  "context": {
+    "@aws-cdk/core:validateAgainstDefaultRules": true
+  }
+}
