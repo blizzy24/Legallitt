@@ -133,3 +133,45 @@ Stop only this local database when finished:
   docker compose --env-file infra/local/.env.local -f infra/local/compose.yaml stop
 The up command starts it again. Do not use down -v unless intentionally deleting
 all local PostgreSQL 16 data. PostgreSQL 14 does not need to run for this project.
+
+Legal Notice cases — step 5 (API only)
+-------------------------------------
+All routes below require a real Cognito ID token in Authorization: Bearer <token>.
+  POST  /api/v1/cases             { service_code: "legal_notice", tier?, details? }
+  GET   /api/v1/cases             ?status=&role=&cursor=&limit=
+  GET   /api/v1/cases/:id          case plus events, documents and drafts
+  PATCH /api/v1/cases/:id          { tier?, details? }, client-owned draft only
+  POST  /api/v1/cases/:id/submit   empty body
+  GET   /api/v1/cases/:id/events   ?cursor=&limit=
+  POST  /api/v1/cases/:id/cancel   empty body
+
+Create only accepts Legal Notice and derives client identity from authentication.
+Draft details may be partial; PATCH merges nested client and noticee fields.
+The shared LegalNoticeSubmissionSchema requires the fields marked required by
+screens 24–26; submit also requires the selected ordinary/urgent tier. Documents
+and KYC are not intake JSON. Unknown fields and caller-supplied status, reference,
+client/advocate/pricing identifiers are rejected. No sample values are inserted.
+
+All reads, lists, events and mutations apply the same database-level visibility:
+client owns the case, advocate is assigned, admin sees every Legal Notice case.
+An inaccessible ID returns the same 404 as a missing ID. The role query parameter
+is only a view filter; it cannot grant a caller another role's visibility.
+
+Case lists sort by created_at then UUID, ascending. Limit defaults to 20 (max 100).
+Responses use {items,next_cursor}. Events sort by monotonic event ID, use a
+separate cursor, and are append-only. Event IDs and document byte counts are
+serialized as decimal strings to avoid bigint precision loss in JSON.
+
+CaseStateMachine is the only case writer. Every initial draft and status change
+has an event in the same transaction. Row locks serialize edits and transitions.
+The production-source ownership test catches case/event writes elsewhere.
+References use LN-<UTC year>-<sequence>, at least four sequence digits. Allocation
+is atomic, globally increasing across years, and may have gaps after rollback.
+Run db:local:migrate to apply the reference sequence migration to both databases.
+
+Cancellation follows the confirmed §4.2 rules, including admin-only cancellation
+once work/payment has progressed and no cancellation from dispatching onwards.
+Refund is an internal admin-only transition from cancelled/completed; it writes
+an event only. No HTTP refund/payment action, assignment endpoint, drafting
+endpoint, money movement or other service implementation is added in step 5.
+The mobile app remains on fixtures until step 7.

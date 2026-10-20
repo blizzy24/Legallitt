@@ -1,0 +1,36 @@
+
+> @legalitt/api@0.0.0 db:local:migrate /Users/riya/Documents/14/apps/api
+> node --env-file=.env.local scripts/migrate-local.cjs
+
+Loaded Prisma config from prisma.config.ts.
+
+Prisma schema loaded from prisma/schema.prisma.
+Datasource "db": PostgreSQL database "legalitt", schema "public" at "127.0.0.1:55432"
+
+2 migrations found in prisma/migrations
+
+Applying migration `20261020010000_legal_notice_references`
+
+The following migration(s) have been applied:
+
+migrations/
+  └─ 20261020010000_legal_notice_references/
+    └─ migration.sql
+
+All migrations have been successfully applied.
+Loaded Prisma config from prisma.config.ts.
+
+Prisma schema loaded from prisma/schema.prisma.
+Datasource "db": PostgreSQL database "legalitt_test", schema "public" at "127.0.0.1:55432"
+
+2 migrations found in prisma/migrations
+
+Applying migration `20261020010000_legal_notice_references`
+
+The following migration(s) have been applied:
+
+migrations/
+  └─ 20261020010000_legal_notice_references/
+    └─ migration.sql
+
+All migrations have been successfully applied.

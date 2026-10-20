@@ -1,0 +1,1 @@
+PASS: real Cognito client token creates, edits, lists, reads and cancels a Legal Notice case; event timeline records draft and cancellation with the authenticated actor.

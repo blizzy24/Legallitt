@@ -1,0 +1,48 @@
+
+> @legalitt/shared@0.0.0 test /Users/riya/Documents/14/packages/shared
+> pnpm build && node --test tests/*.cjs
+
+
+> @legalitt/shared@0.0.0 build /Users/riya/Documents/14/packages/shared
+> tsc
+
+TAP version 13
+# Subtest: all lifecycle values match the authoritative DDL and have the confirmed bucket
+ok 1 - all lifecycle values match the authoritative DDL and have the confirmed bucket
+  ---
+  duration_ms: 1.022417
+  type: 'test'
+  ...
+# Subtest: core schemas preserve every DDL column and nullable flag
+ok 2 - core schemas preserve every DDL column and nullable flag
+  ---
+  duration_ms: 1.986
+  type: 'test'
+  ...
+# Subtest: money retains integer paise and rejects floats and unsafe coercion
+ok 3 - money retains integer paise and rejects floats and unsafe coercion
+  ---
+  duration_ms: 0.224791
+  type: 'test'
+  ...
+# Subtest: nine distinct services and lifecycle/bucket separation
+ok 4 - nine distinct services and lifecycle/bucket separation
+  ---
+  duration_ms: 0.065708
+  type: 'test'
+  ...
+# Subtest: Legal Notice intake permits draft fields but rejects arbitrary JSON and identity uploads
+ok 5 - Legal Notice intake permits draft fields but rejects arbitrary JSON and identity uploads
+  ---
+  duration_ms: 3.596625
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 111.515

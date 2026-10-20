@@ -1,0 +1,78 @@
+Step 5 complete through 5d — Legal Notice only
+
+Specification: architecture v3.3, followed by the user's confirmed cancellation /
+refund rules, now recorded in the user's v3.4 update. No AWS deployment.
+
+5a — State machine
+- One CaseStateMachine owns case creation, draft mutations and status transitions.
+- Draft creation and every status change write their attributed case_events row
+  in the same PostgreSQL transaction. Failed event writes roll back case changes.
+- Scoped row locks serialize updates and transitions; duplicate concurrent submit
+  produces one transition/event and one conflict. Events have no update/delete API.
+- A regression test disallows production ORM case/event mutations outside this
+  class and disallows event updates/deletes. Invalid transitions return 409.
+- Client cancellation: draft, submitted, payment_pending, assigning, assigned,
+  advocate_declined. Admin may also cancel paid, advocate_accepted, in_progress,
+  client_review, changes_requested, approved. Advocate cannot cancel.
+- Nobody cancels dispatching/dispatched/completed/cancelled/refunded. Refund is
+  admin-only from cancelled or completed. No money changes or extra statuses.
+- Client review handoff requires the assigned advocate, including when a caller
+  has admin privileges: an admin cannot substitute for the human advocate action.
+
+5b — Endpoints
+POST /api/v1/cases
+GET /api/v1/cases
+GET /api/v1/cases/:id
+PATCH /api/v1/cases/:id
+POST /api/v1/cases/:id/submit
+GET /api/v1/cases/:id/events
+POST /api/v1/cases/:id/cancel
+All authenticated. Strict DTOs reject ownership/status/reference injection and
+other service codes. Create and draft intake edits belong to the client.
+Shared Legal Notice Zod schemas use existing screen 24–26 intake fields. Drafts
+can be partial; submit requires the drawn required fields, issue and chosen tier.
+No invented case title, issue summary, document names, identity uploads or prices.
+
+5c — Visibility
+One data-layer scope: client_id for clients, advocate_id for advocates, all Legal
+Notice cases for admin. Applied to locking queries, read/list and event relation
+filters. Query-string role never widens access. Missing/inaccessible IDs both 404.
+
+5d — Verification
+- PostgreSQL 16.15 integration suite: 20 tests passed, 0 failed, 0 skipped.
+- Every pair of lifecycle states tested: every defined edge succeeds with one
+  actor/from/to/time event; every other edge is rejected without changes/events.
+- Every cancellation state tested for client, advocate and admin. Refund role
+  restrictions and separate cancelled -> refunded events verified; no payments
+  or ledger rows created. Advocate-only review handoff verified.
+- Cross-client read/event/update/submit/cancel denial, advocate assignment scope,
+  admin reads, other-service exclusion, strict validation and pagination tested.
+- Event insertion failure rolls back both creation and status update. Concurrent
+  submit and concurrent reference allocation tested. Draft edit-after-submit denied.
+- Actual HTTP create/list/read/patch/submit/events/cancel checked with test-verified
+  identities. A separate live check used a real dev Cognito client token against
+  the running API for create/edit/list/read/cancel and its attributed timeline.
+  Temporary test cases/events removed afterward; no real customer records used.
+- Shared schema suite: 5 passed. All-workspace TypeScript: clean.
+- Local application and test DBs migrated. API restarted and running on port 3001.
+
+Implementation decisions beyond the written detail
+- References: PostgreSQL sequence, UTC year, minimum four-digit sequence, no
+  annual reset. Rollback gaps are intentional; client cannot supply a reference.
+  Added one sequence migration; authoritative tables and enum unchanged.
+- Intake fields follow existing mobile field names. PATCH merges nested fields.
+  The schema is strict and blocks twelve-digit identity patterns in non-phone
+  free-text fields, in addition to rejecting identity/upload keys.
+- Cursor pagination defaults to 20, maximum 100. Case order is created_at/UUID;
+  event order is event ID. Bigint IDs/counts use decimal JSON strings.
+- Operational lifecycle transitions are internal domain calls for later steps,
+  not a generic HTTP status setter. Client transitions: submit/payment_pending /
+  approve/request-changes; advocate: accept/decline/start-work/send-for-review;
+  admin: payment/assignment/dispatch/completion. Cancellation/refund use the
+  explicitly confirmed rules. Future payment/admin actions must call the writer.
+
+Stop point
+No other eight service implementations. No mobile changes or fixture conversion,
+so the conditional mobile smoke gate did not apply. No document, payment,
+assignment, drafting or refund HTTP endpoints; those belong to subsequent steps.
+No AWS deployment and no step 6 work. Commits have not been pushed.

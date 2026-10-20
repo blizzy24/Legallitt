@@ -1,7 +1,7 @@
 # Legalitt — Backend & Cloud Architecture
 
-Version 3.2 · 20 October 2026
-Status: steps 0–3 complete. Step 4 is executable as written; §10 governs how.
+Version 3.4 · 20 October 2026
+Status: steps 0–4 complete. Step 5 is executable as written; §10 governs how.
 
 This document is the specification for the backend phase. It is written to be
 handed to a coding agent as the source of truth. Where something is undecided,
@@ -280,6 +280,46 @@ export function bucketFor(status: CaseStatus): CaseBucket {
 All 17 lifecycle values are covered above. The function must be exhaustive —
 add a compile-time check so a future status cannot be added without being
 given a bucket.
+
+### Cancellation and refunds
+
+The dividing line is whether an advocate has started work.
+
+**Client may cancel, on their own:**
+`draft`, `submitted`, `payment_pending`, `assigning`, `assigned`,
+`advocate_declined`
+
+Nothing has been done for them yet, so there is nothing to dispute.
+
+**Admin only may cancel:**
+`paid`, `advocate_accepted`, `in_progress`, `client_review`,
+`changes_requested`, `approved`
+
+An advocate has done work and money has usually moved. If the client wants out
+here, they raise it through support and admin decides. Do not add a
+"cancellation requested" status — it is not in the enum, and this is a
+conversation, not a state.
+
+**Nobody may cancel:**
+`dispatching`, `dispatched`, `completed`, `cancelled`, `refunded`
+
+The notice has been sent, the FIR filed, the matter listed. It cannot be
+unsent.
+
+**Refunds are admin-only, and only from:**
+- `cancelled` — the normal path, when money had already been taken
+- `completed` — a dispute resolved in the client's favour after the fact
+
+There is no direct route from a working state to `refunded`. Cancel first,
+then refund, so both the decision and the money are recorded separately.
+
+Cancelling a case that was paid leaves money held with nothing delivered.
+That is deliberate: the refund is a separate, explicit admin act. Step 9's
+reconciliation reports cases sitting in `cancelled` with a captured payment
+and no refund.
+
+In step 5 these transitions only change status and write events. The actual
+money movement arrives with payments in step 8.
 
 The mapping is one-way. A bucket cannot be turned back into a lifecycle
 status, because several statuses share a bucket.
@@ -871,7 +911,57 @@ advocate screens.
 
 Commit: `feat(auth): cognito sign-in, role guards, app integration`
 
-### Steps 5 onwards — summary only
+### Step 5 — Cases and events
+
+API only. The mobile app still uses fixtures after this step; it is connected
+in step 7.
+
+Build against **Legal Notice only**. The other eight services reuse the same
+shape and are added in step 9 — building them now would multiply any mistake
+by nine.
+
+**5a — The state machine.**
+
+One service class owns every status change. Nothing else writes
+`cases.status`, ever.
+
+- It knows which transitions are legal (§4.2) and rejects the rest.
+- **Every status change writes a `case_events` row in the same database
+  transaction.** A status that changed without an event, or an event without
+  the status change, is a bug. Enforce it in code, not by convention.
+- The event records who did it, what changed, and when.
+
+This matters because every timeline in the app is read from `case_events`. If
+events can be missed, timelines silently go wrong and nothing fails loudly.
+
+**5b — Case endpoints.**
+
+Per §5: create, read one, list, update while in draft, submit, read events,
+cancel.
+
+- References follow the drawn format — `LN-2026-1048`. Generate them; do not
+  accept them from the client.
+- Service-specific intake goes in `cases.details` as JSON, validated against
+  the Zod schema for that service from `packages/shared`.
+
+**5c — Who can see what.** Get this right now; retrofitting it is painful.
+
+- A client sees only cases where they are the client.
+- An advocate sees only cases assigned to them.
+- An admin sees all.
+- Enforce it in the data layer, not in each endpoint. One missed check is a
+  privacy breach involving other people's legal matters.
+- Write a test that proves one client cannot read another client's case.
+
+**5d — Tests.**
+
+- Every legal transition, and a rejection for an illegal one.
+- An event row exists for every status change.
+- The authorisation tests above.
+
+Commit: `feat(api): cases, events and state machine`
+
+### Steps 6 onwards — summary only
 
 Each is expanded in this document before it starts.
 5. **Cases and events** — create, submit, read, timeline. One service only.

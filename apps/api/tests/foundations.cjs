@@ -91,7 +91,7 @@ test("/health answers HTTP without AWS/database configuration", async () => {
     const response = await fetch(`${url}/health`);
     assert.equal(response.status, 200);
     assert.deepEqual(await response.json(), { status: "ok" });
-    assert.equal((await fetch(`${url}/api/v1/cases`)).status, 404);
+    assert.equal((await fetch(`${url}/api/v1/cases`)).status, 401);
   } finally {
     await app.close();
   }
