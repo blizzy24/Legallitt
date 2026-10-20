@@ -1,0 +1,51 @@
+Step 4b — Cognito API auth and mobile integration
+
+API: register, email confirmation/resend, password login, refresh, simulated phone
+OTP, authenticated GET/PATCH /me. Cognito ID JWT signatures, issuer, audience,
+token use and expiry are verified; the guard reads immutable custom:role. Public
+registration permits client/advocate only. /me syncs identities into local users;
+suspended/mismatched-role accounts are rejected. Name is the only editable /me
+field; identity/role changes need a separate verified process, not a guessed one.
+
+Mobile: role selection is now registration intent only, never authentication.
+Password/email verification and phone OTP call the API. A verified session chooses
+the client or advocate home/tab group. Route protection covers the actual advocate
+workspace. services/district-court/advocate/* and chat/advocate are CLIENT screens
+about an advocate and remain client-accessible. The explicit route registry is
+checked against the filesystem. Existing case/service fixtures remain unchanged.
+Native stores a refresh token in SecureStore; web uses sessionStorage. Reloads
+revalidate through the API. Social buttons already existed despite v3.0's wording;
+they are disabled and cannot manufacture an authenticated session.
+
+Infra auth wiring exports Core config/pool for the future Compute API and grants
+its task role scoped config-secret read and Cognito ListUsers. Only Dev-Core was
+updated; Compute/prod remained undeployed. Deployed identifiers remain in Secrets
+Manager and ignored local output/config files, never in tracked source/reports.
+
+Technical choices / unresolved specification points:
+- Added /auth/confirm and /auth/resend to make required email verification usable;
+  §5 did not name verification endpoints.
+- Cognito ID tokens carry custom:role; the verifier explicitly requires ID tokens.
+- Role is immutable to prevent client-side role escalation. Admin creation is IAM
+  provisioning, not public registration or the mobile picker.
+- Unknown-phone provisioning/role is unresolved. No new account or role is invented.
+  Existing registered identities can use simulated phone sign-in.
+- The real SMS provider and DLT are still absent. SMS_ENABLED=true fails closed;
+  flipping the flag is not yet sufficient to send real messages.
+- OTP challenge state is local to the API process, appropriate to the current local
+  deployment. Shared state is needed before multiple hosted API tasks are used.
+- A real email inbox was not supplied. Live password/refresh and OTP tests used
+  temporary Cognito accounts created with message suppression. Inbox delivery and
+  user-entered email confirmation remain a manual check, not claimed as tested.
+- The local API/Postgres were used; no hosted API was invented. Vercel sign-in needs
+  a reachable API configuration. Native device behavior was not exercised here.
+
+Validation results are captured in the associated step4b logs. Stopped at 4b;
+no cases API, payments integration, Compute deployment or production deployment.
+
+Final checks: mobile build passed; authenticated browser smoke 322/322, zero
+failures; browser login/access checks passed; API tests 10/10; infra tests 9/9;
+all workspace typechecks clean. Local database validation used PostgreSQL 14.18,
+not a claim of Postgres 16 runtime validation. AWS final state: Dev-Core
+UPDATE_COMPLETE; only the pre-existing CDKToolkit stack otherwise exists.
+Temporary Cognito test identities and their local database rows were removed.

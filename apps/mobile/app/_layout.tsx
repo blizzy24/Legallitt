@@ -11,6 +11,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 
+import AuthNavigator from '../components/AuthNavigator';
 import AnimatedSplash from '../components/AnimatedSplash';
 import { PreviewNoticeHost } from '../components/PreviewNotice';
 import { SPLASH_ENABLED } from '../constants/dev';
@@ -87,12 +88,7 @@ function App() {
                 <KycProvider>
                   <LegalAdviceProvider>
                     <StatusBar style="dark" />
-                    <Stack
-                      screenOptions={{
-                        headerShown: false,
-                        contentStyle: { backgroundColor: colors.screenBg },
-                      }}
-                    />
+                    <AuthNavigator />
                   </LegalAdviceProvider>
                 </KycProvider>
               </DocumentForensicProvider>

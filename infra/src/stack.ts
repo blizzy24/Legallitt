@@ -232,7 +232,7 @@ export class ComputeStack extends Stack {
         },
       ],
     });
-    const { key, bucket, secret } = core;
+    const { key, bucket, secret, authConfig, userPool } = core;
     const objects = Fn.join("", [arn(bucket), "/*"]);
     const dbSubnets = resource("DatabaseSubnets", "AWS::RDS::DBSubnetGroup", {
       DBSubnetGroupDescription: "Private database subnets",
@@ -295,6 +295,7 @@ export class ComputeStack extends Stack {
       Resource: resources,
     });
     const runtimeStatements = [
+      allow(["cognito-idp:ListUsers"], [arn(userPool)]),
       allow(["s3:ListBucket"], [arn(bucket)]),
       allow(["s3:GetObject", "s3:PutObject", "s3:DeleteObject"], [objects]),
       allow(
@@ -308,7 +309,7 @@ export class ComputeStack extends Stack {
       ),
       allow(
         ["secretsmanager:GetSecretValue", "secretsmanager:DescribeSecret"],
-        [secret.ref],
+        [secret.ref, authConfig.ref],
       ),
       allow(
         [
@@ -426,6 +427,13 @@ export class ComputeStack extends Stack {
           ],
           Environment: [
             { Name: "PORT", Value: port.valueAsString },
+            { Name: "ENVIRONMENT", Value: environment },
+            {
+              Name: "NODE_ENV",
+              Value: environment === "prod" ? "production" : "development",
+            },
+            { Name: "SMS_ENABLED", Value: "false" },
+            { Name: "AUTH_CONFIG_SECRET_ARN", Value: authConfig.ref },
             { Name: "AWS_REGION", Value: "ap-south-1" },
             { Name: "DATABASE_SECRET_ARN", Value: secret.ref },
             { Name: "DOCUMENT_BUCKET", Value: bucket.ref },

@@ -3,12 +3,14 @@ import { ArrowRight, Check } from 'lucide-react-native';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { useSession } from '../../context/session';
 import { authSuccess as t, colors, font, ink } from '../../constants/theme';
 
 // Account created (design/138). A minimal header — just the LEGALITT mark and its
 // status dot — then the glowing check badge and the copy.
 export default function SignupSuccessScreen() {
   const insets = useSafeAreaInsets();
+  const {role,isLoggedIn}=useSession();
 
   return (
     <View style={[styles.screen, { paddingTop: insets.top + t.markTop }]}>
@@ -38,7 +40,7 @@ export default function SignupSuccessScreen() {
       <View style={[styles.footer, { paddingBottom: insets.bottom + 24 }]}>
         <Pressable
           accessibilityRole="button"
-          onPress={() => router.replace('/(auth)/role')}
+          onPress={() => router.replace(!isLoggedIn?'/(auth)/login':role==='lawyer'?'/(advocate)/dashboard':'/(tabs)/home')}
           style={({ pressed }) => [styles.button, pressed && styles.pressed]}
         >
           <Text style={styles.buttonLabel}>Get Started</Text>

@@ -9,6 +9,15 @@ async function bootstrap() {
   }
   const app = await NestFactory.create(AppModule);
   app.enableShutdownHooks();
+  const origins =
+    process.env.CORS_ORIGINS?.split(",")
+      .map((value) => value.trim())
+      .filter(Boolean) ?? [];
+  app.enableCors({
+    origin: origins,
+    allowedHeaders: ["Authorization", "Content-Type"],
+    methods: ["GET", "POST", "PATCH", "OPTIONS"],
+  });
   await app.listen(port, "0.0.0.0");
 }
 

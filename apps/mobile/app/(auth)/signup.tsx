@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { api } from '../../lib/auth';
+import { useSession } from '../../context/session';
 import AuthHeader from '../../components/AuthHeader';
 import { AppleMark, FacebookMark, GoogleMark } from '../../components/SocialMarks';
 import SocialSignInModal, { type SocialProvider } from '../../components/SocialSignInModal';
@@ -12,7 +14,7 @@ import { authLogin as l, authSignup as t, colors, font, ink } from '../../consta
 // Create account (design/136). NEW — there was no sign-up screen before.
 //
 // The terms checkbox is checked by default, as drawn. The password reveal works.
-// Nothing is validated or submitted: Create Account goes straight to verification.
+// Create Account submits to Cognito through the API, then verifies the email.
 //
 // Note the fields here are FILLED lavender boxes where design/134's single field is
 // white with a border — measured from both files and kept as drawn.
@@ -21,6 +23,19 @@ const SOCIALS: SocialProvider[] = ['google', 'facebook', 'apple'];
 
 export default function SignupScreen() {
   const insets = useSafeAreaInsets();
+  const {registrationRole,setPending}=useSession();
+  const [name,setName]=useState('');const [phone,setPhone]=useState('');
+  const [email,setEmail]=useState('');const [password,setPassword]=useState('');
+  const [error,setError]=useState('');const [busy,setBusy]=useState(false);
+  const submit=async()=>{
+    if(!registrationRole){router.push('/(auth)/role');return;}
+    if(!agreed)return;
+    setError('');setBusy(true);
+    try{
+      await api('/auth/register',{name,email:email.trim(),password,role:registrationRole==='lawyer'?'advocate':'client',...(phone?{phone:`+91${phone.replace(/\D/g,'')}`}:{})});
+      setPending({kind:'email',email:email.trim(),password});router.push('/(auth)/signup-verify');
+    }catch(e){setError(e instanceof Error?e.message:'Registration failed');}finally{setBusy(false);}
+  };
   const [reveal, setReveal] = useState(false);
   const [agreed, setAgreed] = useState(true);
   const [provider, setProvider] = useState<SocialProvider | null>(null);
@@ -43,6 +58,7 @@ export default function SignupScreen() {
           <TextInput
             style={styles.input}
             placeholder="Enter your name"
+            value={name} onChangeText={setName}
             placeholderTextColor={colors.textMuted}
           />
         </View>
@@ -55,6 +71,7 @@ export default function SignupScreen() {
           <TextInput
             style={styles.inputBare}
             placeholder="Enter mobile number"
+            value={phone} onChangeText={setPhone}
             placeholderTextColor={colors.textMuted}
             keyboardType="phone-pad"
           />
@@ -66,6 +83,7 @@ export default function SignupScreen() {
           <TextInput
             style={styles.input}
             placeholder="Enter email address"
+            value={email} onChangeText={setEmail}
             placeholderTextColor={colors.textMuted}
             keyboardType="email-address"
             autoCapitalize="none"
@@ -78,6 +96,7 @@ export default function SignupScreen() {
           <TextInput
             style={styles.input}
             placeholder="Enter password"
+            value={password} onChangeText={setPassword}
             placeholderTextColor={colors.textMuted}
             secureTextEntry={!reveal}
           />
@@ -110,9 +129,11 @@ export default function SignupScreen() {
           </Text>
         </Pressable>
 
+        {error ? <Text accessibilityRole="alert">{error}</Text> : null}
         <Pressable
           accessibilityRole="button"
-          onPress={() => router.push('/(auth)/signup-verify')}
+          disabled={busy || !agreed}
+          onPress={submit}
           style={({ pressed }) => [styles.button, pressed && styles.pressed]}
         >
           <Text style={styles.buttonLabel}>Create Account</Text>
@@ -131,7 +152,7 @@ export default function SignupScreen() {
               key={s}
               accessibilityRole="button"
               accessibilityLabel={`Continue with ${s}`}
-              onPress={() => setProvider(s)}
+              disabled accessibilityState={{disabled:true}}
               style={({ pressed }) => [styles.social, pressed && styles.pressed]}
             >
               {s === 'google' && <GoogleMark size={l.socialGlyph} />}
@@ -158,7 +179,7 @@ export default function SignupScreen() {
         onClose={() => setProvider(null)}
         onConfirm={() => {
           setProvider(null);
-          router.push('/(auth)/signup-verify');
+          // Social sign-in is outside architecture v3.0 scope.
         }}
       />
     </View>

@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { api, type AuthResult } from '../../lib/auth';
+import { useSession } from '../../context/session';
 import AuthHeader from '../../components/AuthHeader';
 import { AppleMark, FacebookMark, GoogleMark } from '../../components/SocialMarks';
 import SocialSignInModal, { type SocialProvider } from '../../components/SocialSignInModal';
@@ -55,6 +57,24 @@ const SOCIALS: { id: SocialProvider; label: string }[] = [
 export default function LoginScreen() {
   const insets = useSafeAreaInsets();
   const [value, setValue] = useState('');
+  const [password,setPassword]=useState('');
+  const [error,setError]=useState('');
+  const [busy,setBusy]=useState(false);
+  const {accept,setPending}=useSession();
+  const email=value.includes('@');
+  const submit=async()=>{
+    setError('');setBusy(true);
+    try{
+      if(email){
+        const result=await api<AuthResult|{confirmationRequired:true}>('/auth/login',{email:value.trim(),password});
+        if('confirmationRequired' in result){setPending({kind:'email',email:value.trim(),password});router.push('/(auth)/signup-verify');}
+        else{await accept(result);router.replace(result.user.role==='advocate'?'/(advocate)/dashboard':'/(tabs)/home');}
+      }else{
+        const digits=value.replace(/[^0-9+]/g,'');const phone=digits.startsWith('+')?digits:`+91${digits}`;
+        await api('/auth/otp/request',{phone});setPending({kind:'phone',phone});router.push('/(auth)/verify');
+      }
+    }catch(e){setError(e instanceof Error?e.message:'Authentication failed');}finally{setBusy(false);}
+  };
   const [provider, setProvider] = useState<SocialProvider | null>(null);
 
   return (
@@ -82,9 +102,12 @@ export default function LoginScreen() {
           />
         </View>
 
+        {email && <><Text style={styles.label}>Password</Text><View style={styles.field}><TextInput style={styles.input} value={password} onChangeText={setPassword} secureTextEntry autoCapitalize="none" accessibilityLabel="Password" placeholder="Enter password" /></View></>}
+        {error ? <Text accessibilityRole="alert">{error}</Text> : null}
         <Pressable
           accessibilityRole="button"
-          onPress={() => router.push('/(auth)/verify')}
+          disabled={busy}
+          onPress={submit}
           style={({ pressed }) => [styles.button, pressed && styles.pressed]}
         >
           <Text style={styles.buttonLabel}>Continue</Text>
@@ -103,7 +126,7 @@ export default function LoginScreen() {
               key={s.id}
               accessibilityRole="button"
               accessibilityLabel={s.label}
-              onPress={() => setProvider(s.id)}
+              disabled accessibilityState={{disabled:true}}
               style={({ pressed }) => [styles.social, pressed && styles.pressed]}
             >
               {s.id === 'google' && <GoogleMark size={t.socialGlyph} />}
@@ -117,7 +140,7 @@ export default function LoginScreen() {
           Don&rsquo;t have an account?{' '}
           <Text
             style={styles.signupLink}
-            onPress={() => router.push('/(auth)/signup')}
+            onPress={() => router.push('/(auth)/role')}
             accessibilityRole="link"
           >
             Sign Up
@@ -135,7 +158,7 @@ export default function LoginScreen() {
         onClose={() => setProvider(null)}
         onConfirm={() => {
           setProvider(null);
-          router.push('/(auth)/verify');
+          // Social sign-in is outside architecture v3.0 scope.
         }}
       />
     </View>

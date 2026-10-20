@@ -22,15 +22,13 @@ type Role = 'user' | 'lawyer';
 
 export default function RoleScreen() {
   const insets = useSafeAreaInsets();
-  const { setLoggedIn, setRole } = useSession();
+  const { setRegistrationRole } = useSession();
   const [selected, setSelected] = useState<Role | null>(null);
 
   const onNext = () => {
     if (!selected) return;
-    setLoggedIn(true);
-    setRole(selected);
-    // The two sides are separate route groups with separate navigators.
-    router.replace(selected === 'lawyer' ? '/(advocate)/dashboard' : '/(tabs)/home');
+    setRegistrationRole(selected);
+    router.replace('/(auth)/signup');
   };
 
   return (

@@ -4,13 +4,15 @@ import { useEffect, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import {api,type AuthResult} from '../lib/auth';
+import {useSession} from '../context/session';
 import AuthHeader from './AuthHeader';
 import { shrinkToFit } from '../constants/textFit';
 import { authOtp as t, colors, font, ink } from '../constants/theme';
 
 // The six-box verification screen, shared by login (design/135) and sign-up
 // (design/137) — the two files are the same screen with a different header title and
-// a different destination.
+// a different destination. Verification now comes from the local API.
 //
 // REPLACES the previous four-box screen: the designs now show SIX digits.
 //
@@ -31,8 +33,27 @@ type Props = {
 
 export default function OtpScreen({ title, next, changeTo }: Props) {
   const insets = useSafeAreaInsets();
+  const {pending,accept}=useSession();
+  const [error,setError]=useState('');const [busy,setBusy]=useState(false);
+  const submit=async()=>{
+    if(!pending){router.replace(changeTo);return;}
+    setError('');setBusy(true);
+    try{
+      const code=digits.join('');let result:AuthResult;
+      if(pending.kind==='email'){
+        await api('/auth/confirm',{email:pending.email,code});
+        result=await api<AuthResult>('/auth/login',{email:pending.email,password:pending.password});
+      }else result=await api<AuthResult>('/auth/otp/verify',{phone:pending.phone,code});
+      await accept(result);router.replace(title==='Sign Up'?next:result.user.role==='advocate'?'/(advocate)/dashboard':'/(tabs)/home');
+    }catch(e){setError(e instanceof Error?e.message:'Verification failed');}finally{setBusy(false);}
+  };
+  const resend=async()=>{
+    if(!pending)return;
+    try{await api(pending.kind==='email'?'/auth/resend':'/auth/otp/request',pending.kind==='email'?{email:pending.email}:{phone:pending.phone});setSeconds(RESEND_SECONDS);setError('');}
+    catch(e){setError(e instanceof Error?e.message:'Request failed');}
+  };
   // design/135 draws 4, 8, 2 entered and three boxes empty.
-  const [digits, setDigits] = useState<string[]>(['4', '8', '2', '', '', '']);
+  const [digits, setDigits] = useState<string[]>(['', '', '', '', '', '']);
   const [seconds, setSeconds] = useState(RESEND_SECONDS);
   const inputs = useRef<(TextInput | null)[]>([]);
   const { width } = useWindowDimensions();
@@ -71,12 +92,12 @@ export default function OtpScreen({ title, next, changeTo }: Props) {
           <MessageSquareMore size={t.chipGlyph} color={t.chipColour} />
         </View>
 
-        <Text style={styles.heading}>Verify Your Number</Text>
+        <Text style={styles.heading}>{pending?.kind==='email'?'Email Address':'Verify Your Number'}</Text>
         <Text style={styles.sub}>We&rsquo;ve sent a 6-digit verification code to</Text>
 
         <View style={styles.pill}>
           <Text style={styles.pillNumber} {...shrinkToFit(0.75)}>
-            +91 98765 *****
+            {pending?.kind==='email'?pending.email:pending?.phone ?? ''}
           </Text>
           <Text style={styles.pillDot}>•</Text>
           <Pressable
@@ -124,7 +145,7 @@ export default function OtpScreen({ title, next, changeTo }: Props) {
         ) : (
           <Pressable
             accessibilityRole="button"
-            onPress={() => setSeconds(RESEND_SECONDS)}
+            onPress={resend}
             hitSlop={8}
           >
             <Text style={[styles.resend, styles.resendActive]} {...shrinkToFit(0.8)}>
@@ -133,9 +154,11 @@ export default function OtpScreen({ title, next, changeTo }: Props) {
           </Pressable>
         )}
 
+        {error ? <Text accessibilityRole="alert">{error}</Text> : null}
         <Pressable
           accessibilityRole="button"
-          onPress={() => router.push(next)}
+          disabled={busy || digits.some(d => !d)}
+          onPress={submit}
           style={({ pressed }) => [styles.button, pressed && styles.pressed]}
         >
           <Text style={styles.buttonLabel}>Verify &amp; Continue</Text>

@@ -1,64 +1,113 @@
-import { router } from 'expo-router';
-import { createContext, useContext, useMemo, useState, type ReactNode } from 'react';
-
-/**
- * Which side of the app the session is in. Chosen on app/(auth)/role.tsx and read by
- * app/index.tsx to pick a landing group. 'user' is the client app under (tabs);
- * 'lawyer' is the advocate app under (advocate).
- */
-export type Role = 'user' | 'lawyer';
-
+import { router } from "expo-router";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
+import {
+  api,
+  storedTokens,
+  storeTokens,
+  type AuthResult,
+  type AuthUser,
+  type Tokens,
+} from "../lib/auth";
+export type Role = "user" | "lawyer";
+type Pending =
+  | { kind: "email"; email: string; password: string }
+  | { kind: "phone"; phone: string };
 type Session = {
   isLoggedIn: boolean;
-  setLoggedIn: (value: boolean) => void;
-  /** Null until a role is chosen. Not persisted, like the rest of this context. */
+  ready: boolean;
   role: Role | null;
-  setRole: (value: Role) => void;
-  /**
-   * False until the onboarding carousel is completed. NOT PERSISTED — it resets on
-   * reload, which keeps the flow reachable for review. A real build would store this.
-   */
+  user: AuthUser | null;
+  registrationRole: Role | null;
+  setRegistrationRole: (role: Role) => void;
+  pending: Pending | null;
+  setPending: (pending: Pending | null) => void;
   hasSeenOnboarding: boolean;
   setHasSeenOnboarding: (value: boolean) => void;
-  /**
-   * Clears the session and the role, and returns to the login screen. The app's only
-   * way out, and the only exit shared by both sides — it previously landed on the
-   * CLIENT guest home, which dropped a signed-out advocate into the wrong app.
-   */
+  accept: (result: AuthResult) => Promise<void>;
   signOut: () => void;
 };
-
-const SessionContext = createContext<Session | null>(null);
-
-// In-memory only: signing in does not survive a reload.
+const Context = createContext<Session | null>(null);
 export function SessionProvider({ children }: { children: ReactNode }) {
-  const [isLoggedIn, setLoggedIn] = useState(false);
-  const [role, setRole] = useState<Role | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [ready, setReady] = useState(false);
+  const [registrationRole, setRegistrationRole] = useState<Role | null>(null);
+  const [pending, setPending] = useState<Pending | null>(null);
   const [hasSeenOnboarding, setHasSeenOnboarding] = useState(false);
-
+  const accept = async (result: AuthResult) => {
+    if (result.user.role === "admin")
+      throw new Error("Admin screens are not available");
+    await storeTokens(result.tokens);
+    setUser(result.user);
+    setHasSeenOnboarding(true);
+    setPending(null);
+  };
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        const tokens = await storedTokens();
+        if (!tokens) return;
+        let result: AuthResult;
+        try {
+          result = {
+            tokens,
+            user: await api<AuthUser>("/me", undefined, tokens.idToken),
+          };
+        } catch {
+          if (!tokens.refreshToken) throw new Error("Session expired");
+          result = await api<AuthResult>("/auth/refresh", {
+            refreshToken: tokens.refreshToken,
+          });
+        }
+        if (alive) await accept(result);
+      } catch {
+        await storeTokens(null);
+      } finally {
+        if (alive) setReady(true);
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, []);
   const value = useMemo<Session>(
     () => ({
-      isLoggedIn,
-      setLoggedIn,
-      role,
-      setRole,
+      isLoggedIn: !!user,
+      ready,
+      user,
+      role:
+        user?.role === "advocate"
+          ? "lawyer"
+          : user?.role === "client"
+            ? "user"
+            : null,
+      registrationRole,
+      setRegistrationRole,
+      pending,
+      setPending,
       hasSeenOnboarding,
       setHasSeenOnboarding,
-      // replace, not push: signing out should leave nothing to go back into.
+      accept,
       signOut: () => {
-        setLoggedIn(false);
-        setRole(null);
-        router.replace('/(auth)/login');
+        setUser(null);
+        setPending(null);
+        void storeTokens(null);
+        router.replace("/(auth)/login");
       },
     }),
-    [isLoggedIn, role, hasSeenOnboarding]
+    [user, ready, registrationRole, pending, hasSeenOnboarding],
   );
-
-  return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;
+  return <Context.Provider value={value}>{children}</Context.Provider>;
 }
-
 export function useSession() {
-  const session = useContext(SessionContext);
-  if (!session) throw new Error('useSession must be used inside a SessionProvider');
-  return session;
+  const context = useContext(Context);
+  if (!context) throw new Error("SessionProvider required");
+  return context;
 }

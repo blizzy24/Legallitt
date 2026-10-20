@@ -1,0 +1,81 @@
+
+> @legalitt/api@0.0.0 test /Users/riya/Documents/14/apps/api
+> pnpm build && node --test tests/*.cjs
+
+
+> @legalitt/api@0.0.0 build /Users/riya/Documents/14/apps/api
+> prisma generate && tsc
+
+
+✔ Generated Prisma Client (7.10.1) to ./src/generated/prisma in 139ms
+
+TAP version 13
+# Subtest: JWT verifier rejects expiry, wrong issuer/audience/use/signature and invalid role
+ok 1 - JWT verifier rejects expiry, wrong issuer/audience/use/signature and invalid role
+  ---
+  duration_ms: 68.664375
+  type: 'test'
+  ...
+# Subtest: client cannot pass advocate guard or register as admin
+ok 2 - client cannot pass advocate guard or register as admin
+  ---
+  duration_ms: 3.011375
+  type: 'test'
+  ...
+# Subtest: simulated phone entry rejects production regardless of fixed code
+ok 3 - simulated phone entry rejects production regardless of fixed code
+  ---
+  duration_ms: 0.684167
+  type: 'test'
+  ...
+# Subtest: database seed is idempotent and ledger rejects non-positive amounts
+ok 4 - database seed is idempotent and ledger rejects non-positive amounts
+  ---
+  duration_ms: 327.852584
+  type: 'test'
+  ...
+# Subtest: Prisma lifecycle exactly mirrors canonical shared lifecycle
+ok 5 - Prisma lifecycle exactly mirrors canonical shared lifecycle
+  ---
+  duration_ms: 0.726625
+  type: 'test'
+  ...
+# Subtest: migration includes every authoritative table and SQL-only constraints
+ok 6 - migration includes every authoritative table and SQL-only constraints
+  ---
+  duration_ms: 1.415542
+  type: 'test'
+  ...
+# Subtest: seed uses integer paise, source citations and unconfirmed observations
+ok 7 - seed uses integer paise, source citations and unconfirmed observations
+  ---
+  duration_ms: 1.426375
+  type: 'test'
+  ...
+# Subtest: seed reruns never update existing price versions
+ok 8 - seed reruns never update existing price versions
+  ---
+  duration_ms: 1.875667
+  type: 'test'
+  ...
+# Subtest: /health answers HTTP without AWS/database configuration
+ok 9 - /health answers HTTP without AWS/database configuration
+  ---
+  duration_ms: 434.4845
+  type: 'test'
+  ...
+# Subtest: mobile auth registry covers every root navigator screen and all advocate paths
+ok 10 - mobile auth registry covers every root navigator screen and all advocate paths
+  ---
+  duration_ms: 7.231542
+  type: 'test'
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 592.267208

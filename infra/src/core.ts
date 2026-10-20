@@ -13,6 +13,8 @@ export class CoreStack extends Stack {
   readonly key: CfnResource;
   readonly bucket: CfnResource;
   readonly secret: CfnResource;
+  readonly authConfig: CfnResource;
+  readonly userPool: CfnResource;
   constructor(
     scope: Construct,
     id: string,
@@ -257,6 +259,8 @@ export class CoreStack extends Stack {
       }),
     });
     config.applyRemovalPolicy(RemovalPolicy.RETAIN);
+    this.authConfig = config;
+    this.userPool = pool;
     new CfnOutput(this, "UserPoolId", { value: pool.ref });
     new CfnOutput(this, "ClientId", { value: client.ref });
     new CfnOutput(this, "BucketName", { value: bucket.ref });

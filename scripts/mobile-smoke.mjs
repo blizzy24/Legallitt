@@ -10,16 +10,26 @@ import assert from 'node:assert/strict';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const app = resolve(root, 'apps/mobile/app');
 const dist = resolve(root, 'apps/mobile/dist');
+const roles = new Map();
 function routesIn(dir, base = '') {
   return readdirSync(dir, { withFileTypes: true }).flatMap(entry => {
     if (entry.isDirectory()) return routesIn(resolve(dir, entry.name), base + '/' + entry.name);
     if (!entry.name.endsWith('.tsx') || entry.name.startsWith('_')) return [];
     const name = entry.name.slice(0, -4);
-    return [(name === 'index' ? base : base + '/' + name).replace(/\/\([^)]+\)/g, '') || '/'];
+    const route = (name === 'index' ? base : base + '/' + name).replace(/\/\([^)]+\)/g, '') || '/';
+    roles.set(route.replace(/\[[^\]]+\]/g, '1'), (base.startsWith('/advocate/') || base === '/advocate' || base.startsWith('/(advocate)')) ? 'advocate' : 'client');
+    return [route];
   });
 }
 const routes = [...new Set(routesIn(app))].sort().map(route => route.replace(/\[[^\]]+\]/g, '1'));
 assert.equal(routes.length, 322, 'The monorepo move must preserve all 322 routes');
+const sessions = Object.fromEntries(['client', 'advocate'].map(role => {
+  const file = process.env[`SMOKE_${role.toUpperCase()}_SESSION`];
+  assert.ok(file, `SMOKE_${role.toUpperCase()}_SESSION must point to a private file containing a real dev auth session`);
+  const session = JSON.parse(readFileSync(file, 'utf8'));
+  assert.equal(session.user.role, role);
+  return [role, session];
+}));
 const mime = { '.html': 'text/html', '.js': 'application/javascript', '.json': 'application/json', '.css': 'text/css', '.png': 'image/png', '.svg': 'image/svg+xml', '.ttf': 'font/ttf', '.woff': 'font/woff', '.woff2': 'font/woff2' };
 let server;
 let base = process.env.SMOKE_BASE_URL;
@@ -33,7 +43,7 @@ if (!base) {
     res.setHeader('Content-Type', mime[extname(file)] ?? 'application/octet-stream');
     res.end(readFileSync(file));
   });
-  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  await new Promise(resolve => server.listen(Number(process.env.SMOKE_PORT ?? 0), '127.0.0.1', resolve));
   base = `http://127.0.0.1:${server.address().port}`;
 }
 let browser;
@@ -48,10 +58,12 @@ try {
       const errors = [];
       page.on('pageerror', error => errors.push(error.message));
       try {
+        await page.evaluateOnNewDocument(tokens => { if (window === window.top && ['http:', 'https:'].includes(location.protocol)) sessionStorage.setItem('legalitt.auth.tokens', JSON.stringify(tokens)); }, sessions[roles.get(route)].tokens);
         await page.setViewport({ width: 390, height: 900, isMobile: true });
         const response = await page.goto(base + route, { waitUntil: 'networkidle0', timeout: 30000 });
         if (!response?.ok()) errors.push(`HTTP ${response?.status()}`);
         const text = await page.evaluate(() => document.body.innerText.trim());
+        if (!['/login', '/verify', '/signup', '/signup-verify', '/signup-success', '/role', '/', '/onboarding'].includes(route) && new URL(page.url()).pathname === '/login') errors.push('Protected route redirected to login; session was not valid');
         if (text.length < 2 || text.includes('Unmatched Route')) errors.push('blank/unmatched route');
       } catch (error) { errors.push(error.message); }
       finally { await page.close(); }

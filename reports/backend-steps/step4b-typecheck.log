@@ -1,0 +1,45 @@
+
+> legalitt@0.0.0 typecheck /Users/riya/Documents/14
+> turbo run typecheck
+
+
+   • turbo 2.11.9
+   • Packages in scope: @legalitt/api, @legalitt/infra, @legalitt/mobile, @legalitt/shared
+   • Running typecheck in 4 packages
+   • Remote caching disabled
+
+@legalitt/shared:build: cache hit, replaying logs 50b8f29375a68f64
+@legalitt/shared:typecheck: cache hit, replaying logs 68b70df14b4eb785
+@legalitt/infra:typecheck: cache hit, replaying logs cc9a53438e332137
+@legalitt/shared:build:
+@legalitt/shared:build: > @legalitt/shared@0.0.0 build /Users/riya/Documents/14/packages/shared
+@legalitt/shared:build: > tsc
+@legalitt/shared:build:
+@legalitt/shared:typecheck:
+@legalitt/shared:typecheck: > @legalitt/shared@0.0.0 typecheck /Users/riya/Documents/14/packages/shared
+@legalitt/shared:typecheck: > tsc --noEmit
+@legalitt/shared:typecheck:
+@legalitt/infra:typecheck:
+@legalitt/infra:typecheck: > @legalitt/infra@0.0.0 typecheck /Users/riya/Documents/14/infra
+@legalitt/infra:typecheck: > tsc --noEmit
+@legalitt/infra:typecheck:
+@legalitt/mobile:typecheck: cache miss, executing 6b820ec1fc8ab1cf
+@legalitt/api:typecheck: cache hit, replaying logs 0065fd99173905e6
+@legalitt/api:typecheck:
+@legalitt/api:typecheck: > @legalitt/api@0.0.0 typecheck /Users/riya/Documents/14/apps/api
+@legalitt/api:typecheck: > prisma generate && tsc --noEmit
+@legalitt/api:typecheck:
+@legalitt/api:typecheck: Loaded Prisma config from prisma.config.ts.
+@legalitt/api:typecheck:
+@legalitt/api:typecheck: Prisma schema loaded from prisma/schema.prisma.
+@legalitt/api:typecheck:
+@legalitt/api:typecheck: ✔ Generated Prisma Client (7.10.1) to ./src/generated/prisma in 136ms
+@legalitt/api:typecheck:
+@legalitt/mobile:typecheck:
+@legalitt/mobile:typecheck: > @legalitt/mobile@1.0.0 typecheck /Users/riya/Documents/14/apps/mobile
+@legalitt/mobile:typecheck: > tsc --noEmit
+@legalitt/mobile:typecheck:
+
+ Tasks:    5 successful, 5 total
+Cached:    4 cached, 5 total
+  Time:    14.656s
