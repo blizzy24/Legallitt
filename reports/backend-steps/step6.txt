@@ -1,0 +1,75 @@
+Step 6 — Documents (architecture v3.6, through 6d)
+
+Implemented
+- Authenticated presign, complete, download-URL and delete endpoints.
+- Direct multipart S3 upload with a signed size/type/key policy. Completion
+  reads S3 metadata, validates file structure and records real size/type/pages.
+- PDF page counting (including ID proof); JPEG and PNG count as one page.
+- Case ownership/assignment/admin access applies to every document endpoint.
+  Unrelated clients/advocates receive 404 without a URL. Pending/deleted evidence
+  is excluded from case responses and cannot get a download URL.
+- UUID-based keys; temporary uploads are copied by exact version to immutable
+  validated keys so reuse of a signed upload cannot replace accepted evidence.
+- Scheduled cleanup for abandoned rows; version-aware storage deletion and
+  retries for failed deletions, preserving document metadata/history relations.
+- ID proof remains evidence, not KYC. API supplies the v3.6 alternatives and
+  masked-Aadhaar-only guidance. No OCR/text/identity-field extraction. Identity
+  files get the same structural page counting as other files.
+- Compute IAM source now permits version reads, listing and version deletion.
+  Synthesized only; no AWS infrastructure deployment.
+
+Verification
+- API: 30 tests passed, zero failures/skips, including PostgreSQL 16 integration,
+  authenticated HTTP routes, cross-case refusals, concurrent completion,
+  oversize/type rejection, ID page counting, deleted-document access and cleanup
+  across more than one batch. PDF/JPEG/PNG inspection tested.
+- Shared: 5 tests passed. Infra: 9 tests passed.
+- pnpm typecheck: all 5 tasks passed across all workspaces (including mobile).
+- CDK synth --no-lookups succeeded for Dev and Prod assemblies. No deployment.
+- Live existing Dev S3 + local API/PostgreSQL + real Cognito demo tokens:
+  two-page PDF and one-page PNG uploaded directly, completed and downloaded;
+  content/size/page counts matched; SSE-KMS verified; anonymous fetch refused;
+  unrelated advocate refused; replay did not alter final evidence; deletion
+  invalidated downloads. S3 rejected 25,000,001 bytes before storage. Executable
+  bytes labelled PDF were refused at completion and the inspected version
+  removed. Synthetic case/rows/objects were removed afterward.
+- No apps/mobile files changed. The conditional 322-route smoke gate therefore
+  does not apply to this step; no new mobile smoke result is claimed.
+- No schema migration or seed change needed.
+
+Implementation decisions beyond the document's exact details
+- Five-minute upload/download expiry; cleanup every five minutes while an API
+  process is running. Row locks coordinate concurrent requests and cleanup.
+- 25 MB interpreted as 25,000,000 bytes. Signed multipart POST rather than PUT
+  enforces that limit at S3. File field must be appended last.
+- Internal staging filename is prefixed .pending-; final keys follow the exact
+  cases/<caseId>/<documentId>/<filename> pattern. Clients cannot write final keys.
+- Completion internally reads the S3 object to validate/count its structure.
+  Client upload/download bytes are never proxied through API endpoints.
+- Delete is allowed for uploader/admin only, with current case access required.
+  Metadata is tombstoned, while every S3 version/delete marker is purged. Failed
+  physical deletions retry on the scheduled sweep.
+- PDF inspection: ten-second worker timeout and 128 MB V8 old-generation limit;
+  encrypted/malformed PDFs that cannot be counted are rejected. Parser output
+  is discarded. Format validation is not a malware scanner.
+- Metadata rejects path/template expressions, control characters and full
+  twelve-digit identity-number patterns. It does not inspect image identity
+  content or establish that an uploaded ID has been masked.
+- Existing Legal Notice case scope is retained; other service flows are not
+  implemented here. Non-ID document kinds remain caller-supplied validated
+  identifiers; no unsupported product taxonomy invented.
+
+Remaining / explicit stop point
+- Stopped after 6d. Mobile upload wiring, showing identity guidance and ordering
+  alternatives first are step 7; no claim that the upload UI has changed.
+- Browser-to-S3 CORS must be configured for step 7's permitted web origins before
+  web uploads can run. This step's live check ran from a Node HTTP client.
+- Per-flow accepted identity documents and stricter retention remain client
+  questions. No identity content or KYC record is extracted from evidence.
+- Pending objects cannot be downloaded through this API. Per the specified
+  cleanup rule, an old pending row WITH an object is retained (not silently
+  deleted or promoted). Content uploaded but never completed stays quarantined;
+  retention for that condition is not specified. Cleanup runs only while API
+  is running. Bad content is removed when completion inspects it.
+- Existing Core resources used only for synthetic integration checks. Compute
+  remains undeployed. No step 7 work; no push.

@@ -1,0 +1,12 @@
+
+> @legalitt/infra@0.0.0 synth /Users/riya/Documents/14/infra
+> pnpm build && cdk synth --no-lookups
+
+
+> @legalitt/infra@0.0.0 build /Users/riya/Documents/14/infra
+> tsc
+
+AI agent detected
+Successfully synthesized to /Users/riya/Documents/14/infra/cdk.out
+Supply a stack id () to display its template.
+83 feature flags are not configured. Run 'cdk flags --unstable=flags' to learn more.

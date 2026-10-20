@@ -1,7 +1,7 @@
 # Legalitt — Backend & Cloud Architecture
 
-Version 3.4 · 20 October 2026
-Status: steps 0–4 complete. Step 5 is executable as written; §10 governs how.
+Version 3.6 · 20 October 2026
+Status: steps 0–5 complete. Step 6 is executable as written; §10 governs how.
 
 This document is the specification for the backend phase. It is written to be
 handed to a coding agent as the source of truth. Where something is undecided,
@@ -961,7 +961,88 @@ cancel.
 
 Commit: `feat(api): cases, events and state machine`
 
-### Steps 6 onwards — summary only
+### Step 6 — Documents
+
+Uploads and downloads through S3. API only; the app is connected in step 7.
+
+Files never pass through the API. The app uploads straight to S3 using a
+short-lived signed URL, and downloads the same way. The API only issues URLs
+and records what exists.
+
+**6a — Upload.**
+
+1. `POST /documents/presign` — the app says which case, what kind of document,
+   the filename and type. The API checks the caller is allowed to add a
+   document to that case, creates a `documents` row with status `pending`, and
+   returns a signed upload URL valid for a few minutes.
+2. The app uploads the file directly to S3.
+3. `POST /documents/:id/complete` — the API confirms with S3 that the object
+   actually exists, reads its real size and type from S3, and sets the row to
+   `uploaded`.
+
+**Never trust what the app says about the file.** Size and type come from S3
+after the upload, not from the request. A client that lies about either should
+not be able to store a 2 GB file or an executable.
+
+- S3 keys are `cases/<caseId>/<documentId>/<filename>`. The document id makes
+  the key unique; the filename is kept only for display. Do not build keys
+  from user input alone.
+- Limits: 25 MB per file, and only the types the flows actually use — PDF,
+  JPEG, PNG. Reject the rest.
+- A `pending` row with no object after an hour is abandoned. Delete it on a
+  schedule.
+
+**6b — Page counting.**
+
+Several flows charge per page above a free allowance — Legal Advice and FIR
+both draw ₹25 per page beyond 25. Count pages for PDFs on completion and store
+it in `documents.page_count`. Images count as one page.
+
+This is needed before pricing can be calculated in step 8, so do it now rather
+than retrofitting.
+
+Page counting applies to **every** document, identity files included. Reading
+how many pages a PDF has is reading its structure, not its content — it is not
+the parsing that 6d forbids.
+
+**6c — Download.**
+
+`GET /documents/:id/url` returns a signed URL valid for a few minutes.
+
+Authorisation is the same rule as cases in §5c: only the client who owns the
+case, the advocate assigned to it, and admin. Test that an unrelated user gets
+a refusal, not a URL.
+
+**6d — Identity documents.**
+
+Flows such as FIR require identity evidence attached to the case. §7.1 forbids
+storing Aadhaar numbers, and an unmasked Aadhaar image contains the number, so
+storing one would breach it.
+
+The client's own design already points the right way: 447 draws
+`Aadhaar Card (XXXX-XXXX-4812)` — a **masked** Aadhaar, which UIDAI provides
+as a download for exactly this purpose.
+
+Rules:
+
+- **Do not require Aadhaar.** The ID proof upload accepts PAN, passport,
+  driving licence or voter ID. Offer those first.
+- **If Aadhaar is used, masked only.** The upload screen must say so. The
+  system cannot enforce it technically, so the wording carries the weight.
+- **Never extract content from an identity file** — no OCR, no text
+  extraction, no reading fields. Structural metadata such as page count and
+  file size is not content and is fine to read (see 6b).
+- Mark these documents `kind = 'id_proof'` so stricter retention and access
+  rules can be applied later.
+- Identity *verification* is DigiLocker, never an uploaded image. An uploaded
+  ID card is evidence on a case, not a KYC record.
+
+**Client question:** which identity documents are acceptable for each flow is
+the client's decision, not ours. Added to §8.
+
+Commit: `feat(api): document upload, download and page counting`
+
+### Steps 7 onwards — summary only
 
 Each is expanded in this document before it starts.
 5. **Cases and events** — create, submit, read, timeline. One service only.
@@ -985,6 +1066,10 @@ Each is expanded in this document before it starts.
 The app collects Aadhaar in seven places and design 447 displays
 `Aadhaar Card (XXXX-XXXX-4812)`. Under the Aadhaar Act, storing Aadhaar numbers
 is restricted to authorised entities; a legal services marketplace is not one.
+
+This covers uploaded card images too: an unmasked Aadhaar image contains the
+number, so storing one stores the number. See §6d for how identity documents
+attached to a case are handled.
 
 **Required approach:** DigiLocker or offline Aadhaar e-KYC. The provider
 returns a signed XML with name, address, photo and a reference number — not the
@@ -1048,6 +1133,7 @@ before the backend needs it.
 | 12 | Heading font | Typography |
 | 13 | DPDP consent text and retention periods | Compliance |
 | 14 | Is any AI output client-facing without an advocate between? Check the AI chat screens (160–182, 170) | AI gating |
+| 15 | Which identity documents are accepted for each flow? Aadhaar must be masked if used at all (§6d) | ID proof uploads |
 
 Items 1 to 6 all touch `service_pricing` and `commission_rates`. The schema is
 built so they can land as rows whenever they arrive, without migration.

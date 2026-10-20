@@ -1,0 +1,5 @@
+application/pdf: upload, 2 page(s), KMS, private download, unrelated-user refusal, replay protection, deletion passed
+image/png: upload, 1 page(s), KMS, private download, unrelated-user refusal, replay protection, deletion passed
+S3 rejected 25,000,001 bytes before storage
+Executable with PDF MIME label rejected and uploaded version removed
+Synthetic case, document rows and S3 objects removed

@@ -175,3 +175,73 @@ Refund is an internal admin-only transition from cancelled/completed; it writes
 an event only. No HTTP refund/payment action, assignment endpoint, drafting
 endpoint, money movement or other service implementation is added in step 5.
 The mobile app remains on fixtures until step 7.
+
+Documents — step 6 (API only)
+-----------------------------
+  POST   /api/v1/documents/presign  {case_id,kind,filename,mime}
+  POST   /api/v1/documents/:id/complete  {}
+  GET    /api/v1/documents/:id/url
+  DELETE /api/v1/documents/:id
+
+Uses the existing Dev Core bucket from AUTH_CONFIG_SECRET_ARN (bucketName).
+DOCUMENT_BUCKET may explicitly override the bucket in a configured environment.
+The AWS credential chain must allow S3 object read/write/version deletion and
+bucket version listing plus use of the bucket's KMS key. Compute IAM has been
+updated in source only; this step does not deploy any infrastructure.
+
+Presign returns {document,upload:{url,fields,method,expires_in,max_bytes}}.
+Send a multipart POST directly to upload.url: append every returned field, then
+append the file LAST. Do not send file bytes through an API endpoint. S3 enforces
+an exact key/type and 1..25,000,000 bytes in its signed policy. URLs last 300s.
+Only application/pdf, image/jpeg and image/png are accepted. Client byte/page
+counts, owner IDs and S3 keys are not accepted. Filenames cannot contain paths,
+control characters, template expressions or full twelve-digit identity numbers.
+
+The temporary key has a .pending- filename prefix under the case/document UUIDs.
+Completion reads S3 HEAD metadata and internally reads that exact object version
+for structural validation/page counting. This internal S3 read is required for
+6b; client uploads and downloads remain direct to S3. Actual file signature/type
+must match S3 Content-Type. Validated bytes are copied to the final key:
+  cases/<caseId>/<documentId>/<filename>
+Clients never receive a write URL for that final key. Reusing an upload URL
+cannot replace already validated evidence. Completion is serialized/idempotent.
+Invalid inspected versions are removed and remain unavailable for download.
+
+PDF page trees are counted, including kind=id_proof. JPEG/PNG count as one page.
+Malformed/encrypted PDFs that cannot be counted are rejected. Parsing runs in a
+worker with a ten-second timeout and a 128 MB V8 old-generation heap limit;
+parser diagnostics are discarded. No OCR, text extraction or identity-field
+extraction is requested. This is format validation, not antivirus scanning.
+
+Presign/complete/download require the case's client, assigned advocate or admin.
+Only the uploader or admin can delete, and they must still have case access.
+Delete tombstones metadata immediately and purges all S3 object versions and
+delete markers; failures are retried by cleanup. Existing case-history foreign
+keys remain intact. Case reads include only uploaded documents.
+
+Every five minutes while the API runs, cleanup deletes pending rows older than
+one hour only if neither temporary nor final object exists. Pending rows with
+objects are retained: the specification supplies no retention period for those.
+The sweep also removes old temporary versions of completed uploads and retries
+physical deletion for tombstoned documents. For pending data, an S3 error is not
+treated as absence. Multiple API processes coordinate with database row locks.
+There is no cleanup execution while all API processes are stopped.
+
+ID proof is case evidence, never a KYC record. Use kind=id_proof. Its API response
+includes identity_notice with PAN/passport/driving licence/voter ID alternatives
+and masked-Aadhaar-only guidance from section 6d. Do not require Aadhaar.
+No content-based check can enforce masking here. The upload-screen wording and
+alternatives must be wired in step 7; mobile files are untouched in step 6.
+Per-flow accepted identity documents and stricter retention are still client
+questions. Browser-to-S3 CORS also needs configuration with step 7's web origins.
+
+Tests:
+  pnpm --filter @legalitt/api test:local
+The API suite uses local PostgreSQL 16 and isolated in-memory storage for tests.
+Optional live check, from apps/api after building, with Dev AWS access:
+  node --env-file=.env.local scripts/verify-documents-local.cjs
+It uses seeded Cognito demo accounts, a synthetic local case and synthetic files
+in the existing Dev bucket. It checks private/KMS storage, page counting, access,
+URL replay protection, deletion, false MIME labels and the actual 25 MB S3 limit.
+It removes its synthetic rows and object versions and does not print signed URLs
+or tokens. It refuses non-dev settings and a non-local database. No AWS deploy.

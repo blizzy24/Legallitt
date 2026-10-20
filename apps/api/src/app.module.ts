@@ -1,3 +1,7 @@
+import { DocumentController } from "./documents/document.controller";
+import { DocumentService } from "./documents/document.service";
+import { DocumentStorage } from "./documents/document-storage";
+import { FileInspector } from "./documents/file-inspector";
 import { Controller, Get, Module } from "@nestjs/common";
 import { AuthService } from "./auth/auth.service";
 import {
@@ -20,13 +24,22 @@ export class HealthController {
 }
 
 @Module({
-  controllers: [HealthController, AuthController, MeController, CaseController],
+  controllers: [
+    HealthController,
+    AuthController,
+    MeController,
+    CaseController,
+    DocumentController,
+  ],
   providers: [
     PrismaService,
     AuthService,
     AuthGuard,
     CaseRepository,
     CaseStateMachine,
+    DocumentService,
+    DocumentStorage,
+    FileInspector,
   ],
   exports: [PrismaService],
 })

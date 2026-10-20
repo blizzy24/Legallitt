@@ -45,6 +45,7 @@ export class CaseRepository {
       include: {
         case_events_case_id_relations: { orderBy: { id: "asc" } },
         documents_case_id_relations: {
+          where: { status: "uploaded" },
           orderBy: [{ created_at: "asc" }, { id: "asc" }],
         },
         drafts_case_id_relations: {

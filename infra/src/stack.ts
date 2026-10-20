@@ -295,8 +295,17 @@ export class ComputeStack extends Stack {
       Resource: resources,
     });
     const runtimeStatements = [
-      allow(["s3:ListBucket"], [arn(bucket)]),
-      allow(["s3:GetObject", "s3:PutObject", "s3:DeleteObject"], [objects]),
+      allow(["s3:ListBucket", "s3:ListBucketVersions"], [arn(bucket)]),
+      allow(
+        [
+          "s3:GetObject",
+          "s3:GetObjectVersion",
+          "s3:PutObject",
+          "s3:DeleteObject",
+          "s3:DeleteObjectVersion",
+        ],
+        [objects],
+      ),
       allow(
         [
           "kms:Decrypt",
