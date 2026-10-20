@@ -1,4 +1,4 @@
-Legalitt API — architecture v3.0, through step 4b
+Legalitt API — architecture v3.2, through step 4b
 
 Node 22 and pnpm. Run from the repository root:
   pnpm --filter @legalitt/shared build
@@ -11,7 +11,8 @@ The start script loads an optional ignored apps/api/.env.local. Supply:
   AUTH_CONFIG_SECRET_ARN       Dev Core app-config secret name or ARN
   ENVIRONMENT                  dev for local Dev-Core integration
   NODE_ENV                     development locally
-  SMS_ENABLED                  false while SMS is simulated
+  PHONE_AUTH_MODE              demo locally; live is not implemented
+  DEMO_AUTH_SECRET_ARN          Dev Core demo-auth secret name or ARN
   CORS_ORIGINS                 comma-separated allowed web origins
 
 Use the normal AWS credential chain; do not put AWS keys in configuration files.
@@ -35,7 +36,7 @@ Endpoints:
   POST  /api/v1/auth/login       email, password
   POST  /api/v1/auth/refresh     refreshToken
   POST  /api/v1/auth/otp/request phone
-  POST  /api/v1/auth/otp/verify  phone, code
+  POST  /api/v1/auth/otp/verify  phone, code, role (client/advocate)
   GET   /api/v1/me               Bearer Cognito ID token
   PATCH /api/v1/me               Bearer token; name only
 
@@ -46,14 +47,22 @@ create admin identities. PATCH /me rejects role/identity changes. Account status
 and stored role are checked against the validated identity. No case or payment
 endpoints have been added.
 
-Phone simulation works only for registered identities in dev, with SMS_ENABLED
-false and NODE_ENV not production. The deployed triggers independently enforce
-the dev-only rule. Unknown phone provisioning/role assignment is unresolved and
-not implemented. SMS_ENABLED=true fails closed pending a chosen provider/DLT.
-Challenges live in the local API process, expire after five minutes, permit three
-attempts, and allow resend after the design's 28-second timer. Restarting the API
-invalidates pending challenges. Shared challenge storage needs a decision before
-running multiple API tasks. No phone is marked genuinely verified by simulation.
+Demo phone sign-in requires ENVIRONMENT=dev, NODE_ENV other than production,
+and PHONE_AUTH_MODE=demo. Missing flags and live mode fail closed. The number is
+ignored, not queried or stored. Code 123456 selects a fixed account from the role
+picker and performs normal Cognito password authentication. No custom challenge,
+SMS, account provisioning or second session type exists in request handlers.
+
+After deploying Dev Core, provision the two accounts explicitly:
+  pnpm --filter @legalitt/api db:seed-demo
+This uses admin credentials, rejects non-dev pools, suppresses messages, marks
+emails verified, assigns immutable roles, and seeds corresponding local DB rows.
+Repeating it preserves identities and uses the current password from Secrets
+Manager. The generated demo-only password is shared by these two test accounts;
+it is never returned by the API, embedded in mobile, logged or committed.
+Emails: demo-client@legalitt.invalid and demo-advocate@legalitt.invalid.
+Normal email/password login works with the same accounts. Operators can retrieve
+the password from the Dev Core demo-auth secret through their AWS access.
 
 Database:
   pnpm --filter @legalitt/api db:validate
@@ -81,9 +90,9 @@ CORS_ORIGINS must allow that origin. No token or test password belongs in the re
 
   node scripts/mobile-auth-check.cjs
 Requires SMOKE_BASE_URL and AUTH_TEST_FIXTURES, a private JSON file containing a
-fixtures array with role/email/password/phone for dev client and advocate users.
+fixtures array with role/email/password for dev client and advocate users.
 This verifies login, role redirects, actual URL access and simulated phone login.
 
 Email delivery/confirmation with a real inbox still needs a supplied test address
-or manual verification. Live tests used temporary accounts provisioned without
+or manual verification. Live tests use the seeded demo accounts provisioned without
 sending messages. Native device testing remains separate from the web smoke.

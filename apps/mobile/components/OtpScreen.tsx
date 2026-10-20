@@ -18,7 +18,7 @@ import { authOtp as t, colors, font, ink } from '../constants/theme';
 //
 // design/135 and /137 both draw the first three boxes filled (4, 8, 2) and elevated,
 // with the last three empty. Both states are implemented: a box lifts as soon as it
-// has a digit. Nothing is verified — any six digits continue, and so does none.
+// has a digit. The API verifies email codes or the gated demo code.
 
 const LENGTH = 6;
 const RESEND_SECONDS = 28;
@@ -43,7 +43,7 @@ export default function OtpScreen({ title, next, changeTo }: Props) {
       if(pending.kind==='email'){
         await api('/auth/confirm',{email:pending.email,code});
         result=await api<AuthResult>('/auth/login',{email:pending.email,password:pending.password});
-      }else result=await api<AuthResult>('/auth/otp/verify',{phone:pending.phone,code});
+      }else result=await api<AuthResult>('/auth/otp/verify',{phone:pending.phone,code,role:pending.role});
       await accept(result);router.replace(title==='Sign Up'?next:result.user.role==='advocate'?'/(advocate)/dashboard':'/(tabs)/home');
     }catch(e){setError(e instanceof Error?e.message:'Verification failed');}finally{setBusy(false);}
   };

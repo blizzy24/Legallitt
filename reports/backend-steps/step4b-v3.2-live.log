@@ -1,0 +1,1 @@
+PASS: both seeded roles, normal password login, OTP ignores arbitrary numbers, wrong code/admin rejected, real /me and refresh work, no user rows created, no phone stored.

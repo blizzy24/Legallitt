@@ -18,7 +18,7 @@ import {
 export type Role = "user" | "lawyer";
 type Pending =
   | { kind: "email"; email: string; password: string }
-  | { kind: "phone"; phone: string };
+  | { kind: "phone"; phone: string; role: "client" | "advocate" };
 type Session = {
   isLoggedIn: boolean;
   ready: boolean;

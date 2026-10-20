@@ -59,21 +59,42 @@ const assert = require("node:assert/strict");
       waitUntil: "networkidle0",
     });
     assert.notEqual(new URL(page.url()).pathname, "/advocate/fir/review");
-    await page.goto(`${process.env.SMOKE_BASE_URL}/login`, {
-      waitUntil: "networkidle0",
-    });
-    await page.type(
-      'input[placeholder="Email / Mobile No"]',
-      fixtures[0].phone,
-    );
-    await click("Continue");
-    await page.waitForFunction(() => location.pathname === "/verify");
-    for (let i = 0; i < 6; i++)
-      await page.type(`input[aria-label="Digit ${i + 1}"]`, String(i + 1));
-    await click("Verify & Continue");
-    await page.waitForFunction(() => location.pathname === "/home");
+    for (const role of ["client", "advocate"]) {
+      await page.evaluate(() =>
+        sessionStorage.removeItem("legalitt.auth.tokens"),
+      );
+      await page.goto(`${process.env.SMOKE_BASE_URL}/role?next=login`, {
+        waitUntil: "networkidle0",
+      });
+      await page.evaluate(
+        (label) => {
+          const card = [...document.querySelectorAll('[role="radio"]')].find(
+            (el) => el.textContent.includes(label),
+          );
+          if (!card) throw new Error("Missing role card");
+          card.click();
+        },
+        role === "client" ? "User" : "Lawyer",
+      );
+      await click("Next");
+      await page.waitForFunction(() => location.pathname === "/login");
+      await page.type('input[placeholder="Email / Mobile No"]', "2025550199");
+      await click("Continue");
+      await page.waitForFunction(() => location.pathname === "/verify");
+      for (let i = 0; i < 6; i++)
+        await page.type(`input[aria-label="Digit ${i + 1}"]`, String(i + 1));
+      await click("Verify & Continue");
+      const destination = role === "client" ? "/home" : "/dashboard";
+      await page.waitForFunction(
+        (path) => location.pathname === path,
+        {},
+        destination,
+      );
+      await page.reload({ waitUntil: "networkidle0" });
+      assert.equal(new URL(page.url()).pathname, destination);
+    }
     console.log(
-      "PASS: browser email/password login both roles, client blocked from advocate review, client court-selection route accessible, advocate review accessible, anonymous advocate route blocked, phone 123456 login reaches client home.",
+      "PASS: browser email/password login both roles, client blocked from advocate review, client court-selection route accessible, advocate review accessible, anonymous advocate route blocked, demo 123456 login follows the picker for both roles and survives reload.",
     );
   } finally {
     await browser.close();

@@ -101,12 +101,12 @@ test("simulated phone entry rejects production regardless of fixed code", async 
   const old = {
     environment: process.env.ENVIRONMENT,
     node: process.env.NODE_ENV,
-    sms: process.env.SMS_ENABLED,
+    mode: process.env.PHONE_AUTH_MODE,
   };
   try {
     const auth = service();
     process.env.ENVIRONMENT = "dev";
-    process.env.SMS_ENABLED = "false";
+    process.env.PHONE_AUTH_MODE = "demo";
     process.env.NODE_ENV = "production";
     await assert.rejects(
       auth.verifyOtp({ phone: "+12025550101", code: "123456" }),
@@ -121,8 +121,97 @@ test("simulated phone entry rejects production regardless of fixed code", async 
     for (const [key, value] of Object.entries({
       ENVIRONMENT: old.environment,
       NODE_ENV: old.node,
-      SMS_ENABLED: old.sms,
+      PHONE_AUTH_MODE: old.mode,
     })) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
+});
+
+test("demo OTP ignores phone, selects only fixed accounts and uses password auth", async () => {
+  const demo = require("../dist/src/auth/demo");
+  const oldPassword = demo.demoPassword;
+  const old = {
+    ENVIRONMENT: process.env.ENVIRONMENT,
+    NODE_ENV: process.env.NODE_ENV,
+    PHONE_AUTH_MODE: process.env.PHONE_AUTH_MODE,
+  };
+  try {
+    Object.assign(process.env, {
+      ENVIRONMENT: "dev",
+      NODE_ENV: "development",
+      PHONE_AUTH_MODE: "demo",
+    });
+    demo.demoPassword = async () => "test-secret-not-a-real-password";
+    const auth = service();
+    const calls = [];
+    auth.cognito.send = async (command) => {
+      calls.push(command);
+      const role = command.input.AuthParameters.USERNAME.includes("advocate")
+        ? "advocate"
+        : "client";
+      return {
+        AuthenticationResult: {
+          IdToken: token({ "custom:role": role }),
+          AccessToken: "access",
+          RefreshToken: "refresh",
+          ExpiresIn: 3600,
+        },
+      };
+    };
+    assert.deepEqual(await auth.requestOtp({ phone: "ignored" }), {
+      requested: true,
+    });
+    assert.equal(calls.length, 0);
+    for (const role of ["client", "advocate"]) {
+      const result = await auth.verifyOtp({
+        phone: "any number",
+        code: "123456",
+        role,
+      });
+      assert.equal(result.user.role, role);
+      assert.equal(calls.at(-1).input.AuthFlow, "USER_PASSWORD_AUTH");
+      assert.equal(
+        calls.at(-1).input.AuthParameters.USERNAME,
+        `demo-${role}@legalitt.invalid`,
+      );
+      assert.ok(!JSON.stringify(calls.at(-1)).includes("any number"));
+      assert.equal(result.tokens.refreshToken, "refresh");
+    }
+    const count = calls.length;
+    await assert.rejects(
+      auth.verifyOtp({ phone: "", code: "000000", role: "client" }),
+      { status: 401 },
+    );
+    await assert.rejects(
+      auth.verifyOtp({ phone: "", code: "123456", role: "admin" }),
+      { status: 400 },
+    );
+    await assert.rejects(auth.verifyOtp({ phone: "", code: "123456" }), {
+      status: 400,
+    });
+    assert.equal(calls.length, count);
+    for (const config of [
+      { ENVIRONMENT: "prod", NODE_ENV: "development", PHONE_AUTH_MODE: "demo" },
+      { ENVIRONMENT: "dev", NODE_ENV: "production", PHONE_AUTH_MODE: "demo" },
+      { ENVIRONMENT: "dev", NODE_ENV: "development", PHONE_AUTH_MODE: "live" },
+      { ENVIRONMENT: "", NODE_ENV: "development", PHONE_AUTH_MODE: "demo" },
+      { ENVIRONMENT: "dev", NODE_ENV: "development", PHONE_AUTH_MODE: "" },
+    ]) {
+      Object.assign(process.env, config);
+      await assert.rejects(auth.requestOtp({ phone: "ignored" }), {
+        status: 503,
+      });
+      await assert.rejects(
+        auth.verifyOtp({ phone: "ignored", code: "123456", role: "client" }),
+        { status: 503 },
+      );
+    }
+    assert.equal(calls.length, count);
+  } finally {
+    demo.demoPassword = oldPassword;
+    for (const [key, value] of Object.entries(old)) {
       if (value === undefined) delete process.env[key];
       else process.env[key] = value;
     }

@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { Check } from 'lucide-react-native';
 import { useState, type ReactNode } from 'react';
 import {
@@ -22,13 +22,14 @@ type Role = 'user' | 'lawyer';
 
 export default function RoleScreen() {
   const insets = useSafeAreaInsets();
+  const {next}=useLocalSearchParams<{next?:string}>();
   const { setRegistrationRole } = useSession();
   const [selected, setSelected] = useState<Role | null>(null);
 
   const onNext = () => {
     if (!selected) return;
     setRegistrationRole(selected);
-    router.replace('/(auth)/signup');
+    router.replace(next==='login'?'/(auth)/login':'/(auth)/signup');
   };
 
   return (

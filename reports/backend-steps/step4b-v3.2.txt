@@ -1,0 +1,43 @@
+Step 4b update — architecture v3.2
+
+Changed:
+- OTP request accepts but ignores the displayed phone number; it does no lookup.
+- OTP verify requires code 123456 and a client/advocate role selected by the
+  existing onboarding picker. It authenticates only the specified seeded account
+  with USER_PASSWORD_AUTH. The normal JWT verification, /me, refresh and role
+  guards apply. No second session type or request-time provisioning was added.
+- Demo OTP requires ENVIRONMENT=dev, PHONE_AUTH_MODE=demo, and NODE_ENV other than
+  production. Missing/unknown mode and live mode fail closed. No SMS is sent.
+- Login without a role selection goes through the existing picker and returns to
+  login. Normal signup still uses that picker for the registration role.
+- Kept OTP visuals; carried the selected role in in-memory pending login state.
+- Updated the operator README and automated browser authentication check.
+
+Implementation details not specified by the document:
+- /auth/otp/verify adds a required role field restricted to client or advocate.
+  Missing role is rejected rather than silently defaulting. The verified token's
+  role must match the requested demo role. Phone input is never an identity.
+- Demo credentials are read server-side from Secrets Manager, never mobile.
+
+Validation:
+- All workspace TypeScript checks pass; mobile web export passes.
+- API suite: 11 tests pass, including actual RSA JWT validation, wrong issuer /
+  audience / expiry / signature / role rejection, client role guard, demo flag
+  gates, wrong code / admin / missing role rejection, and local database tests.
+- Infra suite: 9 tests pass; strict CloudFormation synthesis passes.
+- Real Dev Cognito: both seeded email/password logins and both OTP roles pass;
+  two arbitrary phone inputs resolve to the same pre-seeded identity per role.
+  /me and refresh pass. User count stays constant; phones remain null.
+- Actual browser URLs: email/password works for both roles; picker + OTP lands
+  at /home for client and /dashboard for advocate and survives page reload.
+  Client cannot open /advocate/fir/review; advocate can. Anonymous access is
+  blocked. Client court advocate-selection URLs remain accessible.
+- Full mobile smoke: 322/322 routes, zero failures; see step4b-v3.2-smoke.log.
+
+Limits and stop point:
+- No real inbox was supplied: email delivery and human confirmation remain a
+  manual check. Demo users have pre-verified email and send no notifications.
+- Local database integration used PostgreSQL 14.18 available on this machine;
+  schema and infrastructure still target PostgreSQL 16. Native hardware untested.
+- API and Postgres run locally. No hosted API, Compute or prod deployment.
+- Stopped after step 4b. No fixtures or step 5 endpoints were changed.

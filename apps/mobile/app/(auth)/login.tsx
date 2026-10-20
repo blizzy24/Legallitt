@@ -60,7 +60,7 @@ export default function LoginScreen() {
   const [password,setPassword]=useState('');
   const [error,setError]=useState('');
   const [busy,setBusy]=useState(false);
-  const {accept,setPending}=useSession();
+  const {accept,setPending,registrationRole}=useSession();
   const email=value.includes('@');
   const submit=async()=>{
     setError('');setBusy(true);
@@ -71,7 +71,8 @@ export default function LoginScreen() {
         else{await accept(result);router.replace(result.user.role==='advocate'?'/(advocate)/dashboard':'/(tabs)/home');}
       }else{
         const digits=value.replace(/[^0-9+]/g,'');const phone=digits.startsWith('+')?digits:`+91${digits}`;
-        await api('/auth/otp/request',{phone});setPending({kind:'phone',phone});router.push('/(auth)/verify');
+        if(!registrationRole){router.push({pathname:'/(auth)/role',params:{next:'login'}});return;}
+        await api('/auth/otp/request',{phone});setPending({kind:'phone',phone,role:registrationRole==='lawyer'?'advocate':'client'});router.push('/(auth)/verify');
       }
     }catch(e){setError(e instanceof Error?e.message:'Authentication failed');}finally{setBusy(false);}
   };

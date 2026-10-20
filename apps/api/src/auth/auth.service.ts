@@ -10,8 +10,6 @@ import {
   ConfirmSignUpCommand,
   ResendConfirmationCodeCommand,
   InitiateAuthCommand,
-  RespondToAuthChallengeCommand,
-  ListUsersCommand,
   type AuthenticationResultType,
 } from "@aws-sdk/client-cognito-identity-provider";
 import {
@@ -21,6 +19,7 @@ import {
 import { CognitoJwtVerifier } from "aws-jwt-verify";
 import { z } from "zod";
 import { PrismaService } from "../prisma.service";
+import { demoAccounts, demoPassword, requireDemoMode } from "./demo";
 
 const roles = z.enum(["client", "advocate", "admin"]);
 const configSchema = z.object({
@@ -51,16 +50,6 @@ export class AuthService {
   });
   private configuration?: Promise<z.infer<typeof configSchema>>;
   private verifier?: ReturnType<typeof CognitoJwtVerifier.create>;
-  private readonly challenges = new Map<
-    string,
-    {
-      session: string;
-      username: string;
-      expires: number;
-      requestedAt: number;
-      attempts: number;
-    }
-  >();
   constructor(private readonly prisma: PrismaService) {}
   private config() {
     if (!this.configuration)
@@ -207,98 +196,33 @@ export class AuthService {
       throw new UnauthorizedException("Session expired");
     }
   }
-  private requireSimulatedPhone() {
-    // Independent API and deployed Lambda checks. No production bypass exists.
-    if (
-      process.env.ENVIRONMENT !== "dev" ||
-      process.env.NODE_ENV === "production" ||
-      process.env.SMS_ENABLED !== "false"
-    )
-      throw new ServiceUnavailableException("SMS provider is not configured");
-  }
   async requestOtp(body: unknown) {
-    this.requireSimulatedPhone();
-    const { phone } = parse(
-      z.object({ phone: z.string().regex(/^\+[1-9]\d{7,14}$/) }).strict(),
-      body,
-    );
-    const existing = this.challenges.get(phone);
-    if (existing && existing.requestedAt > Date.now() - 28000)
-      throw new BadRequestException(
-        "A verification challenge is already active",
-      );
-    const config = await this.config();
-    const found = await this.cognito.send(
-      new ListUsersCommand({
-        UserPoolId: config.userPoolId,
-        Filter: `phone_number = "${phone}"`,
-        Limit: 2,
-      }),
-    );
-    // No unknown-phone account creation or guessed role. Registration rule pending.
-    if (found.Users?.length !== 1 || !found.Users[0].Username)
-      throw new UnauthorizedException(
-        "Phone sign-in is unavailable for this account",
-      );
-    const username = found.Users[0].Username;
-    const result = await this.cognito.send(
-      new InitiateAuthCommand({
-        ClientId: config.clientId,
-        AuthFlow: "CUSTOM_AUTH",
-        AuthParameters: { USERNAME: username },
-      }),
-    );
-    if (!result.Session)
-      throw new UnauthorizedException("Authentication failed");
-    for (const [key, value] of this.challenges)
-      if (value.expires < Date.now()) this.challenges.delete(key);
-    this.challenges.set(phone, {
-      username,
-      session: result.Session,
-      expires: Date.now() + 300000,
-      requestedAt: Date.now(),
-      attempts: 0,
-    });
+    requireDemoMode();
+    // The displayed number is not an identity and is never sent to Cognito.
+    parse(z.object({ phone: z.string().max(64) }).strict(), body);
     return { requested: true };
   }
   async verifyOtp(body: unknown) {
-    this.requireSimulatedPhone();
+    requireDemoMode();
     const input = parse(
       z
         .object({
-          phone: z.string().regex(/^\+[1-9]\d{7,14}$/),
+          phone: z.string().max(64),
           code: z.string().regex(/^\d{6}$/),
+          role: z.enum(["client", "advocate"]),
         })
         .strict(),
       body,
     );
-    const challenge = this.challenges.get(input.phone);
-    if (!challenge || challenge.expires < Date.now() || challenge.attempts >= 3)
-      throw new UnauthorizedException("Verification expired");
-    const config = await this.config();
-    challenge.attempts++;
-    try {
-      const result = await this.cognito.send(
-        new RespondToAuthChallengeCommand({
-          ClientId: config.clientId,
-          ChallengeName: "CUSTOM_CHALLENGE",
-          Session: challenge.session,
-          ChallengeResponses: {
-            USERNAME: challenge.username,
-            ANSWER: input.code,
-          },
-        }),
-      );
-      if (result.AuthenticationResult) {
-        this.challenges.delete(input.phone);
-        return await this.session(result.AuthenticationResult);
-      }
-      if (result.Session) challenge.session = result.Session;
+    if (input.code !== "123456")
       throw new UnauthorizedException("Verification failed");
-    } catch {
-      if (challenge.attempts >= 3) this.challenges.delete(input.phone);
-      throw new UnauthorizedException("Verification failed");
-    }
+    const result = await this.login({
+      email: demoAccounts[input.role].email,
+      password: await demoPassword(),
+    });
+    if ("confirmationRequired" in result || result.user.role !== input.role)
+      throw new UnauthorizedException("Demo account is not configured");
+    return result;
   }
   async identity(token: string) {
     const config = await this.config();
