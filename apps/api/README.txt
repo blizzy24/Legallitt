@@ -96,3 +96,40 @@ This verifies login, role redirects, actual URL access and simulated phone login
 Email delivery/confirmation with a real inbox still needs a supplied test address
 or manual verification. Live tests use the seeded demo accounts provisioned without
 sending messages. Native device testing remains separate from the web smoke.
+
+Local PostgreSQL 16 (Docker Desktop)
+-----------------------------------
+Run these commands from the repository root. Start Docker Desktop first:
+  open -a Docker
+  docker compose --env-file infra/local/.env.local -f infra/local/compose.yaml up -d --wait
+
+The container binds only to 127.0.0.1:55432. Its named Docker volume persists data
+across restarts. The application database is legalitt; integration tests use the
+separate legalitt_test database. Existing Homebrew PostgreSQL 14 is untouched.
+The official postgres:16 image stays on major version 16.
+
+Local credentials are already configured in ignored files with mode 0600:
+  infra/local/.env.local: POSTGRES_PASSWORD
+  apps/api/.env.local: DATABASE_URL and LEGALITT_TEST_DATABASE_URL
+For a new machine, generate a password and configure the two URLs as:
+  postgresql://legalitt:<URL-encoded-password>@127.0.0.1:55432/legalitt
+  postgresql://legalitt:<URL-encoded-password>@127.0.0.1:55432/legalitt_test
+Use the same password in the Compose environment file. Never commit these files.
+
+Apply migrations to BOTH local databases, seed application data, and test:
+  pnpm --filter @legalitt/api db:local:migrate
+  pnpm --filter @legalitt/api db:local:seed
+  pnpm --filter @legalitt/api test:local
+The integration test seeds its isolated database and checks seed idempotence,
+ledger constraints and exact BIGINT handling. It now asserts server major 16.
+To restore the demo accounts into a fresh application database, with AWS access:
+  pnpm --filter @legalitt/api db:seed-demo
+Start the API separately:
+  pnpm --filter @legalitt/api start
+
+Docker Desktop and the postgres container must stay running while using the API
+or running database tests. The API process is not needed for the test suite.
+Stop only this local database when finished:
+  docker compose --env-file infra/local/.env.local -f infra/local/compose.yaml stop
+The up command starts it again. Do not use down -v unless intentionally deleting
+all local PostgreSQL 16 data. PostgreSQL 14 does not need to run for this project.

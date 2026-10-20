@@ -1,0 +1,90 @@
+
+> @legalitt/api@0.0.0 test:local /Users/riya/Documents/14/apps/api
+> pnpm build && node --env-file=.env.local --test tests/*.cjs
+
+
+> @legalitt/api@0.0.0 build /Users/riya/Documents/14/apps/api
+> prisma generate && tsc
+
+Loaded Prisma config from prisma.config.ts.
+
+Prisma schema loaded from prisma/schema.prisma.
+
+✔ Generated Prisma Client (7.10.1) to ./src/generated/prisma in 136ms
+
+TAP version 13
+# Subtest: JWT verifier rejects expiry, wrong issuer/audience/use/signature and invalid role
+ok 1 - JWT verifier rejects expiry, wrong issuer/audience/use/signature and invalid role
+  ---
+  duration_ms: 57.189375
+  type: 'test'
+  ...
+# Subtest: client cannot pass advocate guard or register as admin
+ok 2 - client cannot pass advocate guard or register as admin
+  ---
+  duration_ms: 3.656875
+  type: 'test'
+  ...
+# Subtest: simulated phone entry rejects production regardless of fixed code
+ok 3 - simulated phone entry rejects production regardless of fixed code
+  ---
+  duration_ms: 0.835958
+  type: 'test'
+  ...
+# Subtest: demo OTP ignores phone, selects only fixed accounts and uses password auth
+ok 4 - demo OTP ignores phone, selects only fixed accounts and uses password auth
+  ---
+  duration_ms: 5.767584
+  type: 'test'
+  ...
+# Subtest: database seed is idempotent and ledger rejects non-positive amounts
+ok 5 - database seed is idempotent and ledger rejects non-positive amounts
+  ---
+  duration_ms: 535.937917
+  type: 'test'
+  ...
+# Subtest: Prisma lifecycle exactly mirrors canonical shared lifecycle
+ok 6 - Prisma lifecycle exactly mirrors canonical shared lifecycle
+  ---
+  duration_ms: 0.697
+  type: 'test'
+  ...
+# Subtest: migration includes every authoritative table and SQL-only constraints
+ok 7 - migration includes every authoritative table and SQL-only constraints
+  ---
+  duration_ms: 1.315833
+  type: 'test'
+  ...
+# Subtest: seed uses integer paise, source citations and unconfirmed observations
+ok 8 - seed uses integer paise, source citations and unconfirmed observations
+  ---
+  duration_ms: 1.474459
+  type: 'test'
+  ...
+# Subtest: seed reruns never update existing price versions
+ok 9 - seed reruns never update existing price versions
+  ---
+  duration_ms: 1.919666
+  type: 'test'
+  ...
+# Subtest: /health answers HTTP without AWS/database configuration
+ok 10 - /health answers HTTP without AWS/database configuration
+  ---
+  duration_ms: 394.778292
+  type: 'test'
+  ...
+# Subtest: mobile auth registry covers every root navigator screen and all advocate paths
+ok 11 - mobile auth registry covers every root navigator screen and all advocate paths
+  ---
+  duration_ms: 7.598959
+  type: 'test'
+  ...
+1..11
+# tests 11
+# suites 0
+# pass 11
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 647.94925

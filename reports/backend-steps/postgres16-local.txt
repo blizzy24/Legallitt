@@ -1,0 +1,23 @@
+Local PostgreSQL 16 setup
+
+Docker Desktop was installed but stopped; started it and used the official
+postgres:16 image. Running server: PostgreSQL 16.15 (Debian package).
+Compose: infra/local/compose.yaml, project legalitt-local.
+Address: 127.0.0.1:55432, bound to localhost only.
+Persistent volume: legalitt-local_postgres16.
+Application database: legalitt. Isolated integration database: legalitt_test.
+Generated credential is stored only in ignored mode-0600 environment files.
+
+Updated apps/api/.env.local DATABASE_URL and LEGALITT_TEST_DATABASE_URL.
+Applied migration 20261020000000_initial to both databases.
+Application seed: 9 services, 65 price observations, 6 commission observations.
+Restored the 2 existing demo identities with the idempotent demo seed.
+Restarted the API with the PostgreSQL 16 URL.
+
+API tests on PostgreSQL 16: 11 passed, 0 failed, 0 skipped. Integration test
+asserts server major 16, checks seed idempotence, ledger constraints and BIGINT.
+No PostgreSQL 14 files, data directories, binaries or services were changed.
+No AWS infrastructure was deployed.
+
+Future startup and migration/seed/test commands are in apps/api/README.txt.
+Keep Docker Desktop and the postgres container running for API/database work.

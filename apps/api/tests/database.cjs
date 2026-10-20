@@ -17,6 +17,11 @@ test(
       }),
     });
     try {
+      const [server] = await db.$queryRaw`
+        SELECT current_setting('server_version_num')::integer AS version
+      `;
+      assert.equal(Math.floor(server.version / 10000), 16,
+        "Database integration tests must run on PostgreSQL 16, matching RDS");
       await seed(db);
       const before = await db.servicePricing.findMany({
         orderBy: { id: "asc" },
