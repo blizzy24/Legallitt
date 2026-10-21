@@ -1,5 +1,5 @@
 import { router, type Href } from 'expo-router';
-import { Bell, Search } from 'lucide-react-native';
+import { Bell, ChevronLeft, Search } from 'lucide-react-native';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -7,7 +7,7 @@ import DevPreviewLinks from '../../components/DevPreviewLinks';
 import ServiceCard from '../../components/ServiceCard';
 import VideoCarousel from '../../components/VideoCarousel';
 import { serviceIcon } from '../../components/serviceIcons';
-import { colors, font, home, ink, space, tabs } from '../../constants/theme';
+import { colors, font, home, homeControlShadow, ink, services, space, tabs } from '../../constants/theme';
 import { useSession } from '../../context/session';
 import { CLIENT_DEV_PREVIEWS } from '../../data/devPreviews';
 import { SERVICE_ROUTES } from '../../data/serviceRoutes';
@@ -122,6 +122,14 @@ function SectionRow({ title, badge, style }: { title: string; badge?: boolean; s
 function GuestHeader() {
   return (
     <>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel="Back"
+        onPress={() => router.replace('/(auth)/role')}
+        style={styles.guestBack}
+      >
+        <ChevronLeft size={services.backIcon} color={colors.textPrimary} />
+      </Pressable>
       <View style={styles.banner}>
         <Text style={styles.bannerText}>
           Already have an account?{' '}
@@ -164,6 +172,19 @@ function MemberHeader() {
 }
 
 const styles = StyleSheet.create({
+  // Same circular back control and tokens as the All Services screen.
+  guestBack: {
+    width: services.headerButton,
+    height: services.headerButton,
+    borderRadius: services.headerButton / 2,
+    backgroundColor: colors.card,
+    borderWidth: services.border,
+    borderColor: colors.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: home.gridGap,
+    ...homeControlShadow,
+  },
   screen: {
     flex: 1,
     backgroundColor: colors.screenBg,
