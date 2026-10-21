@@ -36,15 +36,22 @@ export default function OtpScreen({ title, next, changeTo }: Props) {
   const {pending,accept}=useSession();
   const [error,setError]=useState('');const [busy,setBusy]=useState(false);
   const submit=async()=>{
+    setError('');
+    const code = digits.join('');
+    if (!/^\d{6}$/.test(code)) { setError('Enter the six-digit verification code'); return; }
     if(!pending){router.replace(changeTo);return;}
-    setError('');setBusy(true);
+    if (pending.kind === 'phone' && code !== '123456') { setError('Invalid verification code'); return; }
+    setBusy(true);
     try{
-      const code=digits.join('');let result:AuthResult;
+      let result:AuthResult;
       if(pending.kind==='email'){
         await api('/auth/confirm',{email:pending.email,code});
         result=await api<AuthResult>('/auth/login',{email:pending.email,password:pending.password});
       }else result=await api<AuthResult>('/auth/otp/verify',{phone:pending.phone,code,role:pending.role});
-      await accept(result);router.replace(title==='Sign Up'?next:result.user.role==='advocate'?'/(advocate)/dashboard':'/(tabs)/home');
+      await accept(result);
+      if (title === 'Sign Up') router.replace(next);
+      else if (result.user.role === 'advocate') router.replace('/(advocate)/dashboard');
+      else router.replace('/(tabs)/home');
     }catch(e){setError(e instanceof Error?e.message:'Verification failed');}finally{setBusy(false);}
   };
   const resend=async()=>{
@@ -157,7 +164,7 @@ export default function OtpScreen({ title, next, changeTo }: Props) {
         {error ? <Text accessibilityRole="alert">{error}</Text> : null}
         <Pressable
           accessibilityRole="button"
-          disabled={busy || digits.some(d => !d)}
+          disabled={busy}
           onPress={submit}
           style={({ pressed }) => [styles.button, pressed && styles.pressed]}
         >

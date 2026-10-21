@@ -34,11 +34,9 @@ import { useSession } from '../../context/session';
 // files, design/127 included. Measured by comparing the darkness of all six dots on
 // each file; there was no file error to work around.
 //
-// REPORTED — THE LAST SLIDE HAS NO ENDING. design/130 draws the same "Next" button
-// as the other five: there is no "Get Started", no "Done", and no Skip control on
-// any slide. Built exactly as drawn — slide 6's Next goes to /(auth)/login — but
-// where onboarding ends, and whether it can be skipped, are undesigned. No Skip
-// control has been invented.
+// Design 130 keeps the same "Next" button as the other five slides.
+// Confirmed sign-in order: its final action opens role selection. There is no
+// drawn Skip control, so none is added.
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function OnboardingScreen() {
@@ -62,7 +60,7 @@ export default function OnboardingScreen() {
       return;
     }
     setHasSeenOnboarding(true);
-    router.replace('/(auth)/login');
+    router.replace('/(auth)/role');
   };
 
   return (

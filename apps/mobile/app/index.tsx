@@ -8,10 +8,10 @@ import { useSession } from '../context/session';
 // deliberate for a prototype — it keeps the flow reachable for review without a
 // developer flag.
 export default function Index() {
-  const { hasSeenOnboarding, role, isLoggedIn, ready } = useSession();
+  const { hasSeenOnboarding, role, isLoggedIn, ready, registrationRole } = useSession();
   if (!ready) return null;
   if (!hasSeenOnboarding) return <Redirect href="/onboarding" />;
-  if (!isLoggedIn) return <Redirect href="/(auth)/login" />;
+  if (!isLoggedIn) return <Redirect href={registrationRole === "user" ? "/(tabs)/home" : registrationRole === "lawyer" ? "/(auth)/login" : "/(auth)/role"} />;
   // 'lawyer' lands in the advocate app; everything else in the client app.
   return <Redirect href={role === 'lawyer' ? '/(advocate)/dashboard' : '/(tabs)/home'} />;
 }

@@ -1,6 +1,6 @@
 # Legalitt — Backend & Cloud Architecture
 
-Version 3.8 · 20 October 2026
+Version 3.9 · 21 October 2026
 Status: steps 0–6 complete. Step 7 is executable as written; §10 governs how.
 
 This document is the specification for the backend phase. It is written to be
@@ -169,6 +169,27 @@ email path.
 Google and other social sign-in are **out of scope**. Cognito supports them,
 but the designs draw no such button, and adding one changes a screen the
 client has already reviewed.
+
+**Sign-in order.** Clients can browse the designed guest home before signing in:
+
+```
+Client: onboarding → role selection → guest home → banner → sign in or sign up
+Advocate: onboarding → role selection → sign in or sign up
+```
+
+- Role is chosen **before** entering either flow. Client opens the guest home
+  (11/144); Advocate opens sign-in/sign-up directly. There is no advocate guest
+  home; do not adapt the signed-in dashboard (148).
+- The guest home is browsable without an account. The banner at the top is
+  the only prompt to sign in.
+- Client sign-in and sign-up are reached from that banner, never forced earlier.
+  The advocate exception above was confirmed on 21 October 2026.
+
+The single "email or phone" field decides the path: an `@` means email and
+password, anything else means phone and OTP. Keep that behaviour — it is how
+the screen is drawn.
+
+An **empty** field must be rejected before either path starts.
 
 ### 2.10 Deploy cheap services early, expensive ones late
 

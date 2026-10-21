@@ -1,0 +1,45 @@
+Authentication order and Legal Notice text-node fix — 21 October 2026
+
+Confirmed flow:
+Client: onboarding -> role selection -> existing guest home (11/144) -> banner
+        Log in or Sign up -> authentication -> client home.
+Advocate: onboarding -> role selection -> login (with Sign Up link) ->
+          authentication -> existing advocate dashboard.
+No advocate guest screen was created; design 148 is unchanged.
+Architecture section 2.9 records the user-confirmed advocate exception.
+
+Changes:
+- Onboarding leads to role selection. Client selection opens the guest home;
+  advocate selection opens login. The chosen role is retained for signup and
+  demo OTP. Authenticated role continues to come from the real account.
+- Guest client access permits home and the service catalogue, not private
+  case/message/profile tabs or the advocate workspace.
+- Guest banner Sign up now opens signup, rather than login. Login's Sign Up
+  link reuses the selected role rather than asking for it again.
+- Whitespace-only/empty email-or-phone input is rejected before any request.
+  An @ still switches to the existing email/password path.
+- OTP submission shows an error for missing/incomplete digits and for any
+  demo phone code other than 123456. Email verification remains Cognito-driven.
+  Server-side demo validation was already strict and remains so; tests now
+  explicitly cover empty, short and nonnumeric codes as well as a wrong code.
+- Removed two explicit JSX space expressions directly under a View in the
+  Legal Notice API component. Static JSX inspection also checked the auth
+  navigator, OTP, login and signup components; no other direct literal strings
+  outside Text were found in those components.
+
+Validation:
+- All workspace typechecks pass.
+- API auth suite: four tests pass, including validation and production guards.
+- API-mode browser walk uses actual local API/Cognito demo authentication.
+  Empty identifier, empty OTP and 000000 show errors without starting their
+  respective auth request; 123456 signs in to each selected demo role.
+- Both role flows and signup/login links were walked. @ displays password.
+- All 16 client and 13 advocate Legal Notice API routes loaded; console
+  monitoring found zero unexpected text-node warnings and zero page errors.
+- Default fixture export builds. Full 322-route smoke result: see smoke.log.
+- DATA_SOURCE still defaults to fixtures. No AWS or frontend deployment, no
+  push. The user's separate apps/mobile/.gitignore was not changed or staged.
+
+Local browser tests target localhost:8081 via IPv4 for the static export;
+this leaves the separately running IPv6 Metro server untouched. The local
+static preview has been restored to the default fixture build.

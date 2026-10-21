@@ -180,6 +180,12 @@ test("demo OTP ignores phone, selects only fixed accounts and uses password auth
       assert.equal(result.tokens.refreshToken, "refresh");
     }
     const count = calls.length;
+    for (const code of ["", "12345", "abcdef"]) {
+      await assert.rejects(
+        auth.verifyOtp({ phone: "ignored", code, role: "client" }),
+        { status: 400 },
+      );
+    }
     await assert.rejects(
       auth.verifyOtp({ phone: "", code: "000000", role: "client" }),
       { status: 401 },

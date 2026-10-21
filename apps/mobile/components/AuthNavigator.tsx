@@ -6,7 +6,7 @@ import { colors } from "../constants/theme";
 // Explicit registry protects the advocate workspace. Court paths containing
 // /advocate/ are CLIENT selection screens. A test checks the registry against files.
 export default function AuthNavigator() {
-  const { ready, isLoggedIn, role, sessionError, retrySession } = useSession();
+  const { ready, isLoggedIn, role, registrationRole, sessionError, retrySession } = useSession();
   if (!ready) return <ActivityIndicator accessibilityLabel="Loading" />;
   if (sessionError)
     return (
@@ -35,7 +35,7 @@ export default function AuthNavigator() {
           <Stack.Screen key={name} name={name} />
         ))}
       </Stack.Protected>
-      <Stack.Protected guard={isLoggedIn && role === "user"}>
+      <Stack.Protected guard={(isLoggedIn && role === "user") || (!isLoggedIn && registrationRole === "user")}>
         {routes.clientTabs.map((name) => (
           <Stack.Screen key={name} name={name} />
         ))}

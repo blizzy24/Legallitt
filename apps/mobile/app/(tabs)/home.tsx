@@ -131,7 +131,7 @@ function GuestHeader() {
         </Text>
         <Pressable
           accessibilityRole="button"
-          onPress={() => router.push('/(auth)/login')}
+          onPress={() => router.push('/(auth)/signup')}
           style={styles.signup}
         >
           <Text style={styles.signupText}>Sign up</Text>

@@ -735,7 +735,7 @@ export default function ApiLegalNotice({ stage }: { stage: Stage }) {
       )}
       {loading && (
         <ActivityIndicator accessibilityLabel="Loading" color={colors.brand} />
-      )}{" "}
+      )}
       {!!error && (
         <View accessibilityRole="alert" style={s.error}>
           <Text style={s.text}>{error}</Text>
@@ -749,7 +749,7 @@ export default function ApiLegalNotice({ stage }: { stage: Stage }) {
       )}
       {busy && (
         <ActivityIndicator accessibilityLabel="Saving" color={colors.brand} />
-      )}{" "}
+      )}
       {body}
     </View>
   );

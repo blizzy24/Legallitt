@@ -63,7 +63,9 @@ export default function LoginScreen() {
   const {accept,setPending,registrationRole}=useSession();
   const email=value.includes('@');
   const submit=async()=>{
-    setError('');setBusy(true);
+    setError('');
+    if (!value.trim()) { setError('Enter your email or mobile number'); return; }
+    setBusy(true);
     try{
       if(email){
         const result=await api<AuthResult|{confirmationRequired:true}>('/auth/login',{email:value.trim(),password});
@@ -141,7 +143,7 @@ export default function LoginScreen() {
           Don&rsquo;t have an account?{' '}
           <Text
             style={styles.signupLink}
-            onPress={() => router.push('/(auth)/role')}
+            onPress={() => router.push(registrationRole ? '/(auth)/signup' : {pathname:'/(auth)/role',params:{next:'signup'}})}
             accessibilityRole="link"
           >
             Sign Up

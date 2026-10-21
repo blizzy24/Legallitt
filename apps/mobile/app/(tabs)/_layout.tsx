@@ -1,9 +1,12 @@
 import { Tabs } from 'expo-router';
 
+import { useSession } from '../../context/session';
+
 import TabBar from '../../components/TabBar';
 import { colors } from '../../constants/theme';
 
 export default function TabsLayout() {
+  const { isLoggedIn } = useSession();
   return (
     <Tabs
       tabBar={() => <TabBar />}
@@ -14,9 +17,11 @@ export default function TabsLayout() {
     >
       <Tabs.Screen name="home" />
       <Tabs.Screen name="services" />
-      <Tabs.Screen name="cases" />
-      <Tabs.Screen name="messages" />
-      <Tabs.Screen name="profile" />
+      <Tabs.Protected guard={isLoggedIn}>
+        <Tabs.Screen name="cases" />
+        <Tabs.Screen name="messages" />
+        <Tabs.Screen name="profile" />
+      </Tabs.Protected>
     </Tabs>
   );
 }
