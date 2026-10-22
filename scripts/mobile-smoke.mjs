@@ -23,7 +23,8 @@ function routesIn(dir, base = '') {
 }
 const routes = [...new Set(routesIn(app))].sort().map(route => route.replace(/\[[^\]]+\]/g, '1'));
 assert.equal(routes.length, 322, 'The monorepo move must preserve all 322 routes');
-const sessions = Object.fromEntries(['client', 'advocate'].map(role => {
+const fixtureMode = process.env.SMOKE_DATA_SOURCE === 'fixtures';
+const sessions = fixtureMode ? {} : Object.fromEntries(['client', 'advocate'].map(role => {
   const file = process.env[`SMOKE_${role.toUpperCase()}_SESSION`];
   assert.ok(file, `SMOKE_${role.toUpperCase()}_SESSION must point to a private file containing a real dev auth session`);
   const session = JSON.parse(readFileSync(file, 'utf8'));
@@ -58,11 +59,12 @@ try {
       const errors = [];
       page.on('pageerror', error => errors.push(error.message));
       if (process.env.SMOKE_ASSERT_FIXTURES === '1') page.on('request', request => {
-        if (/\/api\/v1\/(cases|documents|advocate\/requests)(?:[/?]|$)/.test(request.url()))
+        if ((fixtureMode ? /\/api\/v1\// : /\/api\/v1\/(cases|documents|advocate\/requests)(?:[/?]|$)/).test(request.url()))
           errors.push('Fixture build called a case/document API: ' + new URL(request.url()).pathname);
       });
       try {
-        await page.evaluateOnNewDocument(tokens => { if (window === window.top && ['http:', 'https:'].includes(location.protocol)) sessionStorage.setItem('legalitt.auth.tokens', JSON.stringify(tokens)); }, sessions[roles.get(route)].tokens);
+        if (fixtureMode) await page.evaluateOnNewDocument(role => { if (window === window.top && ['http:', 'https:'].includes(location.protocol)) sessionStorage.setItem('legalitt.fixture.role',role); }, roles.get(route));
+        else await page.evaluateOnNewDocument(tokens => { if (window === window.top && ['http:', 'https:'].includes(location.protocol)) sessionStorage.setItem('legalitt.auth.tokens', JSON.stringify(tokens)); }, sessions[roles.get(route)].tokens);
         await page.setViewport({ width: 390, height: 900, isMobile: true });
         const response = await page.goto(base + route, { waitUntil: 'networkidle0', timeout: 30000 });
         if (!response?.ok()) errors.push(`HTTP ${response?.status()}`);

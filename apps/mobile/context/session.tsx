@@ -17,6 +17,7 @@ import {
   type AuthUser,
   type Tokens,
 } from "../lib/auth";
+import { fixtureUser, readFixtureRole, storeFixtureRole, type FixtureRole } from "../lib/fixture-session";
 export type Role = "user" | "lawyer";
 type Pending =
   | { kind: "email"; email: string; password: string }
@@ -34,6 +35,7 @@ type Session = {
   setPending: (pending: Pending | null) => void;
   hasSeenOnboarding: boolean;
   setHasSeenOnboarding: (value: boolean) => void;
+  acceptFixture: (role: FixtureRole) => Promise<void>;
   accept: (result: AuthResult) => Promise<void>;
   signOut: () => void;
 };
@@ -54,12 +56,23 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     setHasSeenOnboarding(true);
     setPending(null);
   };
+  const acceptFixture = async (role: FixtureRole) => {
+    await storeFixtureRole(role);
+    setUser(fixtureUser(role));
+    setHasSeenOnboarding(true);
+    setPending(null);
+  };
   useEffect(() => {
     let alive = true;
     setSessionError(null);
     setReady(false);
     (async () => {
       try {
+        if (DATA_SOURCE === "fixtures") {
+          const role = await readFixtureRole();
+          if (role && alive) await acceptFixture(role);
+          return;
+        }
         const tokens = await storedTokens();
         if (!tokens) return;
         const identity = await api<AuthUser>("/me");
@@ -106,10 +119,11 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       hasSeenOnboarding,
       setHasSeenOnboarding,
       accept,
+      acceptFixture,
       signOut: () => {
         setUser(null);
         setPending(null);
-        void storeTokens(null);
+        void (DATA_SOURCE === "fixtures" ? storeFixtureRole(null) : storeTokens(null));
         router.replace("/(auth)/login");
       },
     }),

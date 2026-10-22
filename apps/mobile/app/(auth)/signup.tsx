@@ -1,3 +1,5 @@
+import { DATA_SOURCE } from '../../lib/data-source';
+import { validateFixtureCredentials } from '../../lib/fixture-session';
 import { router } from 'expo-router';
 import { ArrowRight, Check, Eye, EyeOff, Lock, Mail, Phone, User } from 'lucide-react-native';
 import { useState } from 'react';
@@ -32,7 +34,10 @@ export default function SignupScreen() {
     if(!agreed)return;
     setError('');setBusy(true);
     try{
-      await api('/auth/register',{name,email:email.trim(),password,role:registrationRole==='lawyer'?'advocate':'client',...(phone?{phone:`+91${phone.replace(/\D/g,'')}`}:{})});
+      if (DATA_SOURCE === 'fixtures') {
+        if (!name.trim()) throw new Error('Enter your full name');
+        validateFixtureCredentials(email, password);
+      } else await api('/auth/register',{name,email:email.trim(),password,role:registrationRole==='lawyer'?'advocate':'client',...(phone?{phone:`+91${phone.replace(/\D/g,'')}`}:{})});
       setPending({kind:'email',email:email.trim(),password});router.push('/(auth)/signup-verify');
     }catch(e){setError(e instanceof Error?e.message:'Registration failed');}finally{setBusy(false);}
   };

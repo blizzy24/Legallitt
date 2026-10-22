@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { DATA_SOURCE } from '../../lib/data-source';
+import { validateFixtureCredentials } from '../../lib/fixture-session';
 import { api, type AuthResult } from '../../lib/auth';
 import { useSession } from '../../context/session';
 import AuthHeader from '../../components/AuthHeader';
@@ -60,21 +62,30 @@ export default function LoginScreen() {
   const [password,setPassword]=useState('');
   const [error,setError]=useState('');
   const [busy,setBusy]=useState(false);
-  const {accept,setPending,registrationRole}=useSession();
+  const {accept,acceptFixture,setPending,registrationRole}=useSession();
   const email=value.includes('@');
   const submit=async()=>{
     setError('');
     if (!value.trim()) { setError('Enter your email or mobile number'); return; }
     setBusy(true);
     try{
+      if (DATA_SOURCE === 'fixtures' && !registrationRole) {
+        router.push({pathname:'/(auth)/role',params:{next:'login'}});return;
+      }
       if(email){
+        if (DATA_SOURCE === 'fixtures') {
+          validateFixtureCredentials(value, password);
+          await acceptFixture(registrationRole === 'lawyer' ? 'advocate' : 'client');
+          router.replace(registrationRole === 'lawyer' ? '/(advocate)/dashboard' : '/(tabs)/home');
+          return;
+        }
         const result=await api<AuthResult|{confirmationRequired:true}>('/auth/login',{email:value.trim(),password});
         if('confirmationRequired' in result){setPending({kind:'email',email:value.trim(),password});router.push('/(auth)/signup-verify');}
         else{await accept(result);router.replace(result.user.role==='advocate'?'/(advocate)/dashboard':'/(tabs)/home');}
       }else{
         const digits=value.replace(/[^0-9+]/g,'');const phone=digits.startsWith('+')?digits:`+91${digits}`;
         if(!registrationRole){router.push({pathname:'/(auth)/role',params:{next:'login'}});return;}
-        await api('/auth/otp/request',{phone});setPending({kind:'phone',phone,role:registrationRole==='lawyer'?'advocate':'client'});router.push('/(auth)/verify');
+        if (DATA_SOURCE === 'api') await api('/auth/otp/request',{phone});setPending({kind:'phone',phone,role:registrationRole==='lawyer'?'advocate':'client'});router.push('/(auth)/verify');
       }
     }catch(e){setError(e instanceof Error?e.message:'Authentication failed');}finally{setBusy(false);}
   };

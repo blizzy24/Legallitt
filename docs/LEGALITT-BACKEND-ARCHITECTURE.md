@@ -141,7 +141,14 @@ client needs the full sign-in flow working for demos in the meantime.
   entered is ignored. Verifying the fake code signs the user into a seeded
   demo account, so no role has to be inferred from a number.
 
-**The demo accounts are real accounts.** `/auth/otp/verify` still returns real
+**Data-source boundary (confirmed 22 October 2026).** With `DATA_SOURCE=fixtures`,
+sign-in and signup are local simulations with no API/Cognito calls or required
+configuration. OTP accepts only `123456`; plausible email/password values sign
+into the role chosen earlier. Empty/invalid values show errors. Fixture sessions
+use separate local storage and never authorize API requests. With `DATA_SOURCE=api`,
+the real Cognito behavior below is unchanged.
+
+**In API mode, the demo accounts are real accounts.** `/auth/otp/verify` still returns real
 Cognito tokens, exactly as §5 describes — it simply signs in a known user
 instead of the one matching the phone number. There is no second kind of
 session, and no screen behaves differently afterwards. A local-only session
@@ -163,7 +170,7 @@ email path.
   `demo` is implemented now. `live` is built when DLT registration clears, and
   that is when sign-up by phone — including how the role is chosen — gets
   designed properly.
-- `demo` must be **impossible to reach in production**. Gate it on the
+- The API's `demo` phone-auth endpoint must be **impossible to reach in production**. Gate it on the
   environment as well as the flag.
 
 Google and other social sign-in are **out of scope**. Cognito supports them,

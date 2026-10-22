@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { DATA_SOURCE } from '../lib/data-source';
 import {api,type AuthResult} from '../lib/auth';
 import {useSession} from '../context/session';
 import AuthHeader from './AuthHeader';
@@ -33,16 +34,23 @@ type Props = {
 
 export default function OtpScreen({ title, next, changeTo }: Props) {
   const insets = useSafeAreaInsets();
-  const {pending,accept}=useSession();
+  const {pending,accept,acceptFixture,registrationRole}=useSession();
   const [error,setError]=useState('');const [busy,setBusy]=useState(false);
   const submit=async()=>{
     setError('');
     const code = digits.join('');
     if (!/^\d{6}$/.test(code)) { setError('Enter the six-digit verification code'); return; }
     if(!pending){router.replace(changeTo);return;}
-    if (pending.kind === 'phone' && code !== '123456') { setError('Invalid verification code'); return; }
+    if ((pending.kind === 'phone' || DATA_SOURCE === 'fixtures') && code !== '123456') { setError('Invalid verification code'); return; }
     setBusy(true);
     try{
+      if (DATA_SOURCE === 'fixtures') {
+        const role = pending.kind === 'phone' ? pending.role : registrationRole === 'lawyer' ? 'advocate' : 'client';
+        await acceptFixture(role);
+        if (title === 'Sign Up') router.replace(next);
+        else router.replace(role === 'advocate' ? '/(advocate)/dashboard' : '/(tabs)/home');
+        return;
+      }
       let result:AuthResult;
       if(pending.kind==='email'){
         await api('/auth/confirm',{email:pending.email,code});
@@ -56,6 +64,7 @@ export default function OtpScreen({ title, next, changeTo }: Props) {
   };
   const resend=async()=>{
     if(!pending)return;
+    if (DATA_SOURCE === 'fixtures') { setSeconds(RESEND_SECONDS); setError(''); return; }
     try{await api(pending.kind==='email'?'/auth/resend':'/auth/otp/request',pending.kind==='email'?{email:pending.email}:{phone:pending.phone});setSeconds(RESEND_SECONDS);setError('');}
     catch(e){setError(e instanceof Error?e.message:'Request failed');}
   };

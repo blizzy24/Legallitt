@@ -1,0 +1,5 @@
+API mode: fixture marker ignored; plausible but incorrect email/password rejected by real auth.
+Client: onboarding → role → guest → banner signup/login; empty identifier and empty/wrong OTP rejected; @ enables password; 123456 signs in.
+API Legal Notice: all 16 client routes loaded without raw text warnings.
+Advocate: role → login/signup → valid demo OTP → dashboard; all 13 API Notice routes loaded.
+PASS: no unexpected text nodes or page errors.

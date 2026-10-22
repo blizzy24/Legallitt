@@ -1,0 +1,7 @@
+client otp: validation, role session and reload passed
+client email: validation, role session and reload passed
+client signup: validation, role session and reload passed
+advocate otp: validation, role session and reload passed
+advocate email: validation, role session and reload passed
+advocate signup: validation, role session and reload passed
+PASS: zero API/Cognito requests, zero page errors, no real tokens.

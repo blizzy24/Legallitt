@@ -1,0 +1,28 @@
+Fixture sign-in fix — 22 October 2026
+
+DATA_SOURCE=fixtures now simulates authentication with a separate local role
+marker (sessionStorage on web, SecureStore on native). No fake Cognito tokens
+are created. Bootstrap and sign-out use that fixture session, independently of
+real auth storage. The selected role determines the fixture workspace.
+
+Fixture OTP accepts only 123456. Fixture email/password requires a plausible
+email and a password of at least eight characters after trimming; no account lookup
+occurs. Signup validates name/email/password, uses the existing verification
+screen (123456), and reaches account-created/home. Resend is simulated.
+
+DATA_SOURCE=api retains the real Cognito paths. Fixture session loading and
+creation cannot authorize API mode. The shared API client/backend is unchanged.
+Architecture section 2.9 records the explicitly authorized fixture exception.
+
+Verified before push:
+- Fixture build made with EXPO_NO_DOTENV=1, no API URL and default DATA_SOURCE.
+- Both roles: OTP, email/password and signup (six paths), validation, correct
+  landing, reload persistence, zero API/Cognito calls, zero real tokens.
+- API build: a pre-existing fixture marker does not sign in; incorrect plausible
+  email/password values reach real auth and are rejected. Both roles sign in
+  through real Cognito with valid demo OTP, and 29 API Notice routes load.
+- Workspace typechecks pass. Full 322-route fixture smoke uses role markers and
+  rejects all API requests. See smoke.log for its final result.
+- Native SecureStore code typechecked; no physical-device test claimed.
+
+The user's untracked apps/mobile/.gitignore is untouched.
