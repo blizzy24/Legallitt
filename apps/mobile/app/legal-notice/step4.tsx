@@ -53,15 +53,16 @@ const ROWS: { icon: LucideIcon; title: string; subtitle: string }[] = [
   { icon: Crop, title: 'Screenshots', subtitle: 'WhatsApp, Email, etc' },
 ];
 
-function FixtureStep4Screen() {
-  const { kyc, begin } = useKyc();
+export function Step4ScreenView({ onContinue, onUpload }: {
+  onContinue: () => void; onUpload: (kind: string) => void;
+}) {
   return (
     <WizardShell
       step={4}
       align="top"
       background="tinted"
       buttonLabel="Continue"
-      onContinue={() => kyc.completed ? router.push('/legal-notice/step4-review') : begin('/legal-notice/step4')}
+      onContinue={onContinue}
     >
       <Text style={styles.heading}>Upload Supporting Documents</Text>
 
@@ -69,7 +70,7 @@ function FixtureStep4Screen() {
 
       <View style={styles.rows}>
         {ROWS.map((r, i) => (
-          <Pressable onPress={() => previewNotice(`Upload ${r.title}`)}
+          <Pressable onPress={() => onUpload(r.title)}
             key={r.title}
             accessibilityRole="button"
             accessibilityLabel={`Upload ${r.title}`}
@@ -89,7 +90,7 @@ function FixtureStep4Screen() {
         ))}
       </View>
 
-      <Pressable onPress={() => previewNotice("Add More Documents")}
+      <Pressable onPress={() => onUpload("Add More Documents")}
         accessibilityRole="button"
         style={({ pressed }) => [styles.add, pressed && styles.pressed]}
       >
@@ -275,5 +276,6 @@ const styles = StyleSheet.create({
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function Step4Screen() {
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="upload" /> : <FixtureStep4Screen />;
+  const { kyc, begin } = useKyc();
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="upload" /> : <Step4ScreenView onContinue={() => kyc.completed ? router.push('/legal-notice/step4-review') : begin('/legal-notice/step4')} onUpload={title => previewNotice(title === 'Add More Documents' ? title : `Upload ${title}`)} />;
 }

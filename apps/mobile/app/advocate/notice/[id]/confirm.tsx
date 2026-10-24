@@ -32,7 +32,9 @@ import { advNoticeReceipt as t, colors, font, ink } from '../../../../constants/
 // Confirm Received is disabled until the checkbox is ticked, as design/201 draws it
 // in a muted state.
 
-function FixtureAdvocateNoticeConfirmScreen() {
+export function AdvocateNoticeConfirmScreenView({ data, navigate }: { data: { ADV_NOTICE_CONFIRM: typeof ADV_NOTICE_CONFIRM }; navigate: typeof router }) {
+  const { ADV_NOTICE_CONFIRM } = data;
+  const router = navigate;
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
   const c = ADV_NOTICE_CONFIRM;
@@ -452,5 +454,5 @@ const styles = StyleSheet.create({
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function AdvocateNoticeConfirmScreen() {
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="tracking" /> : <FixtureAdvocateNoticeConfirmScreen />;
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="tracking" /> : <AdvocateNoticeConfirmScreenView data={{ ADV_NOTICE_CONFIRM }} navigate={router} />;
 }

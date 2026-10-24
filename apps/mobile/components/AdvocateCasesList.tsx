@@ -58,6 +58,9 @@ const STATUS_TONE: Record<string, { bg: string; fg: string }> = {
 const STAT_TONE = { active: '#A08A6E', upcoming: '#F0C890', completed: '#2FBF6B' } as const;
 
 export default function AdvocateCasesList({
+  records = ADV_CASES,
+  statistics = ADV_CASES_STATS,
+  onReview,
   chrome = 'tab',
   initialService = 'All Services',
   title,
@@ -67,6 +70,9 @@ export default function AdvocateCasesList({
   showStats = true,
   showListTitle = true,
 }: {
+  records?: AdvCaseMatter[];
+  statistics?: typeof ADV_CASES_STATS;
+  onReview?: (matter: AdvCaseMatter) => void;
   chrome?: CasesChrome;
   initialService?: string;
   /** Portal variant — the header title. The tab variant uses the design's. */
@@ -92,16 +98,17 @@ export default function AdvocateCasesList({
 
   const matters = useMemo(
     () =>
-      ADV_CASES.filter((m) => {
+      records.filter((m) => {
         if (filter !== 'All' && m.bucket !== filter) return false;
         if (service !== 'All Services' && ADV_CASES_SERVICE_KEYS[service] !== m.serviceKey) return false;
         return true;
       }),
-    [filter, service],
+    [filter, service, records],
   );
   const filtersActive = (filter !== 'All' ? 1 : 0) + (service !== 'All Services' ? 1 : 0);
 
   function review(m: AdvCaseMatter) {
+    if (onReview) { onReview(m); return; }
     if (m.serviceKey === 'property-search') {
       router.push(`/advocate/property-search/${m.id}/request` as Href);
     } else if (m.serviceKey === 'legal-notice') {
@@ -198,7 +205,7 @@ export default function AdvocateCasesList({
 
         {showStats && (
         <View style={styles.stats}>
-          {ADV_CASES_STATS.map((s) => (
+          {statistics.map((s) => (
             <View key={s.label} style={styles.stat}>
               <View style={styles.statHead}>
                 <Text style={styles.statLabel} {...shrinkToFit(0.7)}>

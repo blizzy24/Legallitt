@@ -1,3 +1,5 @@
+import type { NoticeIntakeModel } from "../../features/legal-notice/screen-model";
+import { useFixtureIntakeModel } from "../../features/legal-notice/useFixtureIntakeModel";
 import ApiLegalNotice from "../../components/api/LegalNotice";
 import { DATA_SOURCE } from "../../lib/data-source";
 import { router } from 'expo-router';
@@ -12,12 +14,12 @@ import { useLegalNotice } from '../../context/legalNotice';
 
 // Step 1 — the client's own details (design/24). The mobile field's two-person icon is
 // as drawn.
-function FixtureStep1Screen() {
-  const { form, updateClient } = useLegalNotice();
+export function Step1ScreenView({ model }: { model: NoticeIntakeModel }) {
+  const { form, updateClient } = model;
   const c = form.client;
 
   return (
-    <WizardShell step={1} buttonLabel="Continue" onContinue={() => router.push('/legal-notice/step2')}>
+    <WizardShell step={1} buttonLabel="Continue" onContinue={model.continue}>
       <ChatBubble title="Please Provide your details!" time="10:32 AM" />
       <View style={styles.fields}>
         <FlatField icon={User} label="Full Name" required value={c.fullName} onChangeText={(t) => updateClient({ fullName: t })} autoComplete="name" />
@@ -38,5 +40,6 @@ const styles = StyleSheet.create({
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function Step1Screen() {
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="step1" /> : <FixtureStep1Screen />;
+  const model = useFixtureIntakeModel("step1");
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="step1" /> : <Step1ScreenView model={model} />;
 }

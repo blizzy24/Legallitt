@@ -16,19 +16,9 @@ import { INVOICE, invoiceLines, invoiceTotal, rupees } from '../../data/legalNot
 // SHARED BY TWO SERVICES — see the note in scan-pay.tsx. Service name, amount,
 // reference and the onward route all come from search params; with none it behaves
 // exactly as the Legal Notice flow always did.
-function FixturePaymentSuccessScreen() {
-  const { form } = useLegalNotice();
-  const params = useLocalSearchParams<{
-    service?: string;
-    amount?: string;
-    ref?: string;
-    next?: string;
-  }>();
-  const total = params.amount ? Number(params.amount) : invoiceTotal(invoiceLines(form.tier));
-  const requestId = params.ref ?? `#${INVOICE.requestId}`;
-  const service = params.service ?? 'legal notice';
-  const nextHref = (params.next ?? '/legal-notice/tracking') as Href;
-
+export function PaymentSuccessScreenView({ service, total, requestId, nextHref }: {
+  service: string; total: number; requestId: string; nextHref: Href;
+}) {
   return (
     <View style={styles.screen}>
       <PayHeader
@@ -176,5 +166,17 @@ const styles = StyleSheet.create({
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function PaymentSuccessScreen() {
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="tracking" /> : <FixturePaymentSuccessScreen />;
+  const { form } = useLegalNotice();
+  const params = useLocalSearchParams<{
+    service?: string;
+    amount?: string;
+    ref?: string;
+    next?: string;
+  }>();
+  const total = params.amount ? Number(params.amount) : invoiceTotal(invoiceLines(form.tier));
+  const requestId = params.ref ?? `#${INVOICE.requestId}`;
+  const service = params.service ?? 'legal notice';
+  const nextHref = (params.next ?? '/legal-notice/tracking') as Href;
+
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="tracking" /> : <PaymentSuccessScreenView service={service} total={total} requestId={requestId} nextHref={nextHref} />;
 }

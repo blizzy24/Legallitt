@@ -34,11 +34,20 @@ const BAR_HEIGHT = t.barPadTop + t.homeHeight + t.barGap + 16 + t.barPadBottom;
 // Approval"). Both states live here behind a prototype-only toggle at the foot of
 // the page (or ?state=approval). The decision route adds design/437 and proceeds
 // through delivery; the existing Arjun profile assignment is preserved.
-function FixtureTrackingScreen({ decision = false }: { decision?: boolean }) {
+export type NoticeTrackingData = {
+  invoice: typeof INVOICE;
+  tracking: typeof TRACKING;
+  steps: typeof TRACKING_STEPS;
+};
+export function TrackingScreenView({ decision = false, data, form, navigate }: {
+  decision?: boolean; data: NoticeTrackingData;
+  form: ReturnType<typeof useLegalNotice>['form']; navigate: typeof router;
+}) {
+  const { invoice: INVOICE, tracking: TRACKING, steps: TRACKING_STEPS } = data;
+  const router = navigate;
   const params = useLocalSearchParams<{ state?: string }>();
   const [state, setState] = useState<TrackingState>(params.state === 'approval' ? 'approval' : 'drafting');
   const insets = useSafeAreaInsets();
-  const { form } = useLegalNotice();
   const tier = tierFor(form.tier);
   const paid = invoiceTotal(invoiceLines(form.tier));
   const approval = state === 'approval';
@@ -921,5 +930,6 @@ const styles = StyleSheet.create({
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function TrackingScreen({ decision = false }: { decision?: boolean } = {}) {
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="tracking" /> : <FixtureTrackingScreen decision={decision} />;
+  const { form } = useLegalNotice();
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="tracking" /> : <TrackingScreenView decision={decision} data={{ invoice: INVOICE, tracking: TRACKING, steps: TRACKING_STEPS }} form={form} navigate={router} />;
 }

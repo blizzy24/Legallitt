@@ -41,7 +41,9 @@ import { advNoticeReview as t, colors, font, ink } from '../../../../constants/t
 // Every control is inert except the state toggle and navigation (including the
 // two outcome rows).
 
-function FixtureAdvocateNoticeReviewScreen() {
+export function AdvocateNoticeReviewScreenView({ data, navigate }: { data: { ADV_NOTICE_REVIEW: typeof ADV_NOTICE_REVIEW }; navigate: typeof router }) {
+  const { ADV_NOTICE_REVIEW } = data;
+  const router = navigate;
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
   const r = ADV_NOTICE_REVIEW;
@@ -640,5 +642,5 @@ const styles = StyleSheet.create({
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function AdvocateNoticeReviewScreen() {
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="tracking" /> : <FixtureAdvocateNoticeReviewScreen />;
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="tracking" /> : <AdvocateNoticeReviewScreenView data={{ ADV_NOTICE_REVIEW }} navigate={router} />;
 }

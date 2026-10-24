@@ -1,3 +1,5 @@
+import type { NoticeIntakeModel } from "../../features/legal-notice/screen-model";
+import { useFixtureIntakeModel } from "../../features/legal-notice/useFixtureIntakeModel";
 import ApiLegalNotice from "../../components/api/LegalNotice";
 import { DATA_SOURCE } from "../../lib/data-source";
 import { router, type Href } from 'expo-router';
@@ -8,16 +10,6 @@ import ChatBubble from '../../components/ChatBubble';
 import WizardShell from '../../components/WizardShell';
 import { caseSummary as s, colors, font, wizardBubble as b, wizardCardShadow } from '../../constants/theme';
 import { useLegalNotice, type IssueType } from '../../context/legalNotice';
-
-// design/27 sample values, used wherever the flow has nothing entered.
-const SAMPLE = {
-  client: 'Suresh Kumar',
-  noticeType: 'Property Notice',
-  noticee: ['Rahul Kumar', 'Brother', 'Indore, Madhya Pradesh'],
-  // No step collects an issue summary, so this is always the sample (reported).
-  summary: 'My brother is refusing to give my share in ancestral Property.',
-  documents: 3,
-};
 
 const NOTICE_TYPE: Record<IssueType, string> = {
   'property-dispute': 'Property Notice',
@@ -31,21 +23,21 @@ const NOTICE_TYPE: Record<IssueType, string> = {
 
 // Step 5 — case summary (design/27). The file's card is 353pt wide (inset 18.6) against
 // the shell's 346; drawn at the shell width.
-function FixtureStep5Screen() {
-  const { form } = useLegalNotice();
+export function Step5ScreenView({ model }: { model: NoticeIntakeModel }) {
+  const { form } = model;
   const noticee = [form.noticee.fullName, form.noticee.relationship, form.noticee.address].filter(Boolean);
-  const docCount = form.documents.length || SAMPLE.documents;
+  const docCount = form.documents.length || model.summary.documents;
 
   return (
-    <WizardShell step={5} buttonLabel="Submit & Proceed to Pay" onContinue={() => router.push('/legal-notice/step6')}>
+    <WizardShell step={5} buttonLabel="Submit & Proceed to Pay" onContinue={model.continue}>
       <ChatBubble title="Preview Your Case Summary" time="10:32 AM" />
       <View style={styles.card}>
-        <Row label="Client Name" value={form.client.fullName || SAMPLE.client} />
-        <Row label="Notice Type" value={form.issueType ? NOTICE_TYPE[form.issueType] : SAMPLE.noticeType} />
-        <Row label="Notice Details" value={(noticee.length ? noticee : SAMPLE.noticee).join('\n')} />
-        <Row label="Issue Summary" value={SAMPLE.summary} paragraph />
+        <Row label="Client Name" value={form.client.fullName || model.summary.client} />
+        <Row label="Notice Type" value={form.issueType ? NOTICE_TYPE[form.issueType] : model.summary.noticeType} />
+        <Row label="Notice Details" value={(noticee.length ? noticee : model.summary.noticee).join('\n')} />
+        <Row label="Issue Summary" value={model.summary.summary} paragraph />
 
-        <Pressable onPress={() => router.push('/legal-notice/step4-review' as Href)} accessibilityRole="button" style={styles.box}>
+        <Pressable onPress={() => model.navigate('/legal-notice/step4-review')} accessibilityRole="button" style={styles.box}>
           <View style={styles.boxText}>
             <Text style={styles.boxTitle}>Uploaded Documents</Text>
             <Text style={styles.boxSub}>{docCount} Documents Uploaded</Text>
@@ -135,5 +127,6 @@ const styles = StyleSheet.create({
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function Step5Screen() {
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="summary" /> : <FixtureStep5Screen />;
+  const model = useFixtureIntakeModel("step5");
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="summary" /> : <Step5ScreenView model={model} />;
 }

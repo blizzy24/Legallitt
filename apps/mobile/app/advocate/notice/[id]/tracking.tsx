@@ -34,7 +34,9 @@ import { advDocHref } from '../../../../data/docLinks';
 // Dates normalised from October to September 2026, as the rest of the advocate flow
 // already was. Refresh Status, the copy button and View are inert.
 
-function FixtureAdvocateNoticeTrackingScreen() {
+export function AdvocateNoticeTrackingScreenView({ data, navigate }: { data: { ADV_NOTICE_TRACKING: typeof ADV_NOTICE_TRACKING }; navigate: typeof router }) {
+  const { ADV_NOTICE_TRACKING } = data;
+  const router = navigate;
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
   const k = ADV_NOTICE_TRACKING;
@@ -454,5 +456,5 @@ const styles = StyleSheet.create({
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function AdvocateNoticeTrackingScreen() {
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="tracking" /> : <FixtureAdvocateNoticeTrackingScreen />;
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="tracking" /> : <AdvocateNoticeTrackingScreenView data={{ ADV_NOTICE_TRACKING }} navigate={router} />;
 }

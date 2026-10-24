@@ -13,9 +13,12 @@ import { INVOICE, TRACKING, tierFor } from "../../data/legalNotice";
 import { formatDate } from "../../data/cases";
 import { useLegalNotice } from "../../context/legalNotice";
 // design/438 — request changes, not a second approval step.
-function FixtureRequestChanges() {
+export function RequestChangesView({ form, invoice, tracking, onSubmit }: {
+  form: ReturnType<typeof useLegalNotice>['form']; invoice: typeof INVOICE;
+  tracking: typeof TRACKING; onSubmit: (comment: string) => void;
+}) {
+  const INVOICE = invoice, TRACKING = tracking;
   const [message, setMessage] = useState("");
-  const { form } = useLegalNotice();
   const tier = tierFor(form.tier);
   return (
     <View style={s.screen}>
@@ -62,10 +65,7 @@ function FixtureRequestChanges() {
         <NoticeButton
           onPress={() => {
             if (message.trim())
-              router.push({
-                pathname: "/chat/advocate",
-                params: { message: message.trim() },
-              });
+              onSubmit(message.trim());
           }}
         >
           Request Changes
@@ -145,5 +145,6 @@ const s = StyleSheet.create({
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function RequestChanges() {
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="changes" /> : <FixtureRequestChanges />;
+  const { form } = useLegalNotice();
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="changes" /> : <RequestChangesView form={form} invoice={INVOICE} tracking={TRACKING} onSubmit={message => router.push({ pathname: "/chat/advocate", params: { message } })} />;
 }

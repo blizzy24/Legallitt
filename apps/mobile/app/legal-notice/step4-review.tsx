@@ -40,20 +40,12 @@ const SAMPLE_DOCS: Doc[] = [
 // Both this screen and the upload screen sit at "Step 4 of 6": design/91 and
 // design/39 each draw the stepper on 4, so the wizard's six steps are unchanged and
 // step 4 simply spans two screens.
-function FixtureStep4ReviewScreen() {
-  const { kyc, begin } = useKyc();
-  const { form, update } = useLegalNotice();
-
-  useEffect(() => {
-    if (form.documents.length === 0) update({ documents: SAMPLE_DOCS.map((d) => d.title) });
-    // Seed once; the flow has no real upload step.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const count = form.documents.length || SAMPLE_DOCS.length;
-
+export function Step4ReviewScreenView({ documents, count, onContinue, onAdd, onView, onReplace, onDelete }: {
+  documents: Doc[]; count: number; onContinue: () => void; onAdd: () => void;
+  onView: (doc: Doc) => void; onReplace: (doc: Doc) => void; onDelete: (doc: Doc) => void;
+}) {
   return (
-    <WizardShell step={4} align="top" background="tinted" buttonLabel="Continue" onContinue={() => kyc.completed ? router.push('/legal-notice/step5') : begin('/legal-notice/step4-review')}>
+    <WizardShell step={4} align="top" background="tinted" buttonLabel="Continue" onContinue={onContinue}>
       <Text style={styles.title}>Review Your Documents</Text>
       <Text style={styles.subtitle}>Your documents have been uploaded successfully. Review them before continuing.</Text>
 
@@ -69,12 +61,12 @@ function FixtureStep4ReviewScreen() {
 
       <IdentityVerification returnTo="/legal-notice/step4-review" />
       <View style={styles.list}>
-        {SAMPLE_DOCS.map((d) => (
-          <DocRow key={d.title} doc={d} />
+        {documents.map((d) => (
+          <DocRow key={d.title} doc={d} onView={() => onView(d)} onReplace={() => onReplace(d)} onDelete={() => onDelete(d)} />
         ))}
       </View>
 
-      <Pressable onPress={() => previewNotice("Add More Documents")} accessibilityRole="button" style={styles.add}>
+      <Pressable onPress={onAdd} accessibilityRole="button" style={styles.add}>
         <CirclePlus size={r.addIcon} color={r.addText} />
         <Text style={styles.addText}>Add More Documents</Text>
         <View style={styles.chip}>
@@ -85,7 +77,7 @@ function FixtureStep4ReviewScreen() {
   );
 }
 
-function DocRow({ doc }: { doc: Doc }) {
+function DocRow({ doc, onView, onReplace, onDelete }: { doc: Doc; onView: () => void; onReplace: () => void; onDelete: () => void }) {
   const Icon = doc.icon;
   return (
     <View style={styles.card}>
@@ -101,14 +93,14 @@ function DocRow({ doc }: { doc: Doc }) {
           accessibilityRole="button"
           accessibilityLabel={`View ${doc.title}`}
           hitSlop={8}
-          onPress={() => router.push(clientDocHref(doc.title) as Href)}
+          onPress={onView}
         >
           <Eye size={r.actionIcon + 2} color={colors.textPrimary} />
         </Pressable>
-        <Pressable onPress={() => previewNotice(`Replace ${doc.title}`)} accessibilityRole="button" accessibilityLabel={`Replace ${doc.title}`} hitSlop={8}>
+        <Pressable onPress={onReplace} accessibilityRole="button" accessibilityLabel={`Replace ${doc.title}`} hitSlop={8}>
           <RefreshCw size={r.actionIcon} color={colors.textPrimary} />
         </Pressable>
-        <Pressable onPress={() => previewNotice(`Delete ${doc.title}`)} accessibilityRole="button" accessibilityLabel={`Delete ${doc.title}`} hitSlop={8}>
+        <Pressable onPress={onDelete} accessibilityRole="button" accessibilityLabel={`Delete ${doc.title}`} hitSlop={8}>
           <Trash size={r.actionIcon} color={colors.textPrimary} />
         </Pressable>
       </View>
@@ -234,5 +226,12 @@ const styles = StyleSheet.create({
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function Step4ReviewScreen() {
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="upload" /> : <FixtureStep4ReviewScreen />;
+  const { kyc, begin } = useKyc();
+  const { form, update } = useLegalNotice();
+  useEffect(() => { if (!form.documents.length) update({ documents: SAMPLE_DOCS.map(d => d.title) }); }, []);
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="upload" /> : <Step4ReviewScreenView documents={SAMPLE_DOCS} count={form.documents.length || SAMPLE_DOCS.length}
+    onContinue={() => kyc.completed ? router.push('/legal-notice/step5') : begin('/legal-notice/step4-review')}
+    onAdd={() => previewNotice('Add More Documents')}
+    onView={doc => router.push(clientDocHref(doc.title) as Href)}
+    onReplace={doc => previewNotice(`Replace ${doc.title}`)} onDelete={doc => previewNotice(`Delete ${doc.title}`)} />;
 }

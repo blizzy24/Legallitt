@@ -87,7 +87,7 @@ export default function AdvocateNoticeDraftEditorScreen() {
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <NoticeDraftSections />
+        <NoticeDraftSections sections={d.sections} />
       </ScrollView>
 
       <View style={[styles.footer, { paddingBottom: insets.bottom + 14 }]}>

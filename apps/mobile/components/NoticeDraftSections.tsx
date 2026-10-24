@@ -16,17 +16,19 @@ import { advNoticeDraft as t, colors, font } from '../constants/theme';
  * STATIC. The content is fixed strings; nothing was generated. The edit pencils
  * are inert — no editor is specified anywhere in the designs.
  */
-export default function NoticeDraftSections() {
-  const d = ADV_NOTICE_DRAFT;
+export default function NoticeDraftSections({ sections = ADV_NOTICE_DRAFT.sections, onEdit }: {
+  sections?: typeof ADV_NOTICE_DRAFT.sections;
+  onEdit?: (index: number) => void;
+}) {
   return (
     <>
-      {d.sections.map((s) => (
+      {sections.map((s, index) => (
         <View key={s.n} style={styles.card}>
           <View style={styles.secHead}>
             <Text style={styles.secTitle} {...shrinkToFit(0.75)}>
               {s.n}. {s.title}
             </Text>
-            <Pressable accessibilityRole="button" accessibilityLabel={`Edit ${s.title}`} hitSlop={8}>
+            <Pressable accessibilityRole="button" accessibilityLabel={`Edit ${s.title}`} hitSlop={8} onPress={() => onEdit?.(index)}>
               <Pencil size={t.pencil} color={colors.textPrimary} />
             </Pressable>
           </View>

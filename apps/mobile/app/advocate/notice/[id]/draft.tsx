@@ -32,7 +32,9 @@ import {
 // ⚠ design/188 names the advocate "Adv. Abhishek Sahu" where design/148 has
 // "Abhishek Chouhan", and spells its own chip "Fix Grammer". Both kept as drawn.
 
-function FixtureAdvocateNoticeDraftScreen() {
+export function AdvocateNoticeDraftScreenView({ data, navigate }: { data: { ADV_NOTICE_DRAFT: typeof ADV_NOTICE_DRAFT }; navigate: typeof router }) {
+  const { ADV_NOTICE_DRAFT } = data;
+  const router = navigate;
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
   const d = ADV_NOTICE_DRAFT;
@@ -79,7 +81,7 @@ function FixtureAdvocateNoticeDraftScreen() {
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <NoticeDraftSections />
+        <NoticeDraftSections sections={d.sections} />
 
         <View style={styles.card}>
           <View style={styles.aiChip}>
@@ -283,5 +285,5 @@ const styles = StyleSheet.create({
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function AdvocateNoticeDraftScreen() {
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="draft" /> : <FixtureAdvocateNoticeDraftScreen />;
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="draft" /> : <AdvocateNoticeDraftScreenView data={{ ADV_NOTICE_DRAFT }} navigate={router} />;
 }

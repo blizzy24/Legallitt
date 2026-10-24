@@ -33,7 +33,9 @@ import { advDocHref } from '../../../../data/docLinks';
 // View opens the document viewer on that file. The Download chips, the edit pencil
 // and the text area are inert — there is no download and no text entry.
 
-function FixtureAdvocateNoticeDocumentsScreen() {
+export function AdvocateNoticeDocumentsScreenView({ data, navigate }: { data: { ADV_NOTICE_DOCS: typeof ADV_NOTICE_DOCS }; navigate: typeof router }) {
+  const { ADV_NOTICE_DOCS } = data;
+  const router = navigate;
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
   const d = ADV_NOTICE_DOCS;
@@ -373,5 +375,5 @@ const styles = StyleSheet.create({
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function AdvocateNoticeDocumentsScreen() {
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="request" /> : <FixtureAdvocateNoticeDocumentsScreen />;
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="request" /> : <AdvocateNoticeDocumentsScreenView data={{ ADV_NOTICE_DOCS }} navigate={router} />;
 }

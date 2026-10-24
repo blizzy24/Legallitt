@@ -1,3 +1,5 @@
+import type { NoticeIntakeModel } from "../../features/legal-notice/screen-model";
+import { useFixtureIntakeModel } from "../../features/legal-notice/useFixtureIntakeModel";
 import ApiLegalNotice from "../../components/api/LegalNotice";
 import { DATA_SOURCE } from "../../lib/data-source";
 import { router } from 'expo-router';
@@ -17,10 +19,10 @@ const BAR_HEIGHT = p.barPadTop + 20 + p.barButtonGap + 52 + p.captionGap + 16 + 
 // Final Step" against a "Step 6 of 6" stepper; both say 6 of 6 here. The UPI parent
 // and its "Scan QR Code" child are both selected in the file: modelled as method +
 // sub-option.
-function FixtureStep6Screen() {
+export function Step6ScreenView({ model }: { model: NoticeIntakeModel }) {
   const insets = useSafeAreaInsets();
-  const { form } = useLegalNotice();
-  const lines = invoiceLines(form.tier);
+  const { form } = model;
+  const lines = model.invoiceLines;
   const total = invoiceTotal(lines);
 
   return (
@@ -44,9 +46,9 @@ function FixtureStep6Screen() {
           <View style={styles.tile}>
             <FileText size={p.tileIcon} color={ink.accent} />
           </View>
-          <Text style={styles.invoiceTitle}>{INVOICE.service}</Text>
+          <Text style={styles.invoiceTitle}>{model.invoice.service}</Text>
           <Text style={styles.ref}>
-            Ref ID: <Text style={styles.mono}>#{INVOICE.refId}</Text> ·
+            Ref ID: <Text style={styles.mono}>#{model.invoice.refId}</Text> ·
           </Text>
           <View style={styles.divider} />
           <View style={styles.rows}>
@@ -81,7 +83,7 @@ function FixtureStep6Screen() {
         </View>
         <Pressable
           accessibilityRole="button"
-          onPress={() => router.push('/legal-notice/scan-pay')}
+          onPress={() => model.continue()}
           style={({ pressed }) => [styles.pay, pressed && styles.pressed]}
         >
           <Text style={styles.payLabel}>Pay</Text>
@@ -261,5 +263,6 @@ const styles = StyleSheet.create({
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function Step6Screen() {
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="payment" /> : <FixtureStep6Screen />;
+  const model = useFixtureIntakeModel("step6");
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="payment" /> : <Step6ScreenView model={model} />;
 }

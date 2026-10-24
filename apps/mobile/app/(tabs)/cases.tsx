@@ -28,13 +28,13 @@ const SEGMENTS: Segment<Tab>[] = [
   { key: 'closed', label: 'Closed' },
 ];
 
-function FixtureCasesScreen() {
+export function CasesScreenView({ stats, active, hearings, pending }: {
+  stats: ReturnType<typeof caseStats>; active: ReturnType<typeof activeCases>;
+  hearings: ReturnType<typeof upcomingHearings>; pending: PendingRequest[];
+}) {
   const insets = useSafeAreaInsets();
   const [tab, setTab] = useState<Tab>('active');
 
-  const stats = caseStats();
-  const active = activeCases();
-  const hearings = upcomingHearings();
   const nextHearing = hearings[0];
 
   return (
@@ -95,11 +95,11 @@ function FixtureCasesScreen() {
               </View>
             ))}
 
-            <PendingSection requests={PENDING_REQUESTS} />
+            <PendingSection requests={pending} />
           </>
         )}
 
-        {tab === 'pending' && <PendingSection requests={PENDING_REQUESTS} first />}
+        {tab === 'pending' && <PendingSection requests={pending} first />}
 
         {tab === 'closed' && (
           <View style={styles.empty}>
@@ -475,5 +475,5 @@ const styles = StyleSheet.create({
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function CasesScreen() {
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="list" /> : <FixtureCasesScreen />;
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="list" /> : <CasesScreenView stats={caseStats()} active={activeCases()} hearings={upcomingHearings()} pending={PENDING_REQUESTS} />;
 }

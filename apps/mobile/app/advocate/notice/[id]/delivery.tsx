@@ -80,7 +80,9 @@ function AddressBlock({
   );
 }
 
-function FixtureAdvocateNoticeDeliveryScreen() {
+export function AdvocateNoticeDeliveryScreenView({ data, navigate }: { data: { ADV_NOTICE_DELIVERY: typeof ADV_NOTICE_DELIVERY }; navigate: typeof router }) {
+  const { ADV_NOTICE_DELIVERY } = data;
+  const router = navigate;
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
   const d = ADV_NOTICE_DELIVERY;
@@ -554,5 +556,5 @@ const styles = StyleSheet.create({
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function AdvocateNoticeDeliveryScreen() {
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="dispatch" /> : <FixtureAdvocateNoticeDeliveryScreen />;
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="dispatch" /> : <AdvocateNoticeDeliveryScreenView data={{ ADV_NOTICE_DELIVERY }} navigate={router} />;
 }

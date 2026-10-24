@@ -31,7 +31,9 @@ import { advNoticeShipment as t, colors, font, ink } from '../../../../constants
 //
 // ⚠ FIVE status steps here against design/200's SEVEN, for the same shipment.
 
-function FixtureAdvocateNoticeShipmentScreen() {
+export function AdvocateNoticeShipmentScreenView({ data, navigate }: { data: { ADV_NOTICE_SHIPMENT: typeof ADV_NOTICE_SHIPMENT }; navigate: typeof router }) {
+  const { ADV_NOTICE_SHIPMENT } = data;
+  const router = navigate;
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
   const s = ADV_NOTICE_SHIPMENT;
@@ -413,5 +415,5 @@ const styles = StyleSheet.create({
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function AdvocateNoticeShipmentScreen() {
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="tracking" /> : <FixtureAdvocateNoticeShipmentScreen />;
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="tracking" /> : <AdvocateNoticeShipmentScreenView data={{ ADV_NOTICE_SHIPMENT }} navigate={router} />;
 }

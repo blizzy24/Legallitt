@@ -4,7 +4,7 @@ import { Image, ScrollView, StyleSheet } from "react-native";
 import { NoticeHeader } from "../../components/NoticeDeliveryScreen";
 import { noticeDelivery as t } from "../../constants/tokens/noticeDelivery";
 // Only the supplied proof image is available; do not fabricate a document body.
-function FixtureDeliveryProof() {
+export function DeliveryProofView() {
   return (
     <>
       <NoticeHeader title="Signed Proof of Delivery (POD)" />
@@ -25,5 +25,5 @@ const s = StyleSheet.create({
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function DeliveryProof() {
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="delivery" /> : <FixtureDeliveryProof />;
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="delivery" /> : <DeliveryProofView />;
 }

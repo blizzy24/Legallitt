@@ -41,18 +41,18 @@ const ROW_ICONS: Record<string, LucideIcon> = {
   'Requested Date': CalendarDays,
 };
 
-function FixtureRequestsScreen() {
+export function RequestsScreenView({ requests }: { requests: RequestItem[] }) {
   const insets = useSafeAreaInsets();
   const [filter, setFilter] = useState<RequestFilter>('all');
 
-  const shown = REQUESTS.filter((r) => {
+  const shown = requests.filter((r) => {
     const f = REQUEST_FILTERS.find((x) => x.key === filter);
     return !f?.match || r.status === f.match;
   });
 
   const countFor = (key: RequestFilter) => {
     const f = REQUEST_FILTERS.find((x) => x.key === key);
-    return f?.match ? REQUESTS.filter((r) => r.status === f.match).length : REQUESTS.length;
+    return f?.match ? requests.filter((r) => r.status === f.match).length : requests.length;
   };
 
   return (
@@ -444,5 +444,5 @@ const styles = StyleSheet.create({
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function RequestsScreen() {
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="list" /> : <FixtureRequestsScreen />;
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="list" /> : <RequestsScreenView requests={REQUESTS} />;
 }

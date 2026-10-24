@@ -40,7 +40,9 @@ import { advNoticeDispatch as t, colors, font, ink } from '../../../../constants
 // completing them. The pending rows are made tappable here, since a checklist you
 // cannot check is not a checklist — the design shows states but not the transition.
 
-function FixtureAdvocateNoticeDispatchScreen() {
+export function AdvocateNoticeDispatchScreenView({ data, navigate }: { data: { ADV_NOTICE_DISPATCH: typeof ADV_NOTICE_DISPATCH; ADV_NOTICE_RECIPIENT: typeof ADV_NOTICE_RECIPIENT }; navigate: typeof router }) {
+  const { ADV_NOTICE_DISPATCH, ADV_NOTICE_RECIPIENT } = data;
+  const router = navigate;
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
   const d = ADV_NOTICE_DISPATCH;
@@ -487,5 +489,5 @@ const styles = StyleSheet.create({
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function AdvocateNoticeDispatchScreen() {
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="dispatch" /> : <FixtureAdvocateNoticeDispatchScreen />;
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="dispatch" /> : <AdvocateNoticeDispatchScreenView data={{ ADV_NOTICE_DISPATCH, ADV_NOTICE_RECIPIENT }} navigate={router} />;
 }

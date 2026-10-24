@@ -10,12 +10,12 @@ import NoticeResponseScreen from '../../../../components/NoticeResponseScreen';
 // design/267 at app/advocate/notice/response-editor.tsx. A pixel diff of the
 // two exports found them identical above the footer and different only in the
 // three footer controls, so one component carries both and `variant` picks.
-function FixtureAdvocateNoticeResponseScreen() {
+export function AdvocateNoticeResponseScreenView() {
   const { id } = useLocalSearchParams<{ id: string }>();
   return <NoticeResponseScreen variant="share" caseId={id ?? 'ln-2026-1048'} />;
 }
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function AdvocateNoticeResponseScreen() {
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="tracking" /> : <FixtureAdvocateNoticeResponseScreen />;
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="tracking" /> : <AdvocateNoticeResponseScreenView />;
 }

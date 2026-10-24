@@ -32,7 +32,9 @@ import { advNoticeFinal as t, colors, font, ink } from '../../../../constants/th
 //
 // Download PDF is inert — the prototype has no file output.
 
-function FixtureAdvocateNoticeFinalScreen() {
+export function AdvocateNoticeFinalScreenView({ data, navigate }: { data: { ADV_NOTICE_FINAL: typeof ADV_NOTICE_FINAL; ADV_NOTICE_RECIPIENT: typeof ADV_NOTICE_RECIPIENT }; navigate: typeof router }) {
+  const { ADV_NOTICE_FINAL, ADV_NOTICE_RECIPIENT } = data;
+  const router = navigate;
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
   const f = ADV_NOTICE_FINAL;
@@ -410,5 +412,5 @@ const styles = StyleSheet.create({
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function AdvocateNoticeFinalScreen() {
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="final" /> : <FixtureAdvocateNoticeFinalScreen />;
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="final" /> : <AdvocateNoticeFinalScreenView data={{ ADV_NOTICE_FINAL, ADV_NOTICE_RECIPIENT }} navigate={router} />;
 }

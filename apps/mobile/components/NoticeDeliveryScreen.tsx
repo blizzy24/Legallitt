@@ -32,16 +32,14 @@ import { noticeDelivery as t } from "../constants/tokens/noticeDelivery";
 import { NOTICE_DELIVERY as d } from "../data/noticeDelivery";
 import { clientDocHref } from "../data/docLinks";
 import { useDemoWait } from "../hooks/useDemoAdvance";
-const viewNotice = () => router.push(clientDocHref(d.file) as Href);
-const viewProof = () => router.push("/legal-notice/delivery-proof");
-function CopyWaybill() {
+function CopyWaybill({ waybill }: { waybill: string }) {
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityLabel="Copy waybill"
       onPress={() => {
         if (typeof navigator !== "undefined")
-          void navigator.clipboard?.writeText(d.waybill);
+          void navigator.clipboard?.writeText(waybill);
       }}
       style={s.tile}
     >
@@ -144,11 +142,22 @@ function Pill({
 }
 export default function NoticeDeliveryScreen({
   delivered = false,
+  data = d,
+  allowDemoAdvance = true,
+  onViewNotice,
+  onViewProof,
 }: {
   delivered?: boolean;
+  data?: typeof d;
+  allowDemoAdvance?: boolean;
+  onViewNotice?: () => void;
+  onViewProof?: () => void;
 }) {
+  const d = data;
+  const viewNotice = onViewNotice ?? (() => router.push(clientDocHref(d.file) as Href));
+  const viewProof = onViewProof ?? (() => router.push('/legal-notice/delivery-proof'));
   const insets = useSafeAreaInsets();
-  useDemoWait(!delivered);
+  useDemoWait(allowDemoAdvance && !delivered);
   return (
     <View style={s.screen}>
       <NoticeHeader
@@ -194,7 +203,7 @@ export default function NoticeDeliveryScreen({
                   <Title small>{d.courier}</Title>
                   <Body large>Waybill: {d.waybill}</Body>
                 </View>
-                <CopyWaybill />
+                <CopyWaybill waybill={d.waybill} />
               </View>
               <View style={[s.panel, s.row]}>
                 <View style={s.flex}>
@@ -302,7 +311,7 @@ export default function NoticeDeliveryScreen({
                   <Text style={s.strong}>{d.courier}</Text>
                   <Body>{d.waybill}</Body>
                 </View>
-                <CopyWaybill />
+                <CopyWaybill waybill={d.waybill} />
               </View>
             </Card>
             <Card>

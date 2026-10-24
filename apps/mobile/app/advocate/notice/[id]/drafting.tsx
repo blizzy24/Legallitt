@@ -43,7 +43,9 @@ import {
 //
 // The purple is the quarantined Legalitt AI palette (constants/tokens/legalittAi.ts).
 
-function FixtureAdvocateNoticeDraftingScreen() {
+export function AdvocateNoticeDraftingScreenView({ data, navigate }: { data: { ADV_NOTICE_DRAFTING: typeof ADV_NOTICE_DRAFTING }; navigate: typeof router }) {
+  const { ADV_NOTICE_DRAFTING } = data;
+  const router = navigate;
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
   const d = ADV_NOTICE_DRAFTING;
@@ -392,5 +394,5 @@ const styles = StyleSheet.create({
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function AdvocateNoticeDraftingScreen() {
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="draft" /> : <FixtureAdvocateNoticeDraftingScreen />;
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="draft" /> : <AdvocateNoticeDraftingScreenView data={{ ADV_NOTICE_DRAFTING }} navigate={router} />;
 }

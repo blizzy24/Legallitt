@@ -1,3 +1,5 @@
+import type { NoticeIntakeModel } from "../../features/legal-notice/screen-model";
+import { useFixtureIntakeModel } from "../../features/legal-notice/useFixtureIntakeModel";
 import ApiLegalNotice from "../../components/api/LegalNotice";
 import { DATA_SOURCE } from "../../lib/data-source";
 import { router } from 'expo-router';
@@ -33,15 +35,15 @@ const ROWS: Action[][] = [
 
 // Step 3 — issue type (design/26). The file shows a timestamp with no bubble above the
 // heading; drawn as is. No selected state is designed: brand border + brand chip here.
-function FixtureStep3Screen() {
-  const { form, update } = useLegalNotice();
+export function Step3ScreenView({ model }: { model: NoticeIntakeModel }) {
+  const { form, update } = model;
   // The two-column pairing is fixed, so on narrow screens the pills have to give up
   // a little size rather than re-wrap or ellipsize. 390 and wider are untouched.
   const { width } = useWindowDimensions();
   const k = width < q.compactBelow ? q.compactScale : 1;
 
   return (
-    <WizardShell step={3} buttonLabel="Continue" onContinue={() => router.push('/legal-notice/step4')}>
+    <WizardShell step={3} buttonLabel="Continue" onContinue={model.continue}>
       <ChatBubble time="10:30 AM" />
       <Text style={styles.title}>Quick Actions</Text>
       <View style={styles.pills}>
@@ -139,5 +141,6 @@ const styles = StyleSheet.create({
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function Step3Screen() {
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="step3" /> : <FixtureStep3Screen />;
+  const model = useFixtureIntakeModel("step3");
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="step3" /> : <Step3ScreenView model={model} />;
 }

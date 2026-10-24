@@ -44,7 +44,9 @@ import { advDocHref } from '../../../../data/docLinks';
 
 const CHIP_ICONS = [FileText, Gavel, IdCard];
 
-function FixtureAdvocateNoticeSendScreen() {
+export function AdvocateNoticeSendScreenView({ data, navigate }: { data: { ADV_NOTICE_SEND: typeof ADV_NOTICE_SEND }; navigate: typeof router }) {
+  const { ADV_NOTICE_SEND } = data;
+  const router = navigate;
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
   const s = ADV_NOTICE_SEND;
@@ -513,5 +515,5 @@ const styles = StyleSheet.create({
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function AdvocateNoticeSendScreen() {
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="send" /> : <FixtureAdvocateNoticeSendScreen />;
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="send" /> : <AdvocateNoticeSendScreenView data={{ ADV_NOTICE_SEND }} navigate={router} />;
 }

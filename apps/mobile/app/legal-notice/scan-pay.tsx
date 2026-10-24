@@ -13,7 +13,21 @@ import { useLegalNotice } from '../../context/legalNotice';
 // so the body lives in components/ScanPayScreen and each caller passes its own
 // service name, amount, reference and onward route. With no params this route
 // behaves exactly as the Legal Notice flow always did.
-function FixtureLegalNoticeScanPayScreen() {
+export function LegalNoticeScanPayScreenView({ service, total, successHref, query }: {
+  service: string; total: number; successHref: Href; query: URLSearchParams;
+}) {
+  return (
+    <ScanPayScreen
+      service={service}
+      amount={total}
+      successHref={successHref}
+      query={query.toString()}
+    />
+  );
+}
+
+// The deployed fixture path remains unchanged; API mode is explicit.
+export default function LegalNoticeScanPayScreen() {
   const { form } = useLegalNotice();
   const params = useLocalSearchParams<{
     service?: string;
@@ -33,17 +47,5 @@ function FixtureLegalNoticeScanPayScreen() {
   if (params.ref) query.set('ref', params.ref);
   if (params.next) query.set('next', params.next);
 
-  return (
-    <ScanPayScreen
-      service={service}
-      amount={total}
-      successHref={successHref}
-      query={query.toString()}
-    />
-  );
-}
-
-// The deployed fixture path remains unchanged; API mode is explicit.
-export default function LegalNoticeScanPayScreen() {
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="payment" /> : <FixtureLegalNoticeScanPayScreen />;
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="payment" /> : <LegalNoticeScanPayScreenView service={service} total={total} successHref={successHref} query={query} />;
 }

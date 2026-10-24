@@ -1,3 +1,5 @@
+import type { NoticeIntakeModel } from "../../features/legal-notice/screen-model";
+import { useFixtureIntakeModel } from "../../features/legal-notice/useFixtureIntakeModel";
 import ApiLegalNotice from "../../components/api/LegalNotice";
 import { DATA_SOURCE } from "../../lib/data-source";
 import { router } from 'expo-router';
@@ -26,15 +28,15 @@ const REASONS: { icon: LucideIcon; title: string; caption: string; tint: string 
 
 // Legal Notice detail / pricing (design/22). Prices come from data/legalNotice.ts so
 // they match the payment screen's Service Fee.
-function FixtureLegalNoticeDetailScreen() {
+export function LegalNoticeDetailScreenView({ model }: { model: NoticeIntakeModel }) {
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   // The tier cards are half the screen, so the speed line runs out of room before
   // anything else does. Scale it down only where it would otherwise wrap.
   const speedSize = d.speedSize * (width < d.speedCompactBelow ? d.speedCompactScale : 1);
-  const { form, update } = useLegalNotice();
+  const { form, update } = model;
   const tierId = form.tier;
-  const tier = tierFor(tierId);
+  const tier = model.tiers.find(t => t.id === tierId)!;
 
   return (
     <View style={styles.screen}>
@@ -106,7 +108,7 @@ function FixtureLegalNoticeDetailScreen() {
         <Text style={[styles.section, styles.pickSection]}>Choose Your Service</Text>
         <Text style={styles.pickSub}>Select the priority that suits your requirement.</Text>
         <View style={styles.tiers}>
-          {SERVICE_TIERS.map((t) => {
+          {model.tiers.map((t) => {
             const selected = t.id === tierId;
             return (
               <Pressable
@@ -152,7 +154,7 @@ function FixtureLegalNoticeDetailScreen() {
 
         <Pressable
           accessibilityRole="button"
-          onPress={() => router.push('/legal-notice/step1')}
+          onPress={() => model.continue()}
           style={({ pressed }) => [styles.button, pressed && styles.pressed]}
         >
           <Text style={styles.buttonText}>Get Started</Text>
@@ -515,5 +517,6 @@ const styles = StyleSheet.create({
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function LegalNoticeDetailScreen() {
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="detail" /> : <FixtureLegalNoticeDetailScreen />;
+  const model = useFixtureIntakeModel("detail");
+  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="detail" /> : <LegalNoticeDetailScreenView model={model} />;
 }
