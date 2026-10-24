@@ -1,3 +1,4 @@
+import { AdvocateAvatar } from '../../../../components/AdvocateAvatar';
 import { router, type Href } from 'expo-router';
 import {
   ArrowLeftRight,
@@ -88,9 +89,7 @@ export default function DistrictChangeRequestScreen() {
             </View>
           </View>
           <View style={styles.adv}>
-            <View style={styles.photo}>
-              <Text style={styles.photoText}>{d.initials}</Text>
-            </View>
+            <AdvocateAvatar name={'Adv. Abhishek Verma'} style={styles.photo}><Text style={styles.photoText}>{d.initials}</Text></AdvocateAvatar>
             <View style={styles.flex}>
               <Text style={styles.name} {...shrinkToFit(0.75)}>
                 {d.name}

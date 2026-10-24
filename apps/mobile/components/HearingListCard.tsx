@@ -1,3 +1,4 @@
+import { AdvocateAvatar } from './AdvocateAvatar';
 import { Building2, ChevronRight } from 'lucide-react-native';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -63,9 +64,7 @@ export default function HearingListCard({ hearing, onPress }: Props) {
 
           {advocate && (
             <View style={styles.advocateRow}>
-              <View style={styles.avatar}>
-                <Text style={styles.avatarText}>{advocate.initials}</Text>
-              </View>
+              <AdvocateAvatar name={advocate.name} style={styles.avatar}><Text style={styles.avatarText}>{advocate.initials}</Text></AdvocateAvatar>
               <View style={styles.advocateText}>
                 <Text style={styles.advocateLabel}>Assigned Advocate</Text>
                 <Text style={styles.advocateName} numberOfLines={1}>

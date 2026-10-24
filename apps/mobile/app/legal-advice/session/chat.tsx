@@ -1,3 +1,4 @@
+import { AdvocateAvatar } from '../../../components/AdvocateAvatar';
 import { previewNotice } from '../../../components/PreviewNotice';
 import DemoPressable from '../../../components/DemoPressable';
 import { router } from 'expo-router';
@@ -63,10 +64,8 @@ export default function LegalAdviceChatSessionScreen() {
         </Pressable>
 
         <View style={styles.avatarWrap}>
-          {/* Placeholder for design/113's photograph, sized to its circle. */}
-          <View style={styles.avatar}>
-            <Text style={styles.avatarText}>{LA_ADVOCATE.initials}</Text>
-          </View>
+          {/* Client-supplied replacement portrait; mapping in data/advocates.ts. */}
+          <AdvocateAvatar name={LA_ADVOCATE.name} style={styles.avatar}><Text style={styles.avatarText}>{LA_ADVOCATE.initials}</Text></AdvocateAvatar>
           <View style={styles.dot} />
         </View>
 
@@ -94,9 +93,7 @@ export default function LegalAdviceChatSessionScreen() {
         {MESSAGES.map((m, i) => (
           <View key={i} style={[styles.row, m.mine && styles.rowMine]}>
             {!m.mine && (
-              <View style={styles.bubbleAvatar}>
-                <Text style={styles.bubbleAvatarText}>{LA_ADVOCATE.initials}</Text>
-              </View>
+              <AdvocateAvatar name={LA_ADVOCATE.name} style={styles.bubbleAvatar}><Text style={styles.bubbleAvatarText}>{LA_ADVOCATE.initials}</Text></AdvocateAvatar>
             )}
             <View style={[styles.bubble, m.mine ? styles.bubbleMine : styles.bubbleTheirs]}>
               <Text style={styles.bubbleText}>{m.text}</Text>

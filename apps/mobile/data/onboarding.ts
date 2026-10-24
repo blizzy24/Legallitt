@@ -1,3 +1,5 @@
+import type { ImageSourcePropType } from 'react-native';
+
 // Client onboarding carousel copy (design/125-130).
 //
 // Six slides, one layout. All copy lives here so it can be edited in one place
@@ -23,7 +25,7 @@ export type OnboardingSlide = {
   tagline?: string;
   body: string;
   /** The hero photograph this slide needs. See ONBOARDING_ASSETS. */
-  image: string;
+  image?: ImageSourcePropType;
 };
 
 export const ONBOARDING_SLIDES: OnboardingSlide[] = [
@@ -32,41 +34,40 @@ export const ONBOARDING_SLIDES: OnboardingSlide[] = [
     title: 'Find Verified Advocates Nearby',
     tagline: 'Find  •  Connect  •  Consult  •  Resolve',
     body: 'Connect with trusted, verified advocates around you. Chat, call, or book consultations easily.',
-    image: 'onboarding-1-advocates',
   },
   {
     id: 'notice',
     title: 'Legal Notice',
     tagline: 'Initiate legal action with one click',
     body: 'Create, review and send a professionally prepared legal notice quickly, conveniently, and from one platform',
-    image: 'onboarding-2-notice',
+    image: require('../assets/onboarding-01.png'),
   },
   {
     id: 'engage',
     title: 'Engage Verified Advocate',
     tagline: 'Engage  •  Instruct  •  Proceed.',
     body: 'Find and engage a verified advocate for your ongoing case or initiate a new legal matter all from one platform.',
-    image: 'onboarding-3-engage',
+    image: require('../assets/onboarding-02.png'),
   },
   {
     id: 'forensic',
     title: 'Get Your Document Forensically Examined — At Your Doorstep.',
     body: 'Suspect a forged signature, handwriting, alteration, overwriting, erasure, or tampering? Submit your document from the comfort of your home and get it examined by forensic experts, with a detailed forensic examination report delivered to your doorstep.',
-    image: 'onboarding-4-forensic',
+    image: require('../assets/onboarding-03.png'),
   },
   {
     id: 'fir',
     title: 'Draft Your FIR Right. Start Your Case Strong',
     // "advocate- guided" is the file's spacing; left as drawn.
     body: 'Don’t let important facts or applicable offences get missed. Share your complete narration with us and get your FIR professionally drafted with advocate- guided legal analysis to accurately present the facts and identify the appropriate offences.',
-    image: 'onboarding-5-fir',
+    image: require('../assets/onboarding-04.png'),
   },
   {
     id: 'property',
     title: 'Verify the Property Before You Buy',
     tagline: 'Buy Property Not Litigation',
     body: 'Get the property title and revenue records searched and verified by a verified advocate before you buy. Identify potential encumbrances, disputes and title issues and receive a detailed Property Search & Title Verification Certificate.',
-    image: 'onboarding-6-property',
+    image: require('../assets/onboarding-05.png'),
   },
 ];
 
@@ -77,39 +78,17 @@ export const ONBOARDING_SLIDES: OnboardingSlide[] = [
  * diameter. Every badge sits on the circle's upper right.
  */
 export const ONBOARDING_AVATARS = [
-  { x: 294, y: 183, size: 42, badge: 15, badgeX: 44, badgeY: 4 },
-  { x: 30, y: 184, size: 62, badge: 15, badgeX: 61, badgeY: 3 },
-  { x: 146, y: 201, size: 106, badge: 21, badgeX: 103, badgeY: 11 },
-  { x: 88, y: 296, size: 40, badge: 15, badgeX: 39, badgeY: 0 },
-  { x: 228, y: 331, size: 48, badge: 15, badgeX: 44, badgeY: 0 },
-  { x: 125, y: 372, size: 48, badge: 15, badgeX: 47, badgeY: 0 },
+  { image: require('../assets/advocate-04.png'), x: 294, y: 183, size: 42, badge: 15, badgeX: 44, badgeY: 4 },
+  { image: require('../assets/advocate-01.png'), x: 30, y: 184, size: 62, badge: 15, badgeX: 61, badgeY: 3 },
+  { image: require('../assets/advocate-06.png'), x: 146, y: 201, size: 106, badge: 21, badgeX: 103, badgeY: 11 },
+  { image: require('../assets/advocate-02.png'), x: 88, y: 296, size: 40, badge: 15, badgeX: 39, badgeY: 0 },
+  { image: require('../assets/advocate-03.png'), x: 228, y: 331, size: 48, badge: 15, badgeX: 44, badgeY: 0 },
+  { image: require('../assets/advocate-05.png'), x: 125, y: 372, size: 48, badge: 15, badgeX: 47, badgeY: 0 },
 ];
 
-/**
- * ─────────────────────────────────────────────────────────────────────────────
- * IMAGES THIS SECTION NEEDS — none exist yet, so every one renders as a neutral
- * placeholder block at exactly the size and position below. Dropping real images in
- * changes nothing about the layout.
- *
- * Six hero photographs, each shown in a 297pt circle (594px at 2x, 891px at 3x).
- * Square source art is wanted, centre-weighted, since the circle crops to a square:
- *
- *   onboarding-1-advocates   (slide 1 does NOT use this — see the avatars below)
- *   onboarding-2-notice      a judge writing, gavel and law books    design/126
- *   onboarding-3-engage      advocate meeting a client               design/127
- *   onboarding-4-forensic    document examination                    design/128
- *   onboarding-5-fir         police station / FIR paperwork          design/129
- *   onboarding-6-property    property documents or site visit        design/130
- *
- * Slide 1 instead needs SIX advocate portraits, square, at these diameters:
- *   106pt, 62pt, 48pt, 48pt, 42pt, 40pt
- * At 3x the largest needs 318px; 400px square each would cover every density with
- * room to spare. Faces should be centred, since all six are circular crops.
- *
- * So: five hero photographs plus six portraits — eleven images in total. The brief
- * asked for six heroes and seven avatars; slide 1 has six avatars and no hero, so
- * the hero for slide 1 is not needed.
- * ─────────────────────────────────────────────────────────────────────────────
+/** All eleven supplied images match designs 125–130. The six portraits on
+ * 125 are unnamed. Named replacement assignments are recorded in advocates.ts.
+ * Files are already circular with alpha: render with contain, without clipping.
  */
 export const ONBOARDING_ASSETS = {
   heroCircle: 297,

@@ -1,3 +1,4 @@
+import { AdvocateAvatar } from '../../components/AdvocateAvatar';
 import { router } from 'expo-router';
 import { Star } from 'lucide-react-native';
 import { useState } from 'react';
@@ -49,10 +50,8 @@ export default function LegalAdviceRateScreen() {
           </Text>
 
           <View style={styles.row}>
-            {/* Placeholder for the advocate photograph, sized to its circle. */}
-            <View style={styles.photo}>
-              <Text style={styles.photoText}>{LA_ADVOCATE.initials}</Text>
-            </View>
+            {/* Client-supplied replacement portrait; mapping in data/advocates.ts. */}
+            <AdvocateAvatar name={LA_ADVOCATE.name} style={styles.photo}><Text style={styles.photoText}>{LA_ADVOCATE.initials}</Text></AdvocateAvatar>
             <View style={styles.rowText}>
               <Text style={styles.name} {...shrinkToFit(0.75)}>
                 {LA_ADVOCATE.name}

@@ -2,6 +2,7 @@ import { router } from 'expo-router';
 import { BadgeCheck } from 'lucide-react-native';
 import { useRef, useState } from 'react';
 import {
+  Image,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -22,9 +23,8 @@ import { useSession } from '../../context/session';
 // carousel rather than six routes.
 //
 // ─────────────────────────────────────────────────────────────────────────────
-// NO IMAGE ASSETS EXIST. Every photograph is a neutral placeholder block at exactly
-// the size and position the designs draw, so real art drops in without moving
-// anything. The full list of what to request is in data/onboarding.ts.
+// Supplied circular PNGs match designs 125–130. Render the originals with contain;
+// their transparency provides the circular outline, without cropping or recolouring.
 //
 // REPORTED — SLIDE 1 HAS SIX AVATARS, NOT SEVEN. Counted twice on design/125, once
 // as image blobs and once as blue badges; both give six. Their measured positions
@@ -80,11 +80,13 @@ export default function OnboardingScreen() {
               <View style={styles.cluster}>
                 {ONBOARDING_AVATARS.map((a, j) => (
                   <View key={j} style={[styles.avatarWrap, { left: a.x, top: a.y }]}>
-                    {/* Placeholder for design/125's portrait, at the drawn size. */}
-                    <View
+                    <Image
+                      source={a.image}
+                      resizeMode="contain"
+                      accessibilityLabel={`Advocate portrait ${j + 1}`}
                       style={[
                         styles.avatar,
-                        { width: a.size, height: a.size, borderRadius: a.size / 2 },
+                        { width: a.size, height: a.size },
                       ]}
                     />
                     <BadgeCheck
@@ -100,8 +102,7 @@ export default function OnboardingScreen() {
                 ))}
               </View>
             ) : (
-              /* Placeholder for the slide's hero photograph, at the drawn size. */
-              <View style={styles.circle} />
+              <Image source={slide.image} resizeMode="contain" accessibilityLabel={slide.title} style={styles.circle} />
             )}
 
             <View style={styles.text}>
@@ -146,12 +147,10 @@ const styles = StyleSheet.create({
     marginTop: t.circleTop,
     width: t.circle,
     height: t.circle,
-    borderRadius: t.circle / 2,
-    backgroundColor: t.circleBg,
   },
   cluster: { width: '100%', height: t.clusterHeight },
   avatarWrap: { position: 'absolute' },
-  avatar: { backgroundColor: t.avatarBg },
+  avatar: {},
   badge: { position: 'absolute' },
 
   text: { marginTop: 0, paddingHorizontal: t.padX, alignSelf: 'stretch' },

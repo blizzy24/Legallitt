@@ -1,3 +1,4 @@
+import { AdvocateAvatar } from '../../components/AdvocateAvatar';
 import ApiLegalNotice from "../../components/api/LegalNotice";
 import { DATA_SOURCE } from "../../lib/data-source";
 import { previewNotice } from '../../components/PreviewNotice';
@@ -137,9 +138,7 @@ export function TrackingScreenView({ decision = false, data, form, navigate }: {
         <SectionRow label="ASSIGNED ADVOCATE" right="Verified Advocate" icon={<BadgeCheck size={t.sectionLinkIcon} color={ink.accent} />} />
         <View style={[styles.card, styles.adv]}>
           <View style={styles.advRow}>
-            <View style={styles.avatarLarge}>
-              <Text style={styles.avatarText}>{TRACKING.advocate.initials}</Text>
-            </View>
+            <AdvocateAvatar name={TRACKING.advocate.name} style={styles.avatarLarge}><Text style={styles.avatarText}>{TRACKING.advocate.initials}</Text></AdvocateAvatar>
             <View style={styles.advText}>
               <View style={styles.nameRow}>
                 <Text style={styles.name}>{TRACKING.advocate.name}</Text>

@@ -1,3 +1,4 @@
+import { AdvocateAvatar } from '../../components/AdvocateAvatar';
 import { router, type Href } from 'expo-router';
 import {
   CircleCheck,
@@ -77,10 +78,8 @@ export default function LegalAdviceCompletedScreen() {
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Lawyer Details</Text>
           <View style={styles.lawyerRow}>
-            {/* Placeholder for design/116's photograph, sized to its circle. */}
-            <View style={styles.photo}>
-              <Text style={styles.photoText}>{LA_ADVOCATE.initials}</Text>
-            </View>
+            {/* Client-supplied replacement portrait; mapping in data/advocates.ts. */}
+            <AdvocateAvatar name={LA_ADVOCATE.name} style={styles.photo}><Text style={styles.photoText}>{LA_ADVOCATE.initials}</Text></AdvocateAvatar>
             <View style={styles.lawyerText}>
               <Text style={styles.lawyerName} {...shrinkToFit(0.75)}>
                 {LA_ADVOCATE.name}

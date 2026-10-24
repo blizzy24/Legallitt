@@ -1,3 +1,4 @@
+import { AdvocateAvatar } from '../../components/AdvocateAvatar';
 import { previewNotice } from '../../components/PreviewNotice';
 import { router, type Href } from 'expo-router';
 import {
@@ -131,10 +132,8 @@ export default function LegalAdviceConfirmedScreen() {
           <View style={styles.avatarOuter}>
             <UserRound size={t.avatarOuterGlyph} color={colors.textBody} />
           </View>
-          {/* Placeholder for design/111's photograph, sized to its box. */}
-          <View style={styles.photo}>
-            <Text style={styles.photoText}>{LA_ADVOCATE.initials}</Text>
-          </View>
+          {/* Client-supplied replacement portrait; mapping in data/advocates.ts. */}
+          <AdvocateAvatar name={LA_ADVOCATE.name} style={styles.photo}><Text style={styles.photoText}>{LA_ADVOCATE.initials}</Text></AdvocateAvatar>
           <View style={styles.advText}>
             <Text style={styles.advName} {...shrinkToFit(0.75)}>
               {LA_ADVOCATE.name}

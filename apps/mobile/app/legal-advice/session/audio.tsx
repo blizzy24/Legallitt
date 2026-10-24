@@ -1,3 +1,4 @@
+import { AdvocateAvatar } from '../../../components/AdvocateAvatar';
 import { router } from 'expo-router';
 import { ChevronLeft } from 'lucide-react-native';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
@@ -11,7 +12,7 @@ import { colors, font, laSession as t } from '../../../constants/theme';
 // Voice consultation (design/115-la-completed.png — the file name is wrong; the
 // batch's numbering is shifted by one).
 //
-// STATIC MOCK-UP. NO MICROPHONE, NO CALLING SDK. The portrait is a placeholder sized
+// STATIC MOCK-UP. NO MICROPHONE, NO CALLING SDK. The replacement portrait is sized
 // to the design's circle and every control is inert. The same scope note as the
 // video screen applies: a real consultation needs a calling vendor, which is a
 // commercial decision rather than a UI one.
@@ -34,10 +35,8 @@ export default function LegalAdviceAudioSessionScreen() {
       </View>
 
       <View style={styles.body}>
-        {/* Placeholder for design/115's portrait, sized to its circle. */}
-        <View style={styles.photo}>
-          <Text style={styles.photoText}>{LA_ADVOCATE.initials}</Text>
-        </View>
+        {/* Client-supplied replacement portrait; mapping in data/advocates.ts. */}
+        <AdvocateAvatar name={LA_ADVOCATE.name} style={styles.photo}><Text style={styles.photoText}>{LA_ADVOCATE.initials}</Text></AdvocateAvatar>
 
         <Text style={styles.name} {...shrinkToFit(0.75)}>
           {LA_ADVOCATE.name}

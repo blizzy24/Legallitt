@@ -1,6 +1,6 @@
 # Legalitt — Backend & Cloud Architecture
 
-Version 3.9 · 21 October 2026
+Version 4.0 · 24 October 2026
 Status: steps 0–6 complete. Step 7 is executable as written; §10 governs how.
 
 This document is the specification for the backend phase. It is written to be
@@ -32,6 +32,27 @@ Document Forensic · High Court Representation · District Court Representation 
 Court Marriage · Courier (cross-cutting, used by three of the above)
 
 ---
+
+## 1a. The designs are the specification
+
+The frontend is the structure of this application. The client designed it
+deliberately, screen by screen, and the flows encode how he intends the
+business to work. It is not decoration laid over a backend — it is the
+specification the backend serves.
+
+Consequences, which apply to every step in this document:
+
+- **Never build a second version of a screen.** If a screen needs real data,
+  the same screen takes real data. Two implementations of one screen is a
+  defect, not a strategy, however it is justified.
+- **The backend adapts to the designs**, not the reverse. If the data model
+  makes a drawn screen awkward, change the model.
+- **Where this document and the designs disagree, the designs win** — report
+  the conflict rather than resolving it silently.
+- **Do not invent screens, fields, labels, prices or copy.** If something is
+  needed and not drawn, stop and ask.
+
+A change the client can see is a change the client must have asked for.
 
 ## 2. Decisions
 
@@ -141,14 +162,7 @@ client needs the full sign-in flow working for demos in the meantime.
   entered is ignored. Verifying the fake code signs the user into a seeded
   demo account, so no role has to be inferred from a number.
 
-**Data-source boundary (confirmed 22 October 2026).** With `DATA_SOURCE=fixtures`,
-sign-in and signup are local simulations with no API/Cognito calls or required
-configuration. OTP accepts only `123456`; plausible email/password values sign
-into the role chosen earlier. Empty/invalid values show errors. Fixture sessions
-use separate local storage and never authorize API requests. With `DATA_SOURCE=api`,
-the real Cognito behavior below is unchanged.
-
-**In API mode, the demo accounts are real accounts.** `/auth/otp/verify` still returns real
+**The demo accounts are real accounts.** `/auth/otp/verify` still returns real
 Cognito tokens, exactly as §5 describes — it simply signs in a known user
 instead of the one matching the phone number. There is no second kind of
 session, and no screen behaves differently afterwards. A local-only session
@@ -170,27 +184,24 @@ email path.
   `demo` is implemented now. `live` is built when DLT registration clears, and
   that is when sign-up by phone — including how the role is chosen — gets
   designed properly.
-- The API's `demo` phone-auth endpoint must be **impossible to reach in production**. Gate it on the
+- `demo` must be **impossible to reach in production**. Gate it on the
   environment as well as the flag.
 
 Google and other social sign-in are **out of scope**. Cognito supports them,
 but the designs draw no such button, and adding one changes a screen the
 client has already reviewed.
 
-**Sign-in order.** Clients can browse the designed guest home before signing in:
+**Sign-in order.** Nobody is forced to sign in before seeing the app:
 
 ```
-Client: onboarding → role selection → guest home → banner → sign in or sign up
-Advocate: onboarding → role selection → sign in or sign up
+onboarding → role selection → guest home → banner → sign in or sign up
 ```
 
-- Role is chosen **before** entering either flow. Client opens the guest home
-  (11/144); Advocate opens sign-in/sign-up directly. There is no advocate guest
-  home; do not adapt the signed-in dashboard (148).
+- Role is chosen **before** the guest home, and decides which guest home is
+  shown and which app the user lands in afterwards.
 - The guest home is browsable without an account. The banner at the top is
   the only prompt to sign in.
-- Client sign-in and sign-up are reached from that banner, never forced earlier.
-  The advocate exception above was confirmed on 21 October 2026.
+- Sign-in and sign-up are reached from that banner, never forced earlier.
 
 The single "email or phone" field decides the path: an `@` means email and
 password, anything else means phone and OTP. Keep that behaviour — it is how
@@ -1261,10 +1272,13 @@ gate or explicit framing that it is not legal advice.
 
 ## 10. Working agreement
 
-This document is the only specification. Any prompt that starts work on it
-should say which steps of §6 to execute and nothing more. If a prompt contains
-instructions that contradict this document, **stop and report the
-contradiction** — do not choose between them.
+This document is the only specification for the backend. **§1a governs
+everything in it:** the designs are the specification for the application, and
+this document serves them.
+
+Any prompt that starts work should say which steps of §6 to execute and
+nothing more. If a prompt contains instructions that contradict this document,
+**stop and report the contradiction** — do not choose between them.
 
 - **One commit per step**, with the message given in §6.
 - **Gates are gates.** Where a step states a gate, do not begin the next step

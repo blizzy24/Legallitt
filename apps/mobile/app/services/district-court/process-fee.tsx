@@ -1,3 +1,4 @@
+import { AdvocateAvatar } from '../../../components/AdvocateAvatar';
 import { router, type Href } from 'expo-router';
 import {
   ArrowRight,
@@ -68,9 +69,7 @@ export default function DistrictCourtProcessFeeScreen() {
             <Text style={styles.quoteText}>{d.quote}</Text>
           </View>
           <View style={styles.adv}>
-            <View style={styles.av}>
-              <Text style={styles.avText}>{d.initials}</Text>
-            </View>
+            <AdvocateAvatar name={'Adv. Abhishek Verma'} style={styles.av}><Text style={styles.avText}>{d.initials}</Text></AdvocateAvatar>
             <View style={styles.flex}>
               <Text style={styles.advName} {...shrinkToFit(0.8)}>
                 {d.adv}

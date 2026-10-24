@@ -1,3 +1,4 @@
+import { AdvocateAvatar } from '../../components/AdvocateAvatar';
 import { router, useLocalSearchParams } from 'expo-router';
 import {
   Award,
@@ -71,7 +72,7 @@ export default function AdvocateProfileScreen({ profileId }: { profileId?: strin
         <View style={styles.hero}>
           <View style={styles.photoWrap}>
             {/* 433 supplies Rahul's photo; other advocates retain their own initials. */}
-            {advocate.id === 'adv-rahul-sharma' ? <Image source={require('../../assets/advocate-rahul-profile.png')} accessibilityLabel={advocate.name} style={styles.photo}/> : <View style={styles.photo}><Text style={styles.photoText}>{advocate.initials}</Text></View>}
+            <AdvocateAvatar name={advocate.name} style={styles.photo}><Text style={styles.photoText}>{advocate.initials}</Text></AdvocateAvatar>
             <View style={styles.badge}><BadgeCheck size={t.badgeGlyph} color={ink.onBrand} /></View>
           </View>
 

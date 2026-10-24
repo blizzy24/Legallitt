@@ -1,3 +1,4 @@
+import { AdvocateAvatar } from '../../../../components/AdvocateAvatar';
 import { router, type Href } from 'expo-router';
 import { BadgeCheck, Check, Copy, Info, Lock, Shield, UserRoundMinus } from 'lucide-react-native';
 import { useState } from 'react';
@@ -102,9 +103,7 @@ export default function DistrictCancelScreen() {
             </View>
           </View>
           <View style={styles.advPanel}>
-            <View style={styles.photo}>
-              <Text style={styles.photoText}>{d.initials}</Text>
-            </View>
+            <AdvocateAvatar name={'Adv. Abhishek Verma'} style={styles.photo}><Text style={styles.photoText}>{d.initials}</Text></AdvocateAvatar>
             <View style={styles.flex}>
               <Text style={styles.name} {...shrinkToFit(0.75)}>
                 {d.name}

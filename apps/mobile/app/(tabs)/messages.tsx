@@ -1,3 +1,4 @@
+import { AdvocateAvatar } from '../../components/AdvocateAvatar';
 import { previewNotice } from '../../components/PreviewNotice';
 import { router, type Href } from 'expo-router';
 import { BadgeCheck, ChevronRight, Lock, Search, SquarePen } from 'lucide-react-native';
@@ -121,9 +122,7 @@ export default function MessagesScreen() {
               style={({ pressed }) => [styles.row, pressed && styles.pressed]}
             >
               <View style={styles.avatarWrap}>
-                <View style={styles.avatar}>
-                  <Text style={styles.avatarText}>{party.initials}</Text>
-                </View>
+                <AdvocateAvatar name={party.name} style={styles.avatar}><Text style={styles.avatarText}>{party.initials}</Text></AdvocateAvatar>
                 {c.online && <View style={styles.dot} />}
               </View>
 

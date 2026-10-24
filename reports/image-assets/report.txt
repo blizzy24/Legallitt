@@ -1,0 +1,67 @@
+IMAGE ASSET REPORT
+
+Replacement mapping — pending client confirmation
+User confirmed these are new portraits, not matches to the original design photos.
+Assigned in declaration order in apps/mobile/data/advocates.ts, the frontend
+advocate fixture seed. The API seed has no corresponding six-advocate list.
+Mapping is recorded as a comment beside the source map in that file:
+  advocate-01.png: Adv. Priya Sharma
+  advocate-02.png: Adv. Neha Verma
+  advocate-03.png: Adv. Rohan Mehta
+  advocate-04.png: Adv. Abhishek Verma
+  advocate-05.png: Adv. Arjun Sharma
+  advocate-06.png: Adv. Rahul Sharma
+No portraits were assigned by resemblance or inferred gender.
+Known unmatched names include Kavita Rao, Arjun Nair, Abhishek Chouhan,
+Abhishek Sahu, Sarah Jenkins and the incomplete name Adv. Rahul.
+Other named advocates without supplied portraits: R.K. Trivedi, Rajesh Sharma,
+Rajesh V. Sharma and Rajeshwar Rao (some appear only as text, not avatar slots).
+Unknown advocates retain their existing initials/icon fallback. Client avatars
+and reviewer initials do not receive advocate photos.
+
+Onboarding
+The first slide (125) has six small portrait positions, now filled with the six
+supplied advocate assets in their drawn positions. The next five slides (126–130)
+use onboarding-01 through onboarding-05 in order. All eleven source PNG files
+are unchanged, displayed with contain and without clipping or recolouring.
+
+Wiring
+A shared AdvocateAvatar resolves the centrally recorded mapping in known
+advocate contexts. Used in profiles, saved advocates, case/hearing cards and
+details, requests, messages, Notice tracking and client chat, Legal Advice
+consultation screens, District Court advocate/payment/preparation views, High
+Court filing review, and the shared court person blocks. Rahul's profile now
+uses the replacement 06 rather than its previously extracted design portrait.
+
+Remaining image placeholders (separate assets are still needed)
+- Home video carousel: both thumbnail images (data/homeVideos.ts).
+- Legal Notice: detail hero (22), advocate drafting hero (187), review art (190).
+- FIR: introductory clipboard illustration (40).
+- Property Search: introduction/information art (72/73), checking art (79).
+- Document Forensic: introduction art (82), advocate waiting illustration.
+- Legal Advice: scales artwork (102/103).
+- High Court: courthouse illustrations (289/290), documents-needed desk photo
+  (303), courier confirmation map (306), delivered proof image (312).
+- District Court: courthouse hero (338), two learn-more photographs (339),
+  case-type illustration.
+- KYC: DigiLocker connect/checking art (93/94), identity portrait (95), video
+  introduction art (96), framing reference photograph (100).
+- Client photographs: advocate client profile (152), request/schedule/confirmed
+  (163/164/166), consultation room/chat/docket/completed (167–169/180/181),
+  advocate Notice chat (183), forensic admin changes (231), calendar client card
+  (273), and court client photographs (375/376/411/412).
+- Simulated camera/video panels remain separate: KYC (97/98), Legal Advice
+  video (114), advocate consultation remote feed/self-view. Circular portraits
+  are not substitutes for these full-frame feeds.
+Drawn generic user icons, logos, document labels and text-input placeholders
+are not treated as missing image assets.
+
+Screenshots
+onboarding-1.png through onboarding-6.png: all onboarding slides.
+advocate-01.png through advocate-06.png: each replacement in its profile.
+
+Validation
+Mobile TypeScript: pass. Fixture web export: pass.
+Browser: all 11 onboarding images loaded; six slides end at /role.
+All six profile pages loaded the expected numbered portrait without page errors.
+Full fixture smoke: 322 routes, zero failures, no case/document API requests.

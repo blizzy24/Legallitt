@@ -1,3 +1,4 @@
+import { AdvocateAvatar } from '../../components/AdvocateAvatar';
 import { previewNotice } from '../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
@@ -144,9 +145,7 @@ export default function RequestDetailScreen() {
         <View style={styles.card}>
           <View style={styles.advRow}>
             <View>
-              <View style={styles.advAvatar}>
-                <Text style={styles.advAvatarText}>{d.advocate.initials}</Text>
-              </View>
+              <AdvocateAvatar name={d.advocate.name} style={styles.advAvatar}><Text style={styles.advAvatarText}>{d.advocate.initials}</Text></AdvocateAvatar>
               <View style={styles.advDot} />
             </View>
             <View style={styles.advText}>

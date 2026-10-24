@@ -1,3 +1,4 @@
+import { AdvocateAvatar } from '../../components/AdvocateAvatar';
 import { previewNotice } from '../../components/PreviewNotice';
 import DemoPressable from '../../components/DemoPressable';
 import { router, type Href } from 'expo-router';
@@ -98,9 +99,7 @@ function AdvocateCard({
     <View style={styles.card}>
       <View style={styles.cardHead}>
         <View style={styles.avatarWrap}>
-          <View style={styles.avatar}>
-            <Text style={styles.avatarText}>{item.initials}</Text>
-          </View>
+          <AdvocateAvatar name={item.name} style={styles.avatar}><Text style={styles.avatarText}>{item.initials}</Text></AdvocateAvatar>
           <View
             style={[
               styles.dot,

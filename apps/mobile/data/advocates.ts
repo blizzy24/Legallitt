@@ -1,3 +1,4 @@
+import type { ImageSourcePropType } from 'react-native';
 // Saved advocates (design/55).
 //
 // Separate from data/cases.ts's advocate records: those are the counsel assigned to a
@@ -27,7 +28,7 @@ export type SavedAdvocate = {
   availableNow: boolean;
 
   // ── Profile screen (design/81) ──
-  /** design/81 draws a photograph; we have no asset, so initials stand in. */
+  /** Profile details from the design; replacement portrait mapping is below. */
   barCouncil: string;
   experience: string;
   education: string;
@@ -238,3 +239,21 @@ export const ADVOCATES_EMPTY = {
   body: 'Save advocates you may want to contact later.',
   action: 'Find Advocates',
 };
+
+// Client-supplied replacement portraits, assigned in this fixture seed's declaration
+// order as instructed. Provisional mapping: client confirmation pending.
+// 01 Priya Sharma; 02 Neha Verma; 03 Rohan Mehta; 04 Abhishek Verma;
+// 05 Arjun Sharma; 06 Rahul Sharma. Change this map when confirmed.
+const ADVOCATE_PHOTOS: Record<string, ImageSourcePropType> = {
+  'priya sharma': require('../assets/advocate-01.png'),
+  'neha verma': require('../assets/advocate-02.png'),
+  'rohan mehta': require('../assets/advocate-03.png'),
+  'abhishek verma': require('../assets/advocate-04.png'),
+  'arjun sharma': require('../assets/advocate-05.png'),
+  'rahul sharma': require('../assets/advocate-06.png'),
+};
+
+/** For known advocate contexts only: clients may share these names. */
+export function advocatePhoto(name: string): ImageSourcePropType | undefined {
+  return ADVOCATE_PHOTOS[name.replace(/^Adv\.?\s+/i, '').trim().toLowerCase()];
+}

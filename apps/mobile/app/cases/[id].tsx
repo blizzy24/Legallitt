@@ -1,3 +1,4 @@
+import { AdvocateAvatar } from '../../components/AdvocateAvatar';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
   Building2,
@@ -93,9 +94,7 @@ export default function CaseDetailsScreen() {
 
           {advocate && (
             <View style={styles.block}>
-              <View style={styles.avatar}>
-                <Text style={styles.avatarText}>{advocate.initials}</Text>
-              </View>
+              <AdvocateAvatar name={advocate.name} style={styles.avatar}><Text style={styles.avatarText}>{advocate.initials}</Text></AdvocateAvatar>
               <View style={styles.blockText}>
                 <View style={styles.advocateRow}>
                   <Text style={styles.advocateName} numberOfLines={1}>

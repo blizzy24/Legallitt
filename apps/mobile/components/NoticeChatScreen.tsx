@@ -1,3 +1,4 @@
+import { AdvocateAvatar } from './AdvocateAvatar';
 import { useState } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
 import { BadgeCheck, CheckCheck, ChevronLeft, Clock3, Plus, Send, UserRound } from 'lucide-react-native';
@@ -12,16 +13,15 @@ import type { ChatMessage } from '../data/noticeChat';
 // design/183 (`advocate`, the light header, the "Chat Valid" strip, timestamps
 // and read ticks). Initial messages are exactly the drawn messages; typed
 // messages are held locally, without fabricating a response. The designs draw photographs;
-// no asset ships, so the house convention stands in: a brand disc with the user
-// glyph.
+// named advocates use the supplied replacement portraits; clients keep the fallback.
 
-function Avatar({ size, w, h, r, onBrand }: { size?: number; w?: number; h?: number; r: number; onBrand?: boolean }) {
+function Avatar({ name = "", size, w, h, r, onBrand }: { name?: string; size?: number; w?: number; h?: number; r: number; onBrand?: boolean }) {
   const width = w ?? size;
   const height = h ?? size;
   return (
-    <View style={[styles.avatar, onBrand && styles.avatarOnBrand, { width, height, borderRadius: r }]}>
+    <AdvocateAvatar name={name} style={[styles.avatar, onBrand && styles.avatarOnBrand, { width, height, borderRadius: r }]}>
       <UserRound size={(width ?? 0) * 0.5} color={t.white} strokeWidth={1.9} />
-    </View>
+    </AdvocateAvatar>
   );
 }
 
@@ -54,7 +54,7 @@ export default function NoticeChatScreen({
         </Pressable>
         <View style={styles.who}>
           <View>
-            {adv ? <Avatar w={t.avatarW183} h={t.avatarH183} r={t.avatarRadius183} /> : <Avatar size={t.avatar} r={t.avatarRadius} onBrand />}
+            {adv ? <Avatar w={t.avatarW183} h={t.avatarH183} r={t.avatarRadius183} /> : <Avatar name={name} size={t.avatar} r={t.avatarRadius} onBrand />}
             <View style={styles.online} />
           </View>
           <Text style={[styles.name, { color: adv ? t.nameBrown : t.white }]}>{name}</Text>
@@ -75,7 +75,7 @@ export default function NoticeChatScreen({
         {thread.map((m, i) =>
           m.from === 'them' ? (
             <View key={i} style={[styles.inRow, i > 0 ? styles.rowGap : null]}>
-              <Avatar size={t.msgAvatar} r={t.msgAvatar / 2} />
+              <Avatar name={adv ? "" : name} size={t.msgAvatar} r={t.msgAvatar / 2} />
               <View style={[styles.bubble, adv && styles.bubbleAdv, m.time ? styles.bubbleMeta : null]}>
                 <Text style={styles.text}>{m.text}</Text>
                 {m.time ? <Text style={styles.time}>{m.time}</Text> : null}

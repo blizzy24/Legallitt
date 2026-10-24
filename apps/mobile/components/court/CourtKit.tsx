@@ -1,3 +1,4 @@
+import { AdvocateAvatar } from '../AdvocateAvatar';
 import { router, useLocalSearchParams, usePathname, type Href } from 'expo-router';
 import { DC_VALUES } from '../../data/advocateCourt';
 import { BUTTON_TARGETS, nextRoute } from '../../data/flowMap';
@@ -1015,14 +1016,14 @@ export function BlockView({ b }: { b: Block }): ReactNode {
     case 'person':
       return (
         <View style={[s.row, s.person, b.boxed && s.personBoxed]}>
-          <View style={[s.avatar, b.greyDisc && s.greyDisc, b.greyDisc === 'help' && s.greyDiscHelp, b.greyDisc === 'tile' && s.greyDiscTile, b.photo && s.photo]}>
+          <AdvocateAvatar name={/^Adv[. ]/.test(b.name) ? b.name : ''} style={[s.avatar, b.greyDisc && s.greyDisc, b.greyDisc === 'help' && s.greyDiscHelp, b.greyDisc === 'tile' && s.greyDiscTile, b.photo && s.photo]}>
             {/* A photograph's place when b.photo: the asset was not supplied. */}
             {b.photo ? null : b.initials ? (
               <Text style={s.avatarText}>{b.initials}</Text>
             ) : (
               <Icon name={b.icon ?? 'user'} size={t.headIcon} color={c.brown} />
             )}
-          </View>
+          </AdvocateAvatar>
           <View style={s.flex}>
             {b.kicker ? <Text style={[b.kickerPlain ? s.personKickerPlain : s.caps, s.personKicker]}>{b.kicker}</Text> : null}
             <View style={[s.row, s.wrap]}>

@@ -1,3 +1,4 @@
+import { AdvocateAvatar } from '../../../components/AdvocateAvatar';
 import { router, type Href } from 'expo-router';
 import { Check, Compass, Download, Eye, FileText, LockKeyhole, MessageSquare, Phone } from 'lucide-react-native';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -132,9 +133,7 @@ export default function DistrictCourtProcessFeeReceiptScreen() {
           <Text style={styles.qTitle}>{d.qTitle}</Text>
           <Text style={styles.qSub}>{d.qSub}</Text>
           <View style={styles.qRow}>
-            <View style={styles.qPhoto}>
-              <Text style={styles.qInitials}>{d.initials}</Text>
-            </View>
+            <AdvocateAvatar name={'Adv. Abhishek Verma'} style={styles.qPhoto}><Text style={styles.qInitials}>{d.initials}</Text></AdvocateAvatar>
             <View style={styles.flex}>
               <Text style={styles.qName} {...shrinkToFit(0.8)}>
                 {d.adv}

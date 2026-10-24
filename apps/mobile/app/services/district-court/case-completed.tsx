@@ -1,3 +1,4 @@
+import { AdvocateAvatar } from '../../../components/AdvocateAvatar';
 import { router, type Href } from 'expo-router';
 import { ArrowRight, Check, ChevronRight, CircleCheck, Copy, FolderOpen, MessageSquare, RotateCcw } from 'lucide-react-native';
 import { Fragment } from 'react';
@@ -93,9 +94,7 @@ export default function DistrictCourtCaseCompletedScreen() {
             </View>
           </View>
           <View style={styles.adv}>
-            <View style={styles.advPhoto}>
-              <Text style={styles.advInitials}>{d.initials}</Text>
-            </View>
+            <AdvocateAvatar name={'Adv. Abhishek Verma'} style={styles.advPhoto}><Text style={styles.advInitials}>{d.initials}</Text></AdvocateAvatar>
             <View style={styles.flex}>
               <Text style={styles.advName}>{d.adv}</Text>
               <Text style={styles.advSub}>{d.advSub}</Text>

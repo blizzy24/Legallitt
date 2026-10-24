@@ -1,3 +1,4 @@
+import { AdvocateAvatar } from '../../components/AdvocateAvatar';
 import DemoPressable from '../../components/DemoPressable';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
@@ -118,9 +119,7 @@ export default function HearingDetailsScreen() {
             </View>
 
             <View style={styles.advocateRow}>
-              <View style={styles.avatarLarge}>
-                <Text style={styles.avatarText}>{advocate.initials}</Text>
-              </View>
+              <AdvocateAvatar name={advocate.name} style={styles.avatarLarge}><Text style={styles.avatarText}>{advocate.initials}</Text></AdvocateAvatar>
               <View style={styles.advocateText}>
                 <Text style={styles.advocateName}>{advocate.name}</Text>
                 <Text style={styles.advocateMeta}>

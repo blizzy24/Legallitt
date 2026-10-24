@@ -1,3 +1,4 @@
+import { AdvocateAvatar } from '../../../components/AdvocateAvatar';
 import { router, type Href } from 'expo-router';
 import {
   ArrowRight,
@@ -139,9 +140,7 @@ export default function DistrictCourtFirstHearingScreen() {
             </View>
           </View>
           <View style={styles.adv}>
-            <View style={styles.advDisc}>
-              <Text style={styles.advInitials}>{d.initials}</Text>
-            </View>
+            <AdvocateAvatar name={'Adv. Abhishek Verma'} style={styles.advDisc}><Text style={styles.advInitials}>{d.initials}</Text></AdvocateAvatar>
             <View style={styles.flex}>
               <Text style={styles.advName}>{d.adv}</Text>
               <Text style={styles.advSub}>{d.advSub}</Text>

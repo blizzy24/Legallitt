@@ -1,3 +1,4 @@
+import { AdvocateAvatar } from '../../components/AdvocateAvatar';
 import { previewNotice } from '../../components/PreviewNotice';
 import { router, useLocalSearchParams } from 'expo-router';
 import {
@@ -94,9 +95,7 @@ export default function MessageThreadScreen() {
         </Pressable>
 
         <View style={styles.avatarWrap}>
-          <View style={styles.avatar}>
-            <Text style={styles.avatarText}>{party.initials}</Text>
-          </View>
+          <AdvocateAvatar name={party.name} style={styles.avatar}><Text style={styles.avatarText}>{party.initials}</Text></AdvocateAvatar>
           {conversation?.online && <View style={styles.dot} />}
         </View>
 

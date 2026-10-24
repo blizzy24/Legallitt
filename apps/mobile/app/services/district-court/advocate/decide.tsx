@@ -1,3 +1,4 @@
+import { AdvocateAvatar } from '../../../../components/AdvocateAvatar';
 import { router, type Href } from 'expo-router';
 import {
   ArrowRight,
@@ -83,9 +84,7 @@ export default function DistrictDecideScreen() {
         <View style={[styles.card, styles.cardNext]}>
           <View style={styles.advTop}>
             <View>
-              <View style={styles.photo}>
-                <Text style={styles.photoText}>{d.initials}</Text>
-              </View>
+              <AdvocateAvatar name={'Adv. Abhishek Verma'} style={styles.photo}><Text style={styles.photoText}>{d.initials}</Text></AdvocateAvatar>
               <View style={styles.photoBadge}>
                 <Check size={t.photoBadgeGlyph} color={ink.onBrand} strokeWidth={3} />
               </View>

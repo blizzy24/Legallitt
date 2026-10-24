@@ -1,3 +1,4 @@
+import { AdvocateAvatar } from '../../../components/AdvocateAvatar';
 import { router, type Href } from 'expo-router';
 import {
   ArrowRight,
@@ -33,8 +34,7 @@ import { DC_ASSIGNED } from '../../../data/districtCourt';
 // resolved. Review Advocate opened the High Court confirm screen (302) until
 // the District Court decide screen (design/345) was drawn; it now opens 345.
 //
-// The photo is drawn as a portrait; this app uses initials avatars wherever a
-// person's photo appears, so it is one here. The header avatar is drawn as a
+// The supplied replacement portrait fills the advocate photo. The header avatar is drawn as a
 // tiny screenshot thumbnail, not a person — rendered as the standard avatar.
 //
 // STATIC, NOT WIRED: Call Advocate dials nothing; Copy copies nothing; the
@@ -74,9 +74,7 @@ export default function DistrictCourtAdvocateAssignedScreen() {
         <View style={[styles.card, styles.adv]}>
           <View style={styles.advTop}>
             <View>
-              <View style={styles.photo}>
-                <Text style={styles.photoText}>{d.initials}</Text>
-              </View>
+              <AdvocateAvatar name={'Adv. Abhishek Verma'} style={styles.photo}><Text style={styles.photoText}>{d.initials}</Text></AdvocateAvatar>
               <View style={styles.photoBadge}>
                 <BadgeCheck size={t.photoBadgeGlyph} color={ink.onBrand} strokeWidth={2.4} />
               </View>
