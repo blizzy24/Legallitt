@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  Logger,
   UnauthorizedException,
   ServiceUnavailableException,
 } from "@nestjs/common";
@@ -21,6 +22,11 @@ import { z } from "zod";
 import { PrismaService } from "../prisma.service";
 import { demoAccounts, demoPassword, requireDemoMode } from "./demo";
 
+import {
+  registrationDiagnostic,
+  registrationMessage,
+} from "./registration-errors";
+
 const roles = z.enum(["client", "advocate", "admin"]);
 const configSchema = z.object({
   userPoolId: z.string().startsWith("ap-south-1_"),
@@ -28,9 +34,17 @@ const configSchema = z.object({
 });
 export const registerSchema = z
   .object({
-    email: z.email(),
-    password: z.string().min(8).max(256),
-    name: z.string().trim().min(1).max(200),
+    email: z.email({ error: "Enter a valid email address" }),
+    // Matches the deployed Cognito pool policy; do not weaken it for demos.
+    password: z
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .max(256, "Password must be at most 256 characters")
+      .regex(/[A-Z]/, "Password must include an uppercase letter")
+      .regex(/[a-z]/, "Password must include a lowercase letter")
+      .regex(/[0-9]/, "Password must include a number")
+      .regex(/[^A-Za-z0-9\s]/, "Password must include a symbol"),
+    name: z.string().trim().min(1, "Enter your full name").max(200),
     role: z.enum(["client", "advocate"]),
     phone: z
       .string()
@@ -45,6 +59,7 @@ export function parse<T>(schema: z.ZodType<T>, value: unknown): T {
 }
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
   private readonly cognito = new CognitoIdentityProviderClient({
     region: "ap-south-1",
   });
@@ -76,9 +91,9 @@ export class AuthService {
     return this.configuration;
   }
   async register(body: unknown) {
-    const input = parse(registerSchema, body);
-    const config = await this.config();
     try {
+      const input = registerSchema.parse(body);
+      const config = await this.config();
       await this.cognito.send(
         new SignUpCommand({
           ClientId: config.clientId,
@@ -95,8 +110,12 @@ export class AuthService {
         }),
       );
       return { confirmationRequired: true };
-    } catch {
-      throw new BadRequestException("Registration could not be completed");
+    } catch (error) {
+      this.logger.error(registrationDiagnostic(error, body));
+      const message = registrationMessage(error);
+      if (error instanceof ServiceUnavailableException)
+        throw new ServiceUnavailableException(message);
+      throw new BadRequestException(message);
     }
   }
   async confirm(body: unknown) {

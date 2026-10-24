@@ -223,3 +223,108 @@ test("demo OTP ignores phone, selects only fixed accounts and uses password auth
     }
   }
 });
+
+test("registration validates password policy and logs actionable errors without credentials in dev and prod", async () => {
+  const old = {
+    ENVIRONMENT: process.env.ENVIRONMENT,
+    NODE_ENV: process.env.NODE_ENV,
+  };
+  const input = {
+    email: "registration@example.invalid",
+    name: "Registration Test",
+    role: "client",
+    password: "Example123!",
+  };
+  try {
+    for (const env of [
+      { ENVIRONMENT: "dev", NODE_ENV: "development", detailed: true },
+      { ENVIRONMENT: "dev", NODE_ENV: "production", detailed: false },
+      { ENVIRONMENT: "prod", NODE_ENV: "development", detailed: false },
+    ]) {
+      process.env.ENVIRONMENT = env.ENVIRONMENT;
+      process.env.NODE_ENV = env.NODE_ENV;
+      const auth = service(),
+        logs = [];
+      auth.logger = { error: (value) => logs.push(value) };
+      let sends = 0;
+      auth.cognito.send = async () => {
+        sends++;
+        return {};
+      };
+      for (const [password, expected] of [
+        ["Ab1!", "Password must be at least 8 characters"],
+        ["Example123", "Password must include a symbol"],
+        ["example123!", "Password must include an uppercase letter"],
+        ["EXAMPLE123!", "Password must include a lowercase letter"],
+        ["Example!!!", "Password must include a number"],
+      ]) {
+        await assert.rejects(auth.register({ ...input, password }), {
+          status: 400,
+          message: env.detailed
+            ? expected
+            : "Registration could not be completed",
+        });
+        assert.ok(logs.at(-1).reason.includes(expected));
+        assert.ok(!JSON.stringify(logs.at(-1)).includes(password));
+      }
+      assert.equal(sends, 0, "invalid passwords must not call Cognito");
+      assert.deepEqual(await auth.register(input), {
+        confirmationRequired: true,
+      });
+      assert.equal(sends, 1);
+      for (const [name, reason, expected] of [
+        [
+          "InvalidPasswordException",
+          "Password must have symbol characters",
+          "Password must include a symbol",
+        ],
+        [
+          "UsernameExistsException",
+          "User already exists",
+          "An account with this email already exists",
+        ],
+        [
+          "CodeDeliveryFailureException",
+          "SES delivery failure",
+          "The verification email could not be sent. Please try again later",
+        ],
+        [
+          "UnexpectedLambdaException",
+          "Trigger failure",
+          "Registration service is unavailable. Check the API logs",
+        ],
+      ]) {
+        auth.cognito.send = async () => {
+          throw Object.assign(
+            new Error(`${reason}: ${input.email} ${input.password}`),
+            {
+              name,
+              $metadata: {
+                requestId: "diagnostic-request-id",
+                httpStatusCode: 400,
+              },
+            },
+          );
+        };
+        await assert.rejects(auth.register(input), {
+          status: 400,
+          message: env.detailed
+            ? expected
+            : "Registration could not be completed",
+        });
+        const log = logs.at(-1);
+        assert.equal(log.error, name);
+        assert.equal(log.requestId, "diagnostic-request-id");
+        assert.equal(log.httpStatus, 400);
+        assert.ok(log.reason.includes(reason));
+        assert.ok(!JSON.stringify(log).includes(input.email));
+        assert.ok(!JSON.stringify(log).includes(input.password));
+      }
+    }
+  } finally {
+    for (const [key, value] of Object.entries(old)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
+});

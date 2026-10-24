@@ -1,0 +1,45 @@
+Registration diagnosis and error handling — 24 October 2026
+
+Cause established and reported before source edits:
+Cognito InvalidPasswordException:
+"Password did not conform with policy: Password must have symbol characters"
+AWS request id: 81ea079f-0a06-4325-be63-6ff0b346afcf.
+
+The supplied password lacked a symbol. Reproduction used the supplied email
+with a newly generated password having the same missing-symbol condition;
+the user's password was not reused or logged. The Dev pool was read through
+DescribeUserPool: minimum 8, uppercase, lowercase, number and symbol required.
+The old API schema checked only length. Its catch discarded the SDK exception
+and logged nothing, so the historical API log could not reveal the cause.
+An isolated diagnostic wrapper captured the underlying SDK error before the
+existing handler replaced it. No source changes preceded the cause report.
+
+Changes:
+- Registration validates the observed password policy before calling Cognito.
+- Detailed, actionable responses require ENVIRONMENT=dev plus
+  NODE_ENV=development/test. Production and unspecified environments stay generic.
+- Known SDK failures map to safe messages: password requirements, duplicate
+  account, invalid registration details, throttling and email delivery failure.
+- All registration failures log error name, reason and available AWS request ID
+  and HTTP status, including production. The SDK error/request and request body
+  are never serialized. Submitted string values are redacted from logged reasons.
+- Existing configuration-unavailable errors retain HTTP 503. Other registration
+  failures retain HTTP 400. Cognito policy/infra and fixture auth are unchanged.
+
+Validation:
+- 34 API tests passed against local Postgres; no skips/failures.
+- All workspace typechecks passed.
+- Tests cover password requirements, successful SDK invocation with a valid
+  password, known/unknown SDK errors, both production gates and credential
+  redaction while retaining the underlying reason/request ID.
+- Restarted the local API on port 3001 with the fixed build.
+- Live local HTTP missing-symbol request now returns 400:
+  "Password must include a symbol"; API log records that validation reason.
+- Live existing seeded-account request returns 400:
+  "An account with this email already exists"; API log records
+  UsernameExistsException, "User already exists", request ID
+  e8c5adef-1ad5-4d47-b564-59fc837cb0f9 and HTTP 400.
+
+No new account was created and no verification email was sent during validation.
+No AWS deployment or mobile change. Full mobile smoke was not rerun because
+apps/mobile is unchanged. The user's untracked apps/mobile/.gitignore is untouched.

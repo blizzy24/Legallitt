@@ -1,0 +1,231 @@
+
+> @legalitt/api@0.0.0 test:local /Users/riya/Documents/14/apps/api
+> pnpm build && node --env-file=.env.local --test tests/*.cjs
+
+
+> @legalitt/api@0.0.0 build /Users/riya/Documents/14/apps/api
+> prisma generate && tsc
+
+Loaded Prisma config from prisma.config.ts.
+
+Prisma schema loaded from prisma/schema.prisma.
+
+✔ Generated Prisma Client (7.10.1) to ./src/generated/prisma in 143ms
+
+TAP version 13
+# Subtest: JWT verifier rejects expiry, wrong issuer/audience/use/signature and invalid role
+ok 1 - JWT verifier rejects expiry, wrong issuer/audience/use/signature and invalid role
+  ---
+  duration_ms: 53.882167
+  type: 'test'
+  ...
+# Subtest: client cannot pass advocate guard or register as admin
+ok 2 - client cannot pass advocate guard or register as admin
+  ---
+  duration_ms: 6.84475
+  type: 'test'
+  ...
+# Subtest: simulated phone entry rejects production regardless of fixed code
+ok 3 - simulated phone entry rejects production regardless of fixed code
+  ---
+  duration_ms: 22.543875
+  type: 'test'
+  ...
+# Subtest: demo OTP ignores phone, selects only fixed accounts and uses password auth
+ok 4 - demo OTP ignores phone, selects only fixed accounts and uses password auth
+  ---
+  duration_ms: 6.987125
+  type: 'test'
+  ...
+# Subtest: registration validates password policy and logs actionable errors without credentials in dev and prod
+ok 5 - registration validates password policy and logs actionable errors without credentials in dev and prod
+  ---
+  duration_ms: 11.509542
+  type: 'test'
+  ...
+# Subtest: case data access isolates clients, assigned advocates, other services and event cursors
+ok 6 - case data access isolates clients, assigned advocates, other services and event cursors
+  ---
+  duration_ms: 559.402333
+  type: 'test'
+  ...
+# Subtest: case mutations and append-only events have a single production writer
+ok 7 - case mutations and append-only events have a single production writer
+  ---
+  duration_ms: 2.173417
+  type: 'test'
+  ...
+# Subtest: Legal Notice state machine, transactions, permissions, concurrency and HTTP endpoints
+    # Subtest: every allowed edge writes exactly one attributed event; every other edge is rejected
+    ok 1 - every allowed edge writes exactly one attributed event; every other edge is rejected
+      ---
+      duration_ms: 1934.535167
+      type: 'test'
+      ...
+    # Subtest: cancellation/refund roles, terminal states and human review gate
+    ok 2 - cancellation/refund roles, terminal states and human review gate
+      ---
+      duration_ms: 266.434625
+      type: 'test'
+      ...
+    # Subtest: creation reference allocation, incremental drafts, submission and status injection
+    ok 3 - creation reference allocation, incremental drafts, submission and status injection
+      ---
+      duration_ms: 45.386041
+      type: 'test'
+      ...
+    # Subtest: event failure rolls back both status updates and case creation
+    ok 4 - event failure rolls back both status updates and case creation
+      ---
+      duration_ms: 8.208917
+      type: 'test'
+      ...
+    # Subtest: concurrent submissions produce one status change and one event
+    ok 5 - concurrent submissions produce one status change and one event
+      ---
+      duration_ms: 6.763709
+      type: 'test'
+      ...
+    # Subtest: HTTP create/list/read/patch/submit/events/cancel use authentication and scoped data
+    ok 6 - HTTP create/list/read/patch/submit/events/cancel use authentication and scoped data
+      ---
+      duration_ms: 214.980167
+      type: 'test'
+      ...
+    1..6
+ok 8 - Legal Notice state machine, transactions, permissions, concurrency and HTTP endpoints
+  ---
+  duration_ms: 2783.901833
+  type: 'test'
+  ...
+# Subtest: mobile data source defaults to fixtures, including unknown flag values; API must be explicit
+ok 9 - mobile data source defaults to fixtures, including unknown flag values; API must be explicit
+  ---
+  duration_ms: 24.715625
+  type: 'test'
+  ...
+# Subtest: database seed is idempotent and ledger rejects non-positive amounts
+ok 10 - database seed is idempotent and ledger rejects non-positive amounts
+  ---
+  duration_ms: 1100.2855
+  type: 'test'
+  ...
+# Subtest: document input rejects path traversal, unsupported types, identity numbers and client-controlled metadata
+ok 11 - document input rejects path traversal, unsupported types, identity numbers and client-controlled metadata
+  ---
+  duration_ms: 2.638334
+  type: 'test'
+  ...
+# Subtest: structural inspection counts PDFs and images and rejects non-documents
+ok 12 - structural inspection counts PDFs and images and rejects non-documents
+  ---
+  duration_ms: 712.475333
+  type: 'test'
+  ...
+# Subtest: S3 policies constrain size/type/key; reads pin versions; deletion purges exact-key versions
+ok 13 - S3 policies constrain size/type/key; reads pin versions; deletion purges exact-key versions
+  ---
+  duration_ms: 15.002834
+  type: 'test'
+  ...
+# Subtest: document authorization, completion, identity evidence and cleanup on PostgreSQL
+    # Subtest: unrelated clients and advocates cannot create or read evidence
+    ok 1 - unrelated clients and advocates cannot create or read evidence
+      ---
+      duration_ms: 25.347
+      type: 'test'
+      ...
+    # Subtest: ID proof uses real size and structural page count; concurrent completion is idempotent
+    ok 2 - ID proof uses real size and structural page count; concurrent completion is idempotent
+      ---
+      duration_ms: 171.758958
+      type: 'test'
+      ...
+    # Subtest: PNG counts one; malformed, mismatched and oversized objects are refused
+    ok 3 - PNG counts one; malformed, mismatched and oversized objects are refused
+      ---
+      duration_ms: 343.053292
+      type: 'test'
+      ...
+# [Nest] 2005  - 10/24/2026, 2:24:12 PM    WARN [DocumentService] Document deletion will be retried by cleanup
+    # Subtest: deletion requires uploader/admin and blocks new downloads before retrying storage
+    ok 4 - deletion requires uploader/admin and blocks new downloads before retrying storage
+      ---
+      duration_ms: 18.301
+      type: 'test'
+      ...
+    # Subtest: abandoned cleanup handles more than one batch and preserves recent or present objects
+    ok 5 - abandoned cleanup handles more than one batch and preserves recent or present objects
+      ---
+      duration_ms: 423.129791
+      type: 'test'
+      ...
+    # Subtest: HTTP routes enforce authentication, scoped access and strict request bodies
+    ok 6 - HTTP routes enforce authentication, scoped access and strict request bodies
+      ---
+      duration_ms: 289.322958
+      type: 'test'
+      ...
+    1..6
+ok 14 - document authorization, completion, identity evidence and cleanup on PostgreSQL
+  ---
+  duration_ms: 1394.5355
+  type: 'test'
+  ...
+# Subtest: Prisma lifecycle exactly mirrors canonical shared lifecycle
+ok 15 - Prisma lifecycle exactly mirrors canonical shared lifecycle
+  ---
+  duration_ms: 0.799209
+  type: 'test'
+  ...
+# Subtest: migration includes every authoritative table and SQL-only constraints
+ok 16 - migration includes every authoritative table and SQL-only constraints
+  ---
+  duration_ms: 1.586167
+  type: 'test'
+  ...
+# Subtest: seed uses integer paise, source citations and unconfirmed observations
+ok 17 - seed uses integer paise, source citations and unconfirmed observations
+  ---
+  duration_ms: 1.780333
+  type: 'test'
+  ...
+# Subtest: seed reruns never update existing price versions
+ok 18 - seed reruns never update existing price versions
+  ---
+  duration_ms: 4.610459
+  type: 'test'
+  ...
+# Subtest: /health answers HTTP without AWS/database configuration
+ok 19 - /health answers HTTP without AWS/database configuration
+  ---
+  duration_ms: 937.036333
+  type: 'test'
+  ...
+# Subtest: mobile auth registry covers every root navigator screen and all advocate paths
+ok 20 - mobile auth registry covers every root navigator screen and all advocate paths
+  ---
+  duration_ms: 9.363291
+  type: 'test'
+  ...
+# Subtest: Legal Notice full lifecycle, draft privacy/versioning, role boundaries and delivery proof
+ok 21 - Legal Notice full lifecycle, draft privacy/versioning, role boundaries and delivery proof
+  ---
+  duration_ms: 734.239125
+  type: 'test'
+  ...
+# Subtest: shared typed client exercises mounted notice routes; dev payment is unavailable in production
+ok 22 - shared typed client exercises mounted notice routes; dev payment is unavailable in production
+  ---
+  duration_ms: 925.504667
+  type: 'test'
+  ...
+1..22
+# tests 34
+# suites 0
+# pass 34
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3211.997917
