@@ -1,0 +1,47 @@
+Shared auth error handling and OTP diagnosis — 24 October 2026
+
+Diagnosis, reported before edits:
+The request was /api/v1/auth/confirm, as confirmed by the user's Network panel.
+It was email signup confirmation, not /api/v1/auth/otp/verify.
+Cognito returned CodeMismatchException:
+"Exceed max confirmation code attempts. Please resend confirmation code and retry."
+Request ID: 99e80ea6-645b-471e-9d76-6907860cf5c6.
+The email account remained UNCONFIRMED. An isolated SDK wrapper captured this
+underlying reason because the old confirm handler silently replaced it.
+
+Both real demo phone requests with 123456 returned HTTP 201 and the selected
+role with real Cognito tokens. The local flags are ENVIRONMENT=dev,
+NODE_ENV=development, PHONE_AUTH_MODE=demo, with the demo secret configured.
+No seed/flag repair or email-verification bypass was needed. Email signup uses
+the code Cognito sends; 123456 applies only to demo phone sign-in in API mode.
+
+Implementation:
+- Replaced registration-only error helpers with shared auth-errors.ts and one
+  AuthService.authOperation boundary for registration, confirmation, resend,
+  login, refresh and demo OTP request/verification.
+- Detailed responses require explicit local development/test configuration.
+  Production responses are generic. Production resend still uses the existing
+  non-enumerating acknowledgement; its underlying error is now logged.
+- Logs include the operation, original error name/reason, AWS request ID and
+  status when available. Request bodies/tokens are never serialized, submitted
+  strings are redacted, and internally loaded demo credentials are redacted too.
+- Demo sign-in calls the raw sign-in helper within its own operation boundary,
+  preserving the actual Cognito failure and logging it once under otp.verify.
+- Maps mismatched, expired and attempt-limited email codes to actionable messages.
+  Missing demo config messages identify the required flags/secret variable.
+- Cognito email verification, demo environment gates and role checks remain intact.
+
+Validation:
+35 API tests pass, with zero skips/failures; all workspace typechecks pass.
+Tests cover registration plus confirmation, resend, real SDK error mapping,
+production gates, redaction and no duplicated nested demo-login diagnostics.
+Restarted local API on port 3001 with the tested build.
+Both demo roles again returned HTTP 201 with the correct role and real tokens.
+An email-confirmation probe against an existing seeded account returned
+ExpiredCodeException and a clear resend message; the local API log records the
+original reason and request ID bc18fb00-8fe4-4eb4-9d6a-eb08231899c5.
+Wrong demo phone code returns HTTP 401 with "Incorrect demo phone code. Enter 123456".
+
+No new accounts, resend emails, AWS deployments or mobile changes. The user's
+unconfirmed email account was not bypassed or modified. No mobile smoke rerun
+was needed. The untracked apps/mobile/.gitignore is untouched.

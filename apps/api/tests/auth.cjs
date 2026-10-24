@@ -328,3 +328,111 @@ test("registration validates password policy and logs actionable errors without 
     }
   }
 });
+
+test("one auth policy logs confirmation, resend and demo failures with safe environment-specific responses", async () => {
+  const demo = require("../dist/src/auth/demo");
+  const oldPassword = demo.demoPassword;
+  const old = {
+    ENVIRONMENT: process.env.ENVIRONMENT,
+    NODE_ENV: process.env.NODE_ENV,
+    PHONE_AUTH_MODE: process.env.PHONE_AUTH_MODE,
+  };
+  try {
+    for (const production of [false, true]) {
+      Object.assign(process.env, {
+        ENVIRONMENT: "dev",
+        NODE_ENV: production ? "production" : "development",
+        PHONE_AUTH_MODE: "demo",
+      });
+      const auth = service(),
+        logs = [];
+      auth.logger = { error: (value) => logs.push(value) };
+      for (const [name, reason, expected] of [
+        [
+          "CodeMismatchException",
+          "Exceed max confirmation code attempts. Please resend confirmation code and retry.",
+          "Too many incorrect email codes",
+        ],
+        [
+          "CodeMismatchException",
+          "Invalid verification code provided",
+          "Incorrect email verification code",
+        ],
+        [
+          "ExpiredCodeException",
+          "Invalid code provided, please request a code again.",
+          "The email verification code has expired",
+        ],
+      ]) {
+        auth.cognito.send = async () => {
+          throw Object.assign(new Error(reason), {
+            name,
+            $metadata: {
+              requestId: "confirmation-request",
+              httpStatusCode: 400,
+            },
+          });
+        };
+        await assert.rejects(
+          auth.confirm({ email: "test@example.invalid", code: "123456" }),
+          (e) => {
+            assert.equal(e.status, 400);
+            if (production) assert.equal(e.message, "Verification failed");
+            else assert.ok(e.message.startsWith(expected));
+            return true;
+          },
+        );
+        assert.equal(logs.at(-1).event, "auth.confirmation.failed");
+        assert.equal(logs.at(-1).reason, reason);
+        assert.equal(logs.at(-1).requestId, "confirmation-request");
+      }
+      auth.cognito.send = async () => {
+        throw Object.assign(new Error("Email delivery failed"), {
+          name: "CodeDeliveryFailureException",
+        });
+      };
+      if (production)
+        assert.deepEqual(await auth.resend({ email: "test@example.invalid" }), {
+          requested: true,
+        });
+      else
+        await assert.rejects(
+          auth.resend({ email: "test@example.invalid" }),
+          /verification email could not be sent/,
+        );
+      assert.equal(logs.at(-1).event, "auth.resend.failed");
+      if (!production) {
+        demo.demoPassword = async () => "PrivateDemoPassword!";
+        auth.cognito.send = async () => {
+          throw Object.assign(new Error("PrivateDemoPassword! was rejected"), {
+            name: "NotAuthorizedException",
+            $metadata: { requestId: "demo-request" },
+          });
+        };
+        const count = logs.length;
+        await assert.rejects(
+          auth.verifyOtp({ phone: "ignored", code: "123456", role: "client" }),
+          /Demo Cognito sign-in failed/,
+        );
+        assert.equal(logs.length, count + 1);
+        assert.equal(logs.at(-1).event, "auth.otp.verify.failed");
+        assert.equal(logs.at(-1).requestId, "demo-request");
+        assert.ok(
+          !JSON.stringify(logs.at(-1)).includes("PrivateDemoPassword!"),
+        );
+      } else {
+        await assert.rejects(
+          auth.verifyOtp({ phone: "ignored", code: "123456", role: "client" }),
+          { status: 503, message: "Verification failed" },
+        );
+        assert.equal(logs.at(-1).event, "auth.otp.verify.failed");
+      }
+    }
+  } finally {
+    demo.demoPassword = oldPassword;
+    for (const [key, value] of Object.entries(old)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
+});

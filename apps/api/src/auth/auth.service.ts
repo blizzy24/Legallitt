@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   Logger,
+  HttpException,
   UnauthorizedException,
   ServiceUnavailableException,
 } from "@nestjs/common";
@@ -23,9 +24,12 @@ import { PrismaService } from "../prisma.service";
 import { demoAccounts, demoPassword, requireDemoMode } from "./demo";
 
 import {
-  registrationDiagnostic,
-  registrationMessage,
-} from "./registration-errors";
+  authDiagnostic,
+  authMessage,
+  detailedAuthErrors,
+  type AuthOperation,
+} from "./auth-errors";
+class ReportedAuthFailure extends HttpException {}
 
 const roles = z.enum(["client", "advocate", "admin"]);
 const configSchema = z.object({
@@ -90,8 +94,43 @@ export class AuthService {
       });
     return this.configuration;
   }
-  async register(body: unknown) {
+  private async authOperation<T>(
+    operation: AuthOperation,
+    body: unknown,
+    action: () => Promise<T>,
+    secrets: string[] = [],
+  ): Promise<T> {
     try {
+      return await action();
+    } catch (error) {
+      if (error instanceof ReportedAuthFailure) throw error;
+      this.logger.error(authDiagnostic(operation, error, body, secrets));
+      const status =
+        error instanceof HttpException
+          ? error.getStatus()
+          : error instanceof z.ZodError
+            ? 400
+            : ["login", "refresh", "otp.verify"].includes(operation)
+              ? 401
+              : 400;
+      const message = authMessage(operation, error);
+      throw new ReportedAuthFailure(
+        {
+          message,
+          error:
+            status === 401
+              ? "Unauthorized"
+              : status === 503
+                ? "Service Unavailable"
+                : "Bad Request",
+          statusCode: status,
+        },
+        status,
+      );
+    }
+  }
+  async register(body: unknown) {
+    return this.authOperation("registration", body, async () => {
       const input = registerSchema.parse(body);
       const config = await this.config();
       await this.cognito.send(
@@ -110,23 +149,20 @@ export class AuthService {
         }),
       );
       return { confirmationRequired: true };
-    } catch (error) {
-      this.logger.error(registrationDiagnostic(error, body));
-      const message = registrationMessage(error);
-      if (error instanceof ServiceUnavailableException)
-        throw new ServiceUnavailableException(message);
-      throw new BadRequestException(message);
-    }
+    });
   }
   async confirm(body: unknown) {
-    const input = parse(
-      z
-        .object({ email: z.email(), code: z.string().regex(/^\d{6}$/) })
-        .strict(),
-      body,
-    );
-    const config = await this.config();
-    try {
+    return this.authOperation("confirmation", body, async () => {
+      const input = z
+        .object({
+          email: z.email(),
+          code: z
+            .string()
+            .regex(/^\d{6}$/, "Enter the six-digit code from your email"),
+        })
+        .strict()
+        .parse(body);
+      const config = await this.config();
       await this.cognito.send(
         new ConfirmSignUpCommand({
           ClientId: config.clientId,
@@ -135,22 +171,26 @@ export class AuthService {
         }),
       );
       return { confirmed: true };
-    } catch {
-      throw new BadRequestException("Verification failed");
-    }
+    });
   }
   async resend(body: unknown) {
-    const input = parse(z.object({ email: z.email() }).strict(), body);
-    const config = await this.config();
     try {
-      await this.cognito.send(
-        new ResendConfirmationCodeCommand({
-          ClientId: config.clientId,
-          Username: input.email,
-        }),
-      );
-    } catch {}
-    return { requested: true };
+      return await this.authOperation("resend", body, async () => {
+        const input = z.object({ email: z.email() }).strict().parse(body);
+        const config = await this.config();
+        await this.cognito.send(
+          new ResendConfirmationCodeCommand({
+            ClientId: config.clientId,
+            Username: input.email,
+          }),
+        );
+        return { requested: true };
+      });
+    } catch (error) {
+      // Preserve production's non-enumerating acknowledgement, but never lose its diagnostic.
+      if (detailedAuthErrors()) throw error;
+      return { requested: true };
+    }
   }
   private async session(
     result?: AuthenticationResultType,
@@ -170,12 +210,13 @@ export class AuthService {
     };
   }
   async login(body: unknown) {
-    const input = parse(
-      z
-        .object({ email: z.email(), password: z.string().min(1).max(256) })
-        .strict(),
-      body,
-    );
+    return this.authOperation("login", body, () => this.signIn(body));
+  }
+  private async signIn(body: unknown) {
+    const input = z
+      .object({ email: z.email(), password: z.string().min(1).max(256) })
+      .strict()
+      .parse(body);
     const config = await this.config();
     let result;
     try {
@@ -188,18 +229,18 @@ export class AuthService {
       );
     } catch (error) {
       if ((error as { name?: string }).name === "UserNotConfirmedException")
-        return { confirmationRequired: true };
-      throw new UnauthorizedException("Authentication failed");
+        return { confirmationRequired: true as const };
+      throw error;
     }
     return this.session(result.AuthenticationResult);
   }
   async refresh(body: unknown) {
-    const input = parse(
-      z.object({ refreshToken: z.string().min(1).max(8192) }).strict(),
-      body,
-    );
-    const config = await this.config();
-    try {
+    return this.authOperation("refresh", body, async () => {
+      const input = z
+        .object({ refreshToken: z.string().min(1).max(8192) })
+        .strict()
+        .parse(body);
+      const config = await this.config();
       const result = await this.cognito.send(
         new InitiateAuthCommand({
           ClientId: config.clientId,
@@ -207,41 +248,51 @@ export class AuthService {
           AuthParameters: { REFRESH_TOKEN: input.refreshToken },
         }),
       );
-      return await this.session(
-        result.AuthenticationResult,
-        input.refreshToken,
-      );
-    } catch {
-      throw new UnauthorizedException("Session expired");
-    }
+      return this.session(result.AuthenticationResult, input.refreshToken);
+    });
   }
   async requestOtp(body: unknown) {
-    requireDemoMode();
-    // The displayed number is not an identity and is never sent to Cognito.
-    parse(z.object({ phone: z.string().max(64) }).strict(), body);
-    return { requested: true };
+    return this.authOperation("otp.request", body, async () => {
+      requireDemoMode();
+      z.object({ phone: z.string().max(64) })
+        .strict()
+        .parse(body);
+      return { requested: true };
+    });
   }
   async verifyOtp(body: unknown) {
-    requireDemoMode();
-    const input = parse(
-      z
-        .object({
-          phone: z.string().max(64),
-          code: z.string().regex(/^\d{6}$/),
-          role: z.enum(["client", "advocate"]),
-        })
-        .strict(),
+    const secrets: string[] = [];
+    return this.authOperation(
+      "otp.verify",
       body,
+      async () => {
+        requireDemoMode();
+        const input = z
+          .object({
+            phone: z.string().max(64),
+            code: z.string().regex(/^\d{6}$/, "Enter the six-digit demo code"),
+            role: z.enum(["client", "advocate"]),
+          })
+          .strict()
+          .parse(body);
+        if (input.code !== "123456")
+          throw new UnauthorizedException(
+            "Incorrect demo phone code. Enter 123456",
+          );
+        const password = await demoPassword();
+        secrets.push(password, demoAccounts[input.role].email);
+        const result = await this.signIn({
+          email: demoAccounts[input.role].email,
+          password,
+        });
+        if ("confirmationRequired" in result || result.user.role !== input.role)
+          throw new UnauthorizedException(
+            "Demo account is not configured: check the seeded role and email verification",
+          );
+        return result;
+      },
+      secrets,
     );
-    if (input.code !== "123456")
-      throw new UnauthorizedException("Verification failed");
-    const result = await this.login({
-      email: demoAccounts[input.role].email,
-      password: await demoPassword(),
-    });
-    if ("confirmationRequired" in result || result.user.role !== input.role)
-      throw new UnauthorizedException("Demo account is not configured");
-    return result;
   }
   async identity(token: string) {
     const config = await this.config();

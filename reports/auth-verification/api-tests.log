@@ -1,0 +1,373 @@
+
+> @legalitt/api@0.0.0 test:local /Users/riya/Documents/14/apps/api
+> pnpm build && node --env-file=.env.local --test tests/*.cjs
+
+
+> @legalitt/api@0.0.0 build /Users/riya/Documents/14/apps/api
+> prisma generate && tsc
+
+Loaded Prisma config from prisma.config.ts.
+
+Prisma schema loaded from prisma/schema.prisma.
+┌─────────────────────────────────────────────────────────┐
+│  Update available 7.10.1 -> 8.0.0-rc.27                 │
+│                                                         │
+│  This is a major update - please follow the guide at    │
+│  https://pris.ly/d/major-version-upgrade                │
+│                                                         │
+│  Run the following to update                            │
+│    npm i --save-dev prisma@latest                       │
+│    npm i @prisma/client@latest                          │
+└─────────────────────────────────────────────────────────┘
+
+✔ Generated Prisma Client (7.10.1) to ./src/generated/prisma in 144ms
+
+TAP version 13
+# [Nest] 3910  - 10/24/2026, 2:35:19 PM   ERROR [AuthService] Object(5) {
+#   event: 'auth.otp.verify.failed',
+#   error: 'ServiceUnavailableException',
+#   reason: 'Phone sign-in is not configured',
+#   requestId: undefined,
+#   httpStatus: undefined
+# }
+# [Nest] 3910  - 10/24/2026, 2:35:19 PM   ERROR [AuthService] Object(5) {
+#   event: 'auth.otp.request.failed',
+#   error: 'ServiceUnavailableException',
+#   reason: 'Phone sign-in is not configured',
+#   requestId: undefined,
+#   httpStatus: undefined
+# }
+# [Nest] 3910  - 10/24/2026, 2:35:19 PM   ERROR [AuthService] Object(5) {
+#   event: 'auth.otp.verify.failed',
+#   error: 'ZodError',
+#   reason: 'code: Enter the six-digit demo code',
+#   requestId: undefined,
+#   httpStatus: undefined
+# }
+# [Nest] 3910  - 10/24/2026, 2:35:19 PM   ERROR [AuthService] Object(5) {
+#   event: 'auth.otp.verify.failed',
+#   error: 'ZodError',
+#   reason: 'code: Enter the six-digit demo code',
+#   requestId: undefined,
+#   httpStatus: undefined
+# }
+# [Nest] 3910  - 10/24/2026, 2:35:19 PM   ERROR [AuthService] Object(5) {
+#   event: 'auth.otp.verify.failed',
+#   error: 'ZodError',
+#   reason: 'code: Enter the six-digit demo code',
+#   requestId: undefined,
+#   httpStatus: undefined
+# }
+# [Nest] 3910  - 10/24/2026, 2:35:19 PM   ERROR [AuthService] Object(5) {
+#   event: 'auth.otp.verify.failed',
+#   error: 'UnauthorizedException',
+#   reason: 'Incorrect demo phone code. Enter 123456',
+#   requestId: undefined,
+#   httpStatus: undefined
+# }
+# [Nest] 3910  - 10/24/2026, 2:35:19 PM   ERROR [AuthService] Object(5) {
+#   event: 'auth.otp.verify.failed',
+#   error: 'ZodError',
+#   reason: 'role: Invalid option: expected one of "client"|"advocate"',
+#   requestId: undefined,
+#   httpStatus: undefined
+# }
+# [Nest] 3910  - 10/24/2026, 2:35:19 PM   ERROR [AuthService] Object(5) {
+#   event: 'auth.otp.verify.failed',
+#   error: 'ZodError',
+#   reason: 'role: Invalid option: expected one of "client"|"advocate"',
+#   requestId: undefined,
+#   httpStatus: undefined
+# }
+# [Nest] 3910  - 10/24/2026, 2:35:19 PM   ERROR [AuthService] Object(5) {
+#   event: 'auth.otp.request.failed',
+#   error: 'ServiceUnavailableException',
+#   reason: 'Phone sign-in is not configured',
+#   requestId: undefined,
+#   httpStatus: undefined
+# }
+# [Nest] 3910  - 10/24/2026, 2:35:19 PM   ERROR [AuthService] Object(5) {
+#   event: 'auth.otp.verify.failed',
+#   error: 'ServiceUnavailableException',
+#   reason: 'Phone sign-in is not configured',
+#   requestId: undefined,
+#   httpStatus: undefined
+# }
+# [Nest] 3910  - 10/24/2026, 2:35:19 PM   ERROR [AuthService] Object(5) {
+#   event: 'auth.otp.request.failed',
+#   error: 'ServiceUnavailableException',
+#   reason: 'Phone sign-in is not configured',
+#   requestId: undefined,
+#   httpStatus: undefined
+# }
+# [Nest] 3910  - 10/24/2026, 2:35:19 PM   ERROR [AuthService] Object(5) {
+#   event: 'auth.otp.verify.failed',
+#   error: 'ServiceUnavailableException',
+#   reason: 'Phone sign-in is not configured',
+#   requestId: undefined,
+#   httpStatus: undefined
+# }
+# [Nest] 3910  - 10/24/2026, 2:35:19 PM   ERROR [AuthService] Object(5) {
+#   event: 'auth.otp.request.failed',
+#   error: 'ServiceUnavailableException',
+#   reason: 'Phone sign-in is not configured',
+#   requestId: undefined,
+#   httpStatus: undefined
+# }
+# [Nest] 3910  - 10/24/2026, 2:35:19 PM   ERROR [AuthService] Object(5) {
+#   event: 'auth.otp.verify.failed',
+#   error: 'ServiceUnavailableException',
+#   reason: 'Phone sign-in is not configured',
+#   requestId: undefined,
+#   httpStatus: undefined
+# }
+# [Nest] 3910  - 10/24/2026, 2:35:19 PM   ERROR [AuthService] Object(5) {
+#   event: 'auth.otp.request.failed',
+#   error: 'ServiceUnavailableException',
+#   reason: 'Phone sign-in is not configured',
+#   requestId: undefined,
+#   httpStatus: undefined
+# }
+# [Nest] 3910  - 10/24/2026, 2:35:19 PM   ERROR [AuthService] Object(5) {
+#   event: 'auth.otp.verify.failed',
+#   error: 'ServiceUnavailableException',
+#   reason: 'Phone sign-in is not configured',
+#   requestId: undefined,
+#   httpStatus: undefined
+# }
+# [Nest] 3910  - 10/24/2026, 2:35:19 PM   ERROR [AuthService] Object(5) {
+#   event: 'auth.otp.request.failed',
+#   error: 'ServiceUnavailableException',
+#   reason: 'Phone sign-in is not configured',
+#   requestId: undefined,
+#   httpStatus: undefined
+# }
+# [Nest] 3910  - 10/24/2026, 2:35:19 PM   ERROR [AuthService] Object(5) {
+#   event: 'auth.otp.verify.failed',
+#   error: 'ServiceUnavailableException',
+#   reason: 'Phone sign-in is not configured',
+#   requestId: undefined,
+#   httpStatus: undefined
+# }
+# Subtest: JWT verifier rejects expiry, wrong issuer/audience/use/signature and invalid role
+ok 1 - JWT verifier rejects expiry, wrong issuer/audience/use/signature and invalid role
+  ---
+  duration_ms: 150.553083
+  type: 'test'
+  ...
+# Subtest: client cannot pass advocate guard or register as admin
+ok 2 - client cannot pass advocate guard or register as admin
+  ---
+  duration_ms: 9.606959
+  type: 'test'
+  ...
+# Subtest: simulated phone entry rejects production regardless of fixed code
+ok 3 - simulated phone entry rejects production regardless of fixed code
+  ---
+  duration_ms: 6.85025
+  type: 'test'
+  ...
+# Subtest: demo OTP ignores phone, selects only fixed accounts and uses password auth
+ok 4 - demo OTP ignores phone, selects only fixed accounts and uses password auth
+  ---
+  duration_ms: 82.29725
+  type: 'test'
+  ...
+# Subtest: registration validates password policy and logs actionable errors without credentials in dev and prod
+ok 5 - registration validates password policy and logs actionable errors without credentials in dev and prod
+  ---
+  duration_ms: 3.236959
+  type: 'test'
+  ...
+# Subtest: one auth policy logs confirmation, resend and demo failures with safe environment-specific responses
+ok 6 - one auth policy logs confirmation, resend and demo failures with safe environment-specific responses
+  ---
+  duration_ms: 6.821
+  type: 'test'
+  ...
+# Subtest: case data access isolates clients, assigned advocates, other services and event cursors
+ok 7 - case data access isolates clients, assigned advocates, other services and event cursors
+  ---
+  duration_ms: 675.542792
+  type: 'test'
+  ...
+# Subtest: case mutations and append-only events have a single production writer
+ok 8 - case mutations and append-only events have a single production writer
+  ---
+  duration_ms: 2.108584
+  type: 'test'
+  ...
+# Subtest: Legal Notice state machine, transactions, permissions, concurrency and HTTP endpoints
+    # Subtest: every allowed edge writes exactly one attributed event; every other edge is rejected
+    ok 1 - every allowed edge writes exactly one attributed event; every other edge is rejected
+      ---
+      duration_ms: 1770.380792
+      type: 'test'
+      ...
+    # Subtest: cancellation/refund roles, terminal states and human review gate
+    ok 2 - cancellation/refund roles, terminal states and human review gate
+      ---
+      duration_ms: 208.877875
+      type: 'test'
+      ...
+    # Subtest: creation reference allocation, incremental drafts, submission and status injection
+    ok 3 - creation reference allocation, incremental drafts, submission and status injection
+      ---
+      duration_ms: 59.840291
+      type: 'test'
+      ...
+    # Subtest: event failure rolls back both status updates and case creation
+    ok 4 - event failure rolls back both status updates and case creation
+      ---
+      duration_ms: 8.191917
+      type: 'test'
+      ...
+    # Subtest: concurrent submissions produce one status change and one event
+    ok 5 - concurrent submissions produce one status change and one event
+      ---
+      duration_ms: 6.667791
+      type: 'test'
+      ...
+    # Subtest: HTTP create/list/read/patch/submit/events/cancel use authentication and scoped data
+    ok 6 - HTTP create/list/read/patch/submit/events/cancel use authentication and scoped data
+      ---
+      duration_ms: 206.7635
+      type: 'test'
+      ...
+    1..6
+ok 9 - Legal Notice state machine, transactions, permissions, concurrency and HTTP endpoints
+  ---
+  duration_ms: 2697.056208
+  type: 'test'
+  ...
+# Subtest: mobile data source defaults to fixtures, including unknown flag values; API must be explicit
+ok 10 - mobile data source defaults to fixtures, including unknown flag values; API must be explicit
+  ---
+  duration_ms: 25.660417
+  type: 'test'
+  ...
+# Subtest: database seed is idempotent and ledger rejects non-positive amounts
+ok 11 - database seed is idempotent and ledger rejects non-positive amounts
+  ---
+  duration_ms: 1238.81775
+  type: 'test'
+  ...
+# Subtest: document input rejects path traversal, unsupported types, identity numbers and client-controlled metadata
+ok 12 - document input rejects path traversal, unsupported types, identity numbers and client-controlled metadata
+  ---
+  duration_ms: 2.623375
+  type: 'test'
+  ...
+# Subtest: structural inspection counts PDFs and images and rejects non-documents
+ok 13 - structural inspection counts PDFs and images and rejects non-documents
+  ---
+  duration_ms: 636.404125
+  type: 'test'
+  ...
+# Subtest: S3 policies constrain size/type/key; reads pin versions; deletion purges exact-key versions
+ok 14 - S3 policies constrain size/type/key; reads pin versions; deletion purges exact-key versions
+  ---
+  duration_ms: 15.016375
+  type: 'test'
+  ...
+# Subtest: document authorization, completion, identity evidence and cleanup on PostgreSQL
+    # Subtest: unrelated clients and advocates cannot create or read evidence
+    ok 1 - unrelated clients and advocates cannot create or read evidence
+      ---
+      duration_ms: 21.474375
+      type: 'test'
+      ...
+    # Subtest: ID proof uses real size and structural page count; concurrent completion is idempotent
+    ok 2 - ID proof uses real size and structural page count; concurrent completion is idempotent
+      ---
+      duration_ms: 154.3885
+      type: 'test'
+      ...
+    # Subtest: PNG counts one; malformed, mismatched and oversized objects are refused
+    ok 3 - PNG counts one; malformed, mismatched and oversized objects are refused
+      ---
+      duration_ms: 351.827583
+      type: 'test'
+      ...
+# [Nest] 3916  - 10/24/2026, 2:35:20 PM    WARN [DocumentService] Document deletion will be retried by cleanup
+    # Subtest: deletion requires uploader/admin and blocks new downloads before retrying storage
+    ok 4 - deletion requires uploader/admin and blocks new downloads before retrying storage
+      ---
+      duration_ms: 16.471084
+      type: 'test'
+      ...
+    # Subtest: abandoned cleanup handles more than one batch and preserves recent or present objects
+    ok 5 - abandoned cleanup handles more than one batch and preserves recent or present objects
+      ---
+      duration_ms: 377.923584
+      type: 'test'
+      ...
+    # Subtest: HTTP routes enforce authentication, scoped access and strict request bodies
+    ok 6 - HTTP routes enforce authentication, scoped access and strict request bodies
+      ---
+      duration_ms: 271.29825
+      type: 'test'
+      ...
+    1..6
+ok 15 - document authorization, completion, identity evidence and cleanup on PostgreSQL
+  ---
+  duration_ms: 1311.597
+  type: 'test'
+  ...
+# Subtest: Prisma lifecycle exactly mirrors canonical shared lifecycle
+ok 16 - Prisma lifecycle exactly mirrors canonical shared lifecycle
+  ---
+  duration_ms: 0.766375
+  type: 'test'
+  ...
+# Subtest: migration includes every authoritative table and SQL-only constraints
+ok 17 - migration includes every authoritative table and SQL-only constraints
+  ---
+  duration_ms: 1.517375
+  type: 'test'
+  ...
+# Subtest: seed uses integer paise, source citations and unconfirmed observations
+ok 18 - seed uses integer paise, source citations and unconfirmed observations
+  ---
+  duration_ms: 2.385208
+  type: 'test'
+  ...
+# Subtest: seed reruns never update existing price versions
+ok 19 - seed reruns never update existing price versions
+  ---
+  duration_ms: 4.096459
+  type: 'test'
+  ...
+# Subtest: /health answers HTTP without AWS/database configuration
+ok 20 - /health answers HTTP without AWS/database configuration
+  ---
+  duration_ms: 1002.298375
+  type: 'test'
+  ...
+# Subtest: mobile auth registry covers every root navigator screen and all advocate paths
+ok 21 - mobile auth registry covers every root navigator screen and all advocate paths
+  ---
+  duration_ms: 13.562666
+  type: 'test'
+  ...
+# Subtest: Legal Notice full lifecycle, draft privacy/versioning, role boundaries and delivery proof
+ok 22 - Legal Notice full lifecycle, draft privacy/versioning, role boundaries and delivery proof
+  ---
+  duration_ms: 777.981708
+  type: 'test'
+  ...
+# Subtest: shared typed client exercises mounted notice routes; dev payment is unavailable in production
+ok 23 - shared typed client exercises mounted notice routes; dev payment is unavailable in production
+  ---
+  duration_ms: 986.215167
+  type: 'test'
+  ...
+1..23
+# tests 35
+# suites 0
+# pass 35
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3232.180084

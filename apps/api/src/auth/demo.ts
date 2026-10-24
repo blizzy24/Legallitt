@@ -22,7 +22,9 @@ export function requireDemoMode() {
 export async function demoPassword(): Promise<string> {
   requireDemoMode();
   if (!process.env.DEMO_AUTH_SECRET_ARN)
-    throw new ServiceUnavailableException("Demo sign-in is not configured");
+    throw new ServiceUnavailableException(
+      "Demo sign-in requires DEMO_AUTH_SECRET_ARN",
+    );
   const secrets = new SecretsManagerClient({ region: "ap-south-1" });
   try {
     const result = await secrets.send(
