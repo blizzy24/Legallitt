@@ -18,10 +18,7 @@ const generic: Record<AuthOperation, string> = {
   "otp.verify": "Verification failed",
 };
 export function detailedAuthErrors() {
-  return (
-    process.env.ENVIRONMENT === "dev" &&
-    ["development", "test"].includes(process.env.NODE_ENV ?? "")
-  );
+  return process.env.NODE_ENV !== "production";
 }
 export function authMessage(operation: AuthOperation, error: unknown): string {
   if (!detailedAuthErrors()) return generic[operation];

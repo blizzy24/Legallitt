@@ -239,7 +239,8 @@ test("registration validates password policy and logs actionable errors without 
     for (const env of [
       { ENVIRONMENT: "dev", NODE_ENV: "development", detailed: true },
       { ENVIRONMENT: "dev", NODE_ENV: "production", detailed: false },
-      { ENVIRONMENT: "prod", NODE_ENV: "development", detailed: false },
+      { ENVIRONMENT: "prod", NODE_ENV: "development", detailed: true },
+      { ENVIRONMENT: "", NODE_ENV: "", detailed: true },
     ]) {
       process.env.ENVIRONMENT = env.ENVIRONMENT;
       process.env.NODE_ENV = env.NODE_ENV;
@@ -306,11 +307,18 @@ test("registration validates password policy and logs actionable errors without 
             },
           );
         };
-        await assert.rejects(auth.register(input), {
-          status: 400,
-          message: env.detailed
-            ? expected
-            : "Registration could not be completed",
+        await assert.rejects(auth.register(input), (error) => {
+          assert.equal(error.status, 400);
+          const response = error.getResponse();
+          assert.equal(response.message, env.detailed ? expected : "Registration could not be completed");
+          if (env.detailed) {
+            assert.equal(response.detail.error, name);
+            assert.equal(response.detail.requestId, "diagnostic-request-id");
+            assert.ok(response.detail.reason.includes(reason));
+            assert.ok(!JSON.stringify(response).includes(input.password));
+            assert.ok(!JSON.stringify(response).includes(input.email));
+          } else assert.equal(response.detail, undefined);
+          return true;
         });
         const log = logs.at(-1);
         assert.equal(log.error, name);

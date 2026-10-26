@@ -104,7 +104,8 @@ export class AuthService {
       return await action();
     } catch (error) {
       if (error instanceof ReportedAuthFailure) throw error;
-      this.logger.error(authDiagnostic(operation, error, body, secrets));
+      const diagnostic = authDiagnostic(operation, error, body, secrets);
+      this.logger.error(diagnostic);
       const status =
         error instanceof HttpException
           ? error.getStatus()
@@ -117,6 +118,7 @@ export class AuthService {
       throw new ReportedAuthFailure(
         {
           message,
+          ...(detailedAuthErrors() ? { detail: diagnostic } : {}),
           error:
             status === 401
               ? "Unauthorized"
