@@ -15,7 +15,7 @@ async function bootstrap() {
       .filter(Boolean) ?? [];
   app.enableCors({
     origin: origins,
-    allowedHeaders: ["Authorization", "Content-Type"],
+    allowedHeaders: ["Authorization", "Content-Type", "Idempotency-Key"],
     methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
   });
   await app.listen(port, "0.0.0.0");

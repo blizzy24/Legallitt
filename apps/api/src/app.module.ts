@@ -1,3 +1,9 @@
+import { DatabaseModule } from "./database.module";
+import { PaymentsModule } from './payments/payments.module';
+import { PaymentsService } from './payments/payments.service';
+import { PaymentsController } from './payments/payments.controller';
+import { NotificationsModule } from './notifications/notifications.module';
+import { PhoneAuthModule } from "./phone-auth/phone-auth.module";
 import { ServicesController } from "./cases/services.controller";
 import { NoticeController } from "./cases/notice.controller";
 import { DocumentController } from "./documents/document.controller";
@@ -26,7 +32,9 @@ export class HealthController {
 }
 
 @Module({
+  imports: [DatabaseModule, PhoneAuthModule, PaymentsModule, NotificationsModule],
   controllers: [
+    PaymentsController,
     HealthController,
     AuthController,
     MeController,
@@ -36,7 +44,7 @@ export class HealthController {
     DocumentController,
   ],
   providers: [
-    PrismaService,
+    PaymentsService,
     AuthService,
     AuthGuard,
     CaseRepository,
@@ -45,6 +53,6 @@ export class HealthController {
     DocumentStorage,
     FileInspector,
   ],
-  exports: [PrismaService],
+  exports: [DatabaseModule],
 })
 export class AppModule {}

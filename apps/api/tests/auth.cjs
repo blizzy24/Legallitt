@@ -33,8 +33,9 @@ function token(changes = {}, key = privateKey) {
   return `${header}.${body}.${sign("RSA-SHA256", Buffer.from(`${header}.${body}`), key).toString("base64url")}`;
 }
 function service() {
-  const auth = new AuthService({
+  const prisma = {
     getClient: async () => ({
+      authEvent: {create: async () => ({})},
       user: {
         upsert: async ({ create }) => ({
           id: "test-id",
@@ -43,7 +44,9 @@ function service() {
         }),
       },
     }),
-  });
+  };
+  const {SimulatedPhoneAuth} = require('../dist/src/phone-auth/simulated-phone-auth');
+  const auth = new AuthService(prisma, new SimulatedPhoneAuth(prisma));
   auth.configuration = Promise.resolve({ userPoolId: pool, clientId: client });
   auth.verifier = CognitoJwtVerifier.create({
     userPoolId: pool,
@@ -130,7 +133,7 @@ test("simulated phone entry rejects production regardless of fixed code", async 
 });
 
 test("demo OTP ignores phone, selects only fixed accounts and uses password auth", async () => {
-  const demo = require("../dist/src/auth/demo");
+  const demo = require("../dist/src/phone-auth/demo-accounts");
   const oldPassword = demo.demoPassword;
   const old = {
     ENVIRONMENT: process.env.ENVIRONMENT,
@@ -161,7 +164,7 @@ test("demo OTP ignores phone, selects only fixed accounts and uses password auth
       };
     };
     assert.deepEqual(await auth.requestOtp({ phone: "ignored" }), {
-      requested: true,
+      requested: true, simulated: true,
     });
     assert.equal(calls.length, 0);
     for (const role of ["client", "advocate"]) {
@@ -188,7 +191,7 @@ test("demo OTP ignores phone, selects only fixed accounts and uses password auth
     }
     await assert.rejects(
       auth.verifyOtp({ phone: "", code: "000000", role: "client" }),
-      { status: 401 },
+      { status: 400 },
     );
     await assert.rejects(
       auth.verifyOtp({ phone: "", code: "123456", role: "admin" }),
@@ -201,9 +204,9 @@ test("demo OTP ignores phone, selects only fixed accounts and uses password auth
     for (const config of [
       { ENVIRONMENT: "prod", NODE_ENV: "development", PHONE_AUTH_MODE: "demo" },
       { ENVIRONMENT: "dev", NODE_ENV: "production", PHONE_AUTH_MODE: "demo" },
-      { ENVIRONMENT: "dev", NODE_ENV: "development", PHONE_AUTH_MODE: "live" },
+
       { ENVIRONMENT: "", NODE_ENV: "development", PHONE_AUTH_MODE: "demo" },
-      { ENVIRONMENT: "dev", NODE_ENV: "development", PHONE_AUTH_MODE: "" },
+
     ]) {
       Object.assign(process.env, config);
       await assert.rejects(auth.requestOtp({ phone: "ignored" }), {
@@ -338,7 +341,7 @@ test("registration validates password policy and logs actionable errors without 
 });
 
 test("one auth policy logs confirmation, resend and demo failures with safe environment-specific responses", async () => {
-  const demo = require("../dist/src/auth/demo");
+  const demo = require("../dist/src/phone-auth/demo-accounts");
   const oldPassword = demo.demoPassword;
   const old = {
     ENVIRONMENT: process.env.ENVIRONMENT,

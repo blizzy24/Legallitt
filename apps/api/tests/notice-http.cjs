@@ -38,7 +38,7 @@ test("shared typed client exercises mounted notice routes; dev payment is unavai
     );
     process.env.ENVIRONMENT = "prod";
     process.env.NODE_ENV = "production";
-    await assert.rejects(client.devPay(actor.id), { status: 404 });
+    await assert.rejects(client.request(`/dev/cases/${actor.id}/pay`, {}), { status: 404 });
   } finally {
     if (oldEnv === undefined) delete process.env.ENVIRONMENT;
     else process.env.ENVIRONMENT = oldEnv;

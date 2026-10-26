@@ -391,7 +391,7 @@ export default function ApiLegalNotice({ stage }: { stage: Stage }) {
         <Text style={s.text}>Development only — no money is charged.</Text>
         {record?.status === "payment_pending"
           ? button("Pay", async () => {
-              await backend.devPay(id!);
+              await backend.pay(id!);
               go("/legal-notice/tracking");
             })
           : button("Continue", () => go("/legal-notice/tracking"))}

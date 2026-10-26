@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  Inject,
   Logger,
   HttpException,
   UnauthorizedException,
@@ -21,7 +22,7 @@ import {
 import { CognitoJwtVerifier } from "aws-jwt-verify";
 import { z } from "zod";
 import { PrismaService } from "../prisma.service";
-import { demoAccounts, demoPassword, requireDemoMode } from "./demo";
+import { PHONE_AUTH, type PhoneAuthPort } from "../phone-auth/phone-auth.port";
 
 import {
   authDiagnostic,
@@ -69,7 +70,7 @@ export class AuthService {
   });
   private configuration?: Promise<z.infer<typeof configSchema>>;
   private verifier?: ReturnType<typeof CognitoJwtVerifier.create>;
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService, @Inject(PHONE_AUTH) private readonly phone: PhoneAuthPort) {}
   private config() {
     if (!this.configuration)
       this.configuration = (async () => {
@@ -94,18 +95,33 @@ export class AuthService {
       });
     return this.configuration;
   }
+  private async auditEmail(operation: AuthOperation, body: unknown, succeeded: boolean, result?: unknown) {
+    if (operation !== 'registration' && operation !== 'login') return;
+    const input = body as {email?: unknown} | null;
+    const identifier = typeof input?.email === 'string' ? input.email.slice(0, 320) : '';
+    const userId = (result as {user?: {id?: string}} | undefined)?.user?.id;
+    await (await this.prisma.getClient()).authEvent.create({data: {
+      identifier, user_id: userId, simulated: false,
+      event: operation === 'registration' ? (succeeded ? 'registered' : 'registration_failed') : (succeeded && userId ? 'password_login' : 'login_failed'),
+    }});
+  }
   private async authOperation<T>(
     operation: AuthOperation,
     body: unknown,
     action: () => Promise<T>,
     secrets: string[] = [],
+    metadata: Record<string, boolean> = {},
   ): Promise<T> {
     try {
-      return await action();
+      const result = await action();
+      await this.auditEmail(operation, body, true, result);
+      return result;
     } catch (error) {
       if (error instanceof ReportedAuthFailure) throw error;
       const diagnostic = authDiagnostic(operation, error, body, secrets);
       this.logger.error(diagnostic);
+      try { await this.auditEmail(operation, body, false); }
+      catch { this.logger.error({event: 'auth.audit.failed', operation}); }
       const status =
         error instanceof HttpException
           ? error.getStatus()
@@ -118,6 +134,7 @@ export class AuthService {
       throw new ReportedAuthFailure(
         {
           message,
+          ...metadata,
           ...(detailedAuthErrors() ? { detail: diagnostic } : {}),
           error:
             status === 401
@@ -254,47 +271,12 @@ export class AuthService {
     });
   }
   async requestOtp(body: unknown) {
-    return this.authOperation("otp.request", body, async () => {
-      requireDemoMode();
-      z.object({ phone: z.string().max(64) })
-        .strict()
-        .parse(body);
-      return { requested: true };
-    });
+    return this.authOperation("otp.request", body, () => this.phone.request(body), [], this.phone.responseMetadata);
   }
   async verifyOtp(body: unknown) {
     const secrets: string[] = [];
-    return this.authOperation(
-      "otp.verify",
-      body,
-      async () => {
-        requireDemoMode();
-        const input = z
-          .object({
-            phone: z.string().max(64),
-            code: z.string().regex(/^\d{6}$/, "Enter the six-digit demo code"),
-            role: z.enum(["client", "advocate"]),
-          })
-          .strict()
-          .parse(body);
-        if (input.code !== "123456")
-          throw new UnauthorizedException(
-            "Incorrect demo phone code. Enter 123456",
-          );
-        const password = await demoPassword();
-        secrets.push(password, demoAccounts[input.role].email);
-        const result = await this.signIn({
-          email: demoAccounts[input.role].email,
-          password,
-        });
-        if ("confirmationRequired" in result || result.user.role !== input.role)
-          throw new UnauthorizedException(
-            "Demo account is not configured: check the seeded role and email verification",
-          );
-        return result;
-      },
-      secrets,
-    );
+    return this.authOperation("otp.verify", body,
+      () => this.phone.verify(body, (input) => this.signIn(input), secrets), secrets, this.phone.responseMetadata);
   }
   async identity(token: string) {
     const config = await this.config();

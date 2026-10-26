@@ -1,6 +1,6 @@
 const assert = require("node:assert/strict");
 const test = require("node:test");
-const { readFileSync } = require("node:fs");
+const { readFileSync, readdirSync } = require("node:fs");
 const { CaseStatus, SERVICE_CODES } = require("@legalitt/shared");
 const {
   CaseStatus: PrismaCaseStatus,
@@ -16,13 +16,10 @@ test("migration includes every authoritative table and SQL-only constraints", ()
     "../../docs/LEGALITT-BACKEND-ARCHITECTURE.md",
     "utf8",
   );
-  const sql = readFileSync(
-    "prisma/migrations/20261020000000_initial/migration.sql",
-    "utf8",
-  );
+  const sql = readdirSync('prisma/migrations', {withFileTypes: true}).filter(e => e.isDirectory()).map(e => readFileSync(`prisma/migrations/${e.name}/migration.sql`, 'utf8')).join('\n');
   const names = (text) =>
     [...text.matchAll(/CREATE TABLE "?(\w+)"? \(/g)].map((m) => m[1]).sort();
-  assert.equal(names(sql).length, 22);
+  assert.equal(names(sql).length, 23);
   assert.deepEqual(names(sql), names(doc));
   assert.match(sql, /CREATE EXTENSION IF NOT EXISTS citext/);
   assert.match(sql, /CHECK \("amount_paise" > 0\)/);

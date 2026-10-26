@@ -1,0 +1,87 @@
+Legal Notice rework — backend simulator stage (26 October 2026)
+
+Completed:
+- Applied architecture v5.1 migration locally: auth_events, case_events.source,
+  payments.payer_id (existing rows backfilled from case client), simulation
+  columns on payments and notifications. case_events.case_id remains NOT NULL.
+- Payments, notifications and phone-auth each have a port, simulator and
+  module-time selection. Defaults are simulated; phone also accepts the existing
+  demo spelling. Live selection fails startup because live adapters/credentials
+  are not configured. No AWS deployment.
+- POST /payments/intents replaces /dev/cases/:id/pay. The shared client sends
+  Idempotency-Key and retries preserve it. Payment capture, payer, event,
+  notification and initial-fee lifecycle transition commit atomically. Courier
+  payment is advocate-paid and leaves approved/dispatching unchanged.
+- Phone attempts and email registration/login outcomes are audited.
+  Auth events store only identifier, event/outcome, optional user id, simulation
+  flag and database timestamp. The optional IP/user-agent columns remain empty.
+  No OTP, password or token is persisted in auth_events.
+- Auth diagnostic fix from 86073e3 remains: detail outside production, redacted
+  logs in every environment. Simulated OTP failures also carry simulated=true.
+
+Verification:
+37 API tests passed on local PostgreSQL 16; all workspace typechecks passed.
+Fixture web build and 322-route smoke passed (zero failures).
+Rebuilt API on temporary port 3002: code 123456 succeeded for both seeded roles,
+returned real tokens and simulated=true. Invalid-password registration returned
+400, 'Password must include a symbol', with redacted ZodError detail.
+The temporary server was stopped; the existing port-3001 process was not replaced.
+
+Remaining:
+Parts A and B mobile capability cleanup remain unfinished. The old API renderer
+still exists; changing its payment client call did not change its screen markup.
+No new after images are claimed. Existing stages 1 and 2 are 4037d96/de2c1e6.
+The original auth diagnostics change is 86073e3.
+Payout maths and other services were not changed.
+
+Design conflict requiring client decision:
+Actual PNG 194 says 'Send the documents directly to your advocate',
+'Legalitt will arrange delivery to your advocate', and 'Your advocate needs the
+physical documents for the case'. PNG 195 explicitly shows pickup from client
+and send to advocate. Legal Notice dispatch is advocate -> noticee. Previous
+permission covered only changing recipient in the reused design 286. No copy,
+layout, route wiring or recipient changes were made to 194/195.
+
+Before screenshots (designed fixture screens, 390x844 viewport):
+reports/notice-rework/before/legal-notice--delivered.png
+reports/notice-rework/before/legal-notice--delivery-proof.png
+reports/notice-rework/before/legal-notice--delivery.png
+reports/notice-rework/before/legal-notice--detail.png
+reports/notice-rework/before/legal-notice.png
+reports/notice-rework/before/legal-notice--request-changes.png
+reports/notice-rework/before/legal-notice--request-submitted.png
+reports/notice-rework/before/legal-notice--scan-pay.png
+reports/notice-rework/before/legal-notice--step1.png
+reports/notice-rework/before/legal-notice--step2.png
+reports/notice-rework/before/legal-notice--step3.png
+reports/notice-rework/before/legal-notice--step4-review.png
+reports/notice-rework/before/legal-notice--step4.png
+reports/notice-rework/before/legal-notice--step5.png
+reports/notice-rework/before/legal-notice--step6.png
+reports/notice-rework/before/legal-notice--success.png
+reports/notice-rework/before/legal-notice--tracking.png
+reports/notice-rework/before/advocate--notice--1--chat.png
+reports/notice-rework/before/advocate--notice--1--confirm.png
+reports/notice-rework/before/advocate--notice--1--delivery.png
+reports/notice-rework/before/advocate--notice--1--dispatch.png
+reports/notice-rework/before/advocate--notice--1--documents.png
+reports/notice-rework/before/advocate--notice--1--draft.png
+reports/notice-rework/before/advocate--notice--1--drafting.png
+reports/notice-rework/before/advocate--notice--1--fee.png
+reports/notice-rework/before/advocate--notice--1--final.png
+reports/notice-rework/before/advocate--notice--1--paid.png
+reports/notice-rework/before/advocate--notice--1--payment.png
+reports/notice-rework/before/advocate--notice--1--received.png
+reports/notice-rework/before/advocate--notice--1--report.png
+reports/notice-rework/before/advocate--notice--1--response.png
+reports/notice-rework/before/advocate--notice--1--review.png
+reports/notice-rework/before/advocate--notice--1--scan-pay.png
+reports/notice-rework/before/advocate--notice--1--send.png
+reports/notice-rework/before/advocate--notice--1--shipment.png
+reports/notice-rework/before/advocate--notice--1--tracking.png
+reports/notice-rework/before/advocate--notice--draft-editor.png
+reports/notice-rework/before/advocate--notice--response-editor.png
+reports/notice-rework/before/cases.png
+reports/notice-rework/before/requests.png
+reports/notice-rework/before/matters.png
+reports/notice-rework/before/chat--advocate.png

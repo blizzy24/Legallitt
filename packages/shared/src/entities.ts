@@ -74,6 +74,7 @@ export const CaseSchema = z.strictObject({
 export type Case = z.infer<typeof CaseSchema>;
 
 export const CaseEventSchema = z.strictObject({
+  source: z.enum(["real", "simulated"]),
   id: bigint64,
   case_id: z.uuid(),
   type: z.string(),
@@ -114,6 +115,8 @@ export const DraftSchema = z.strictObject({
 export type Draft = z.infer<typeof DraftSchema>;
 
 export const PaymentSchema = z.strictObject({
+  payer_id: z.uuid(),
+  simulated: z.boolean(),
   id: z.uuid(),
   case_id: z.uuid(),
   purpose: z.string(),

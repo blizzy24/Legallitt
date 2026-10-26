@@ -112,15 +112,7 @@ export class NoticeController {
   ) {
     return json(this.state.assign(req.user!, id(value), body));
   }
-  // Development only: no payment row, money transfer or simulated production payment.
-  @Post("dev/cases/:id/pay") pay(
-    @Req() req: AuthRequest,
-    @Param("id") value: string,
-    @Body() body: unknown,
-  ) {
-    empty(body);
-    return json(this.state.devPay(req.user!, id(value)));
-  }
+
   @Post("cases/:id/dispatch") dispatch(
     @Req() req: AuthRequest,
     @Param("id") value: string,

@@ -45,8 +45,9 @@ export type ApiUser = {
   email: string | null;
   phone: string | null;
 };
-export type ApiAuthResult = { user: ApiUser; tokens: ApiTokens };
+export type ApiAuthResult = { user: ApiUser; tokens: ApiTokens; simulated?: boolean };
 export type ApiEvent = {
+  source: "real" | "simulated";
   id: string;
   type: string;
   actor_role: string | null;

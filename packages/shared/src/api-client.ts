@@ -36,6 +36,7 @@ export class ApiClient {
     method: string,
     body: unknown,
     token?: string,
+    headers: Record<string, string> = {},
   ): Promise<Response> {
     if (!this.options.baseUrl)
       throw new ApiError(
@@ -57,6 +58,7 @@ export class ApiClient {
           signal: controller.signal,
           headers: {
             "Content-Type": "application/json",
+            ...headers,
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           ...(body === undefined ? {} : { body: JSON.stringify(body) }),
@@ -143,6 +145,7 @@ export class ApiClient {
     body?: unknown,
     method = body === undefined ? "GET" : "POST",
     explicitToken?: string,
+    headers: Record<string, string> = {},
   ): Promise<T> {
     const authenticated = !path.startsWith("/auth/");
     let tokens = authenticated ? await this.options.getTokens?.() : null;
@@ -153,10 +156,11 @@ export class ApiClient {
       method,
       body,
       explicitToken ?? tokens?.idToken,
+      headers,
     );
     if (response.status === 401 && authenticated && tokens?.refreshToken) {
       tokens = await this.refresh(tokens);
-      response = await this.transport(path, method, body, tokens.idToken);
+      response = await this.transport(path, method, body, tokens.idToken, headers);
     }
     return this.decode<T>(response);
   }
@@ -202,8 +206,9 @@ export class ApiClient {
   submit(id: string) {
     return this.request<ApiCase>(`/cases/${id}/submit`, {});
   }
-  devPay(id: string) {
-    return this.request<ApiCase>(`/dev/cases/${id}/pay`, {});
+  pay(id: string, purpose: 'service_fee' | 'courier' = 'service_fee', key = `${purpose}:${id}`) {
+    return this.request<{id: string; case_id: string; payer_id: string; purpose: string; total_paise: string; simulated: boolean; status: string}>(
+      '/payments/intents', {case_id: id, purpose}, 'POST', undefined, {'Idempotency-Key': key});
   }
   assign(id: string, advocate_id: string) {
     return this.request<ApiCase>(`/admin/cases/${id}/assign`, { advocate_id });

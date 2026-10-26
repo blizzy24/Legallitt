@@ -216,6 +216,7 @@ export class CaseStateMachine {
     to: CaseStatus,
     payload: Prisma.InputJsonObject = {},
     devPayment = false,
+    source: 'real' | 'simulated' = 'real',
   ) {
     const from = record.status as CaseStatus;
     if (devPayment) {
@@ -241,7 +242,8 @@ export class CaseStateMachine {
     await tx.caseEvent.create({
       data: {
         case_id: record.id,
-        type: devPayment ? "development_payment" : "status_changed",
+        type: devPayment ? "payment_captured" : "status_changed",
+        source,
         actor_id: actor.id,
         actor_role: actor.role,
         from_status: from,
@@ -265,33 +267,20 @@ export class CaseStateMachine {
       if (actor.role !== "client")
         throw new ForbiddenException("Only clients submit");
       if (record.status === "payment_pending") return record;
-      if (record.status === "draft")
+      if (record.status === "draft") {
+        const now = new Date();
+        const pricing = await tx.servicePricing.findFirst({where: {service_code: 'legal_notice', tier: record.tier, variant: null, effective_from: {lte: now}, OR: [{effective_to: null}, {effective_to: {gt: now}}]}, orderBy: [{effective_from: 'desc'}, {id: 'asc'}]});
+        if (!pricing) throw new ConflictException('Case pricing is unavailable');
+        await tx.case.update({where: {id}, data: {pricing_id: pricing.id}});
         record = await this.advance(tx, actor, record, CaseStatus.submitted);
+      }
       return this.advance(tx, actor, record, CaseStatus.payment_pending);
     });
   }
-  async devPay(actor: CaseActor, id: string) {
-    // Deliberately no production route to paid without a verified payment.
-    if (
-      process.env.ENVIRONMENT !== "dev" ||
-      !["development", "test"].includes(process.env.NODE_ENV ?? "")
-    )
-      throw new NotFoundException();
-    if (actor.role !== "client")
-      throw new ForbiddenException("Only the case client can simulate payment");
-    const db = await this.prisma.getClient();
-    return db.$transaction(async (tx) => {
-      const record = await lockedCase(tx, actor, id);
-      if (record.status === "paid") return record;
-      return this.advance(
-        tx,
-        actor,
-        record,
-        CaseStatus.paid,
-        { development_only: true },
-        true,
-      );
-    });
+  async paymentCaptured(tx: Prisma.TransactionClient, actor: CaseActor,
+    record: {id: string; status: string; details: unknown; tier: string | null},
+    paymentId: string, source: 'real' | 'simulated') {
+    return this.advance(tx, actor, record, CaseStatus.paid, {payment_id: paymentId}, true, source);
   }
   async assign(actor: CaseActor, id: string, body: unknown) {
     if (actor.role !== "admin") throw new ForbiddenException("Admin required");
@@ -536,4 +525,9 @@ export class CaseStateMachine {
       return updated;
     });
   }
+}
+
+/** Append-only non-lifecycle events share the case event writer. */
+export function appendCaseEvent(tx: Prisma.TransactionClient, data: Prisma.CaseEventUncheckedCreateInput) {
+  return tx.caseEvent.create({data});
 }

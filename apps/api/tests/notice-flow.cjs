@@ -69,15 +69,16 @@ test(
         (await state.submitForPayment(client, c.id)).status,
         "payment_pending",
       );
-      process.env.ENVIRONMENT = "prod";
-      process.env.NODE_ENV = "development";
-      await assert.rejects(state.devPay(client, c.id), { status: 404 });
-      process.env.ENVIRONMENT = "dev";
-      process.env.NODE_ENV = "production";
-      await assert.rejects(state.devPay(client, c.id), { status: 404 });
-      process.env.NODE_ENV = "test";
-      await assert.rejects(state.devPay(other, c.id), { status: 404 });
-      await state.devPay(client, c.id);
+      const {PaymentsService} = require('../dist/src/payments/payments.service');
+      const {SimulatedPayments} = require('../dist/src/payments/simulated-payments');
+      const {SimulatedNotifications} = require('../dist/src/notifications/simulated-notifications');
+      const payments = new PaymentsService(prisma, state, new SimulatedPayments(), new SimulatedNotifications());
+      await assert.rejects(payments.intent(other, {case_id: c.id, purpose: 'service_fee'}, randomUUID()), {status: 404});
+      const key = randomUUID();
+      const payment = await payments.intent(client, {case_id: c.id, purpose: 'service_fee'}, key);
+      assert.equal(payment.simulated, true);
+      assert.equal(payment.payer_id, client.id);
+      assert.equal((await payments.intent(client, {case_id: c.id, purpose: 'service_fee'}, key)).id, payment.id);
       await assert.rejects(
         state.assign(client, c.id, { advocate_id: advocate.id }),
         { status: 403 },
@@ -145,6 +146,16 @@ test(
         { status: 409 },
       );
       await state.reviewNoticeDraft(client, c.id, draft2.id, "approved", {});
+      await assert.rejects(payments.intent(client, {case_id: c.id, purpose: 'courier'}, randomUUID()), {status: 403});
+      const courierKey = randomUUID();
+      const [courier1, courier2] = await Promise.all([1,2].map(() => payments.intent(advocate, {case_id: c.id, purpose: 'courier'}, courierKey)));
+      assert.equal(courier1.id, courier2.id);
+      assert.equal(courier1.payer_id, advocate.id);
+      assert.equal(courier1.total_paise, 29500n);
+      assert.equal((await repo.read(client, c.id)).status, 'approved');
+      const simulatedEvents = await db.caseEvent.findMany({where: {case_id: c.id, source: 'simulated'}});
+      assert.deepEqual(simulatedEvents.map(e => e.type).sort(), ['courier_payment_captured','notification_created','notification_created','payment_captured']);
+      assert.equal(await db.notification.count({where: {case_id: c.id, simulated: true}}), 2);
       await assert.rejects(
         state.saveNoticeDraft(advocate, c.id, {
           kind: "legal_notice",
@@ -216,7 +227,7 @@ test(
         orderBy: { id: "asc" },
       });
       assert.deepEqual(
-        events.map((e) =>
+        events.filter(e => !['notification_created','courier_payment_captured'].includes(e.type)).map((e) =>
           e.type === "draft_saved" ? "draft_saved" : e.to_status,
         ),
         [
@@ -246,7 +257,7 @@ test(
         }),
         2,
       );
-      assert.equal(await db.payment.count({ where: { case_id: c.id } }), 0);
+      assert.equal(await db.payment.count({ where: { case_id: c.id } }), 2);
       assert.equal(await db.ledgerEntry.count({ where: { case_id: c.id } }), 0);
       await assert.rejects(
         state.deliver(admin, c.id, { pod_document_id: proof.id }),
@@ -263,6 +274,8 @@ test(
       });
       await db.draft.deleteMany({ where: { case_id: { in: ids } } });
       await db.document.deleteMany({ where: { case_id: { in: ids } } });
+      await db.notification.deleteMany({where: {case_id: {in: ids}}});
+      await db.payment.deleteMany({where: {case_id: {in: ids}}});
       await db.caseEvent.deleteMany({ where: { case_id: { in: ids } } });
       await db.adminAction.deleteMany({ where: { admin_id: admin.id } });
       await db.case.deleteMany({ where: { id: { in: ids } } });
