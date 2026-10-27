@@ -1,3 +1,4 @@
+import {NoticeMessages,NoticeMessagesController} from './cases/notice-messages';
 import { CourierModule } from "./courier/courier.module";
 import { ShipmentService } from "./cases/shipment.service";
 import { AdminUiModule } from "./admin-ui/admin-ui.module";
@@ -36,7 +37,7 @@ export class HealthController {
 
 @Module({
   imports: [CourierModule, AdminUiModule, DatabaseModule, PhoneAuthModule, PaymentsModule, NotificationsModule],
-  controllers: [
+  controllers: [NoticeMessagesController,
     PaymentsController,
     HealthController,
     AuthController,
@@ -46,7 +47,7 @@ export class HealthController {
     ServicesController,
     DocumentController,
   ],
-  providers: [
+  providers: [NoticeMessages,
     ShipmentService,
     PaymentsService,
     AuthService,

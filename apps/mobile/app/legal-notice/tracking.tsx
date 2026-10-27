@@ -39,8 +39,8 @@ export type NoticeTrackingData = {
   tracking: Omit<typeof TRACKING, 'advocate'> & {advocate: Omit<typeof TRACKING.advocate, 'rating'|'reviews'> & {rating: number|string; reviews: number|string}};
   steps: typeof TRACKING_STEPS;
 };
-export function TrackingScreenView({ decision = false, data, form, navigate, currentStep, paidAmount, onViewDraft, onApprove, onViewProfile, allowDemoAdvance = true }: {
-  decision?: boolean; data: NoticeTrackingData; currentStep?: number; paidAmount?: number | null; onViewProfile?: () => void; onViewDraft?: () => void; onApprove?: () => void; allowDemoAdvance?: boolean;
+export function TrackingScreenView({ decision = false, data, form, navigate, currentStep, paidAmount, onViewDraft, onApprove, onViewProfile, advocateVerified = true, allowDemoAdvance = true }: {
+  advocateVerified?: boolean; decision?: boolean; data: NoticeTrackingData; currentStep?: number; paidAmount?: number | null; onViewProfile?: () => void; onViewDraft?: () => void; onApprove?: () => void; allowDemoAdvance?: boolean;
   form: ReturnType<typeof useLegalNotice>['form']; navigate: typeof router;
 }) {
   const { invoice: INVOICE, tracking: TRACKING, steps: TRACKING_STEPS } = data;
@@ -134,14 +134,14 @@ export function TrackingScreenView({ decision = false, data, form, navigate, cur
           </TableRow>
         </View>
 
-        <SectionRow label="ASSIGNED ADVOCATE" right="Verified Advocate" icon={<BadgeCheck size={t.sectionLinkIcon} color={ink.accent} />} />
+        <SectionRow label="ASSIGNED ADVOCATE" right={advocateVerified?"Verified Advocate":""} icon={<BadgeCheck style={!advocateVerified?{opacity:0}:undefined} size={t.sectionLinkIcon} color={ink.accent} />} />
         <View style={[styles.card, styles.adv]}>
           <View style={styles.advRow}>
             <AdvocateAvatar name={TRACKING.advocate.name} style={styles.avatarLarge}><Text style={styles.avatarText}>{TRACKING.advocate.initials}</Text></AdvocateAvatar>
             <View style={styles.advText}>
               <View style={styles.nameRow}>
                 <Text style={styles.name}>{TRACKING.advocate.name}</Text>
-                <BadgeCheck size={t.tickSize} color={colors.brand} />
+                <BadgeCheck style={!advocateVerified?{opacity:0}:undefined} size={t.tickSize} color={colors.brand} />
               </View>
               <Text style={styles.meta}>
                 {TRACKING.advocate.experience} · {TRACKING.advocate.practice}

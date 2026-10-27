@@ -296,7 +296,7 @@ export default function AdvocateCasesList({
         )}
 
         {matters.map((m) => {
-          const tone = STATUS_TONE[m.status];
+          const tone = STATUS_TONE[m.status] ?? STATUS_TONE.Active;
           const Icon = m.bodyIcon ? BODY_ICONS[m.bodyIcon] : null;
           const urgent = m.urgency === 'URGENT';
           return (

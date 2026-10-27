@@ -43,6 +43,7 @@ export class CaseRepository {
     const record = await db.case.findFirst({
       where: { AND: [caseScope(actor), { id }] },
       include: {
+        advocate_id_relation:{select:{id:true,full_name:true}},
         case_events_case_id_relations: { orderBy: { id: "asc" } },
         documents_case_id_relations: {
           where: { status: "uploaded" },
@@ -62,6 +63,7 @@ export class CaseRepository {
     // Same response for a missing case and an inaccessible case.
     if (!record) throw new NotFoundException("Case not found");
     const {
+      advocate_id_relation: advocate,
       case_events_case_id_relations: events,
       documents_case_id_relations: documents,
       drafts_case_id_relations: allDrafts,
@@ -82,7 +84,7 @@ export class CaseRepository {
       (d) => actor.role !== "client" || sent.has(d.id),
     );
     const reviews = drafts.flatMap((d) => d.draft_reviews_draft_id_relations);
-    return { ...caseRecord, events, documents, drafts, reviews, shipments };
+    return { ...caseRecord, advocate, events, documents, drafts, reviews, shipments };
   }
 
   async list(actor: CaseActor, query: unknown) {

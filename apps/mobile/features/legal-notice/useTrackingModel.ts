@@ -17,7 +17,7 @@ export function useTrackingModel() {
       submittedAt:submitted ? new Date(submitted).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}) : '',
       estimate:{date:'',time:''}, draftFile:notice?.filename ?? '',
       // The case response has an advocate id, but no profile facts. Do not borrow Arjun's.
-      advocate:{name:'',initials:'',experience:'',practice:'',barReg:'',rating:'',reviews:''},
+      advocate:{name:record?.advocate?.full_name??'',initials:(record?.advocate?.full_name??'').split(/\s+/).map(v=>v[0]??'').join('').slice(0,2),experience:'',practice:'',barReg:'',rating:'',reviews:''},
     },
   } : {invoice:INVOICE,tracking:TRACKING,steps:TRACKING_STEPS};
   const state = record?.status;
@@ -29,10 +29,10 @@ export function useTrackingModel() {
     push:(href,options)=>router.push(c.href(typeof href==='string'?href:href.pathname),options),
     replace:(href,options)=>router.replace(c.href(typeof href==='string'?href:href.pathname),options),
   } : router;
-  return {data,form:model.form,navigate,currentStep,
+  return {data,advocateVerified:!api,form:model.form,navigate,currentStep,
     paidAmount: api ? (model.invoiceLines.length ? invoiceTotal(model.invoiceLines) : null) : undefined,
     // No profile facts are available yet; never open an unrelated fixture profile.
-    onViewProfile: api ? () => {} : undefined,
+    onViewProfile: api ? ()=>{if(record?.advocate_id)router.push(c.href(`/advocates/${record.advocate_id}`));} : undefined,
     allowDemoAdvance:!api,
     onViewDraft:api ? ()=>{void c.run(async()=>{if(notice) await Linking.openURL((await c.repository.documentUrl(notice.id)).url);});} : undefined,
     onApprove:api ? ()=>{void c.run(async()=>{if(c.id&&c.latest){await c.repository.approve(c.id,c.latest.id);c.go('/legal-notice/delivery');}});} : undefined,

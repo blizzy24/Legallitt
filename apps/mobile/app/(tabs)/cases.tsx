@@ -1,5 +1,4 @@
-import ApiLegalNotice from "../../components/api/LegalNotice";
-import { DATA_SOURCE } from "../../lib/data-source";
+import {useNoticeLists} from "../../features/legal-notice/useNoticeLists";
 import { router, type Href } from 'expo-router';
 import { Bell, ChevronRight, Clock, FolderOpen } from 'lucide-react-native';
 import { useState } from 'react';
@@ -28,7 +27,9 @@ const SEGMENTS: Segment<Tab>[] = [
   { key: 'closed', label: 'Closed' },
 ];
 
-export function CasesScreenView({ stats, active, hearings, pending }: {
+export function CasesScreenView({ stats, active, hearings, pending, closed = [], onOpen }: {
+  closed?: ReturnType<typeof activeCases>;
+  onOpen?:(id:string)=>void;
   stats: ReturnType<typeof caseStats>; active: ReturnType<typeof activeCases>;
   hearings: ReturnType<typeof upcomingHearings>; pending: PendingRequest[];
 }) {
@@ -91,17 +92,18 @@ export function CasesScreenView({ stats, active, hearings, pending }: {
             />
             {active.map((item) => (
               <View key={item.id} style={styles.cardSpacing}>
-                <CaseCard item={item} onPress={() => router.push(`/cases/${item.id}`)} />
+                <CaseCard item={item} onPress={() => onOpen ? onOpen(item.id) : router.push(`/cases/${item.id}`)} />
               </View>
             ))}
 
-            <PendingSection requests={pending} />
+            <PendingSection onOpen={onOpen} requests={pending} />
           </>
         )}
 
-        {tab === 'pending' && <PendingSection requests={pending} first />}
+        {tab === 'pending' && <PendingSection onOpen={onOpen} requests={pending} first />}
 
-        {tab === 'closed' && (
+        {tab === 'closed' && closed.map(item=><View key={item.id} style={styles.cardSpacing}><CaseCard item={item} statusLabel={item.statusLabel} onPress={()=>onOpen?.(item.id)} /></View>)}
+        {tab === 'closed' && closed.length===0 && (
           <View style={styles.empty}>
             <View style={styles.emptyIcon}>
               <FolderOpen size={t.statNumberSize} color={ink.accent} />
@@ -117,7 +119,7 @@ export function CasesScreenView({ stats, active, hearings, pending }: {
   );
 }
 
-function PendingSection({ requests, first }: { requests: PendingRequest[]; first?: boolean }) {
+function PendingSection({ requests, first, onOpen }: { requests: PendingRequest[]; first?: boolean; onOpen?:(id:string)=>void }) {
   return (
     <>
       {/* "View All" opens the requests list (design/53). */}
@@ -127,7 +129,7 @@ function PendingSection({ requests, first }: { requests: PendingRequest[]; first
         style={first ? styles.sectionFirst : styles.sectionSpaced}
       />
       {requests.map((request) => (
-        <RequestCard key={request.id} request={request} />
+        <RequestCard key={request.id} request={request} onOpen={onOpen} />
       ))}
     </>
   );
@@ -192,7 +194,7 @@ function SectionHeading({
   );
 }
 
-function RequestCard({ request }: { request: PendingRequest }) {
+function RequestCard({ request, onOpen }: { request: PendingRequest; onOpen?:(id:string)=>void }) {
   return (
     <View style={styles.card}>
       <View style={styles.topRow}>
@@ -226,7 +228,7 @@ function RequestCard({ request }: { request: PendingRequest }) {
         <View style={styles.spacer} />
         {/* "View Request" opens the request (design/54). This pending request has no
             record of its own; /requests/[id] shows District Representation DR-4402. */}
-        <Pressable accessibilityRole="link" onPress={() => router.push(`/requests/${request.id}` as Href)} style={styles.viewAll}>
+        <Pressable accessibilityRole="link" onPress={() => onOpen ? onOpen(request.id) : router.push(`/requests/${request.id}` as Href)} style={styles.viewAll}>
           <Text style={styles.requestLink}>View Request</Text>
           <ChevronRight size={t.linkSize} color={colors.textBody} />
         </Pressable>
@@ -475,5 +477,6 @@ const styles = StyleSheet.create({
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function CasesScreen() {
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="list" /> : <CasesScreenView stats={caseStats()} active={activeCases()} hearings={upcomingHearings()} pending={PENDING_REQUESTS} />;
+  const model=useNoticeLists();
+  return <CasesScreenView stats={model.stats} closed={model.closed} active={model.active} hearings={model.hearings} pending={model.pending} onOpen={model.api?id=>model.open(id):undefined} />;
 }

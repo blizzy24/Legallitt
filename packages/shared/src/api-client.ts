@@ -245,6 +245,10 @@ export class ApiClient {
   events(id: string) {
     return this.request<ApiPage<ApiEvent>>(`/cases/${id}/events?limit=100`);
   }
+  caseThread(id:string){return this.request<{id:string;case_id:string}>(`/cases/${id}/thread`);}
+  messages(id:string,after?:string){return this.request<ApiPage<import('./notice-api').ApiMessage>>(`/threads/${id}/messages${after?'?after='+encodeURIComponent(after):''}`);}
+  sendMessage(id:string,input:{body?:string;document_id?:string}){return this.request<import('./notice-api').ApiMessage>(`/threads/${id}/messages`,input);}
+  readMessages(id:string){return this.request<{read:true}>(`/threads/${id}/read`,{});}
   receiveShipment(id: string) {
     return this.request<import('./shipments').ApiShipment>(`/cases/${id}/shipment/received`, {});
   }

@@ -71,7 +71,7 @@ export function AdvocateNoticeFeeView({notice, navigate, onAccept, onDecline}: {
               </Text>
             </View>
             <View style={styles.verified}>
-              <Check size={t.verifiedIcon} color={t.verifiedColour} />
+              <Check style={!n.verifiedChip?{opacity:0}:undefined} size={t.verifiedIcon} color={t.verifiedColour} />
               <Text style={styles.verifiedText} {...shrinkToFit(0.8)}>
                 {n.verifiedChip}
               </Text>

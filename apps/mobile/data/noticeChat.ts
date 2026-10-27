@@ -2,7 +2,7 @@
 // typos included ("relevent", "Yes ia can"). Nothing is added to either thread;
 // the input bar sends nothing.
 
-export type ChatMessage = { from: 'them' | 'me'; text: string; time?: string; read?: boolean };
+export type ChatMessage = { documentId?:string; from: 'them' | 'me'; text: string; time?: string; read?: boolean };
 
 /** design/33 — the client's chat with Adv. Arjun Sharma (Legal Notice tracking → Chat with Advocate). */
 export const NOTICE_CHAT_CLIENT = {

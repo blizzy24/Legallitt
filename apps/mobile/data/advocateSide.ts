@@ -2874,6 +2874,9 @@ export const ADV_LA_REPORT = {
 // ═════════════════════════════════════════════════════════════════════════════
 
 export type AdvMatterStatus =
+  | 'Cancelled'
+  | 'Refunded'
+  | 'Completed'
   | 'Client Review'
   | 'Draft Preparation'
   | 'Report Preparation'
@@ -2901,7 +2904,7 @@ export type AdvCaseMatter = {
   bodyIcon?: 'calendar' | 'gavel' | 'video';
   footer: string;
   /** Which chip row the card answers to. */
-  bucket: 'Active' | 'Upcoming' | 'Waiting for Client';
+  bucket: 'Active' | 'Upcoming' | 'Waiting for Client' | 'Completed';
 };
 
 export const ADV_CASES_STATS = [

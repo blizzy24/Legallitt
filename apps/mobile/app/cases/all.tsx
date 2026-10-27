@@ -1,3 +1,4 @@
+import {useNoticeLists} from '../../features/legal-notice/useNoticeLists';
 import { router } from 'expo-router';
 import { Funnel, Search } from 'lucide-react-native';
 import { useMemo, useState } from 'react';
@@ -21,19 +22,19 @@ const FILTERS: { key: FilterKey; label: string }[] = [
   { key: 'property', label: 'Property' },
 ];
 
-export default function AllActiveCasesScreen() {
+export function AllActiveCasesView({records,onOpen}:{records:ReturnType<typeof activeCases>;onOpen?:(id:string)=>void}) {
   const insets = useSafeAreaInsets();
   const [filter, setFilter] = useState<FilterKey>('all');
   const [query, setQuery] = useState('');
 
   const cases = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return activeCases().filter((c) => {
+    return records.filter((c) => {
       const byCategory = filter === 'all' || c.category === filter;
       const byQuery = !q || c.title.toLowerCase().includes(q);
       return byCategory && byQuery;
     });
-  }, [filter, query]);
+  }, [filter, query,records]);
 
   const goBack = () => {
     if (router.canGoBack()) router.back();
@@ -106,7 +107,7 @@ export default function AllActiveCasesScreen() {
 
         {cases.map((item, i) => (
           <View key={item.id} style={i === 0 ? undefined : styles.cardSpacing}>
-            <CaseListCard item={item} onPress={() => router.push(`/cases/${item.id}`)} />
+            <CaseListCard item={item} onPress={() => onOpen ? onOpen(item.id) : router.push(`/cases/${item.id}`)} />
           </View>
         ))}
 
@@ -224,3 +225,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
+
+export default function AllActiveCasesScreen(){const model=useNoticeLists();return <AllActiveCasesView records={model.active} onOpen={model.api?id=>model.open(id):undefined} />;}

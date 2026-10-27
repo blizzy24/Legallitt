@@ -6,7 +6,7 @@ export type NoticeRepository = Pick<ApiClient,
   'service' | 'case' | 'cases' | 'requests' | 'createCase' | 'saveIntake' |
   'submit' | 'pay' | 'accept' | 'decline' | 'saveDraft' | 'sendDraft' |
   'approve' | 'requestChanges' | 'dispatch' | 'presign' | 'upload' |
-  'documentUrl' | 'deleteDocument' | 'saveShipment' | 'bookShipment' | 'receiveShipment'
+  'documentUrl' | 'deleteDocument' | 'saveShipment' | 'bookShipment' | 'receiveShipment' | 'caseThread' | 'messages' | 'sendMessage' | 'readMessages'
 >;
 
 export const apiNoticeRepository: NoticeRepository = backend;

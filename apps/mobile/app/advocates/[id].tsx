@@ -1,3 +1,4 @@
+import {useNoticeProfile} from '../../features/legal-notice/useNoticeProfile';
 import { AdvocateAvatar } from '../../components/AdvocateAvatar';
 import { router, useLocalSearchParams } from 'expo-router';
 import {
@@ -29,12 +30,8 @@ import { SAVED_ADVOCATES, advocateProfileById, type AdvocateProfileView, type Ad
 // Optional sections remain hidden when a selected advocate has no supplied values.
 // The lavender-grey palette is local to advocateProfile, as drawn.
 
-export default function AdvocateProfileScreen({ profileId }: { profileId?: string }) {
-  const insets = useSafeAreaInsets();
-  const { id } = useLocalSearchParams<{ id: string }>();
-  // A court advocate's record carries only what its screen draws; every section
-  // below whose values it lacks is left out rather than filled from another advocate.
-  const advocate: AdvocateProfileView = advocateProfileById(profileId ?? String(id)) ?? SAVED_ADVOCATES[0];
+export function AdvocateProfileViewScreen({advocate,showBadge=true}:{advocate:AdvocateProfileView;showBadge?:boolean}) {
+  const insets=useSafeAreaInsets();
   const [expanded, setExpanded] = useState(false);
 
   const details = (
@@ -73,7 +70,7 @@ export default function AdvocateProfileScreen({ profileId }: { profileId?: strin
           <View style={styles.photoWrap}>
             {/* 433 supplies Rahul's photo; other advocates retain their own initials. */}
             <AdvocateAvatar name={advocate.name} style={styles.photo}><Text style={styles.photoText}>{advocate.initials}</Text></AdvocateAvatar>
-            <View style={styles.badge}><BadgeCheck size={t.badgeGlyph} color={ink.onBrand} /></View>
+            <View style={[styles.badge,!showBadge&&{opacity:0}]}><BadgeCheck size={t.badgeGlyph} color={ink.onBrand} /></View>
           </View>
 
           <Text style={styles.name} {...shrinkToFit(0.75)}>
@@ -652,3 +649,9 @@ const styles = StyleSheet.create({
     color: colors.textBody,
   },
 });
+
+export default function AdvocateProfileScreen({profileId}:{profileId?:string}){
+ const {id}=useLocalSearchParams<{id:string}>();
+ const notice=useNoticeProfile();
+ return <AdvocateProfileViewScreen showBadge={!notice||notice.verified} advocate={notice??advocateProfileById(profileId??String(id))??SAVED_ADVOCATES[0]} />;
+}

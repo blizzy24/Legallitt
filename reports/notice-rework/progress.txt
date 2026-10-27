@@ -201,3 +201,18 @@ renderer, and final end-to-end gates. The task is not yet complete.
 
 Stage 4 gate: all-workspace tsc passed; API tests 40/40; fixture and API web
 exports passed; final mobile smoke 322 routes, zero failures.
+
+2026-10-28 — Stage 5 final screen consolidation
+The designed client Cases/Requests and advocate Cases lists now receive Notice
+records through a model. Active/pending/closed grouping uses shared bucketFor;
+completed cases open their own delivered screen. The designed chat views use
+real case-scoped threads, messages and read receipts. Assigned-advocate profile
+uses only the case's actual advocate identity; missing verification/profile
+facts are not filled with fixtures. Design 433 remains separate.
+
+components/api/LegalNotice.tsx is deleted and no route imports it.
+Gates: all-workspace tsc passed; API tests 41/41; fixture/API exports passed;
+mobile smoke 322 routes/zero failures; fixture flow and rounding checks passed.
+Two browser roles exchanged persisted messages and read receipts; the assigned
+profile opened with the same case id. See final-report.txt for current results,
+remaining integration limits, all stage commits and screenshot inventories.

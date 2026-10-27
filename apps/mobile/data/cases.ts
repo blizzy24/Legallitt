@@ -31,7 +31,7 @@ export type Case = {
   /** Short reference shown as a pill on the Cases tab (design/14, 16). */
   shortRef: string;
   title: string;
-  category: CaseCategory;
+  category: CaseCategory | null;
   /** Printed form of the category, e.g. "Property Dispute". */
   categoryLabel: string;
   /** Court name as printed, e.g. "District Court, Indore". */

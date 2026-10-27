@@ -31,8 +31,9 @@ export default function NoticeChatScreen({
   messages,
   placeholder,
   valid,
-  validTime,
+  validTime, onSend, onAttach, onOpenDocument, verified=true, online=true, typing=true,
 }: {
+  onSend?:(text:string)=>Promise<boolean>; onAttach?:()=>void; onOpenDocument?:(id:string)=>void; verified?:boolean;online?:boolean;typing?:boolean;
   variant: 'client' | 'advocate';
   name: string;
   messages: ChatMessage[];
@@ -44,6 +45,7 @@ export default function NoticeChatScreen({
   const params = useLocalSearchParams<{message?: string}>();
   const [draft, setDraft] = useState('');
   const [thread, setThread] = useState<ChatMessage[]>(() => [...messages, ...(variant === 'client' && params.message ? [{from: 'me' as const, text: params.message}] : [])]);
+  const shown=onSend?messages:thread;
   const adv = variant === 'advocate';
   const fg = adv ? t.brand : t.white;
   return (
@@ -55,10 +57,10 @@ export default function NoticeChatScreen({
         <View style={styles.who}>
           <View>
             {adv ? <Avatar w={t.avatarW183} h={t.avatarH183} r={t.avatarRadius183} /> : <Avatar name={name} size={t.avatar} r={t.avatarRadius} onBrand />}
-            <View style={styles.online} />
+            <View style={[styles.online,!online&&{opacity:0}]} />
           </View>
           <Text style={[styles.name, { color: adv ? t.nameBrown : t.white }]}>{name}</Text>
-          <BadgeCheck size={t.badge} color={adv ? t.white : t.brand} fill={adv ? t.verified : t.white} strokeWidth={2.2} />
+          <BadgeCheck style={!verified?{opacity:0}:undefined} size={t.badge} color={adv ? t.white : t.brand} fill={adv ? t.verified : t.white} strokeWidth={2.2} />
         </View>
       </View>
 
@@ -72,19 +74,19 @@ export default function NoticeChatScreen({
             <Text style={styles.pillText}>{validTime}</Text>
           </View>
         ) : null}
-        {thread.map((m, i) =>
+        {shown.map((m, i) =>
           m.from === 'them' ? (
             <View key={i} style={[styles.inRow, i > 0 ? styles.rowGap : null]}>
               <Avatar name={adv ? "" : name} size={t.msgAvatar} r={t.msgAvatar / 2} />
               <View style={[styles.bubble, adv && styles.bubbleAdv, m.time ? styles.bubbleMeta : null]}>
-                <Text style={styles.text}>{m.text}</Text>
+                <Text style={styles.text} onPress={m.documentId?()=>onOpenDocument?.(m.documentId!):undefined}>{m.text}</Text>
                 {m.time ? <Text style={styles.time}>{m.time}</Text> : null}
               </View>
             </View>
           ) : (
             <View key={i} style={[styles.outRow, styles.rowGap]}>
               <View style={[styles.bubble, adv && styles.bubbleAdv, m.read ? styles.bubbleMeta : null]}>
-                <Text style={styles.text}>{m.text}</Text>
+                <Text style={styles.text} onPress={m.documentId?()=>onOpenDocument?.(m.documentId!):undefined}>{m.text}</Text>
                 {m.read ? (
                   <View style={styles.tick}>
                     <CheckCheck size={t.tick} color={t.read} strokeWidth={2.4} />
@@ -94,7 +96,7 @@ export default function NoticeChatScreen({
             </View>
           ),
         )}
-        <View style={styles.typing}>
+        <View style={[styles.typing,!typing&&{opacity:0}]}>
           {[0, 1, 2].map((d) => (
             <View key={d} style={styles.dot} />
           ))}
@@ -102,12 +104,12 @@ export default function NoticeChatScreen({
       </ScrollView>
 
       <View style={[styles.input, { marginBottom: insets.bottom + t.inputBottom }]}>
-        <Pressable accessibilityRole="button" accessibilityLabel="Attach" onPress={() => previewNotice('Attach')} style={styles.plus}>
+        <Pressable accessibilityRole="button" accessibilityLabel="Attach" onPress={onAttach??(()=>previewNotice('Attach'))} style={styles.plus}>
           <Plus size={t.plusIcon} color={t.white} strokeWidth={2.2} />
         </Pressable>
         <View style={styles.divider} />
         <TextInput accessibilityLabel={placeholder} value={draft} onChangeText={setDraft} placeholder={placeholder} style={styles.placeholder}/>
-        <Pressable accessibilityRole="button" accessibilityLabel="Send" onPress={() => { if (draft.trim()) { setThread([...thread, {from: 'me', text: draft.trim()}]); setDraft(''); } }}>
+        <Pressable accessibilityRole="button" accessibilityLabel="Send" onPress={async () => { if (draft.trim()) { if(onSend){if(await onSend(draft.trim()))setDraft('');}else{setThread([...thread, {from: 'me', text: draft.trim()}]);setDraft('');} } }}>
           <Send size={t.send} color={t.brand} fill={t.brand} strokeWidth={1.6} />
         </Pressable>
       </View>

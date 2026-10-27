@@ -1,0 +1,87 @@
+Legal Notice designed-screen rework — 28 October 2026
+
+Stages and commits
+1. 4037d96 — extracted API loading/actions into the Notice controller.
+2. de2c1e6 — exposed the original designed views through data/action props.
+3. 88c5974 — connected client intake, review, payment, tracking and delivery.
+4. 8675b5b — connected advocate views, editors, payment and courier form.
+5. This report's accompanying commit — connected designed entry lists, real
+   Notice chat and assigned-advocate profile; deleted the legacy API renderer.
+
+Backend changes
+86073e3 — authentication diagnostics: safe development detail, production-generic
+responses, underlying reasons in redacted logs. Demo phone code 123456 succeeds
+for both seeded roles. Registration rejects passwords missing a required symbol.
+The earlier reported OTP request was actually /auth/confirm (email verification);
+123456 is valid only for demo phone sign-in, not email confirmation.
+9be75c2 — payments, notifications and phone-auth ports/simulators; real payment,
+notification, case-event and auth-event writes. Mode flags stay at registration.
+938ce4f — real admin delivery endpoint, seeded admin-owned simulated POD through
+real S3 upload/validation; system-triggered events use null actors and source.
+ccbf076 — exact v5.8 shipment fields and persistent draft/book operations;
+optional/null decline reason after searching all 461 supplied design images.
+87b5817 — inbound Confirm Received closes only the inbound shipment and records
+confirmation_source=advocate, without POD or a case lifecycle change.
+The final stage also implements the documented Notice messaging endpoints. Read
+and send access follows case membership, including after reassignment.
+
+Design fidelity
+No measured token values changed. Fixture pixel comparisons for the advocate
+screens are exact except the approved 194/195 recipient wording substitutions
+and 26 pixels of the animated Scan & Pay spinner.
+An undrawn reference row discovered in 197's comparison was removed. Unknown
+API verification facts do not display verification badges. Missing profile,
+fees/payout and document facts stay empty; no other case's fixture values fill them.
+Design 433 remains separate and is not wired as Arjun Sharma's identity.
+
+Registered substitutions
+194/195 bind advocate pickup and noticee recipient; exact approved wording is
+in apps/mobile/copy/substitutions.ts and the working architecture §9.2 table.
+286 is an approved substitution for outbound courier details, NOT an outbound
+design supplied by the client. Its recipient is the noticee; its approved tracking
+sentence is registered. Layout/tokens stay unchanged.
+440 uses the selected matter_type; it has no fixed recovery-copy substitution.
+Decline: no advocate reason screen/dialog found in 461 designs. The drawn button
+records reason:null, advocate actor, case and timestamp. No prompt/default reason.
+
+Verified behavior
+- Client intake and all seven matter choices persist; payment reaches tracking
+  with the same case ID (stage 3 browser walk).
+- Advocate acceptance, six edited draft sections saved, send for client review.
+- Real client approval endpoint, courier payment without lifecycle movement.
+- Partial 286 data survives leaving/reopening. Submitted details stay booked
+  until Confirm Dispatch; the typed date is separate from booked_at.
+- Confirm Dispatch -> real S3-validated simulated POD -> completed. Advocate
+  browser lands on report; null system actor and source=simulated verified.
+- Direct browser Decline Request -> advocate_declined with reason:null.
+- Completed cases populate the Closed tab using the existing case-card view.
+- Two signed-in browser roles exchange persisted chat messages; polling and
+  read receipts work. View Profile opens the actual assigned advocate.
+- Document reads are case-membership based, not owner based. The case client
+  can read an admin-owned POD; unrelated advocates cannot read the case.
+
+Gates
+All-workspace TypeScript passed. API tests: 41/41. Fixture and API web exports
+passed. Mobile smoke: 322 routes, zero failures. Fixture flow-routing and
+whole-rupee invoice checks passed. No AWS infrastructure was deployed.
+components/api/LegalNotice.tsx is deleted; no imports remain.
+
+Screenshot files
+Before/after fixtures and same-screen fixture/API pairs are actual Chrome captures.
+Left = before or fixture; right = after or API. Different case data is intentional.
+Inventories: stage3-screenshot-files.txt, stage4-screenshot-files.txt,
+stage5-screenshot-files.txt in this folder. Individual captures are in before/,
+stage3-fixtures/, stage3-api/, stage4-fixtures/, stage4-api/, stage5-fixtures/,
+stage5-api/. The comparison folders have corresponding before-after and
+fixture-api names. Additional before images for cases/all, profile and courier are in stage5-before/,
+exported from commit 8675b5b in an isolated temporary checkout. The complete path
+list is screenshot-files.txt. courier-reuse.png compares the original 286 view
+with the approved outbound substitution; it is not a supplied outbound design.
+
+Limits — do not mistake these for completed integrations
+The final Notice PDF is not automatically generated by this work. Draft saving
+persists structured content; PDF cells/actions bind to real uploaded legal_notice
+documents when present. No sample PDF or fabricated signature is substituted.
+AI drafting, real KYC, commission/payout calculations and external integrations
+remain subject to the existing implementation/decision register. This report does
+not claim to implement them. The unconfirmed fee bases and other services are unchanged.

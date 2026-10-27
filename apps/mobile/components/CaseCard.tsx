@@ -8,12 +8,13 @@ import StatusPill from './StatusPill';
 
 type Props = {
   item: Case;
+  statusLabel?:string;
   onPress?: () => void;
 };
 
 // Active case card (design/14, 16): status pill and mono ID chip, title and meta, an
 // inner jurisdiction/advocate block, then the next hearing and a "View Case" button.
-export default function CaseCard({ item, onPress }: Props) {
+export default function CaseCard({ item, onPress, statusLabel='Active' }: Props) {
   const advocate = getAdvocate(item.advocateId);
   const hearing = item.nextHearingId ? getHearing(item.nextHearingId) : undefined;
 
@@ -27,7 +28,7 @@ export default function CaseCard({ item, onPress }: Props) {
       footerGap={cases.dividerGap}
       pills={
         <>
-          <StatusPill label="Active" tone="active" dot />
+          <StatusPill label={statusLabel} tone="active" dot />
           <View style={styles.chip}>
             <Text style={styles.chipText}>#{item.shortRef}</Text>
           </View>

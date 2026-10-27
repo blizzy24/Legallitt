@@ -1,5 +1,4 @@
-import ApiLegalNotice from "../../components/api/LegalNotice";
-import { DATA_SOURCE } from "../../lib/data-source";
+import {useNoticeLists} from "../../features/legal-notice/useNoticeLists";
 import { previewNotice } from '../../components/PreviewNotice';
 import { router, type Href } from 'expo-router';
 import {
@@ -41,7 +40,7 @@ const ROW_ICONS: Record<string, LucideIcon> = {
   'Requested Date': CalendarDays,
 };
 
-export function RequestsScreenView({ requests }: { requests: RequestItem[] }) {
+export function RequestsScreenView({ requests, onOpen }: { requests: RequestItem[]; onOpen?:(id:string)=>void }) {
   const insets = useSafeAreaInsets();
   const [filter, setFilter] = useState<RequestFilter>('all');
 
@@ -110,7 +109,7 @@ export function RequestsScreenView({ requests }: { requests: RequestItem[] }) {
         </ScrollView>
 
         {shown.map((r) => (
-          <RequestCard key={r.id} item={r} />
+          <RequestCard key={r.id} item={r} onOpen={onOpen} />
         ))}
 
         <View style={styles.note}>
@@ -121,7 +120,7 @@ export function RequestsScreenView({ requests }: { requests: RequestItem[] }) {
   );
 }
 
-function RequestCard({ item }: { item: RequestItem }) {
+function RequestCard({ item, onOpen }: { item: RequestItem; onOpen?:(id:string)=>void }) {
   const s = REQUEST_STATUS[item.status];
   const tone = s.tone === 'active' ? status.active : status.pending;
   const toneBg = s.tone === 'active' ? status.activeBg : status.pendingBg;
@@ -182,7 +181,7 @@ function RequestCard({ item }: { item: RequestItem }) {
           </Text>
           <Pressable
             accessibilityRole="button"
-            onPress={() => router.push(`/requests/${item.id}` as Href)}
+            onPress={() => onOpen ? onOpen(item.id) : router.push(`/requests/${item.id}` as Href)}
             style={({ pressed }) => [styles.link, pressed && styles.pressed]}
           >
             <Text style={styles.linkText} {...shrinkToFit(0.8)}>
@@ -444,5 +443,6 @@ const styles = StyleSheet.create({
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function RequestsScreen() {
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="list" /> : <RequestsScreenView requests={REQUESTS} />;
+  const model=useNoticeLists();
+  return <RequestsScreenView requests={model.requests} onOpen={model.api?id=>model.open(id):undefined} />;
 }

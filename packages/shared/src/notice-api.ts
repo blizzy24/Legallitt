@@ -86,6 +86,7 @@ export type ApiReview = {
   created_at: string;
 };
 export type ApiCase = {
+  advocate?: {id:string;full_name:string}|null;
   id: string;
   reference: string;
   service_code: "legal_notice";
@@ -114,3 +115,5 @@ export type UploadTicket = {
   };
 };
 export type PresignInput = z.infer<typeof DocumentPresignSchema>;
+
+export type ApiMessage = {id:string;thread_id:string;sender_id:string;body:string|null;document_id:string|null;created_at:string;read_at:string|null};
