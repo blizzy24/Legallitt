@@ -12,13 +12,18 @@ import {
   UnauthorizedException,
   ForbiddenException,
   UseGuards,
+  Optional,
 } from "@nestjs/common";
+import { SystemTrigger } from "../admin-ui/system-trigger";
+import type { CaseActor } from "../cases/case-access";
 import { Reflector } from "@nestjs/core";
 import { AuthService } from "./auth.service";
 export const Roles = (...roles: string[]) => SetMetadata("roles", roles);
 export type AuthRequest = {
-  headers: { authorization?: string };
-  user?: Awaited<ReturnType<AuthService["identity"]>>;
+  headers: { authorization?: string; "x-system-trigger"?: string };
+  path?: string;
+  body?: unknown;
+  user?: Awaited<ReturnType<AuthService["identity"]>> & Pick<CaseActor, "trigger" | "source">;
 };
 export function bearer(req: AuthRequest) {
   const match = req.headers.authorization?.match(/^Bearer (\S+)$/);
@@ -30,10 +35,16 @@ export class AuthGuard implements CanActivate {
   constructor(
     private readonly auth: AuthService,
     private readonly reflector: Reflector,
+    @Optional() private readonly systemTrigger?: SystemTrigger,
   ) {}
   async canActivate(context: ExecutionContext) {
     const req = context.switchToHttp().getRequest<AuthRequest>();
     req.user = await this.auth.identity(bearer(req));
+    const provenance = req.headers["x-system-trigger"];
+    if (provenance) {
+      if (!this.systemTrigger) throw new UnauthorizedException("System provenance unavailable");
+      Object.assign(req.user, this.systemTrigger.verify(provenance, req.user, req.path ?? '', req.body));
+    }
     const roles = this.reflector.getAllAndOverride<string[]>("roles", [
       context.getHandler(),
       context.getClass(),

@@ -51,3 +51,16 @@ export const LegalNoticeSubmissionSchema = z.strictObject({
   issueType: LegalNoticeIssueSchema,
 });
 export type LegalNoticeIntake = z.infer<typeof LegalNoticeIntakeSchema>;
+
+/** §9.2: matter types are selected data, never copy substitutions. */
+export const LegalNoticeMatterTypeSchema = z.enum([
+  'property_dispute', 'money_recovery', 'tenant_issue', 'family_dispute',
+  'cheque_bounce', 'consumer_complaint', 'other',
+]);
+export type LegalNoticeMatterType = z.infer<typeof LegalNoticeMatterTypeSchema>;
+export function noticeMatterType(issue: LegalNoticeIntake['issueType']): LegalNoticeMatterType | null {
+  return issue ? LegalNoticeMatterTypeSchema.parse(issue.replaceAll('-', '_')) : null;
+}
+export function noticeIssueType(matter: LegalNoticeMatterType | null): LegalNoticeIntake['issueType'] {
+  return matter ? LegalNoticeIssueSchema.parse(matter.replaceAll('_', '-')) : undefined;
+}

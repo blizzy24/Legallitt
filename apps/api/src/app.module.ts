@@ -1,3 +1,4 @@
+import { AdminUiModule } from "./admin-ui/admin-ui.module";
 import { DatabaseModule } from "./database.module";
 import { PaymentsModule } from './payments/payments.module';
 import { PaymentsService } from './payments/payments.service';
@@ -32,7 +33,7 @@ export class HealthController {
 }
 
 @Module({
-  imports: [DatabaseModule, PhoneAuthModule, PaymentsModule, NotificationsModule],
+  imports: [AdminUiModule, DatabaseModule, PhoneAuthModule, PaymentsModule, NotificationsModule],
   controllers: [
     PaymentsController,
     HealthController,

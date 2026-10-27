@@ -182,6 +182,7 @@ export class ApiClient {
     service_code: "legal_notice";
     tier?: "ordinary" | "urgent";
     details?: LegalNoticeIntake;
+    matter_type?: import("./legal-notice").LegalNoticeMatterType | null;
   }) {
     return this.request<ApiCase>("/cases", input);
   }
@@ -199,7 +200,7 @@ export class ApiClient {
   }
   saveIntake(
     id: string,
-    input: { details?: LegalNoticeIntake; tier?: "ordinary" | "urgent" },
+    input: { details?: LegalNoticeIntake; tier?: "ordinary" | "urgent"; matter_type?: import("./legal-notice").LegalNoticeMatterType | null },
   ) {
     return this.request<ApiCase>(`/cases/${id}`, input, "PATCH");
   }

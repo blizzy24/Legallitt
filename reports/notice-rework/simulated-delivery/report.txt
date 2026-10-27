@@ -1,0 +1,30 @@
+27 October 2026 — admin delivery simulator and document-access audit
+
+Read-access finding: DocumentService.url calls locked(), which joins the case
+and scopes access to its client, assigned advocate, or an admin. owner_id is
+not a read permission. Only deletion additionally checks uploader/admin.
+Regression: an admin-owned one-page POD is readable by the client and assigned
+advocate; unrelated client/advocate receive 404 before an S3 URL is issued.
+
+A third dev demo account, demo-admin@legalitt.invalid, was seeded through the
+existing Cognito AdminCreateUser/AdminSetUserPassword path, with verified email
+and a local users row. Seeding requires ENVIRONMENT=dev, non-production Node,
+a dev-tagged Cognito pool, and the configured password secret. Public phone
+OTP still accepts only client/advocate roles; it cannot sign in as admin.
+
+The simulator authenticates using the normal admin login and calls the normal
+presign, S3 POST, document-completion, and delivery endpoints. A scoped in-memory
+provenance ticket never replaces Cognito authentication or role checks. It
+binds the admin, case and uploaded document, expires after five minutes, and
+is revoked after the operation. No POD validation exemption exists.
+
+Real Dev S3 verification passed on a local test case: dispatched -> completed;
+one-page PDF uploaded and validated, owner_id = seeded admin, simulated=true;
+completion event actor_id=NULL, actor_role=NULL, payload.actor='system',
+source='simulated'. Client download succeeded. Downloaded artefact: proof.pdf.
+The PDF says SIMULATED PROOF OF DELIVERY and No delivery occurred.
+No AWS infrastructure was deployed. No user_role enum value was added.
+
+This completes the new simulator subtask, not the full screen rework.
+The advocate route migration and removal of components/api/LegalNotice.tsx
+are still pending and must not be reported as complete.

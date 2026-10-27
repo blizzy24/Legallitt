@@ -58,6 +58,8 @@ export type ApiEvent = {
 };
 export type ApiDocument = {
   id: string;
+  owner_id: string;
+  simulated: boolean;
   case_id: string;
   kind: string;
   filename: string;
@@ -91,6 +93,7 @@ export type ApiCase = {
   advocate_id: string | null;
   status: CaseStatus;
   tier: z.infer<typeof LegalNoticeTierSchema> | null;
+  matter_type: import("./legal-notice").LegalNoticeMatterType | null;
   details: LegalNoticeIntake;
   created_at: string;
   updated_at: string;

@@ -63,6 +63,7 @@ export const CaseSchema = z.strictObject({
   advocate_id: z.uuid().nullable(),
   status: CaseStatusSchema,
   sub_status: z.string().nullable(),
+  matter_type: z.string().nullable(),
   tier: z.string().nullable(),
   title: z.string().nullable(),
   details: z.json(),
@@ -98,6 +99,7 @@ export const DocumentSchema = z.strictObject({
   size_bytes: bigint64,
   page_count: int32.nullable(),
   status: z.string(),
+  simulated: z.boolean(),
   created_at: z.date(),
 });
 export type Document = z.infer<typeof DocumentSchema>;

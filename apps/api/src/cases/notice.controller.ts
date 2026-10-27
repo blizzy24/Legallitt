@@ -1,5 +1,6 @@
 import {
   Body,
+  Inject,
   Controller,
   Get,
   Param,
@@ -7,6 +8,7 @@ import {
   Req,
   UseGuards,
 } from "@nestjs/common";
+import { ADMIN_UI, type AdminUiPort } from "../admin-ui/admin-ui.port";
 import { z } from "zod";
 import { CaseStatus } from "@legalitt/shared";
 import { AuthGuard, Roles, type AuthRequest } from "../auth/auth.controller";
@@ -28,6 +30,7 @@ export class NoticeController {
   constructor(
     private readonly state: CaseStateMachine,
     private readonly cases: CaseRepository,
+    @Inject(ADMIN_UI) private readonly adminUi: AdminUiPort,
   ) {}
   @Get("advocate/requests") @Roles("advocate") requests(
     @Req() req: AuthRequest,
@@ -118,13 +121,16 @@ export class NoticeController {
     @Param("id") value: string,
     @Body() body: unknown,
   ) {
-    return json(this.state.dispatch(req.user!, id(value), body));
+    return json(this.state.dispatch(req.user!, id(value), body).then(record => {
+      this.adminUi.dispatched(record.id);
+      return record;
+    }));
   }
-  @Post("admin/cases/:id/deliver") @Roles("admin") deliver(
+  @Post(["admin/cases/:id/deliver", "cases/:id/delivered"]) @Roles("admin") deliver(
     @Req() req: AuthRequest,
     @Param("id") value: string,
     @Body() body: unknown,
   ) {
-    return json(this.state.deliver(req.user!, id(value), body));
+    return json(this.state.deliver(req.user!, id(value), body).then(record => ({...record, ...(req.user!.source === "simulated" ? {simulated: true} : {})})));
   }
 }

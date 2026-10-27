@@ -3,6 +3,8 @@ import type { Prisma } from "../generated/prisma/client";
 
 export type CaseActor = {
   id: string;
+  trigger?: "system";
+  source?: "simulated";
   role: "client" | "advocate" | "admin";
 };
 

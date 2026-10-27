@@ -180,6 +180,7 @@ model Case {
   advocate_id                       String?         @db.Uuid
   status                            CaseStatus      @default(draft)
   sub_status                        String?
+  matter_type                       String?
   tier                              String?
   title                             String?
   details                           Json            @default("{}") @db.JsonB
@@ -250,6 +251,7 @@ model Document {
   size_bytes                          BigInt
   page_count                          Int?
   status                              String     @default("uploaded")
+  simulated                           Boolean    @default(false)
   created_at                          DateTime   @default(now()) @db.Timestamptz(6)
   case_id_relation                    Case?      @relation("documents_case_id_cases", fields: [case_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   owner_id_relation                   User       @relation("documents_owner_id_users", fields: [owner_id], references: [id], onDelete: NoAction, onUpdate: NoAction)

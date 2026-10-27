@@ -83,6 +83,7 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
           id,
           case_id: input.case_id,
           owner_id: actor.id,
+          simulated: actor.source === "simulated",
           kind: input.kind,
           filename: input.filename,
           s3_key: key,
@@ -94,6 +95,7 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
       const upload = await this.storage.upload(key, input.mime);
       return {
         document: this.publicRecord(doc),
+        ...(doc.simulated ? {simulated: true} : {}),
         upload: {
           ...upload,
           method: "POST",
@@ -157,6 +159,7 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
         throw new NotFoundException("Document not found");
       return {
         url: await this.storage.download(doc.s3_key, doc.filename),
+        ...(doc.simulated ? {simulated: true} : {}),
         expires_in: DOCUMENT_URL_SECONDS,
       };
     }, transactionOptions);

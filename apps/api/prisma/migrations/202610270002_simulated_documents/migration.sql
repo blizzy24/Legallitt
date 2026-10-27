@@ -1,0 +1,1 @@
+ALTER TABLE documents ADD COLUMN simulated BOOLEAN NOT NULL DEFAULT false;

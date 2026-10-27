@@ -36,7 +36,7 @@ async function main() {
     if (pool.UserPool?.UserPoolTags?.environment !== "dev")
       throw new Error("Demo accounts require a dev-tagged pool");
     const password = await demoPassword();
-    for (const [role, account] of Object.entries(demoAccounts)) {
+    for (const [role, account] of Object.entries({ ...demoAccounts, admin: { email: "demo-admin@legalitt.invalid", name: "Demo admin" } })) {
       const target = { UserPoolId: userPoolId, Username: account.email };
       try {
         await cognito.send(
@@ -84,12 +84,12 @@ async function main() {
           full_name: account.name,
           email: account.email,
           email_verified: true,
-          role: role as "client" | "advocate",
+          role: role as "client" | "advocate" | "admin",
         },
         update: {},
       });
     }
-    console.log("Seeded two verified demo accounts; no mail or SMS sent.");
+    console.log("Seeded three verified demo accounts; no mail or SMS sent.");
   } finally {
     secrets.destroy();
     cognito.destroy();

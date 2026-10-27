@@ -217,7 +217,14 @@ test(
         where: { id: proof.id },
         data: { status: "uploaded" },
       });
-      await state.deliver(admin, c.id, { pod_document_id: proof.id });
+      const automaticAdmin = {...admin, trigger: 'system', source: 'simulated'};
+      await assert.rejects(state.deliver(automaticAdmin, c.id, {pod_document_id: randomUUID()}), {status: 400});
+      await state.deliver(automaticAdmin, c.id, { pod_document_id: proof.id });
+      const deliveredEvent = await db.caseEvent.findFirst({where: {case_id: c.id, to_status: 'completed'}});
+      assert.equal(deliveredEvent.actor_id, null);
+      assert.equal(deliveredEvent.actor_role, null);
+      assert.equal(deliveredEvent.payload.actor, 'system');
+      assert.equal(deliveredEvent.source, 'simulated');
       const complete = await repo.read(client, c.id);
       assert.equal(complete.status, "completed");
       assert.ok(complete.completed_at);

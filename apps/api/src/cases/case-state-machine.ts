@@ -10,6 +10,9 @@ import {
   LegalNoticeIntakeSchema,
   LegalNoticeSubmissionSchema,
   LegalNoticeTierSchema,
+  LegalNoticeMatterTypeSchema,
+  noticeMatterType,
+  noticeIssueType,
   NoticeDraftInputSchema,
   NoticeCommentSchema,
   NoticeDeclineSchema,
@@ -24,11 +27,13 @@ export const createCaseSchema = z.strictObject({
   service_code: z.literal("legal_notice"),
   tier: LegalNoticeTierSchema.optional(),
   details: LegalNoticeIntakeSchema.default({}),
+  matter_type: LegalNoticeMatterTypeSchema.nullable().optional(),
 });
 export const updateCaseSchema = z
   .strictObject({
     tier: LegalNoticeTierSchema.optional(),
     details: LegalNoticeIntakeSchema.optional(),
+    matter_type: LegalNoticeMatterTypeSchema.nullable().optional(),
   })
   .refine((v) => Object.keys(v).length > 0);
 
@@ -141,6 +146,10 @@ export class CaseStateMachine {
     if (actor.role !== "client")
       throw new ForbiddenException("Only clients create cases");
     const input = parse(createCaseSchema, body);
+    if (input.matter_type !== undefined && input.details.issueType !== undefined && input.matter_type !== noticeMatterType(input.details.issueType))
+      throw new BadRequestException('Matter type must match the selected issue');
+    const matterType = input.matter_type ?? noticeMatterType(input.details.issueType);
+    const issueType = noticeIssueType(matterType);
     const db = await this.prisma.getClient();
     return db.$transaction(async (tx) => {
       const [sequence] = await tx.$queryRaw<{ value: bigint }[]>`
@@ -153,7 +162,8 @@ export class CaseStateMachine {
           reference,
           status: CaseStatus.draft,
           tier: input.tier,
-          details: input.details,
+          matter_type: matterType,
+          details: {...input.details, ...(issueType ? {issueType} : {})},
         },
       });
       await tx.caseEvent.create({
@@ -193,9 +203,17 @@ export class CaseStateMachine {
               : {}),
           })
         : previous;
+      if (input.matter_type !== undefined && input.details?.issueType !== undefined && input.matter_type !== noticeMatterType(input.details.issueType))
+        throw new BadRequestException('Matter type must match the selected issue');
+      const matterType = input.matter_type !== undefined ? input.matter_type :
+        input.details?.issueType !== undefined ? noticeMatterType(input.details.issueType) : record.matter_type;
+      const issueType = noticeIssueType(parse(LegalNoticeMatterTypeSchema.nullable(), matterType));
+      if (issueType) details.issueType = issueType;
+      else delete details.issueType;
       return tx.case.update({
         where: { id },
         data: {
+          matter_type: matterType,
           details,
           ...(input.tier ? { tier: input.tier } : {}),
           updated_at: new Date(),
@@ -215,17 +233,17 @@ export class CaseStateMachine {
     },
     to: CaseStatus,
     payload: Prisma.InputJsonObject = {},
-    devPayment = false,
+    capturedPayment = false,
     source: 'real' | 'simulated' = 'real',
   ) {
     const from = record.status as CaseStatus;
-    if (devPayment) {
+    if (capturedPayment) {
       if (
         from !== CaseStatus.payment_pending ||
         to !== CaseStatus.paid ||
         actor.role !== "client"
       )
-        throw new ConflictException("Invalid development payment");
+        throw new ConflictException("Invalid captured payment transition");
     } else permit(actor, from, to);
     if (to === CaseStatus.submitted) {
       parse(LegalNoticeSubmissionSchema, record.details);
@@ -242,13 +260,13 @@ export class CaseStateMachine {
     await tx.caseEvent.create({
       data: {
         case_id: record.id,
-        type: devPayment ? "payment_captured" : "status_changed",
-        source,
-        actor_id: actor.id,
-        actor_role: actor.role,
+        type: capturedPayment ? "payment_captured" : "status_changed",
+        source: actor.source ?? source,
+        actor_id: actor.trigger === "system" ? null : actor.id,
+        actor_role: actor.trigger === "system" ? null : actor.role,
         from_status: from,
         to_status: to,
-        payload,
+        payload: actor.trigger === "system" ? {...payload, actor: "system"} : payload,
       },
     });
     return updated;
@@ -280,6 +298,8 @@ export class CaseStateMachine {
   async paymentCaptured(tx: Prisma.TransactionClient, actor: CaseActor,
     record: {id: string; status: string; details: unknown; tier: string | null},
     paymentId: string, source: 'real' | 'simulated') {
+    const payment = await tx.payment.findFirst({where: {id: paymentId, case_id: record.id, payer_id: actor.id, purpose: 'service_fee', status: 'captured'}});
+    if (!payment) throw new ConflictException('A captured service payment is required');
     return this.advance(tx, actor, record, CaseStatus.paid, {payment_id: paymentId}, true, source);
   }
   async assign(actor: CaseActor, id: string, body: unknown) {

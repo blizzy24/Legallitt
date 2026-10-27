@@ -56,6 +56,7 @@ test(
           status,
           tier: "ordinary",
           details,
+          matter_type: "property_dispute",
         },
       });
     };
@@ -91,6 +92,23 @@ test(
             full_name: "Test identity",
           },
         });
+      await t.test("matter type round trips all seven selections without changing unrelated intake", async () => {
+        const row = await create();
+        for (const matter_type of ['property_dispute','money_recovery','tenant_issue','family_dispute','cheque_bounce','consumer_complaint','other']) {
+          const saved = await machine.updateDraft(client,row.id,{matter_type});
+          assert.equal(saved.matter_type,matter_type);
+          assert.equal(saved.details.issueType,matter_type.replaceAll('_','-'));
+          assert.deepEqual(saved.details.client,details.client);
+          assert.equal((await db.case.findUnique({where:{id:row.id}})).matter_type,matter_type);
+        }
+        await assert.rejects(machine.updateDraft(client,row.id,{matter_type:'money_recovery',details:{issueType:'property-dispute'}}),{status:400});
+        await assert.rejects(machine.updateDraft(client,row.id,{matter_type:'invented'}),{status:400});
+        const cleared=await machine.updateDraft(client,row.id,{matter_type:null});
+        assert.equal(cleared.matter_type,null);
+        assert.equal(cleared.details.issueType,undefined);
+        const legacy=await machine.updateDraft(client,row.id,{details:{issueType:'tenant-issue'}});
+        assert.equal(legacy.matter_type,'tenant_issue');
+      });
       await t.test(
         "every allowed edge writes exactly one attributed event; every other edge is rejected",
         async () => {

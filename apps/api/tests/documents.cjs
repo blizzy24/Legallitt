@@ -295,6 +295,21 @@ test(
           assert.equal((await service.complete(client, d.id)).page_count, 2);
         },
       );
+      await t.test("admin-owned POD is readable through case membership, never ownership", async () => {
+        const { simulatedProof } = require("../dist/src/admin-ui/simulated-proof");
+        const proof = await simulatedProof("TEST-POD", new Date("2026-10-27T00:00:00Z"));
+        const signed = await presign(admin, "proof_of_delivery");
+        assert.equal(signed.document.owner_id, admin.id);
+        storage.put(stagingKey(signed.document.s3_key), proof);
+        const completed = await service.complete(admin, signed.document.id);
+        assert.equal(completed.page_count, 1);
+        for (const actor of [client, advocate, admin])
+          assert.equal((await service.url(actor, completed.id)).expires_in, 300);
+        const downloads = storage.downloads;
+        for (const actor of [other, otherAdvocate])
+          await assert.rejects(service.url(actor, completed.id), { status: 404 });
+        assert.equal(storage.downloads, downloads);
+      });
       await t.test(
         "PNG counts one; malformed, mismatched and oversized objects are refused",
         async () => {
