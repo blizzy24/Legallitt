@@ -1,3 +1,4 @@
+import {useAdvocateNoticeModel} from '../../../features/legal-notice/useAdvocateNoticeModel';
 import NoticeResponseScreen from '../../../components/NoticeResponseScreen';
 
 // Advocate — legal notice response editor (design/267).
@@ -16,5 +17,7 @@ import NoticeResponseScreen from '../../../components/NoticeResponseScreen';
 // STATIC, NOT WIRED: the rich-text toolbar (Paragraph / B / I / U / lists /
 // undo / redo) is inert. No editor engine is specified anywhere in the designs.
 export default function AdvocateNoticeResponseEditorScreen() {
-  return <NoticeResponseScreen variant="generate" caseId="ln-2026-1048" />;
+  const model=useAdvocateNoticeModel('response');
+  return <NoticeResponseScreen variant="generate" caseId={model.controller.id??'ln-2026-1048'}
+    data={model.data.ADV_NOTICE_RESPONSE} fields={model.documentFields} navigate={model.navigate} onSave={model.onSaveDraft} />;
 }

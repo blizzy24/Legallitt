@@ -1,3 +1,4 @@
+import {useAdvocateNoticeModel} from '../../../../features/legal-notice/useAdvocateNoticeModel';
 import { useLocalSearchParams } from 'expo-router';
 
 import ReportSentScreen from '../../../../components/ReportSentScreen';
@@ -14,5 +15,6 @@ import { ADV_NOTICE_REPORT } from '../../../../data/advocateSide';
 
 export default function AdvocateNoticeReportScreen() {
   useLocalSearchParams<{ id: string }>();
-  return <ReportSentScreen r={ADV_NOTICE_REPORT} />;
+  const model=useAdvocateNoticeModel('report');
+  return <ReportSentScreen r={model.data.ADV_NOTICE_REPORT} />;
 }

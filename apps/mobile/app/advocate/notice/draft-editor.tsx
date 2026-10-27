@@ -1,3 +1,4 @@
+import { useAdvocateNoticeModel } from '../../../features/legal-notice/useAdvocateNoticeModel';
 import DemoPressable from '../../../components/DemoPressable';
 import { router, type Href } from 'expo-router';
 import { ArrowLeft, Sparkles } from 'lucide-react-native';
@@ -41,9 +42,14 @@ import {
 // STATIC, NOT WIRED: the edit pencils open no editor, Save Draft saves nothing,
 // Preview previews nothing, and Continue to Review only navigates.
 
-export default function AdvocateNoticeDraftEditorScreen() {
+export function AdvocateNoticeDraftEditorView({draft, navigate, onChange, onSave, previewHref, reviewHref}: {
+  draft: typeof ADV_NOTICE_DRAFT; navigate: typeof router;
+  onChange?: (index:number,value:string)=>void; onSave?:()=>void;
+  previewHref: Href; reviewHref: Href;
+}) {
+  const router=navigate;
   const insets = useSafeAreaInsets();
-  const d = ADV_NOTICE_DRAFT;
+  const d = draft;
   const e = AT_DRAFT_EDITOR;
 
   return (
@@ -87,17 +93,17 @@ export default function AdvocateNoticeDraftEditorScreen() {
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <NoticeDraftSections sections={d.sections} />
+        <NoticeDraftSections sections={d.sections} onChange={onChange} />
       </ScrollView>
 
       <View style={[styles.footer, { paddingBottom: insets.bottom + 14 }]}>
         <View style={styles.btnRow}>
-          <DemoPressable accessibilityRole="button" style={styles.btn}>
+          <DemoPressable accessibilityRole="button" onPress={onSave} style={styles.btn}>
             <Text style={styles.btnText} {...shrinkToFit(0.8)}>
               {e.saveDraft}
             </Text>
           </DemoPressable>
-          <DemoPressable accessibilityRole="button" style={[styles.btn, { marginLeft: t.btnGap }]}>
+          <DemoPressable accessibilityRole="button" onPress={()=>router.push(previewHref)} style={[styles.btn, { marginLeft: t.btnGap }]}>
             <Text style={styles.btnText} {...shrinkToFit(0.8)}>
               {e.preview}
             </Text>
@@ -106,7 +112,7 @@ export default function AdvocateNoticeDraftEditorScreen() {
         <Pressable
           accessibilityRole="button"
           style={({ pressed }) => [styles.cta, pressed && styles.pressed]}
-          onPress={() => router.push('/advocate/notice/ln-2026-1048/review' as Href)}
+          onPress={() => router.push(reviewHref)}
         >
           <Text style={styles.ctaText} {...shrinkToFit(0.8)}>
             {e.cta}
@@ -206,3 +212,10 @@ const styles = StyleSheet.create({
   pressed: { opacity: 0.85 },
   ctaText: { fontFamily: font.appHeading, fontSize: t.ctaSize, color: ink.onBrand },
 });
+
+export default function AdvocateNoticeDraftEditorScreen() {
+  const model=useAdvocateNoticeModel('draft-editor');
+  return <AdvocateNoticeDraftEditorView draft={model.data.ADV_NOTICE_DRAFT} navigate={model.navigate}
+    onChange={model.onEditSection} onSave={model.onSaveDraft}
+    previewHref={model.path('response')} reviewHref={model.path('review')} />;
+}

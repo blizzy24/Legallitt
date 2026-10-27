@@ -1,0 +1,238 @@
+[
+  {
+    "design": 194,
+    "before": "Send the documents directly to your advocate.",
+    "after": "Send the documents directly to the recipient.",
+    "original": {
+      "width": 241,
+      "height": 36,
+      "lineRects": [
+        {
+          "x": 84,
+          "y": 490,
+          "width": 201.8203125,
+          "height": 14
+        },
+        {
+          "x": 285.8203125,
+          "y": 490,
+          "width": 2.921875,
+          "height": 14
+        },
+        {
+          "x": 84,
+          "y": 508,
+          "width": 53.34375,
+          "height": 14
+        }
+      ]
+    },
+    "actual": {
+      "width": 241,
+      "height": 36,
+      "lineRects": [
+        {
+          "x": 84,
+          "y": 490,
+          "width": 195.3984375,
+          "height": 14
+        },
+        {
+          "x": 279.3984375,
+          "y": 490,
+          "width": 2.921875,
+          "height": 14
+        },
+        {
+          "x": 84,
+          "y": 508,
+          "width": 51.8359375,
+          "height": 14
+        }
+      ]
+    }
+  },
+  {
+    "design": 194,
+    "before": "Legalitt will arrange delivery to your advocate.",
+    "after": "Legalitt will arrange delivery to the recipient.",
+    "original": {
+      "width": 241,
+      "height": 36,
+      "lineRects": [
+        {
+          "x": 84,
+          "y": 641,
+          "width": 200.28125,
+          "height": 14
+        },
+        {
+          "x": 284.28125,
+          "y": 641,
+          "width": 2.921875,
+          "height": 14
+        },
+        {
+          "x": 84,
+          "y": 659,
+          "width": 53.34375,
+          "height": 14
+        }
+      ]
+    },
+    "actual": {
+      "width": 241,
+      "height": 36,
+      "lineRects": [
+        {
+          "x": 84,
+          "y": 641,
+          "width": 193.859375,
+          "height": 14
+        },
+        {
+          "x": 277.859375,
+          "y": 641,
+          "width": 2.921875,
+          "height": 14
+        },
+        {
+          "x": 84,
+          "y": 659,
+          "width": 51.8359375,
+          "height": 14
+        }
+      ]
+    }
+  },
+  {
+    "design": 194,
+    "before": "Your advocate needs the physical documents for the case.",
+    "after": "The signed notice must reach the recipient by post.",
+    "original": {
+      "width": 278,
+      "height": 42,
+      "lineRects": [
+        {
+          "x": 78,
+          "y": 920,
+          "width": 229.046875,
+          "height": 17.5
+        },
+        {
+          "x": 307.046875,
+          "y": 920,
+          "width": 3.1875,
+          "height": 17.5
+        },
+        {
+          "x": 78,
+          "y": 941,
+          "width": 165.5625,
+          "height": 17.5
+        }
+      ]
+    },
+    "actual": {
+      "width": 278,
+      "height": 42,
+      "lineRects": [
+        {
+          "x": 78,
+          "y": 920,
+          "width": 228.5625,
+          "height": 17.5
+        },
+        {
+          "x": 306.5625,
+          "y": 920,
+          "width": 3.2734375,
+          "height": 17.5
+        },
+        {
+          "x": 78,
+          "y": 941,
+          "width": 119.4296875,
+          "height": 17.5
+        }
+      ]
+    }
+  },
+  {
+    "design": 195,
+    "before": "Your documents will be picked up and sent to the receiver.",
+    "after": "Your documents will be picked up and sent to the recipient.",
+    "original": {
+      "width": 154.171875,
+      "height": 66,
+      "lineRects": [
+        {
+          "x": 96,
+          "y": 237,
+          "width": 140.1953125,
+          "height": 17.5
+        },
+        {
+          "x": 236.1953125,
+          "y": 237,
+          "width": 3.6484375,
+          "height": 17.5
+        },
+        {
+          "x": 96,
+          "y": 259,
+          "width": 151.9375,
+          "height": 17.5
+        },
+        {
+          "x": 247.9375,
+          "y": 259,
+          "width": 3.6484375,
+          "height": 17.5
+        },
+        {
+          "x": 96,
+          "y": 281,
+          "width": 102.8125,
+          "height": 17.5
+        }
+      ]
+    },
+    "actual": {
+      "width": 154.171875,
+      "height": 66,
+      "lineRects": [
+        {
+          "x": 96,
+          "y": 237,
+          "width": 140.1953125,
+          "height": 17.5
+        },
+        {
+          "x": 236.1953125,
+          "y": 237,
+          "width": 3.6484375,
+          "height": 17.5
+        },
+        {
+          "x": 96,
+          "y": 259,
+          "width": 151.9375,
+          "height": 17.5
+        },
+        {
+          "x": 247.9375,
+          "y": 259,
+          "width": 3.6484375,
+          "height": 17.5
+        },
+        {
+          "x": 96,
+          "y": 281,
+          "width": 108.984375,
+          "height": 17.5
+        }
+      ]
+    }
+  }
+]

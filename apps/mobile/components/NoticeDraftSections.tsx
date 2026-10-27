@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { Pencil } from 'lucide-react-native';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { shrinkToFit } from '../constants/textFit';
 import { ADV_NOTICE_DRAFT } from '../data/advocateSide';
@@ -16,10 +17,12 @@ import { advNoticeDraft as t, colors, font } from '../constants/theme';
  * STATIC. The content is fixed strings; nothing was generated. The edit pencils
  * are inert — no editor is specified anywhere in the designs.
  */
-export default function NoticeDraftSections({ sections = ADV_NOTICE_DRAFT.sections, onEdit }: {
+export default function NoticeDraftSections({ sections = ADV_NOTICE_DRAFT.sections, onEdit, onChange }: {
   sections?: typeof ADV_NOTICE_DRAFT.sections;
   onEdit?: (index: number) => void;
+  onChange?: (index: number, value: string) => void;
 }) {
+  const [editing, setEditing] = useState<number | null>(null);
   return (
     <>
       {sections.map((s, index) => (
@@ -28,12 +31,12 @@ export default function NoticeDraftSections({ sections = ADV_NOTICE_DRAFT.sectio
             <Text style={styles.secTitle} {...shrinkToFit(0.75)}>
               {s.n}. {s.title}
             </Text>
-            <Pressable accessibilityRole="button" accessibilityLabel={`Edit ${s.title}`} hitSlop={8} onPress={() => onEdit?.(index)}>
+            <Pressable accessibilityRole="button" accessibilityLabel={`Edit ${s.title}`} hitSlop={8} onPress={() => {setEditing(index);onEdit?.(index);}}>
               <Pencil size={t.pencil} color={colors.textPrimary} />
             </Pressable>
           </View>
           <View style={styles.body}>
-            <Text style={styles.bodyText}>{s.body}</Text>
+            <>{onChange && editing === index ? <TextInput accessibilityLabel={s.title} multiline autoFocus value={s.body} onChangeText={value=>onChange(index,value)} style={[styles.bodyText,{padding:0}]} /> : <Text style={styles.bodyText}>{s.body}</Text>}</>
           </View>
         </View>
       ))}

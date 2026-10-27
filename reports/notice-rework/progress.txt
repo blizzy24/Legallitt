@@ -160,3 +160,44 @@ These are browser captures, not mockups or a claim of identical fixture data.
 Remaining: advocate view migration, courier 286 persistence/schema decision,
 entry lists/chat, final full-flow verification and deletion of the legacy API
 renderer. Its presence is explicitly NOT claimed resolved by this stage.
+
+2026-10-28 — Stage 4 advocate designed-view wiring
+The advocate Notice fee, document review, drafting/editor, response, review,
+final, dispatch, delivery/payment and inbound shipment routes now use the
+existing views with controller data. The outbound payment success leads to
+reused design 286, then dispatch; 199–202 remain inbound only.
+
+The 461-image decline audit found no advocate reason input. No-reason decline
+is implemented: reason:null, advocate actor, case and timestamp. Commit ccbf076
+also adds the exact v5.8 shipment columns and draft/book save operations.
+Inbound receipt is commit 87b5817: closes the inbound shipment, records
+confirmation_source:advocate, requires no POD, leaves the lifecycle untouched.
+
+Chrome verification against the local API:
+- The drawn Decline Request button recorded advocate_declined with reason:null.
+- Accepted the assigned case; edited and saved all six draft sections; sent
+  for review. The client approval used the real endpoint in this advocate walk.
+- Courier payment captured without moving approved; the form restored its
+  partial carrier entry after leaving/reloading; submit saved a booked shipment.
+- Confirm Dispatch used the saved shipment. The simulator authenticated as the
+  seeded admin, uploaded the labelled POD through S3/validation, called delivery,
+  and the case became completed. The advocate browser landed on report.
+- A pricing-load race discovered in this walk was fixed and the courier leg rerun.
+
+No tokens changed. The visual comparison caught and removed an undrawn
+reference row from design 197. Approved recipient substitutions remain in
+copy/substitutions.ts, and their exact strings are reflected in the working
+architecture document (the user's other document edits are not staged).
+
+Screenshots: stage4-before-after/ and stage4-fixture-api/; individual images in
+stage4-fixtures/ and stage4-api/. Inventory: stage4-screenshot-files.txt.
+The displayed data differs intentionally. Unknown fee/payout/profile/document
+facts are empty; no fixture legal notice PDF or fabricated signature is supplied.
+Save Draft and response saving persist structured draft content; generation of
+a downloadable final notice PDF is not claimed by this stage.
+
+Remaining for the full rework: entry lists/chat, deletion of the legacy API
+renderer, and final end-to-end gates. The task is not yet complete.
+
+Stage 4 gate: all-workspace tsc passed; API tests 40/40; fixture and API web
+exports passed; final mobile smoke 322 routes, zero failures.

@@ -1,5 +1,4 @@
-import ApiLegalNotice from "../../../../components/api/LegalNotice";
-import { DATA_SOURCE } from "../../../../lib/data-source";
+import { useAdvocateNoticeModel } from "../../../../features/legal-notice/useAdvocateNoticeModel";
 import { previewNotice } from '../../../../components/PreviewNotice';
 import DemoPressable from '../../../../components/DemoPressable';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
@@ -40,7 +39,7 @@ import { advNoticeDispatch as t, colors, font, ink } from '../../../../constants
 // completing them. The pending rows are made tappable here, since a checklist you
 // cannot check is not a checklist — the design shows states but not the transition.
 
-export function AdvocateNoticeDispatchScreenView({ data, navigate }: { data: { ADV_NOTICE_DISPATCH: typeof ADV_NOTICE_DISPATCH; ADV_NOTICE_RECIPIENT: typeof ADV_NOTICE_RECIPIENT }; navigate: typeof router }) {
+export function AdvocateNoticeDispatchScreenView({ data, navigate, onDownload, onConfirm }: { onDownload?: (id?: string) => void; onConfirm?: () => void; data: { ADV_NOTICE_DISPATCH: typeof ADV_NOTICE_DISPATCH; ADV_NOTICE_RECIPIENT: typeof ADV_NOTICE_RECIPIENT }; navigate: typeof router }) {
   const { ADV_NOTICE_DISPATCH, ADV_NOTICE_RECIPIENT } = data;
   const router = navigate;
   const insets = useSafeAreaInsets();
@@ -118,7 +117,7 @@ export function AdvocateNoticeDispatchScreenView({ data, navigate }: { data: { A
           </View>
 
           {/* Inert — the prototype has no file output. */}
-          <Pressable onPress={() => previewNotice(d.download)} accessibilityRole="button" style={styles.dl}>
+          <Pressable onPress={() => onDownload ? onDownload() : previewNotice(d.download)} accessibilityRole="button" style={styles.dl}>
             <Download size={t.dlIcon} color={colors.textPrimary} />
             <Text style={styles.dlText} {...shrinkToFit(0.8)}>
               {d.download}
@@ -216,6 +215,7 @@ export function AdvocateNoticeDispatchScreenView({ data, navigate }: { data: { A
       {/* ⚠ Second primary action; see the note at the top of this file. Inert. */}
       <View style={[styles.bar, { paddingBottom: insets.bottom + 12 }]}>
         <DemoPressable
+          onPress={onConfirm}
           accessibilityRole="button"
           style={({ pressed }) => [styles.confirm, pressed && styles.pressed]}
         >
@@ -489,5 +489,6 @@ const styles = StyleSheet.create({
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function AdvocateNoticeDispatchScreen() {
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="dispatch" /> : <AdvocateNoticeDispatchScreenView data={{ ADV_NOTICE_DISPATCH, ADV_NOTICE_RECIPIENT }} navigate={router} />;
+  const model = useAdvocateNoticeModel("dispatch");
+  return <AdvocateNoticeDispatchScreenView data={model.data} navigate={model.navigate} onDownload={model.onViewDocument} onConfirm={model.onConfirmDispatch} />;
 }

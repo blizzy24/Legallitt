@@ -1,5 +1,4 @@
-import ApiLegalNotice from "../../../../components/api/LegalNotice";
-import { DATA_SOURCE } from "../../../../lib/data-source";
+import {useAdvocateNoticeModel} from "../../../../features/legal-notice/useAdvocateNoticeModel";
 import { DEMO_AUTO_ADVANCE } from '../../../../constants/dev';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
@@ -32,7 +31,7 @@ import { advNoticeReceipt as t, colors, font, ink } from '../../../../constants/
 // Confirm Received is disabled until the checkbox is ticked, as design/201 draws it
 // in a muted state.
 
-export function AdvocateNoticeConfirmScreenView({ data, navigate }: { data: { ADV_NOTICE_CONFIRM: typeof ADV_NOTICE_CONFIRM }; navigate: typeof router }) {
+export function AdvocateNoticeConfirmScreenView({ data, navigate, onReceive }: { onReceive?:()=>void; data: { ADV_NOTICE_CONFIRM: typeof ADV_NOTICE_CONFIRM }; navigate: typeof router }) {
   const { ADV_NOTICE_CONFIRM } = data;
   const router = navigate;
   const insets = useSafeAreaInsets();
@@ -195,8 +194,8 @@ export function AdvocateNoticeConfirmScreenView({ data, navigate }: { data: { AD
         <Pressable
           accessibilityRole="button"
           accessibilityState={{ disabled: !checked }}
-          disabled={!checked && !DEMO_AUTO_ADVANCE}
-          onPress={() => router.push(`/advocate/notice/${id}/received` as Href)}
+          disabled={!checked}
+          onPress={onReceive ?? (() => router.push(`/advocate/notice/${id}/received` as Href))}
           style={({ pressed }) => [
             styles.btn,
             styles.primary,
@@ -454,5 +453,6 @@ const styles = StyleSheet.create({
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function AdvocateNoticeConfirmScreen() {
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="tracking" /> : <AdvocateNoticeConfirmScreenView data={{ ADV_NOTICE_CONFIRM }} navigate={router} />;
+  const model=useAdvocateNoticeModel('confirm');
+  return <AdvocateNoticeConfirmScreenView data={model.data} navigate={model.navigate} onReceive={model.onReceive} />;
 }

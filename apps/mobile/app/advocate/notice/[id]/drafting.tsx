@@ -1,5 +1,4 @@
-import ApiLegalNotice from "../../../../components/api/LegalNotice";
-import { DATA_SOURCE } from "../../../../lib/data-source";
+import { useAdvocateNoticeModel } from "../../../../features/legal-notice/useAdvocateNoticeModel";
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
   ArrowRight,
@@ -394,5 +393,6 @@ const styles = StyleSheet.create({
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function AdvocateNoticeDraftingScreen() {
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="draft" /> : <AdvocateNoticeDraftingScreenView data={{ ADV_NOTICE_DRAFTING }} navigate={router} />;
+  const model = useAdvocateNoticeModel("drafting");
+  return <AdvocateNoticeDraftingScreenView data={model.data} navigate={model.navigate} />;
 }

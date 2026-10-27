@@ -551,7 +551,7 @@ export default function ApiLegalNotice({ stage }: { stage: Stage }) {
                   style={s.editor}
                 />
                 {button("Mark Dispatched", async () => {
-                  await backend.dispatch(id!, carrier, waybill);
+                  await backend.dispatch(id!);
                   go(advocatePath("tracking"));
                 })}
               </>

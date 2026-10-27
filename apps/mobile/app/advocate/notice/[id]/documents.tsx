@@ -1,5 +1,4 @@
-import ApiLegalNotice from "../../../../components/api/LegalNotice";
-import { DATA_SOURCE } from "../../../../lib/data-source";
+import { useAdvocateNoticeModel } from "../../../../features/legal-notice/useAdvocateNoticeModel";
 import { previewNotice } from '../../../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
@@ -33,7 +32,7 @@ import { advDocHref } from '../../../../data/docLinks';
 // View opens the document viewer on that file. The Download chips, the edit pencil
 // and the text area are inert — there is no download and no text entry.
 
-export function AdvocateNoticeDocumentsScreenView({ data, navigate }: { data: { ADV_NOTICE_DOCS: typeof ADV_NOTICE_DOCS }; navigate: typeof router }) {
+export function AdvocateNoticeDocumentsScreenView({ data, navigate, onViewDocument }: { onViewDocument?: (id?: string) => void; data: { ADV_NOTICE_DOCS: typeof ADV_NOTICE_DOCS }; navigate: typeof router }) {
   const { ADV_NOTICE_DOCS } = data;
   const router = navigate;
   const insets = useSafeAreaInsets();
@@ -110,13 +109,13 @@ export function AdvocateNoticeDocumentsScreenView({ data, navigate }: { data: { 
 
           <View style={styles.linkRule} />
           <View style={styles.links}>
-            <Pressable onPress={() => router.push(advDocHref(d.files[0].name) as Href)} accessibilityRole="button" style={styles.link}>
+            <Pressable onPress={() => onViewDocument ? onViewDocument(d.files[0]?.id) : router.push(advDocHref(d.files[0]?.name ?? '') as Href)} accessibilityRole="button" style={styles.link}>
               <Eye size={t.linkIcon} color={colors.brandDark} />
               <Text style={styles.linkText} {...shrinkToFit(0.8)}>
                 {d.viewFull}
               </Text>
             </Pressable>
-            <Pressable onPress={() => router.push(advDocHref(d.files[0].name) as Href)} accessibilityRole="button" style={styles.link}>
+            <Pressable onPress={() => onViewDocument ? onViewDocument(d.files[0]?.id) : router.push(advDocHref(d.files[0]?.name ?? '') as Href)} accessibilityRole="button" style={styles.link}>
               <FileText size={t.linkIcon} color={colors.textPrimary} />
               <Text style={[styles.linkText, styles.linkTextPlain]} {...shrinkToFit(0.8)}>
                 {d.viewSource}
@@ -148,7 +147,7 @@ export function AdvocateNoticeDocumentsScreenView({ data, navigate }: { data: { 
             </View>
             <Pressable
               accessibilityRole="button"
-              onPress={() => router.push(advDocHref(f.name) as Href)}
+              onPress={() => onViewDocument ? onViewDocument(f.id) : router.push(advDocHref(f.name) as Href)}
               style={styles.fileBtn}
             >
               <Text style={styles.fileBtnText} {...shrinkToFit(0.8)}>
@@ -375,5 +374,6 @@ const styles = StyleSheet.create({
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function AdvocateNoticeDocumentsScreen() {
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="request" /> : <AdvocateNoticeDocumentsScreenView data={{ ADV_NOTICE_DOCS }} navigate={router} />;
+  const model = useAdvocateNoticeModel("documents");
+  return <AdvocateNoticeDocumentsScreenView data={model.data} navigate={model.navigate} onViewDocument={model.onViewDocument} />;
 }

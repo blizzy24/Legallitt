@@ -1,3 +1,4 @@
+import { useAdvocateNoticeModel } from "../../../../features/legal-notice/useAdvocateNoticeModel";
 import { useLocalSearchParams, type Href } from 'expo-router';
 
 import ScanPayScreen from '../../../../components/ScanPayScreen';
@@ -10,13 +11,9 @@ import { ADV_NOTICE_PAYMENT } from '../../../../data/advocateSide';
 // amount is the delivery payment's own (design/196, ₹290); the QR's "Legal
 // Notice" label is drawn.
 export default function AdvocateNoticeScanPayScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
-  return (
-    <ScanPayScreen
-      service={CO_SCAN_PAY.service}
-      amount={ADV_NOTICE_PAYMENT.totalAmount}
-      successHref={`/advocate/notice/${id}/paid` as Href}
-      hold
-    />
-  );
+  const model = useAdvocateNoticeModel('scan-pay');
+  return <ScanPayScreen service={CO_SCAN_PAY.service} amount={model.total}
+    successHref={model.path('paid')}
+    backHref={model.path('payment')} onPayment={model.onPay}
+    paymentReady={!model.api || (!model.controller.loading && model.total !== null)} hold />;
 }

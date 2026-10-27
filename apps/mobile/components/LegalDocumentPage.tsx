@@ -29,12 +29,13 @@ const WORDMARK = require('../assets/legalitt-wordmark-white.png');
 // data/advocateSide.ts.
 
 /** A ruled blank, as the printed form draws it. */
-function Blank({ flex, width }: { flex?: number; width?: number }) {
-  return <View style={[styles.blank, flex ? { flex } : null, width ? { width } : null]} />;
+function Blank({ flex, width, value }: { flex?: number; width?: number; value?:string }) {
+  return <View style={[styles.blank, flex ? { flex } : null, width ? { width } : null]}>{value ? <Text numberOfLines={1} style={[styles.label,{position:'absolute',bottom:0,left:0,right:0}]}>{value}</Text> : null}</View>;
 }
 
-export default function LegalDocumentPage({ title, advocateName }: { title: string; advocateName?: string }) {
-  const r = ADV_NOTICE_RESPONSE;
+export type NoticeDocumentFields = {reference:string; date:string; recipient:string[]; subject:string; client:string; father:string; age:string; address:string; facts:string[]; demands:string[]};
+export default function LegalDocumentPage({ title, advocateName, data = ADV_NOTICE_RESPONSE, fields }: { title: string; advocateName?: string; data?:typeof ADV_NOTICE_RESPONSE; fields?:NoticeDocumentFields }) {
+  const r = data;
   return (
       <View style={styles.page}>
         <View style={styles.lh}>
@@ -88,51 +89,51 @@ export default function LegalDocumentPage({ title, advocateName }: { title: stri
 
           <View style={styles.row}>
             <Text style={styles.label}>{r.refLabel}</Text>
-            <Blank width={52} />
+            <Blank width={52} value={fields?.reference} />
             <Text style={styles.label}>{r.refSuffix}</Text>
             <Blank width={44} />
             <View style={styles.spacer} />
             <Text style={styles.label}>{r.dateLabel}</Text>
-            <Blank width={78} />
+            <Blank width={78} value={fields?.date} />
           </View>
 
           <View style={styles.toRow}>
             <Text style={styles.label}>{r.toLabel}</Text>
             <View style={styles.toLines}>
               {Array.from({ length: r.toLines }).map((_, i) => (
-                <Blank key={i} width={148} />
+                <Blank key={i} width={148} value={fields?.recipient[i]} />
               ))}
             </View>
           </View>
 
           <View style={styles.row}>
             <Text style={styles.label}>{r.subjectLabel}</Text>
-            <Blank flex={1} />
+            <Blank flex={1} value={fields?.subject} />
           </View>
 
           <Text style={styles.body}>
             {r.intro[0]}
-            <Text style={styles.inlineBlank}>__________</Text>
+            <Text style={styles.inlineBlank}>{fields ? fields.client : '__________'}</Text>
             {r.intro[1]}
-            <Text style={styles.inlineBlank}>________</Text>
+            <Text style={styles.inlineBlank}>{fields ? fields.father : '________'}</Text>
             {r.intro[2]}
-            <Text style={styles.inlineBlank}>_____</Text>
+            <Text style={styles.inlineBlank}>{fields ? fields.age : '_____'}</Text>
             {r.intro[3]}
-            <Text style={styles.inlineBlank}>__________</Text>
+            <Text style={styles.inlineBlank}>{fields ? fields.address : '__________'}</Text>
             {r.intro[4]}
           </Text>
 
           {Array.from({ length: r.clauses }).map((_, i) => (
             <View key={i} style={styles.clause}>
               <Text style={styles.clauseN}>{i + 1}.</Text>
-              <Blank flex={1} />
+              <Blank flex={1} value={fields?.facts[i]} />
             </View>
           ))}
 
           <Text style={styles.bodyNext}>{r.thereforeLine}</Text>
-          {r.thereforeItems.map((item) => (
+          {r.thereforeItems.map((item, i) => (
             <Text key={item} style={styles.item}>
-              {item}
+              {item}{fields?.demands[i] ? ` ${fields.demands[i]}` : ''}
             </Text>
           ))}
 

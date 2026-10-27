@@ -1,5 +1,4 @@
-import ApiLegalNotice from "../../../../components/api/LegalNotice";
-import { DATA_SOURCE } from "../../../../lib/data-source";
+import { useAdvocateNoticeModel } from "../../../../features/legal-notice/useAdvocateNoticeModel";
 import { useDemoWait } from '../../../../hooks/useDemoAdvance';
 import { previewNotice } from '../../../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
@@ -41,19 +40,20 @@ import { advNoticeReview as t, colors, font, ink } from '../../../../constants/t
 // Every control is inert except the state toggle and navigation (including the
 // two outcome rows).
 
-export function AdvocateNoticeReviewScreenView({ data, navigate }: { data: { ADV_NOTICE_REVIEW: typeof ADV_NOTICE_REVIEW }; navigate: typeof router }) {
+export function AdvocateNoticeReviewScreenView({ data, navigate, reviewState }: { reviewState?: string; data: { ADV_NOTICE_REVIEW: Omit<typeof ADV_NOTICE_REVIEW, "cells"> & {cells: {label: string; value: string; verified?: boolean; dot?: boolean}[]} }; navigate: typeof router }) {
   const { ADV_NOTICE_REVIEW } = data;
   const router = navigate;
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
   const r = ADV_NOTICE_REVIEW;
-  const [changesRequested, setChangesRequested] = useState(false);
+  const [localChanges, setChangesRequested] = useState(false);
+  const changesRequested = reviewState === undefined ? localChanges : reviewState === 'changes_requested';
   // DEMO: the drawn states in order, each on the shared wait — awaiting client
   // review (190) → changes requested (191) → the final notice ready (192).
   const toChanges = useCallback(() => setChangesRequested(true), []);
   const toFinal = useCallback(() => router.push(`/advocate/notice/${id}/final` as Href), [id]);
-  useDemoWait(!changesRequested, toChanges);
-  useDemoWait(changesRequested, toFinal);
+  useDemoWait(reviewState === undefined && !changesRequested, toChanges);
+  useDemoWait(reviewState === undefined && changesRequested, toFinal);
 
   return (
     <View style={styles.screen}>
@@ -642,5 +642,6 @@ const styles = StyleSheet.create({
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function AdvocateNoticeReviewScreen() {
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="tracking" /> : <AdvocateNoticeReviewScreenView data={{ ADV_NOTICE_REVIEW }} navigate={router} />;
+  const model = useAdvocateNoticeModel("review");
+  return <AdvocateNoticeReviewScreenView data={model.data} navigate={model.navigate} reviewState={model.api ? model.controller.record?.status ?? '' : undefined} />;
 }

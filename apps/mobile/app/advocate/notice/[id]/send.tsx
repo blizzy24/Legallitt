@@ -1,5 +1,4 @@
-import ApiLegalNotice from "../../../../components/api/LegalNotice";
-import { DATA_SOURCE } from "../../../../lib/data-source";
+import { useAdvocateNoticeModel } from "../../../../features/legal-notice/useAdvocateNoticeModel";
 import { previewNotice } from '../../../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
@@ -44,7 +43,7 @@ import { advDocHref } from '../../../../data/docLinks';
 
 const CHIP_ICONS = [FileText, Gavel, IdCard];
 
-export function AdvocateNoticeSendScreenView({ data, navigate }: { data: { ADV_NOTICE_SEND: typeof ADV_NOTICE_SEND }; navigate: typeof router }) {
+export function AdvocateNoticeSendScreenView({ data, navigate, onChoice }: { onChoice?: (choice: string) => void; data: { ADV_NOTICE_SEND: typeof ADV_NOTICE_SEND }; navigate: typeof router }) {
   const { ADV_NOTICE_SEND } = data;
   const router = navigate;
   const insets = useSafeAreaInsets();
@@ -243,7 +242,7 @@ export function AdvocateNoticeSendScreenView({ data, navigate }: { data: { ADV_N
       <View style={[styles.bar, { paddingBottom: insets.bottom + 12 }]}>
         <Pressable
           accessibilityRole="button"
-          onPress={() => router.push(`/advocate/notice/${id}/delivery` as Href)}
+          onPress={() => onChoice ? onChoice(choice) : router.push(`/advocate/notice/${id}/delivery` as Href)}
           style={({ pressed }) => [styles.cta, pressed && styles.pressed]}
         >
           <Text style={styles.ctaText} {...shrinkToFit(0.8)}>
@@ -515,5 +514,6 @@ const styles = StyleSheet.create({
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function AdvocateNoticeSendScreen() {
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="send" /> : <AdvocateNoticeSendScreenView data={{ ADV_NOTICE_SEND }} navigate={router} />;
+  const model = useAdvocateNoticeModel("send");
+  return <AdvocateNoticeSendScreenView data={model.data} navigate={model.navigate} onChoice={model.onSendChoice} />;
 }

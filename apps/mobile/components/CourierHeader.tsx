@@ -33,8 +33,10 @@ export default function CourierHeader({
   titleGap,
   titleStyle,
   titleChip,
+  onBack,
 }: {
   title: string;
+  onBack?: () => void;
   sub?: string;
   avatar?: boolean;
   chevron?: boolean;
@@ -70,7 +72,7 @@ export default function CourierHeader({
           accessibilityRole="button"
           accessibilityLabel={close ? 'Close' : 'Back'}
           hitSlop={10}
-          onPress={() => (router.canGoBack() ? router.back() : router.replace(backHref))}
+          onPress={onBack ?? (() => (router.canGoBack() ? router.back() : router.replace(backHref)))}
           style={chevron ? styles.chevBtn : styles.back}
         >
           {chevron ? (

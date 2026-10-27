@@ -1,3 +1,4 @@
+import { useAdvocateNoticeModel } from "../../../../features/legal-notice/useAdvocateNoticeModel";
 import { useLocalSearchParams, type Href } from 'expo-router';
 
 import PaymentSuccessScreen from '../../../../components/PaymentSuccessScreen';
@@ -10,12 +11,13 @@ import { ADV_NOTICE_PAYMENT } from '../../../../data/advocateSide';
 // own amount, reference and service (the entering flow's, 17 Oct). Start
 // Tracking opens the shipment (design/199).
 export default function AdvocateNoticePaidScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const model = useAdvocateNoticeModel('paid');
+  const payment = model.data.ADV_NOTICE_PAYMENT;
   const d = {
     ...CO_SUCCESS,
-    refValue: ADV_NOTICE_PAYMENT.ref,
-    successBody: CO_SUCCESS.successBody.replace(/₹[\d,]+/, ADV_NOTICE_PAYMENT.total.replace(/\/-$/, '')),
+    refValue: payment.ref,
+    successBody: CO_SUCCESS.successBody.replace(/₹[\d,]+/, payment.total.replace(/\/-$/, '')),
     successBody2: CO_SUCCESS.successBody2.replace('forensic analysis', 'document delivery'),
   };
-  return <PaymentSuccessScreen d={d} ctaHref={`/advocate/notice/${id}/shipment` as Href} />;
+  return <PaymentSuccessScreen d={d} ctaHref={model.courierHref()} />;
 }

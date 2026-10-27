@@ -1,4 +1,5 @@
 import { gst18, withGst18 } from './tax';
+import { designSubstitutions } from '../copy/substitutions';
 
 // Advocate-side data (designs 148-159).
 //
@@ -2466,14 +2467,14 @@ export const ADV_NOTICE_SEND = {
     {
       id: 'self' as const,
       title: 'Send by Yourself',
-      body: 'Send the documents directly to your advocate.',
+      body: designSubstitutions[194].selfDelivery.after,
       sub: 'Use any courier or delivery service.',
     },
     {
       id: 'partner' as const,
       title: 'Legalitt Delivery Partner',
       chip: 'Recommended',
-      body: 'Legalitt will arrange delivery to your advocate.',
+      body: designSubstitutions[194].partnerDelivery.after,
       safe: 'Safe document delivery',
     },
   ],
@@ -2484,7 +2485,7 @@ export const ADV_NOTICE_SEND = {
     lines: ['Chamber No. 14, High Court Bar Building', 'Indore, Madhya Pradesh • 452001'],
   },
   note: {
-    title: 'Your advocate needs the physical documents for the case.',
+    title: designSubstitutions[194].deliveryReason.after,
     body: 'You can send them yourself or use Legalitt Delivery.',
   },
   cta: 'Continue',
@@ -2512,7 +2513,7 @@ export const ADV_NOTICE_DELIVERY = {
   partner: {
     title: 'Legalitt Delivery Partner',
     chip: 'Selected',
-    body: 'Your documents will be picked up and sent to the receiver.',
+    body: designSubstitutions[195].partnerDelivery.after,
     poweredBy: 'Powered by Blue Dart',
     bullet: 'Direct secure legal courier',
   },

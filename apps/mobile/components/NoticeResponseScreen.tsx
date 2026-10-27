@@ -15,7 +15,7 @@ import {
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import LegalDocumentPage from './LegalDocumentPage';
+import LegalDocumentPage, {type NoticeDocumentFields} from './LegalDocumentPage';
 import { shrinkToFit } from '../constants/textFit';
 import { ADV_NOTICE_RESPONSE } from '../data/advocateSide';
 import { AT_RESPONSE_EDITOR } from '../data/advocateTools';
@@ -63,15 +63,17 @@ import {
  */
 export default function NoticeResponseScreen({
   variant,
-  caseId,
+  caseId, data = ADV_NOTICE_RESPONSE, fields, navigate = router, onSave,
 }: {
   variant: 'share' | 'generate';
   caseId: string;
+  data?:typeof ADV_NOTICE_RESPONSE; fields?:NoticeDocumentFields; navigate?:typeof router; onSave?:()=>void;
 }) {
   const { advance } = useDemoAdvance();
   const insets = useSafeAreaInsets();
   const id = caseId;
-  const r = ADV_NOTICE_RESPONSE;
+  const r = data;
+  const router = navigate;
   const e = AT_RESPONSE_EDITOR;
   const generate = variant === 'generate';
 
@@ -124,7 +126,7 @@ export default function NoticeResponseScreen({
             <Redo2 size={t.toolUndo} color={colors.textPrimary} style={styles.toolIcon} />
           </View>
 
-          <LegalDocumentPage title={r.docTitle} advocateName={caseId.toLowerCase().includes('1048') ? 'ABHISHEK VERMA ADVOCATE' : undefined} />
+          <LegalDocumentPage data={data} fields={fields} title={r.docTitle} advocateName={fields ? r.letterhead.advocate : caseId.toLowerCase().includes('1048') ? 'ABHISHEK VERMA ADVOCATE' : undefined} />
 
           <View style={styles.btns}>
             <Pressable
@@ -139,7 +141,7 @@ export default function NoticeResponseScreen({
             <Pressable
               accessibilityRole="button"
               // DEMO: Save & Upload / Confirm draw without a destination; follow the flow map.
-              onPress={() => advance()}
+              onPress={onSave ?? (() => advance())}
               style={({ pressed }) => [styles.btn, styles.save, pressed && styles.pressed]}
             >
               <Text style={styles.saveText} {...shrinkToFit(0.75)}>

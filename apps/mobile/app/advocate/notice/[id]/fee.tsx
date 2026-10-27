@@ -1,3 +1,4 @@
+import { useAdvocateNoticeModel } from "../../../../features/legal-notice/useAdvocateNoticeModel";
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
   ArrowLeft,
@@ -25,11 +26,12 @@ import { advNoticeFeeScreen as t, colors, font, ink } from '../../../../constant
 // ⚠ design/185 clips its own subtitle behind the stage chip ("Review your earnings
 // before ac…"); it wraps here.
 
-export default function AdvocateNoticeFeeScreen() {
+export function AdvocateNoticeFeeView({notice, navigate, onAccept, onDecline}: {notice: Omit<typeof ADV_NOTICE, 'clientFee'> & {clientFee: number | null}; navigate: typeof router; onAccept: () => void; onDecline: () => void}) {
+  const router = navigate;
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const n = ADV_NOTICE;
-  const f = advNoticeFee(n.clientFee);
+  const n = notice;
+  const f = n.clientFee === null ? null : advNoticeFee(n.clientFee);
 
   return (
     <View style={styles.screen}>
@@ -106,7 +108,7 @@ export default function AdvocateNoticeFeeScreen() {
           </Text>
           <View style={styles.feeRow}>
             <Text style={styles.fee} {...shrinkToFit(0.75)}>
-              ₹{f.clientFee.toLocaleString('en-IN')}
+              {f ? '₹' + f.clientFee.toLocaleString('en-IN') : ''}
             </Text>
             <Text style={styles.feeNote} {...shrinkToFit(0.75)}>
               {n.escrowNote}
@@ -132,7 +134,7 @@ export default function AdvocateNoticeFeeScreen() {
               Client Fee
             </Text>
             <Text style={styles.lineAmount} {...shrinkToFit(0.75)}>
-              ₹{f.clientFee.toLocaleString('en-IN')}
+              {f ? '₹' + f.clientFee.toLocaleString('en-IN') : ''}
             </Text>
           </View>
 
@@ -142,7 +144,7 @@ export default function AdvocateNoticeFeeScreen() {
             </Text>
             <Info size={t.lineInfoIcon} color={colors.brandDark} style={styles.lineInfo} />
             <Text style={[styles.lineAmount, styles.lineDeduct]} {...shrinkToFit(0.75)}>
-              -₹{f.platformFee.toLocaleString('en-IN')}
+              {f ? '-₹' + f.platformFee.toLocaleString('en-IN') : ''}
             </Text>
           </View>
 
@@ -152,7 +154,7 @@ export default function AdvocateNoticeFeeScreen() {
               <Text style={styles.lineSub}>(GST &amp; Gateway)</Text>
             </Text>
             <Text style={[styles.lineAmount, styles.lineDeduct]} {...shrinkToFit(0.75)}>
-              -₹{f.charges.toLocaleString('en-IN')}
+              {f ? '-₹' + f.charges.toLocaleString('en-IN') : ''}
             </Text>
           </View>
 
@@ -164,7 +166,7 @@ export default function AdvocateNoticeFeeScreen() {
                 YOUR NET EARNINGS
               </Text>
               <Text style={styles.netAmount} {...shrinkToFit(0.7)}>
-                ₹{f.net.toLocaleString('en-IN')}
+                {f ? '₹' + f.net.toLocaleString('en-IN') : ''}
               </Text>
             </View>
             <View style={styles.netBottom}>
@@ -237,7 +239,7 @@ export default function AdvocateNoticeFeeScreen() {
             </Text>
           </View>
           <Text style={styles.barAmount} {...shrinkToFit(0.7)}>
-            ₹{f.net.toLocaleString('en-IN')}
+            {f ? '₹' + f.net.toLocaleString('en-IN') : ''}
           </Text>
         </View>
 
@@ -246,7 +248,7 @@ export default function AdvocateNoticeFeeScreen() {
         <View style={styles.barBtns}>
           <Pressable
             accessibilityRole="button"
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/matters' as Href))}
+            onPress={onDecline}
             style={({ pressed }) => [styles.barBtn, styles.decline, pressed && styles.pressed]}
           >
             <Text style={styles.declineText} {...shrinkToFit(0.75)}>
@@ -255,7 +257,7 @@ export default function AdvocateNoticeFeeScreen() {
           </Pressable>
           <Pressable
             accessibilityRole="button"
-            onPress={() => router.push(`/advocate/notice/${id}/documents` as Href)}
+            onPress={onAccept}
             style={({ pressed }) => [styles.barBtn, styles.accept, pressed && styles.pressed]}
           >
             <Text style={styles.acceptText} {...shrinkToFit(0.7)}>
@@ -544,3 +546,8 @@ const styles = StyleSheet.create({
   acceptIcon: { marginLeft: t.acceptIconGap },
   pressed: { opacity: 0.85 },
 });
+
+export default function AdvocateNoticeFeeScreen() {
+  const model = useAdvocateNoticeModel('fee');
+  return <AdvocateNoticeFeeView notice={model.data.ADV_NOTICE} navigate={model.navigate} onAccept={model.onAccept} onDecline={model.onDecline} />;
+}

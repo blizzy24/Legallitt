@@ -1,5 +1,4 @@
-import ApiLegalNotice from "../../../../components/api/LegalNotice";
-import { DATA_SOURCE } from "../../../../lib/data-source";
+import { useAdvocateNoticeModel } from "../../../../features/legal-notice/useAdvocateNoticeModel";
 import { previewNotice } from '../../../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import { ArrowLeft } from 'lucide-react-native';
@@ -32,7 +31,7 @@ import {
 // ⚠ design/188 names the advocate "Adv. Abhishek Sahu" where design/148 has
 // "Abhishek Chouhan", and spells its own chip "Fix Grammer". Both kept as drawn.
 
-export function AdvocateNoticeDraftScreenView({ data, navigate }: { data: { ADV_NOTICE_DRAFT: typeof ADV_NOTICE_DRAFT }; navigate: typeof router }) {
+export function AdvocateNoticeDraftScreenView({ data, navigate, onChangeSection }: { onChangeSection?: (index: number, value: string) => void; data: { ADV_NOTICE_DRAFT: typeof ADV_NOTICE_DRAFT }; navigate: typeof router }) {
   const { ADV_NOTICE_DRAFT } = data;
   const router = navigate;
   const insets = useSafeAreaInsets();
@@ -81,7 +80,7 @@ export function AdvocateNoticeDraftScreenView({ data, navigate }: { data: { ADV_
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <NoticeDraftSections sections={d.sections} />
+        <NoticeDraftSections onChange={onChangeSection} sections={d.sections} />
 
         <View style={styles.card}>
           <View style={styles.aiChip}>
@@ -285,5 +284,6 @@ const styles = StyleSheet.create({
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function AdvocateNoticeDraftScreen() {
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="draft" /> : <AdvocateNoticeDraftScreenView data={{ ADV_NOTICE_DRAFT }} navigate={router} />;
+  const model = useAdvocateNoticeModel("draft");
+  return <AdvocateNoticeDraftScreenView data={model.data} navigate={model.navigate} onChangeSection={model.onEditSection} />;
 }

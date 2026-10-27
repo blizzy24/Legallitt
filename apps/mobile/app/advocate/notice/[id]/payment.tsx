@@ -1,3 +1,4 @@
+import { useAdvocateNoticeModel } from "../../../../features/legal-notice/useAdvocateNoticeModel";
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import { ArrowLeft, ArrowRight, FileText, ShieldCheck } from 'lucide-react-native';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -24,14 +25,15 @@ import { advNoticePayment as t, colors, font, ink } from '../../../../constants/
 // Pay routes to the shared scan-pay screen, parameterised with this service's name,
 // amount and reference, as the Property Search and Document Forensic flows do.
 
-export default function AdvocateNoticePaymentScreen() {
+export function AdvocateNoticePaymentView({payment, navigate, payHref}: {payment: typeof ADV_NOTICE_PAYMENT; navigate: typeof router; payHref: Href}) {
+  const router = navigate;
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const p = ADV_NOTICE_PAYMENT;
+  const p = payment;
 
   // design/197 → 198, the advocate's own Scan & Pay and success (not the client
   // Legal Notice screens 29–30).
-  const payHref = `/advocate/notice/${id}/scan-pay` as Href;
+
 
   return (
     <View style={styles.screen}>
@@ -274,3 +276,8 @@ const styles = StyleSheet.create({
   payIcon: { marginLeft: t.payIconGap },
   pressed: { opacity: 0.85 },
 });
+
+export default function AdvocateNoticePaymentScreen() {
+  const model = useAdvocateNoticeModel('payment');
+  return <AdvocateNoticePaymentView payment={model.data.ADV_NOTICE_PAYMENT} navigate={model.navigate} payHref={model.path('scan-pay')} />;
+}
