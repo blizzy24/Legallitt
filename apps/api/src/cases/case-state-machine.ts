@@ -340,7 +340,7 @@ export class CaseStateMachine {
     });
   }
   async decline(actor: CaseActor, id: string, body: unknown) {
-    const input = parse(NoticeDeclineSchema, body);
+    const input = parse(NoticeDeclineSchema, body ?? {});
     const db = await this.prisma.getClient();
     return db.$transaction(async (tx) =>
       this.advance(
@@ -348,7 +348,7 @@ export class CaseStateMachine {
         actor,
         await lockedCase(tx, actor, id),
         CaseStatus.advocate_declined,
-        input,
+        {reason: input.reason ?? null},
       ),
     );
   }
@@ -461,13 +461,7 @@ export class CaseStateMachine {
   async dispatch(actor: CaseActor, id: string, body: unknown) {
     if (actor.role !== "advocate")
       throw new ForbiddenException("Assigned advocate required");
-    const input = parse(
-      z.strictObject({
-        carrier: z.string().trim().min(1).max(200),
-        waybill: z.string().trim().min(1).max(200),
-      }),
-      body,
-    );
+    parse(z.strictObject({}), body);
     const db = await this.prisma.getClient();
     return db.$transaction(async (tx) => {
       let record = await lockedCase(tx, actor, id);
@@ -477,21 +471,14 @@ export class CaseStateMachine {
         throw new ConflictException(
           "Only an approved notice may be dispatched",
         );
-      const shipment = await tx.shipment.create({
-        data: {
-          case_id: id,
-          direction: "to_recipient",
-          carrier: input.carrier,
-          waybill: input.waybill,
-          status: "dispatched",
-          booked_at: new Date(),
-          recipient: parse(LegalNoticeSubmissionSchema, record.details).noticee,
-        },
-      });
+      const shipment = await tx.shipment.findFirst({where: {case_id: id, direction: 'to_recipient', status: 'booked'}, orderBy: {booked_at: 'desc'}});
+      if (!shipment || !shipment.carrier?.trim() || !shipment.waybill?.trim() || !shipment.dispatch_date)
+        throw new BadRequestException('Save complete courier details before confirming dispatch');
+      await tx.shipment.update({where: {id: shipment.id}, data: {status: 'dispatched', dispatched_at: new Date()}});
       return this.advance(tx, actor, record, CaseStatus.dispatched, {
         shipment_id: shipment.id,
-        carrier: input.carrier,
-        waybill: input.waybill,
+        carrier: shipment.carrier,
+        waybill: shipment.waybill,
       });
     });
   }

@@ -1,0 +1,30 @@
+design/117-advocate-profile-b.png: . | Previous Topic: | Property Dispute (Advice) | Reason for Follow-up | Tell the advocate what you want to discuss | next... | Optional | Choose 
+design/160-adv-request-brief.png: ech India Pvt. Ltd. or | subsidiary entities. | X Decline | V Accept & Schedule | Accepting will generate video chamber link and bill escrowed | r
+design/161-adv-request-actions.png: ry_Adden‹ | 640 KB • Uploaded 2h ago | • View | X Decline | V Accept & Schedule
+design/163-adv-request-ful.png: of Trad | •Prepare Pre-Execution Risk Advisor | X Decline | / Accept & Schedul
+design/164-adv-schedule-payout.png:  Confirm Consultation | Propose Alternate Time or Decline
+design/165-adv-propose-time.png: slot so we can | proceed. | Eo Propose New Time | Decline Consultation | The proposed alternative schedule will be communicated to the | client fo
+design/170-ai-chat.png:  breach of | contract or that the parties | could reasonably have expected | when entering the contract. It | also excludes remote or indirect | l
+design/176-adv-reschedule.png: lings | + Earliest openir | Eo Propose New Time | Decline Consultation | The proposed alternative schedule will be communicated to the | client fo
+design/185-adv-fee-earnings.png: ings after applicable fees and charges | 73,087 | Decline Request | Accept & Schedule →
+design/215-adv-fir-request.png: fore | accepting this request. | All Verified | X Reject | Accept Request | Reiect → Returns to Admin | Accept → Review & Draft
+design/218-adv-fir-draft.png: Used | White SUV (Reg: MP-09-CZ-4412) | Suspected Reason / Motive | Extortion of R2,50,000 & intimidation regat | g+ + Add Accused / Person | Appl
+design/223-adv-df-request.png: Protocol | Accept Request → | Request More Info | Decline Request
+design/302-hcr-confirm-advocate.png: urn to | Assigned Advocate. It does not accept or reject this | advocate. | Bar Council | Compliant | 100% | Confidential | Fair Review | Policy |
+design/329-dcr-change-advocate.png: y. | Why Do You Want to Change? | Choose the main reason for your request | I want a different advocate | I need a different practice area | I am 
+design/341-dcr-case-details.png: revious Advocate (Optional) | Adv. R.K. Trivedi | Reason for Changing Advocate (Optional) | Relocation to district headquarter | NOC from Previous
+design/344-dcr-review-request.png: ber | CS/2024/8912 | NOC Status | Not Added Yet | Reason for Advocate Change | Relocation to district headquarter | ONy rosiaty, uploaded later if
+design/347-dcr-advocate-change.png: ry | Why Do You Want a New Advocate? | Choose the reason that best matches your request. | I want a different advocate | I need a different practi;  after talking to | the advocate | I have another reason | Tell Us More | (Optional) | Share any context that helps us match the right counsel. | 
+design/349-dcr-cancel-request.png: ion. | Why Are You Cancelling? | You can choose a reason. This helps Legalitt improve the | service. (Optional) | No longer need this service | Wa
+design/367-adv-hc-ai-chat.png:  breach of | contract or that the parties | could reasonably have expected | when entering the contract. It | also excludes remote or indirect | l
+design/373-adv-dc-client-declined.png: Client Declined Dc-2026-1048 | District Court Representation | CASE REPRESENTATION | Decision Made | Cl; ient Declined | The client did not accept your request. | • You are no longer waiting for the client'; : Admin Review for New Advocate | Step 4 of 4 | X Declined | CLIENT | Civil Matter | Rahul Sharma | Rahul Sharma vs Amit Verma | d District Court ; T DECISION | E Decision Date | 5 October 2026 | • Declined | Decision Time | 6:40 PM | CLIENT REASON | I want a different advocate. | CLIENT NOTE 
+design/393-adv-dc-change-advocate.png: dvocate | Request | Requested By | Request Date | Reason Stated | © Admin | Approved | Client (Rahul Sharma) | 28 October 2026 | "I want a differe
+design/394-adv-dc-change-advocate-noc.png:  REQUEST | • Approved b> | Admin | Requested By | Reason Stated | Submission Date | Rahul Sharma (Client) | "I want a different advocate" | 28 Oct
+design/398-adv-dc-request.png: Legalitt until representation begins. | 720,000 | Decline | Request | Accept Request
+design/402-adv-dc-ai-chat.png:  breach of | contract or that the parties | could reasonably have expected | when entering the contract. It | also excludes remote or indirect | l
+design/409-adv-dc-client-declined.png: Client Declined Dc-2026-1048 | District Court Representation | CASE REPRESENTATION | Decision Made | Cl; ient Declined | The client did not accept your request. | ® You are no longer waiting for the client'; : Admin Review for New Advocate | Step 4 of 4 | X Declined | CLIENT | Civil Matter | Rahul Sharma | Rahul Sharma vs Amit Verma | District Court | ; T DECISION | E Decision Date | 5 October 2026 | • Declined | • Decision Time | 6:40 PM | CLIENT REASON | I want a different advocate. | CLIENT NOT
+design/428-adv-dc-change-advocate.png: dvocate | Request | Requested By | Request Date | Reason Stated | Admin | Approved | Client (Rahul Sharma) | 28 October 2026 | "I want a different
+design/429-adv-dc-change-advocate-2.png: dvocate | Request | Requested By | Request Date | Reason Stated | Admin | Approved | Client (Rahul Sharma) | 28 October 2026 | "I want a different
+design/430-adv-dc-change-advocate-noc.png: 0 AM | CHANGE ADVOCATE | REQUEST | Requested By | Reason Stated | Submission Date | •Approved by | Admin | Rahul Sharma (Client) | "I want a diffe
+design/444-adv-client-case-detail.png: fore | accepting this request. | All Verified | X Reject | Accept Request | Reiect → Returns to Admin | Accept → Review & Draft
+design/447-adv-fir-draft-proforma.png: Used | White SUV (Reg: MP-09-CZ-4412) | Suspected Reason / Motive | Extortion of R2,50,000 & intimidation regat | g+ + Add Accused / Person | Appl

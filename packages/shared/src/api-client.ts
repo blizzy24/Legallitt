@@ -217,7 +217,7 @@ export class ApiClient {
   accept(id: string) {
     return this.request<ApiCase>(`/cases/${id}/accept`, {});
   }
-  decline(id: string, reason: string) {
+  decline(id: string, reason?: string | null) {
     return this.request<ApiCase>(`/cases/${id}/decline`, { reason });
   }
   saveDraft(id: string, content: NoticeDraftContent) {
@@ -245,8 +245,14 @@ export class ApiClient {
   events(id: string) {
     return this.request<ApiPage<ApiEvent>>(`/cases/${id}/events?limit=100`);
   }
-  dispatch(id: string, carrier: string, waybill: string) {
-    return this.request<ApiCase>(`/cases/${id}/dispatch`, { carrier, waybill });
+  saveShipment(id: string, details: import('./shipments').ShipmentDetails) {
+    return this.request<import('./shipments').ApiShipment>(`/cases/${id}/shipment`, details);
+  }
+  bookShipment(id: string, details: import('./shipments').ShipmentDetails) {
+    return this.request<import('./shipments').ApiShipment>(`/cases/${id}/shipment/book`, details);
+  }
+  dispatch(id: string) {
+    return this.request<ApiCase>(`/cases/${id}/dispatch`, {});
   }
   deliver(id: string, pod_document_id: string) {
     return this.request<ApiCase>(`/admin/cases/${id}/deliver`, {

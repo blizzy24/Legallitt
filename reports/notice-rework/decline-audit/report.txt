@@ -1,0 +1,9 @@
+Advocate decline audit — 27 October 2026
+
+Searched all 461 supplied design images, including archives. Reused the OCR index only where the image SHA256 matched; OCR-read the remaining 22 images. The inventory and wording matches are beside this report.
+
+No advocate decline-reason input or dialog was found. Reason fields in 329, 347 and 349 concern client changes/cancellation; 373 and 409 display a client decision. 165 and 176 contain rescheduling notes. These are not the missing advocate decline flow.
+
+Branch taken: design 185 declines directly. The endpoint accepts absent/null reason, writes reason:null, and preserves the case, advocate actor and event timestamp. No prompt, dialog or default explanation is introduced. See architecture v5.9 decision and client question 18.
+
+Validation: all-workspace TypeScript passed; API regression suite 40/40 passed, including absence of a decline reason and shipment draft persistence. Mobile visual/flow verification remains part of stage 4.

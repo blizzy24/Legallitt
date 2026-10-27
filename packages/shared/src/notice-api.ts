@@ -29,7 +29,7 @@ export const NoticeCommentSchema = z.strictObject({
   comment: evidenceText.trim().min(1),
 });
 export const NoticeDeclineSchema = z.strictObject({
-  reason: evidenceText.trim().min(1),
+  reason: evidenceText.trim().min(1).nullable().optional(),
 });
 export type ApiTokens = {
   idToken: string;
@@ -101,13 +101,7 @@ export type ApiCase = {
   documents?: ApiDocument[];
   drafts?: ApiDraft[];
   reviews?: ApiReview[];
-  shipments?: {
-    carrier: string | null;
-    waybill: string | null;
-    status: string;
-    delivered_at: string | null;
-  }[];
-};
+  shipments?: import('./shipments').ApiShipment[];};
 export type ApiPage<T> = { items: T[]; next_cursor: string | null };
 export type UploadTicket = {
   document: ApiDocument;

@@ -105,6 +105,13 @@ test(
         }),
         { status: 400 },
       );
+      const declinedCase = await db.case.create({data: {reference:'TEST-DECLINE-'+randomUUID(), service_code:'legal_notice', client_id:client.id, advocate_id:advocate.id, status:'assigned'}});
+      ids.push(declinedCase.id);
+      await state.decline(advocate, declinedCase.id, {});
+      const declineEvent = await db.caseEvent.findFirst({where:{case_id:declinedCase.id,to_status:'advocate_declined'}});
+      assert.equal(declineEvent.payload.reason, null);
+      assert.equal(declineEvent.actor_id, advocate.id);
+      assert.equal(declineEvent.actor_role, 'advocate');
       const draft1 = await state.saveNoticeDraft(advocate, c.id, {
         kind: "legal_notice",
         content,
@@ -164,17 +171,35 @@ test(
         }),
         { status: 409 },
       );
-      await assert.rejects(
-        state.dispatch(admin, c.id, {
-          carrier: "Test carrier",
-          waybill: "Test waybill",
-        }),
-        { status: 403 },
-      );
-      await state.dispatch(advocate, c.id, {
-        carrier: "Test carrier",
-        waybill: "Test waybill",
-      });
+      const {ShipmentService} = require('../dist/src/cases/shipment.service');
+      const shipmentService = new ShipmentService(prisma, {simulated: true});
+      await assert.rejects(shipmentService.save(otherAdvocate, c.id, {carrier: 'Forbidden'}), {status: 404});
+      await assert.rejects(state.dispatch(admin, c.id, {}), {status: 403});
+      await assert.rejects(state.dispatch(advocate, c.id, {}), {status: 400});
+      const saved = await shipmentService.save(advocate, c.id, {carrier: 'Test carrier'});
+      assert.equal(saved.status, 'draft');
+      assert.equal((await repo.read(client, c.id)).status, 'approved');
+      assert.equal((await repo.read(advocate, c.id)).shipments[0].carrier, 'Test carrier');
+      await assert.rejects(shipmentService.save(advocate, c.id, {}, true), {status: 400});
+      await assert.rejects(shipmentService.save(advocate, c.id, {receipt_document_id: randomUUID()}), {status: 400});
+      const completeShipment = await shipmentService.save(advocate, c.id, {
+        waybill: 'Test waybill', dispatch_date: '2020-01-02', courier_office: 'Test office',
+        courier_phone: '2025550101', tracking_url: 'https://example.invalid/typed-exactly?q=1', expected_delivery: '2030-12-31',
+      }, true);
+      assert.equal(completeShipment.id, saved.id);
+      assert.equal(completeShipment.status, 'booked');
+      assert.equal(completeShipment.booked_at.getTime(), saved.booked_at.getTime());
+      assert.equal(completeShipment.dispatch_date.toISOString().slice(0,10), '2020-01-02');
+      assert.equal(completeShipment.expected_delivery.toISOString().slice(0,10), '2030-12-31');
+      assert.equal(completeShipment.tracking_url, 'https://example.invalid/typed-exactly?q=1');
+      assert.equal(completeShipment.pod_document_id, null);
+      assert.equal(completeShipment.dispatched_at, null);
+      assert.equal((await repo.read(client, c.id)).status, 'approved');
+      await state.dispatch(advocate, c.id, {});
+      const dispatched = await db.shipment.findUnique({where: {id: saved.id}});
+      assert.ok(dispatched.dispatched_at);
+      assert.equal(dispatched.status, 'dispatched');
+      await assert.rejects(shipmentService.save(advocate, c.id, {carrier: 'Changed'}), {status: 409});
       await assert.rejects(
         state.deliver(advocate, c.id, { pod_document_id: randomUUID() }),
         { status: 403 },
@@ -234,7 +259,7 @@ test(
         orderBy: { id: "asc" },
       });
       assert.deepEqual(
-        events.filter(e => !['notification_created','courier_payment_captured'].includes(e.type)).map((e) =>
+        events.filter(e => !['notification_created','courier_payment_captured','shipment_details_saved','shipment_booked'].includes(e.type)).map((e) =>
           e.type === "draft_saved" ? "draft_saved" : e.to_status,
         ),
         [

@@ -256,6 +256,7 @@ model Document {
   case_id_relation                    Case?      @relation("documents_case_id_cases", fields: [case_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   owner_id_relation                   User       @relation("documents_owner_id_users", fields: [owner_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   messages_document_id_relations      Message[]  @relation("messages_document_id_documents")
+  shipments_receipt_document_id_relations Shipment[] @relation("shipments_receipt_document_id_documents")
   shipments_pod_document_id_relations Shipment[] @relation("shipments_pod_document_id_documents")
 
   @@map("documents")
@@ -388,8 +389,17 @@ model Shipment {
   direction                String
   carrier                  String?
   waybill                  String?
-  status                   String    @default("booked")
+  status                   String    @default("draft")
   recipient                Json      @default("{}") @db.JsonB
+  dispatch_date            DateTime? @db.Date
+  courier_office           String?
+  courier_phone            String?
+  tracking_url             String?
+  expected_delivery        DateTime? @db.Date
+  receipt_document_id      String?   @db.Uuid
+  simulated                Boolean   @default(false)
+  dispatched_at            DateTime? @db.Timestamptz(6)
+  receipt_document_id_relation Document? @relation("shipments_receipt_document_id_documents", fields: [receipt_document_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   booked_at                DateTime? @db.Timestamptz(6)
   delivered_at             DateTime? @db.Timestamptz(6)
   pod_document_id          String?   @db.Uuid

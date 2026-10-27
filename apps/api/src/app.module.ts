@@ -1,3 +1,5 @@
+import { CourierModule } from "./courier/courier.module";
+import { ShipmentService } from "./cases/shipment.service";
 import { AdminUiModule } from "./admin-ui/admin-ui.module";
 import { DatabaseModule } from "./database.module";
 import { PaymentsModule } from './payments/payments.module';
@@ -33,7 +35,7 @@ export class HealthController {
 }
 
 @Module({
-  imports: [AdminUiModule, DatabaseModule, PhoneAuthModule, PaymentsModule, NotificationsModule],
+  imports: [CourierModule, AdminUiModule, DatabaseModule, PhoneAuthModule, PaymentsModule, NotificationsModule],
   controllers: [
     PaymentsController,
     HealthController,
@@ -45,6 +47,7 @@ export class HealthController {
     DocumentController,
   ],
   providers: [
+    ShipmentService,
     PaymentsService,
     AuthService,
     AuthGuard,

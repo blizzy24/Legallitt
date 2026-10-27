@@ -13,6 +13,7 @@ import { z } from "zod";
 import { CaseStatus } from "@legalitt/shared";
 import { AuthGuard, Roles, type AuthRequest } from "../auth/auth.controller";
 import { parse } from "../auth/auth.service";
+import { ShipmentService } from "./shipment.service";
 import { CaseStateMachine } from "./case-state-machine";
 import { CaseRepository } from "./case-repository";
 const id = (value: string) => parse(z.uuid(), value);
@@ -31,6 +32,7 @@ export class NoticeController {
     private readonly state: CaseStateMachine,
     private readonly cases: CaseRepository,
     @Inject(ADMIN_UI) private readonly adminUi: AdminUiPort,
+    private readonly shipments: ShipmentService,
   ) {}
   @Get("advocate/requests") @Roles("advocate") requests(
     @Req() req: AuthRequest,
@@ -116,6 +118,12 @@ export class NoticeController {
     return json(this.state.assign(req.user!, id(value), body));
   }
 
+  @Post("cases/:id/shipment") saveShipment(@Req() req: AuthRequest, @Param("id") value: string, @Body() body: unknown) {
+    return json(this.shipments.save(req.user!, id(value), body));
+  }
+  @Post("cases/:id/shipment/book") bookShipment(@Req() req: AuthRequest, @Param("id") value: string, @Body() body: unknown) {
+    return json(this.shipments.save(req.user!, id(value), body, true));
+  }
   @Post("cases/:id/dispatch") dispatch(
     @Req() req: AuthRequest,
     @Param("id") value: string,
