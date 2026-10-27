@@ -118,6 +118,10 @@ export class NoticeController {
     return json(this.state.assign(req.user!, id(value), body));
   }
 
+  @Post("cases/:id/shipment/received") receiveShipment(@Req() req: AuthRequest, @Param("id") value: string, @Body() body: unknown) {
+    empty(body);
+    return json(this.shipments.receive(req.user!, id(value)));
+  }
   @Post("cases/:id/shipment") saveShipment(@Req() req: AuthRequest, @Param("id") value: string, @Body() body: unknown) {
     return json(this.shipments.save(req.user!, id(value), body));
   }

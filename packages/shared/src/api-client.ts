@@ -245,6 +245,9 @@ export class ApiClient {
   events(id: string) {
     return this.request<ApiPage<ApiEvent>>(`/cases/${id}/events?limit=100`);
   }
+  receiveShipment(id: string) {
+    return this.request<import('./shipments').ApiShipment>(`/cases/${id}/shipment/received`, {});
+  }
   saveShipment(id: string, details: import('./shipments').ShipmentDetails) {
     return this.request<import('./shipments').ApiShipment>(`/cases/${id}/shipment`, details);
   }

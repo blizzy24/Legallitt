@@ -37,6 +37,8 @@ test(
       }),
     });
     const prisma = { getClient: async () => db };
+    const {ShipmentService} = require('../dist/src/cases/shipment.service');
+    const shipmentService = new ShipmentService(prisma, {simulated:true});
     const state = new CaseStateMachine(prisma),
       repo = new CaseRepository(prisma);
     const [client, other, advocate, otherAdvocate, admin] = [
@@ -105,6 +107,21 @@ test(
         }),
         { status: 400 },
       );
+      // Receipt is the inbound recipient's evidence, not an outbound admin POD.
+      const inbound = await db.shipment.create({data:{case_id:c.id,direction:'to_advocate',status:'dispatched',booked_at:new Date()}});
+      const beforeReceipt = (await repo.read(advocate,c.id)).status;
+      await assert.rejects(shipmentService.receive(client,c.id), {status:403});
+      const receipt = await shipmentService.receive(advocate,c.id);
+      assert.equal(receipt.status,'delivered');
+      assert.ok(receipt.delivered_at);
+      assert.equal(receipt.pod_document_id,null);
+      assert.equal((await repo.read(advocate,c.id)).status,beforeReceipt);
+      const receiptEvent = await db.caseEvent.findFirst({where:{case_id:c.id,type:'documents_received'}});
+      assert.equal(receiptEvent.actor_id,advocate.id);
+      assert.equal(receiptEvent.payload.confirmation_source,'advocate');
+      assert.equal(receiptEvent.payload.shipment_id,inbound.id);
+      await shipmentService.receive(advocate,c.id);
+      assert.equal(await db.caseEvent.count({where:{case_id:c.id,type:'documents_received'}}),1);
       const declinedCase = await db.case.create({data: {reference:'TEST-DECLINE-'+randomUUID(), service_code:'legal_notice', client_id:client.id, advocate_id:advocate.id, status:'assigned'}});
       ids.push(declinedCase.id);
       await state.decline(advocate, declinedCase.id, {});
@@ -171,15 +188,13 @@ test(
         }),
         { status: 409 },
       );
-      const {ShipmentService} = require('../dist/src/cases/shipment.service');
-      const shipmentService = new ShipmentService(prisma, {simulated: true});
       await assert.rejects(shipmentService.save(otherAdvocate, c.id, {carrier: 'Forbidden'}), {status: 404});
       await assert.rejects(state.dispatch(admin, c.id, {}), {status: 403});
       await assert.rejects(state.dispatch(advocate, c.id, {}), {status: 400});
       const saved = await shipmentService.save(advocate, c.id, {carrier: 'Test carrier'});
       assert.equal(saved.status, 'draft');
       assert.equal((await repo.read(client, c.id)).status, 'approved');
-      assert.equal((await repo.read(advocate, c.id)).shipments[0].carrier, 'Test carrier');
+      assert.equal((await repo.read(advocate, c.id)).shipments.find(s=>s.direction==='to_recipient').carrier, 'Test carrier');
       await assert.rejects(shipmentService.save(advocate, c.id, {}, true), {status: 400});
       await assert.rejects(shipmentService.save(advocate, c.id, {receipt_document_id: randomUUID()}), {status: 400});
       const completeShipment = await shipmentService.save(advocate, c.id, {
@@ -253,13 +268,13 @@ test(
       const complete = await repo.read(client, c.id);
       assert.equal(complete.status, "completed");
       assert.ok(complete.completed_at);
-      assert.equal(complete.shipments[0].pod_document_id, proof.id);
+      assert.equal(complete.shipments.find(s=>s.direction==='to_recipient').pod_document_id, proof.id);
       const events = await db.caseEvent.findMany({
         where: { case_id: c.id },
         orderBy: { id: "asc" },
       });
       assert.deepEqual(
-        events.filter(e => !['notification_created','courier_payment_captured','shipment_details_saved','shipment_booked'].includes(e.type)).map((e) =>
+        events.filter(e => !['notification_created','courier_payment_captured','shipment_details_saved','shipment_booked','documents_received'].includes(e.type)).map((e) =>
           e.type === "draft_saved" ? "draft_saved" : e.to_status,
         ),
         [

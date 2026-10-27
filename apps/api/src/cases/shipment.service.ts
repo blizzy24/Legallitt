@@ -9,6 +9,23 @@ import { lockedCase, appendCaseEvent } from './case-state-machine';
 @Injectable()
 export class ShipmentService {
   constructor(private readonly prisma: PrismaService, @Inject(COURIER) private readonly courier: CourierPort) {}
+  async receive(actor: CaseActor, caseId: string) {
+    if (actor.role !== 'advocate') throw new ForbiddenException('Assigned advocate required');
+    const db = await this.prisma.getClient();
+    return db.$transaction(async tx => {
+      const record = await lockedCase(tx, actor, caseId);
+      const shipment = await tx.shipment.findFirst({where:{case_id:caseId,direction:'to_advocate'},orderBy:[{booked_at:'desc'},{id:'desc'}]});
+      if (!shipment) throw new BadRequestException('No inbound shipment exists for this case');
+      const existing = await tx.caseEvent.findFirst({where:{case_id:caseId,type:'documents_received',payload:{path:['shipment_id'],equals:shipment.id}}});
+      if (existing) return shipment;
+      const delivered = await tx.shipment.update({where:{id:shipment.id},data:{status:'delivered',delivered_at:new Date()}});
+      await appendCaseEvent(tx,{case_id:caseId,type:'documents_received',source:'real',actor_id:actor.id,actor_role:actor.role,
+        from_status:record.status,to_status:record.status,
+        payload:{shipment_id:shipment.id,confirmation_source:'advocate'},
+      });
+      return delivered;
+    });
+  }
   async save(actor: CaseActor, caseId: string, body: unknown, book = false) {
     if (actor.role !== 'advocate') throw new ForbiddenException('Assigned advocate required');
     const input = parse(ShipmentDetailsSchema, body);
