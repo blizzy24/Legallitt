@@ -1,5 +1,4 @@
-import ApiLegalNotice from "../../components/api/LegalNotice";
-import { DATA_SOURCE } from "../../lib/data-source";
+import { useUploadModel } from "../../features/legal-notice/useUploadModel";
 import IdentityVerification from '../../components/IdentityVerification';
 import { useKyc } from '../../context/kyc';
 import { previewNotice } from '../../components/PreviewNotice';
@@ -13,7 +12,7 @@ import { colors, font, ink, reviewDocs as r, wizardCardShadow } from '../../cons
 import { useLegalNotice } from '../../context/legalNotice';
 import { clientDocHref } from '../../data/docLinks';
 
-type Doc = { title: string; subtitle: string; icon: LucideIcon };
+export type Doc = { id?: string; title: string; subtitle: string; icon: LucideIcon };
 
 // Documents from design/39. The upload screen that produces this state is design/91,
 // now app/legal-notice/step4.tsx; these stand in for the user's files and are written
@@ -40,8 +39,8 @@ const SAMPLE_DOCS: Doc[] = [
 // Both this screen and the upload screen sit at "Step 4 of 6": design/91 and
 // design/39 each draw the stepper on 4, so the wizard's six steps are unchanged and
 // step 4 simply spans two screens.
-export function Step4ReviewScreenView({ documents, count, onContinue, onAdd, onView, onReplace, onDelete }: {
-  documents: Doc[]; count: number; onContinue: () => void; onAdd: () => void;
+export function Step4ReviewScreenView({ documents, count, onContinue, onAdd, onView, onReplace, onDelete, returnTo = "/legal-notice/step4-review" }: {
+  returnTo?: Href; documents: Doc[]; count: number; onContinue: () => void; onAdd: () => void;
   onView: (doc: Doc) => void; onReplace: (doc: Doc) => void; onDelete: (doc: Doc) => void;
 }) {
   return (
@@ -59,10 +58,10 @@ export function Step4ReviewScreenView({ documents, count, onContinue, onAdd, onV
         </View>
       </View>
 
-      <IdentityVerification returnTo="/legal-notice/step4-review" />
+      <IdentityVerification returnTo={returnTo} />
       <View style={styles.list}>
         {documents.map((d) => (
-          <DocRow key={d.title} doc={d} onView={() => onView(d)} onReplace={() => onReplace(d)} onDelete={() => onDelete(d)} />
+          <DocRow key={d.id ?? d.title} doc={d} onView={() => onView(d)} onReplace={() => onReplace(d)} onDelete={() => onDelete(d)} />
         ))}
       </View>
 
@@ -226,12 +225,6 @@ const styles = StyleSheet.create({
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function Step4ReviewScreen() {
-  const { kyc, begin } = useKyc();
-  const { form, update } = useLegalNotice();
-  useEffect(() => { if (!form.documents.length) update({ documents: SAMPLE_DOCS.map(d => d.title) }); }, []);
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="upload" /> : <Step4ReviewScreenView documents={SAMPLE_DOCS} count={form.documents.length || SAMPLE_DOCS.length}
-    onContinue={() => kyc.completed ? router.push('/legal-notice/step5') : begin('/legal-notice/step4-review')}
-    onAdd={() => previewNotice('Add More Documents')}
-    onView={doc => router.push(clientDocHref(doc.title) as Href)}
-    onReplace={doc => previewNotice(`Replace ${doc.title}`)} onDelete={doc => previewNotice(`Delete ${doc.title}`)} />;
+  const model = useUploadModel('step4-review');
+  return <Step4ReviewScreenView {...model} />;
 }

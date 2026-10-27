@@ -1,5 +1,4 @@
-import ApiLegalNotice from "../../components/api/LegalNotice";
-import { DATA_SOURCE } from "../../lib/data-source";
+import { useUploadModel } from "../../features/legal-notice/useUploadModel";
 import IdentityVerification from '../../components/IdentityVerification';
 import { useKyc } from '../../context/kyc';
 import { previewNotice } from '../../components/PreviewNotice';
@@ -53,8 +52,8 @@ const ROWS: { icon: LucideIcon; title: string; subtitle: string }[] = [
   { icon: Crop, title: 'Screenshots', subtitle: 'WhatsApp, Email, etc' },
 ];
 
-export function Step4ScreenView({ onContinue, onUpload }: {
-  onContinue: () => void; onUpload: (kind: string) => void;
+export function Step4ScreenView({ onContinue, onUpload, returnTo = "/legal-notice/step4" }: {
+  onContinue: () => void; onUpload: (kind: string) => void; returnTo?: import("expo-router").Href;
 }) {
   return (
     <WizardShell
@@ -66,7 +65,7 @@ export function Step4ScreenView({ onContinue, onUpload }: {
     >
       <Text style={styles.heading}>Upload Supporting Documents</Text>
 
-      <IdentityVerification returnTo="/legal-notice/step4" />
+      <IdentityVerification returnTo={returnTo} />
 
       <View style={styles.rows}>
         {ROWS.map((r, i) => (
@@ -276,6 +275,6 @@ const styles = StyleSheet.create({
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function Step4Screen() {
-  const { kyc, begin } = useKyc();
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="upload" /> : <Step4ScreenView onContinue={() => kyc.completed ? router.push('/legal-notice/step4-review') : begin('/legal-notice/step4')} onUpload={title => previewNotice(title === 'Add More Documents' ? title : `Upload ${title}`)} />;
+  const model = useUploadModel('step4');
+  return <Step4ScreenView onContinue={model.onContinue} onUpload={model.onUpload} returnTo={model.returnTo} />;
 }

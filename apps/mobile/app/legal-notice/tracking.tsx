@@ -1,6 +1,5 @@
 import { AdvocateAvatar } from '../../components/AdvocateAvatar';
-import ApiLegalNotice from "../../components/api/LegalNotice";
-import { DATA_SOURCE } from "../../lib/data-source";
+import { useTrackingModel } from "../../features/legal-notice/useTrackingModel";
 import { previewNotice } from '../../components/PreviewNotice';
 import DemoPressable from '../../components/DemoPressable';
 import { useDemoWait } from '../../hooks/useDemoAdvance';
@@ -37,11 +36,11 @@ const BAR_HEIGHT = t.barPadTop + t.homeHeight + t.barGap + 16 + t.barPadBottom;
 // through delivery; the existing Arjun profile assignment is preserved.
 export type NoticeTrackingData = {
   invoice: typeof INVOICE;
-  tracking: typeof TRACKING;
+  tracking: Omit<typeof TRACKING, 'advocate'> & {advocate: Omit<typeof TRACKING.advocate, 'rating'|'reviews'> & {rating: number|string; reviews: number|string}};
   steps: typeof TRACKING_STEPS;
 };
-export function TrackingScreenView({ decision = false, data, form, navigate }: {
-  decision?: boolean; data: NoticeTrackingData;
+export function TrackingScreenView({ decision = false, data, form, navigate, currentStep, paidAmount, onViewDraft, onApprove, onViewProfile, allowDemoAdvance = true }: {
+  decision?: boolean; data: NoticeTrackingData; currentStep?: number; paidAmount?: number | null; onViewProfile?: () => void; onViewDraft?: () => void; onApprove?: () => void; allowDemoAdvance?: boolean;
   form: ReturnType<typeof useLegalNotice>['form']; navigate: typeof router;
 }) {
   const { invoice: INVOICE, tracking: TRACKING, steps: TRACKING_STEPS } = data;
@@ -50,11 +49,11 @@ export function TrackingScreenView({ decision = false, data, form, navigate }: {
   const [state, setState] = useState<TrackingState>(params.state === 'approval' ? 'approval' : 'drafting');
   const insets = useSafeAreaInsets();
   const tier = tierFor(form.tier);
-  const paid = invoiceTotal(invoiceLines(form.tier));
-  const approval = state === 'approval';
+  const paid = paidAmount === undefined ? invoiceTotal(invoiceLines(form.tier)) : paidAmount;
+  const approval = currentStep === undefined ? state === 'approval' : currentStep === 5;
   // DEMO: Drafting in Progress waits on the advocate; it moves to Awaiting Your Approval.
-  useDemoWait(!approval && !decision, () => setState('approval'));
-  const current = TRACKING_CURRENT[state];
+  useDemoWait(allowDemoAdvance && !approval && !decision, () => setState('approval'));
+  const current = currentStep ?? TRACKING_CURRENT[state];
   const statusLabel = TRACKING_STEPS[current - 1].title;
 
   return (
@@ -125,7 +124,7 @@ export function TrackingScreenView({ decision = false, data, form, navigate }: {
             <Text style={styles.rowValue}>{tier.trackingSpeed}</Text>
           </TableRow>
           <TableRow label="Submitted On">
-            <Text style={styles.rowValue}>{formatDate(TRACKING.submittedOn)}</Text>
+            <Text style={styles.rowValue}>{(TRACKING.submittedOn ? formatDate(TRACKING.submittedOn) : '')}</Text>
           </TableRow>
           <TableRow label="Current Status">
             <View style={styles.statusPill}>
@@ -159,7 +158,7 @@ export function TrackingScreenView({ decision = false, data, form, navigate }: {
             </View>
           </View>
           <View style={styles.buttons}>
-            <Pressable accessibilityRole="button" onPress={() => router.push(`/advocates/${LEGAL_NOTICE_ADVOCATE.id}`)} style={[styles.button, styles.buttonOutline]}>
+            <Pressable accessibilityRole="button" onPress={onViewProfile ?? (() => router.push(`/advocates/${LEGAL_NOTICE_ADVOCATE.id}`))} style={[styles.button, styles.buttonOutline]}>
               <CircleUser size={t.buttonIcon} color={colors.textPrimary} />
               <Text style={styles.buttonText}>View Profile</Text>
             </Pressable>
@@ -183,12 +182,12 @@ export function TrackingScreenView({ decision = false, data, form, navigate }: {
                 <Text style={styles.reviewDesc}>Please review the notice before approving it for dispatch.</Text>
               </View>
             </View>
-            <Pressable onPress={() => previewNotice("Review Draft")} accessibilityRole="button" style={styles.review}>
+            <Pressable onPress={onViewDraft ?? (() => previewNotice("Review Draft"))} accessibilityRole="button" style={styles.review}>
               <Eye size={t.reviewIcon} color={ink.onBrand} />
               <Text style={styles.reviewText}>Review Draft</Text>
               <ArrowRight size={t.reviewIcon} color={ink.onBrand} />
             </Pressable>
-            <Pressable onPress={() => previewNotice("Download PDF")} accessibilityRole="link" style={styles.download}>
+            <Pressable onPress={onViewDraft ?? (() => previewNotice("Download PDF"))} accessibilityRole="link" style={styles.download}>
               <Download size={t.downloadIcon} color={ink.accent} />
               <Text style={styles.downloadText}>Download PDF</Text>
             </Pressable>
@@ -196,7 +195,7 @@ export function TrackingScreenView({ decision = false, data, form, navigate }: {
         ) : (
           <View style={[styles.card, styles.timeline]}>
             {TRACKING_STEPS.map((step, i) => (
-              <TimelineStep key={step.title} index={i + 1} step={step} current={current} paid={paid} last={i === TRACKING_STEPS.length - 1} />
+              <TimelineStep key={step.title} index={i + 1} step={step} current={current} paid={paid} tracking={TRACKING} last={i === TRACKING_STEPS.length - 1} />
             ))}
           </View>
         )}
@@ -212,18 +211,18 @@ export function TrackingScreenView({ decision = false, data, form, navigate }: {
             </View>
           </View>
           {decision ? <>
-            <Pressable accessibilityRole="button" style={styles.review} onPress={() => router.push('/documents/file?name=Legal_Notice_Draft_v1.pdf')}><Eye size={t.reviewIcon} color={ink.onBrand}/><Text style={styles.reviewText}>Review Draft →</Text></Pressable>
-            <Pressable accessibilityRole="button" style={styles.download} onPress={() => router.push('/documents/file?name=Legal_Notice_Draft_v1.pdf')}><Download size={t.downloadIcon} color={ink.accent}/><Text style={styles.downloadText}>Download PDF</Text></Pressable>
+            <Pressable accessibilityRole="button" style={styles.review} onPress={onViewDraft ?? (() => router.push('/documents/file?name=Legal_Notice_Draft_v1.pdf'))}><Eye size={t.reviewIcon} color={ink.onBrand}/><Text style={styles.reviewText}>Review Draft →</Text></Pressable>
+            <Pressable accessibilityRole="button" style={styles.download} onPress={onViewDraft ?? (() => router.push('/documents/file?name=Legal_Notice_Draft_v1.pdf'))}><Download size={t.downloadIcon} color={ink.accent}/><Text style={styles.downloadText}>Download PDF</Text></Pressable>
           </> : <View style={styles.view}><Lock size={t.viewIcon} color={t.disabledText}/><Text style={styles.viewText}>View Draft</Text></View>}
         </View>
         {decision ? <>
           <Text style={[styles.title, { marginTop: t.sectionGap }]}>Your Decision</Text>
-          <Pressable accessibilityRole="button" style={styles.home} onPress={() => router.push('/legal-notice/delivery')}><BadgeCheck size={t.homeIcon} color={ink.onBrand}/><Text style={styles.homeText}>Approve & Proceed</Text></Pressable>
+          <Pressable accessibilityRole="button" style={styles.home} onPress={onApprove ?? (() => router.push('/legal-notice/delivery'))}><BadgeCheck size={t.homeIcon} color={ink.onBrand}/><Text style={styles.homeText}>Approve & Proceed</Text></Pressable>
           <Pressable accessibilityRole="button" style={[styles.button, { marginTop: t.cardGap, backgroundColor: colors.card }]} onPress={() => router.push('/legal-notice/request-changes')}><PenLine size={t.buttonIcon} color={ink.accent}/><Text style={styles.buttonText}>Request Changes</Text></Pressable>
         </> : approval ? <TextInput multiline placeholder="Describe what you would like to change" placeholderTextColor={t.placeholder} textAlignVertical="top" accessibilityLabel="Describe what you would like to change" style={styles.change}/> : <Pressable accessibilityRole="button" onPress={() => router.replace('/(tabs)/home')} style={styles.home}><Target size={t.homeIcon} color={ink.onBrand}/><Text style={styles.homeText}>Back To Home</Text></Pressable>}
 
         {/* Development only — hidden by DEV_PREVIEW_TOGGLES in constants/dev.ts. */}
-        {DEV_PREVIEW_TOGGLES && (
+        {allowDemoAdvance && DEV_PREVIEW_TOGGLES && (
         <View style={styles.toggle}>
           <Text style={styles.toggleLabel}>Preview state</Text>
           <SegmentedControl segments={STATE_SEGMENTS} value={state} onChange={setState} style={styles.toggleControl} />
@@ -269,13 +268,13 @@ function TableRow({ label, children }: { label: string; children: ReactNode }) {
   );
 }
 
-function TimelineStep({ index, step, current, paid, last }: { index: number; step: { title: string; description: string }; current: number; paid: number; last: boolean }) {
+function TimelineStep({ index, step, current, paid, last, tracking: TRACKING }: { index: number; step: { title: string; description: string }; current: number; paid: number | null; last: boolean; tracking: NoticeTrackingData["tracking"] }) {
   const done = index < current;
   const active = index === current;
   const pending = index > current;
   const meta =
-    index === 1 ? `${shortDate(TRACKING.submittedOn)}, ${TRACKING.submittedAt}`
-    : index === 2 ? `${rupees(paid)} via UPI`
+    index === 1 ? (TRACKING.submittedOn ? `${shortDate(TRACKING.submittedOn)}, ${TRACKING.submittedAt}` : '')
+    : index === 2 ? (paid === null ? '' : `${rupees(paid)} via UPI`)
     : index === 3 ? TRACKING.advocate.name
     : pending ? 'Pending' : '';
 
@@ -295,7 +294,7 @@ function TimelineStep({ index, step, current, paid, last }: { index: number; ste
             <Text style={styles.stepTitle}>{step.title}</Text>
             <View style={styles.est}>
               <Text style={styles.estText}>
-                EST. {shortDate(TRACKING.estimate.date).toUpperCase()}, {TRACKING.estimate.time}
+                EST. {(TRACKING.estimate.date ? shortDate(TRACKING.estimate.date).toUpperCase() : '')}, {TRACKING.estimate.time}
               </Text>
             </View>
           </View>
@@ -929,6 +928,6 @@ const styles = StyleSheet.create({
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function TrackingScreen({ decision = false }: { decision?: boolean } = {}) {
-  const { form } = useLegalNotice();
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="tracking" /> : <TrackingScreenView decision={decision} data={{ invoice: INVOICE, tracking: TRACKING, steps: TRACKING_STEPS }} form={form} navigate={router} />;
+  const model = useTrackingModel();
+  return <TrackingScreenView decision={decision} {...model} />;
 }

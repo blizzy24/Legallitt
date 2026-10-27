@@ -1,7 +1,5 @@
 import type { NoticeIntakeModel } from "../../features/legal-notice/screen-model";
-import { useFixtureIntakeModel } from "../../features/legal-notice/useFixtureIntakeModel";
-import ApiLegalNotice from "../../components/api/LegalNotice";
-import { DATA_SOURCE } from "../../lib/data-source";
+import { useIntakeModel } from "../../features/legal-notice/useIntakeModel";
 import { router } from 'expo-router';
 import { ArrowRight, FileText } from 'lucide-react-native';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
@@ -62,7 +60,7 @@ export function Step6ScreenView({ model }: { model: NoticeIntakeModel }) {
           <View style={styles.divider} />
           <View style={styles.totalRow}>
             <Text style={styles.totalLabel}>Total Payable</Text>
-            <Text style={styles.totalValue}>{rupees(total)}</Text>
+            <Text style={styles.totalValue}>{lines.length ? rupees(total) : ''}</Text>
           </View>
           <Text style={styles.note}>Inclusive of all legal taxes</Text>
         </View>
@@ -79,7 +77,7 @@ export function Step6ScreenView({ model }: { model: NoticeIntakeModel }) {
       <View style={[styles.bar, { paddingBottom: insets.bottom + p.barPadBottom }]}>
         <View style={styles.amountRow}>
           <Text style={styles.amountLabel}>Amount to pay</Text>
-          <Text style={styles.amountValue}>{rupees(total)}</Text>
+          <Text style={styles.amountValue}>{lines.length ? rupees(total) : ''}</Text>
         </View>
         <Pressable
           accessibilityRole="button"
@@ -263,6 +261,6 @@ const styles = StyleSheet.create({
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function Step6Screen() {
-  const model = useFixtureIntakeModel("step6");
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="payment" /> : <Step6ScreenView model={model} />;
+  const { model } = useIntakeModel("step6");
+  return <Step6ScreenView model={model} />;
 }

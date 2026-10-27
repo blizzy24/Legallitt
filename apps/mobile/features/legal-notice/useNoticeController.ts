@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 import { router, useFocusEffect, useLocalSearchParams, type Href } from "expo-router";
 import * as DocumentPicker from "expo-document-picker";
-import { ApiError, DOCUMENT_MAX_BYTES, DocumentMimeSchema, type ApiCase, type LegalNoticeIntake, type NoticeDraftContent } from "@legalitt/shared";
+import { noticeMatterType, noticeIssueType, ApiError, DOCUMENT_MAX_BYTES, DocumentMimeSchema, type ApiCase, type LegalNoticeIntake, type NoticeDraftContent } from "@legalitt/shared";
 import { apiNoticeRepository, type NoticeRepository } from "./repository";
 import { useSession } from "../../context/session";
 
@@ -34,7 +34,7 @@ const emptyDraft: NoticeDraftContent = {
 };
 
 /** Data and actions extracted from the legacy renderer; no screen markup lives here. */
-export function useNoticeController(stage: NoticeStage, backend: NoticeRepository = apiNoticeRepository) {
+export function useNoticeController(stage: NoticeStage, backend: NoticeRepository = apiNoticeRepository, enabled = true) {
   const params = useLocalSearchParams<{ caseId?: string; id?: string }>();
   const id = params.caseId ?? params.id;
   const { user, signOut } = useSession();
@@ -57,12 +57,16 @@ export function useNoticeController(stage: NoticeStage, backend: NoticeRepositor
   const dirty = useRef(false),
     working = useRef(false);
   const latest = record?.drafts?.at(-1);
-  const go = (path: string, caseId = id) =>
-    router.push(
-      (path + (caseId ? "?caseId=" + encodeURIComponent(caseId) : "")) as Href,
-    );
+  const href = (path: string, caseId = id): Href => {
+    const [pathname, search = ''] = path.split('?');
+    const query = new URLSearchParams(search);
+    if (caseId) query.set('caseId', caseId);
+    return (pathname + (query.size ? '?' + query.toString() : '')) as Href;
+  };
+  const go = (path: string, caseId = id) => router.push(href(path, caseId));
   const advocatePath = (suffix: string) => `/advocate/notice/${id}/${suffix}`;
   const load = useCallback(async () => {
+    if (!enabled) return;
     if (stage === "detail") {
       setPricing((await backend.service("legal_notice")).pricing);
       return;
@@ -82,13 +86,14 @@ export function useNoticeController(stage: NoticeStage, backend: NoticeRepositor
     const value = await backend.case(id);
     setRecord(value);
     if (!dirty.current) {
-      setDetails(value.details);
+      setDetails({...value.details, issueType: noticeIssueType(value.matter_type)});
       setTier(value.tier ?? "urgent");
       setContent(value.drafts?.at(-1)?.content ?? emptyDraft);
     }
-  }, [id, stage]);
+  }, [id, stage, enabled, backend]);
   useFocusEffect(
     useCallback(() => {
+      if (!enabled) return;
       let alive = true;
       setLoading(true);
       setError("");
@@ -114,7 +119,7 @@ export function useNoticeController(stage: NoticeStage, backend: NoticeRepositor
         alive = false;
         clearInterval(timer);
       };
-    }, [load]),
+    }, [load, enabled]),
   );
   const run = async (action: () => Promise<unknown>) => {
     if (working.current) return;
@@ -133,7 +138,7 @@ export function useNoticeController(stage: NoticeStage, backend: NoticeRepositor
   };
   const save = async (next: string) => {
     if (!id) return;
-    await backend.saveIntake(id, { details, tier });
+    await backend.saveIntake(id, { details, tier, matter_type: noticeMatterType(details.issueType) });
     dirty.current = false;
     go(next);
   };
@@ -144,7 +149,7 @@ export function useNoticeController(stage: NoticeStage, backend: NoticeRepositor
       copyToCacheDirectory: true,
       base64: false,
     });
-    if (result.canceled) return;
+    if (result.canceled) return false;
     const asset = result.assets[0];
     if (asset.size !== undefined && asset.size > DOCUMENT_MAX_BYTES)
       throw new Error("File must be 25 MB or smaller.");
@@ -161,8 +166,9 @@ export function useNoticeController(stage: NoticeStage, backend: NoticeRepositor
       asset.file ?? { uri: asset.uri, name: asset.name, type: mime.data },
     );
     await load();
+    return true;
   };
   return { repository: backend, id, advocate, signOut, record, items, details, setDetails, tier, setTier,
     content, setContent, comment, setComment, carrier, setCarrier, waybill, setWaybill,
-    authRequired, busy, error, loading, pricing, dirty, latest, go, advocatePath, load, run, save, upload };
+    authRequired, busy, error, loading, pricing, dirty, latest, href, go, advocatePath, load, run, save, upload };
 }

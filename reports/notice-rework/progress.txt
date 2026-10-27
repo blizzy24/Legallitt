@@ -85,3 +85,78 @@ reports/notice-rework/before/cases.png
 reports/notice-rework/before/requests.png
 reports/notice-rework/before/matters.png
 reports/notice-rework/before/chat--advocate.png
+
+2026-10-27 — v5.2 approved copy substitutions (work in progress)
+Read §9.2. Design 188 uses “Recipient Details”; design 32 does not name that party.
+Added copy/substitutions.ts keyed by 194 and 195, with exact original/replacement text.
+Data constants consume the register; no component styles or measured tokens changed.
+Updated §9.2 with the four exact before/after sentences.
+Mobile typecheck and fixture export passed.
+Chrome at 390×844: 194's three changed blocks remain 2 lines (36/36/42px);
+195's changed block remains 3 lines (66px). Measurements: copy-substitutions/wraps.json.
+Screenshots: copy-substitutions/{194,195}-{before,after}.png and matching -bottom.png;
+side-by-side: {194,195}-comparison.png and {194,195}-comparison-bottom.png.
+These compare original/replacement copy in the designed fixture renderer. The before
+copy is reinstated in the browser DOM for capture, with all other rendered data equal.
+They are NOT API/fixture parity evidence; controller binding remains unfinished.
+
+Paused dispatch wiring under user's explicit “third place” rule: design 286 itself
+says “Your advocate can use the tracking number to check the shipment.” Asked whether
+its advocate-side reuse may say “You can use the tracking number to check the shipment.”
+No change to 286 pending reply. No stage completion or new commit claimed.
+
+2026-10-27 — v5.3 continuation (stage 3 remains in progress)
+Added the approved design 286 trackingHelp entry to copy/substitutions.ts.
+The 286 route is not yet rebound; its original client-side copy remains unchanged.
+Client intake/detail, document upload/review, payment/success and tracking/decision
+routes now use the designed views with data supplied by controller models.
+Controller navigation preserves existing query parameters and the case id.
+Intake saves before proceeding; KYC return destinations retain the case id.
+Scan & Pay supports an action callback; the Notice API adapter calls payments/intents
+before navigating to success. Other callers retain the previous defaults.
+API-mode manual walkthrough and API/fixture screenshots remain outstanding.
+Five workspace typechecks and fixture export passed after these edits.
+42 current fixture captures saved under reports/notice-rework/stage3-fixtures/.
+These are progress evidence, not a claim of completed API-mode visual parity.
+
+Further copy conflict verified against design/440-ln-notice-delivery.png:
+“Your official recovery notice is dispatched via priority legal courier.” and
+“Legal Notice for Recovery” describe every notice as a recovery case, including
+property, tenant and family cases. Asked for approval to generalise those strings;
+left them unchanged, as required by the user's stop-and-ask rule.
+No stage-3 commit yet. Remaining client delivery and request-changes wiring,
+advocate screens, case-entry lists, cleanup/deletion and full API walk are unfinished.
+components/api/LegalNotice.tsx still exists and is still imported by remaining routes.
+Temporary local API process on port 3002 was stopped; existing port 3001 left alone.
+Fixture smoke result after the v5.3 continuation: 322 routes, zero failures.
+
+2026-10-27 — Stage 3 client designed-view wiring
+All app/legal-notice routes now render the existing designed views through
+Legal Notice models. No client route imports components/api/LegalNotice.tsx.
+API intake, all seven matter choices, pricing, document actions, payment,
+tracking, change requests and delivery use the case record. Unknown profile,
+telemetry and document values remain empty. No measured tokens changed.
+
+Gate results:
+- All five workspace typechecks passed; mobile checked again after navigation fixes.
+- Fixture web export passed; smoke: 322 routes, zero failures.
+- Fresh API web export passed.
+- Chrome walk: real seeded client session, all seven matter chips persisted,
+  screen 440 headings bound correctly, intake saved, submit/payment captured,
+  success -> tracking retained the same case ID; no browser errors.
+- This browser walk directly visited review after upload: it does not claim a
+  fresh KYC verification or a new file upload. Real S3 upload was separately
+  exercised by the admin POD verification in simulated-delivery/report.txt.
+
+Actual screenshots:
+  before/                       original fixture captures
+  stage3-fixtures/               current fixture captures (42 routes)
+  stage3-api/                    current client API captures
+  stage3-before-after/           16 client screen pairs, before left / after right
+  stage3-fixture-api/            16 client screen pairs, fixture left / API right
+The data intentionally differs (references, selected matter and absent values).
+These are browser captures, not mockups or a claim of identical fixture data.
+
+Remaining: advocate view migration, courier 286 persistence/schema decision,
+entry lists/chat, final full-flow verification and deletion of the legacy API
+renderer. Its presence is explicitly NOT claimed resolved by this stage.

@@ -1,7 +1,5 @@
 import type { NoticeIntakeModel } from "../../features/legal-notice/screen-model";
-import { useFixtureIntakeModel } from "../../features/legal-notice/useFixtureIntakeModel";
-import ApiLegalNotice from "../../components/api/LegalNotice";
-import { DATA_SOURCE } from "../../lib/data-source";
+import { useIntakeModel } from "../../features/legal-notice/useIntakeModel";
 import { router } from 'expo-router';
 import { Ellipsis, FilePenLine, House, IndianRupee, ShoppingCart, Users, type LucideIcon } from 'lucide-react-native';
 import { Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
@@ -141,6 +139,6 @@ const styles = StyleSheet.create({
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function Step3Screen() {
-  const model = useFixtureIntakeModel("step3");
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="step3" /> : <Step3ScreenView model={model} />;
+  const { model } = useIntakeModel("step3");
+  return <Step3ScreenView model={model} />;
 }

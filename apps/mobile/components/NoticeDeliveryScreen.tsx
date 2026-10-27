@@ -1,3 +1,5 @@
+import type { LegalNoticeMatterType } from "@legalitt/shared";
+import { noticeMatter } from "../data/legalNoticeMatter";
 import { router, type Href } from "expo-router";
 import {
   ArrowLeft,
@@ -19,6 +21,7 @@ import {
 } from "lucide-react-native";
 import {
   Image,
+  type ImageSourcePropType,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -47,17 +50,17 @@ function CopyWaybill({ waybill }: { waybill: string }) {
     </Pressable>
   );
 }
-export function NoticeHeader({ title }: { title: string }) {
+export function NoticeHeader({ title, onBack }: { title: string; onBack?: () => void }) {
   const insets = useSafeAreaInsets();
   return (
     <View style={[s.header, { paddingTop: insets.top }]}>
       <Pressable
         accessibilityRole="button"
         accessibilityLabel="Back"
-        onPress={() =>
+        onPress={onBack ?? (() =>
           router.canGoBack()
             ? router.back()
-            : router.replace("/legal-notice/tracking")
+            : router.replace("/legal-notice/tracking"))
         }
       >
         <ArrowLeft color={t.ink} size={t.headerIcon} />
@@ -140,20 +143,41 @@ function Pill({
     </Text>
   );
 }
+export type NoticeDeliveryFacts = {
+  confirmation: string; deliveredOn: string; deliveredAt: string; receivedBy: string;
+  proof: ImageSourcePropType | null; proofStatus: string; signatureStatus: string;
+  fileMeta: string; estimate: string; latestUpdate: string; latestPlace: string; latestTime: string;
+  progressStep: number; completedSteps: number[];
+};
+const fixtureFacts: NoticeDeliveryFacts = {
+  confirmation:'BLUE DART CONFIRMED', deliveredOn:'26 Oct 2024', deliveredAt:'02:45 PM', receivedBy:d.recipient,
+  proof:require('../assets/notice-delivery-proof.png'), proofStatus:'Available', signatureStatus:'Signature On File',
+  fileMeta:'Signed Copy · 4 Pages', estimate:'◷ In 1–2 days',
+  latestUpdate:'Package processed at Sorting Hub. Moving towards Rohini delivery center.',
+  latestPlace:'⌖ Delhi Central Hub', latestTime:'Today, 26 Oct · 04:15 PM',
+  progressStep:5, completedSteps:[0,1,2,3,4],
+};
 export default function NoticeDeliveryScreen({
+  matterType = null,
   delivered = false,
   data = d,
+  facts = fixtureFacts,
   allowDemoAdvance = true,
   onViewNotice,
   onViewProof,
+  onBack,
 }: {
+  matterType?: LegalNoticeMatterType | null;
   delivered?: boolean;
   data?: typeof d;
+  facts?: NoticeDeliveryFacts;
   allowDemoAdvance?: boolean;
   onViewNotice?: () => void;
   onViewProof?: () => void;
+  onBack?: () => void;
 }) {
   const d = data;
+  const matter = noticeMatter(matterType);
   const viewNotice = onViewNotice ?? (() => router.push(clientDocHref(d.file) as Href));
   const viewProof = onViewProof ?? (() => router.push('/legal-notice/delivery-proof'));
   const insets = useSafeAreaInsets();
@@ -161,6 +185,7 @@ export default function NoticeDeliveryScreen({
   return (
     <View style={s.screen}>
       <NoticeHeader
+        onBack={onBack}
         title={delivered ? "Notice Delivered" : "Notice Delivery"}
       />
       <ScrollView
@@ -177,7 +202,7 @@ export default function NoticeDeliveryScreen({
                   <Check color="white" size={t.discIcon} />
                 </View>
               </View>
-              <Pill>BLUE DART CONFIRMED</Pill>
+              <Pill>{facts.confirmation}</Pill>
               <Text style={s.heroTitle}>Notice Delivered</Text>
               <Text
                 style={[
@@ -208,19 +233,19 @@ export default function NoticeDeliveryScreen({
               <View style={[s.panel, s.row]}>
                 <View style={s.flex}>
                   <Body large>Delivered On</Body>
-                  <Title small>26 Oct 2024</Title>
+                  <Title small>{facts.deliveredOn}</Title>
                 </View>
                 <View style={s.flex}>
                   <Body large>Delivered At</Body>
-                  <Title small>02:45 PM</Title>
+                  <Title small>{facts.deliveredAt}</Title>
                 </View>
               </View>
               <Body large>Received By</Body>
               <View style={s.row}>
                 <Text style={[s.strong, s.flex, { fontSize: t.deliveredBody }]}>
-                  {d.recipient}
+                  {facts.receivedBy}
                 </Text>
-                <Pill>Signature On File</Pill>
+                <Pill>{facts.signatureStatus}</Pill>
               </View>
               <Body large>Delivery Address</Body>
               <Text style={[s.body, { fontSize: t.deliveredBody }]}>
@@ -230,11 +255,11 @@ export default function NoticeDeliveryScreen({
             <Card>
               <View style={s.row}>
                 <Label>DELIVERY PROOF</Label>
-                <Pill green>Available</Pill>
+                <Pill green>{facts.proofStatus}</Pill>
               </View>
               <View style={s.row}>
                 <Image
-                  source={require("../assets/notice-delivery-proof.png")}
+                  source={facts.proof ?? undefined}
                   style={s.proof}
                 />
                 <View style={s.flex}>
@@ -263,7 +288,7 @@ export default function NoticeDeliveryScreen({
                 <FileText color={t.pdf} />
                 <View style={s.flex}>
                   <Text style={s.strong}>{d.file}</Text>
-                  <Body large>Signed Copy · 4 Pages</Body>
+                  <Body large>{facts.fileMeta}</Body>
                 </View>
                 <Pressable accessibilityRole="button" onPress={viewNotice}>
                   <Text style={s.pill}>View Notice</Text>
@@ -298,12 +323,11 @@ export default function NoticeDeliveryScreen({
             <Card>
               <View style={s.row}>
                 <Text style={[s.label, { color: t.green }]}>● IN TRANSIT</Text>
-                <Pill>◷ In 1–2 days</Pill>
+                <Pill>{facts.estimate}</Pill>
               </View>
               <Title>Physical Notice on the Way</Title>
               <Body>
-                Your official recovery notice is dispatched via priority legal
-                courier.
+                {matter.dispatch}
               </Body>
               <View style={[s.panel, s.row]}>
                 <Truck color={t.brand} />
@@ -319,7 +343,7 @@ export default function NoticeDeliveryScreen({
                 <Label>NOTICE RECIPIENT</Label>
                 <Pill>{d.case}</Pill>
               </View>
-              <Title>Legal Notice for Recovery</Title>
+              <Title>{matter.title}</Title>
               <Text style={s.strong}>{d.recipient}</Text>
               <View style={s.panel}>
                 <View style={s.row}>
@@ -335,12 +359,11 @@ export default function NoticeDeliveryScreen({
             <Card>
               <Label>● LATEST COURIER UPDATE</Label>
               <Text style={s.strong}>
-                Package processed at Sorting Hub. Moving towards Rohini delivery
-                center.
+                {facts.latestUpdate}
               </Text>
               <View style={s.row}>
-                <Body>⌖ Delhi Central Hub</Body>
-                <Body>Today, 26 Oct · 04:15 PM</Body>
+                <Body>{facts.latestPlace}</Body>
+                <Body>{facts.latestTime}</Body>
               </View>
             </Card>
             <View style={s.envelopeCard}>
@@ -352,7 +375,7 @@ export default function NoticeDeliveryScreen({
                 <FileText color={t.pdf} />
                 <View style={s.flex}>
                   <Text style={s.strong}>{d.file}</Text>
-                  <Body>Signed copy · 4 Pages</Body>
+                  <Body>{facts === fixtureFacts ? 'Signed copy · 4 Pages' : facts.fileMeta}</Body>
                 </View>
                 <Pressable accessibilityRole="button" onPress={viewNotice}>
                   <Text style={s.pill}>Preview</Text>
@@ -372,7 +395,7 @@ export default function NoticeDeliveryScreen({
                         <View
                           style={[
                             s.line,
-                            { backgroundColor: i < 5 ? t.green : t.border },
+                            { backgroundColor: facts.completedSteps.includes(i) ? t.green : t.border },
                           ]}
                         />
                       )}
@@ -381,21 +404,21 @@ export default function NoticeDeliveryScreen({
                           s.dot,
                           {
                             backgroundColor:
-                              i < 5 ? t.green : i === 5 ? t.brand : t.border,
+                              facts.completedSteps.includes(i) ? t.green : i === facts.progressStep ? t.brand : t.border,
                           },
                         ]}
                       >
-                        {i < 5 ? (
+                        {facts.completedSteps.includes(i) ? (
                           <Check color="white" size={t.checkIcon} />
                         ) : (
                           <Text style={{ color: "white" }}>●</Text>
                         )}
                       </View>
                     </View>
-                    <View style={[s.step, i === 5 && s.active]}>
-                      <Text style={[s.strong, i > 5 && { opacity: 0.5 }]}>
+                    <View style={[s.step, i === facts.progressStep && s.active]}>
+                      <Text style={[s.strong, !facts.completedSteps.includes(i) && i !== facts.progressStep && { opacity: 0.5 }]}>
                         {title}
-                        {i === 5 ? "  ACTIVE" : ""}
+                        {i === facts.progressStep ? "  ACTIVE" : ""}
                       </Text>
                       <Body>{sub}</Body>
                     </View>

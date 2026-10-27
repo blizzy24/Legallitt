@@ -9,7 +9,7 @@ export type NoticeIntakeModel = {
   updateNoticee: (patch: Partial<LegalNoticeForm['noticee']>) => void;
   continue: () => void;
   navigate: (path: string) => void;
-  tiers: ServiceTier[];
+  tiers: (Omit<ServiceTier, 'price'> & { price: number | null })[];
   invoice: { service: string; refId: string; requestId: string };
   invoiceLines: InvoiceLine[];
   summary: { client: string; noticeType: string; noticee: string[]; summary: string; documents: number };

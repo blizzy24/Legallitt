@@ -2,7 +2,7 @@ import { router, useFocusEffect, type Href } from 'expo-router';
 import { DEMO_AUTO_ADVANCE } from '../constants/dev';
 import { DEMO_WAIT_MS } from '../hooks/useDemoAdvance';
 import { Clock, QrCode, Smartphone } from 'lucide-react-native';
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useRef, useEffect } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -43,15 +43,22 @@ export default function ScanPayScreen({
   hold = false,
   backHref,
   requestId,
+  onPayment,
+  paymentReady = true,
 }: {
   service: string;
-  amount: number;
+  amount: number | null;
   successHref: Href;
   query?: string;
   hold?: boolean;
   backHref?: Href;
   requestId?: string;
+  onPayment?: () => void;
+  paymentReady?: boolean;
 }) {
+  const paymentAction = useRef(onPayment);
+  useEffect(() => { paymentAction.current = onPayment; }, [onPayment]);
+  const controlled = Boolean(onPayment);
   const insets = useSafeAreaInsets();
   const [left, setLeft] = useState(s.validSeconds);
   // successHref is widened to string first: with every route typed, the
@@ -60,21 +67,27 @@ export default function ScanPayScreen({
   const successTarget = query ? `${base}?${query}` : base;
 
   useFocusEffect(useCallback(() => {
-    if (hold) return;
+    if (hold || controlled) return;
     const tick = setInterval(() => setLeft((t) => Math.max(0, t - 1)), 1000);
     const done = setTimeout(() => router.replace(successTarget as Href), s.autoAdvanceMs);
     return () => {
       clearInterval(tick);
       clearTimeout(done);
     };
-  }, [hold, successTarget]));
+  }, [hold, successTarget, controlled]));
 
   // DEMO: a held screen still moves on, after the shared demo wait.
   useFocusEffect(useCallback(() => {
-    if (!hold || !DEMO_AUTO_ADVANCE) return;
+    if (controlled || !hold || !DEMO_AUTO_ADVANCE) return;
     const done = setTimeout(() => router.replace(successTarget as Href), DEMO_WAIT_MS);
     return () => clearTimeout(done);
-  }, [hold, successTarget]));
+  }, [hold, successTarget, controlled]));
+
+  useFocusEffect(useCallback(() => {
+    if (!controlled || !paymentReady) return;
+    const timer = setTimeout(() => paymentAction.current?.(), s.autoAdvanceMs);
+    return () => clearTimeout(timer);
+  }, [controlled, paymentReady]));
 
   return (
     <View style={styles.screen}>
@@ -106,7 +119,7 @@ export default function ScanPayScreen({
             <QrGlyph />
           </View>
 
-          <Text style={styles.amount}>{rupees(amount)}</Text>
+          <Text style={styles.amount}>{amount === null ? '' : rupees(amount)}</Text>
           <Text style={styles.service}>{service}</Text>
           {requestId && <Text style={styles.service}>Request ID: {requestId}</Text>}
           <Text style={styles.instr}>Open your UPI app and scan the QR code to complete the payment.</Text>
@@ -134,7 +147,7 @@ export default function ScanPayScreen({
               charged. Callers that auto-advance leave it inert, as before. */}
           <Pressable
             accessibilityRole="button"
-            onPress={hold ? () => router.replace(successTarget as Href) : undefined}
+            onPress={onPayment ? () => paymentReady && paymentAction.current?.() : hold ? () => router.replace(successTarget as Href) : undefined}
             style={styles.altButton}
           >
             <Smartphone size={s.altIcon} color={ink.accent} />

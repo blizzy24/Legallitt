@@ -1,5 +1,4 @@
-import ApiLegalNotice from "../../components/api/LegalNotice";
-import { DATA_SOURCE } from "../../lib/data-source";
+import { usePaymentModel } from "../../features/legal-notice/usePaymentModel";
 import { previewNotice } from '../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import { Check, ChevronRight, Copy, FileText } from 'lucide-react-native';
@@ -17,7 +16,7 @@ import { INVOICE, invoiceLines, invoiceTotal, rupees } from '../../data/legalNot
 // reference and the onward route all come from search params; with none it behaves
 // exactly as the Legal Notice flow always did.
 export function PaymentSuccessScreenView({ service, total, requestId, nextHref }: {
-  service: string; total: number; requestId: string; nextHref: Href;
+  service: string; total: number | null; requestId: string; nextHref: Href;
 }) {
   return (
     <View style={styles.screen}>
@@ -35,7 +34,7 @@ export function PaymentSuccessScreenView({ service, total, requestId, nextHref }
             <Text style={styles.idLabel}>Request ID</Text>
             <Text style={styles.idValue}>{requestId}</Text>
           </View>
-          <Pressable onPress={() => previewNotice("Copy request ID")} accessibilityRole="button" accessibilityLabel="Copy request ID" hitSlop={10}>
+          <Pressable onPress={() => { if (typeof navigator !== 'undefined') void navigator.clipboard?.writeText(requestId); }} accessibilityRole="button" accessibilityLabel="Copy request ID" hitSlop={10}>
             <Copy size={s.copyIcon} color={colors.brand} />
           </Pressable>
         </View>
@@ -47,7 +46,7 @@ export function PaymentSuccessScreenView({ service, total, requestId, nextHref }
             </View>
             <View style={styles.headText}>
               <Text style={styles.title}>Payment Successful</Text>
-              <Text style={styles.sub}>Your payment of {rupees(total, false)} has been received.</Text>
+              <Text style={styles.sub}>Your payment of {total === null ? '' : rupees(total, false)} has been received.</Text>
             </View>
           </View>
           <Text style={styles.note}>Your {service} request has been submitted.</Text>
@@ -166,17 +165,6 @@ const styles = StyleSheet.create({
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function PaymentSuccessScreen() {
-  const { form } = useLegalNotice();
-  const params = useLocalSearchParams<{
-    service?: string;
-    amount?: string;
-    ref?: string;
-    next?: string;
-  }>();
-  const total = params.amount ? Number(params.amount) : invoiceTotal(invoiceLines(form.tier));
-  const requestId = params.ref ?? `#${INVOICE.requestId}`;
-  const service = params.service ?? 'legal notice';
-  const nextHref = (params.next ?? '/legal-notice/tracking') as Href;
-
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="tracking" /> : <PaymentSuccessScreenView service={service} total={total} requestId={requestId} nextHref={nextHref} />;
+  const model = usePaymentModel('success');
+  return <PaymentSuccessScreenView {...model} />;
 }

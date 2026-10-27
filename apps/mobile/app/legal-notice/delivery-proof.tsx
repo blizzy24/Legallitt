@@ -1,16 +1,15 @@
-import ApiLegalNotice from "../../components/api/LegalNotice";
-import { DATA_SOURCE } from "../../lib/data-source";
-import { Image, ScrollView, StyleSheet } from "react-native";
+import { useDeliveryModel } from "../../features/legal-notice/useDeliveryModel";
+import { Image, ScrollView, StyleSheet, type ImageSourcePropType } from "react-native";
 import { NoticeHeader } from "../../components/NoticeDeliveryScreen";
 import { noticeDelivery as t } from "../../constants/tokens/noticeDelivery";
 // Only the supplied proof image is available; do not fabricate a document body.
-export function DeliveryProofView() {
+export function DeliveryProofView({source, onBack}: {source:ImageSourcePropType|null; onBack?: () => void}) {
   return (
     <>
-      <NoticeHeader title="Signed Proof of Delivery (POD)" />
+      <NoticeHeader onBack={onBack} title="Signed Proof of Delivery (POD)" />
       <ScrollView contentContainerStyle={s.content}>
         <Image
-          source={require("../../assets/notice-delivery-proof.png")}
+          source={source ?? undefined}
           style={s.image}
           resizeMode="contain"
         />
@@ -25,5 +24,6 @@ const s = StyleSheet.create({
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function DeliveryProof() {
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="delivery" /> : <DeliveryProofView />;
+  const model = useDeliveryModel();
+  return <DeliveryProofView onBack={model.onBack} source={model.proofSource} />;
 }

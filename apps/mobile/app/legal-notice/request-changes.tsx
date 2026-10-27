@@ -1,5 +1,5 @@
-import ApiLegalNotice from "../../components/api/LegalNotice";
-import { DATA_SOURCE } from "../../lib/data-source";
+import { useTrackingModel } from "../../features/legal-notice/useTrackingModel";
+import type { NoticeTrackingData } from "./tracking";
 import { router } from "expo-router";
 import { useState } from "react";
 import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
@@ -15,7 +15,7 @@ import { useLegalNotice } from "../../context/legalNotice";
 // design/438 — request changes, not a second approval step.
 export function RequestChangesView({ form, invoice, tracking, onSubmit }: {
   form: ReturnType<typeof useLegalNotice>['form']; invoice: typeof INVOICE;
-  tracking: typeof TRACKING; onSubmit: (comment: string) => void;
+  tracking: NoticeTrackingData["tracking"]; onSubmit: (comment: string) => void;
 }) {
   const INVOICE = invoice, TRACKING = tracking;
   const [message, setMessage] = useState("");
@@ -44,7 +44,7 @@ export function RequestChangesView({ form, invoice, tracking, onSubmit }: {
           {[
             ["Notice Type", "Legal Notice"],
             ["Service", `${tier.label}  ${tier.trackingSpeed}`],
-            ["Submitted On", formatDate(TRACKING.submittedOn)],
+            ["Submitted On", TRACKING.submittedOn ? formatDate(TRACKING.submittedOn) : ''],
             ["Current Status", "● Awaiting Your Approval"],
           ].map(([a, b]) => (
             <View key={a} style={s.detail}>
@@ -145,6 +145,6 @@ const s = StyleSheet.create({
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function RequestChanges() {
-  const { form } = useLegalNotice();
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="changes" /> : <RequestChangesView form={form} invoice={INVOICE} tracking={TRACKING} onSubmit={message => router.push({ pathname: "/chat/advocate", params: { message } })} />;
+  const model = useTrackingModel();
+  return <RequestChangesView form={model.form} invoice={model.data.invoice} tracking={model.data.tracking} onSubmit={model.requestChanges} />;
 }

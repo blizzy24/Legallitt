@@ -1,7 +1,5 @@
 import type { NoticeIntakeModel } from "../../features/legal-notice/screen-model";
-import { useFixtureIntakeModel } from "../../features/legal-notice/useFixtureIntakeModel";
-import ApiLegalNotice from "../../components/api/LegalNotice";
-import { DATA_SOURCE } from "../../lib/data-source";
+import { useIntakeModel } from "../../features/legal-notice/useIntakeModel";
 import { router } from 'expo-router';
 import { ArrowRight, Check, ChevronRight, Clock, FileSearch, Lock, MapPin, MessageCircle, ShieldCheck, Zap, type LucideIcon } from 'lucide-react-native';
 import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
@@ -128,7 +126,7 @@ export function LegalNoticeDetailScreenView({ model }: { model: NoticeIntakeMode
                   </View>
                 </View>
                 <View style={styles.priceRow}>
-                  <Text style={styles.price}>{rupees(t.price)}</Text>
+                  <Text style={styles.price}>{t.price === null ? '' : rupees(t.price)}</Text>
                   <Clock size={d.speedIcon} color={colors.textBody} />
                   <Text style={[styles.speed, { fontSize: speedSize }]} {...shrinkToOneLine()}>
                     {t.speed}
@@ -149,7 +147,7 @@ export function LegalNoticeDetailScreenView({ model }: { model: NoticeIntakeMode
             Selected: {tier.summary}
           </Text>
           <View style={styles.spacer} />
-          <Text style={styles.summaryPrice}>{rupees(tier.price)}</Text>
+          <Text style={styles.summaryPrice}>{tier.price === null ? '' : rupees(tier.price)}</Text>
         </View>
 
         <Pressable
@@ -517,6 +515,6 @@ const styles = StyleSheet.create({
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function LegalNoticeDetailScreen() {
-  const model = useFixtureIntakeModel("detail");
-  return DATA_SOURCE === "api" ? <ApiLegalNotice stage="detail" /> : <LegalNoticeDetailScreenView model={model} />;
+  const { model } = useIntakeModel("detail");
+  return <LegalNoticeDetailScreenView model={model} />;
 }
