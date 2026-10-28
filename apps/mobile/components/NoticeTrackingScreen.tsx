@@ -2,8 +2,8 @@ import { router } from 'expo-router';
 import {
   ArrowLeft, BadgeCheck, Check, CircleUser, Copy, Download, Eye, FileText, Lock, MessageSquare, PenLine, Star, User,
 } from 'lucide-react-native';
-import type { ReactNode } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useState, type ReactNode } from 'react';
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AdvocateAvatar } from './AdvocateAvatar';
@@ -15,7 +15,9 @@ import { useDemoWait } from '../hooks/useDemoAdvance';
 // Legal Notice Tracking, design 437 (docs/CHUNK-1-TRACKING.md). One screen, four
 // states: drafting, review, approved (nothing to decide yet) and dispatched (the
 // drawn route to delivery). The seven-step timeline and the single draft card are
-// present in every state. Designs 31 and 32 are superseded and not rendered.
+// present in every state. Tapping Request Changes shows design 438: the same
+// screen reduced to the header and NOTICE DETAILS, with the textarea revealed by
+// that tap and never before it. Designs 31 and 32 are superseded and not rendered.
 export type NoticeTrackingStage = 'drafting' | 'review' | 'approved' | 'dispatched';
 export type NoticeTrackingAdvocate = {
   id: string; name: string; initials: string; experience: string; practice: string;
@@ -44,6 +46,11 @@ export default function NoticeTrackingScreen({ model: m }: { model: NoticeTracki
   // DEMO (fixture only): Drafting in Progress waits on the advocate, then follows the flow map.
   useDemoWait(m.allowDemoAdvance && m.stage === 'drafting');
   const ready = m.stage !== 'drafting';
+  // 438: revealed by the tap, and withdrawn when the case leaves review.
+  const [requesting, setRequesting] = useState(false);
+  const [comment, setComment] = useState('');
+  useEffect(() => { if (m.stage !== 'review') setRequesting(false); }, [m.stage]);
+  const changes = requesting && m.stage === 'review';
   // The pill names the stage; the timeline below follows the events. Approved and
   // beyond print no pill: no drawn status is true of the case then.
   const pill = m.stage === 'drafting' ? 'Drafting in Progress' : m.stage === 'review' ? 'Awaiting Your Approval' : '';
@@ -67,7 +74,13 @@ export default function NoticeTrackingScreen({ model: m }: { model: NoticeTracki
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        <View style={[styles.card, styles.statusCard, !m.requestId && styles.statusCardNoId]}>
+        {changes && Boolean(m.requestId) && (
+          <View style={styles.idChip}>
+            <Text style={styles.idChipLabel}>REQUEST ID</Text>
+            <Text style={styles.idChipValue}>#{m.requestId}</Text>
+          </View>
+        )}
+        <View style={[styles.card, styles.statusCard, (changes || !m.requestId) && styles.statusCardNoId]}>
           <View style={styles.pillRow}>
             {Boolean(pill) && (
               <View style={styles.pill}>
@@ -83,7 +96,7 @@ export default function NoticeTrackingScreen({ model: m }: { model: NoticeTracki
               ? 'Your advocate has prepared the legal notice. Please review the draft carefully before approving it for dispatch.'
               : 'Your request and payment have been received. A verified advocate is preparing your legal notice.'}
           </Text>
-          {Boolean(m.requestId) && (
+          {!changes && Boolean(m.requestId) && (
             <View style={styles.idBox}>
               <Text style={styles.idLabel}>REQUEST ID</Text>
               <Text style={styles.idValue}>#{m.requestId}</Text>
@@ -125,6 +138,21 @@ export default function NoticeTrackingScreen({ model: m }: { model: NoticeTracki
           )}
         </View>
 
+        {changes ? (
+          <>
+            <Text style={[styles.title, styles.decisionTitle]}>Your Decision</Text>
+            <TextInput
+              value={comment} onChangeText={setComment} multiline textAlignVertical="top"
+              placeholder="Describe what you would like to change" placeholderTextColor={t.placeholder}
+              accessibilityLabel="Describe what you would like to change" style={styles.change}
+            />
+            <Pressable accessibilityRole="button" style={styles.primary} onPress={() => { if (comment.trim()) m.onRequestChanges(comment.trim()); }}>
+              <PenLine size={t.homeIcon} color={ink.onBrand} />
+              <Text style={styles.primaryText}>Request Changes</Text>
+            </Pressable>
+          </>
+        ) : (
+        <>
         {adv && (
           <>
             <SectionRow label="ASSIGNED ADVOCATE" right={adv.verified ? 'Verified Advocate' : ''}
@@ -221,7 +249,7 @@ export default function NoticeTrackingScreen({ model: m }: { model: NoticeTracki
               <BadgeCheck size={t.homeIcon} color={ink.onBrand} />
               <Text style={styles.primaryText}>Approve & Proceed</Text>
             </Pressable>
-            <Pressable accessibilityRole="button" style={[styles.button, styles.secondary]} onPress={() => router.push('/legal-notice/request-changes')}>
+            <Pressable accessibilityRole="button" style={[styles.button, styles.secondary]} onPress={() => setRequesting(true)}>
               <PenLine size={t.buttonIcon} color={ink.accent} />
               <Text style={styles.buttonText}>Request Changes</Text>
             </Pressable>
@@ -236,6 +264,8 @@ export default function NoticeTrackingScreen({ model: m }: { model: NoticeTracki
               <Text style={styles.primaryText}>Approve & Proceed</Text>
             </Pressable>
           </>
+        )}
+        </>
         )}
       </ScrollView>
     </View>
@@ -353,6 +383,21 @@ const styles = StyleSheet.create({
     paddingBottom: t.cardPadBottom,
   },
   statusCardNoId: { paddingBottom: t.cardPadTop },
+  idChip: {
+    alignSelf: 'flex-start',
+    height: t.idChipHeight,
+    borderRadius: t.idChipHeight / 2,
+    paddingHorizontal: t.idChipPadX,
+    backgroundColor: colors.card,
+    borderWidth: 1,
+    borderColor: colors.border,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: t.idChipGapX,
+    marginBottom: t.idChipGap,
+  },
+  idChipLabel: { fontFamily: font.appSemi, fontSize: t.idChipTextSize, letterSpacing: 0.5, color: colors.textMuted },
+  idChipValue: { fontFamily: font.appHeading, fontSize: t.idChipTextSize, color: colors.textPrimary },
   pillRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   pill: {
     height: t.pillHeight,
@@ -549,6 +594,20 @@ const styles = StyleSheet.create({
   download: { marginTop: t.downloadGap, alignSelf: 'center', flexDirection: 'row', alignItems: 'center', gap: 4 },
   downloadText: { fontFamily: font.appSemi, fontSize: t.downloadTextSize, color: ink.accent },
   decisionTitle: { marginTop: t.sectionGap },
+  change: {
+    marginTop: t.changeGap,
+    height: t.changeHeight,
+    borderRadius: t.changeRadius,
+    borderWidth: 1,
+    borderColor: colors.brand,
+    backgroundColor: t.cardBg,
+    paddingHorizontal: t.changePadX,
+    paddingVertical: t.changePadY,
+    fontFamily: font.appBody,
+    fontSize: t.changeTextSize,
+    color: colors.textPrimary,
+    outlineWidth: 0,
+  },
   primary: {
     marginTop: t.homeGap,
     height: t.homeHeight,
