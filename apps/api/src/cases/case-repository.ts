@@ -43,7 +43,11 @@ export class CaseRepository {
     const record = await db.case.findFirst({
       where: { AND: [caseScope(actor), { id }] },
       include: {
-        advocate_id_relation:{select:{id:true,full_name:true}},
+        // The advocate's drawn facts (design 437) travel with the case; the id
+        // alone would leave the card empty.
+        advocate_id_relation:{select:{id:true,full_name:true,advocate_profiles_user_id_relations:{select:{
+          years_experience:true,practice_areas:true,bar_council_number:true,enrolment_year:true,rating_avg:true,rating_count:true,
+          verification:true,verified_at:true,city:true,state:true,photo_key:true}}}},
         case_events_case_id_relations: { orderBy: { id: "asc" } },
         documents_case_id_relations: {
           where: { status: "uploaded" },
@@ -84,7 +88,8 @@ export class CaseRepository {
       (d) => actor.role !== "client" || sent.has(d.id),
     );
     const reviews = drafts.flatMap((d) => d.draft_reviews_draft_id_relations);
-    return { ...caseRecord, advocate, events, documents, drafts, reviews, shipments };
+    const {advocate_profiles_user_id_relations: profile = null, ...advocateUser} = advocate ?? {};
+    return { ...caseRecord, advocate: advocate ? {...advocateUser, profile} : advocate, events, documents, drafts, reviews, shipments };
   }
 
   async list(actor: CaseActor, query: unknown) {

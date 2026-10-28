@@ -60,6 +60,12 @@ emails verified, assigns immutable roles, and seeds corresponding local DB rows.
 Repeating it preserves identities and uses the current password from Secrets
 Manager. The generated demo-only password is shared by these two test accounts;
 it is never returned by the API, embedded in mobile, logged or committed.
+The advocate account is named Adv. Arjun Sharma and the seed also upserts its
+advocate_profiles row with design 437's drawn facts (8 years, Property Law,
+D/1842/2016, 4.9 from 142 reviews, verified, photo_key advocate-05). Dev seed
+data behind the same guards; architecture §9.1 lists it. bar_council_state is
+not drawn anywhere and is left null. photo_key holds a bundled asset name now
+and an S3 key once advocates upload portraits (migration 202610280001).
 Emails: demo-client@legalitt.invalid and demo-advocate@legalitt.invalid.
 Normal email/password login works with the same accounts. Operators can retrieve
 the password from the Dev Core demo-auth secret through their AWS access.

@@ -85,8 +85,16 @@ export type ApiReview = {
   comment: string | null;
   created_at: string;
 };
+/** advocate_profiles as the case carries it. rating_avg is NUMERIC(2,1), serialised as a string. */
+export type ApiAdvocateProfile = {
+  years_experience: number | null; practice_areas: string[]; bar_council_number: string | null; enrolment_year: number | null;
+  rating_avg: string | null; rating_count: number; verification: 'not_started' | 'in_review' | 'approved' | 'rejected' | 'needs_update';
+  verified_at: string | null; city: string | null; state: string | null;
+  /** A bundled portrait name (advocate-05) for now; an S3 key once advocates upload their own. */
+  photo_key: string | null;
+};
 export type ApiCase = {
-  advocate?: {id:string;full_name:string}|null;
+  advocate?: {id:string;full_name:string;profile:ApiAdvocateProfile|null}|null;
   id: string;
   reference: string;
   service_code: "legal_notice";

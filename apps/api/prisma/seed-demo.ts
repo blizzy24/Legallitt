@@ -13,6 +13,22 @@ import { z } from "zod";
 import { demoAccounts, demoPassword, requireDemoMode } from "../src/auth/demo";
 import { createDatabaseClient } from "../src/database";
 
+// Design 437's advocate card, value for value. bar_council_state is not drawn
+// anywhere, so it is not invented.
+const demoAdvocateProfile = {
+  years_experience: 8,
+  practice_areas: ["Property Law"],
+  bar_council_number: "D/1842/2016",
+  enrolment_year: 2016,
+  rating_avg: "4.9",
+  rating_count: 142,
+  verification: "approved" as const,
+  verified_at: new Date("2026-05-01T00:00:00Z"),
+  city: "Indore",
+  state: "Madhya Pradesh",
+  photo_key: "advocate-05",
+};
+
 // Explicit operator command, never run by a request handler or in production.
 async function main() {
   requireDemoMode();
@@ -77,7 +93,7 @@ async function main() {
           Permanent: true,
         }),
       );
-      await db.user.upsert({
+      const row = await db.user.upsert({
         where: { cognito_sub: attributes.sub },
         create: {
           cognito_sub: attributes.sub,
@@ -86,10 +102,19 @@ async function main() {
           email_verified: true,
           role: role as "client" | "advocate" | "admin",
         },
-        update: {},
+        update: { full_name: account.name },
       });
+      // Dev seed data only, behind the same guards as the accounts (§9.1): the
+      // facts design 437 draws for its advocate. A seeded 4.9 from 142 reviews
+      // must never reach a production stage.
+      if (role === "advocate")
+        await db.advocateProfile.upsert({
+          where: { user_id: row.id },
+          create: { user_id: row.id, ...demoAdvocateProfile },
+          update: demoAdvocateProfile,
+        });
     }
-    console.log("Seeded three verified demo accounts; no mail or SMS sent.");
+    console.log("Seeded three verified demo accounts and the advocate's profile; no mail or SMS sent.");
   } finally {
     secrets.destroy();
     cognito.destroy();

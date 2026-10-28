@@ -124,6 +124,7 @@ model AdvocateProfile {
   rating_count           Int                @default(0)
   rzp_linked_account_id  String?
   rzp_account_status     String?
+  photo_key              String?
   created_at             DateTime           @default(now()) @db.Timestamptz(6)
   updated_at             DateTime           @default(now()) @db.Timestamptz(6)
   user_id_relation       User               @relation("advocate_profiles_user_id_users", fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)

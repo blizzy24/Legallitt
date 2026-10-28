@@ -6,7 +6,6 @@ import { useEffect, useState, type ReactNode } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { AdvocateAvatar } from './AdvocateAvatar';
 import { colors, font, ink, tracking as t } from '../constants/theme';
 import { formatDate } from '../data/cases';
 import { rupees, type ServiceTier, type TrackingStep } from '../data/legalNotice';
@@ -51,9 +50,10 @@ export default function NoticeTrackingScreen({ model: m }: { model: NoticeTracki
   const [comment, setComment] = useState('');
   useEffect(() => { if (m.stage !== 'review') setRequesting(false); }, [m.stage]);
   const changes = requesting && m.stage === 'review';
-  // The pill names the stage; the timeline below follows the events. Approved and
-  // beyond print no pill: no drawn status is true of the case then.
-  const pill = m.stage === 'drafting' ? 'Drafting in Progress' : m.stage === 'review' ? 'Awaiting Your Approval' : '';
+  // The pill names the stage; the timeline below follows the events. No pill when
+  // no drawn status is true of the case: before an advocate is assigned (the
+  // timeline still shows drafting as Pending), and from approval onward.
+  const pill = m.stage === 'drafting' ? (m.ticked >= 3 ? 'Drafting in Progress' : '') : m.stage === 'review' ? 'Awaiting Your Approval' : '';
   const current = m.ticked + 1;
   const adv = m.advocate;
 
@@ -159,7 +159,8 @@ export default function NoticeTrackingScreen({ model: m }: { model: NoticeTracki
               icon={adv.verified ? <BadgeCheck size={t.sectionLinkIcon} color={ink.accent} /> : undefined} />
             <View style={[styles.card, styles.adv]}>
               <View style={styles.advRow}>
-                <AdvocateAvatar name={adv.name} style={styles.avatarLarge}><Text style={styles.avatarText}>{adv.initials}</Text></AdvocateAvatar>
+                {/* 437 draws initials on a cream circle, not a portrait (open question 22). */}
+                <View style={styles.avatarLarge}><Text style={styles.avatarText}>{adv.initials}</Text></View>
                 <View style={styles.advText}>
                   <View style={styles.nameRow}>
                     <Text style={styles.name}>{adv.name}</Text>

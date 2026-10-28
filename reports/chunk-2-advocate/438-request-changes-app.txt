@@ -1,0 +1,20 @@
+Legal Notice Tracking
+REQUEST ID
+#LN-2026-0004
+Awaiting Your Approval
+Urgent Tier
+Your Legal Notice Draft is Ready
+Your advocate has prepared the legal notice. Please review the draft carefully before approving it for dispatch.
+NOTICE DETAILS
+Ref: LN-2026-0004
+Notice Type
+Cheque Bounce
+Service
+URGENT
+Within 5 Days
+Submitted On
+28 Oct 2026
+Current Status
+Awaiting Your Approval
+Your Decision
+Request Changes

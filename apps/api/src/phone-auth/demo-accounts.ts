@@ -8,7 +8,8 @@ import { z } from "zod";
 // Architecture v3.2 §2.9: these are fixed accounts, never derived from a phone.
 export const demoAccounts = {
   client: { email: "demo-client@legalitt.invalid", name: "Demo client" },
-  advocate: { email: "demo-advocate@legalitt.invalid", name: "Demo advocate" },
+  // The designs' own advocate (437, 31): the seeded profile carries their drawn facts.
+  advocate: { email: "demo-advocate@legalitt.invalid", name: "Adv. Arjun Sharma" },
 } as const;
 export function requireDemoMode() {
   if (

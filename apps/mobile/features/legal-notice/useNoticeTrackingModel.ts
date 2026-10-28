@@ -39,6 +39,7 @@ export function useNoticeTrackingModel(fixtureStage: 'drafting' | 'review' = 'dr
   const submitted = record?.events?.find(e => e.to_status === 'submitted')?.created_at ?? '';
   const notice = record?.documents?.find(d => d.kind === 'legal_notice');
   const name = record?.advocate?.full_name ?? '';
+  const profile = record?.advocate?.profile ?? null;
   // A decision tapped before the first poll lands still acts on the sent draft.
   const latestDraft = async () => c.latest ?? (c.id ? (await c.repository.case(c.id)).drafts?.at(-1) : undefined);
   // Assigned, not a conditional expression: the typed-route union is too wide for one.
@@ -70,9 +71,13 @@ export function useNoticeTrackingModel(fixtureStage: 'drafting' | 'review' = 'dr
     ticked: tickedFor(status),
     // Approved but not yet shipped: no drawn step describes the case, so none is active.
     stepActive: status !== 'approved' && status !== 'dispatching',
-    // The case carries an advocate id and name, no profile facts; nothing is borrowed.
-    advocate: name ? { id: record?.advocate_id ?? '', name, initials: name.split(/\s+/).map(v => v[0] ?? '').join('').slice(0, 2),
-      experience: '', practice: '', barReg: '', rating: '', reviews: '', verified: false } : null,
+    // The advocate's own profile, bound into 437's drawn formats; a missing fact
+    // leaves its element out (no star, number or brackets for an unrated advocate).
+    advocate: name ? { id: record?.advocate_id ?? '', name, initials: name.replace(/^Adv\.?\s+/i, '').split(/\s+/).map(v => v[0] ?? '').join('').slice(0, 2),
+      experience: profile?.years_experience ? `${profile.years_experience}+ Years Experience` : '',
+      practice: profile?.practice_areas.join(', ') ?? '', barReg: profile?.bar_council_number ?? '',
+      rating: profile?.rating_avg ?? '', reviews: profile?.rating_count ? String(profile.rating_count) : '',
+      verified: profile?.verification === 'approved' } : null,
     paidAmount: model.invoiceLines.length ? invoiceTotal(model.invoiceLines) : null,
     draftFile: notice?.filename ?? '', allowDemoAdvance: false,
     onViewDraft: () => { void c.run(async () => { if (notice) await Linking.openURL((await c.repository.documentUrl(notice.id)).url); }); },
