@@ -1,8 +1,8 @@
-import TrackingScreen from './tracking';
-// design/437: the complete client decision view, following design/32.
-export function NoticeDecisionView() { return <TrackingScreen decision />; }
+import NoticeTrackingScreen from '../../components/NoticeTrackingScreen';
+import { useNoticeTrackingModel } from '../../features/legal-notice/useNoticeTrackingModel';
 
-// The deployed fixture path remains unchanged; API mode is explicit.
+// Design 437. In the fixture demo this route is the review state the flow map
+// lands on; in API mode the case decides the state.
 export default function NoticeDecision() {
-  return <NoticeDecisionView />;
+  return <NoticeTrackingScreen model={useNoticeTrackingModel('review')} />;
 }
