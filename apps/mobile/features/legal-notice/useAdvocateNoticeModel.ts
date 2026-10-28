@@ -23,7 +23,7 @@ export function useAdvocateNoticeModel(stage: string) {
   const matter=noticeMatter(r?.matter_type??null);
   const path=(suffix:string)=>c.href(`/advocate/notice/${c.id ?? (api ? '' : 'ln-2026-1048')}/${suffix}`);
   const courierHref=()=>c.href('/courier/self/details?noticeOutbound=1');
-  useEffect(()=>{if(api&&stage==='dispatch'&&r?.status==='completed')router.replace(path('report'));},[api,stage,r?.status]);
+  // Navigation follows the tap, never the clock (§2.12): a completed case updates this screen in place.
   const open=(id?:string)=>{if(id)void c.run(async()=>{await Linking.openURL((await c.repository.documentUrl(id)).url);});};
   const saveDraft=async()=>{
     if(!c.id)throw new Error('Select a request from My Cases.');
