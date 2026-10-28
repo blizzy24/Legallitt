@@ -1,7 +1,8 @@
 # Legalitt — Backend & Cloud Architecture
 
-Version 4.0 · 24 October 2026
-Status: steps 0–6 complete. Step 7 is executable as written; §10 governs how.
+Version 6.2 · 28 October 2026
+Status: steps 0–7 complete for Legal Notice. The screen-rework (§1a) is in
+flight. §2.11 now governs every capability that is not yet real.
 
 This document is the specification for the backend phase. It is written to be
 handed to a coding agent as the source of truth. Where something is undecided,
@@ -230,6 +231,134 @@ So the CDK is split into **two stacks per stage**:
 
 Until then the API and Postgres run locally. All schema, queries and business
 logic are built and tested on a laptop.
+
+---
+
+### 2.11 Nothing is left unbuilt — unbuilt parts are simulated behind the API
+
+**"Keep it fake till we make it."**
+
+The whole application must run end to end at every point in the build. A user
+must be able to start a case, pay for it, have it assigned, watch it progress
+and see it completed — today, before payments, SMS, courier tracking, KYC or AI
+drafting are real.
+
+Where the real capability does not exist yet, a **simulator** stands in for it.
+
+**The rule that makes this safe:**
+
+> A simulator is a *swap*, not a *shortcut*.
+> It replaces an implementation, never an endpoint, never a screen.
+
+Concretely, four conditions. All four, every time:
+
+**1. The endpoint is real.** The app calls `POST /payments/intents` whether the
+money is real or not. There is no "payment is not built yet" branch in the app,
+no missing route, no disabled button. The contract in §5 is written once and
+never changes when the simulator is replaced.
+
+**2. The simulator is one named file behind an interface.** Each capability has
+a port and two adapters:
+
+```
+apps/api/src/payments/payments.port.ts          ← the interface
+apps/api/src/payments/simulated-payments.ts     ← the fake
+apps/api/src/payments/razorpay-payments.ts      ← the real one, later
+```
+
+Which adapter loads is decided once, at module registration, from an env flag.
+Nothing downstream knows or asks. Replacing the fake is deleting one file and
+flipping one flag — never a rewrite.
+
+**3. The side effects are real even when the capability is not.** A simulated
+payment still writes a `payments` row, still writes a `case_events` row, still
+moves the case from `payment_pending` to `paid`, still fires the notification.
+Only the call to Razorpay is absent. This is the point: the state machine, the
+timeline, the ledger and the screens are all exercised for real, so when the
+real adapter lands, nothing around it is untested.
+
+**4. The simulator is honest internally and invisible externally.** Every
+simulated response carries `"simulated": true` in the API payload and the
+`case_events` row records `source: "simulated"`. The client's screens show
+nothing unusual — a payment looks like a payment. But the database always knows
+what was real, so demo data can be identified and cleared before launch.
+
+**Flags.** One per capability, same shape, all defaulting to `simulated`:
+
+| Flag | `simulated` behaviour | `live` behaviour |
+|---|---|---|
+| `PAYMENTS_MODE` | 2s delay, always succeeds, fake `pay_` id | Razorpay |
+| `PHONE_AUTH_MODE` | accepts `123456` only (§2.9) | SMS via DLT |
+| `NOTIFY_MODE` | writes the `notifications` row, sends nothing | SNS / FCM |
+| `AI_MODE` | returns a fixed, sensible draft per service | Bedrock |
+| `COURIER_MODE` | waybill is whatever the advocate typed | carrier API |
+| `KYC_MODE` | marks verified after a 3s delay | real provider |
+
+A build with any flag on `live` must fail to start if its real credentials are
+missing. Never silently fall back — a silent fallback is how a demo payment
+reaches production.
+
+**No bypasses in real handlers.** A simulator must satisfy the real validation,
+not be excused from it. No handler may contain "skip this check when the caller
+is the simulator" — such a branch is a live bypass sitting in production code,
+and the validation it skips is then never exercised until the real feature
+arrives.
+
+Where a simulator needs an artefact it cannot legitimately produce (a proof of
+delivery, a signed document, a KYC result), it supplies a **clearly-labelled
+placeholder**, generated at runtime, that could not be mistaken for the real
+thing: the words SIMULATED and "no real event occurred" on its face, and
+`simulated = true` on its database row.
+
+Fabricating something that *looks* genuine — a signed receipt, a realistic
+invoice — is never acceptable, in either direction. The placeholder is honest
+on its face; the bypass is invisible. Prefer the honest artefact.
+
+**§9 of this document lists every capability still simulated.** Nothing ships
+to a production stage while that list is non-empty without the client being
+told, in writing, which items are on it.
+
+---
+
+### 2.12 The demo progression
+
+A case cannot advance on its own. Two steps need a human who does not yet have
+a screen — an **admin assigning an advocate**, and an **admin confirming
+delivery** — and one needs an advocate who happens to be offline. Without help,
+every case stops at `paid` and the flow after it can never be seen.
+
+So under `DEMO_PROGRESSION=on` (default on locally, **off** everywhere else), a
+timer advances a case through the steps nobody is present to perform.
+
+**The rule that makes this legitimate:**
+
+> The timer is a stand-in for a **person**, not for the **system**.
+> It calls the same endpoint that person will call, with the same
+> authorisation, and writes the same events. It contains no logic of its own.
+
+So: the timer does not set a status, does not write to the database, and does
+not tell the app to move on. It performs the real action and the app finds out
+the way it always will — by reading the case.
+
+| After | What happens | Which real endpoint runs | As whom |
+|---|---|---|---|
+| 30s from `paid` | advocate assigned | the admin assign endpoint | seeded admin |
+| 30s later | drafting starts | the advocate accept + start endpoints | seeded advocate |
+| 30s later | draft sent for review | the advocate submit-draft endpoint | seeded advocate |
+| on client approval | dispatch begins | the real approval path | the client |
+| on a change request | drafting restarts | the advocate start endpoint | seeded advocate |
+| every 5s after dispatch | shipment advances one step | the shipment status endpoint | seeded admin |
+
+Intervals are configurable (`DEMO_ASSIGN_DELAY_MS` and relatives), not
+hard-coded, so a demo can be slowed down or sped up without a code change.
+
+**The app never contains a timer that changes what it displays.** Screens poll
+the case and render whatever state they find. A screen that animates its own
+progress is lying, and it will keep lying after the simulators are gone.
+
+**Nothing about the designed screens changes between demo and real.** If a
+button appears at a given status with the timer running, it appears at that
+same status without it.
 
 ---
 
@@ -466,6 +595,15 @@ CREATE TABLE cases (
   advocate_id    UUID REFERENCES users(id),
   status         case_status NOT NULL DEFAULT 'draft',
   sub_status     TEXT,
+  matter_type    TEXT,                     -- what KIND of matter, chosen by the
+                                           -- client during intake. Legal Notice
+                                           -- step 3 of 6 offers: property_dispute,
+                                           -- money_recovery, tenant_issue,
+                                           -- family_dispute, cheque_bounce,
+                                           -- consumer_complaint, other.
+                                           -- Other services have their own sets.
+                                           -- Printed into screen headings and
+                                           -- body copy — see §9.2.
   tier           TEXT,
   title          TEXT,
   details        JSONB NOT NULL DEFAULT '{}',   -- service-specific intake
@@ -489,6 +627,7 @@ CREATE TABLE case_events (
   from_status  case_status,
   to_status    case_status,
   payload      JSONB NOT NULL DEFAULT '{}',
+  source       TEXT NOT NULL DEFAULT 'real',  -- 'real' | 'simulated' (§2.11)
   created_at   TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
@@ -516,8 +655,15 @@ CREATE TABLE documents (
   size_bytes    BIGINT NOT NULL,
   page_count    INT,               -- drives per-page charges
   status        TEXT NOT NULL DEFAULT 'uploaded',
+  simulated     BOOLEAN NOT NULL DEFAULT false,   -- §2.11 placeholder artefact
   created_at    TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+-- owner_id is WHO PRODUCED the document, not who may read it.
+-- Read access comes from membership of the case (client, assigned advocate,
+-- admin) — never from owner_id. A client can read a proof of delivery an admin
+-- uploaded; an advocate cannot read another advocate's case documents.
+-- Setting owner_id to grant visibility is a bug, not a shortcut.
 
 -- Versioned. Design 447 draws 'v2.1', so versioning is a product requirement.
 CREATE TABLE drafts (
@@ -570,6 +716,9 @@ CREATE TYPE payment_status AS ENUM
 CREATE TABLE payments (
   id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   case_id             UUID NOT NULL REFERENCES cases(id),
+  payer_id            UUID NOT NULL REFERENCES users(id),
+                                       -- usually the client; the ADVOCATE for
+                                       -- purpose='courier' (designs 196–198)
   purpose             TEXT NOT NULL,   -- 'service_fee','court_fee',
                                        -- 'process_fee','courier','follow_up'
   base_amount_paise   BIGINT NOT NULL,
@@ -579,6 +728,7 @@ CREATE TABLE payments (
   rzp_order_id        TEXT UNIQUE,
   rzp_payment_id      TEXT UNIQUE,
   idempotency_key     TEXT UNIQUE NOT NULL,
+  simulated           BOOLEAN NOT NULL DEFAULT false,   -- §2.11
   created_at          TIMESTAMPTZ NOT NULL DEFAULT now(),
   captured_at         TIMESTAMPTZ
 );
@@ -620,18 +770,41 @@ CREATE TABLE ledger_entries (
 
 -- ---------- fulfilment ----------
 
+-- Every column below exists because design 286 draws an input for it.
+-- The design is the specification (§1a); the schema adapts to it, never the
+-- other way round. Do not drop a drawn input because the table lacked a column.
+
 CREATE TABLE shipments (
   id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   case_id         UUID NOT NULL REFERENCES cases(id),
   direction       TEXT NOT NULL,     -- 'to_recipient' | 'to_advocate'
   carrier         TEXT,              -- 'Blue Dart'
   waybill         TEXT,
-  status          TEXT NOT NULL DEFAULT 'booked',
+  status          TEXT NOT NULL DEFAULT 'draft',
+                                     -- draft | booked | dispatched | delivered
   recipient       JSONB NOT NULL DEFAULT '{}',
-  booked_at       TIMESTAMPTZ,
+
+  -- entered by the advocate on design 286
+  dispatch_date       DATE,          -- the date the advocate states, NOT booked_at
+  courier_office      TEXT,
+  courier_phone       TEXT,
+  tracking_url        TEXT,
+  expected_delivery   DATE,
+  receipt_document_id UUID REFERENCES documents(id),  -- courier receipt slip
+
+  simulated       BOOLEAN NOT NULL DEFAULT false,     -- §2.11
+  booked_at       TIMESTAMPTZ,       -- system clock, when the row was saved
+  dispatched_at   TIMESTAMPTZ,
   delivered_at    TIMESTAMPTZ,
-  pod_document_id UUID REFERENCES documents(id)
+  pod_document_id UUID REFERENCES documents(id)       -- proof of delivery
 );
+
+-- dispatch_date and booked_at are NOT the same thing and must not be collapsed.
+-- dispatch_date is a human statement that may be backdated or future-dated.
+-- booked_at is when our system recorded it. Both are needed for a dispute.
+--
+-- receipt_document_id (booking) and pod_document_id (delivery) are likewise
+-- two different documents at two different moments.
 
 CREATE TABLE hearings (
   id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -687,8 +860,33 @@ CREATE TABLE notifications (
   data        JSONB NOT NULL DEFAULT '{}',
   channels    TEXT[] NOT NULL DEFAULT '{}',  -- 'push','sms','email','in_app'
   read_at     TIMESTAMPTZ,
+  simulated   BOOLEAN NOT NULL DEFAULT false,   -- §2.11: row written, nothing sent
   created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+-- ---------- auth audit ----------
+-- Sign-in happens before any case exists, so it CANNOT go in case_events:
+-- case_events.case_id is NOT NULL by design and stays that way (§4.1).
+-- This table is the audit trail for authentication only.
+
+CREATE TABLE auth_events (
+  id          BIGSERIAL PRIMARY KEY,
+  user_id     UUID REFERENCES users(id),  -- NULL when the attempt matched nobody
+  identifier  TEXT NOT NULL,              -- email or phone as entered
+  event       TEXT NOT NULL,              -- 'otp_requested','otp_verified',
+                                          -- 'otp_failed','password_login',
+                                          -- 'login_failed','registered','logout'
+  simulated   BOOLEAN NOT NULL DEFAULT false,   -- §2.11
+  ip          INET,
+  user_agent  TEXT,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX ON auth_events (identifier, created_at DESC);
+CREATE INDEX ON auth_events (user_id, created_at DESC);
+
+-- NEVER store the OTP itself, the password, or any token in this table.
+-- DPDP: purge rows older than 180 days (§7).
 
 -- ---------- admin ----------
 
@@ -1243,6 +1441,11 @@ before the backend needs it.
 | 13 | DPDP consent text and retention periods | Compliance |
 | 14 | Is any AI output client-facing without an advocate between? Check the AI chat screens (160–182, 170) | AI gating |
 | 15 | Which identity documents are accepted for each flow? Aadhaar must be masked if used at all (§6d) | ID proof uploads |
+| 16 | The advocate pays the courier out of pocket (196–198). Is that cost reimbursed, deducted from the payout, or absorbed by the advocate? The schema records the payment either way; the **payout calculation** needs the answer | Payouts, advocate wallet |
+| 17 | Designs 194–195 are drawn for client → advocate delivery, but Legal Notice dispatch is advocate → noticee. Approve the substituted wording in §9.2, or supply corrected screens | Dispatch screens |
+| 18 | Design 185 lets an advocate decline a request without giving a reason. Built as drawn. Was that intended? Whoever reassigns the case sees no explanation, and repeated unexplained declines can't be spotted | Assignment, advocate quality |
+| 19 | **No design shows "Your Decision" after the client approves.** The section has a drawn before-state (437) and nothing after. What does the client see between approving and dispatch starting? | Tracking screen 440 |
+| 20 | **No design shows how Notice Delivered (441) is entered.** It is a drawn destination with no drawn route. Where does the client tap to reach it? | Delivery screens |
 
 Items 1 to 6 all touch `service_pricing` and `commission_rates`. The schema is
 built so they can land as rows whenever they arrive, without migration.
@@ -1263,10 +1466,93 @@ is re-litigated mid-build.
 | Who dispatches and delivers | **Advocate** marks dispatched and enters carrier and waybill — the designs put courier booking on the advocate side (197–199), so they hold the slip. **Admin** marks delivered and attaches proof of delivery, because delivery means the work is complete, and completion is what releases the advocate's payment | 2026-10-20 |
 | AI model | Claude on Bedrock, Sonnet-tier for drafting, Haiku-tier for summaries and chat, subject to in-region availability (§2.8) | 2026-10-19 |
 | AI human approval | Enforced in the state machine, not the UI. Screens already exist — 446 → 447 → advocate review → client (§2.8) | 2026-10-19 |
+| Unbuilt capabilities | **Simulated behind the API, never skipped in the app** (§2.11). The whole flow runs end to end from the first build | 2026-10-26 |
+| Auth audit trail | New `auth_events` table. `case_events.case_id` stays `NOT NULL` — sign-in has no case, and weakening the spine to fit one event type is the wrong trade | 2026-10-26 |
+| Outbound dispatch flow | Courier payment → **design 286** courier-details form → back to the dispatch screen. Designs **199–202 are not reused** — they ask the advocate to confirm *receiving* documents, which is the client → advocate direction and contradicts admin-only delivery confirmation | 2026-10-27 |
+| Delivery confirmation with no admin panel | The admin endpoint and state transition are **real now**. Only the screen is missing, so in simulated mode a dispatched case auto-confirms after a delay (§9.1). Nothing about the flow changes when the panel arrives | 2026-10-27 |
+| Who owns a system-generated document | A **seeded admin user**, the same owner a real admin upload would have — not the client, and not an invented system account. `documents.owner_id` means who produced the document; read access comes from case membership | 2026-10-27 |
+| Design 286's extra fields | **Schema adapts to the design** (§1a). `shipments` gains dispatch_date, courier_office, courier_phone, tracking_url, expected_delivery and receipt_document_id. A drawn input is never dropped because a table lacked a column | 2026-10-27 |
+| Inbound receipt (design 201) | "Confirm Received" writes a `documents_received` event **and** closes out the inbound shipment — `status='delivered'`, `delivered_at=now()`. The advocate's word is the proof for inbound; no POD is required, because the recipient is the one confirming. **`case_status` is unchanged.** Nobody else can ever confirm an inbound shipment, so not closing it would strand every one of them | 2026-10-28 |
+| Advocate decline reason | **Optional.** Design 185 draws a Decline Request button and no reason input, so the API relaxes to match (§1a). `reason` is nullable; no dialog is invented. Flagged to the client as question 18 | 2026-10-27 |
+| Advocate's courier payment (196–198) | A **payment**, not a lifecycle step. Writes `payments` with `purpose='courier'` and `payer_id` = the advocate, writes a `case_events` row, and **leaves `case_status` unchanged**. `payment_pending → paid` belongs to the service fee alone | 2026-10-26 |
+| Admin panel | Built **after** the backend, because it consumes the API. Designs requested from the client | 2026-10-26 |
+
+### 9.1 Register of simulated capabilities
+
+Everything currently standing in for a real integration. This list must be
+empty, or explicitly accepted in writing by the client, before production.
+
+| Capability | Flag | Standing in because | Clears when |
+|---|---|---|---|
+| Payments | `PAYMENTS_MODE=simulated` | No Razorpay test keys yet | Client supplies test keys with Route enabled |
+| Phone OTP | `PHONE_AUTH_MODE=demo` | DLT registration not started (1–2 week lead) | DLT template approved |
+| Notifications | `NOTIFY_MODE=simulated` | No SNS/FCM setup yet | Compute stack deployed |
+| AI drafting | `AI_MODE=simulated` | Bedrock not wired; keeps cost at zero during build | Step 11 |
+| Advocate assignment | `DEMO_PROGRESSION=on` | Admin assigns (§9), but no admin panel exists. **Without this every case stops at `paid` and nothing after it can be reached** | Admin panel built |
+| Demo progression | `DEMO_PROGRESSION=on` | Stands in for people with no screen yet — see §2.12. Calls real endpoints only | Admin panel built |
+| Delivery confirmation | `ADMIN_UI_MODE=simulated` | Admin marks delivered (§9), but no admin panel exists yet. The **endpoint is real**; only the screen is missing. The shipment advances one drawn milestone at a time (§2.12), and delivery with a simulated proof follows Out for Delivery | Admin panel built |
+| Courier tracking | `COURIER_MODE=simulated` | Manual courier in v1 by decision, not by gap | Only if the client later buys a carrier API |
+| KYC | `KYC_MODE=simulated` | No provider chosen | Provider chosen |
 
 The one thing still to check is item 14 in §8: whether any AI surface reaches a
 client without an advocate in between. If one does, it needs either an advocate
 gate or explicit framing that it is not legal advice.
+
+### 9.2 Register of design substitutions
+
+§1a forbids inventing screens, labels or copy. Where a supplied design has been
+**reused for a flow it was not drawn for**, it is listed here — every single
+one, with the exact words changed.
+
+**Implementation rule.** Every substituted string lives in one file,
+`apps/mobile/copy/substitutions.ts`, keyed by design number. Nothing is
+hard-coded into a screen. When corrected designs arrive, the fix is this one
+file, not a hunt through components.
+
+**Review rule.** This table is sent to the client for approval. Until he
+approves a row, that row is provisional — it ships so the flow works, but it is
+not treated as settled.
+
+| Design | Drawn for | Reused for | What changed | Status |
+|---|---|---|---|---|
+| 286 | Client → advocate document hand-off | Advocate → noticee dispatch | Carrier and waybill inputs bound to the dispatch case; recipient is the case's noticee. **One string changed** — see below | Provisional |
+| 194 | Client → advocate delivery | Advocate → noticee dispatch | Recipient wording — two strings. See below | Provisional |
+| 195 | Client → advocate delivery | Advocate → noticee dispatch | Pickup and recipient cells bound to advocate and noticee. Wording follows 194 | Provisional |
+| 440 | — | — | **No wording changed.** View Profile and Chat with Advocate had no drawn disabled state, so they borrow the disabled look drawn for View Draft on the same screen. A reused visual state, not new copy | Provisional |
+
+**Design 440 is NOT a substitution.** Its "Recovery" wording was almost
+registered as one. It is not copy — it is the `matter_type` the client chose at
+intake step 3 of 6, printed into the screen. Those strings are **bound to
+data**, never replaced:
+
+| Design 440 | Renders as |
+|---|---|
+| `Legal Notice for Recovery` | `Legal Notice for {matterTypeLabel}` |
+| `Your official recovery notice is dispatched…` | `Your official {matterTypeLabel lowercased} notice is dispatched…` |
+
+Fallback when `matter_type` is `other` or unset: `Legal Notice`, and
+`Your official legal notice is dispatched…`. Never print the word "other".
+
+**The lesson.** Before registering any substitution, check whether the wording
+is a *value* rather than *copy*. Replacing a value with a fixed string silently
+deletes a feature the client drew.
+
+---
+
+**Exact strings changed.** `<Party>` is whatever term the supplied Legal Notice
+designs already use for the notice recipient — not a term invented here.
+
+| Design | Original | Replacement |
+|---|---|---|
+| 194 | `to your advocate` | `to the <Party>` |
+| 194 | `Your advocate needs the physical documents for the case` | `The signed notice must reach the <Party> by post.` |
+| 286 | `Your advocate can use the tracking number to check the shipment.` | `You can use the tracking number to check the shipment.` |
+
+The 286 change exists because the reader of that screen on the advocate side
+**is** the advocate — the original sentence addresses the wrong person.
+
+Layout, spacing, type and all measured tokens are unchanged in every row above.
+Only the bound data and the listed strings differ.
 
 ---
 
