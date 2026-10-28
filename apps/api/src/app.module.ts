@@ -1,6 +1,7 @@
 import {NoticeMessages,NoticeMessagesController} from './cases/notice-messages';
 import { CourierModule } from "./courier/courier.module";
 import { ShipmentService } from "./cases/shipment.service";
+import { NoticePdfService } from "./cases/notice-pdf.service";
 import { AdminUiModule } from "./admin-ui/admin-ui.module";
 import { DemoModule } from "./demo/demo.module";
 import { DatabaseModule } from "./database.module";
@@ -50,6 +51,7 @@ export class HealthController {
   ],
   providers: [NoticeMessages,
     ShipmentService,
+    NoticePdfService,
     PaymentsService,
     AuthService,
     AuthGuard,

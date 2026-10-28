@@ -76,6 +76,8 @@ export type ApiDraft = {
   kind: string;
   content: NoticeDraftContent;
   generated_by: string;
+  /** Legal_Notice_Draft_v{version}.pdf, rendered when the draft went for review. */
+  document_id: string | null;
   created_at: string;
 };
 export type ApiReview = {
@@ -103,6 +105,8 @@ export type ApiCase = {
   status: CaseStatus;
   tier: z.infer<typeof LegalNoticeTierSchema> | null;
   matter_type: import("./legal-notice").LegalNoticeMatterType | null;
+  /** Legal_Notice_Final.pdf, rendered on the client's approval. */
+  notice_document_id: string | null;
   details: LegalNoticeIntake;
   created_at: string;
   updated_at: string;

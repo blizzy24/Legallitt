@@ -12,6 +12,7 @@ import { CaseStatus } from "@legalitt/shared";
 import { AuthGuard, Roles, type AuthRequest } from "../auth/auth.controller";
 import { parse } from "../auth/auth.service";
 import { ShipmentService } from "./shipment.service";
+import { NoticePdfService } from "./notice-pdf.service";
 import { CaseStateMachine } from "./case-state-machine";
 import { CaseRepository } from "./case-repository";
 const id = (value: string) => parse(z.uuid(), value);
@@ -30,6 +31,7 @@ export class NoticeController {
     private readonly state: CaseStateMachine,
     private readonly cases: CaseRepository,
     private readonly shipments: ShipmentService,
+    private readonly pdf: NoticePdfService,
   ) {}
   @Get("advocate/requests") @Roles("advocate") requests(
     @Req() req: AuthRequest,
@@ -74,30 +76,40 @@ export class NoticeController {
   ) {
     return json(this.cases.read(req.user!, id(value)).then((r) => r.drafts));
   }
-  @Post("cases/:id/drafts/:draftId/send") send(
+  // The PDF is filed first, then the lifecycle moves; if the move is refused the
+  // file is discarded, so a case never advances without its document.
+  @Post("cases/:id/drafts/:draftId/send") async send(
     @Req() req: AuthRequest,
     @Param("id") value: string,
     @Param("draftId") draft: string,
     @Body() body: unknown,
   ) {
     empty(body);
-    return json(this.state.sendNoticeDraft(req.user!, id(value), id(draft)));
+    const document = await this.pdf.draft(req.user!, id(value), id(draft));
+    try {
+      return await json(this.state.sendNoticeDraft(req.user!, id(value), id(draft)));
+    } catch (error) {
+      await this.pdf.discard(req.user!, document.id);
+      throw error;
+    }
   }
-  @Post("cases/:id/drafts/:draftId/approve") approve(
+  @Post("cases/:id/drafts/:draftId/approve") async approve(
     @Req() req: AuthRequest,
     @Param("id") value: string,
     @Param("draftId") draft: string,
     @Body() body: unknown,
   ) {
-    return json(
-      this.state.reviewNoticeDraft(
-        req.user!,
-        id(value),
-        id(draft),
-        "approved",
-        body ?? {},
-      ),
-    );
+    empty(body);
+    const approvedAt = new Date();
+    const document = await this.pdf.final(req.user!, id(value), id(draft), approvedAt);
+    try {
+      return await json(
+        this.state.reviewNoticeDraft(req.user!, id(value), id(draft), "approved", body ?? {}, { approvedAt, noticeDocumentId: document.id }),
+      );
+    } catch (error) {
+      await this.pdf.discard(req.user!, document.id);
+      throw error;
+    }
   }
   @Post("cases/:id/drafts/:draftId/request-changes") changes(
     @Req() req: AuthRequest,

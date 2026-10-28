@@ -18,7 +18,8 @@ export function useDeliveryModel(fixtureDelivered = false) {
   const record=c.record, shipment=record?.shipments?.filter(x=>x.direction==='to_recipient').sort((a,b)=>(a.booked_at??'').localeCompare(b.booked_at??'')).at(-1);
   const status=shipment?.status as ShipmentStatus|undefined;
   const approvedAt=record?.events?.find(e=>e.to_status==='approved')?.created_at;
-  const notice=record?.documents?.find(d=>d.kind==='legal_notice');
+  // Legal_Notice_Final.pdf, rendered on approval (designs 440 and 441).
+  const notice=record?.documents?.find(d=>d.id===record.notice_document_id);
   const proofId=record?.events?.find(e=>e.to_status==='completed')?.payload.pod_document_id;
   const proof=record?.documents?.find(d=>d.id===proofId);
   const [proofSource,setProofSource]=useState<ImageSourcePropType|null>(null);
@@ -51,7 +52,9 @@ export function useDeliveryModel(fixtureDelivered = false) {
   const facts:NoticeDeliveryFacts = {
     confirmation:'',deliveredOn:shipment?.delivered_at ? formatDate(calendarDate(shipment.delivered_at)) : '',
     deliveredAt:shipment?.delivered_at ? clockTime(shipment.delivered_at) : '',
-    receivedBy:'',proof:proofSource,proofStatus:proof?'Available':'',signatureStatus:'',fileMeta:'',
+    receivedBy:'',proof:proofSource,proofStatus:proof?'Available':'',signatureStatus:'',
+    // The page count is read from the generated file, never assumed.
+    fileMeta:notice?.page_count ? `${completed?'Signed Copy':'Signed copy'} · ${notice.page_count} Pages` : '',
     estimate:'',latestUpdate:'',latestPlace:'',latestTime:'',
     // The first unfinished row is the active one; none once every row is done.
     progressStep:approved?done.indexOf(false):-1,

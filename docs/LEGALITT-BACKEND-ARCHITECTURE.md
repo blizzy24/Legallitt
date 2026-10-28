@@ -601,6 +601,10 @@ CREATE TABLE cases (
   advocate_id    UUID REFERENCES users(id),
   status         case_status NOT NULL DEFAULT 'draft',
   sub_status     TEXT,
+  notice_document_id UUID REFERENCES documents(id),
+                                           -- Legal_Notice_Final.pdf, rendered on the
+                                           -- client's approval with the recorded
+                                           -- approval on it (design 192)
   matter_type    TEXT,                     -- what KIND of matter, chosen by the
                                            -- client during intake. Legal Notice
                                            -- step 3 of 6 offers: property_dispute,
@@ -680,6 +684,9 @@ CREATE TABLE drafts (
   content     JSONB NOT NULL,        -- structured, not a blob of HTML
   generated_by TEXT,                 -- 'ai' | 'manual'
   created_by  UUID NOT NULL REFERENCES users(id),
+  document_id UUID REFERENCES documents(id),
+                                     -- Legal_Notice_Draft_v{version}.pdf, rendered
+                                     -- from content when the draft went for review
   created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
   UNIQUE (case_id, kind, version)
 );
@@ -1453,6 +1460,7 @@ before the backend needs it.
 | 19 | **No design shows "Your Decision" after the client approves.** The section has a drawn before-state (437) and nothing after. What does the client see between approving and dispatch starting? | Tracking screen 440 |
 | 20 | **No design shows how Notice Delivered (441) is entered.** Checked My Cases (14–17), Home (12), Notifications (60), My Requests (53), My Documents (56) — 14 draws a Closed tab with nothing in it, and 56's served notice opens the viewer (57). A drawn destination with no drawn route. Where does the client tap to reach it? The fixture demo currently reaches it on a timer; was that the intent? | Delivery screens |
 | 22 | The client supplied six advocate portraits, but **design 437 draws initials** on the tracking card, not a photo. The photos are drawn on the chat screen (439). Should the portraits also appear on the tracking card, or are initials intended there? Built as drawn — initials — until he says otherwise | Advocate card |
+| 23 | **No design draws the inside of the notice.** 266 is the editor and 189 a different letter, so the generated PDF uses a plain conventional layout — sender block, date and place, recipient block, subject, numbered body, closing — with the advocate's section-1 details as the letterhead and only 266's section names as headings. Please review the printed layout, and supply a letterhead if you want one | Notice PDF |
 | 21 | **No design draws 440 after delivery completes.** Its headline reads "Physical Notice on the Way", which stops being true. The drawn route to 440 is withdrawn on completion, so this only affects a client already sitting on the page. Supply a delivered state, or confirm 440 is simply not the screen for a finished case | Tracking screen 440 |
 
 Items 1 to 6 all touch `service_pricing` and `commission_rates`. The schema is

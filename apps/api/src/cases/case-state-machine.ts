@@ -446,6 +446,9 @@ export class CaseStateMachine {
     draftId: string,
     decision: "approved" | "changes_requested",
     body: unknown,
+    // The final notice rendered for this approval, timestamped before the move
+    // so the document's record and the review row agree.
+    approval?: { approvedAt: Date; noticeDocumentId: string },
   ) {
     if (actor.role !== "client")
       throw new ForbiddenException("Case client required");
@@ -457,17 +460,19 @@ export class CaseStateMachine {
     return db.$transaction(async (tx) => {
       const record = await lockedCase(tx, actor, id);
       await this.latestDraft(tx, id, draftId);
-      const updated = await this.advance(
+      let updated = await this.advance(
         tx,
         actor,
         record,
         decision === "approved"
           ? CaseStatus.approved
           : CaseStatus.changes_requested,
-        { draft_id: draftId },
+        { draft_id: draftId, ...(approval ? { notice_document_id: approval.noticeDocumentId } : {}) },
       );
+      if (approval)
+        updated = await tx.case.update({ where: { id }, data: { notice_document_id: approval.noticeDocumentId } });
       await tx.draftReview.create({
-        data: { draft_id: draftId, reviewer_id: actor.id, decision, comment },
+        data: { draft_id: draftId, reviewer_id: actor.id, decision, comment, ...(approval ? { created_at: approval.approvedAt } : {}) },
       });
       return updated;
     });

@@ -300,6 +300,14 @@ client. It returns 404 outside those environments. It creates no payment,
 ledger or payout row and charges no money. Pricing calculations and Razorpay
 remain step 8; API mode displays seeded base tier prices, never fixture totals.
 
+Sending a draft for review renders it to Legal_Notice_Draft_v{version}.pdf and
+approval renders Legal_Notice_Final.pdf with the recorded approval ("Signed by
+Client", the approving client's name, the timestamp); both are filed through
+the real documents pipeline as the acting user (kind legal_notice), so the page
+count comes from the file. drafts.document_id and cases.notice_document_id link
+them (migration 202610280002). The PDF is filed before the lifecycle moves and
+discarded if the move is refused. Layout: architecture §8, question 23.
+
 Draft content has the six structured editor fields drawn on 188:
   sender, recipient, subject, facts, demand, closing
 Every save creates a numbered version and a draft_saved event. Only the

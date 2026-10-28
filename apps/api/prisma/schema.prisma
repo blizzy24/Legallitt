@@ -184,6 +184,7 @@ model Case {
   matter_type                       String?
   tier                              String?
   title                             String?
+  notice_document_id                String?         @db.Uuid
   details                           Json            @default("{}") @db.JsonB
   pricing_id                        String?         @db.Uuid
   created_at                        DateTime        @default(now()) @db.Timestamptz(6)
@@ -209,6 +210,8 @@ model Case {
   @@index([client_id, status])
   @@index([advocate_id, status])
   @@index([service_code, status])
+  notice_document_id_relation       Document?       @relation("cases_notice_document_id_documents", fields: [notice_document_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
   @@map("cases")
 }
 
@@ -260,6 +263,9 @@ model Document {
   shipments_receipt_document_id_relations Shipment[] @relation("shipments_receipt_document_id_documents")
   shipments_pod_document_id_relations Shipment[] @relation("shipments_pod_document_id_documents")
 
+  drafts_document_id_relations          Draft[]    @relation("drafts_document_id_documents")
+  cases_notice_document_id_relations    Case[]     @relation("cases_notice_document_id_documents")
+
   @@map("documents")
 }
 
@@ -271,7 +277,9 @@ model Draft {
   content                          Json          @db.JsonB
   generated_by                     String?
   created_by                       String        @db.Uuid
+  document_id                      String?       @db.Uuid
   created_at                       DateTime      @default(now()) @db.Timestamptz(6)
+  document_id_relation             Document?     @relation("drafts_document_id_documents", fields: [document_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   case_id_relation                 Case          @relation("drafts_case_id_cases", fields: [case_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   created_by_relation              User          @relation("drafts_created_by_users", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   draft_reviews_draft_id_relations DraftReview[] @relation("draft_reviews_draft_id_drafts")

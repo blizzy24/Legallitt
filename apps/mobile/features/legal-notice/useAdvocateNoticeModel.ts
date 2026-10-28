@@ -14,7 +14,15 @@ export function useAdvocateNoticeModel(stage: string) {
   const c=useNoticeController(stage as NoticeStage,undefined,api);
   useEffect(()=>{if(c.error){if(Platform.OS==='web')window.alert(c.error);else Alert.alert(c.error);}},[c.error]);
   const {user} = useSession();
-  const r=c.record, documents=r?.documents??[], notice=documents.find(d=>d.kind==='legal_notice');
+  const r=c.record, documents=r?.documents??[];
+  // The final notice (rendered on approval) and the latest draft's PDF (rendered on send).
+  const notice=documents.find(d=>d.id===r?.notice_document_id), draftDoc=documents.find(d=>d.id===c.latest?.document_id);
+  const approvedAt=r?.reviews?.find(v=>v.decision==='approved')?.created_at;
+  const when=(value?:string|null)=>value?new Date(value).toLocaleDateString('en-GB'):'';
+  // Design 192's sign-off line: "Approved today, 11:20 AM", or the date when it was not today.
+  const signOff=approvedAt?(()=>{const d=new Date(approvedAt),now=new Date();const day=d.toDateString()===now.toDateString()?'today':d.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+    return `Client Sign-off complete • Approved ${day}, ${d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})}`;})():'';
+  const finalMeta=notice?.page_count ? `${notice.page_count} Pages • Signed by Client` : '';
   const [pricing,setPricing]=useState<Awaited<ReturnType<typeof c.repository.service>>['pricing']>([]);
   useEffect(()=>{if(api)void c.run(async()=>setPricing((await c.repository.service('courier')).pricing));},[api]);
   const price=pricing.find(p=>!p.variant&&!p.tier);
@@ -49,7 +57,6 @@ export function useAdvocateNoticeModel(stage: string) {
   const received=r?.events?.find(e=>e.type==='documents_received');
   const inboundRecipient=inbound?.recipient as {fullName?:string; name?:string; address?:string}|undefined;
   const inboundName=inboundRecipient?.fullName??inboundRecipient?.name??'';
-  const when=(value?:string|null)=>value?new Date(value).toLocaleDateString('en-GB'):'';
   const data={
     ADV_NOTICE_SHIPMENT:api?{...fixture.ADV_NOTICE_SHIPMENT,chip:'',
       details:fixture.ADV_NOTICE_SHIPMENT.details.map((cell,i)=>({...cell,value:[inbound?.carrier??'',inbound?.waybill??'',''][i]})),
@@ -89,11 +96,11 @@ export function useAdvocateNoticeModel(stage: string) {
     ADV_NOTICE_RECIPIENT:api?{name:recipient,address}:fixture.ADV_NOTICE_RECIPIENT,
     ADV_NOTICE_REVIEW:api?{...fixture.ADV_NOTICE_REVIEW,ref:r?.reference??'',
       cells:fixture.ADV_NOTICE_REVIEW.cells.map(cell=>({...cell,verified:false,value:cell.label==='CLIENT'?client:cell.label==='AGAINST'?recipient:cell.label==='FILING TYPE'?matter.label:cell.label==='STATUS'&&r?.status==='client_review'?'In Client Queue':''})),
-      draftFile:{...fixture.ADV_NOTICE_REVIEW.draftFile,name:notice?.filename??'',size:'',status:c.latest?'Sent to Client':''},
+      draftFile:{...fixture.ADV_NOTICE_REVIEW.draftFile,name:draftDoc?.filename??'',size:'',status:c.latest?'Sent to Client':''},
       message:'',messageMeta:'',awaiting:{...fixture.ADV_NOTICE_REVIEW.awaiting,note:r?.reviews?.at(-1)?.comment??''},
     }:fixture.ADV_NOTICE_REVIEW,
-    ADV_NOTICE_FINAL:api?{...fixture.ADV_NOTICE_FINAL,clientName:client,verifiedChip:'',signOff:'',doc:{name:notice?.filename??'',meta:''}}:fixture.ADV_NOTICE_FINAL,
-    ADV_NOTICE_DISPATCH:api?{...fixture.ADV_NOTICE_DISPATCH,doc:{name:notice?.filename??'',meta:'',chip:''}}:fixture.ADV_NOTICE_DISPATCH,
+    ADV_NOTICE_FINAL:api?{...fixture.ADV_NOTICE_FINAL,clientName:client,verifiedChip:'',signOff,doc:{name:notice?.filename??'',meta:finalMeta}}:fixture.ADV_NOTICE_FINAL,
+    ADV_NOTICE_DISPATCH:api?{...fixture.ADV_NOTICE_DISPATCH,doc:{name:notice?.filename??'',meta:finalMeta,chip:''}}:fixture.ADV_NOTICE_DISPATCH,
     ADV_NOTICE_SEND:api?{...fixture.ADV_NOTICE_SEND,serviceChip:'Legal Notice',matterRef:r?.reference??'',parties:r?`${client} vs ${recipient}`:'',advocate:user?.name??'',docsChip:r?`${documents.length} Documents`:'',docChips:documents.map(d=>d.filename),docChipOverflow:'',sendTo:{name:recipient,lines:[address]}}:fixture.ADV_NOTICE_SEND,
     ADV_NOTICE_DELIVERY:api?{...fixture.ADV_NOTICE_DELIVERY,
       pickup:{...fixture.ADV_NOTICE_DELIVERY.pickup,name:user?.name??'',address:'',cityLine:'',mobile:user?.phone??''},
@@ -110,7 +117,7 @@ export function useAdvocateNoticeModel(stage: string) {
   const documentFields=api?{reference:r?.reference??'',date:c.latest?new Date(c.latest.created_at).toLocaleDateString('en-GB'):'',recipient:c.content.recipient.split('\n'),subject:c.content.subject,
     client, father:'',age:'',address:r?.details.client?.address??'',facts:c.content.facts.split('\n'),demands:c.content.demand.split('\n')}:undefined;
   return {data,documentFields,navigate,controller:c,api,total:api?total:fixture.ADV_NOTICE_PAYMENT.totalAmount,path,courierHref,
-    onViewDocument:api?(id?:string)=>open(id??notice?.id):undefined,
+    onViewDocument:api?(id?:string)=>open(id??notice?.id??draftDoc?.id):undefined,
     onEditSection:api?(index:number,value:string)=>{c.dirty.current=true;c.setContent(prev=>({...prev,[draftKeys[index]]:value}));}:undefined,
     onSaveDraft:api?()=>{void c.run(saveDraft);}:undefined,
     onConfirmDispatch:()=>{if(!api){router.push(path('report'));return;}void c.run(async()=>{if(c.id){await c.repository.dispatch(c.id);await c.load();}});},

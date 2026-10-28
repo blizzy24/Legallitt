@@ -37,7 +37,8 @@ export function useNoticeTrackingModel(fixtureStage: 'drafting' | 'review' = 'dr
   const record = c.record;
   const status = record?.status;
   const submitted = record?.events?.find(e => e.to_status === 'submitted')?.created_at ?? '';
-  const notice = record?.documents?.find(d => d.kind === 'legal_notice');
+  // The PDF rendered when this draft went for review (design 437's draft card).
+  const notice = record?.documents?.find(d => d.id === c.latest?.document_id);
   const name = record?.advocate?.full_name ?? '';
   const profile = record?.advocate?.profile ?? null;
   // A decision tapped before the first poll lands still acts on the sent draft.
