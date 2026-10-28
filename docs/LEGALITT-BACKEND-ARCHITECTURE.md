@@ -1,6 +1,6 @@
 # Legalitt — Backend & Cloud Architecture
 
-Version 6.2 · 28 October 2026
+Version 6.3 · 28 October 2026
 Status: steps 0–7 complete for Legal Notice. The screen-rework (§1a) is in
 flight. §2.11 now governs every capability that is not yet real.
 
@@ -355,6 +355,12 @@ hard-coded, so a demo can be slowed down or sped up without a code change.
 **The app never contains a timer that changes what it displays.** Screens poll
 the case and render whatever state they find. A screen that animates its own
 progress is lying, and it will keep lying after the simulators are gone.
+
+**Navigation follows the tap, never the clock.** Moving someone to another
+screen because *they* acted is the app responding. Moving them because someone
+else acted, or because time passed, is the app deciding for them — and no
+design asks for it. A screen may change what it shows when state changes; it
+may not change which screen you are on.
 
 **Nothing about the designed screens changes between demo and real.** If a
 button appears at a given status with the timer running, it appears at that
@@ -1445,7 +1451,8 @@ before the backend needs it.
 | 17 | Designs 194–195 are drawn for client → advocate delivery, but Legal Notice dispatch is advocate → noticee. Approve the substituted wording in §9.2, or supply corrected screens | Dispatch screens |
 | 18 | Design 185 lets an advocate decline a request without giving a reason. Built as drawn. Was that intended? Whoever reassigns the case sees no explanation, and repeated unexplained declines can't be spotted | Assignment, advocate quality |
 | 19 | **No design shows "Your Decision" after the client approves.** The section has a drawn before-state (437) and nothing after. What does the client see between approving and dispatch starting? | Tracking screen 440 |
-| 20 | **No design shows how Notice Delivered (441) is entered.** It is a drawn destination with no drawn route. Where does the client tap to reach it? | Delivery screens |
+| 20 | **No design shows how Notice Delivered (441) is entered.** Checked My Cases (14–17), Home (12), Notifications (60), My Requests (53), My Documents (56) — 14 draws a Closed tab with nothing in it, and 56's served notice opens the viewer (57). A drawn destination with no drawn route. Where does the client tap to reach it? The fixture demo currently reaches it on a timer; was that the intent? | Delivery screens |
+| 21 | **No design draws 440 after delivery completes.** Its headline reads "Physical Notice on the Way", which stops being true. The drawn route to 440 is withdrawn on completion, so this only affects a client already sitting on the page. Supply a delivered state, or confirm 440 is simply not the screen for a finished case | Tracking screen 440 |
 
 Items 1 to 6 all touch `service_pricing` and `commission_rates`. The schema is
 built so they can land as rows whenever they arrive, without migration.
@@ -1518,7 +1525,7 @@ not treated as settled.
 | 286 | Client → advocate document hand-off | Advocate → noticee dispatch | Carrier and waybill inputs bound to the dispatch case; recipient is the case's noticee. **One string changed** — see below | Provisional |
 | 194 | Client → advocate delivery | Advocate → noticee dispatch | Recipient wording — two strings. See below | Provisional |
 | 195 | Client → advocate delivery | Advocate → noticee dispatch | Pickup and recipient cells bound to advocate and noticee. Wording follows 194 | Provisional |
-| 440 | — | — | **No wording changed.** View Profile and Chat with Advocate had no drawn disabled state, so they borrow the disabled look drawn for View Draft on the same screen. A reused visual state, not new copy | Provisional |
+| 31, 32, 437 | — | — | **No wording changed.** View Profile and Chat with Advocate had no drawn disabled state, so they borrow the disabled look drawn for View Draft. A reused visual state, not new copy | Provisional |
 
 **Design 440 is NOT a substitution.** Its "Recovery" wording was almost
 registered as one. It is not copy — it is the `matter_type` the client chose at
