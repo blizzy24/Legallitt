@@ -135,6 +135,8 @@ function Pill({
   children: ReactNode;
   green?: boolean;
 }) {
+  // An absent fact takes its pill with it.
+  if (children === '' || children === null || children === undefined) return null;
   return (
     <Text
       style={[s.pill, green && { backgroundColor: t.mint, color: t.green }]}
@@ -148,6 +150,8 @@ export type NoticeDeliveryFacts = {
   proof: ImageSourcePropType | null; proofStatus: string; signatureStatus: string;
   fileMeta: string; estimate: string; latestUpdate: string; latestPlace: string; latestTime: string;
   progressStep: number; completedSteps: number[];
+  /** The notice has left the advocate and is not yet delivered. */
+  inTransit: boolean;
 };
 const fixtureFacts: NoticeDeliveryFacts = {
   confirmation:'BLUE DART CONFIRMED', deliveredOn:'26 Oct 2024', deliveredAt:'02:45 PM', receivedBy:d.recipient,
@@ -155,7 +159,7 @@ const fixtureFacts: NoticeDeliveryFacts = {
   fileMeta:'Signed Copy · 4 Pages', estimate:'◷ In 1–2 days',
   latestUpdate:'Package processed at Sorting Hub. Moving towards Rohini delivery center.',
   latestPlace:'⌖ Delhi Central Hub', latestTime:'Today, 26 Oct · 04:15 PM',
-  progressStep:5, completedSteps:[0,1,2,3,4],
+  progressStep:5, completedSteps:[0,1,2,3,4], inTransit:true,
 };
 export default function NoticeDeliveryScreen({
   matterType = null,
@@ -222,35 +226,51 @@ export default function NoticeDeliveryScreen({
                 <Label>DELIVERY DETAILS</Label>
                 <Pill green>● Handover Complete</Pill>
               </View>
-              <View style={s.row}>
-                <Truck color={t.brand} />
-                <View style={s.flex}>
-                  <Title small>{d.courier}</Title>
-                  <Body large>Waybill: {d.waybill}</Body>
+              {Boolean(d.courier || d.waybill) && (
+                <View style={s.row}>
+                  <Truck color={t.brand} />
+                  <View style={s.flex}>
+                    {Boolean(d.courier) && <Title small>{d.courier}</Title>}
+                    {Boolean(d.waybill) && <Body large>Waybill: {d.waybill}</Body>}
+                  </View>
+                  {Boolean(d.waybill) && <CopyWaybill waybill={d.waybill} />}
                 </View>
-                <CopyWaybill waybill={d.waybill} />
-              </View>
-              <View style={[s.panel, s.row]}>
-                <View style={s.flex}>
-                  <Body large>Delivered On</Body>
-                  <Title small>{facts.deliveredOn}</Title>
+              )}
+              {Boolean(facts.deliveredOn || facts.deliveredAt) && (
+                <View style={[s.panel, s.row]}>
+                  {Boolean(facts.deliveredOn) && (
+                    <View style={s.flex}>
+                      <Body large>Delivered On</Body>
+                      <Title small>{facts.deliveredOn}</Title>
+                    </View>
+                  )}
+                  {Boolean(facts.deliveredAt) && (
+                    <View style={s.flex}>
+                      <Body large>Delivered At</Body>
+                      <Title small>{facts.deliveredAt}</Title>
+                    </View>
+                  )}
                 </View>
-                <View style={s.flex}>
-                  <Body large>Delivered At</Body>
-                  <Title small>{facts.deliveredAt}</Title>
-                </View>
-              </View>
-              <Body large>Received By</Body>
-              <View style={s.row}>
-                <Text style={[s.strong, s.flex, { fontSize: t.deliveredBody }]}>
-                  {facts.receivedBy}
-                </Text>
-                <Pill>{facts.signatureStatus}</Pill>
-              </View>
-              <Body large>Delivery Address</Body>
-              <Text style={[s.body, { fontSize: t.deliveredBody }]}>
-                {d.address}
-              </Text>
+              )}
+              {Boolean(facts.receivedBy) && (
+                <>
+                  <Body large>Received By</Body>
+                  <View style={s.row}>
+                    <Text style={[s.strong, s.flex, { fontSize: t.deliveredBody }]}>
+                      {facts.receivedBy}
+                    </Text>
+                    <Pill>{facts.signatureStatus}</Pill>
+                  </View>
+                </>
+              )}
+              {Boolean(d.address) && (
+                <>
+                  <Body large>Delivery Address</Body>
+                  <Text style={[s.body, { fontSize: t.deliveredBody }]}>
+                    {d.address}
+                  </Text>
+                </>
+              )}
             </Card>
             <Card>
               <View style={s.row}>
@@ -258,10 +278,7 @@ export default function NoticeDeliveryScreen({
                 <Pill green>{facts.proofStatus}</Pill>
               </View>
               <View style={s.row}>
-                <Image
-                  source={facts.proof ?? undefined}
-                  style={s.proof}
-                />
+                {facts.proof !== null && <Image source={facts.proof} style={s.proof} />}
                 <View style={s.flex}>
                   <Title small>Signed Proof of Delivery (POD)</Title>
                   <Body large>
@@ -282,19 +299,21 @@ export default function NoticeDeliveryScreen({
                 </View>
               </View>
             </Card>
-            <Card>
-              <Label>YOUR LEGAL NOTICE</Label>
-              <View style={[s.panel, s.row]}>
-                <FileText color={t.pdf} />
-                <View style={s.flex}>
-                  <Text style={s.strong}>{d.file}</Text>
-                  <Body large>{facts.fileMeta}</Body>
+            {Boolean(d.file) && (
+              <Card>
+                <Label>YOUR LEGAL NOTICE</Label>
+                <View style={[s.panel, s.row]}>
+                  <FileText color={t.pdf} />
+                  <View style={s.flex}>
+                    <Text style={s.strong}>{d.file}</Text>
+                    {Boolean(facts.fileMeta) && <Body large>{facts.fileMeta}</Body>}
+                  </View>
+                  <Pressable accessibilityRole="button" onPress={viewNotice}>
+                    <Text style={s.pill}>View Notice</Text>
+                  </Pressable>
                 </View>
-                <Pressable accessibilityRole="button" onPress={viewNotice}>
-                  <Text style={s.pill}>View Notice</Text>
-                </Pressable>
-              </View>
-            </Card>
+              </Card>
+            )}
             <Card>
               <View style={s.row}>
                 <Title small>Case Status</Title>
@@ -321,22 +340,26 @@ export default function NoticeDeliveryScreen({
         ) : (
           <>
             <Card>
-              <View style={s.row}>
-                <Text style={[s.label, { color: t.green }]}>● IN TRANSIT</Text>
-                <Pill>{facts.estimate}</Pill>
-              </View>
+              {(facts.inTransit || Boolean(facts.estimate)) && (
+                <View style={s.row}>
+                  {facts.inTransit && <Text style={[s.label, { color: t.green }]}>● IN TRANSIT</Text>}
+                  <Pill>{facts.estimate}</Pill>
+                </View>
+              )}
               <Title>Physical Notice on the Way</Title>
               <Body>
                 {matter.dispatch}
               </Body>
-              <View style={[s.panel, s.row]}>
-                <Truck color={t.brand} />
-                <View style={s.flex}>
-                  <Text style={s.strong}>{d.courier}</Text>
-                  <Body>{d.waybill}</Body>
+              {Boolean(d.courier || d.waybill) && (
+                <View style={[s.panel, s.row]}>
+                  <Truck color={t.brand} />
+                  <View style={s.flex}>
+                    {Boolean(d.courier) && <Text style={s.strong}>{d.courier}</Text>}
+                    {Boolean(d.waybill) && <Body>{d.waybill}</Body>}
+                  </View>
+                  {Boolean(d.waybill) && <CopyWaybill waybill={d.waybill} />}
                 </View>
-                <CopyWaybill waybill={d.waybill} />
-              </View>
+              )}
             </Card>
             <Card>
               <View style={s.row}>
@@ -344,43 +367,55 @@ export default function NoticeDeliveryScreen({
                 <Pill>{d.case}</Pill>
               </View>
               <Title>{matter.title}</Title>
-              <Text style={s.strong}>{d.recipient}</Text>
-              <View style={s.panel}>
-                <View style={s.row}>
-                  <MapPin size={t.discIcon} color={t.brand} />
-                  <Text style={[s.body, s.flex]}>{d.address}</Text>
+              {Boolean(d.recipient) && <Text style={s.strong}>{d.recipient}</Text>}
+              {Boolean(d.address || d.phone) && (
+                <View style={s.panel}>
+                  {Boolean(d.address) && (
+                    <View style={s.row}>
+                      <MapPin size={t.discIcon} color={t.brand} />
+                      <Text style={[s.body, s.flex]}>{d.address}</Text>
+                    </View>
+                  )}
+                  {Boolean(d.phone) && (
+                    <View style={s.row}>
+                      <Phone size={t.discIcon} color={t.brand} />
+                      <Body>{d.phone}</Body>
+                    </View>
+                  )}
                 </View>
-                <View style={s.row}>
-                  <Phone size={t.discIcon} color={t.brand} />
-                  <Body>{d.phone}</Body>
-                </View>
-              </View>
+              )}
             </Card>
-            <Card>
-              <Label>● LATEST COURIER UPDATE</Label>
-              <Text style={s.strong}>
-                {facts.latestUpdate}
-              </Text>
-              <View style={s.row}>
-                <Body>{facts.latestPlace}</Body>
-                <Body>{facts.latestTime}</Body>
-              </View>
-            </Card>
+            {Boolean(facts.latestUpdate) && (
+              <Card>
+                <Label>● LATEST COURIER UPDATE</Label>
+                <Text style={s.strong}>
+                  {facts.latestUpdate}
+                </Text>
+                {Boolean(facts.latestPlace || facts.latestTime) && (
+                  <View style={s.row}>
+                    <Body>{facts.latestPlace}</Body>
+                    <Body>{facts.latestTime}</Body>
+                  </View>
+                )}
+              </Card>
+            )}
             <View style={s.envelopeCard}>
               <Image
                 source={require("../assets/notice-envelope.png")}
                 style={s.envelope}
               />
-              <View style={[s.panel, s.row]}>
-                <FileText color={t.pdf} />
-                <View style={s.flex}>
-                  <Text style={s.strong}>{d.file}</Text>
-                  <Body>{facts === fixtureFacts ? 'Signed copy · 4 Pages' : facts.fileMeta}</Body>
+              {Boolean(d.file) && (
+                <View style={[s.panel, s.row]}>
+                  <FileText color={t.pdf} />
+                  <View style={s.flex}>
+                    <Text style={s.strong}>{d.file}</Text>
+                    {facts === fixtureFacts ? <Body>Signed copy · 4 Pages</Body> : Boolean(facts.fileMeta) && <Body>{facts.fileMeta}</Body>}
+                  </View>
+                  <Pressable accessibilityRole="button" onPress={viewNotice}>
+                    <Text style={s.pill}>Preview</Text>
+                  </Pressable>
                 </View>
-                <Pressable accessibilityRole="button" onPress={viewNotice}>
-                  <Text style={s.pill}>Preview</Text>
-                </Pressable>
-              </View>
+              )}
             </View>
             <Card>
               <View style={s.row}>
@@ -420,7 +455,7 @@ export default function NoticeDeliveryScreen({
                         {title}
                         {i === facts.progressStep ? "  ACTIVE" : ""}
                       </Text>
-                      <Body>{sub}</Body>
+                      {Boolean(sub) && <Body>{sub}</Body>}
                     </View>
                   </View>
                 ))}

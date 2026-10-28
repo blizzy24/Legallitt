@@ -185,18 +185,26 @@ export function AdvocateNoticeReviewScreenView({ data, navigate, reviewState }: 
             <FileText size={t.fileIconGlyph} color={colors.brandDark} />
           </View>
           <View style={styles.fileText}>
-            <Text style={styles.fileName} {...shrinkToFit(0.7)}>
-              {r.draftFile.name}
-            </Text>
-            <View style={styles.fileMetaRow}>
-              <Text style={styles.fileMeta} {...shrinkToFit(0.75)}>
-                {r.draftFile.size} •
+            {Boolean(r.draftFile.name) && (
+              <Text style={styles.fileName} {...shrinkToFit(0.7)}>
+                {r.draftFile.name}
               </Text>
-              <CircleCheck size={t.fileTick} color={t.fileStatusColour} style={styles.fileTick} />
-              <Text style={styles.fileStatus} {...shrinkToFit(0.75)}>
-                {r.draftFile.status}
-              </Text>
-            </View>
+            )}
+            {Boolean(r.draftFile.size || r.draftFile.status) && (
+              <View style={styles.fileMetaRow}>
+                {Boolean(r.draftFile.size) && (
+                  <Text style={styles.fileMeta} {...shrinkToFit(0.75)}>
+                    {r.draftFile.size}{r.draftFile.status ? ' •' : ''}
+                  </Text>
+                )}
+                {Boolean(r.draftFile.status) && <CircleCheck size={t.fileTick} color={t.fileStatusColour} style={styles.fileTick} />}
+                {Boolean(r.draftFile.status) && (
+                  <Text style={styles.fileStatus} {...shrinkToFit(0.75)}>
+                    {r.draftFile.status}
+                  </Text>
+                )}
+              </View>
+            )}
           </View>
           <Pressable onPress={() => router.push(`/advocate/notice/${id}/draft` as Href)} accessibilityRole="button" style={styles.fileBtn}>
             <Text style={styles.fileBtnText} {...shrinkToFit(0.8)}>

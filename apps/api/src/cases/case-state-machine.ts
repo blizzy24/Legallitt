@@ -16,6 +16,7 @@ import {
   NoticeDraftInputSchema,
   NoticeCommentSchema,
   NoticeDeclineSchema,
+  IN_FLIGHT_SHIPMENT_STATUSES,
 } from "@legalitt/shared";
 import { z } from "zod";
 import { parse } from "../auth/auth.service";
@@ -339,6 +340,18 @@ export class CaseStateMachine {
       return updated;
     });
   }
+  // The advocate begins (or, after a review, resumes) drafting. Repeating it once
+  // drafting has begun is harmless, so a double tap is not an error.
+  async startDrafting(actor: CaseActor, id: string) {
+    if (actor.role !== "advocate")
+      throw new ForbiddenException("Assigned advocate required");
+    const db = await this.prisma.getClient();
+    return db.$transaction(async (tx) => {
+      const record = await lockedCase(tx, actor, id);
+      if (record.status === CaseStatus.in_progress) return record;
+      return this.advance(tx, actor, record, CaseStatus.in_progress);
+    });
+  }
   async decline(actor: CaseActor, id: string, body: unknown) {
     const input = parse(NoticeDeclineSchema, body ?? {});
     const db = await this.prisma.getClient();
@@ -384,6 +397,7 @@ export class CaseStateMachine {
         data: {
           case_id: id,
           type: "draft_saved",
+          source: actor.source ?? "real",
           actor_id: actor.id,
           actor_role: actor.role,
           from_status: record.status,
@@ -499,7 +513,7 @@ export class CaseStateMachine {
           "Upload proof of delivery for this case first",
         );
       const shipment = await tx.shipment.findFirst({
-        where: { case_id: id, direction: "to_recipient", status: "dispatched" },
+        where: { case_id: id, direction: "to_recipient", status: { in: [...IN_FLIGHT_SHIPMENT_STATUSES] } },
         orderBy: { booked_at: "desc" },
       });
       if (!shipment)

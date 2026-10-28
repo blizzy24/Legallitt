@@ -1,4 +1,3 @@
-import { Logger, type OnModuleDestroy } from '@nestjs/common';
 import { z } from 'zod';
 import type { PrismaService } from '../prisma.service';
 import { demoPassword } from '../phone-auth/demo-accounts';
@@ -6,25 +5,18 @@ import type { AdminUiPort } from './admin-ui.port';
 import { SystemTrigger } from './system-trigger';
 import { simulatedProof } from './simulated-proof';
 
-export class SimulatedAdminUi implements AdminUiPort, OnModuleDestroy {
-  private readonly logger = new Logger(SimulatedAdminUi.name);
-  private readonly pending = new Map<string, NodeJS.Timeout>();
+// No timer of its own: the demo progression (§2.12) calls this as the seeded
+// admin once a dispatched notice has passed its last courier milestone.
+export class SimulatedAdminUi implements AdminUiPort {
   constructor(private readonly prisma: PrismaService, private readonly trigger: SystemTrigger) {}
-  dispatched(caseId: string) {
-    if (this.pending.has(caseId)) return;
-    const timer = setTimeout(() => {
-      void this.deliver(caseId).catch((error: unknown) => {
-        // Never log credentials, signed URLs or PDF contents.
-        const reason = error instanceof Error && /^(Delivery pipeline|POD S3 upload)/.test(error.message) ? error.message : (error instanceof Error ? error.name : "UnknownError");
-        this.logger.error(`Simulated delivery failed for case ${caseId}: ${reason}; case remains dispatched`);
-      }).finally(() => this.pending.delete(caseId));
-    }, 3000);
-    timer.unref();
-    this.pending.set(caseId, timer);
-  }
-  onModuleDestroy() {
-    for (const timer of this.pending.values()) clearTimeout(timer);
-    this.pending.clear();
+  async confirmDelivery(caseId: string) {
+    try {
+      await this.deliver(caseId);
+    } catch (error) {
+      // Never surface credentials, signed URLs or PDF contents.
+      const reason = error instanceof Error && /^(Delivery pipeline|POD S3 upload)/.test(error.message) ? error.message : (error instanceof Error ? error.name : "UnknownError");
+      throw new Error(`Simulated delivery failed: ${reason}`);
+    }
   }
   private async deliver(caseId: string) {
     // Read only. The HTTP handlers own every write and lifecycle transition.

@@ -1,6 +1,5 @@
 import {
   Body,
-  Inject,
   Controller,
   Get,
   Param,
@@ -8,7 +7,6 @@ import {
   Req,
   UseGuards,
 } from "@nestjs/common";
-import { ADMIN_UI, type AdminUiPort } from "../admin-ui/admin-ui.port";
 import { z } from "zod";
 import { CaseStatus } from "@legalitt/shared";
 import { AuthGuard, Roles, type AuthRequest } from "../auth/auth.controller";
@@ -31,7 +29,6 @@ export class NoticeController {
   constructor(
     private readonly state: CaseStateMachine,
     private readonly cases: CaseRepository,
-    @Inject(ADMIN_UI) private readonly adminUi: AdminUiPort,
     private readonly shipments: ShipmentService,
   ) {}
   @Get("advocate/requests") @Roles("advocate") requests(
@@ -48,6 +45,14 @@ export class NoticeController {
     return json(
       this.state.transition(req.user!, id(value), CaseStatus.advocate_accepted),
     );
+  }
+  @Post("cases/:id/start") start(
+    @Req() req: AuthRequest,
+    @Param("id") value: string,
+    @Body() body: unknown,
+  ) {
+    empty(body);
+    return json(this.state.startDrafting(req.user!, id(value)));
   }
   @Post("cases/:id/decline") decline(
     @Req() req: AuthRequest,
@@ -133,10 +138,10 @@ export class NoticeController {
     @Param("id") value: string,
     @Body() body: unknown,
   ) {
-    return json(this.state.dispatch(req.user!, id(value), body).then(record => {
-      this.adminUi.dispatched(record.id);
-      return record;
-    }));
+    return json(this.state.dispatch(req.user!, id(value), body));
+  }
+  @Post("admin/cases/:id/shipment/status") @Roles("admin") shipmentStatus(@Req() req: AuthRequest, @Param("id") value: string, @Body() body: unknown) {
+    return json(this.shipments.advance(req.user!, id(value), body));
   }
   @Post(["admin/cases/:id/deliver", "cases/:id/delivered"]) @Roles("admin") deliver(
     @Req() req: AuthRequest,

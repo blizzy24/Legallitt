@@ -38,11 +38,11 @@ export function RequestChangesView({ form, invoice, tracking, onSubmit }: {
         </View>
         <View style={s.row}>
           <Text style={s.label}>NOTICE DETAILS</Text>
-          <Text style={s.label}>Ref: {TRACKING.ref}</Text>
+          {Boolean(TRACKING.ref) && <Text style={s.label}>Ref: {TRACKING.ref}</Text>}
         </View>
         <View style={s.card}>
           {[
-            ["Notice Type", "Legal Notice"],
+            ["Notice Type", TRACKING.noticeType],
             ["Service", `${tier.label}  ${tier.trackingSpeed}`],
             ["Submitted On", TRACKING.submittedOn ? formatDate(TRACKING.submittedOn) : ''],
             ["Current Status", "● Awaiting Your Approval"],

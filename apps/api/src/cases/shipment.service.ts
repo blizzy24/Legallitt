@@ -1,5 +1,5 @@
 import { BadRequestException, ConflictException, ForbiddenException, Inject, Injectable } from '@nestjs/common';
-import { ShipmentDetailsSchema } from '@legalitt/shared';
+import { ShipmentDetailsSchema, ShipmentStatusInputSchema, nextShipmentStatus, type ShipmentStatus } from '@legalitt/shared';
 import { PrismaService } from '../prisma.service';
 import { parse } from '../auth/auth.service';
 import { COURIER, type CourierPort } from '../courier/courier.port';
@@ -24,6 +24,30 @@ export class ShipmentService {
         payload:{shipment_id:shipment.id,confirmation_source:'advocate'},
       });
       return delivered;
+    });
+  }
+  /** Admin moves a dispatched notice one courier milestone forward (design 440).
+   * Delivered is not set here: it needs proof of delivery, via the deliver route. */
+  async advance(actor: CaseActor, caseId: string, body: unknown) {
+    if (actor.role !== 'admin') throw new ForbiddenException('Admin required');
+    const {status} = parse(ShipmentStatusInputSchema, body);
+    const db = await this.prisma.getClient();
+    return db.$transaction(async tx => {
+      const record = await lockedCase(tx, actor, caseId);
+      if (record.status !== 'dispatched') throw new ConflictException('Only a dispatched notice has courier milestones');
+      const shipment = await tx.shipment.findFirst({where: {case_id: caseId, direction: 'to_recipient'}, orderBy: [{booked_at: 'desc'}, {id: 'desc'}]});
+      if (!shipment) throw new ConflictException('Dispatched shipment not found');
+      if (nextShipmentStatus(shipment.status as ShipmentStatus) !== status)
+        throw new ConflictException('Shipment milestones advance one step at a time');
+      const updated = await tx.shipment.update({where: {id: shipment.id}, data: {status}});
+      await appendCaseEvent(tx, {case_id: caseId, type: 'shipment_status_changed', source: actor.source ?? 'real',
+        actor_id: actor.trigger === 'system' ? null : actor.id, actor_role: actor.trigger === 'system' ? null : actor.role,
+        from_status: record.status, to_status: record.status,
+        payload: {shipment_id: shipment.id, from: shipment.status, to: status, ...(actor.trigger === 'system' ? {actor: 'system'} : {})},
+      });
+      await tx.adminAction.create({data: {admin_id: actor.id, action: 'shipment_status', subject_type: 'case', subject_id: caseId,
+        payload: {shipment_id: shipment.id, from: shipment.status, to: status}}});
+      return updated;
     });
   }
   async save(actor: CaseActor, caseId: string, body: unknown, book = false) {

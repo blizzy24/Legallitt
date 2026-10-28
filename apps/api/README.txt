@@ -312,3 +312,29 @@ Admin has API endpoints, no invented admin screens or permanent new accounts.
 
 Export API and fixture modes sequentially. The mobile build clears Metro
 transforms to avoid reusing a previous mode's inlined environment values.
+
+Demo progression — architecture §2.12
+-------------------------------------
+DEMO_PROGRESSION=on|off. Unset means on only when ENVIRONMENT=dev and
+NODE_ENV=development; anything else is off. On outside dev, or in production,
+fails startup. When on, all four intervals are required in .env.local (whole
+milliseconds; there are no built-in defaults):
+  DEMO_ASSIGN_DELAY_MS=30000        paid -> seeded admin assigns the seeded advocate
+  DEMO_DRAFT_START_DELAY_MS=30000   assigned -> seeded advocate accepts and starts
+                                    (also: accepted, or changes requested, -> starts)
+  DEMO_DRAFT_DONE_DELAY_MS=30000    in progress -> seeded advocate submits the draft
+  DEMO_SHIPMENT_STEP_MS=5000        dispatched -> seeded admin advances one courier
+                                    milestone; after Out for Delivery, confirms
+                                    delivery with a labelled SIMULATED proof
+Client approval and the advocate's courier booking/dispatch are never timed.
+Each step signs in as demo-admin@ or demo-advocate@legalitt.invalid and calls
+the real endpoint with a provenance ticket limited to that case and route; its
+events record source=simulated. The timer reads cases and writes nothing. If no
+advocate wrote a draft, the seeded advocate submits a placeholder marked
+SIMULATED DRAFT. The progression acts on EVERY eligible case in DATABASE_URL.
+
+Additional routes:
+  POST /api/v1/cases/:id/start                     {} advocate begins drafting
+  POST /api/v1/admin/cases/:id/shipment/status     {status} one step of
+       pickup_booked -> picked_up -> in_transit -> out_for_delivery
+Delivery confirmation (admin/cases/:id/deliver) accepts any in-flight milestone.

@@ -39,8 +39,14 @@ export type NoticeTrackingData = {
   tracking: Omit<typeof TRACKING, 'advocate'> & {advocate: Omit<typeof TRACKING.advocate, 'rating'|'reviews'> & {rating: number|string; reviews: number|string}};
   steps: typeof TRACKING_STEPS;
 };
-export function TrackingScreenView({ decision = false, data, form, navigate, currentStep, paidAmount, onViewDraft, onApprove, onViewProfile, advocateVerified = true, allowDemoAdvance = true }: {
+// decisionStage drives 437's Your Decision section: 'review' draws Approve &
+// Proceed and Request Changes; 'route' (the notice has shipped) draws only the
+// drawn route to 440; null draws nothing. stepActive=false means no drawn step
+// describes the case right now (approved, not yet shipped): the timeline shows
+// the ticks it has earned and no status pill is printed.
+export function TrackingScreenView({ decision = false, data, form, navigate, currentStep, paidAmount, onViewDraft, onApprove, onViewProfile, advocateVerified = true, allowDemoAdvance = true, decisionStage = 'review', stepActive = true }: {
   advocateVerified?: boolean; decision?: boolean; data: NoticeTrackingData; currentStep?: number; paidAmount?: number | null; onViewProfile?: () => void; onViewDraft?: () => void; onApprove?: () => void; allowDemoAdvance?: boolean;
+  decisionStage?: 'review' | 'route' | null; stepActive?: boolean;
   form: ReturnType<typeof useLegalNotice>['form']; navigate: typeof router;
 }) {
   const { invoice: INVOICE, tracking: TRACKING, steps: TRACKING_STEPS } = data;
@@ -54,7 +60,13 @@ export function TrackingScreenView({ decision = false, data, form, navigate, cur
   // DEMO: Drafting in Progress waits on the advocate; it moves to Awaiting Your Approval.
   useDemoWait(allowDemoAdvance && !approval && !decision, () => setState('approval'));
   const current = currentStep ?? TRACKING_CURRENT[state];
-  const statusLabel = TRACKING_STEPS[current - 1].title;
+  // Past the last step (a completed case) the status reads as that last step.
+  const statusLabel = stepActive ? TRACKING_STEPS[Math.min(current, TRACKING_STEPS.length) - 1].title : '';
+  // Absent facts render as absent elements, taking their labels, separators,
+  // brackets and icons with them — never an empty slot with its decoration left.
+  const adv = TRACKING.advocate;
+  const hasAdvocate = Boolean(adv.name);
+  const hasRating = adv.rating !== '';
 
   return (
     <View style={styles.screen}>
@@ -74,11 +86,11 @@ export function TrackingScreenView({ decision = false, data, form, navigate, cur
       </View>
 
       <ScrollView
-        contentContainerStyle={[styles.content, { paddingBottom: approval ? BAR_HEIGHT + insets.bottom + t.cardGap : insets.bottom + t.cardGap }]}
+        contentContainerStyle={[styles.content, { paddingBottom: approval && !decision ? BAR_HEIGHT + insets.bottom + t.cardGap : insets.bottom + t.cardGap }]}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        {approval && (
+        {approval && Boolean(INVOICE.requestId) && (
           <View style={styles.idChip}>
             <Text style={styles.idChipLabel}>REQUEST ID</Text>
             <Text style={styles.idChipValue}>#{INVOICE.requestId}</Text>
@@ -87,10 +99,12 @@ export function TrackingScreenView({ decision = false, data, form, navigate, cur
 
         <View style={[styles.card, styles.statusCard, approval && styles.statusCardApproval]}>
           <View style={styles.pillRow}>
-            <View style={styles.pill}>
-              <View style={styles.pillDot} />
-              <Text style={styles.pillText}>{statusLabel}</Text>
-            </View>
+            {Boolean(statusLabel) && (
+              <View style={styles.pill}>
+                <View style={styles.pillDot} />
+                <Text style={styles.pillText}>{statusLabel}</Text>
+              </View>
+            )}
             <Text style={styles.tier}>{tier.tierLabel}</Text>
           </View>
           <Text style={styles.title}>{approval ? 'Your Legal Notice Draft is Ready' : 'Legal Notice Request Submitted'}</Text>
@@ -99,7 +113,7 @@ export function TrackingScreenView({ decision = false, data, form, navigate, cur
               ? 'Your advocate has prepared the legal notice. Please review the draft carefully before approving it for dispatch.'
               : 'Your request and payment have been received. A verified advocate is preparing your legal notice.'}
           </Text>
-          {!approval && (
+          {!approval && Boolean(INVOICE.requestId) && (
             <View style={styles.idBox}>
               <Text style={styles.idLabel}>REQUEST ID</Text>
               <Text style={styles.idValue}>#{INVOICE.requestId}</Text>
@@ -112,10 +126,10 @@ export function TrackingScreenView({ decision = false, data, form, navigate, cur
           )}
         </View>
 
-        <SectionRow label="NOTICE DETAILS" right={`Ref: ${TRACKING.ref}`} />
+        <SectionRow label="NOTICE DETAILS" right={TRACKING.ref ? `Ref: ${TRACKING.ref}` : ''} />
         <View style={[styles.card, styles.table]}>
           <TableRow label="Notice Type">
-            <Text style={styles.rowValue}>{INVOICE.service}</Text>
+            <Text style={styles.rowValue}>{TRACKING.noticeType}</Text>
           </TableRow>
           <TableRow label="Service">
             <View style={styles.urgent}>
@@ -126,45 +140,56 @@ export function TrackingScreenView({ decision = false, data, form, navigate, cur
           <TableRow label="Submitted On">
             <Text style={styles.rowValue}>{(TRACKING.submittedOn ? formatDate(TRACKING.submittedOn) : '')}</Text>
           </TableRow>
-          <TableRow label="Current Status">
-            <View style={styles.statusPill}>
-              <View style={styles.pillDot} />
-              <Text style={styles.statusPillText}>{decision ? "Awaiting Your Approval" : statusLabel}</Text>
-            </View>
-          </TableRow>
+          {(Boolean(statusLabel) || (decision && currentStep === undefined)) && (
+            <TableRow label="Current Status">
+              <View style={styles.statusPill}>
+                <View style={styles.pillDot} />
+                <Text style={styles.statusPillText}>{decision && currentStep === undefined ? "Awaiting Your Approval" : statusLabel}</Text>
+              </View>
+            </TableRow>
+          )}
         </View>
 
         <SectionRow label="ASSIGNED ADVOCATE" right={advocateVerified?"Verified Advocate":""} icon={<BadgeCheck style={!advocateVerified?{opacity:0}:undefined} size={t.sectionLinkIcon} color={ink.accent} />} />
         <View style={[styles.card, styles.adv]}>
+          {hasAdvocate && (
           <View style={styles.advRow}>
-            <AdvocateAvatar name={TRACKING.advocate.name} style={styles.avatarLarge}><Text style={styles.avatarText}>{TRACKING.advocate.initials}</Text></AdvocateAvatar>
+            <AdvocateAvatar name={adv.name} style={styles.avatarLarge}><Text style={styles.avatarText}>{adv.initials}</Text></AdvocateAvatar>
             <View style={styles.advText}>
               <View style={styles.nameRow}>
-                <Text style={styles.name}>{TRACKING.advocate.name}</Text>
+                <Text style={styles.name}>{adv.name}</Text>
                 <BadgeCheck style={!advocateVerified?{opacity:0}:undefined} size={t.tickSize} color={colors.brand} />
               </View>
-              <Text style={styles.meta}>
-                {TRACKING.advocate.experience} · {TRACKING.advocate.practice}
-              </Text>
-              <View style={styles.barRow}>
-                <Text style={styles.bar}>Bar Reg: {TRACKING.advocate.barReg}</Text>
-                <Text style={styles.barDot}>·</Text>
-                <Star size={t.starSize} color={colors.brand} fill={colors.brand} />
-                <Text style={styles.rating}>
-                  {' '}
-                  {TRACKING.advocate.rating} ({TRACKING.advocate.reviews} reviews)
+              {Boolean(adv.experience || adv.practice) && (
+                <Text style={styles.meta}>
+                  {adv.experience}{Boolean(adv.experience && adv.practice) && ' · '}{adv.practice}
                 </Text>
-              </View>
+              )}
+              {(Boolean(adv.barReg) || hasRating) && (
+                <View style={styles.barRow}>
+                  {Boolean(adv.barReg) && <Text style={styles.bar}>Bar Reg: {adv.barReg}</Text>}
+                  {Boolean(adv.barReg) && hasRating && <Text style={styles.barDot}>·</Text>}
+                  {hasRating && <Star size={t.starSize} color={colors.brand} fill={colors.brand} />}
+                  {hasRating && (
+                    <Text style={styles.rating}>
+                      {' '}
+                      {adv.rating}{adv.reviews !== '' && <> ({adv.reviews} reviews)</>}
+                    </Text>
+                  )}
+                </View>
+              )}
             </View>
           </View>
-          <View style={styles.buttons}>
-            <Pressable accessibilityRole="button" onPress={onViewProfile ?? (() => router.push(`/advocates/${LEGAL_NOTICE_ADVOCATE.id}`))} style={[styles.button, styles.buttonOutline]}>
-              <CircleUser size={t.buttonIcon} color={colors.textPrimary} />
-              <Text style={styles.buttonText}>View Profile</Text>
+          )}
+          {/* No advocate yet: both take this screen's drawn disabled state (View Draft). */}
+          <View style={[styles.buttons, !hasAdvocate && styles.buttonsAlone]}>
+            <Pressable accessibilityRole="button" disabled={!hasAdvocate} accessibilityState={{ disabled: !hasAdvocate }} onPress={onViewProfile ?? (() => router.push(`/advocates/${LEGAL_NOTICE_ADVOCATE.id}`))} style={[styles.button, styles.buttonOutline]}>
+              <CircleUser size={t.buttonIcon} color={hasAdvocate ? colors.textPrimary : t.disabledText} />
+              <Text style={[styles.buttonText, !hasAdvocate && styles.buttonTextDisabled]}>View Profile</Text>
             </Pressable>
-            <Pressable accessibilityRole="button" onPress={() => router.push('/chat/advocate')} style={[styles.button, styles.buttonFill]}>
-              <MessageSquare size={t.buttonIcon} color={ink.onBrand} />
-              <Text style={[styles.buttonText, styles.buttonTextFill]}>Chat with Advocate</Text>
+            <Pressable accessibilityRole="button" disabled={!hasAdvocate} accessibilityState={{ disabled: !hasAdvocate }} onPress={() => router.push('/chat/advocate')} style={[styles.button, hasAdvocate ? styles.buttonFill : styles.buttonOutline]}>
+              <MessageSquare size={t.buttonIcon} color={hasAdvocate ? ink.onBrand : t.disabledText} />
+              <Text style={[styles.buttonText, hasAdvocate ? styles.buttonTextFill : styles.buttonTextDisabled]}>Chat with Advocate</Text>
             </Pressable>
           </View>
         </View>
@@ -177,8 +202,8 @@ export function TrackingScreenView({ decision = false, data, form, navigate, cur
                 <FileText size={t.draftTileIcon} color={colors.brand} strokeWidth={1.5} />
               </View>
               <View style={styles.draftText}>
-                <Text style={styles.draftTitle}>{TRACKING.draftFile}</Text>
-                <Text style={styles.draftNote}>Prepared by {TRACKING.advocate.name}</Text>
+                {Boolean(TRACKING.draftFile) && <Text style={styles.draftTitle}>{TRACKING.draftFile}</Text>}
+                {hasAdvocate && <Text style={styles.draftNote}>Prepared by {adv.name}</Text>}
                 <Text style={styles.reviewDesc}>Please review the notice before approving it for dispatch.</Text>
               </View>
             </View>
@@ -195,7 +220,7 @@ export function TrackingScreenView({ decision = false, data, form, navigate, cur
         ) : (
           <View style={[styles.card, styles.timeline]}>
             {TRACKING_STEPS.map((step, i) => (
-              <TimelineStep key={step.title} index={i + 1} step={step} current={current} paid={paid} tracking={TRACKING} last={i === TRACKING_STEPS.length - 1} />
+              <TimelineStep key={step.title} index={i + 1} step={step} current={current} activeStep={stepActive} paid={paid} tracking={TRACKING} last={i === TRACKING_STEPS.length - 1} />
             ))}
           </View>
         )}
@@ -205,8 +230,8 @@ export function TrackingScreenView({ decision = false, data, form, navigate, cur
           <View style={styles.draftRow}>
             <View style={styles.draftTile}><FileText size={t.draftTileIcon} color={colors.brand} /></View>
             <View style={styles.draftText}>
-              <Text style={styles.draftTitle}>{TRACKING.draftFile}</Text>
-              <Text style={styles.draftNote}>{decision ? `Prepared by ${TRACKING.advocate.name}` : 'Being prepared by your advocate'}</Text>
+              {Boolean(TRACKING.draftFile) && <Text style={styles.draftTitle}>{TRACKING.draftFile}</Text>}
+              {(!decision || hasAdvocate) && <Text style={styles.draftNote}>{decision ? `Prepared by ${adv.name}` : 'Being prepared by your advocate'}</Text>}
               <Text style={styles.reviewDesc}>{decision ? 'Please review the notice before approving it for dispatch.' : 'Available after drafting is complete'}</Text>
             </View>
           </View>
@@ -215,10 +240,10 @@ export function TrackingScreenView({ decision = false, data, form, navigate, cur
             <Pressable accessibilityRole="button" style={styles.download} onPress={onViewDraft ?? (() => router.push('/documents/file?name=Legal_Notice_Draft_v1.pdf'))}><Download size={t.downloadIcon} color={ink.accent}/><Text style={styles.downloadText}>Download PDF</Text></Pressable>
           </> : <View style={styles.view}><Lock size={t.viewIcon} color={t.disabledText}/><Text style={styles.viewText}>View Draft</Text></View>}
         </View>
-        {decision ? <>
+        {decision ? decisionStage && <>
           <Text style={[styles.title, { marginTop: t.sectionGap }]}>Your Decision</Text>
-          <Pressable accessibilityRole="button" style={styles.home} onPress={onApprove ?? (() => router.push('/legal-notice/delivery'))}><BadgeCheck size={t.homeIcon} color={ink.onBrand}/><Text style={styles.homeText}>Approve & Proceed</Text></Pressable>
-          <Pressable accessibilityRole="button" style={[styles.button, { marginTop: t.cardGap, backgroundColor: colors.card }]} onPress={() => router.push('/legal-notice/request-changes')}><PenLine size={t.buttonIcon} color={ink.accent}/><Text style={styles.buttonText}>Request Changes</Text></Pressable>
+          <Pressable accessibilityRole="button" style={styles.home} onPress={decisionStage === 'review' && onApprove ? onApprove : () => router.push('/legal-notice/delivery')}><BadgeCheck size={t.homeIcon} color={ink.onBrand}/><Text style={styles.homeText}>Approve & Proceed</Text></Pressable>
+          {decisionStage === 'review' && <Pressable accessibilityRole="button" style={[styles.button, { marginTop: t.cardGap, backgroundColor: colors.card }]} onPress={() => router.push('/legal-notice/request-changes')}><PenLine size={t.buttonIcon} color={ink.accent}/><Text style={styles.buttonText}>Request Changes</Text></Pressable>}
         </> : approval ? <TextInput multiline placeholder="Describe what you would like to change" placeholderTextColor={t.placeholder} textAlignVertical="top" accessibilityLabel="Describe what you would like to change" style={styles.change}/> : <Pressable accessibilityRole="button" onPress={() => router.replace('/(tabs)/home')} style={styles.home}><Target size={t.homeIcon} color={ink.onBrand}/><Text style={styles.homeText}>Back To Home</Text></Pressable>}
 
         {/* Development only — hidden by DEV_PREVIEW_TOGGLES in constants/dev.ts. */}
@@ -230,7 +255,8 @@ export function TrackingScreenView({ decision = false, data, form, navigate, cur
         )}
       </ScrollView>
 
-      {approval && (
+      {/* design/32's bar leads to design/437, which draws its own decision instead. */}
+      {approval && !decision && (
         <View style={[styles.fixedBar, { paddingBottom: insets.bottom + t.barPadBottom }]}>
           <DemoPressable accessibilityRole="button" onPress={() => router.push('/legal-notice/request-submitted')} style={[styles.home, styles.barButton]}>
             <FileCheck size={t.homeIcon} color={ink.onBrand} />
@@ -268,12 +294,12 @@ function TableRow({ label, children }: { label: string; children: ReactNode }) {
   );
 }
 
-function TimelineStep({ index, step, current, paid, last, tracking: TRACKING }: { index: number; step: { title: string; description: string }; current: number; paid: number | null; last: boolean; tracking: NoticeTrackingData["tracking"] }) {
+function TimelineStep({ index, step, current, activeStep, paid, last, tracking: TRACKING }: { index: number; step: { title: string; description: string }; current: number; activeStep: boolean; paid: number | null; last: boolean; tracking: NoticeTrackingData["tracking"] }) {
   const done = index < current;
-  const active = index === current;
-  const pending = index > current;
+  const active = index === current && activeStep;
+  const pending = index > current || (index === current && !activeStep);
   const meta =
-    index === 1 ? (TRACKING.submittedOn ? `${shortDate(TRACKING.submittedOn)}, ${TRACKING.submittedAt}` : '')
+    index === 1 ? (TRACKING.submittedOn ? [shortDate(TRACKING.submittedOn), TRACKING.submittedAt].filter(Boolean).join(', ') : '')
     : index === 2 ? (paid === null ? '' : `${rupees(paid)} via UPI`)
     : index === 3 ? TRACKING.advocate.name
     : pending ? 'Pending' : '';
@@ -292,11 +318,13 @@ function TimelineStep({ index, step, current, paid, last, tracking: TRACKING }: 
         <View style={styles.box}>
           <View style={styles.stepHead}>
             <Text style={styles.stepTitle}>{step.title}</Text>
-            <View style={styles.est}>
-              <Text style={styles.estText}>
-                EST. {(TRACKING.estimate.date ? shortDate(TRACKING.estimate.date).toUpperCase() : '')}, {TRACKING.estimate.time}
-              </Text>
-            </View>
+            {Boolean(TRACKING.estimate.date) && (
+              <View style={styles.est}>
+                <Text style={styles.estText}>
+                  EST. {shortDate(TRACKING.estimate.date).toUpperCase()}{Boolean(TRACKING.estimate.time) && ', '}{Boolean(TRACKING.estimate.time) && TRACKING.estimate.time}
+                </Text>
+              </View>
+            )}
           </View>
           <Text style={styles.stepDesc}>{step.description}</Text>
         </View>
@@ -655,6 +683,12 @@ const styles = StyleSheet.create({
   },
   buttonTextFill: {
     color: ink.onBrand,
+  },
+  buttonsAlone: {
+    marginTop: 0,
+  },
+  buttonTextDisabled: {
+    color: t.disabledText,
   },
   timeline: {
     padding: t.tlPad,

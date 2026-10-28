@@ -60,6 +60,8 @@ export type TrackingState = 'drafting' | 'approval';
 export const TRACKING = {
   // design/31 reads "Ref: LN-2026/05" while the invoice's Ref ID is #LGT-849204.
   ref: 'LN-2026/05',
+  // design/31 prints the selected matter here; its sample request has none chosen.
+  noticeType: 'Legal Notice',
   submittedOn: '2026-05-23',
   submittedAt: '10:30 AM',
   estimate: { date: '2026-05-25', time: '6 PM' },

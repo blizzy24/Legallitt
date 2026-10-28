@@ -217,6 +217,9 @@ export class ApiClient {
   accept(id: string) {
     return this.request<ApiCase>(`/cases/${id}/accept`, {});
   }
+  start(id: string) {
+    return this.request<ApiCase>(`/cases/${id}/start`, {});
+  }
   decline(id: string, reason?: string | null) {
     return this.request<ApiCase>(`/cases/${id}/decline`, { reason });
   }
@@ -265,6 +268,9 @@ export class ApiClient {
     return this.request<ApiCase>(`/admin/cases/${id}/deliver`, {
       pod_document_id,
     });
+  }
+  shipmentStatus(id: string, status: import('./shipments').ShipmentStatus) {
+    return this.request<import('./shipments').ApiShipment>(`/admin/cases/${id}/shipment/status`, { status });
   }
   cancel(id: string) {
     return this.request<ApiCase>(`/cases/${id}/cancel`, {});

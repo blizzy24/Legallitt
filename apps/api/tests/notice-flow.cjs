@@ -129,6 +129,11 @@ test(
       assert.equal(declineEvent.payload.reason, null);
       assert.equal(declineEvent.actor_id, advocate.id);
       assert.equal(declineEvent.actor_role, 'advocate');
+      // Beginning drafting is the advocate's own action; repeating it is harmless.
+      await assert.rejects(state.startDrafting(client, c.id), {status: 403});
+      await assert.rejects(state.startDrafting(otherAdvocate, c.id), {status: 404});
+      assert.equal((await state.startDrafting(advocate, c.id)).status, 'in_progress');
+      assert.equal((await state.startDrafting(advocate, c.id)).status, 'in_progress');
       const draft1 = await state.saveNoticeDraft(advocate, c.id, {
         kind: "legal_notice",
         content,
@@ -214,6 +219,16 @@ test(
       const dispatched = await db.shipment.findUnique({where: {id: saved.id}});
       assert.ok(dispatched.dispatched_at);
       assert.equal(dispatched.status, 'dispatched');
+      // Courier milestones (design 440): admin only, one step at a time, case unchanged.
+      await assert.rejects(shipmentService.advance(advocate, c.id, {status: 'pickup_booked'}), {status: 403});
+      await assert.rejects(shipmentService.advance(admin, c.id, {status: 'picked_up'}), {status: 409});
+      await assert.rejects(shipmentService.advance(admin, c.id, {status: 'delivered'}), {status: 400});
+      assert.equal((await shipmentService.advance(admin, c.id, {status: 'pickup_booked'})).status, 'pickup_booked');
+      assert.equal((await shipmentService.advance(admin, c.id, {status: 'picked_up'})).status, 'picked_up');
+      await assert.rejects(shipmentService.advance(admin, c.id, {status: 'picked_up'}), {status: 409});
+      const milestone = await db.caseEvent.findFirst({where: {case_id: c.id, type: 'shipment_status_changed'}, orderBy: {id: 'desc'}});
+      assert.deepEqual([milestone.payload.from, milestone.payload.to, milestone.from_status, milestone.to_status], ['pickup_booked', 'picked_up', 'dispatched', 'dispatched']);
+      assert.equal(await db.adminAction.count({where: {subject_id: c.id, action: 'shipment_status'}}), 2);
       await assert.rejects(shipmentService.save(advocate, c.id, {carrier: 'Changed'}), {status: 409});
       await assert.rejects(
         state.deliver(advocate, c.id, { pod_document_id: randomUUID() }),
@@ -274,7 +289,7 @@ test(
         orderBy: { id: "asc" },
       });
       assert.deepEqual(
-        events.filter(e => !['notification_created','courier_payment_captured','shipment_details_saved','shipment_booked','documents_received'].includes(e.type)).map((e) =>
+        events.filter(e => !['notification_created','courier_payment_captured','shipment_details_saved','shipment_booked','shipment_status_changed','documents_received'].includes(e.type)).map((e) =>
           e.type === "draft_saved" ? "draft_saved" : e.to_status,
         ),
         [

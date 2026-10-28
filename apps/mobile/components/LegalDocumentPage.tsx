@@ -72,13 +72,18 @@ export default function LegalDocumentPage({ title, advocateName, data = ADV_NOTI
             <Text style={styles.lhAdv} {...shrinkToFit(0.65)}>
               {advocateName ?? r.letterhead.advocate}
             </Text>
-            <Text style={styles.lhQual} {...shrinkToFit(0.75)}>
-              {r.letterhead.quals}
-            </Text>
-            <Text style={styles.lhEnrol} {...shrinkToFit(0.7)}>
-              {r.letterhead.enrolment}{' '}
-              <Text style={styles.lhEnrolNo}>{r.letterhead.enrolmentNo}</Text>
-            </Text>
+            {Boolean(r.letterhead.quals) && (
+              <Text style={styles.lhQual} {...shrinkToFit(0.75)}>
+                {r.letterhead.quals}
+              </Text>
+            )}
+            {/* The letterhead prints facts; the form's blanks below are drawn. */}
+            {Boolean(r.letterhead.enrolmentNo) && (
+              <Text style={styles.lhEnrol} {...shrinkToFit(0.7)}>
+                {r.letterhead.enrolment}{' '}
+                <Text style={styles.lhEnrolNo}>{r.letterhead.enrolmentNo}</Text>
+              </Text>
+            )}
           </View>
         </View>
         <View style={styles.lhRule} />

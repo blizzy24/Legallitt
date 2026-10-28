@@ -37,6 +37,8 @@ export function useAdvocateNoticeModel(stage: string) {
     const destination=c.href(value);
     void c.run(async()=>{
       if(/\/final(\?|$)/.test(value)&&!['approved','dispatching','dispatched','completed'].includes(r?.status??''))throw new Error(fixture.ADV_NOTICE_REVIEW.awaiting.title);
+      // 187's drafting choice is where the advocate begins (or resumes) drafting.
+      if(stage==='drafting'&&c.id&&['advocate_accepted','changes_requested'].includes(r?.status??''))await c.repository.start(c.id);
       if((stage==='draft'||stage==='draft-editor')&&/\/(response|review)(\?|$)/.test(value)){const draft=await saveDraft();if(/\/review(\?|$)/.test(value)&&c.id)await c.repository.sendDraft(c.id,draft.id);}
       if(stage==='response'&&/\/review(\?|$)/.test(value)&&c.id){const draft=await saveDraft();await c.repository.sendDraft(c.id,draft.id);}
       if(replace)router.replace(destination);else router.push(destination);

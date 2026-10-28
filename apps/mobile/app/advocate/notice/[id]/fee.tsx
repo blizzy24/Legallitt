@@ -91,14 +91,17 @@ export function AdvocateNoticeFeeView({notice, navigate, onAccept, onDecline}: {
                 {n.matter}
               </Text>
             </View>
-            <View style={styles.slotCol}>
-              <Text style={styles.slotLabel} {...shrinkToFit(0.75)}>
-                {n.slot.label}
-              </Text>
-              <Text style={styles.slotValue} {...shrinkToFit(0.7)}>
-                {n.slot.date} • {n.slot.time}
-              </Text>
-            </View>
+            {/* No booked slot: the label and its separator go with it. */}
+            {Boolean(n.slot.date || n.slot.time) && (
+              <View style={styles.slotCol}>
+                <Text style={styles.slotLabel} {...shrinkToFit(0.75)}>
+                  {n.slot.label}
+                </Text>
+                <Text style={styles.slotValue} {...shrinkToFit(0.7)}>
+                  {n.slot.date}{Boolean(n.slot.date && n.slot.time) && ' • '}{n.slot.time}
+                </Text>
+              </View>
+            )}
           </View>
         </View>
 

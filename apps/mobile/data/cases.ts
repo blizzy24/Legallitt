@@ -354,6 +354,19 @@ export function formatDate(isoDate: string) {
   return `${String(d).padStart(2, '0')} ${MONTHS[m - 1]} ${y}`;
 }
 
+/** An API timestamp's calendar date on this device, as formatDate expects
+ * ("2026-10-28T10:37:11Z" -> "2026-10-28" in UTC, "2026-10-28" in IST). formatDate
+ * takes a date, not a timestamp; slicing the string would give the UTC day. */
+export function calendarDate(timestamp: string) {
+  const d = new Date(timestamp);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+/** "04:07 PM": the clock format drawn on design/31 and design/441. */
+export function clockTime(timestamp: string) {
+  return new Date(timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+}
+
 /** "2026-09-24" -> { month: "SEP", day: "24" } for the calendar tiles (design/18, 20). */
 export function calendarParts(isoDate: string) {
   const [, m, d] = isoDate.split('-').map(Number);

@@ -16,7 +16,7 @@ export function useNoticeLists(){
  const title=(r:ApiCase)=>noticeMatter(r.matter_type).title;
  const destination=(r:ApiCase,advocate=false)=>{
    const suffix=advocate ? ({assigned:'fee',advocate_accepted:'documents',in_progress:'draft',changes_requested:'draft',client_review:'review',approved:'final',dispatching:'dispatch',dispatched:'dispatch',completed:'report'} as Record<string,string>)[r.status]??'fee'
-     : ({draft:'step1',submitted:'step6',payment_pending:'step6',client_review:'tracking',approved:'delivery',dispatching:'delivery',dispatched:'delivery',completed:'delivered'} as Record<string,string>)[r.status]??'tracking';
+     : ({draft:'step1',submitted:'step6',payment_pending:'step6',client_review:'tracking',approved:'request-submitted',dispatching:'request-submitted',dispatched:'delivery',completed:'tracking'} as Record<string,string>)[r.status]??'tracking';
    return c.href(advocate?`/advocate/notice/${r.id}/${suffix}`:`/legal-notice/${suffix}`,r.id);
  };
  const open=(id:string,advocate=false)=>{const r=records.find(r=>r.id===id);if(r)router.push(destination(r,advocate));};
