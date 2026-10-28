@@ -347,6 +347,7 @@ the way it always will — by reading the case.
 | 30s later | draft sent for review | the advocate submit-draft endpoint | seeded advocate |
 | on client approval | dispatch begins | the real approval path | the client |
 | on a change request | drafting restarts | the advocate start endpoint | seeded advocate |
+| 30s from `approved` | courier booked (a labelled SIMULATED COURIER, §2.11) and dispatch confirmed | the advocate shipment-book and dispatch endpoints | seeded advocate |
 | every 5s after dispatch | shipment advances one step | the shipment status endpoint | seeded admin |
 
 Intervals are configurable (`DEMO_ASSIGN_DELAY_MS` and relatives), not
@@ -1569,6 +1570,15 @@ The 286 change exists because the reader of that screen on the advocate side
 
 Layout, spacing, type and all measured tokens are unchanged in every row above.
 Only the bound data and the listed strings differ.
+
+**Instructed copy.** Words the project owner instructed, drawn in no design.
+They live in `apps/mobile/copy/instructed.ts`, apart from drawn copy and from
+the substitutions above, so they stay distinguishable later.
+
+| Design | Element | Copy | Instructed | Status |
+|---|---|---|---|---|
+| 437 | Your Decision between approval and dispatch | heading **Approved**; body **The draft has been approved by you and sent to your advocate for dispatch.** | Project owner, 28 Oct 2026 | Provisional |
+| 440 | Once the shipment is delivered, replaces the Statutory Evidence Guarantee block | button **View Delivery Confirmation**, to 441 | Project owner, 28 Oct 2026 — overrides the earlier decision to leave 441 unreachable (question 20) and DESIGN-GENERATIONS.md §3a | Provisional |
 
 ---
 

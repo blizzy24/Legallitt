@@ -3,6 +3,7 @@ export type DemoProgressionConfig = {
   assignDelayMs: number;
   draftStartDelayMs: number;
   draftDoneDelayMs: number;
+  dispatchDelayMs: number;
   shipmentStepMs: number;
 };
 
@@ -29,6 +30,7 @@ export function demoProgressionConfig(env: NodeJS.ProcessEnv = process.env): Dem
     assignDelayMs: ms('DEMO_ASSIGN_DELAY_MS'),
     draftStartDelayMs: ms('DEMO_DRAFT_START_DELAY_MS'),
     draftDoneDelayMs: ms('DEMO_DRAFT_DONE_DELAY_MS'),
+    dispatchDelayMs: ms('DEMO_DISPATCH_DELAY_MS'),
     shipmentStepMs: ms('DEMO_SHIPMENT_STEP_MS'),
   };
 }

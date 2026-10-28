@@ -1,7 +1,7 @@
 import NoticeDeliveryScreen from '../../components/NoticeDeliveryScreen';
 import { useDeliveryModel } from '../../features/legal-notice/useDeliveryModel';
-// Designs 440 and 441: one destination, rendered by shipment state.
+// Design 440. Once the shipment is delivered it offers the route to 441.
 export default function DeliveryView() {
-  const model = useDeliveryModel();
+  const model = useDeliveryModel('delivery');
   return <NoticeDeliveryScreen {...model} />;
 }

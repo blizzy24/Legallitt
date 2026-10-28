@@ -7,6 +7,7 @@ import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { colors, font, ink, tracking as t } from '../constants/theme';
+import { instructedCopy } from '../copy/instructed';
 import { formatDate } from '../data/cases';
 import { rupees, type ServiceTier, type TrackingStep } from '../data/legalNotice';
 import { useDemoWait } from '../hooks/useDemoAdvance';
@@ -254,6 +255,13 @@ export default function NoticeTrackingScreen({ model: m }: { model: NoticeTracki
               <PenLine size={t.buttonIcon} color={ink.accent} />
               <Text style={styles.buttonText}>Request Changes</Text>
             </Pressable>
+          </>
+        )}
+        {/* Between approval and dispatch: instructed copy, not drawn (§9.2). */}
+        {m.stage === 'approved' && (
+          <>
+            <Text style={[styles.title, styles.decisionTitle]}>{instructedCopy[437].approved.heading}</Text>
+            <Text style={styles.desc}>{instructedCopy[437].approved.body}</Text>
           </>
         )}
         {/* Once the notice has shipped, 437's primary button is the drawn route to delivery tracking. */}

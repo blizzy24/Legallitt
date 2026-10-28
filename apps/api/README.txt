@@ -341,10 +341,12 @@ milliseconds; there are no built-in defaults):
   DEMO_DRAFT_START_DELAY_MS=30000   assigned -> seeded advocate accepts and starts
                                     (also: accepted, or changes requested, -> starts)
   DEMO_DRAFT_DONE_DELAY_MS=30000    in progress -> seeded advocate submits the draft
+  DEMO_DISPATCH_DELAY_MS=30000      approved -> seeded advocate books a labelled
+                                    SIMULATED COURIER shipment and confirms dispatch
   DEMO_SHIPMENT_STEP_MS=5000        dispatched -> seeded admin advances one courier
                                     milestone; after Out for Delivery, confirms
                                     delivery with a labelled SIMULATED proof
-Client approval and the advocate's courier booking/dispatch are never timed.
+Client approval is never timed.
 Each step signs in as demo-admin@ or demo-advocate@legalitt.invalid and calls
 the real endpoint with a provenance ticket limited to that case and route; its
 events record source=simulated. The timer reads cases and writes nothing. If no

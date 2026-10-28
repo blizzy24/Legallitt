@@ -34,6 +34,7 @@ import { font } from "../constants/theme";
 import { noticeDelivery as t } from "../constants/tokens/noticeDelivery";
 import { NOTICE_DELIVERY as d } from "../data/noticeDelivery";
 import { clientDocHref } from "../data/docLinks";
+import { instructedCopy } from "../copy/instructed";
 import { useDemoWait } from "../hooks/useDemoAdvance";
 function CopyWaybill({ waybill }: { waybill: string }) {
   return (
@@ -170,6 +171,7 @@ export default function NoticeDeliveryScreen({
   onViewNotice,
   onViewProof,
   onBack,
+  onDeliveryConfirmation,
 }: {
   matterType?: LegalNoticeMatterType | null;
   delivered?: boolean;
@@ -179,6 +181,8 @@ export default function NoticeDeliveryScreen({
   onViewNotice?: () => void;
   onViewProof?: () => void;
   onBack?: () => void;
+  /** Set once the shipment is delivered: the route to design 441 replaces the guarantee block (instructed, §9.2). */
+  onDeliveryConfirmation?: () => void;
 }) {
   const d = data;
   const matter = noticeMatter(matterType);
@@ -461,14 +465,18 @@ export default function NoticeDeliveryScreen({
                 ))}
               </View>
             </Card>
-            <View style={s.panel}>
-              <Title>Statutory Evidence Guarantee</Title>
-              <Body>
-                Once delivered, a digitally stamped certificate of service with
-                physical recipient sign-off will automatically appear in your
-                case file.
-              </Body>
-            </View>
+            {onDeliveryConfirmation ? (
+              <NoticeButton onPress={onDeliveryConfirmation}>{instructedCopy[440].deliveryConfirmation}</NoticeButton>
+            ) : (
+              <View style={s.panel}>
+                <Title>Statutory Evidence Guarantee</Title>
+                <Body>
+                  Once delivered, a digitally stamped certificate of service with
+                  physical recipient sign-off will automatically appear in your
+                  case file.
+                </Body>
+              </View>
+            )}
             <NoticeButton onPress={viewNotice}>
               View Notice Document →
             </NoticeButton>

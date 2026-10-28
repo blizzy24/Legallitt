@@ -1,8 +1,7 @@
 import NoticeDeliveryScreen from '../../components/NoticeDeliveryScreen';
 import { useDeliveryModel } from '../../features/legal-notice/useDeliveryModel';
-// Thin alias of delivery for the fixture demo's flow map, which lands here for
-// design 441. In API mode the shipment decides the state exactly as on delivery.
+// Design 441, reached from 440's View Delivery Confirmation (or the fixture flow map).
 export default function DeliveredView() {
-  const model = useDeliveryModel(true);
+  const model = useDeliveryModel('delivered');
   return <NoticeDeliveryScreen {...model} />;
 }

@@ -37,8 +37,9 @@ test('a demo-progression ticket is one identity, one case and only its routes', 
 test('demo progression: on locally by default, off elsewhere, intervals required', () => {
   const {demoProgressionConfig} = require('../dist/src/demo/demo-config');
   const local = {ENVIRONMENT: 'dev', NODE_ENV: 'development'};
-  const intervals = {DEMO_ASSIGN_DELAY_MS: '30000', DEMO_DRAFT_START_DELAY_MS: '30000', DEMO_DRAFT_DONE_DELAY_MS: '30000', DEMO_SHIPMENT_STEP_MS: '5000'};
-  assert.deepEqual(demoProgressionConfig({...local, ...intervals}), {assignDelayMs: 30000, draftStartDelayMs: 30000, draftDoneDelayMs: 30000, shipmentStepMs: 5000});
+  const intervals = {DEMO_ASSIGN_DELAY_MS: '30000', DEMO_DRAFT_START_DELAY_MS: '30000', DEMO_DRAFT_DONE_DELAY_MS: '30000', DEMO_DISPATCH_DELAY_MS: '30000', DEMO_SHIPMENT_STEP_MS: '5000'};
+  assert.deepEqual(demoProgressionConfig({...local, ...intervals}), {assignDelayMs: 30000, draftStartDelayMs: 30000, draftDoneDelayMs: 30000, dispatchDelayMs: 30000, shipmentStepMs: 5000});
+  assert.throws(() => demoProgressionConfig({...local, ...intervals, DEMO_DISPATCH_DELAY_MS: ''}), /DEMO_DISPATCH_DELAY_MS/);
   assert.equal(demoProgressionConfig({...intervals, ENVIRONMENT: 'dev', NODE_ENV: 'test'}), null);
   assert.equal(demoProgressionConfig({...intervals, NODE_ENV: 'production'}), null);
   assert.equal(demoProgressionConfig({...local, ...intervals, DEMO_PROGRESSION: 'off'}), null);

@@ -60,6 +60,9 @@ export class DemoProgression implements OnApplicationBootstrap, OnModuleDestroy 
       // A client's change request leaves the same advocate to resume drafting.
       case 'changes_requested': return {actor: 'advocate', after: c.draftStartDelayMs};
       case 'in_progress': return {actor: 'advocate', after: c.draftDoneDelayMs};
+      // The advocate books the courier and confirms dispatch; with no human
+      // advocate the approved case would otherwise strand.
+      case 'approved': return {actor: 'advocate', after: c.dispatchDelayMs};
       case 'dispatched': return {actor: 'admin', after: c.shipmentStepMs};
       default: return null;
     }
@@ -71,7 +74,7 @@ export class DemoProgression implements OnApplicationBootstrap, OnModuleDestroy 
     try {
       const db = await this.prisma.getClient();
       const rows = await db.case.findMany({
-        where: {service_code: 'legal_notice', status: {in: ['paid', 'assigned', 'advocate_accepted', 'changes_requested', 'in_progress', 'dispatched']}},
+        where: {service_code: 'legal_notice', status: {in: ['paid', 'assigned', 'advocate_accepted', 'changes_requested', 'in_progress', 'approved', 'dispatched']}},
         select: {id: true, status: true, advocate_id: true, case_events_case_id_relations: {
           where: {type: {in: clockEvents}}, orderBy: {id: 'desc'}, take: 1, select: {created_at: true},
         }},
@@ -124,6 +127,15 @@ export class DemoProgression implements OnApplicationBootstrap, OnModuleDestroy 
           const draft = latest && !sent.has(latest.id) ? latest
             : z.object({id: z.uuid()}).parse(await post(`${cases}/drafts`, {kind: 'legal_notice', content: latest?.content ?? simulatedDraft, generated_by: 'manual'}));
           await post(`${cases}/drafts/${draft.id}/send`, {});
+        });
+      }
+      case 'approved': {
+        // §2.11: the courier details are a labelled placeholder, never a real carrier's name.
+        const record = await this.read(session, caseId);
+        const today = new Date().toISOString().slice(0, 10);
+        return this.call(session, caseId, [new RegExp(`^${cases}/(shipment/book|dispatch)$`)], async post => {
+          await post(`${cases}/shipment/book`, {carrier: 'SIMULATED COURIER', waybill: `SIMULATED-${record.reference}`, dispatch_date: today});
+          await post(`${cases}/dispatch`, {});
         });
       }
       case 'dispatched': {
