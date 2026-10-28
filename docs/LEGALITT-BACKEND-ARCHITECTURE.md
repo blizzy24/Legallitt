@@ -1,6 +1,6 @@
 # Legalitt — Backend & Cloud Architecture
 
-Version 6.3 · 28 October 2026
+Version 6.4 · 28 October 2026
 Status: steps 0–7 complete for Legal Notice. The screen-rework (§1a) is in
 flight. §2.11 now governs every capability that is not yet real.
 
@@ -546,10 +546,6 @@ CREATE TABLE advocate_profiles (
   -- Razorpay Route: required before this advocate can be paid. See §7.2
   rzp_linked_account_id     TEXT,
   rzp_account_status        TEXT,
-  photo_key                 TEXT,  -- the portrait: a bundled asset name today
-                                   -- (advocate-05), an S3 key once advocates
-                                   -- upload their own. Same column, no second
-                                   -- migration.
   created_at                TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at                TIMESTAMPTZ NOT NULL DEFAULT now()
 );
@@ -1456,6 +1452,7 @@ before the backend needs it.
 | 18 | Design 185 lets an advocate decline a request without giving a reason. Built as drawn. Was that intended? Whoever reassigns the case sees no explanation, and repeated unexplained declines can't be spotted | Assignment, advocate quality |
 | 19 | **No design shows "Your Decision" after the client approves.** The section has a drawn before-state (437) and nothing after. What does the client see between approving and dispatch starting? | Tracking screen 440 |
 | 20 | **No design shows how Notice Delivered (441) is entered.** Checked My Cases (14–17), Home (12), Notifications (60), My Requests (53), My Documents (56) — 14 draws a Closed tab with nothing in it, and 56's served notice opens the viewer (57). A drawn destination with no drawn route. Where does the client tap to reach it? The fixture demo currently reaches it on a timer; was that the intent? | Delivery screens |
+| 22 | The client supplied six advocate portraits, but **design 437 draws initials** on the tracking card, not a photo. The photos are drawn on the chat screen (439). Should the portraits also appear on the tracking card, or are initials intended there? Built as drawn — initials — until he says otherwise | Advocate card |
 | 21 | **No design draws 440 after delivery completes.** Its headline reads "Physical Notice on the Way", which stops being true. The drawn route to 440 is withdrawn on completion, so this only affects a client already sitting on the page. Supply a delivered state, or confirm 440 is simply not the screen for a finished case | Tracking screen 440 |
 
 Items 1 to 6 all touch `service_pricing` and `commission_rates`. The schema is
@@ -1504,7 +1501,6 @@ empty, or explicitly accepted in writing by the client, before production.
 | Delivery confirmation | `ADMIN_UI_MODE=simulated` | Admin marks delivered (§9), but no admin panel exists yet. The **endpoint is real**; only the screen is missing. The shipment advances one drawn milestone at a time (§2.12), and delivery with a simulated proof follows Out for Delivery | Admin panel built |
 | Courier tracking | `COURIER_MODE=simulated` | Manual courier in v1 by decision, not by gap | Only if the client later buys a carrier API |
 | KYC | `KYC_MODE=simulated` | No provider chosen | Provider chosen |
-| Demo advocate profile | `db:seed-demo` (dev pool only) | The seeded advocate carries design 437's drawn facts — Adv. Arjun Sharma, 8 years, Property Law, D/1842/2016, **4.9 from 142 reviews**, verified, a bundled portrait — so the demo matches the PNGs. None of it is real. Guarded like the demo accounts: dev-tagged pool, `ENVIRONMENT=dev`, never production | Real advocates enrol and are verified (steps 9–10) |
 
 The one thing still to check is item 14 in §8: whether any AI surface reaches a
 client without an advocate in between. If one does, it needs either an advocate
