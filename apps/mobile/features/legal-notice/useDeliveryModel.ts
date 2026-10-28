@@ -8,7 +8,10 @@ import { NOTICE_DELIVERY } from '../../data/noticeDelivery';
 import { useIntakeModel } from './useIntakeModel';
 import type { NoticeDeliveryFacts } from '../../components/NoticeDeliveryScreen';
 
-export function useDeliveryModel() {
+/** Designs 440 and 441 are one destination at two states (DESIGN-GENERATIONS.md §3a):
+ * the shipment decides which renders. The fixture demo has no shipment, so its
+ * delivered route names the state. */
+export function useDeliveryModel(fixtureDelivered = false) {
   const {model,controller:c} = useIntakeModel('delivery');
   const api = DATA_SOURCE === 'api';
   // The notice's own outbound shipment, never an inbound document hand-off.
@@ -41,7 +44,9 @@ export function useDeliveryModel() {
     progress:NOTICE_DELIVERY.progress.map(([title,fixture],i)=>[title,sub(i,fixture)]),
   };
   const completed=record?.status==='completed';
-  // No automatic move to 441: no design draws a route to it (§8 question 20).
+  // 441 renders once the notice is delivered. Nothing navigates: the screen the
+  // client is on re-renders when the shipment state changes.
+  const delivered=api ? status==='delivered' || completed : fixtureDelivered;
   const approved=record?.events?.some(e=>e.to_status==='approved');
   const facts:NoticeDeliveryFacts = {
     confirmation:'',deliveredOn:shipment?.delivered_at ? formatDate(calendarDate(shipment.delivered_at)) : '',
@@ -61,6 +66,6 @@ export function useDeliveryModel() {
     onViewNotice:api?()=>open(notice?.id):undefined,
     onViewProof:api?()=>open(proof?.id):undefined,
     proofSource:api?proofSource:require('../../assets/notice-delivery-proof.png') as ImageSourcePropType,
-    completed,
+    completed, delivered,
   };
 }
