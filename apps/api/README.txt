@@ -306,7 +306,11 @@ Client", the approving client's name, the timestamp); both are filed through
 the real documents pipeline as the acting user (kind legal_notice), so the page
 count comes from the file. drafts.document_id and cases.notice_document_id link
 them (migration 202610280002). The PDF is filed before the lifecycle moves and
-discarded if the move is refused. Layout: architecture §8, question 23.
+discarded if the move is refused. Layout: architecture §8, question 23. The
+approval is not printed in the letter (it is posted to the other party); the
+app's "Signed by Client" descriptor comes from the approval record. Text is set
+in bundled Noto Sans and Noto Sans Devanagari (assets/fonts, OFL), shaped by
+fontkit, so what the advocate typed is what prints.
 
 Draft content has the six structured editor fields drawn on 188:
   sender, recipient, subject, facts, demand, closing

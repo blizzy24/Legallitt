@@ -28,15 +28,14 @@ export class NoticePdfService {
     return document;
   }
 
-  /** Legal_Notice_Final.pdf: the approved draft with the client's recorded approval (design 192). */
+  /** Legal_Notice_Final.pdf: the approved draft, dated on approval. The approval
+   * itself is recorded on the case (design 192's "Signed by Client" is the app's
+   * descriptor of this file), never printed in a letter that goes to the other party. */
   async final(actor: CaseActor, caseId: string, draftId: string, approvedAt: Date) {
     if (actor.role !== 'client') throw new ForbiddenException('Case client required');
     const { record, content } = await this.load(actor, caseId, draftId);
     if (record.status !== 'client_review') throw new ConflictException('Invalid case transition');
-    const db = await this.prisma.getClient();
-    const client = await db.user.findUnique({ where: { id: actor.id }, select: { full_name: true } });
-    const bytes = await renderNoticePdf({ reference: record.reference, date: approvedAt, place: await this.place(record.advocate_id), content,
-      approval: { clientName: client?.full_name ?? '', approvedAt } });
+    const bytes = await renderNoticePdf({ reference: record.reference, date: approvedAt, place: await this.place(record.advocate_id), content });
     return this.file(actor, caseId, 'Legal_Notice_Final.pdf', bytes);
   }
 
