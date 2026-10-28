@@ -299,7 +299,7 @@ export const DEV_ROUTES: { section: string; routes: { href: string; design?: num
     { href: '/legal-notice/step6', design: 28 },
     { href: '/legal-notice/scan-pay', design: 29 },
     { href: '/legal-notice/success', design: 30 },
-    { href: '/legal-notice/tracking', design: 31 },
+    { href: '/legal-notice/tracking', design: 437 },
     { href: '/legal-notice/step4-review', design: 39 },
     { href: '/legal-notice/step4', design: 91 },
   ] },

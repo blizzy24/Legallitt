@@ -146,7 +146,7 @@ export default function NoticeTrackingScreen({ model: m }: { model: NoticeTracki
               placeholder="Describe what you would like to change" placeholderTextColor={t.placeholder}
               accessibilityLabel="Describe what you would like to change" style={styles.change}
             />
-            <Pressable accessibilityRole="button" style={styles.primary} onPress={() => { if (comment.trim()) m.onRequestChanges(comment.trim()); }}>
+            <Pressable accessibilityRole="button" style={styles.primary} onPress={() => { if (comment.trim()) { m.onRequestChanges(comment.trim()); setRequesting(false); } }}>
               <PenLine size={t.homeIcon} color={ink.onBrand} />
               <Text style={styles.primaryText}>Request Changes</Text>
             </Pressable>

@@ -54,13 +54,12 @@ export function rupees(n: number, grouped = true) {
   return '₹' + (grouped ? n.toLocaleString('en-IN') : String(n));
 }
 
-// Tracking screens 31, 32 and 437: dates follow the supplied May 2026 design.
-export type TrackingState = 'drafting' | 'approval';
-
+// Tracking screen 437 (and its reduced form 438): dates follow the supplied May
+// 2026 design. Designs 31 and 32 are superseded (docs/DESIGN-GENERATIONS.md).
 export const TRACKING = {
-  // design/31 reads "Ref: LN-2026/05" while the invoice's Ref ID is #LGT-849204.
+  // design/437 reads "Ref: LN-2026/05" while the invoice's Ref ID is #LGT-849204.
   ref: 'LN-2026/05',
-  // design/31 prints the selected matter here; its sample request has none chosen.
+  // design/437 prints the selected matter here; its sample request has none chosen.
   noticeType: 'Legal Notice',
   submittedOn: '2026-05-23',
   submittedAt: '10:30 AM',
@@ -90,20 +89,17 @@ export const TRACKING_STEPS: TrackingStep[] = [
   { title: 'Delivery Confirmed', description: 'Delivery status will appear here.' },
 ];
 
-/** 1-based index of the current step for each state. */
-export const TRACKING_CURRENT: Record<TrackingState, number> = { drafting: 4, approval: 5 };
-
 // Service tiers shown on the detail screen (design/22). `standard` is the fee the
 // payment screen charges, so the two can't drift.
 export type ServiceTier = {
   id: 'urgent' | 'ordinary';
   label: string;
-  /** "Urgent Tier" — the status-card wording on design/31. */
+  /** "Urgent Tier" — the status-card wording on design/437. */
   tierLabel: string;
   price: number;
   /** design/22's casing, used on the detail screen. */
   speed: string;
-  /** design/31 capitalises "Days" in the tracking table; kept per screen. */
+  /** design/437 capitalises "Days" in the tracking table; kept per screen. */
   trackingSpeed: string;
   note: string;
   /** Wording used by the selected-summary bar. */
