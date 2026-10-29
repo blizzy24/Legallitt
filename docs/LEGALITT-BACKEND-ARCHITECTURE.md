@@ -1,6 +1,6 @@
 # Legalitt — Backend & Cloud Architecture
 
-Version 6.4 · 28 October 2026
+Version 6.5 · 29 October 2026
 Status: steps 0–7 complete for Legal Notice. The screen-rework (§1a) is in
 flight. §2.11 now governs every capability that is not yet real.
 
@@ -347,7 +347,6 @@ the way it always will — by reading the case.
 | 30s later | draft sent for review | the advocate submit-draft endpoint | seeded advocate |
 | on client approval | dispatch begins | the real approval path | the client |
 | on a change request | drafting restarts | the advocate start endpoint | seeded advocate |
-| 30s from `approved` | courier booked (a labelled SIMULATED COURIER, §2.11) and dispatch confirmed | the advocate shipment-book and dispatch endpoints | seeded advocate |
 | every 5s after dispatch | shipment advances one step | the shipment status endpoint | seeded admin |
 
 Intervals are configurable (`DEMO_ASSIGN_DELAY_MS` and relatives), not
@@ -538,7 +537,9 @@ CREATE TABLE advocate_profiles (
   city                      TEXT,
   state                     TEXT,
   years_experience          INT,
+  education                 TEXT,          -- 'LL.B., LL.M.' — design 433
   bio                       TEXT,
+  photo_key                 TEXT,          -- bundled asset name now, S3 key later
   consultation_fee_paise    BIGINT,
   verification              verification_status NOT NULL DEFAULT 'not_started',
   verified_at               TIMESTAMPTZ,
@@ -602,10 +603,6 @@ CREATE TABLE cases (
   advocate_id    UUID REFERENCES users(id),
   status         case_status NOT NULL DEFAULT 'draft',
   sub_status     TEXT,
-  notice_document_id UUID REFERENCES documents(id),
-                                           -- Legal_Notice_Final.pdf, rendered on the
-                                           -- client's approval with the recorded
-                                           -- approval on it (design 192)
   matter_type    TEXT,                     -- what KIND of matter, chosen by the
                                            -- client during intake. Legal Notice
                                            -- step 3 of 6 offers: property_dispute,
@@ -685,9 +682,6 @@ CREATE TABLE drafts (
   content     JSONB NOT NULL,        -- structured, not a blob of HTML
   generated_by TEXT,                 -- 'ai' | 'manual'
   created_by  UUID NOT NULL REFERENCES users(id),
-  document_id UUID REFERENCES documents(id),
-                                     -- Legal_Notice_Draft_v{version}.pdf, rendered
-                                     -- from content when the draft went for review
   created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
   UNIQUE (case_id, kind, version)
 );
@@ -1448,7 +1442,9 @@ before the backend needs it.
 | 6 | The ₹34,999 / ₹379 / ₹40,680 screen — template or real | Pricing seed |
 | 7 | Advocate Route onboarding — designs needed | Payouts |
 | 8 | Admin panel — scope, designs, price, timeline | Assignment, release |
-| 9 | Whose profile is design 433 ("Adv. Rahul Sharma", the client's own name) | Profile screens |
+| ~~9~~ | ~~Whose profile is design 433~~ — **closed 29 Oct.** 433 is the advocate profile: its header, bar council enrolment, practice areas, availability and client reviews admit no other reading. "Rahul Sharma" is a placeholder name, as the High Court matter drawn on Send Documents is a placeholder matter | — |
+| 24 | **Advocate availability** — design 433 draws an availability block (days, hours, "Slots open"). No data model exists for it | Advocate profile |
+| 25 | **Client reviews** — design 433 draws reviews with names, stars and quotes; designs 264–265 draw the advocate's own reviews list. No data model exists | Advocate profile, ratings |
 | 10 | FIR Approved and Changes states — still not supplied | FIR review |
 | 11 | Design 348 — the supplied file is a 1× copy of 381 | Token values |
 | 12 | Heading font | Typography |
@@ -1461,7 +1457,6 @@ before the backend needs it.
 | 19 | **No design shows "Your Decision" after the client approves.** The section has a drawn before-state (437) and nothing after. What does the client see between approving and dispatch starting? | Tracking screen 440 |
 | 20 | **No design shows how Notice Delivered (441) is entered.** Checked My Cases (14–17), Home (12), Notifications (60), My Requests (53), My Documents (56) — 14 draws a Closed tab with nothing in it, and 56's served notice opens the viewer (57). A drawn destination with no drawn route. Where does the client tap to reach it? The fixture demo currently reaches it on a timer; was that the intent? | Delivery screens |
 | 22 | The client supplied six advocate portraits, but **design 437 draws initials** on the tracking card, not a photo. The photos are drawn on the chat screen (439). Should the portraits also appear on the tracking card, or are initials intended there? Built as drawn — initials — until he says otherwise | Advocate card |
-| 23 | **No design draws the inside of the notice.** 266 is the editor and 189 a different letter, so the generated PDF uses a plain conventional layout — sender block, date and place, recipient block, subject, numbered body, closing — with the advocate's section-1 details as the letterhead and only 266's section names as headings. The letter ends with whatever the advocate typed last; 192 says he prints and posts it, so a blank signature rule above the name would be conventional, but nobody drew one. Please review the printed layout, say whether you want a signature rule, and supply a letterhead if you want one | Notice PDF |
 | 21 | **No design draws 440 after delivery completes.** Its headline reads "Physical Notice on the Way", which stops being true. The drawn route to 440 is withdrawn on completion, so this only affects a client already sitting on the page. Supply a delivered state, or confirm 440 is simply not the screen for a finished case | Tracking screen 440 |
 
 Items 1 to 6 all touch `service_pricing` and `commission_rates`. The schema is
@@ -1570,15 +1565,6 @@ The 286 change exists because the reader of that screen on the advocate side
 
 Layout, spacing, type and all measured tokens are unchanged in every row above.
 Only the bound data and the listed strings differ.
-
-**Instructed copy.** Words the project owner instructed, drawn in no design.
-They live in `apps/mobile/copy/instructed.ts`, apart from drawn copy and from
-the substitutions above, so they stay distinguishable later.
-
-| Design | Element | Copy | Instructed | Status |
-|---|---|---|---|---|
-| 437 | Your Decision between approval and dispatch | heading **Approved**; body **The draft has been approved by you and sent to your advocate for dispatch.** | Project owner, 28 Oct 2026 | Provisional |
-| 440 | Once the shipment is delivered, replaces the Statutory Evidence Guarantee block | button **View Delivery Confirmation**, to 441 | Project owner, 28 Oct 2026 — overrides the earlier decision to leave 441 unreachable (question 20) and DESIGN-GENERATIONS.md §3a | Provisional |
 
 ---
 
