@@ -27,6 +27,12 @@ const demoAdvocateProfile = {
   city: "Indore",
   state: "Madhya Pradesh",
   photo_key: "advocate-05",
+  // Design 433's About and Professional Details. Its "Rahul Sharma" is a
+  // placeholder name (question 9, closed), so the bio names this advocate.
+  bio: "Adv. Arjun Sharma is an experienced legal professional with expertise in civil, criminal, and property matters. He focuses on providing clear legal guidance and professional representation tailored to each client's needs.",
+  education: "LL.B., LL.M.",
+  courts: ["District Court", "High Court"],
+  languages: ["Hindi", "English"],
 };
 
 // Explicit operator command, never run by a request handler or in production.

@@ -47,7 +47,7 @@ export class CaseRepository {
         // alone would leave the card empty.
         advocate_id_relation:{select:{id:true,full_name:true,advocate_profiles_user_id_relations:{select:{
           years_experience:true,practice_areas:true,bar_council_number:true,enrolment_year:true,rating_avg:true,rating_count:true,
-          verification:true,verified_at:true,city:true,state:true,photo_key:true}}}},
+          verification:true,verified_at:true,city:true,state:true,photo_key:true,bio:true,courts:true,languages:true,education:true}}}},
         case_events_case_id_relations: { orderBy: { id: "asc" } },
         documents_case_id_relations: {
           where: { status: "uploaded" },

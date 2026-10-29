@@ -68,6 +68,7 @@ export function useDeliveryModel(screen: 'delivery' | 'delivered' = 'delivery') 
     onViewProof:api?()=>open(proof?.id):undefined,
     proofSource:api?proofSource:require('../../assets/notice-delivery-proof.png') as ImageSourcePropType,
     completed, delivered,
+    onViewCase: api ? () => router.push(c.href('/legal-notice/tracking')) : undefined,
     onDeliveryConfirmation: shipmentDelivered ? () => router.push(c.href('/legal-notice/delivered')) : undefined,
   };
 }

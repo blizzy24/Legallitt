@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger, Optional, type OnApplicationBootstrap, type OnModuleDestroy } from '@nestjs/common';
 import { z } from 'zod';
-import { nextShipmentStatus, type ApiCase, type ShipmentStatus } from '@legalitt/shared';
+import { NOTICE_ADVOCATE_GREETING, nextShipmentStatus, type ApiCase, type ShipmentStatus } from '@legalitt/shared';
 import { PrismaService } from '../prisma.service';
 import { demoPassword } from '../phone-auth/demo-accounts';
 import { ADMIN_UI, type AdminUiPort } from '../admin-ui/admin-ui.port';
@@ -110,10 +110,11 @@ export class DemoProgression implements OnApplicationBootstrap, OnModuleDestroy 
           await post(`/api/v1/admin/cases/${caseId}/assign`, {advocate_id: (await this.session('advocate')).id});
         });
       case 'assigned':
-        return this.call(session, caseId, [new RegExp(`^${cases}/(accept|start)$`)], async post => {
+        await this.call(session, caseId, [new RegExp(`^${cases}/(accept|start)$`)], async post => {
           await post(`${cases}/accept`, {});
           await post(`${cases}/start`, {});
         });
+        return this.greet(session, caseId);
       case 'advocate_accepted':
       case 'changes_requested':
         return this.call(session, caseId, [new RegExp(`^${cases}/start$`)], post => post(`${cases}/start`, {}));
@@ -150,6 +151,19 @@ export class DemoProgression implements OnApplicationBootstrap, OnModuleDestroy 
     }
   }
 
+  /** The advocate's drawn opening message (33, 439), sent once through the real messages endpoint. */
+  private async greet(session: Session, caseId: string) {
+    const get = async (path: string) => {
+      const response = await fetch(this.base() + path, {headers: {Authorization: `Bearer ${session.idToken}`}});
+      if (!response.ok) throw new Error(`GET ${path.replace(caseId, ':id')}: HTTP ${response.status}`);
+      return response.json();
+    };
+    const thread = z.object({id: z.uuid()}).parse(await get(`/api/v1/cases/${caseId}/thread`));
+    const page = z.object({items: z.array(z.object({sender_id: z.string()}))}).parse(await get(`/api/v1/threads/${thread.id}/messages`));
+    if (page.items.some(m => m.sender_id === session.id)) return;
+    await this.call(session, caseId, [new RegExp(`^/api/v1/threads/${thread.id}/messages$`)], post =>
+      post(`/api/v1/threads/${thread.id}/messages`, {body: NOTICE_ADVOCATE_GREETING}));
+  }
   private base() { return `http://127.0.0.1:${process.env.PORT}`; }
   private async session(actor: Actor) {
     const cached = this.sessions.get(actor);

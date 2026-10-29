@@ -172,6 +172,7 @@ export default function NoticeDeliveryScreen({
   onViewProof,
   onBack,
   onDeliveryConfirmation,
+  onViewCase,
 }: {
   matterType?: LegalNoticeMatterType | null;
   delivered?: boolean;
@@ -183,7 +184,10 @@ export default function NoticeDeliveryScreen({
   onBack?: () => void;
   /** Set once the shipment is delivered: the route to design 441 replaces the guarantee block (instructed, §9.2). */
   onDeliveryConfirmation?: () => void;
+  /** View Case (441) and View Case Details (440): this case's tracking screen. */
+  onViewCase?: () => void;
 }) {
+  const viewCase = onViewCase ?? (() => router.push("/(tabs)/cases"));
   const d = data;
   const matter = noticeMatter(matterType);
   const viewNotice = onViewNotice ?? (() => router.push(clientDocHref(d.file) as Href));
@@ -337,7 +341,7 @@ export default function NoticeDeliveryScreen({
                 </Body>
               </View>
             </Card>
-            <NoticeButton onPress={() => router.push("/(tabs)/cases")}>
+            <NoticeButton onPress={viewCase}>
               View Case →
             </NoticeButton>
           </>
@@ -482,7 +486,7 @@ export default function NoticeDeliveryScreen({
             </NoticeButton>
             <NoticeButton
               secondary
-              onPress={() => router.push("/(tabs)/cases")}
+              onPress={viewCase}
             >
               View Case Details
             </NoticeButton>

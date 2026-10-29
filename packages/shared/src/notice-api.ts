@@ -92,6 +92,7 @@ export type ApiAdvocateProfile = {
   years_experience: number | null; practice_areas: string[]; bar_council_number: string | null; enrolment_year: number | null;
   rating_avg: string | null; rating_count: number; verification: 'not_started' | 'in_review' | 'approved' | 'rejected' | 'needs_update';
   verified_at: string | null; city: string | null; state: string | null;
+  bio: string | null; courts: string[]; languages: string[]; education: string | null;
   /** A bundled portrait name (advocate-05) for now; an S3 key once advocates upload their own. */
   photo_key: string | null;
 };

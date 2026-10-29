@@ -13,7 +13,8 @@ import type { NoticeTrackingModel, NoticeTrackingStage } from '../../components/
 function stageFor(status: string | undefined): NoticeTrackingStage {
   if (status === 'client_review') return 'review';
   if (status === 'approved') return 'approved';
-  if (status === 'dispatching' || status === 'dispatched' || status === 'completed') return 'dispatched';
+  if (status === 'dispatching' || status === 'dispatched') return 'dispatched';
+  if (status === 'completed') return 'completed';
   return 'drafting';
 }
 // Timeline ticks follow the lifecycle events behind the status: how many of the
@@ -37,8 +38,9 @@ export function useNoticeTrackingModel(fixtureStage: 'drafting' | 'review' = 'dr
   const record = c.record;
   const status = record?.status;
   const submitted = record?.events?.find(e => e.to_status === 'submitted')?.created_at ?? '';
-  // The PDF rendered when this draft went for review (design 437's draft card).
-  const notice = record?.documents?.find(d => d.id === c.latest?.document_id);
+  // The PDF rendered when this draft went for review (design 437's draft card);
+  // once the case is complete, the final notice that was posted.
+  const notice = record?.documents?.find(d => d.id === (status === 'completed' ? record.notice_document_id : c.latest?.document_id));
   const name = record?.advocate?.full_name ?? '';
   const profile = record?.advocate?.profile ?? null;
   // A decision tapped before the first poll lands still acts on the sent draft.

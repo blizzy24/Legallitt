@@ -170,7 +170,10 @@ export const advocateById = (id: string) => SAVED_ADVOCATES.find((a) => a.id ===
  * own screen draws — the screen leaves out every section it has no values for.
  */
 export type AdvocateProfileView = Pick<SavedAdvocate, 'id' | 'initials' | 'name' | 'verified'> &
-  Partial<Omit<SavedAdvocate, 'id' | 'initials' | 'name' | 'verified'>>;
+  Partial<Omit<SavedAdvocate, 'id' | 'initials' | 'name' | 'verified'>> & {
+    /** The case advocate's own portrait (advocate_profiles.photo_key). */
+    photo?: ImageSourcePropType;
+  };
 
 /**
  * The District Court advocate, from design/300 (Advocate Assigned): name,
@@ -252,6 +255,20 @@ const ADVOCATE_PHOTOS: Record<string, ImageSourcePropType> = {
   'arjun sharma': require('../assets/advocate-05.png'),
   'rahul sharma': require('../assets/advocate-06.png'),
 };
+
+/** The bundled portraits by the name advocate_profiles.photo_key holds today; an
+ * S3 key (once advocates upload their own) matches nothing here. */
+const ADVOCATE_PORTRAITS: Record<string, ImageSourcePropType> = {
+  'advocate-01': require('../assets/advocate-01.png'),
+  'advocate-02': require('../assets/advocate-02.png'),
+  'advocate-03': require('../assets/advocate-03.png'),
+  'advocate-04': require('../assets/advocate-04.png'),
+  'advocate-05': require('../assets/advocate-05.png'),
+  'advocate-06': require('../assets/advocate-06.png'),
+};
+export function advocatePortrait(key: string | null | undefined): ImageSourcePropType | undefined {
+  return key ? ADVOCATE_PORTRAITS[key] : undefined;
+}
 
 /** For known advocate contexts only: clients may share these names. */
 export function advocatePhoto(name: string): ImageSourcePropType | undefined {

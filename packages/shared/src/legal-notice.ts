@@ -52,6 +52,9 @@ export const LegalNoticeSubmissionSchema = z.strictObject({
 });
 export type LegalNoticeIntake = z.infer<typeof LegalNoticeIntakeSchema>;
 
+/** The advocate's opening message, exactly as drawn on designs 33 and 439 ("relevent" as drawn). */
+export const NOTICE_ADVOCATE_GREETING = 'Hello you can now message me with any case concerns or upload any relevent documents here...';
+
 /** §9.2: matter types are selected data, never copy substitutions. */
 export const LegalNoticeMatterTypeSchema = z.enum([
   'property_dispute', 'money_recovery', 'tenant_issue', 'family_dispute',

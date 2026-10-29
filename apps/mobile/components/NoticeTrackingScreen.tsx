@@ -18,7 +18,7 @@ import { useDemoWait } from '../hooks/useDemoAdvance';
 // present in every state. Tapping Request Changes shows design 438: the same
 // screen reduced to the header and NOTICE DETAILS, with the textarea revealed by
 // that tap and never before it. Designs 31 and 32 are superseded and not rendered.
-export type NoticeTrackingStage = 'drafting' | 'review' | 'approved' | 'dispatched';
+export type NoticeTrackingStage = 'drafting' | 'review' | 'approved' | 'dispatched' | 'completed';
 export type NoticeTrackingAdvocate = {
   id: string; name: string; initials: string; experience: string; practice: string;
   barReg: string; rating: string; reviews: string; verified: boolean;
@@ -92,11 +92,14 @@ export default function NoticeTrackingScreen({ model: m }: { model: NoticeTracki
             <Text style={styles.tier}>{m.tier.tierLabel}</Text>
           </View>
           <Text style={styles.title}>{ready ? 'Your Legal Notice Draft is Ready' : 'Legal Notice Request Submitted'}</Text>
-          <Text style={styles.desc}>
-            {ready
-              ? 'Your advocate has prepared the legal notice. Please review the draft carefully before approving it for dispatch.'
-              : 'Your request and payment have been received. A verified advocate is preparing your legal notice.'}
-          </Text>
+          {/* A completed case is not asked to review or approve again. */}
+          {m.stage !== 'completed' && (
+            <Text style={styles.desc}>
+              {ready
+                ? 'Your advocate has prepared the legal notice. Please review the draft carefully before approving it for dispatch.'
+                : 'Your request and payment have been received. A verified advocate is preparing your legal notice.'}
+            </Text>
+          )}
           {!changes && Boolean(m.requestId) && (
             <View style={styles.idBox}>
               <Text style={styles.idLabel}>REQUEST ID</Text>
@@ -218,7 +221,7 @@ export default function NoticeTrackingScreen({ model: m }: { model: NoticeTracki
               {ready ? (
                 <>
                   {adv && <Text style={styles.draftNote}>Prepared by {adv.name}</Text>}
-                  <Text style={styles.reviewDesc}>Please review the notice before approving it for dispatch.</Text>
+                  {m.stage !== 'completed' && <Text style={styles.reviewDesc}>Please review the notice before approving it for dispatch.</Text>}
                 </>
               ) : (
                 <>

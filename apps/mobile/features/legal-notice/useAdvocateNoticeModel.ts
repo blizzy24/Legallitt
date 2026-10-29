@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Alert, Linking, Platform } from 'react-native';
 import { router, type Href } from 'expo-router';
-import type { NoticeDraftContent } from '@legalitt/shared';
+import { NOTICE_ADVOCATE_GREETING, type NoticeDraftContent } from '@legalitt/shared';
 import { DATA_SOURCE } from '../../lib/data-source';
 import { useSession } from '../../context/session';
 import { useNoticeController, type NoticeStage } from './useNoticeController';
@@ -124,7 +124,11 @@ export function useAdvocateNoticeModel(stage: string) {
     onSendChoice:(choice:string)=>{let destination:Href=path('delivery');if(choice==='self')destination=courierHref();router.push(destination);},
     onPay:()=>{void c.run(async()=>{if(api&&c.id)await c.repository.pay(c.id,'courier');router.replace(path('paid'));});},
     onReceive:()=>{void c.run(async()=>{if(api&&c.id)await c.repository.receiveShipment(c.id);router.replace(path('received'));});},
-    onAccept:()=>{void c.run(async()=>{if(api&&c.id&&r?.status==='assigned')await c.repository.accept(c.id);router.push(path('documents'));});},
+    onAccept:()=>{void c.run(async()=>{if(api&&c.id&&r?.status==='assigned'){await c.repository.accept(c.id);
+      // The advocate's drawn opening message (33, 439), sent as them through the real endpoint.
+      const thread=await c.repository.caseThread(c.id);const page=await c.repository.messages(thread.id);
+      if(!page.items.some(m=>m.sender_id===user?.id))await c.repository.sendMessage(thread.id,{body:NOTICE_ADVOCATE_GREETING});}
+      router.push(path('documents'));});},
     onDecline:()=>{void c.run(async()=>{if(api&&c.id)await c.repository.decline(c.id);router.replace('/matters');});},
     saveDraft,
   };

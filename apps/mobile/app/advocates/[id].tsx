@@ -69,7 +69,7 @@ export function AdvocateProfileViewScreen({advocate,showBadge=true}:{advocate:Ad
         <View style={styles.hero}>
           <View style={styles.photoWrap}>
             {/* 433 supplies Rahul's photo; other advocates retain their own initials. */}
-            <AdvocateAvatar name={advocate.name} style={styles.photo}><Text style={styles.photoText}>{advocate.initials}</Text></AdvocateAvatar>
+            <AdvocateAvatar name={advocate.name} source={advocate.photo} style={styles.photo}><Text style={styles.photoText}>{advocate.initials}</Text></AdvocateAvatar>
             <View style={[styles.badge,!showBadge&&{opacity:0}]}><BadgeCheck size={t.badgeGlyph} color={ink.onBrand} /></View>
           </View>
 
