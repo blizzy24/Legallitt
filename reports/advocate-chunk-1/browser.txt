@@ -1,0 +1,31 @@
+{
+  "total": 21,
+  "counts": {
+    "Needs Review": 0,
+    "In Progress": 7,
+    "Resolved": 14
+  },
+  "filters": [
+    {
+      "filter": "All",
+      "count": 21
+    },
+    {
+      "filter": "Needs Review",
+      "count": 0
+    },
+    {
+      "filter": "In Progress",
+      "count": 7
+    },
+    {
+      "filter": "Waiting for Client",
+      "count": 7
+    },
+    {
+      "filter": "Resolved",
+      "count": 14
+    }
+  ],
+  "errors": []
+}

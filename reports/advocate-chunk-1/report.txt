@@ -1,0 +1,104 @@
+Advocate chunk 1 — Legal Notice entry screens — 2 November 2026
+
+Scope
+Dashboard and matters list only. No per-case screen, backend, timer, database,
+AWS stack or other service implementation changed. Fixture data remains the
+designed preview. One dashboard renderer receives its model, regardless of source.
+
+Causes
+- Dashboard imported ADVOCATE_SELF, ADV_DASHBOARD_STATS and ADV_TODAY directly.
+- Matters used the CLIENT bucketFor() for advocate work. Client review and
+  advocate_declined count as client pending; this became Upcoming on the list.
+- The list badge was the literal '8 active', independent of rendered records.
+- Button labels depended on the service, not the case lifecycle.
+
+Dashboard
+API identity is the signed-in /me user: Adv. Arjun Sharma -> Arjun / AS.
+Date is the device's current local calendar date, not 10 September 2026.
+New Requests counts assigned Legal Notice cases, matching the real request endpoint.
+No earnings, hearings, consultations, consultation availability, schedule, unread
+notification dot or verified/high-court credential is fabricated. Their data is
+absent in this controller, so those elements are omitted. Failed/loading case
+requests do not become a displayed zero. The existing inline error remains usable.
+This leaves a deliberately sparse dashboard: identity, date, New Requests and
+existing navigation. No replacement widgets were invented. Product-owner decision
+needed if more content belongs here; none was added in anticipation.
+All measured dashboard styles are unchanged (checked against the previous file).
+
+Counter meaning and design sources
+Design 184/443 supplies the existing list layout; design 162 supplies its advocate
+REVIEW / PROGRESS / RESOLVED grouping, Needs Review / In Progress and Open Case.
+Upcoming is scheduled work in the generic fixtures, not a Legal Notice lifecycle.
+For API Legal Notices:
+- REVIEW: assigned requests awaiting the advocate's acceptance.
+- PROGRESS: accepted, in_progress, changes_requested, client_review, approved,
+  dispatching, dispatched. Waiting for Client is the client_review subset.
+- RESOLVED: completed, cancelled, refunded, or declined by this advocate.
+  Resolved describes this advocate's work; a declined case can still await admin
+  reassignment. It is not represented as a globally completed case.
+Defensive pre-assignment statuses (draft/submitted/payment_pending/paid/assigning)
+remain in REVIEW if ever supplied for this advocate, with no action. Normally the
+advocate-scoped endpoint cannot return those unassigned cases.
+The three groups partition the records; no case is counted twice or omitted.
+Counters respect search and service scope. Status filters narrow the cards, while
+the counter strip remains the breakdown of the scoped list. The Your Matters
+badge is the actual visible row count. Recent First uses updated_at descending.
+API service filters offer All Services and Legal Notice only; other APIs are not
+built by this chunk. Fixture services/filters remain available as before.
+
+Action mapping
+assigned                 Review Request -> fee (184)
+advocate_accepted        Continue Draft -> drafting choice (443 label)
+in_progress              Continue Draft -> draft editor (443 label)
+changes_requested        Continue Draft -> drafting choice (starts resume first)
+client_review            Open Case -> review (162 label)
+approved                 Open Case -> final notice (162 label)
+dispatching/dispatched   Open Case -> dispatch (162 label)
+completed                Open Case -> existing report (162 completed-card label)
+advocate_declined        no action; actual Declined status remains visible
+cancelled/refunded       no action; actual status remains visible
+pre-assignment states    no action
+
+Declined/cancelled/refunded have no drawn read-only advocate destination. The
+entry list does not send them to the old fee/acceptance fallback. Per-case screens
+are unchanged. Every navigable record retains caseId. Existing drafting choice is
+used after acceptance/change requests so the real start transition is not skipped.
+The whole real notice card is no longer an HTML button around another button;
+only its explicit action is interactive, removing browser nesting errors.
+Missing tier, body or footer removes that element, without a fallback fixture.
+
+Real-data verification (no cases created or modified)
+Signed in through the email/password UI as demo-advocate@legalitt.invalid, which
+is the real Cognito account for Adv. Arjun Sharma. Read every paginated API page.
+21 cases: 7 client_review, 13 completed, 1 advocate_declined.
+Counters: REVIEW 0, PROGRESS 7, RESOLVED 14.
+Filters and rendered card counts: All 21; Needs Review 0; In Progress 7;
+Waiting for Client 7; Resolved 14. Legal Notice service filter also returns 21.
+Searching one reference gives one card and counter totals of one.
+Opened real client_review/completed cases from their buttons; correct paths and
+case IDs persisted. Declined has no button and no clickable card.
+Also signed in with real seeded Kabir and Meera accounts: their in_progress cases
+show Continue Draft and open the matching draft editor. No lifecycle writes.
+All lifecycle states, including states absent in the live dataset, have a focused
+regression test for action/route, counter membership and no Upcoming status.
+No browser page errors or nested-button/unexpected-text errors in the walkthrough.
+
+Screenshots (this folder)
+dashboard.png
+list-all.png
+list-needs-review.png
+list-in-progress.png
+list-waiting-for-client.png
+list-resolved.png
+list-legal-notice.png
+declined-card.png
+list-advocate-3.png — Kabir, one real draft
+list-advocate-4.png — Meera, drafts plus completed case
+Full per-record counts/actions and opened draft references: evidence.json.
+
+Validation
+All six workspace typechecks passed. Mobile fixture web export passed.
+Focused lifecycle/action/count regression passed: scripts/check-advocate-entry.cjs.
+Browser verification: scripts/advocate-entry-smoke.cjs.
+Full fixture smoke: 321 routes, zero failures (the existing route count).
+git diff --check passed. No push or deployment performed.

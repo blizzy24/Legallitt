@@ -39,7 +39,8 @@ import { advCases as t, colors, font, ink } from '../constants/theme';
 // pushed copy that once lived at app/advocate/fir/requests.tsx was removed.
 //
 // ⚠ design/214's card action reads "Continue Draft →" WITH an arrow where design/204
-// reads "Review Request" with none. Both are kept, chosen per service.
+// reads "Review Request" with none. Fixtures keep that mapping; real records
+// supply the action permitted by their lifecycle state.
 
 export type CasesChrome = 'tab' | 'portal';
 
@@ -61,6 +62,10 @@ export default function AdvocateCasesList({
   records = ADV_CASES,
   statistics = ADV_CASES_STATS,
   onReview,
+  filters = ADV_CASES_FILTERS,
+  services = ADV_CASES_SERVICES,
+  countLabel,
+  statisticsFor,
   chrome = 'tab',
   initialService = 'All Services',
   title,
@@ -73,6 +78,10 @@ export default function AdvocateCasesList({
   records?: AdvCaseMatter[];
   statistics?: typeof ADV_CASES_STATS;
   onReview?: (matter: AdvCaseMatter) => void;
+  filters?: string[];
+  services?: string[];
+  countLabel?: (records: AdvCaseMatter[]) => string;
+  statisticsFor?: (records: AdvCaseMatter[]) => typeof ADV_CASES_STATS;
   chrome?: CasesChrome;
   initialService?: string;
   /** Portal variant — the header title. The tab variant uses the design's. */
@@ -96,15 +105,14 @@ export default function AdvocateCasesList({
   const [filter, setFilter] = useState('All');
   const [service, setService] = useState(initialService);
 
-  const matters = useMemo(
-    () =>
-      records.filter((m) => {
-        if (filter !== 'All' && m.bucket !== filter) return false;
-        if (service !== 'All Services' && ADV_CASES_SERVICE_KEYS[service] !== m.serviceKey) return false;
-        return true;
-      }),
-    [filter, service, records],
-  );
+  const [search, setSearch] = useState('');
+  const scoped = useMemo(() => records.filter(m =>
+    (service === 'All Services' || ADV_CASES_SERVICE_KEYS[service] === m.serviceKey) &&
+    [m.title,m.ref,m.service,m.searchText ?? ''].join(' ').toLocaleLowerCase().includes(search.trim().toLocaleLowerCase())
+  ), [records,service,search]);
+  const matters = scoped.filter(m => filter === 'All' || m.bucket === filter || m.filterTags?.includes(filter));
+  const stats = statisticsFor ? statisticsFor(scoped) : statistics;
+  const count = countLabel ? countLabel(matters) : c.listChip;
   const filtersActive = (filter !== 'All' ? 1 : 0) + (service !== 'All Services' ? 1 : 0);
 
   function review(m: AdvCaseMatter) {
@@ -205,8 +213,8 @@ export default function AdvocateCasesList({
 
         {showStats && (
         <View style={styles.stats}>
-          {statistics.map((s) => (
-            <View key={s.label} style={styles.stat}>
+          {stats.map((s) => (
+            <View key={s.label} testID={`matter-stat-${s.label}`} style={styles.stat}>
               <View style={styles.statHead}>
                 <Text style={styles.statLabel} {...shrinkToFit(0.7)}>
                   {s.label}
@@ -226,6 +234,8 @@ export default function AdvocateCasesList({
           <Search size={t.searchIcon} color={colors.textBody} />
           <TextInput
             style={styles.searchInput}
+            value={search}
+            onChangeText={setSearch}
             placeholder={c.searchPlaceholder}
             placeholderTextColor={colors.textBody}
           />
@@ -237,7 +247,7 @@ export default function AdvocateCasesList({
           style={styles.chipRow}
           contentContainerStyle={styles.chipRowContent}
         >
-          {ADV_CASES_FILTERS.map((f) => (
+          {filters.map((f) => (
             <Pressable
               key={f}
               accessibilityRole="button"
@@ -258,7 +268,7 @@ export default function AdvocateCasesList({
           style={styles.svcRow}
           contentContainerStyle={styles.chipRowContent}
         >
-          {ADV_CASES_SERVICES.map((s) => (
+          {services.map((s) => (
             <Pressable
               key={s}
               accessibilityRole="button"
@@ -281,11 +291,11 @@ export default function AdvocateCasesList({
           <Text style={styles.ymTitle} {...shrinkToFit(0.75)}>
             {c.listTitle}
           </Text>
-          <View style={styles.ymChip}>
+          {!!count && <View testID="matter-count" style={styles.ymChip}>
             <Text style={styles.ymChipText} {...shrinkToFit(0.8)}>
-              {c.listChip}
+              {count}
             </Text>
-          </View>
+          </View>}
           <Pressable accessibilityRole="button" style={styles.sort}>
             <Text style={styles.sortText} {...shrinkToFit(0.8)}>
               {c.sort}
@@ -299,16 +309,23 @@ export default function AdvocateCasesList({
           const tone = STATUS_TONE[m.status] ?? STATUS_TONE.Active;
           const Icon = m.bodyIcon ? BODY_ICONS[m.bodyIcon] : null;
           const urgent = m.urgency === 'URGENT';
+          const action = m.action === undefined ? ADV_CASES_ACTIONS[m.serviceKey] ?? c.review : m.action;
+          const arrow = m.actionArrow ?? Boolean(ADV_CASES_ACTIONS[m.serviceKey]);
+          // Real notice cards have one explicit action. Do not nest its button
+          // inside another HTML button; preserve fixture court card navigation.
+          const tappable = m.action === undefined && Boolean(m.href);
+          const Card = tappable ? Pressable : View;
           return (
             // The court cards (design/362's High Court and District Court) open
             // their request screens from anywhere on the card, as well as from
             // the button; the card draws exactly as before.
-            <Pressable
+            <Card
               key={m.id}
-              accessibilityRole={m.href ? 'button' : undefined}
-              accessibilityLabel={m.href ? m.title : undefined}
-              disabled={!m.href}
-              onPress={() => review(m)}
+              accessibilityRole={tappable ? 'button' : undefined}
+              accessibilityLabel={tappable ? m.title : undefined}
+              disabled={!tappable}
+              onPress={tappable ? () => review(m) : undefined}
+              testID={`matter-${m.id}`}
               style={styles.card}
             >
               <View style={styles.cardHead}>
@@ -317,7 +334,7 @@ export default function AdvocateCasesList({
                     {m.service}
                   </Text>
                 </View>
-                <View style={[styles.urg, urgent ? styles.urgent : styles.ordinary]}>
+                {!!m.urgency && <View style={[styles.urg, urgent ? styles.urgent : styles.ordinary]}>
                   {urgent && <View style={styles.urgDot} />}
                   <Text
                     style={[styles.urgText, urgent ? styles.urgentText : styles.ordinaryText]}
@@ -325,7 +342,7 @@ export default function AdvocateCasesList({
                   >
                     {m.urgency}
                   </Text>
-                </View>
+                </View>}
               </View>
 
               <Text style={styles.cardTitle} {...shrinkToFit(0.7)}>
@@ -368,32 +385,32 @@ export default function AdvocateCasesList({
                 </Text>
               </View>
 
-              <View style={styles.bodyRow}>
+              {!!m.body && <View style={styles.bodyRow}>
                 {Icon && <Icon size={t.bodyIcon} color={colors.brandDark} style={styles.bodyIcon} />}
                 <Text style={styles.body}>{m.body}</Text>
-              </View>
+              </View>}
 
-              <View style={styles.rule} />
+              {(!!m.footer || !!action) && <><View style={styles.rule} />
 
               <View style={styles.foot}>
-                <Text style={styles.footText} {...shrinkToFit(0.7)}>
+                {!!m.footer && <Text style={styles.footText} {...shrinkToFit(0.7)}>
                   {m.footer}
-                </Text>
-                <Pressable
+                </Text>}
+                {!!action && <Pressable
                   accessibilityRole="button"
-                  onPress={() => review(m)}
+                  onPress={(event) => { event.stopPropagation(); review(m); }}
                   style={({ pressed }) => [styles.review, pressed && styles.pressed]}
                 >
                   <Text style={styles.reviewText} {...shrinkToFit(0.8)}>
-                    {ADV_CASES_ACTIONS[m.serviceKey] ?? c.review}
+                    {action}
                   </Text>
                   {/* design/214 draws an arrow on "Continue Draft"; design/204 draws none. */}
-                  {ADV_CASES_ACTIONS[m.serviceKey] && (
+                  {arrow && (
                     <ArrowRight size={t.reviewArrow} color={ink.onBrand} style={styles.reviewArrow} />
                   )}
-                </Pressable>
-              </View>
-            </Pressable>
+                </Pressable>}
+              </View></>}
+            </Card>
           );
         })}
       </ScrollView>
@@ -648,7 +665,7 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
   },
 
-  foot: { flexDirection: 'row', alignItems: 'center' },
+  foot: { flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' },
   footText: {
     flex: 1,
     minWidth: 0,

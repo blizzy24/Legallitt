@@ -1,0 +1,193 @@
+{
+  "identity": {
+    "id": "a9442690-6857-47c9-b91c-8c4c210cc6a4",
+    "role": "advocate",
+    "name": "Adv. Arjun Sharma",
+    "email": "demo-advocate@legalitt.invalid",
+    "phone": null,
+    "emailVerified": true,
+    "phoneVerified": false
+  },
+  "total": 21,
+  "states": {
+    "completed": 13,
+    "client_review": 7,
+    "advocate_declined": 1
+  },
+  "counts": {
+    "Needs Review": 0,
+    "In Progress": 7,
+    "Resolved": 14
+  },
+  "filters": [
+    {
+      "filter": "All",
+      "count": 21
+    },
+    {
+      "filter": "Needs Review",
+      "count": 0
+    },
+    {
+      "filter": "In Progress",
+      "count": 7
+    },
+    {
+      "filter": "Waiting for Client",
+      "count": 7
+    },
+    {
+      "filter": "Resolved",
+      "count": 14
+    }
+  ],
+  "cards": [
+    {
+      "reference": "LN-2026-0006",
+      "status": "completed",
+      "action": "Open Case"
+    },
+    {
+      "reference": "LN-2026-0007",
+      "status": "client_review",
+      "action": "Open Case"
+    },
+    {
+      "reference": "LN-2026-0012",
+      "status": "completed",
+      "action": "Open Case"
+    },
+    {
+      "reference": "LN-2026-0013",
+      "status": "completed",
+      "action": "Open Case"
+    },
+    {
+      "reference": "LN-2026-0014",
+      "status": "advocate_declined",
+      "action": null
+    },
+    {
+      "reference": "LN-2026-0015",
+      "status": "client_review",
+      "action": "Open Case"
+    },
+    {
+      "reference": "LN-2026-0016",
+      "status": "client_review",
+      "action": "Open Case"
+    },
+    {
+      "reference": "LN-2026-0017",
+      "status": "completed",
+      "action": "Open Case"
+    },
+    {
+      "reference": "LN-2026-0019",
+      "status": "client_review",
+      "action": "Open Case"
+    },
+    {
+      "reference": "LN-2026-0020",
+      "status": "completed",
+      "action": "Open Case"
+    },
+    {
+      "reference": "LN-2026-0021",
+      "status": "completed",
+      "action": "Open Case"
+    },
+    {
+      "reference": "LN-2026-0022",
+      "status": "completed",
+      "action": "Open Case"
+    },
+    {
+      "reference": "LN-2026-0023",
+      "status": "completed",
+      "action": "Open Case"
+    },
+    {
+      "reference": "LN-2026-0024",
+      "status": "completed",
+      "action": "Open Case"
+    },
+    {
+      "reference": "LN-2026-0025",
+      "status": "completed",
+      "action": "Open Case"
+    },
+    {
+      "reference": "LN-2026-0026",
+      "status": "client_review",
+      "action": "Open Case"
+    },
+    {
+      "reference": "LN-2026-0027",
+      "status": "completed",
+      "action": "Open Case"
+    },
+    {
+      "reference": "LN-2026-0028",
+      "status": "completed",
+      "action": "Open Case"
+    },
+    {
+      "reference": "LN-2026-0029",
+      "status": "completed",
+      "action": "Open Case"
+    },
+    {
+      "reference": "LN-2026-0030",
+      "status": "client_review",
+      "action": "Open Case"
+    },
+    {
+      "reference": "LN-2026-0031",
+      "status": "client_review",
+      "action": "Open Case"
+    }
+  ],
+  "advocate3": {
+    "name": "Demo Advocate Kabir",
+    "states": [
+      {
+        "reference": "LN-2026-0032",
+        "status": "in_progress",
+        "action": "Continue Draft"
+      }
+    ],
+    "openedDraft": "LN-2026-0032"
+  },
+  "advocate4": {
+    "name": "Demo Advocate Meera",
+    "states": [
+      {
+        "reference": "LN-2026-0033",
+        "status": "in_progress",
+        "action": "Continue Draft"
+      },
+      {
+        "reference": "LN-2026-0034",
+        "status": "in_progress",
+        "action": "Continue Draft"
+      },
+      {
+        "reference": "LN-2026-0035",
+        "status": "in_progress",
+        "action": "Continue Draft"
+      },
+      {
+        "reference": "LN-2026-0038",
+        "status": "in_progress",
+        "action": "Continue Draft"
+      },
+      {
+        "reference": "LN-2026-0039",
+        "status": "completed",
+        "action": "Open Case"
+      }
+    ],
+    "openedDraft": "LN-2026-0033"
+  }
+}

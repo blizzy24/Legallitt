@@ -2874,6 +2874,8 @@ export const ADV_LA_REPORT = {
 // ═════════════════════════════════════════════════════════════════════════════
 
 export type AdvMatterStatus =
+  | 'Needs Review' | 'Changes Requested' | 'Client Approved' | 'Ready for Dispatch' | 'Dispatched'
+  | 'Declined' | 'Draft' | 'Submitted' | 'Payment Pending' | 'Paid' | 'Assigning'
   | 'Cancelled'
   | 'Refunded'
   | 'Completed'
@@ -2892,7 +2894,7 @@ export type AdvCaseMatter = {
   serviceKey: 'legal-notice' | 'fir' | 'property-search' | 'forensic' | 'legal-advice' | 'high-court' | 'district-court' | 'court-marriage' | 'other';
   /** Where Review opens, for a service whose flow is not keyed by serviceKey. */
   href?: string;
-  urgency: 'URGENT' | 'ORDINARY';
+  urgency: 'URGENT' | 'ORDINARY' | null;
   title: string;
   ref: string;
   /** Some cards carry a fee on the reference line, others a location. */
@@ -2904,7 +2906,12 @@ export type AdvCaseMatter = {
   bodyIcon?: 'calendar' | 'gavel' | 'video';
   footer: string;
   /** Which chip row the card answers to. */
-  bucket: 'Active' | 'Upcoming' | 'Waiting for Client' | 'Completed';
+  bucket: 'Active' | 'Upcoming' | 'Waiting for Client' | 'Completed' | 'Needs Review' | 'In Progress' | 'Resolved';
+  filterTags?: string[];
+  searchText?: string;
+  /** Undefined keeps the drawn fixture action; null means no permitted action. */
+  action?: string | null;
+  actionArrow?: boolean;
 };
 
 export const ADV_CASES_STATS = [
