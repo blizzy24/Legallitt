@@ -1,0 +1,66 @@
+Admin panel chunk A — 1 November 2026
+
+Existing work was committed and pushed to origin/main first:
+68fe7b2 My Cases fixes
+d2a38b1 Notice inline errors, navigation, entry order and delivery action
+b5058f4 supplied court images
+4496334 architecture v6.6 and design precedence
+
+New work (local only):
+- apps/admin: Vite, React, React Router, TypeScript, shared API/types; a dark
+  surface, orange accent, dense notices table, counter strip and left nav.
+  No admin Figma exports exist per the survey. The survey is the visual
+  reference; no old-panel business rules, data or credentials were copied.
+- Same Cognito pool via the existing API, admin-only access. Client/advocate
+  roles are refused both by the API and the UI. Browser token storage is
+  separate from mobile and is cleared on role refusal. No fixture auth.
+- Reused the existing dev-only Cognito seed for demo-admin@legalitt.invalid;
+  verified real sign-in. Did not reset passwords or reseed existing accounts.
+- Exhaustive adminBucketFor beside bucketFor. Unpaid statuses return null.
+- GET /api/v1/admin/cases: admin-only in guard and repository, service/bucket/
+  search filters, stable cursor pagination, counters, and table fields only.
+  Existing Legal Notice-only data scope remains in force for this chunk.
+- Amount is the saved case pricing row's base amount, not a literal or a
+  replacement current rate. Two older cases have no pricing_id, so their
+  amounts are blank. No missing values are filled from another case.
+- Four document origins as approved: Client, Advocate, Admin, Generated.
+  Linked draft/final PDFs count as Generated; other uploaded documents use
+  their owner's role. Documents pending upload or deleted are excluded.
+- No assignment, case-detail, or delivery UI in chunk A. + Assign is disabled
+  where no advocate exists; ACTIONS cells are empty. No dead detail links.
+- No deployment. Existing assignment/delivery simulators are unchanged.
+- Added admin to the existing mobile-only .vercelignore exclusions.
+
+Regression findings resolved:
+- Added already-documented education/photo_key fields missing from the shared
+  advocate schema; schema parity compares field names without imposing object
+  key order.
+- The new admin test now uses an existing pricing row instead of adding one
+  concurrently with the seed-idempotency test.
+
+Verification:
+- Admin browser sign-in uses real Cognito; real local cases are displayed.
+- Live counts during screenshots: Open 1, Pending 5, In Progress 0,
+  Completed 13, Closed 0; total 19. Empty buckets reflect the actual database.
+- Integration tests exercise every lifecycle status, including populated
+  In Progress/Closed, cursor ties, search, origin counts and unpaid exclusion;
+  temporary test cases are cleaned up.
+- All three searches work: reference, client name, matter type.
+- Admin session survives refresh. A stored client token is refused before the
+  table renders; client and advocate tokens each get HTTP 403 at the endpoint.
+- All 50 API tests and 10 shared tests pass.
+- All six workspace typechecks pass; admin production bundle builds.
+- Mobile fixture build passes; full smoke: 321 routes, zero failures.
+
+Local backend commits: 3a82daa (schema parity), 86246fa (admin list/API).
+
+Screenshots:
+notices-list.png — real local list, counter strip and table
+client-refused.png — real client email/password sign-in refused visibly
+open.png, pending.png, in-progress.png, completed.png, closed.png — bucket views
+
+Local URLs:
+http://127.0.0.1:5173/legal-notices
+http://127.0.0.1:5173/sign-in
+Admin verification API is on 127.0.0.1:3006; mobile API on 3001 untouched.
+Startup commands are in apps/admin/README.txt.

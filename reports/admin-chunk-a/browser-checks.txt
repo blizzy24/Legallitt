@@ -1,0 +1,16 @@
+Admin Cognito sign-in: pass
+Real case counts: {"open":1,"pending":5,"in_progress":0,"completed":13,"closed":0}
+Bucket Open rows 1
+Bucket Pending rows 5
+Bucket In Progress rows 0
+Bucket Completed rows 13
+Bucket Closed rows 0
+Search LN-2026-0029 : pass
+Search Keshav Porwal : pass
+Search Money Recovery : pass
+Admin refresh: pass
+Client Cognito sign-in refused visibly; no token retained: pass
+Real client token GET /admin/cases: 403
+Cold-loaded client token refused before rendering list: pass
+Real advocate token GET /admin/cases: 403
+Browser runtime errors: none
