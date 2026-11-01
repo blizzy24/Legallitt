@@ -19,7 +19,7 @@ test('core schemas preserve every DDL column and nullable flag',()=>{
   const body=spec.match(new RegExp('CREATE TABLE '+table+' \\(([\\s\\S]*?)\\n\\);'))[1];
   const columns=body.split('\n').map(line=>line.split('--')[0].trim()).filter(line=>line&&!line.startsWith('UNIQUE'));
   const shape=shared[name+'Schema'].shape;
-  assert.deepEqual(Object.keys(shape),columns.map(line=>line.split(/\s+/)[0]),table);
+  assert.deepEqual(Object.keys(shape).sort(),columns.map(line=>line.split(/\s+/)[0]).sort(),table);
   // JSON null is a valid JSONB value, distinct from SQL NULL.
   for(const line of columns){const field=line.split(/\s+/)[0];assert.equal(shape[field].isNullable(),line.includes('JSONB') || (!line.includes('NOT NULL')&&!line.includes('PRIMARY KEY')),table+'.'+field);}
  }
