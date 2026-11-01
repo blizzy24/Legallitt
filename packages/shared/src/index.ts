@@ -7,3 +7,4 @@ export * from './notice-api';
 export * from './api-client';
 
 export * from './shipments';
+export * from './admin-api';

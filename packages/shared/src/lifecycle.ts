@@ -21,6 +21,39 @@ export enum CaseStatus {
 
 export type CaseBucket = 'active' | 'pending' | 'closed';
 
+export const ADMIN_CASE_BUCKETS = ['open', 'pending', 'in_progress', 'completed', 'closed'] as const;
+export type AdminCaseBucket = typeof ADMIN_CASE_BUCKETS[number];
+export const ADMIN_CASE_BUCKET_LABELS: Record<AdminCaseBucket, string> = {
+  open: 'Open', pending: 'Pending', in_progress: 'In Progress', completed: 'Completed', closed: 'Closed',
+};
+
+// null deliberately excludes unpaid intake from admin counters and lists.
+export function adminBucketFor(status: CaseStatus): AdminCaseBucket | null {
+  switch (status) {
+    case CaseStatus.draft:
+    case CaseStatus.submitted:
+    case CaseStatus.payment_pending: return null;
+    case CaseStatus.paid:
+    case CaseStatus.assigning:
+    case CaseStatus.advocate_declined: return 'open';
+    case CaseStatus.client_review:
+    case CaseStatus.changes_requested: return 'pending';
+    case CaseStatus.assigned:
+    case CaseStatus.advocate_accepted:
+    case CaseStatus.in_progress:
+    case CaseStatus.approved:
+    case CaseStatus.dispatching:
+    case CaseStatus.dispatched: return 'in_progress';
+    case CaseStatus.completed: return 'completed';
+    case CaseStatus.cancelled:
+    case CaseStatus.refunded: return 'closed';
+    default: {
+      const exhaustive: never = status;
+      throw new Error(`Unknown lifecycle status: ${exhaustive}`);
+    }
+  }
+}
+
 // One-way display grouping. Buckets never imply a unique lifecycle state.
 export function bucketFor(status: CaseStatus): CaseBucket {
   switch (status) {

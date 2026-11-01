@@ -1,3 +1,5 @@
+import {AdminCasesController} from './admin-cases/admin-cases.controller';
+import {AdminCasesRepository} from './admin-cases/admin-cases.repository';
 import {NoticeMessages,NoticeMessagesController} from './cases/notice-messages';
 import { CourierModule } from "./courier/courier.module";
 import { ShipmentService } from "./cases/shipment.service";
@@ -39,7 +41,7 @@ export class HealthController {
 
 @Module({
   imports: [CourierModule, AdminUiModule, DemoModule, DatabaseModule, PhoneAuthModule, PaymentsModule, NotificationsModule],
-  controllers: [NoticeMessagesController,
+  controllers: [AdminCasesController, NoticeMessagesController,
     PaymentsController,
     HealthController,
     AuthController,
@@ -49,7 +51,7 @@ export class HealthController {
     ServicesController,
     DocumentController,
   ],
-  providers: [NoticeMessages,
+  providers: [AdminCasesRepository, NoticeMessages,
     ShipmentService,
     NoticePdfService,
     PaymentsService,
