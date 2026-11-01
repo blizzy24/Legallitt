@@ -147,14 +147,14 @@ export class DocumentStorage {
       }),
     );
   }
-  async download(key: string, filename: string) {
+  async download(key: string, filename: string, inline = false) {
     const { bucketName: Bucket } = await this.config();
     return getSignedUrl(
       this.s3,
       new GetObjectCommand({
         Bucket,
         Key: key,
-        ResponseContentDisposition: `attachment; filename*=UTF-8''${encodeURIComponent(filename)}`,
+        ResponseContentDisposition: `${inline ? 'inline' : 'attachment'}; filename*=UTF-8''${encodeURIComponent(filename)}`,
       }),
       { expiresIn: DOCUMENT_URL_SECONDS },
     );

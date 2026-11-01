@@ -1,4 +1,4 @@
-Legalitt admin — chunks A–B (local only)
+Legalitt admin — chunks A–C (local only)
 
 Node 22.22+ is required by React Router 8; the repo's Node 22.23.3 works.
 From the repository root:
@@ -31,8 +31,8 @@ Build/typecheck:
   pnpm --filter @legalitt/admin build
   pnpm typecheck
 
-Legal Notices, sign-in and initial advocate assignment are available. Case
-detail, reassignment and delivery actions remain outside this chunk.
+Legal Notices, case detail, sign-in and initial advocate assignment are
+available. Reassignment and delivery actions remain outside this chunk.
 The existing progression and delivery simulators remain unchanged.
 
 Admin API: GET /api/v1/admin/cases
@@ -75,3 +75,27 @@ Repeatable browser checks (with local API 3006 and admin 5173 running):
 This reads the existing dev password from Secrets Manager in memory, signs in
 through the UI, tests real role refusals, and writes screenshots to
 reports/admin-chunk-a. It does not print or save passwords or tokens.
+
+Case detail (chunk C): /legal-notices/:id, linked from each reference.
+GET /api/v1/admin/cases/:id returns a Legal Notice only, admin role required.
+It includes the full newest-first timeline, account and intake contacts,
+origin-grouped documents, draft versions, payments by payer/purpose and shipment
+milestones. Price is the saved pricing row; unconfirmed fees are labelled.
+No absent value gets a label or empty evidence section. Assign is the only write.
+
+Document preview uses GET /api/v1/admin/cases/documents/:id/preview, guarded as
+admin and by existing case membership. Only PDF/PNG/JPEG get inline disposition;
+other types download. All signed links expire; object keys stay server-side.
+The ordinary document download endpoint is unchanged.
+
+The guarded demo seed also creates Asha (Mumbai, Consumer Law, 0 cases), Kabir
+(Jaipur, Family/Civil Law, 1), Meera (Pune, Property/Tenancy, 3), plus an awaiting
+assignment and a sparse sample. Names/accounts are explicitly demo data. Loads
+are actual case counts, not display constants. Cases are idempotently seeded
+and have simulated events; repeat seeding never resets an operator's changes.
+
+Run the detail browser check:
+  node --env-file=apps/api/.env.local scripts/admin-detail-smoke.cjs
+Screenshots/evidence: reports/admin-chunk-c. It signs in, follows a list link,
+checks four advocate choices, waiting/drafting/delivered/sparse states, opens
+real S3 files, refuses client tokens and asserts the detail UI performs no writes.

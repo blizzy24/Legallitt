@@ -1,3 +1,4 @@
+import { CaseDetail } from './case-detail';
 import { StrictMode, useState, type FormEvent } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Navigate, Route, Routes, NavLink, Outlet } from 'react-router';
@@ -44,6 +45,6 @@ function Shell() {
 }
 createRoot(document.getElementById('root')!).render(<StrictMode><BrowserRouter><SessionProvider><Routes>
   <Route path="/sign-in" element={<SignIn/>}/>
-  <Route element={<Shell/>}><Route path="/legal-notices" element={<Notices/>}/></Route>
+  <Route element={<Shell/>}><Route path="/legal-notices" element={<Notices/>}/><Route path="/legal-notices/:id" element={<CaseDetail/>}/></Route>
   <Route path="*" element={<Navigate to="/legal-notices" replace/>}/>
 </Routes></SessionProvider></BrowserRouter></StrictMode>);

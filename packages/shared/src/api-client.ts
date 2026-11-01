@@ -164,6 +164,8 @@ export class ApiClient {
     }
     return this.decode<T>(response);
   }
+  adminDocumentPreview(id: string) { return this.request<{url: string; expires_in: number}>(`/admin/cases/documents/${encodeURIComponent(id)}/preview`); }
+  adminCase(id: string) { return this.request<import('./admin-api').AdminCaseDetail>(`/admin/cases/${encodeURIComponent(id)}`); }
   adminAdvocates() {
     return this.request<{items: import('./admin-api').AdminAdvocate[]}>('/admin/advocates');
   }

@@ -23,3 +23,22 @@ export type AdminCasePage = {
 export type AdminAdvocate = {
   id: string; name: string; practice_areas: string[]; city: string | null; open_cases: number;
 };
+
+export type AdminContact = {name: string | null; email: string | null; phone: string | null; address: string | null; relationship?: string | null; role: string};
+export type AdminCaseDetail = {
+  id: string; reference: string; status: CaseStatus; sub_status: string | null;
+  matter_type: string | null; tier: string | null; simulated: boolean; created_at: string;
+  advocate_id: string | null; contacts: AdminContact[];
+  pricing: {base_amount_paise: string; gst_bps: number; confirmed: boolean} | null;
+  intake: Record<string, unknown>;
+  events: {id: string; type: string; from_status: string | null; to_status: string | null;
+    actor: {name: string; role: string | null} | null; source: string; payload: Record<string, unknown>; created_at: string}[];
+  documents: {id: string; filename: string; kind: string; origin: 'client' | 'advocate' | 'admin' | 'generated';
+    owner: string; status: string; mime_type: string; page_count: number | null; size_bytes: string;
+    simulated: boolean; created_at: string; final: boolean; draft_version: number | null}[];
+  drafts: {id: string; version: number; content: Record<string, unknown>; document_id: string | null;
+    generated_by: string | null; author: string; created_at: string}[];
+  payments: {id: string; purpose: string; base_amount_paise: string; gst_paise: string; total_paise: string;
+    status: string; payer: {name: string; role: string}; simulated: boolean; created_at: string; captured_at: string | null}[];
+  shipments: import('./shipments').ApiShipment[];
+};

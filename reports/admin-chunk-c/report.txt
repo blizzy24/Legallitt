@@ -1,0 +1,74 @@
+Admin chunk C — case detail, 1 November 2026
+
+SEED
+Commit 631da8c adds three explicitly named demo advocates using the existing
+Cognito admin path, preverified email, suppressed messages, ENVIRONMENT=dev,
+nonproduction guard, and dev-tagged user pool check. Passwords remain in Secrets
+Manager. No real phone numbers, portraits, ratings or credentials were invented.
+- Demo Advocate Asha: Consumer Law, Mumbai; 0 open cases.
+- Demo Advocate Kabir: Family Law / Civil Law, Jaipur; 1 open case.
+- Demo Advocate Meera: Property Law / Tenancy, Pune; 3 seeded open cases, plus
+  1 created through real endpoints during verification (4 at final capture).
+- Existing Adv. Arjun Sharma: Property Law, Indore; 7 at capture.
+The picker sorts by real case load and shows all four comfortably.
+Workload samples have simulated development_seed events. All case/event writes
+remain in the existing case writer. The seed is idempotent and never resets a
+case the operator has since worked on. Re-running it was verified.
+
+DETAIL
+Click any case reference in Legal Notices to open /legal-notices/:id.
+- Top: reference, client, current lifecycle status, matter, tier, saved base fee,
+  GST, creation time, and admin task only when applicable. Unconfirmed pricing is
+  labelled; amounts were not recalculated or changed by this chunk.
+- People: real account contacts, plus separately labelled sender intake and
+  noticee details. No fixture fallback. Missing fields and their labels disappear.
+- Timeline: full newest-first events, actor/role, timestamp, source demo tag,
+  actual shipment milestones, optional expandable event payload.
+- Documents: Client / Advocate / Admin / Generated origins, all available files,
+  draft versions and final notice; previews use short-lived authenticated URLs.
+- Current and older draft content is read-only. Section links avoid long hunts.
+- Payments: purpose, payer/role, status, recorded base/GST/total; courier payments
+  use their actual advocate payer. The API integration test covers this explicitly.
+- Shipments: saved carrier/waybill, dates, office/contact, typed tracking URL,
+  receipt/POD links, and recorded milestones with timestamps.
+- Demo tags reflect persisted flags/source on cases, events, documents, payments
+  and shipments. Empty evidence sections are omitted.
+- Assign is the only mutation in the UI. No reassignment or Confirm Delivery.
+
+API
+GET /admin/cases/:id is admin-only, Legal Notice only, using the existing scope.
+It exposes only selected screen data, not Cognito subjects or S3 object keys.
+GET /admin/cases/documents/:id/preview retains document membership checks and
+returns expiring URLs; only PDF/PNG/JPEG use inline disposition. Existing mobile
+attachment downloads retain their behaviour. No schema fields were added.
+
+VERIFICATION
+54 API tests pass, including admin/non-admin boundaries, service scope, origins,
+real payer, sparse values, shipment history and dev seed guards/idempotency.
+10 shared tests pass. All six workspace typechecks and the admin build pass.
+Browser: real admin login, list-to-detail link, four-entry picker, all four
+uploaded documents on the delivered case opened from S3, client token refusal,
+zero runtime errors, and no writes while reading/previewing.
+Mobile source and other services were not changed. No AWS deployment.
+
+Screenshots (all local API data, not fixture-rendered screens):
+waiting.png — LN-2026-0036, awaiting assignment (guarded seed sample).
+drafting.png — LN-2026-0038, in_progress with saved draft. Created through real
+  intake -> submit -> simulated payment -> admin assignment -> advocate accept
+  -> start -> save draft. Uses the existing clearly labelled simulator text;
+  no legal prose fabricated. Assigned to Meera, so Arjun's timer cannot advance it.
+delivered.png — LN-2026-0029, existing completed case with shipment and POD.
+sparse.png — LN-2026-0037, no tier/price/matter/advocate/documents/payments;
+  corresponding labels and sections are absent.
+picker.png — four approved advocates, with actual current loads.
+review.png — existing client-review case with generated draft.
+document-preview.png — the flagged admin-owned simulated POD opened inline.
+evidence.json — exact ids/statuses, advocate loads and document/role checks.
+
+Data observation (not changed): LN-2026-0029 also contains a client-uploaded
+copy of a simulated POD from LN-2026-0017, stored as kind screenshots and
+simulated=false. The panel faithfully places it under Client; its actual
+admin-owned POD is a separate simulated=true document. No flag was inferred
+from a filename or PDF contents, and no historical record was silently edited.
+
+Local only. No push or deployment was requested for this chunk.

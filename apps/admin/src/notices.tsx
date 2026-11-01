@@ -1,6 +1,6 @@
 import { AssignAdvocate } from './assign-advocate';
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router';
+import { Link, useSearchParams } from 'react-router';
 import { ADMIN_CASE_BUCKETS, ADMIN_CASE_BUCKET_LABELS, ApiError, type AdminCaseBucket, type AdminCasePage } from '@legalitt/shared';
 import { api, useSession } from './session';
 
@@ -49,7 +49,7 @@ export function Notices() {
     {error && <div role="alert" className="error">{error} <button onClick={() => setReload(n => n + 1)}>Retry</button></div>}
     <div className="table-scroll" aria-busy={loading}><table><thead><tr>{['CASE #','CLIENT','MATTER','ADVOCATE','DOCUMENTS','STATUS','AMOUNT','CREATED','ACTIONS'].map(h => <th key={h} scope="col">{h}</th>)}</tr></thead><tbody>
       {loading ? <tr><td colSpan={9} className="empty" role="status">Loading notices…</td></tr> : data?.items.map(row => <tr key={row.id}>
-        <td className="reference">{row.reference}{row.simulated && <small className="demo" title="This case has simulated events">demo</small>}</td><td className="client">{row.client.name}</td>
+        <td className="reference"><Link className="case-reference-link" to={`/legal-notices/${row.id}`}>{row.reference}</Link>{row.simulated && <small className="demo" title="This case has simulated events">demo</small>}</td><td className="client">{row.client.name}</td>
         <td className="matter">{row.matter_type && matterLabels[row.matter_type] && <strong>{matterLabels[row.matter_type]}</strong>}{row.parties.map((party, i) => <div className="party" key={i}>{partyLabels[party.kind] && <span>{partyLabels[party.kind]}: </span>}{party.name}</div>)}</td>
         <td>{row.advocate ? row.advocate.name : row.bucket === 'open' ? <button className="assign" onClick={() => setAssigning({id: row.id, reference: row.reference})}>+ Assign</button> : null}</td>
         <td className="documents">{(['client', 'advocate', 'admin', 'generated'] as const).map(origin => row.documents[origin] > 0 && <span key={origin}>{row.documents[origin]} {origin} {row.documents[origin] === 1 ? 'doc' : 'docs'}{row.simulated_documents[origin] > 0 && <small className="demo" title={`${row.simulated_documents[origin]} of ${row.documents[origin]} documents are simulated`}>{row.simulated_documents[origin] === row.documents[origin] ? 'demo' : `${row.simulated_documents[origin]} demo`}</small>}</span>)}</td>

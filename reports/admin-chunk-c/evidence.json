@@ -1,0 +1,71 @@
+{
+  "cases": {
+    "waiting": {
+      "id": "7144a721-9a7d-49d6-b6dd-d11cea8a9757",
+      "reference": "LN-2026-0036",
+      "status": "assigning"
+    },
+    "drafting": {
+      "id": "cee78bce-0c6f-40cb-aa32-06c2545b7050",
+      "reference": "LN-2026-0038",
+      "status": "in_progress"
+    },
+    "delivered": {
+      "id": "d9520f0b-a68b-4055-81fa-92986d604e4f",
+      "reference": "LN-2026-0029",
+      "status": "completed"
+    },
+    "sparse": {
+      "id": "716a2f9a-062b-44d6-b686-6843b034f499",
+      "reference": "LN-2026-0037",
+      "status": "assigning"
+    },
+    "review": {
+      "id": "464693c9-5cdd-44c7-95aa-a15e905e7543",
+      "reference": "LN-2026-0031",
+      "status": "client_review"
+    }
+  },
+  "advocates": [
+    {
+      "id": "876ed707-a69e-4d53-9e30-e92a5cbb4b43",
+      "name": "Demo Advocate Asha",
+      "practice_areas": [
+        "Consumer Law"
+      ],
+      "city": "Mumbai",
+      "open_cases": 0
+    },
+    {
+      "id": "0aefd2b7-2f5e-4d80-a5d6-50e1e20e1aad",
+      "name": "Demo Advocate Kabir",
+      "practice_areas": [
+        "Family Law",
+        "Civil Law"
+      ],
+      "city": "Jaipur",
+      "open_cases": 1
+    },
+    {
+      "id": "c7027453-909b-4c3d-a9c3-dab0c3b375ca",
+      "name": "Demo Advocate Meera",
+      "practice_areas": [
+        "Property Law",
+        "Tenancy"
+      ],
+      "city": "Pune",
+      "open_cases": 4
+    },
+    {
+      "id": "a9442690-6857-47c9-b91c-8c4c210cc6a4",
+      "name": "Adv. Arjun Sharma",
+      "practice_areas": [
+        "Property Law"
+      ],
+      "city": "Indore",
+      "open_cases": 7
+    }
+  ],
+  "documentsOpened": 4,
+  "clientRefused": true
+}

@@ -1,0 +1,72 @@
+import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { Link, useParams } from 'react-router';
+import { ApiError, adminBucketFor, type AdminCaseDetail } from '@legalitt/shared';
+import { api, useSession } from './session';
+import { AssignAdvocate } from './assign-advocate';
+const label = (s: string) => s.replaceAll('_', ' ').replace(/^./, c => c.toUpperCase());
+const money = (v: string) => '₹' + ((BigInt(v) + 50n) / 100n).toLocaleString('en-IN');
+const date = (v: string) => new Date(v).toLocaleString('en-IN', {day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit'});
+const eventTitle = (e: AdminCaseDetail['events'][number]) => e.type === 'shipment_status_changed' && typeof e.payload.to === 'string' ? label(e.payload.to) : e.type === 'status_changed' && e.to_status ? label(e.to_status) : label(e.type);
+const present = (v: unknown): boolean => v !== null && v !== undefined && v !== '' && (typeof v !== 'object' || Object.values(v).some(present));
+function Demo({show}: {show: boolean}) {return show ? <small className="demo">demo</small> : null;}
+function Field({name, value}: {name: string; value: ReactNode}) {return value !== null && value !== undefined && value !== '' ? <div className="detail-field"><dt>{name}</dt><dd>{value}</dd></div> : null;}
+function Values({value}: {value: Record<string, unknown>}) {
+  return <dl className="event-values">{Object.entries(value).filter(([,v])=>present(v)).map(([k,v])=><Field key={k} name={label(k)} value={typeof v === 'object' ? <Values value={v as Record<string,unknown>}/> : String(v)}/>)}</dl>;
+}
+function Preview({doc, close}: {doc: AdminCaseDetail['documents'][number]; close(): void}) {
+ const ref=useRef<HTMLDialogElement>(null); const [url,setUrl]=useState(''),[error,setError]=useState('');
+ useEffect(()=>{const dialog=ref.current;dialog?.showModal();return()=>dialog?.close();},[]);
+ useEffect(()=>{let alive=true;api.adminDocumentPreview(doc.id).then(r=>{if(alive)setUrl(r.url);}).catch(e=>{if(alive)setError(e.message);});return()=>{alive=false;};},[doc.id]);
+ return <dialog ref={ref} className="document-dialog" onCancel={e=>{e.preventDefault();close();}} aria-label={doc.filename}>
+  <div className="dialog-heading"><div><h2>{doc.filename}<Demo show={doc.simulated}/></h2><p>{label(doc.kind)}</p></div><button onClick={close} aria-label="Close document">×</button></div>
+  {error ? <div role="alert" className="error">{error}</div> : !url ? <p role="status">Opening document…</p> : <><a href={url} target="_blank" rel="noreferrer">Open in new tab ↗</a>{doc.mime_type.startsWith('image/') ? <img src={url} alt={doc.filename}/> : doc.mime_type === 'application/pdf' ? <iframe title={doc.filename} src={url}/> : null}</>}
+ </dialog>;
+}
+export function CaseDetail() {
+ const {id}=useParams(),{refuse}=useSession(); const [data,setData]=useState<AdminCaseDetail|null>(null),[error,setError]=useState('');
+ const [reload,setReload]=useState(0),[assign,setAssign]=useState(false),[preview,setPreview]=useState<AdminCaseDetail['documents'][number]|null>(null);
+ useEffect(()=>{let alive=true;setData(null);setError('');api.adminCase(id!).then(r=>{if(alive)setData(r);}).catch(e=>{
+  if(!alive)return;if(e instanceof ApiError && [401,403].includes(e.status))refuse('Admin access required. Sign in again.');else setError(e.message);
+ });return()=>{alive=false;};},[id,reload]);
+ if(!data)return <main className="case-detail"><Link className="back-link" to="/legal-notices">← Legal Notices</Link>{error?<div className="error" role="alert">{error} <button onClick={()=>setReload(n=>n+1)}>Retry</button></div>:<p role="status">Loading case…</p>}</main>;
+ const d=data, bucket=adminBucketFor(d.status), canAssign=!d.advocate_id && ['paid','assigning','advocate_declined'].includes(d.status);
+ const task=canAssign?'Assign an advocate':d.status==='advocate_declined'?'Advocate declined · assignment needs review':d.status==='dispatched'?'Delivery confirmation awaits admin':null;
+ const document=(doc: AdminCaseDetail['documents'][number])=><div className="document-row" key={doc.id}>
+  <span className="file-symbol">{doc.mime_type==='application/pdf'?'PDF':'FILE'}</span><div className="file-description">
+  {doc.status==='uploaded'?<button className="text-button" onClick={()=>setPreview(doc)}>{doc.filename} ↗</button>:<strong>{doc.filename}</strong>}
+  <p>{doc.final?'Final notice':doc.draft_version!==null?`Draft · v${doc.draft_version}`:label(doc.kind)}<Demo show={doc.simulated}/></p>
+  <p>{doc.owner}{doc.page_count!==null?` · ${doc.page_count} ${doc.page_count===1?'page':'pages'}`:''}{doc.status!=='uploaded'?` · ${label(doc.status)}`:''}</p></div></div>;
+ const relatedDoc=(docId:string|null)=>{const doc=d.documents.find(v=>v.id===docId);return doc?<button className="text-button" onClick={()=>setPreview(doc)}>{doc.filename} ↗<Demo show={doc.simulated}/></button>:null;};
+ return <main className="case-detail">
+  <Link className="back-link" to="/legal-notices">← Legal Notices</Link>
+  <section className="case-overview"><div className="case-heading"><div><p className="eyebrow">LEGAL NOTICE</p><h1>{d.reference}<Demo show={d.simulated}/></h1><p>{d.contacts.find(c=>c.role==='client')?.name}</p></div><span className={'status '+(bucket??'')}>{label(d.status)}</span></div>
+   <dl className="summary-fields"><Field name="Matter" value={d.matter_type?label(d.matter_type):null}/><Field name="Intake issue" value={!d.matter_type&&typeof d.intake.issueType==='string'?label(d.intake.issueType.replaceAll('-','_')):null}/><Field name="Tier" value={d.tier?label(d.tier):null}/>
+    <Field name="Base fee" value={d.pricing?<>{money(d.pricing.base_amount_paise)}{!d.pricing.confirmed&&<small className="unconfirmed">Unconfirmed price</small>}</>:null}/>
+    <Field name="GST" value={d.pricing?`${d.pricing.gst_bps/100}% exclusive`:null}/><Field name="Created" value={date(d.created_at)}/><Field name="Sub-status" value={d.sub_status?label(d.sub_status):null}/></dl>
+   {task&&<div className="admin-attention"><span className="attention-dot"/><div><small>NEEDS ADMIN</small><strong>{task}</strong></div>{canAssign&&<button className="assign" onClick={()=>setAssign(true)}>+ Assign</button>}</div>}
+  </section>
+  <section className="people-section"><h2>People</h2><div className="people-grid">{d.contacts.map((c,i)=><article className="person" key={i}><p className="eyebrow">{c.role==='sender'?'SENDER · INTAKE':label(c.role)}</p>{c.name&&<h3>{c.name}</h3>}<dl><Field name="Email" value={c.email}/><Field name="Phone" value={c.phone}/><Field name="Address" value={c.address}/><Field name="Relationship" value={c.relationship}/></dl></article>)}</div></section>
+  <nav className="case-sections" aria-label="Case sections">
+   {d.events.length>0&&<a href="#timeline">Timeline <span>{d.events.length}</span></a>}
+   {d.drafts.length>0&&<a href="#drafts">Drafts <span>{d.drafts.length}</span></a>}
+   {d.documents.length>0&&<a href="#documents">Documents <span>{d.documents.length}</span></a>}
+   {d.payments.length>0&&<a href="#payments">Payments <span>{d.payments.length}</span></a>}
+   {d.shipments.length>0&&<a href="#shipments">Shipments <span>{d.shipments.length}</span></a>}
+  </nav>
+  <div className="case-columns"><div className="case-spine">{d.events.length>0&&<section id="timeline" className="detail-panel timeline-panel"><div className="section-title"><h2>Case timeline</h2><span>{d.events.length} {d.events.length===1?'event':'events'} · newest first</span></div>
+   <ol className="case-timeline">{d.events.map(e=><li key={e.id}><div className="event-heading"><strong>{eventTitle(e)}</strong><Demo show={e.source==='simulated'}/><time dateTime={e.created_at}>{date(e.created_at)}</time></div>
+    {(e.actor||e.from_status)&&<p>{e.actor?.name}{e.actor?.role?` · ${label(e.actor.role)}`:''}{e.from_status && e.from_status!==e.to_status?<span className="event-transition">{label(e.from_status)} → {e.to_status?label(e.to_status):label(e.type)}</span>:null}</p>}
+    {Object.values(e.payload).some(present)&&<details><summary>Event details</summary><Values value={e.payload}/></details>}
+   </li>)}</ol>
+  </section>}  {d.drafts.length>0&&<section id="drafts" className="detail-panel drafts-panel"><div className="section-title"><h2>Drafts</h2><span>Latest first</span></div>{d.drafts.map((draft,i)=><details key={draft.id} open={i===0}><summary>{i===0?'Current draft':'Draft'} · v{draft.version}<span>{draft.author} · {date(draft.created_at)}</span></summary>{draft.document_id&&relatedDoc(draft.document_id)}<dl className="draft-content">{Object.entries(draft.content).filter(([,v])=>present(v)).map(([key,v])=><Field key={key} name={label(key)} value={typeof v==='string'?v:JSON.stringify(v)}/>)}</dl></details>)}</section>}</div><div className="case-evidence">
+   {d.documents.length>0&&<section id="documents" className="detail-panel"><div className="section-title"><h2>Documents</h2><span>{d.documents.length} {d.documents.length===1?'file':'files'}</span></div>{(['client','advocate','admin','generated'] as const).map(origin=>{const docs=d.documents.filter(x=>x.origin===origin);return docs.length?<div className="document-group" key={origin}><h3>{label(origin)} <span>{docs.length}</span></h3>{docs.map(document)}</div>:null;})}</section>}
+   {d.payments.length>0&&<section id="payments" className="detail-panel"><div className="section-title"><h2>Payments</h2><span>{d.payments.length} {d.payments.length===1?'record':'records'}</span></div>{d.payments.map(p=><article className="payment-row" key={p.id}><div><strong>{label(p.purpose)}<Demo show={p.simulated}/></strong><b>{money(p.total_paise)}</b></div><p>{p.payer.name} · {label(p.payer.role)}</p><p className="payment-state">{label(p.status)} · {date(p.captured_at??p.created_at)}</p><details><summary>Amount breakdown</summary><dl><Field name="Base" value={money(p.base_amount_paise)}/><Field name="GST" value={money(p.gst_paise)}/></dl></details></article>)}</section>}
+   {d.shipments.map((s,i)=><section id={i===0?"shipments":undefined} className="detail-panel" key={s.id}><div className="section-title"><h2>Shipment<Demo show={s.simulated}/></h2><span>{label(s.status)}</span></div><dl className="shipment-fields">
+    <Field name="Direction" value={label(s.direction)}/><Field name="Carrier" value={s.carrier}/><Field name="Waybill" value={s.waybill}/><Field name="Dispatch date" value={s.dispatch_date}/><Field name="Booked" value={s.booked_at?date(s.booked_at):null}/><Field name="Dispatched" value={s.dispatched_at?date(s.dispatched_at):null}/><Field name="Expected delivery" value={s.expected_delivery}/><Field name="Delivered" value={s.delivered_at?date(s.delivered_at):null}/><Field name="Courier office" value={s.courier_office}/><Field name="Courier phone" value={s.courier_phone}/><Field name="Tracking URL" value={s.tracking_url}/><Field name="Receipt" value={relatedDoc(s.receipt_document_id)}/><Field name="Proof of delivery" value={relatedDoc(s.pod_document_id)}/>
+   </dl>{d.events.some(e=>e.payload.shipment_id===s.id)&&<ol className="shipment-milestones">{d.events.filter(e=>e.payload.shipment_id===s.id).slice().reverse().map(e=><li key={e.id}><strong>{e.type === 'status_changed' && e.to_status === 'completed' ? 'Delivered' : eventTitle(e)}<Demo show={e.source==='simulated'}/></strong><time>{date(e.created_at)}</time></li>)}</ol>}</section>)}
+  </div></div>
+
+  {assign&&<AssignAdvocate caseId={d.id} reference={d.reference} close={()=>setAssign(false)} assigned={()=>{setAssign(false);setReload(n=>n+1);}}/>}
+  {preview&&<Preview doc={preview} close={()=>setPreview(null)}/>}
+ </main>;
+}

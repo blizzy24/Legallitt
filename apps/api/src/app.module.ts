@@ -1,3 +1,4 @@
+import {AdminCaseDetailRepository} from './admin-cases/admin-case-detail';
 import {AdminAdvocatesController, AdminAdvocatesRepository} from './admin-cases/admin-advocates';
 import {AdminCasesController} from './admin-cases/admin-cases.controller';
 import {AdminCasesRepository} from './admin-cases/admin-cases.repository';
@@ -52,7 +53,7 @@ export class HealthController {
     ServicesController,
     DocumentController,
   ],
-  providers: [AdminAdvocatesRepository, AdminCasesRepository, NoticeMessages,
+  providers: [AdminCaseDetailRepository, AdminAdvocatesRepository, AdminCasesRepository, NoticeMessages,
     ShipmentService,
     NoticePdfService,
     PaymentsService,

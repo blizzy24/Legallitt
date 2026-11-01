@@ -151,14 +151,15 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
       }
     }, transactionOptions);
   }
-  async url(actor: CaseActor, id: string) {
+  async url(actor: CaseActor, id: string, preview = false) {
     const db = await this.prisma.getClient();
     return db.$transaction(async (tx) => {
       const doc = await this.locked(tx, actor, id);
       if (doc.status !== "uploaded")
         throw new NotFoundException("Document not found");
       return {
-        url: await this.storage.download(doc.s3_key, doc.filename),
+        url: await this.storage.download(doc.s3_key, doc.filename,
+          preview && actor.role === 'admin' && ['application/pdf', 'image/png', 'image/jpeg'].includes(doc.mime_type)),
         ...(doc.simulated ? {simulated: true} : {}),
         expires_in: DOCUMENT_URL_SECONDS,
       };
