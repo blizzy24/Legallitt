@@ -1,6 +1,6 @@
 # Legalitt — Backend & Cloud Architecture
 
-Version 6.5 · 29 October 2026
+Version 6.6 · 1 November 2026
 Status: steps 0–7 complete for Legal Notice. The screen-rework (§1a) is in
 flight. §2.11 now governs every capability that is not yet real.
 
@@ -54,6 +54,23 @@ Consequences, which apply to every step in this document:
   needed and not drawn, stop and ask.
 
 A change the client can see is a change the client must have asked for.
+
+### 1a.1 Precedence, and reading intent
+
+The Figma files were drawn with a view of what the product does and what
+belongs in it. **They outrank every other source**, including the admin panel
+the previous team built (`ADMIN-PANEL-SURVEY.md`). Where the old panel and the
+designs disagree, the designs win — the old panel reflects a different vision
+of the product and is a visual reference only.
+
+Read the designs for **what they mean, not only what they show**. A drawn
+screen expresses an intent about how the business works; serve that intent.
+Design 22 drawing ₹999 urgent and ₹699 ordinary is not a label to copy, it is
+a decision about how Legal Notice is priced and tiered.
+
+This does not loosen the last rule above. Reading intent means inferring from
+what *is* drawn; it is never licence to invent what is not. Where the intent is
+genuinely unclear, still stop and ask.
 
 ## 2. Decisions
 
@@ -1484,6 +1501,8 @@ is re-litigated mid-build.
 | Delivery confirmation with no admin panel | The admin endpoint and state transition are **real now**. Only the screen is missing, so in simulated mode a dispatched case auto-confirms after a delay (§9.1). Nothing about the flow changes when the panel arrives | 2026-10-27 |
 | Who owns a system-generated document | A **seeded admin user**, the same owner a real admin upload would have — not the client, and not an invented system account. `documents.owner_id` means who produced the document; read access comes from case membership | 2026-10-27 |
 | Design 286's extra fields | **Schema adapts to the design** (§1a). `shipments` gains dispatch_date, courier_office, courier_phone, tracking_url, expected_delivery and receipt_document_id. A drawn input is never dropped because a table lacked a column | 2026-10-27 |
+| Legal Notice pricing | **₹999 urgent (within 5 days), ₹699 ordinary (within 10 days)**, as design 22 draws. The old admin panel's flat ₹1,199 is superseded (§1a.1) | 2026-11-01 |
+| Source precedence | The Figma files outrank the previous team's admin panel, which is a visual reference only (§1a.1) | 2026-11-01 |
 | Inbound receipt (design 201) | "Confirm Received" writes a `documents_received` event **and** closes out the inbound shipment — `status='delivered'`, `delivered_at=now()`. The advocate's word is the proof for inbound; no POD is required, because the recipient is the one confirming. **`case_status` is unchanged.** Nobody else can ever confirm an inbound shipment, so not closing it would strand every one of them | 2026-10-28 |
 | Advocate decline reason | **Optional.** Design 185 draws a Decline Request button and no reason input, so the API relaxes to match (§1a). `reason` is nullable; no dialog is invented. Flagged to the client as question 18 | 2026-10-27 |
 | Advocate's courier payment (196–198) | A **payment**, not a lifecycle step. Writes `payments` with `purpose='courier'` and `payer_id` = the advocate, writes a `case_events` row, and **leaves `case_status` unchanged**. `payment_pending → paid` belongs to the service fee alone | 2026-10-26 |
