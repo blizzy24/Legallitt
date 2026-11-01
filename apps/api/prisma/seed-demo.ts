@@ -1,3 +1,4 @@
+import { seedDevelopmentNotice } from '../src/cases/case-state-machine';
 import {
   AdminCreateUserCommand,
   AdminGetUserCommand,
@@ -35,6 +36,13 @@ const demoAdvocateProfile = {
   languages: ["Hindi", "English"],
 };
 
+// Synthetic development accounts authorised for testing the multi-row picker.
+// No portraits, ratings, credentials or personal contact numbers are invented.
+const extraAdvocates = [
+  {role: 'advocate', email: 'demo-advocate-2@legalitt.invalid', name: 'Demo Advocate Asha', practice_areas: ['Consumer Law'], city: 'Mumbai', load: 0},
+  {role: 'advocate', email: 'demo-advocate-3@legalitt.invalid', name: 'Demo Advocate Kabir', practice_areas: ['Family Law', 'Civil Law'], city: 'Jaipur', load: 1},
+  {role: 'advocate', email: 'demo-advocate-4@legalitt.invalid', name: 'Demo Advocate Meera', practice_areas: ['Property Law', 'Tenancy'], city: 'Pune', load: 3},
+];
 // Explicit operator command, never run by a request handler or in production.
 async function main() {
   requireDemoMode();
@@ -58,7 +66,9 @@ async function main() {
     if (pool.UserPool?.UserPoolTags?.environment !== "dev")
       throw new Error("Demo accounts require a dev-tagged pool");
     const password = await demoPassword();
-    for (const [role, account] of Object.entries({ ...demoAccounts, admin: { email: "demo-admin@legalitt.invalid", name: "Demo admin" } })) {
+    const accounts = [...Object.entries({...demoAccounts, admin: {email: "demo-admin@legalitt.invalid", name: "Demo admin"}}).map(([role, account]) => ({role, ...account})), ...extraAdvocates];
+    for (const account of accounts) {
+      const {role} = account;
       const target = { UserPoolId: userPoolId, Username: account.email };
       try {
         await cognito.send(
@@ -113,14 +123,31 @@ async function main() {
       // Dev seed data only, behind the same guards as the accounts (§9.1): the
       // facts design 437 draws for its advocate. A seeded 4.9 from 142 reviews
       // must never reach a production stage.
-      if (role === "advocate")
+      if (role === "advocate" && account.email === demoAccounts.advocate.email)
         await db.advocateProfile.upsert({
           where: { user_id: row.id },
           create: { user_id: row.id, ...demoAdvocateProfile },
           update: demoAdvocateProfile,
         });
+      const extra = extraAdvocates.find(a => a.email === account.email);
+      if (extra) {
+        const profile = {verification: 'approved' as const, practice_areas: extra.practice_areas, city: extra.city};
+        await db.advocateProfile.upsert({where: {user_id: row.id}, create: {user_id: row.id, ...profile}, update: profile});
+      }
     }
-    console.log("Seeded three verified demo accounts and the advocate's profile; no mail or SMS sent.");
+    const client = await db.user.findUniqueOrThrow({where: {email: demoAccounts.client.email}});
+    const pricing = await db.servicePricing.findFirstOrThrow({where: {service_code: 'legal_notice', tier: 'ordinary', effective_to: null}, orderBy: {effective_from: 'desc'}});
+    const samples: {key: string; advocate_id?: string; status: 'in_progress' | 'assigning'; sparse?: boolean}[] = [];
+    for (const extra of extraAdvocates) {
+      const advocate = await db.user.findUniqueOrThrow({where: {email: extra.email}});
+      for (let i = 0; i < extra.load; i++) samples.push({key: extra.email + ':' + i, advocate_id: advocate.id, status: 'in_progress'});
+    }
+    samples.push({key: 'waiting', status: 'assigning'}, {key: 'sparse', status: 'assigning', sparse: true});
+    for (const sample of samples) {
+      await seedDevelopmentNotice(db, {seedKey: sample.key, clientId: client.id, advocateId: sample.advocate_id,
+        status: sample.status, sparse: sample.sparse, pricingId: pricing.id});
+    }
+    console.log("Seeded six dev accounts and idempotent demo workload cases; no mail or SMS sent.");
   } finally {
     secrets.destroy();
     cognito.destroy();

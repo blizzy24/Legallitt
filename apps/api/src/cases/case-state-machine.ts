@@ -1,3 +1,4 @@
+import { requireDemoMode } from '../auth/demo';
 import {
   BadRequestException,
   ConflictException,
@@ -21,7 +22,7 @@ import {
 import { z } from "zod";
 import { parse } from "../auth/auth.service";
 import { PrismaService } from "../prisma.service";
-import type { Prisma } from "../generated/prisma/client";
+import type { Prisma, PrismaClient } from "../generated/prisma/client";
 import { caseScope, type CaseActor } from "./case-access";
 
 export const createCaseSchema = z.strictObject({
@@ -560,4 +561,25 @@ export class CaseStateMachine {
 /** Append-only non-lifecycle events share the case event writer. */
 export function appendCaseEvent(tx: Prisma.TransactionClient, data: Prisma.CaseEventUncheckedCreateInput) {
   return tx.caseEvent.create({data});
+}
+
+// Explicit dev-seed entry point; never called by a request handler. Keep all
+// case/event writes in this owner, including authorised development fixtures.
+export async function seedDevelopmentNotice(db: PrismaClient, input: {
+  seedKey: string; clientId: string; advocateId?: string; status: 'in_progress' | 'assigning'; sparse?: boolean; pricingId: string;
+}) {
+  requireDemoMode();
+  return db.$transaction(async tx => {
+    await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${'admin-seed:' + input.seedKey}))::text`;
+    if (await tx.caseEvent.findFirst({where: {type: 'development_seed', payload: {path: ['seed_key'], equals: input.seedKey}}})) return;
+    const [seq] = await tx.$queryRaw<{value: bigint}[]>`SELECT nextval('legal_notice_reference_seq') AS value`;
+    const record = await tx.case.create({data: {
+      reference: `LN-${new Date().getUTCFullYear()}-${seq.value.toString().padStart(4, '0')}`,
+      service_code: 'legal_notice', client_id: input.clientId, advocate_id: input.advocateId, status: input.status,
+      ...(input.sparse ? {} : {tier: 'ordinary', pricing_id: input.pricingId, matter_type: 'tenant_issue',
+        details: {client: {fullName: 'Demo client'}, noticee: {fullName: 'Demo noticee', email: 'demo-noticee@legalitt.invalid'}, issueType: 'tenant-issue'}}),
+    }});
+    await appendCaseEvent(tx, {case_id: record.id, type: 'development_seed', source: 'simulated', to_status: input.status,
+      payload: {actor: 'system', seed_key: input.seedKey}});
+  });
 }
