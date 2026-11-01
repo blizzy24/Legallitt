@@ -39,6 +39,7 @@ for (const [stage, env] of [
     if (env === "dev")
       assert.deepEqual(bucket.CorsConfiguration.CorsRules[0].AllowedOrigins, [
         "http://localhost:8081",
+        "http://127.0.0.1:5173",
       ]);
     else assert.equal(bucket.CorsConfiguration, undefined);
     assert.ok(
