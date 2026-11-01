@@ -1,0 +1,130 @@
+{
+  "case": {
+    "id": "b780cabd-576a-4731-99ed-0d80d5954718",
+    "reference": "LN-2026-0039"
+  },
+  "assignment": {
+    "id": "371",
+    "type": "status_changed",
+    "from_status": "assigning",
+    "to_status": "assigned",
+    "actor": {
+      "name": "Demo admin",
+      "role": "admin"
+    },
+    "source": "real",
+    "payload": {
+      "advocate_id": "c7027453-909b-4c3d-a9c3-dab0c3b375ca"
+    },
+    "created_at": "2026-11-01T21:55:26.140Z"
+  },
+  "completion": {
+    "id": "382",
+    "type": "status_changed",
+    "from_status": "dispatched",
+    "to_status": "completed",
+    "actor": {
+      "name": "Demo admin",
+      "role": "admin"
+    },
+    "source": "real",
+    "payload": {
+      "received_by": "Navigation Test Noticee",
+      "shipment_id": "3f838cd3-3487-4300-b321-8d7f7e3ac725",
+      "delivered_at": "2026-11-01T21:54:00.000Z",
+      "pod_document_id": "4631e82d-c6f4-4429-b50c-5e42f6a23c93"
+    },
+    "created_at": "2026-11-01T21:55:31.754Z"
+  },
+  "shipment": {
+    "id": "3f838cd3-3487-4300-b321-8d7f7e3ac725",
+    "case_id": "b780cabd-576a-4731-99ed-0d80d5954718",
+    "direction": "to_recipient",
+    "status": "delivered",
+    "carrier": "TEST COURIER",
+    "waybill": "TEST-LN-2026-0039",
+    "recipient": {
+      "email": "noticee@example.invalid",
+      "mobile": "9999999998",
+      "address": "Test recipient address",
+      "fullName": "Navigation Test Noticee",
+      "relationship": "Other"
+    },
+    "dispatch_date": "2026-11-01",
+    "courier_office": null,
+    "courier_phone": null,
+    "tracking_url": null,
+    "expected_delivery": null,
+    "receipt_document_id": null,
+    "pod_document_id": "4631e82d-c6f4-4429-b50c-5e42f6a23c93",
+    "received_by": "Navigation Test Noticee",
+    "simulated": false,
+    "booked_at": "2026-11-01T21:55:29.905Z",
+    "dispatched_at": "2026-11-01T21:55:29.946Z",
+    "delivered_at": "2026-11-01T21:54:00.000Z"
+  },
+  "proof": {
+    "id": "4631e82d-c6f4-4429-b50c-5e42f6a23c93",
+    "filename": "manual-upload-verification.pdf",
+    "kind": "proof_of_delivery",
+    "origin": "admin",
+    "owner": "Demo admin",
+    "status": "uploaded",
+    "mime_type": "application/pdf",
+    "page_count": 1,
+    "size_bytes": "1073",
+    "simulated": false,
+    "created_at": "2026-11-01T21:55:31.061Z",
+    "final": false,
+    "draft_version": null
+  },
+  "oldPricing": {
+    "reference": "LN-2026-0029",
+    "pricing": {
+      "base_amount_paise": "99900",
+      "gst_bps": 1800,
+      "confirmed": false
+    },
+    "payment": {
+      "id": "daa3d432-3b73-49f6-962d-64bd54479471",
+      "purpose": "service_fee",
+      "base_amount_paise": "137700",
+      "gst_paise": "24786",
+      "total_paise": "162486",
+      "status": "captured",
+      "payer": {
+        "name": "Keshav Porwal",
+        "role": "client"
+      },
+      "simulated": true,
+      "created_at": "2026-10-29T23:03:20.766Z",
+      "captured_at": "2026-10-29T23:03:18.761Z"
+    }
+  },
+  "newPricing": {
+    "reference": "LN-2026-0039",
+    "pricing": {
+      "base_amount_paise": "99900",
+      "gst_bps": 1800,
+      "confirmed": false
+    },
+    "payment": {
+      "id": "087dccd8-3fc2-4b76-9e2c-59caeb45141b",
+      "purpose": "service_fee",
+      "base_amount_paise": "137700",
+      "gst_paise": "24786",
+      "total_paise": "162486",
+      "status": "captured",
+      "payer": {
+        "name": "Demo client",
+        "role": "client"
+      },
+      "simulated": true,
+      "created_at": "2026-11-01T21:55:24.996Z",
+      "captured_at": "2026-11-01T21:55:22.990Z"
+    }
+  },
+  "duplicateStatus": 409,
+  "timerOverwrite": false,
+  "fileHashVerified": true
+}

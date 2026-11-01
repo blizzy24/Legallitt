@@ -1,0 +1,70 @@
+Admin chunk D — 2 November 2026
+
+Delivered
+- Confirm delivery dialog on dispatched Legal Notices, using the existing endpoint.
+- Actual browser file upload through presign, S3, document validation and completion.
+- Optional typed receiver (blank is NULL), typed local delivery time converted to ISO.
+- Real admin actor/event, real POD and shipment delivery; historical demo events kept.
+- Duplicate/racing confirmations rejected under the case lock; no timer flag changes.
+- Client 441 reads the shipment POD and typed receiver. Existing layout/copy unchanged.
+- Local dev and test databases migrated for shipments.received_by.
+
+Pricing finding
+The original header already joined the case's own pricing_id. LN-2026-0029's
+saved pricing row is 99900 paise, not 137700. Its captured payment has base 137700,
+GST 24786 and total 162486. The extra base is the existing platform 19900 plus
+delivery 17900. The newly created LN-2026-0039 has the same stored amounts.
+Header now separates Service fee (999), Additional fees (378), Charged before GST
+(1377), GST paid (248 rounded), Total paid (1625 rounded). Nothing is repriced.
+A database regression test separately verifies an expired 1377 pricing row is
+retained for its case even with a newer 999 price present.
+
+Browser evidence
+LN-2026-0039, b780cabd-576a-4731-99ed-0d80d5954718.
+Admin sign-in, Assign to Demo Advocate Meera and Confirm delivery were performed
+through the panel. The advocate accepted/drafted/sent/dispatched through real
+role-authenticated endpoints; client approval also used the real endpoint.
+Draft content was explicitly labelled test content, not legal advice. The uploaded
+PDF says it is a manual development verification file, not an actual delivery.
+The POD upload was human-triggered, not simulator-generated. Its bytes were read
+back through the client's document endpoint and SHA-256 matched the uploaded file.
+Receiver: Navigation Test Noticee. Client 441 shows it, delivery time and available
+proof, without demo tags. Old simulated payment/history tags remain in admin.
+Second confirmation returned 409. After 35 seconds with the unchanged mobile API
+timer running, the single completion event and the same real POD were unchanged.
+Integration tests additionally cover concurrent confirmations, blank receiver,
+non-admin refusal, simulated-proof refusal for human confirmation, and simulator
+short-circuiting before authentication/upload for an already completed case.
+
+Screenshots (this directory)
+- old-case-price.png — LN-2026-0029 header and payment-derived amounts.
+- confirm-delivery.png — file validated, receiver/time entered before confirmation.
+- case-completed.png — admin detail after confirmation, real POD/event/shipment.
+- client-441.png — delivered state with receiver and proof controls.
+- client-441-proof.png — scrolled proof area on client 441.
+Supporting evidence: evidence.json, verification-case.json, manual-upload-verification.pdf.
+
+AWS change (explicitly approved)
+Pre-deploy CDK diff showed exactly one resource/property change: dev Documents
+bucket CorsConfiguration AllowedOrigins, adding http://127.0.0.1:5173 alongside
+http://localhost:8081. Deployed the physical stack LegalittDev-Core only, selecting
+its CDK assembly path LegalittDev/Core with --exclusively. Compute was not deployed.
+Readback CORS contains exactly those two origins. Production stack inventory was
+empty both before and after; no production stack was created or modified. Infra
+tests also assert no production CORS configuration. No further AWS change made.
+See cors-diff.txt, cors-after.json and production-stacks-{before,after}.json.
+The admin application itself remains local, not deployed.
+
+Validation
+- All six workspace typechecks passed.
+- API build and all 57 API tests passed against local PostgreSQL 16.
+- Shared: 10 tests passed. Infra: 9 tests passed.
+- Admin and mobile fixture web builds passed.
+- Full fixture mobile smoke: all 321 current routes passed, zero failures.
+  The former 322nd Request Changes route was folded into tracking before this chunk.
+- git diff --check passed.
+
+Commits
+- d829270: approved dev bucket CORS origin.
+- d6e9ee4: admin delivery, charged totals, migration and regression checks.
+Changes are committed locally; no push or admin app deployment performed.

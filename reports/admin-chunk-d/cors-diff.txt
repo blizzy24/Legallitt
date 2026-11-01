@@ -1,0 +1,21 @@
+AI agent detected
+Stack LegalittDev/Core (LegalittDev-Core) (aws://026379630400/ap-south-1)
+Resources
+[~] AWS::S3::Bucket Core/Documents Documents
+ └─ [~] CorsConfiguration
+     └─ [~] .CorsRules:
+         └─ @@ -1,7 +1,8 @@
+            [ ] [
+            [ ]   {
+            [ ]     "AllowedOrigins": [
+            [-]       "http://localhost:8081"
+            [+]       "http://localhost:8081",
+            [+]       "http://127.0.0.1:5173"
+            [ ]     ],
+            [ ]     "AllowedMethods": [
+            [ ]       "POST",
+
+
+
+✨  Number of stacks with differences: 1
+
