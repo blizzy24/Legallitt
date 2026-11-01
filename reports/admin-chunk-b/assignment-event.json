@@ -1,0 +1,16 @@
+[
+  {
+    "source": "real",
+    "id": "344",
+    "case_id": "464693c9-5cdd-44c7-95aa-a15e905e7543",
+    "type": "status_changed",
+    "actor_id": "73a83220-8f45-42ba-a277-9f1ebee7230a",
+    "actor_role": "admin",
+    "from_status": "assigning",
+    "to_status": "assigned",
+    "payload": {
+      "advocate_id": "a9442690-6857-47c9-b91c-8c4c210cc6a4"
+    },
+    "created_at": "2026-11-01T11:59:48.466Z"
+  }
+]

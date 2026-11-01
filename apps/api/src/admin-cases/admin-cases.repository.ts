@@ -59,12 +59,13 @@ export class AdminCasesRepository {
         select: {
           id: true, reference: true, status: true, matter_type: true, created_at: true,
           details: true, notice_document_id: true,
+          case_events_case_id_relations: {where: {source: 'simulated'}, take: 1, select: {id: true}},
           client_id_relation: {select: {id: true, full_name: true}},
           advocate_id_relation: {select: {id: true, full_name: true}},
           pricing_id_relation: {select: {base_amount_paise: true}},
           case_parties_case_id_relations: {select: {kind: true, name: true}},
           drafts_case_id_relations: {select: {document_id: true}},
-          documents_case_id_relations: {where: {status: 'uploaded'}, select: {id: true, owner_id_relation: {select: {role: true}}}},
+          documents_case_id_relations: {where: {status: 'uploaded'}, select: {id: true, simulated: true, owner_id_relation: {select: {role: true}}}},
         },
       });
       const items: AdminCaseRow[] = rows.slice(0, input.limit).map(row => {
@@ -76,15 +77,17 @@ export class AdminCasesRepository {
         }
         const generated = new Set([row.notice_document_id, ...row.drafts_case_id_relations.map(d => d.document_id)].filter(Boolean));
         const documents = {client: 0, admin: 0, generated: 0, advocate: 0};
+        const simulated_documents = {client: 0, admin: 0, generated: 0, advocate: 0};
         for (const doc of row.documents_case_id_relations) {
-          if (generated.has(doc.id)) documents.generated++;
-          else documents[doc.owner_id_relation.role]++;
+          const origin = generated.has(doc.id) ? 'generated' : doc.owner_id_relation.role;
+          documents[origin]++;
+          if (doc.simulated) simulated_documents[origin]++;
         }
         return {
           id: row.id, reference: row.reference, client: {id: row.client_id_relation.id, name: row.client_id_relation.full_name},
           matter_type: row.matter_type, parties: parties.filter(p => p.name.trim()),
           advocate: row.advocate_id_relation ? {id: row.advocate_id_relation.id, name: row.advocate_id_relation.full_name} : null,
-          documents, status: row.status as CaseStatus, bucket: adminBucketFor(row.status as CaseStatus)!,
+          documents, simulated_documents, simulated: row.case_events_case_id_relations.length > 0, status: row.status as CaseStatus, bucket: adminBucketFor(row.status as CaseStatus)!,
           amount_paise: row.pricing_id_relation?.base_amount_paise.toString() ?? null,
           created_at: row.created_at.toISOString(),
         };

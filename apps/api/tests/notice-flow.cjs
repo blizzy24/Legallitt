@@ -61,6 +61,7 @@ test(
             full_name: "Test identity",
           },
         });
+      await db.advocateProfile.create({data:{user_id:advocate.id,verification:"approved"}});
       const c = await state.create(client, {
         service_code: "legal_notice",
         tier: "ordinary",
@@ -341,6 +342,7 @@ test(
       await db.caseEvent.deleteMany({ where: { case_id: { in: ids } } });
       await db.adminAction.deleteMany({ where: { admin_id: admin.id } });
       await db.case.deleteMany({ where: { id: { in: ids } } });
+      await db.advocateProfile.deleteMany({where:{user_id:advocate.id}});
       await db.user.deleteMany({
         where: { id: { in: actors.map((a) => a.id) } },
       });

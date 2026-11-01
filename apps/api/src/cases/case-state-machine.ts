@@ -312,10 +312,14 @@ export class CaseStateMachine {
     const db = await this.prisma.getClient();
     return db.$transaction(async (tx) => {
       let record = await lockedCase(tx, actor, id);
+      // Initial assignment only. A declined case retaining its former advocate
+      // needs a separately approved reassignment flow, not this action.
+      if (record.advocate_id) throw new ConflictException("Case already has an advocate");
       const advocate = await tx.user.findFirst({
-        where: { id: advocate_id, role: "advocate", status: "active" },
+        where: { id: advocate_id, role: "advocate", status: "active",
+          advocate_profiles_user_id_relations: {is: {verification: "approved"}} },
       });
-      if (!advocate) throw new BadRequestException("Advocate not found");
+      if (!advocate) throw new BadRequestException("Choose an active, approved advocate");
       if (record.status === "paid" || record.status === "advocate_declined")
         record = await this.advance(tx, actor, record, CaseStatus.assigning);
       if (record.status !== "assigning")

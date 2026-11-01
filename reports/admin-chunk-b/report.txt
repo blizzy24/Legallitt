@@ -1,0 +1,50 @@
+Admin chunk B — local verification, 1 November 2026
+
+Implemented:
+- Muted demo tags on cases with simulated case_events.source and document
+  origin counts with documents.simulated. Mixed counts identify the simulated
+  subset. Admin-owned simulated PODs remain Admin documents.
+- Approved, active advocate picker: name, practice areas, city, open-case load.
+  Load includes assigned work, client review and transit across services;
+  declined/unpaid/terminal cases are excluded. Empty optional values are omitted.
+- Existing real assignment endpoint rechecks eligibility and refuses any case
+  already holding an advocate. No reassignment was added.
+- List reloads after assignment; assigned case leaves Open.
+
+Verified in browser:
+LN-2026-0031 (464693c9-5cdd-44c7-95aa-a15e905e7543) was created through real
+client intake/submit/payment endpoints in the development database, assigned
+from the admin picker to Adv. Arjun Sharma, and opened in the client app.
+The event is assigning -> assigned, source real, actor_role admin, actor_id
+73a83220-8f45-42ba-a277-9f1ebee7230a (the signed-in demo admin).
+assignment-event.json records the event without credentials.
+
+The only pre-existing Open case, LN-2026-0014, was advocate_declined with its
+former advocate still attached. It was not reassigned or edited. Initial browser
+automation stalled on a background tab and the unchanged timer progressed the
+first test case LN-2026-0030. Retesting with the admin tab in foreground succeeded
+on LN-2026-0031. Both are development test records, not real client matters.
+
+DEMO_PROGRESSION configuration/code is unchanged. Its assignment action selects
+paid cases; assigned cases take the drafting branch. Real assignment locks the
+case and rejects an existing advocate, so a stale timer request cannot overwrite
+human assignment. Integration tests include competing assignments and a stale
+system request. The local mobile API's timer remains enabled; the separate admin
+API instance remains on its prior timer-off setting.
+
+Validation:
+- 52 API tests passed on local Postgres 16.
+- 10 shared tests passed.
+- All six workspace typechecks passed; admin production build passed.
+- Fixture mobile smoke: all 321 routes passed, no failures.
+- No mobile screens, measured tokens, or other service flows changed.
+
+Screenshots:
+  demo-markers.png — simulated case/document tags
+  open.png — Open filter with + Assign
+  picker.png — approved advocate with practice area, city, load
+  open-after-assignment.png — assigned case removed from Open
+  client-tracking.png — client tracking after assignment
+  client-advocate.png — assigned advocate visible in client tracking
+
+Nothing deployed. Chunk B is local only.

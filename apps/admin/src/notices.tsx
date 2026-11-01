@@ -1,3 +1,4 @@
+import { AssignAdvocate } from './assign-advocate';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router';
 import { ADMIN_CASE_BUCKETS, ADMIN_CASE_BUCKET_LABELS, ApiError, type AdminCaseBucket, type AdminCasePage } from '@legalitt/shared';
@@ -11,6 +12,7 @@ const partyLabels: Record<string, string> = {sender: 'Sender', noticee: 'Noticee
 const rupees = (value: string) => '₹' + ((BigInt(value) + 50n) / 100n).toLocaleString('en-IN');
 export function Notices() {
   const {refuse} = useSession();
+  const [assigning, setAssigning] = useState<{id: string; reference: string} | null>(null);
   const [params, setParams] = useSearchParams();
   const search = params.get('search') ?? '';
   const selected = params.get('bucket');
@@ -47,10 +49,10 @@ export function Notices() {
     {error && <div role="alert" className="error">{error} <button onClick={() => setReload(n => n + 1)}>Retry</button></div>}
     <div className="table-scroll" aria-busy={loading}><table><thead><tr>{['CASE #','CLIENT','MATTER','ADVOCATE','DOCUMENTS','STATUS','AMOUNT','CREATED','ACTIONS'].map(h => <th key={h} scope="col">{h}</th>)}</tr></thead><tbody>
       {loading ? <tr><td colSpan={9} className="empty" role="status">Loading notices…</td></tr> : data?.items.map(row => <tr key={row.id}>
-        <td className="reference">{row.reference}</td><td className="client">{row.client.name}</td>
+        <td className="reference">{row.reference}{row.simulated && <small className="demo" title="This case has simulated events">demo</small>}</td><td className="client">{row.client.name}</td>
         <td className="matter">{row.matter_type && matterLabels[row.matter_type] && <strong>{matterLabels[row.matter_type]}</strong>}{row.parties.map((party, i) => <div className="party" key={i}>{partyLabels[party.kind] && <span>{partyLabels[party.kind]}: </span>}{party.name}</div>)}</td>
-        <td>{row.advocate ? row.advocate.name : <button className="assign" disabled>+ Assign</button>}</td>
-        <td className="documents">{(['client', 'advocate', 'admin', 'generated'] as const).map(origin => row.documents[origin] > 0 && <span key={origin}>{row.documents[origin]} {origin} {row.documents[origin] === 1 ? 'doc' : 'docs'}</span>)}</td>
+        <td>{row.advocate ? row.advocate.name : row.bucket === 'open' ? <button className="assign" onClick={() => setAssigning({id: row.id, reference: row.reference})}>+ Assign</button> : null}</td>
+        <td className="documents">{(['client', 'advocate', 'admin', 'generated'] as const).map(origin => row.documents[origin] > 0 && <span key={origin}>{row.documents[origin]} {origin} {row.documents[origin] === 1 ? 'doc' : 'docs'}{row.simulated_documents[origin] > 0 && <small className="demo" title={`${row.simulated_documents[origin]} of ${row.documents[origin]} documents are simulated`}>{row.simulated_documents[origin] === row.documents[origin] ? 'demo' : `${row.simulated_documents[origin]} demo`}</small>}</span>)}</td>
         <td><span className={'status ' + row.bucket}>{ADMIN_CASE_BUCKET_LABELS[row.bucket]}</span></td>
         <td className="amount">{row.amount_paise !== null && rupees(row.amount_paise)}</td>
         <td className="date">{new Date(row.created_at).toLocaleDateString('en-IN', {day: '2-digit', month: 'short', year: 'numeric'})}</td><td/>
@@ -59,5 +61,8 @@ export function Notices() {
     </tbody></table></div>
     <div className="pagination"><span>{data && !loading ? `${data.filtered_total} notices` : ''}</span><button disabled={loading || page === 0} onClick={() => setPage(n => n - 1)}>Previous</button><span>Page {page + 1}</span><button disabled={loading || !data?.next_cursor} onClick={() => {if (data?.next_cursor) {setCursors(old => [...old.slice(0, page + 1), data.next_cursor!]); setPage(n => n + 1);}}}>Next</button></div>
     </section>
+    {assigning && <AssignAdvocate caseId={assigning.id} reference={assigning.reference} close={() => setAssigning(null)} assigned={() => {
+      setAssigning(null); setCursors([undefined]); setPage(0); setReload(n => n + 1);
+    }}/>}
   </main>;
 }

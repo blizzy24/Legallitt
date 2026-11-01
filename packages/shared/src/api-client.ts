@@ -164,6 +164,9 @@ export class ApiClient {
     }
     return this.decode<T>(response);
   }
+  adminAdvocates() {
+    return this.request<{items: import('./admin-api').AdminAdvocate[]}>('/admin/advocates');
+  }
   adminCases(input: import('./admin-api').AdminCaseQuery = {}) {
     const query = new URLSearchParams();
     for (const [key, value] of Object.entries(input)) if (value !== undefined) query.set(key, String(value));

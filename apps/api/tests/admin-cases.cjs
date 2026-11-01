@@ -33,16 +33,21 @@ test('admin list filters, counts, paginates, groups documents and exposes only t
       await db.document.create({data:{id,case_id:caseId,owner_id:owner.id,kind:'legal_notice',filename:'private.pdf',s3_key:id,mime_type:'application/pdf',size_bytes:1n,status:'uploaded'}});
     }
     await db.draft.create({data:{id:draftId,case_id:caseId,kind:'legal_notice',version:1,content:{},created_by:advocate.id,document_id:docs[2]}});
+    await db.document.update({where:{id:docs[1]},data:{simulated:true}});
+    await db.caseEvent.create({data:{case_id:caseId,type:'status_changed',source:'simulated',from_status:'assigning',to_status:'assigned'}});
     const all = await repo.list(admin,{search:marker,limit:100});
     assert.equal(all.total,14); assert.equal(all.filtered_total,14); assert.equal(all.items.length,14);
     assert.deepEqual(all.counts,{open:3,pending:2,in_progress:6,completed:1,closed:2});
     for (const row of all.items) {
       assert.ok(adminBucketFor(row.status)); assert.equal(row.amount_paise,'99900');
-      assert.deepEqual(Object.keys(row).sort(),['id','reference','client','matter_type','parties','advocate','documents','status','bucket','amount_paise','created_at'].sort());
+      assert.deepEqual(Object.keys(row).sort(),['id','reference','client','matter_type','parties','advocate','documents','simulated_documents','simulated','status','bucket','amount_paise','created_at'].sort());
       assert.ok(!JSON.stringify(row).includes('PRIVATE')); assert.ok(!JSON.stringify(row).includes('s3_key'));
     }
     const assigned=all.items.find(r=>r.id===caseId);
     assert.equal(assigned.advocate.id,advocate.id);
+    assert.equal(assigned.simulated,true);
+    assert.deepEqual(assigned.simulated_documents,{client:0,admin:1,generated:0,advocate:0});
+    assert.ok(all.items.filter(r=>r.id!==caseId).every(r=>r.simulated===false));
     assert.deepEqual(assigned.documents,{client:1,admin:1,generated:1,advocate:1});
     assert.deepEqual(assigned.parties,[{kind:'sender',name:'Sender test'},{kind:'noticee',name:'Noticee test'}]);
     const seen=new Set();let cursor;
@@ -69,6 +74,7 @@ test('admin list filters, counts, paginates, groups documents and exposes only t
   } finally {
     await db.draft.deleteMany({where:{id:draftId}});
     await db.document.deleteMany({where:{id:{in:docs}}});
+    await db.caseEvent.deleteMany({where:{case_id:{in:ids}}});
     await db.case.deleteMany({where:{id:{in:ids}}});
     await db.user.deleteMany({where:{id:{in:users.map(u=>u.id)}}});
     await db.$disconnect();

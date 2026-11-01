@@ -1,4 +1,4 @@
-Legalitt admin — chunk A (local only)
+Legalitt admin — chunks A–B (local only)
 
 Node 22.22+ is required by React Router 8; the repo's Node 22.23.3 works.
 From the repository root:
@@ -31,8 +31,8 @@ Build/typecheck:
   pnpm --filter @legalitt/admin build
   pnpm typecheck
 
-Only the Legal Notices list and sign-in exist in this chunk. Assign is drawn
-but disabled; case detail, assignment and delivery actions are later chunks.
+Legal Notices, sign-in and initial advocate assignment are available. Case
+detail, reassignment and delivery actions remain outside this chunk.
 The existing progression and delivery simulators remain unchanged.
 
 Admin API: GET /api/v1/admin/cases
@@ -45,6 +45,21 @@ Admin API: GET /api/v1/admin/cases
   Other services remain excluded by the existing Legal Notice data scope.
   AMOUNT is the base_amount_paise of the case's saved pricing_id; if absent,
   it remains blank. No current price is substituted into a historical case.
+
+Assignment: GET /api/v1/admin/advocates lists active, approved advocates.
+The picker shows practice areas, city and assigned open-case load (including
+client review and transit; excluding declined and terminal cases). It calls
+POST /api/v1/admin/cases/:id/assign. Eligibility is checked again on write.
+An existing advocate cannot be replaced, including on a declined case.
+Real assignment records the admin actor; stale timer requests cannot overwrite it.
+
+Muted demo tags use documents.simulated and case_events.source = simulated.
+Mixed-origin counts show how many documents are simulated. A case tag means
+it has a simulated event, including payment, not necessarily simulated delivery.
+
+Browser assignment check (creates one development case through real endpoints):
+  node --env-file=apps/api/.env.local scripts/admin-assignment-smoke.cjs
+Screenshots go to reports/admin-chunk-b.
 
 No deployment configuration is supplied and nothing has been deployed.
 
