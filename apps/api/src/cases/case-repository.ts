@@ -121,9 +121,10 @@ export class CaseRepository {
         ],
       },
       orderBy: [{ created_at: "asc" }, { id: "asc" }],
+      include: { advocate_id_relation: { select: { id: true, full_name: true } } },
       take: input.limit + 1,
     });
-    const items = rows.slice(0, input.limit);
+    const items = rows.slice(0, input.limit).map(({ advocate_id_relation: advocate, ...record }) => ({ ...record, advocate }));
     const last = items.at(-1);
     return {
       items,

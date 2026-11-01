@@ -15,8 +15,9 @@ type Props = {
 // Active case card (design/14, 16): status pill and mono ID chip, title and meta, an
 // inner jurisdiction/advocate block, then the next hearing and a "View Case" button.
 export default function CaseCard({ item, onPress, statusLabel='Active' }: Props) {
-  const advocate = getAdvocate(item.advocateId);
-  const hearing = item.nextHearingId ? getHearing(item.nextHearingId) : undefined;
+  const advocate = item.advocate !== undefined ? item.advocate : getAdvocate(item.advocateId);
+  const court = item.serviceCode !== 'legal_notice' ? item.court : '';
+  const hearing = item.serviceCode !== 'legal_notice' && item.nextHearingId ? getHearing(item.nextHearingId) : undefined;
 
   return (
     <RecordCard
@@ -29,26 +30,26 @@ export default function CaseCard({ item, onPress, statusLabel='Active' }: Props)
       pills={
         <>
           <StatusPill label={statusLabel} tone="active" dot />
-          <View style={styles.chip}>
+          {Boolean(item.shortRef) && <View style={styles.chip}>
             <Text style={styles.chipText}>#{item.shortRef}</Text>
-          </View>
+          </View>}
         </>
       }
       title={item.title}
       meta={
-        <Text style={styles.meta}>
-          {item.categoryLabel} • {item.city}
+        (Boolean(item.categoryLabel) || Boolean(item.city)) && <Text style={styles.meta}>
+          {[item.categoryLabel, item.city].filter(Boolean).join(' • ')}
         </Text>
       }
       inner={
-        <View style={styles.inner}>
-          <View style={styles.innerCol}>
+        (Boolean(court) || Boolean(advocate?.name)) && <View style={styles.inner}>
+          {Boolean(court) && <View style={styles.innerCol}>
             <Text style={styles.innerLabel}>JURISDICTION</Text>
             <Text style={styles.innerValue} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85}>
-              {item.court}
+              {court}
             </Text>
-          </View>
-          <View style={styles.innerCol}>
+          </View>}
+          {Boolean(advocate?.name) && <View style={styles.innerCol}>
             <Text style={styles.innerLabel}>ASSIGNED ADVOCATE</Text>
             <View style={styles.advocateRow}>
               <View style={styles.advocateDot} />
@@ -56,13 +57,13 @@ export default function CaseCard({ item, onPress, statusLabel='Active' }: Props)
                 {advocate?.name}
               </Text>
             </View>
-          </View>
+          </View>}
         </View>
       }
       footer={
         <>
-          <Text style={styles.footerLabel}>Next Hearing: </Text>
-          <Text style={styles.footerValue}>{hearing ? formatDate(hearing.date) : '—'}</Text>
+          {hearing && <><Text style={styles.footerLabel}>Next Hearing: </Text>
+          <Text style={styles.footerValue}>{formatDate(hearing.date)}</Text></>}
           <View style={styles.spacer} />
           <Pressable accessibilityRole="button" onPress={onPress} style={styles.button}>
             <Text style={styles.buttonText}>View Case</Text>

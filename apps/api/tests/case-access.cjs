@@ -90,6 +90,8 @@ test(
         [caseIds[0]],
       );
       assert.deepEqual((await repository.list(a, { role: "admin" })).items, []);
+      assert.deepEqual((await repository.list(a, {})).items[0].advocate, {id: advocate.id, full_name: "Test identity"});
+      assert.equal((await repository.list(b, {})).items[0].advocate, null);
       const first = await repository.list(admin, { limit: 1 });
       assert.equal(first.items.length, 1);
       assert.ok(first.next_cursor);

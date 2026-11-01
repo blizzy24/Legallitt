@@ -1,3 +1,4 @@
+import NoticeScreenFeedback from '../../components/NoticeScreenFeedback';
 import {useNoticeLists} from "../../features/legal-notice/useNoticeLists";
 import { router, type Href } from 'expo-router';
 import { Bell, ChevronRight, Clock, FolderOpen } from 'lucide-react-native';
@@ -195,6 +196,7 @@ function SectionHeading({
 }
 
 function RequestCard({ request, onOpen }: { request: PendingRequest; onOpen?:(id:string)=>void }) {
+  const subtitle = [request.categoryLabel, request.note].filter(Boolean).join(' • ');
   return (
     <View style={styles.card}>
       <View style={styles.topRow}>
@@ -205,26 +207,26 @@ function RequestCard({ request, onOpen }: { request: PendingRequest; onOpen?:(id
       </View>
 
       <Text style={styles.cardTitle}>{request.title}</Text>
-      <Text style={styles.cardMeta}>
-        {request.categoryLabel} • {request.note}
-      </Text>
+      {Boolean(subtitle && subtitle !== request.title) && <Text style={styles.cardMeta}>
+        {subtitle}
+      </Text>}
 
       {/* design/17 fits both halves on one line, but only just: at 360pt they would wrap
           or truncate. Stacked here so the row holds at 360, 390 and 412 without setting
           the type smaller than the design's. */}
-      <View style={styles.requestInner}>
-        <Text style={styles.requestLabel} numberOfLines={1}>
+      {(Boolean(request.requestedDate) || Boolean(request.estimatedMatch)) && <View style={styles.requestInner}>
+        {Boolean(request.requestedDate) && <Text style={styles.requestLabel} numberOfLines={1}>
           Requested: <Text style={styles.requestValue}>{formatDate(request.requestedDate)}</Text>
-        </Text>
-        <Text style={styles.requestMatch} numberOfLines={1}>
+        </Text>}
+        {Boolean(request.estimatedMatch) && <Text style={styles.requestMatch} numberOfLines={1}>
           Est. Advocate match: {request.estimatedMatch}
-        </Text>
-      </View>
+        </Text>}
+      </View>}
 
       <View style={styles.divider} />
 
       <View style={styles.footer}>
-        <Text style={styles.footerText}>{request.progressNote}</Text>
+        {Boolean(request.progressNote) && <Text style={styles.footerText}>{request.progressNote}</Text>}
         <View style={styles.spacer} />
         {/* "View Request" opens the request (design/54). This pending request has no
             record of its own; /requests/[id] shows District Representation DR-4402. */}
@@ -478,5 +480,5 @@ const styles = StyleSheet.create({
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function CasesScreen() {
   const model=useNoticeLists();
-  return <CasesScreenView stats={model.stats} closed={model.closed} active={model.active} hearings={model.hearings} pending={model.pending} onOpen={model.api?id=>model.open(id):undefined} />;
+  return <NoticeScreenFeedback error={model.error}><CasesScreenView stats={model.stats} closed={model.closed} active={model.active} hearings={model.hearings} pending={model.pending} onOpen={model.api?id=>model.open(id):undefined} /></NoticeScreenFeedback>;
 }

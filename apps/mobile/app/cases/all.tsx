@@ -1,3 +1,4 @@
+import NoticeScreenFeedback from '../../components/NoticeScreenFeedback';
 import {useNoticeLists} from '../../features/legal-notice/useNoticeLists';
 import { router } from 'expo-router';
 import { Funnel, Search } from 'lucide-react-native';
@@ -226,4 +227,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function AllActiveCasesScreen(){const model=useNoticeLists();return <AllActiveCasesView records={model.active} onOpen={model.api?id=>model.open(id):undefined} />;}
+export default function AllActiveCasesScreen(){const model=useNoticeLists();return <NoticeScreenFeedback error={model.error}><AllActiveCasesView records={model.active} onOpen={model.api?id=>model.open(id):undefined} /></NoticeScreenFeedback>;}

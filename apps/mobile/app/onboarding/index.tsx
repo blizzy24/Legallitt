@@ -75,7 +75,7 @@ export default function OnboardingScreen() {
         style={styles.pager}
       >
         {ONBOARDING_SLIDES.map((slide, i) => (
-          <View key={slide.id} style={[styles.slide, { width }]}>
+          <ScrollView key={slide.id} style={{ width }} contentContainerStyle={styles.slide} showsVerticalScrollIndicator={false}>
             {i === 0 ? (
               <View style={styles.cluster}>
                 {ONBOARDING_AVATARS.map((a, j) => (
@@ -114,7 +114,7 @@ export default function OnboardingScreen() {
               )}
               <Text style={styles.body}>{slide.body}</Text>
             </View>
-          </View>
+          </ScrollView>
         ))}
       </ScrollView>
 

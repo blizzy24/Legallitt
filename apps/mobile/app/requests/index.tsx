@@ -1,3 +1,4 @@
+import NoticeScreenFeedback from '../../components/NoticeScreenFeedback';
 import {useNoticeLists} from "../../features/legal-notice/useNoticeLists";
 import { previewNotice } from '../../components/PreviewNotice';
 import { router, type Href } from 'expo-router';
@@ -444,5 +445,5 @@ const styles = StyleSheet.create({
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function RequestsScreen() {
   const model=useNoticeLists();
-  return <RequestsScreenView requests={model.requests} onOpen={model.api?id=>model.open(id):undefined} />;
+  return <NoticeScreenFeedback error={model.error}><RequestsScreenView requests={model.requests} onOpen={model.api?id=>model.open(id):undefined} /></NoticeScreenFeedback>;
 }

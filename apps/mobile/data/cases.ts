@@ -43,6 +43,9 @@ export type Case = {
   statusLabel: string;
   filedDate: string; // ISO yyyy-mm-dd
   advocateId: string;
+  /** Case-supplied advocate; null means unassigned, undefined uses the fixture lookup. */
+  advocate?: Pick<Advocate, 'name' | 'initials' | 'role'> | null;
+  serviceCode?: string;
   nextHearingId?: string;
   documentsCount: number;
   recentUpdate?: { date: string; text: string };

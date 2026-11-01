@@ -16,8 +16,9 @@ type Props = {
 // a category chip instead of an ID chip, a single advocate row with a role label, and a
 // light "View Case" pill rather than the brand button.
 export default function CaseListCard({ item, onPress }: Props) {
-  const advocate = getAdvocate(item.advocateId);
-  const hearing = item.nextHearingId ? getHearing(item.nextHearingId) : undefined;
+  const advocate = item.advocate !== undefined ? item.advocate : getAdvocate(item.advocateId);
+  const court = item.serviceCode !== 'legal_notice' ? item.court : '';
+  const hearing = item.serviceCode !== 'legal_notice' && item.nextHearingId ? getHearing(item.nextHearingId) : undefined;
 
   return (
     <RecordCard
@@ -36,10 +37,10 @@ export default function CaseListCard({ item, onPress }: Props) {
       }
       title={item.title}
       meta={
-        <View style={styles.courtRow}>
+        Boolean(court) && <View style={styles.courtRow}>
           <Building2 size={a.courtIcon} color={ink.accent} />
           <Text style={styles.courtText} numberOfLines={1}>
-            {item.court}
+            {court}
           </Text>
         </View>
       }
@@ -51,18 +52,18 @@ export default function CaseListCard({ item, onPress }: Props) {
               {advocate.name}
             </Text>
             <View style={styles.spacer} />
-            <Text style={styles.role} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85}>
+            {Boolean(advocate.role) && <Text style={styles.role} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85}>
               {advocate.role}
-            </Text>
+            </Text>}
           </View>
         )
       }
       footer={
         <>
-          <View style={styles.footerText}>
+          {hearing ? <View style={styles.footerText}>
             <Text style={styles.footerLabel}>NEXT HEARING</Text>
-            <Text style={styles.footerDate}>{hearing ? formatDate(hearing.date) : '—'}</Text>
-          </View>
+            <Text style={styles.footerDate}>{formatDate(hearing.date)}</Text>
+          </View> : <View style={styles.spacer} />}
           <Pressable accessibilityRole="button" onPress={onPress} style={styles.button}>
             <Text style={styles.buttonText}>View Case</Text>
             <ChevronRight size={a.buttonText} color={colors.textBody} />

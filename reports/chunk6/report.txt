@@ -1,0 +1,53 @@
+Chunk 6 — My Cases and the way in
+
+Cause of the reported hang
+LN-2026-0017 (5ae0d968-b3b5-40f5-86f3-2368c9b0b009) belongs to a different client from LN-2026-0006. The signed-in demo client receives HTTP 404, correctly, and that case is correctly absent from their Closed list. Tracking called window.alert('Case not found'), which blocks browser interaction and injected scripts. No render loop was found.
+Tracking now renders the existing API error inline under its header, preserves the Back action, and stops polling on 401/403/404. No case ownership or access permissions were changed. Verified the exact failing URL: one 404, no blocking dialog, Back returns to Home. Accessible cases continue to load on direct navigation and refresh.
+Stopped stale static-server PID 6930 on 127.0.0.1:8081; current Metro remains running. Restarted the usual API on port 3001 using its existing .env.local so the list endpoint change is live locally.
+
+Cards
+- Convert created_at timestamps through calendarDate, as tracking does, before formatting Requested dates.
+- Remove the whole missing estimate, including its label.
+- Join available metadata values only, with no empty bullet; bind the selected matter type.
+- Restore design 17's Verification in progress.
+- Legal Notice cards omit jurisdiction and hearing fields entirely.
+- GET /cases includes only the assigned advocate's id/full_name, scoped by existing case membership. Cards use that supplied advocate instead of looking up an API UUID in fixture advocates.
+- Omit missing advocate sections and other empty metadata wrappers. Apply the same data binding and omissions to All Active Cases cards.
+
+Completed copy
+Only at completed, use the project owner's exact headline and sub-line in copy/instructed.ts and record them in architecture section 9.2:
+Your Legal Notice Has Been Delivered
+The notice was delivered to the recipient. This case is now complete.
+No cancelled/refunded case was encountered in this client's Closed tab; those states' copy is unchanged and remains unprovided.
+
+Entry screens
+Role: unchanged. Inspected design/131-role-none.png, which draws the heading below the options; the owner withdrew item 5 after this finding.
+Onboarding: each horizontal slide can scroll vertically when its full text exceeds available height. No copy, font, image or measured token changed. Full Verification Certificate. text is visible at 390x844 and reachable at 360x640.
+
+Browser evidence
+Signed in via role selection -> client guest home -> Log in -> phone -> 123456.
+Used real local cases and real API data (initial list verification used an isolated copy of the API on 3006; final Closed verification uses the normal restarted API on 3001).
+Active: LN-2026-0026, created through real local intake, submit and simulated-payment endpoints for this check; opened tracking and refreshed successfully. Demo progression subsequently advances this case normally.
+Pending: case 1e64be7c-c3c0-49ff-9494-ac85b55220d2, opened tracking and refreshed successfully.
+Closed: LN-2026-0006, opened tracking and refreshed successfully.
+
+Screenshots (paths relative to this folder; each tab image includes its card type)
+active.png
+pending.png
+closed.png
+active-opened.png
+pending-opened.png
+closed-opened.png
+completed-headline.png
+unavailable-case.png
+onboarding-property.png
+onboarding-property-small-scrolled.png
+role-current-design-order.png
+
+Validation
+All-workspace typecheck passed.
+45 API tests passed, zero skipped; added assigned/unassigned advocate assertions to case-access regression and reran it successfully.
+Fixture web export passed.
+Final full mobile smoke result recorded separately in smoke-result.txt. Current repository enumerates 321 routes (the previously removed request-changes route was folded into tracking before this chunk); no routes added or removed here.
+
+No commit or push requested for this chunk. Unrelated existing court hero/image changes were left alone.
