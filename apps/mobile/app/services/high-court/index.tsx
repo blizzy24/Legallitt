@@ -11,7 +11,7 @@ import {
   type LucideIcon,
 } from 'lucide-react-native';
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import CourierHeader from '../../../components/CourierHeader';
@@ -29,7 +29,7 @@ import { colors, font, hcLanding as t, hcPalette as c, ink, status } from '../..
 // ⚠ CONFLICT 1 — this screen prices Ordinary/Urgent at ₹18,500/₹28,500;
 // design/295 prices them at ₹24,999/₹34,999. Each renders its own figures.
 //
-// The hero illustration is a neutral block at the drawn size — no asset exists.
+// Client-supplied hero image; the design crop is applied only in the layout.
 // "View Service Policy" and the help icon are inert: neither has a destination.
 // The two option groups are real local selections; nothing is persisted.
 
@@ -58,8 +58,9 @@ export default function HighCourtLandingScreen() {
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.hero}>
-          {/* Neutral placeholder for design/289's courthouse illustration. */}
-          <View style={styles.heroArt} />
+          <View style={styles.heroArt}>
+            <Image source={require('../../../assets/hero-high-court.png')} accessibilityLabel="High Court building" resizeMode="cover" style={[StyleSheet.absoluteFill, { width: '100%', height: '100%' }]} />
+          </View>
           <View style={[styles.badge, styles.badgeLeft]}>
             <View style={styles.badgeDot} />
             <Text style={styles.badgeText} {...shrinkToFit(0.8)}>
@@ -280,7 +281,7 @@ const styles = StyleSheet.create({
     paddingTop: t.heroInsetTop,
     overflow: 'hidden',
   },
-  heroArt: { flex: 1, borderTopLeftRadius: t.heroArtRadius, borderTopRightRadius: t.heroArtRadius, backgroundColor: c.heroArt },
+  heroArt: { flex: 1, overflow: 'hidden', borderTopLeftRadius: t.heroArtRadius, borderTopRightRadius: t.heroArtRadius, backgroundColor: c.heroArt },
   badge: {
     position: 'absolute',
     bottom: t.badgeInset,

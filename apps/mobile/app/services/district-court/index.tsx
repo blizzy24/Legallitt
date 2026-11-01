@@ -14,7 +14,7 @@ import {
   ShieldCheck,
   Zap,
 } from 'lucide-react-native';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import CourierHeader from '../../../components/CourierHeader';
@@ -27,8 +27,8 @@ import { DC_LANDING } from '../../../data/districtCourt';
 //
 // Conflict 1 (the "₹XX,XXX" placeholder prices) is commented on DC_LANDING.
 //
-// The courthouse photograph is a neutral block at the drawn size — no asset
-// exists. The header avatar is drawn as a court thumbnail; it is the standard
+// Client-supplied courthouse image is cropped by the rounded hero layout.
+// The header avatar is drawn as a court thumbnail; it is the standard
 // avatar here.
 //
 // Wiring: all three "Start New Case" buttons open design/340 (case type); Learn
@@ -49,6 +49,7 @@ export default function DistrictCourtLandingScreen() {
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={[styles.card, styles.hero]}>
           <View style={styles.heroArt}>
+            <Image source={require('../../../assets/hero-district-court.png')} accessibilityLabel="District Court building" resizeMode="cover" style={[StyleSheet.absoluteFill, { width: '100%', height: '100%' }]} />
             <View style={styles.heroPill}>
               <View style={styles.heroPillDot} />
               <Text style={styles.heroPillText}>{d.heroPill}</Text>
@@ -203,7 +204,7 @@ const styles = StyleSheet.create({
 
   card: { ...shadow, borderRadius: t.cardRadius, backgroundColor: c.card },
   hero: { marginTop: t.heroTop, paddingHorizontal: t.cardPad, paddingTop: t.heroPadTop, paddingBottom: t.heroPadBottom },
-  heroArt: { height: t.heroH, borderRadius: t.heroRadius, backgroundColor: c.heroArt, justifyContent: 'flex-end' },
+  heroArt: { overflow: 'hidden', height: t.heroH, borderRadius: t.heroRadius, backgroundColor: c.heroArt, justifyContent: 'flex-end' },
   heroPill: {
     marginLeft: t.heroPillLeft,
     marginBottom: t.heroPillBottom,

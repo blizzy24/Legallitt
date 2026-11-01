@@ -40,9 +40,9 @@ Remaining image placeholders (separate assets are still needed)
 - Property Search: introduction/information art (72/73), checking art (79).
 - Document Forensic: introduction art (82), advocate waiting illustration.
 - Legal Advice: scales artwork (102/103).
-- High Court: courthouse illustrations (289/290), documents-needed desk photo
+- High Court: learn-more courthouse illustration (290), documents-needed desk photo
   (303), courier confirmation map (306), delivered proof image (312).
-- District Court: courthouse hero (338), two learn-more photographs (339),
+- District Court: two learn-more photographs (339),
   case-type illustration.
 - KYC: DigiLocker connect/checking art (93/94), identity portrait (95), video
   introduction art (96), framing reference photograph (100).
@@ -65,3 +65,18 @@ Mobile TypeScript: pass. Fixture web export: pass.
 Browser: all 11 onboarding images loaded; six slides end at /role.
 All six profile pages loaded the expected numbered portrait without page errors.
 Full fixture smoke: 322 routes, zero failures, no case/document API requests.
+
+Court hero update
+Resolved: High Court landing (289 / re-export referred to as 451) and District
+Court landing (338). Workspace files are hero-high-court.png and
+hero-district-court.png, not .jpg. Original bytes retained: no conversion,
+resizing, recompression, filters or recolouring. Centered cover rendering in
+existing hero bounds; High Court inset/top-rounded crop and District Court
+rounded rectangle are layout masks. Existing badges remain above the images.
+These two landing heroes are no longer missing placeholders; learn-more art
+and the District Court header's tiny courthouse thumbnail remain separate.
+Hero verification: mobile TypeScript and web export pass. Both actual landing
+URLs were opened in Chrome; images loaded without browser errors. Screenshots
+hero-high-court.png and hero-district-court.png were visually inspected for
+building visibility, centered crop, rounded masks and badge overlays. Source
+SHA-256 checksums remain unchanged.
