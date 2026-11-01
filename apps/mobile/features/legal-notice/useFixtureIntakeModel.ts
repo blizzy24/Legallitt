@@ -1,6 +1,7 @@
 import { router, type Href } from 'expo-router';
 import { useLegalNotice } from '../../context/legalNotice';
 import { INVOICE, SERVICE_TIERS, invoiceLines } from '../../data/legalNotice';
+import { noticeHref, noticeParents } from './navigation';
 import type { NoticeIntakeModel } from './screen-model';
 
 const next: Record<string, string> = {
@@ -15,9 +16,9 @@ export const fixtureSummary = {
 };
 export function useFixtureIntakeModel(stage: string): NoticeIntakeModel {
   const state = useLegalNotice();
-  return { ...state, tiers: SERVICE_TIERS, invoice: INVOICE,
+  return { ...state, back: () => router.replace(noticeHref(noticeParents[stage] ?? "/legal-notice/tracking")), tiers: SERVICE_TIERS, invoice: INVOICE,
     invoiceLines: invoiceLines(state.form.tier), summary: fixtureSummary,
-    continue: () => router.push(`/legal-notice/${next[stage]}` as Href),
+    continue: () => { if (stage === "detail") state.setPaid(false); router.push(`/legal-notice/${next[stage]}` as Href); },
     navigate: (path) => router.push(path as Href),
   };
 }

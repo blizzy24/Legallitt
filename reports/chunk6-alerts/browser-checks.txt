@@ -1,0 +1,6 @@
+PASS my-cases inline error; controls responsive
+PASS intake inline error; controls responsive
+PASS chat inline error; controls responsive
+PASS pending loaded from real API
+PASS advocate inline error; controls responsive
+PASS courier inline error; controls responsive

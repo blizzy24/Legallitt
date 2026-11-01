@@ -1,3 +1,4 @@
+import NoticeScreenFeedback from '../../components/NoticeScreenFeedback';
 import { useUploadModel } from "../../features/legal-notice/useUploadModel";
 import IdentityVerification from '../../components/IdentityVerification';
 import { useKyc } from '../../context/kyc';
@@ -39,12 +40,12 @@ const SAMPLE_DOCS: Doc[] = [
 // Both this screen and the upload screen sit at "Step 4 of 6": design/91 and
 // design/39 each draw the stepper on 4, so the wizard's six steps are unchanged and
 // step 4 simply spans two screens.
-export function Step4ReviewScreenView({ documents, count, onContinue, onAdd, onView, onReplace, onDelete, returnTo = "/legal-notice/step4-review" }: {
-  returnTo?: Href; documents: Doc[]; count: number; onContinue: () => void; onAdd: () => void;
+export function Step4ReviewScreenView({ onBack, documents, count, onContinue, onAdd, onView, onReplace, onDelete, returnTo = "/legal-notice/step4-review" }: {
+  onBack?: () => void; returnTo?: Href; documents: Doc[]; count: number; onContinue: () => void; onAdd: () => void;
   onView: (doc: Doc) => void; onReplace: (doc: Doc) => void; onDelete: (doc: Doc) => void;
 }) {
   return (
-    <WizardShell step={4} align="top" background="tinted" buttonLabel="Continue" onContinue={onContinue}>
+    <WizardShell onBack={onBack} step={4} align="top" background="tinted" buttonLabel="Continue" onContinue={onContinue}>
       <Text style={styles.title}>Review Your Documents</Text>
       <Text style={styles.subtitle}>Your documents have been uploaded successfully. Review them before continuing.</Text>
 
@@ -226,5 +227,5 @@ const styles = StyleSheet.create({
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function Step4ReviewScreen() {
   const model = useUploadModel('step4-review');
-  return <Step4ReviewScreenView {...model} />;
+  return <NoticeScreenFeedback error={model.error}><Step4ReviewScreenView {...model} /></NoticeScreenFeedback>;
 }

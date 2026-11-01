@@ -29,6 +29,7 @@ export function useUploadModel(stage: 'step4' | 'step4-review') {
     ...(categories.find(row=>row.kind===d.kind) ?? {title:'',subtitle:'',icon:File}), id:d.id,
   })) : categories;
   return {
+    error: c.error, onBack: model.back,
     documents, count:api ? documents.length : model.form.documents.length || categories.length, returnTo,
     onContinue: () => kyc.completed ? model.continue() : begin(returnTo),
     onUpload: (title:string) => { if (api) void c.run(()=>upload(title)); else previewNotice(title==='Add More Documents'?title:`Upload ${title}`); },

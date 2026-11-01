@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo, useState, type ReactNode } from 'react';
+import { createContext, useContext, useMemo, useState, useCallback, useEffect, type ReactNode } from 'react';
 
 import type { ServiceTier } from '../data/legalNotice';
 
@@ -47,6 +47,8 @@ export const EMPTY_FORM: LegalNoticeForm = {
 };
 
 type Ctx = {
+  paid: boolean;
+  setPaid: (paid: boolean) => void;
   form: LegalNoticeForm;
   update: (patch: Partial<LegalNoticeForm>) => void;
   updateClient: (patch: Partial<ClientDetails>) => void;
@@ -57,17 +59,36 @@ type Ctx = {
 const LegalNoticeContext = createContext<Ctx | null>(null);
 
 export function LegalNoticeProvider({ children }: { children: ReactNode }) {
+  // Keep fixture payment completion across browser history/reloads in this session.
+  const [paid, setPaidState] = useState(() => {
+    try { return globalThis.sessionStorage?.getItem('legalitt.notice.paid') === 'true'; }
+    catch { return false; }
+  });
+  const setPaid = useCallback((value: boolean) => {
+    setPaidState(value);
+    try { globalThis.sessionStorage?.setItem('legalitt.notice.paid', String(value)); }
+    catch { /* Native and restricted browsers retain the in-memory state. */ }
+  }, []);
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const restore = () => {
+      try { setPaidState(globalThis.sessionStorage?.getItem('legalitt.notice.paid') === 'true'); }
+      catch { /* Storage may be unavailable. */ }
+    };
+    window.addEventListener('pageshow', restore);
+    return () => window.removeEventListener('pageshow', restore);
+  }, []);
   const [form, setForm] = useState<LegalNoticeForm>(EMPTY_FORM);
 
   const value = useMemo<Ctx>(
     () => ({
-      form,
+      form, paid, setPaid,
       update: (patch) => setForm((f) => ({ ...f, ...patch })),
       updateClient: (patch) => setForm((f) => ({ ...f, client: { ...f.client, ...patch } })),
       updateNoticee: (patch) => setForm((f) => ({ ...f, noticee: { ...f.noticee, ...patch } })),
-      reset: () => setForm(EMPTY_FORM),
+      reset: () => { setForm(EMPTY_FORM); setPaid(false); },
     }),
-    [form]
+    [form, paid, setPaid]
   );
 
   return <LegalNoticeContext.Provider value={value}>{children}</LegalNoticeContext.Provider>;

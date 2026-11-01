@@ -16,6 +16,7 @@ type Props = {
   children: ReactNode;
   buttonLabel: string;
   onContinue: () => void;
+  onBack?: () => void;
   /**
    * Chat-style steps (1, 2, 3, 5) sit their content directly above the button with the
    * spare space at the top; step 4 fills from the top. Measured from the designs.
@@ -40,7 +41,7 @@ export default function WizardShell({
   step,
   children,
   buttonLabel,
-  onContinue,
+  onContinue, onBack,
   align = 'bottom',
   header = 'centred',
   title = 'Legal Notice',
@@ -51,10 +52,10 @@ export default function WizardShell({
 }: Props) {
   const insets = useSafeAreaInsets();
 
-  const goBack = () => {
+  const goBack = onBack ?? (() => {
     if (router.canGoBack()) router.back();
     else router.replace('/(tabs)/home');
-  };
+  });
 
   const bg = background === 'tinted' ? colors.appBg : colors.screenBg;
 

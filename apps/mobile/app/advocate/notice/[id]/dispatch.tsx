@@ -1,3 +1,4 @@
+import NoticeScreenFeedback from '../../../../components/NoticeScreenFeedback';
 import { useAdvocateNoticeModel } from "../../../../features/legal-notice/useAdvocateNoticeModel";
 import { previewNotice } from '../../../../components/PreviewNotice';
 import DemoPressable from '../../../../components/DemoPressable';
@@ -490,5 +491,5 @@ const styles = StyleSheet.create({
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function AdvocateNoticeDispatchScreen() {
   const model = useAdvocateNoticeModel("dispatch");
-  return <AdvocateNoticeDispatchScreenView data={model.data} navigate={model.navigate} onDownload={model.onViewDocument} onConfirm={model.onConfirmDispatch} />;
+  return <NoticeScreenFeedback error={model.error}><AdvocateNoticeDispatchScreenView data={model.data} navigate={model.navigate} onDownload={model.onViewDocument} onConfirm={model.onConfirmDispatch} /></NoticeScreenFeedback>;
 }

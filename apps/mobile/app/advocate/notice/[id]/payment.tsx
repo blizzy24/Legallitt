@@ -1,3 +1,4 @@
+import NoticeScreenFeedback from '../../../../components/NoticeScreenFeedback';
 import { useAdvocateNoticeModel } from "../../../../features/legal-notice/useAdvocateNoticeModel";
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import { ArrowLeft, ArrowRight, FileText, ShieldCheck } from 'lucide-react-native';
@@ -279,5 +280,5 @@ const styles = StyleSheet.create({
 
 export default function AdvocateNoticePaymentScreen() {
   const model = useAdvocateNoticeModel('payment');
-  return <AdvocateNoticePaymentView payment={model.data.ADV_NOTICE_PAYMENT} navigate={model.navigate} payHref={model.path('scan-pay')} />;
+  return <NoticeScreenFeedback error={model.error}><AdvocateNoticePaymentView payment={model.data.ADV_NOTICE_PAYMENT} navigate={model.navigate} payHref={model.path('scan-pay')} /></NoticeScreenFeedback>;
 }

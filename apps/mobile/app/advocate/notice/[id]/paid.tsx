@@ -1,3 +1,4 @@
+import NoticeScreenFeedback from '../../../../components/NoticeScreenFeedback';
 import { useAdvocateNoticeModel } from "../../../../features/legal-notice/useAdvocateNoticeModel";
 import { useLocalSearchParams, type Href } from 'expo-router';
 
@@ -19,5 +20,5 @@ export default function AdvocateNoticePaidScreen() {
     successBody: CO_SUCCESS.successBody.replace(/₹[\d,]+/, payment.total.replace(/\/-$/, '')),
     successBody2: CO_SUCCESS.successBody2.replace('forensic analysis', 'document delivery'),
   };
-  return <PaymentSuccessScreen d={d} ctaHref={model.courierHref()} />;
+  return <NoticeScreenFeedback error={model.error}><PaymentSuccessScreen d={d} ctaHref={model.courierHref()} /></NoticeScreenFeedback>;
 }

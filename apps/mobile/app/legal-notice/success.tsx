@@ -1,3 +1,4 @@
+import NoticeScreenFeedback from '../../components/NoticeScreenFeedback';
 import { usePaymentModel } from "../../features/legal-notice/usePaymentModel";
 import { previewNotice } from '../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
@@ -15,8 +16,8 @@ import { INVOICE, invoiceLines, invoiceTotal, rupees } from '../../data/legalNot
 // SHARED BY TWO SERVICES — see the note in scan-pay.tsx. Service name, amount,
 // reference and the onward route all come from search params; with none it behaves
 // exactly as the Legal Notice flow always did.
-export function PaymentSuccessScreenView({ service, total, requestId, nextHref }: {
-  service: string; total: number | null; requestId: string; nextHref: Href;
+export function PaymentSuccessScreenView({ service, total, requestId, nextHref, onBack }: {
+  onBack?: () => void; service: string; total: number | null; requestId: string; nextHref: Href;
 }) {
   return (
     <View style={styles.screen}>
@@ -25,7 +26,7 @@ export function PaymentSuccessScreenView({ service, total, requestId, nextHref }
         title="Scan & Pay"
         subtitle="UPI Dynamic QR"
         intro="Scan the QR code using any UPI app to complete your payment."
-        onBack={() => router.replace('/(tabs)/home')}
+        onBack={onBack ?? (() => router.replace(nextHref))}
       />
       <View style={styles.content}>
         <View style={styles.idCard}>
@@ -166,5 +167,5 @@ const styles = StyleSheet.create({
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function PaymentSuccessScreen() {
   const model = usePaymentModel('success');
-  return <PaymentSuccessScreenView {...model} />;
+  return <NoticeScreenFeedback error={model.error}><PaymentSuccessScreenView {...model} /></NoticeScreenFeedback>;
 }

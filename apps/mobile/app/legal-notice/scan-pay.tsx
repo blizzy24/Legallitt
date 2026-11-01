@@ -1,3 +1,4 @@
+import NoticeScreenFeedback from '../../components/NoticeScreenFeedback';
 import { usePaymentModel } from "../../features/legal-notice/usePaymentModel";
 import { useLocalSearchParams, type Href } from 'expo-router';
 
@@ -12,12 +13,13 @@ import { useLegalNotice } from '../../context/legalNotice';
 // so the body lives in components/ScanPayScreen and each caller passes its own
 // service name, amount, reference and onward route. With no params this route
 // behaves exactly as the Legal Notice flow always did.
-export function LegalNoticeScanPayScreenView({ service, total, successHref, query, onPayment, paymentReady, backHref }: {
-  service: string; total: number | null; backHref?: Href; successHref: Href; query: URLSearchParams; onPayment?: () => void; paymentReady?: boolean;
+export function LegalNoticeScanPayScreenView({ service, total, successHref, query, onPayment, paymentReady, backHref, onBack }: {
+  onBack?: () => void; service: string; total: number | null; backHref?: Href; successHref: Href; query: URLSearchParams; onPayment?: () => void; paymentReady?: boolean;
 }) {
   return (
     <ScanPayScreen
       backHref={backHref}
+      onBack={onBack}
       service={service}
       amount={total}
       successHref={successHref}
@@ -31,5 +33,5 @@ export function LegalNoticeScanPayScreenView({ service, total, successHref, quer
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function LegalNoticeScanPayScreen() {
   const model = usePaymentModel('scan-pay');
-  return <LegalNoticeScanPayScreenView {...model} />;
+  return <NoticeScreenFeedback error={model.error}><LegalNoticeScanPayScreenView {...model} /></NoticeScreenFeedback>;
 }

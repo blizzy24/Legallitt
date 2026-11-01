@@ -1,0 +1,717 @@
+role loaded
+click UserGet Legal Services URL http://localhost:8081/role
+
+click Next URL http://localhost:8081/role
+User
+Get Legal Services
+Lawyer
+Offer Legal Services
+Choose Your Role
+You Have To Choose Your Role What is Your Profession
+Next
+click Log in URL http://localhost:8081/home
+Already have an account? Log in
+Sign up
+LEGALITT CLIENT
+Welcome to Legalitt
+How can we help you today?
+Popular Services
+TOP
+View All
+Legal Advice
+Get guidance from a qualified advocate
+Legal Notice
+Prepare and send a professional notice
+Our Services
+View All
+Legal Advice
+Get guidance from a qualified advocate
+FIR Draft
+Assistance with precise FIR drafting
+Document Forensic
+Examine documents by exp
+click Continue URL http://localhost:8081/login
+LEGALITT
+Login
+Welcome Back
+Login to your verified Legalitt client account
+Email or Mobile Number
+Continue
+OR
+Don’t have an account? Sign Up
+By continuing, you agree to our Terms & Conditions | Privacy Policy
+204 http://127.0.0.1:3001/api/v1/auth/otp/request
+201 http://127.0.0.1:3001/api/v1/auth/otp/request
+verify LEGALITT
+Login
+Verify Your Number
+We’ve sent a 6-digit verification code to
++919999999999
+•
+Change
+Didn’t receive the code?
+Resend OTP in 00:26
+Verify & Continue
+END-TO-END ENCRYPTED SESSION
+By continuing, you agree to Legalitt’s Terms of Service & Privacy Policy.
+inputs [
+  { placeholder: 'Search legal services', maxLength: -1 },
+  { placeholder: 'Email / Mobile No', maxLength: -1 },
+  { placeholder: '', maxLength: 1 },
+  { placeholder: '', maxLength: 1 },
+  { placeholder: '', maxLength: 1 },
+  { placeholder: '', maxLength: 1 },
+  { placeholder: '', maxLength: 1 },
+  { placeholder: '', maxLength: 1 }
+]
+click Verify & Continue URL http://localhost:8081/verify
+LEGALITT
+Login
+Verify Your Number
+We’ve sent a 6-digit verification code to
++919999999999
+•
+Change
+Didn’t receive the code?
+Resend OTP in 00:26
+Verify & Continue
+END-TO-END ENCRYPTED SESSION
+By continuing, you agree to Legalitt’s Terms of Service & Privacy Policy.
+204 http://127.0.0.1:3001/api/v1/auth/otp/verify
+201 http://127.0.0.1:3001/api/v1/auth/otp/verify
+204 http://127.0.0.1:3001/api/v1/me
+200 http://127.0.0.1:3001/api/v1/me
+204 http://127.0.0.1:3001/api/v1/services/legal_notice
+204 http://127.0.0.1:3001/api/v1/services/legal_notice
+200 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+204 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+200 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+click Learn more URL http://localhost:8081/legal-notice?caseId=114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+Legal Notice Detail
+FORMAL LEGAL ACTION
+Send a Legal Notice
+Legally drafted. Professionally reviewed. Hassle-free.
+Why send a Legal Notice?
+Before you go to court, make your position clear.
+A legal notice formally communicates your grievance, your demand, and gives the other party an opportunity to respond.
+Acts as evidence in court
+Clearly states your demand
+Opens an opportunity to resolve the di
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+BACK -> /legal-notice
+click Get Started URL http://localhost:8081/legal-notice?caseId=114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+Legal Notice Detail
+FORMAL LEGAL ACTION
+Send a Legal Notice
+Legally drafted. Professionally reviewed. Hassle-free.
+Why send a Legal Notice?
+Before you go to court, make your position clear.
+A legal notice formally communicates your grievance, your demand, and gives the other party an opportunity to respond.
+Acts as evidence in court
+Clearly states your demand
+Opens an opportunity to resolve the di
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+200 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+200 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+304 http://127.0.0.1:3001/api/v1/me
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+BACK -> /legal-notice
+204 http://127.0.0.1:3001/api/v1/me
+304 http://127.0.0.1:3001/api/v1/me
+204 http://127.0.0.1:3001/api/v1/services/legal_notice
+204 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+BACK -> /legal-notice/step1
+304 http://127.0.0.1:3001/api/v1/me
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+BACK -> /legal-notice/step2
+204 http://127.0.0.1:3001/api/v1/me
+304 http://127.0.0.1:3001/api/v1/me
+204 http://127.0.0.1:3001/api/v1/services/legal_notice
+204 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+BACK -> /legal-notice/step3
+304 http://127.0.0.1:3001/api/v1/me
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+BACK -> /legal-notice/step4
+204 http://127.0.0.1:3001/api/v1/me
+304 http://127.0.0.1:3001/api/v1/me
+204 http://127.0.0.1:3001/api/v1/services/legal_notice
+204 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+BACK -> /legal-notice/step4-review
+304 http://127.0.0.1:3001/api/v1/me
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+BACK -> /legal-notice/step5
+204 http://127.0.0.1:3001/api/v1/me
+304 http://127.0.0.1:3001/api/v1/me
+204 http://127.0.0.1:3001/api/v1/services/legal_notice
+204 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+click Continue URL http://localhost:8081/legal-notice/step1?caseId=114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+Legal Notice
+Secure & Confidence
+1
+2
+3
+4
+5
+6
+Step 1 of 6
+Please Provide your details!
+10:32 AM
+Continue
+Your information is safe and confidential
+200 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+200 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+click Continue URL http://localhost:8081/legal-notice/step2?caseId=114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+Legal Notice
+Secure & Confidence
+1
+2
+3
+4
+5
+6
+Step 2 of 6
+Who would you like to send the notice to?
+10:30 AM
+Note: The person receiving the notice.
+Continue
+Your information is safe and confidential
+200 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+200 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+click Money Recovery URL http://localhost:8081/legal-notice/step3?caseId=114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+Legal Notice
+Secure & Confidence
+1
+2
+3
+4
+5
+6
+Step 3 of 6
+10:30 AM
+Quick Actions
+Property Dispute
+Money Recovery
+Tenant Issue
+Family Dispute
+Cheque Bounce
+Consumer Complaint
+Any other
+Continue
+Your information is safe and confidential
+click Continue URL http://localhost:8081/legal-notice/step3?caseId=114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+Legal Notice
+Secure & Confidence
+1
+2
+3
+4
+5
+6
+Step 3 of 6
+10:30 AM
+Quick Actions
+Property Dispute
+Money Recovery
+Tenant Issue
+Family Dispute
+Cheque Bounce
+Consumer Complaint
+Any other
+Continue
+Your information is safe and confidential
+200 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+200 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+click Verify identity URL http://localhost:8081/legal-notice/step4?caseId=114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+Legal Notice
+Secure & Confidence
+1
+2
+3
+4
+5
+6
+Step 4 of 6
+Upload Supporting Documents
+Identity verification required
+Complete identity verification once to continue. It will be reused across your client services.
+Verify identity
+Property Papers
+Sales Deed, Khata, etc
+Agreement
+Any agreement document
+Screenshots
+WhatsApp, Email, etc
+Add More Documents
+Optional
+Continue
+Your information is safe and c
+click Continue URL http://localhost:8081/kyc/choose
+Choose Verification Method
+IDENTITY VERIFICATION
+Choose one way to verify your identity.
+DigiLocker
+Recommended
+Verify using your digital documents.
+Quick and simple • Takes ~1 min
+Video KYC
+Verify your identity through a short video check.
+Face and ID check • Takes ~2 mins
+Before You Start
+Keep your official government ID ready
+Make sure your phone camera and internet are working
+256-bit encrypti
+click Continue to DigiLocker URL http://localhost:8081/kyc/digilocker/connect
+Connect Digilocker
+Encrypted Session
+IDENTITY STEP 1 OF 3
+Safe & Official
+Verify with DigiLocker
+Use your DigiLocker documents to verify your identity quickly and securely.
+How It Works
+1
+Open DigiLocker
+You will be redirected safely to the government DigiLocker portal.
+2
+Sign in and give permission
+Log in with your phone or Aadhaar and approve document sharing.
+3
+Come back to Legalitt
+We will con
+click Continue URL http://localhost:8081/kyc/digilocker/verified
+Verification Complete
+STEP 3 OF 3 • ENCRYPTED & VERIFIED
+Details Verified
+Your identity details were verified using DigiLocker.
+PS
+Priya Sharma
+MATCH
+DOB: 14 Aug 1994 • Female
+Verified Details
+Official
+Full Legal Name
+Priya Sharma
+Residential Address
+42 Palm Avenue, Indiranagar, Bengaluru, KA 560038
+Document Source
+Aadhaar Card (via DigiLocker)
+Verification Info
+Method
+DigiLocker
+Status
+Verified
+T
+204 http://127.0.0.1:3001/api/v1/services/legal_notice
+204 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+click Continue URL http://localhost:8081/legal-notice/step4?caseId=114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+Legal Notice
+Secure & Confidence
+1
+2
+3
+4
+5
+6
+Step 4 of 6
+Upload Supporting Documents
+Identity verified
+Your existing verification is reused. No additional identity upload is needed.
+Property Papers
+Sales Deed, Khata, etc
+Agreement
+Any agreement document
+Screenshots
+WhatsApp, Email, etc
+Add More Documents
+Optional
+Continue
+Your information is safe and confidential
+200 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+200 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+click Continue URL http://localhost:8081/legal-notice/step4-review?caseId=114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+Legal Notice
+Secure & Confidence
+1
+2
+3
+4
+5
+6
+Step 4 of 6
+Review Your Documents
+Your documents have been uploaded successfully. Review them before continuing.
+Documents uploaded successfully
+0 documents added
+Identity verified
+Your existing verification is reused. No additional identity upload is needed.
+Add More Documents
+Optional
+Continue
+Your information is safe and confidential
+200 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+200 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+click Submit & Proceed to Pay URL http://localhost:8081/legal-notice/step5?caseId=114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+Legal Notice
+Secure & Confidence
+1
+2
+3
+4
+5
+6
+Step 5 of 6
+Preview Your Case Summary
+10:32 AM
+Client Name
+Navigation Test Client
+Notice Type
+Money Recovery Notice
+Notice Details
+Navigation Test Noticee
+Other
+Test recipient address
+Issue Summary
+Uploaded Documents
+0 Documents Uploaded
+Submit & Proceed to Pay
+Your information is safe and confidential
+200 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+204 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7/submit
+201 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7/submit
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+200 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+click Pay URL http://localhost:8081/legal-notice/step6?caseId=114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+Complete Payment
+Step 6 of 6
+1
+2
+3
+4
+5
+6
+Step 6 of 6
+Legal Notice
+Ref ID: #LN-2026-0028 ·
+Service Fee
+₹999
+Legal Notice Delivery Fee
+₹179
+Goods & Services Tax (GST 18%)
+₹248
+Platform fees
+₹199
+Total Payable
+₹1,625
+Inclusive of all legal taxes
+SELECT PAYMENT METHOD
+Fast & Secure
+UPI
+UPI
+Recommended
+Pay using any UPI app
+Pay via UPI App
+Google Pay, PhonePe, Paytm & other UPI apps
+Scan QR Code
+Select
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+BACK -> /legal-notice/step6
+click Pay URL http://localhost:8081/legal-notice/step6?caseId=114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+Complete Payment
+Step 6 of 6
+1
+2
+3
+4
+5
+6
+Step 6 of 6
+Legal Notice
+Ref ID: #LN-2026-0028 ·
+Service Fee
+₹999
+Legal Notice Delivery Fee
+₹179
+Goods & Services Tax (GST 18%)
+₹248
+Platform fees
+₹199
+Total Payable
+₹1,625
+Inclusive of all legal taxes
+SELECT PAYMENT METHOD
+Fast & Secure
+UPI
+UPI
+Recommended
+Pay using any UPI app
+Pay via UPI App
+Google Pay, PhonePe, Paytm & other UPI apps
+Scan QR Code
+Select
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+204 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+204 http://127.0.0.1:3001/api/v1/payments/intents
+201 http://127.0.0.1:3001/api/v1/payments/intents
+204 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+200 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+BACK -> /legal-notice/tracking
+204 http://127.0.0.1:3001/api/v1/cases?limit=100
+200 http://127.0.0.1:3001/api/v1/cases?limit=100
+BACK -> /cases
+204 http://127.0.0.1:3001/api/v1/me
+304 http://127.0.0.1:3001/api/v1/me
+204 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+PAID GUARD step1
+304 http://127.0.0.1:3001/api/v1/me
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+PAID GUARD step2
+304 http://127.0.0.1:3001/api/v1/me
+204 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+PAID GUARD step3
+304 http://127.0.0.1:3001/api/v1/me
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+PAID GUARD step4
+204 http://127.0.0.1:3001/api/v1/me
+304 http://127.0.0.1:3001/api/v1/me
+204 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+PAID GUARD step4-review
+304 http://127.0.0.1:3001/api/v1/me
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+PAID GUARD step5
+304 http://127.0.0.1:3001/api/v1/me
+204 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+PAID GUARD step6
+304 http://127.0.0.1:3001/api/v1/me
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+PAID GUARD scan-pay
+204 http://127.0.0.1:3001/api/v1/me
+304 http://127.0.0.1:3001/api/v1/me
+204 http://127.0.0.1:3001/api/v1/cases/ae1275e1-afa7-480e-9670-c1f7c5e6bdd0
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+200 http://127.0.0.1:3001/api/v1/cases/ae1275e1-afa7-480e-9670-c1f7c5e6bdd0
+click Track Delivery URL http://localhost:8081/legal-notice/tracking?caseId=ae1275e1-afa7-480e-9670-c1f7c5e6bdd0
+Legal Notice Tracking
+Urgent Tier
+Your Legal Notice Has Been Delivered
+The notice was delivered to the recipient. This case is now complete.
+REQUEST ID
+#LN-2026-0006
+Copy
+NOTICE DETAILS
+Ref: LN-2026-0006
+Notice Type
+Money Recovery
+Service
+URGENT
+Within 5 Days
+Submitted On
+20 Oct 2026
+ASSIGNED ADVOCATE
+Verified Advocate
+AS
+Adv. Arjun Sharma
+8+ Years Experience · Property Law
+Bar Reg: D/1842/2016
+·
+
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/ae1275e1-afa7-480e-9670-c1f7c5e6bdd0
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/ae1275e1-afa7-480e-9670-c1f7c5e6bdd0
+BACK -> /legal-notice/tracking
+click Track Delivery URL http://localhost:8081/legal-notice/tracking?caseId=ae1275e1-afa7-480e-9670-c1f7c5e6bdd0
+Legal Notice Tracking
+Urgent Tier
+Your Legal Notice Has Been Delivered
+The notice was delivered to the recipient. This case is now complete.
+REQUEST ID
+#LN-2026-0006
+Copy
+NOTICE DETAILS
+Ref: LN-2026-0006
+Notice Type
+Money Recovery
+Service
+URGENT
+Within 5 Days
+Submitted On
+20 Oct 2026
+ASSIGNED ADVOCATE
+Verified Advocate
+AS
+Adv. Arjun Sharma
+8+ Years Experience · Property Law
+Bar Reg: D/1842/2016
+·
+
+204 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/ae1275e1-afa7-480e-9670-c1f7c5e6bdd0
+click View Delivery Confirmation URL http://localhost:8081/legal-notice/delivery?caseId=ae1275e1-afa7-480e-9670-c1f7c5e6bdd0
+Notice Delivery
+Physical Notice on the Way
+Your official recovery notice is dispatched via priority legal courier.
+Blue Dart
+TEST-STEP7
+NOTICE RECIPIENT
+Case #LN-2026-0006
+Legal Notice for Recovery
+Amit Verma (Noticee)
+Commercial Enclave, Indore
+2025550102
+Delivery Progress
+● Live Updates
+Notice Approved
+Approved by you on 20 Oct
+Notice Prepared
+Printed and sealed in advocate chamber
+Shipment Crea
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/ae1275e1-afa7-480e-9670-c1f7c5e6bdd0
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/ae1275e1-afa7-480e-9670-c1f7c5e6bdd0
+BACK -> /legal-notice/tracking
+click Chat with Advocate URL http://localhost:8081/legal-notice/tracking?caseId=ae1275e1-afa7-480e-9670-c1f7c5e6bdd0
+Legal Notice Tracking
+Urgent Tier
+Your Legal Notice Has Been Delivered
+The notice was delivered to the recipient. This case is now complete.
+REQUEST ID
+#LN-2026-0006
+Copy
+NOTICE DETAILS
+Ref: LN-2026-0006
+Notice Type
+Money Recovery
+Service
+URGENT
+Within 5 Days
+Submitted On
+20 Oct 2026
+ASSIGNED ADVOCATE
+Verified Advocate
+AS
+Adv. Arjun Sharma
+8+ Years Experience · Property Law
+Bar Reg: D/1842/2016
+·
+
+204 http://127.0.0.1:3001/api/v1/cases/ae1275e1-afa7-480e-9670-c1f7c5e6bdd0
+204 http://127.0.0.1:3001/api/v1/cases/ae1275e1-afa7-480e-9670-c1f7c5e6bdd0/thread
+304 http://127.0.0.1:3001/api/v1/cases/ae1275e1-afa7-480e-9670-c1f7c5e6bdd0
+200 http://127.0.0.1:3001/api/v1/cases/ae1275e1-afa7-480e-9670-c1f7c5e6bdd0/thread
+204 http://127.0.0.1:3001/api/v1/threads/8a0f0a34-e503-47c1-bfb3-24ebe47beb35/messages
+200 http://127.0.0.1:3001/api/v1/threads/8a0f0a34-e503-47c1-bfb3-24ebe47beb35/messages
+204 http://127.0.0.1:3001/api/v1/threads/8a0f0a34-e503-47c1-bfb3-24ebe47beb35/read
+201 http://127.0.0.1:3001/api/v1/threads/8a0f0a34-e503-47c1-bfb3-24ebe47beb35/read
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/ae1275e1-afa7-480e-9670-c1f7c5e6bdd0
+BACK -> /legal-notice/tracking
+click View Profile URL http://localhost:8081/legal-notice/tracking?caseId=ae1275e1-afa7-480e-9670-c1f7c5e6bdd0
+Legal Notice Tracking
+Urgent Tier
+Your Legal Notice Has Been Delivered
+The notice was delivered to the recipient. This case is now complete.
+REQUEST ID
+#LN-2026-0006
+Copy
+NOTICE DETAILS
+Ref: LN-2026-0006
+Notice Type
+Money Recovery
+Service
+URGENT
+Within 5 Days
+Submitted On
+20 Oct 2026
+ASSIGNED ADVOCATE
+Verified Advocate
+AS
+Adv. Arjun Sharma
+8+ Years Experience · Property Law
+Bar Reg: D/1842/2016
+·
+
+304 http://127.0.0.1:3001/api/v1/cases/ae1275e1-afa7-480e-9670-c1f7c5e6bdd0
+204 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/ae1275e1-afa7-480e-9670-c1f7c5e6bdd0
+BACK -> /legal-notice/tracking
+204 http://127.0.0.1:3001/api/v1/cases?limit=100
+304 http://127.0.0.1:3001/api/v1/cases?limit=100
+BACK -> /cases
+PASS all declared parents, paid guards, completed delivery roundtrip, chat and profile

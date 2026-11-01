@@ -1,3 +1,4 @@
+import NoticeScreenFeedback from '../../../../components/NoticeScreenFeedback';
 import { useAdvocateNoticeModel } from "../../../../features/legal-notice/useAdvocateNoticeModel";
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
@@ -552,5 +553,5 @@ const styles = StyleSheet.create({
 
 export default function AdvocateNoticeFeeScreen() {
   const model = useAdvocateNoticeModel('fee');
-  return <AdvocateNoticeFeeView notice={model.data.ADV_NOTICE} navigate={model.navigate} onAccept={model.onAccept} onDecline={model.onDecline} />;
+  return <NoticeScreenFeedback error={model.error}><AdvocateNoticeFeeView notice={model.data.ADV_NOTICE} navigate={model.navigate} onAccept={model.onAccept} onDecline={model.onDecline} /></NoticeScreenFeedback>;
 }

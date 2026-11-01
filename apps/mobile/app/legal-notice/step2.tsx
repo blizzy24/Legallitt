@@ -1,3 +1,4 @@
+import NoticeScreenFeedback from '../../components/NoticeScreenFeedback';
 import type { NoticeIntakeModel } from "../../features/legal-notice/screen-model";
 import { useIntakeModel } from "../../features/legal-notice/useIntakeModel";
 import { router } from 'expo-router';
@@ -17,7 +18,7 @@ export function Step2ScreenView({ model }: { model: NoticeIntakeModel }) {
   const n = form.noticee;
 
   return (
-    <WizardShell step={2} buttonLabel="Continue" onContinue={model.continue}>
+    <WizardShell onBack={model.back} step={2} buttonLabel="Continue" onContinue={model.continue}>
       <ChatBubble title="Who would you like to send the notice to?" time="10:30 AM" />
       <Text style={styles.note}>Note: The person receiving the notice.</Text>
       <View style={styles.fields}>
@@ -47,5 +48,5 @@ const styles = StyleSheet.create({
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function Step2Screen() {
   const { model } = useIntakeModel("step2");
-  return <Step2ScreenView model={model} />;
+  return <NoticeScreenFeedback error={model.error}><Step2ScreenView model={model} /></NoticeScreenFeedback>;
 }

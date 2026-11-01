@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Alert, Linking, Platform } from 'react-native';
+import { Linking } from 'react-native';
 import { router, type Href } from 'expo-router';
 import { NOTICE_ADVOCATE_GREETING, type NoticeDraftContent } from '@legalitt/shared';
 import { DATA_SOURCE } from '../../lib/data-source';
@@ -12,7 +12,6 @@ export const draftKeys: (keyof NoticeDraftContent)[] = ['sender','recipient','su
 export function useAdvocateNoticeModel(stage: string) {
   const api = DATA_SOURCE === 'api';
   const c=useNoticeController(stage as NoticeStage,undefined,api);
-  useEffect(()=>{if(c.error){if(Platform.OS==='web')window.alert(c.error);else Alert.alert(c.error);}},[c.error]);
   const {user} = useSession();
   const r=c.record, documents=r?.documents??[];
   // The final notice (rendered on approval) and the latest draft's PDF (rendered on send).
@@ -116,7 +115,7 @@ export function useAdvocateNoticeModel(stage: string) {
   };
   const documentFields=api?{reference:r?.reference??'',date:c.latest?new Date(c.latest.created_at).toLocaleDateString('en-GB'):'',recipient:c.content.recipient.split('\n'),subject:c.content.subject,
     client, father:'',age:'',address:r?.details.client?.address??'',facts:c.content.facts.split('\n'),demands:c.content.demand.split('\n')}:undefined;
-  return {data,documentFields,navigate,controller:c,api,total:api?total:fixture.ADV_NOTICE_PAYMENT.totalAmount,path,courierHref,
+  return {error:c.error,data,documentFields,navigate,controller:c,api,total:api?total:fixture.ADV_NOTICE_PAYMENT.totalAmount,path,courierHref,
     onViewDocument:api?(id?:string)=>open(id??notice?.id??draftDoc?.id):undefined,
     onEditSection:api?(index:number,value:string)=>{c.dirty.current=true;c.setContent(prev=>({...prev,[draftKeys[index]]:value}));}:undefined,
     onSaveDraft:api?()=>{void c.run(saveDraft);}:undefined,

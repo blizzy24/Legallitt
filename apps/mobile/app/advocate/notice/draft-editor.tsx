@@ -1,3 +1,4 @@
+import NoticeScreenFeedback from '../../../components/NoticeScreenFeedback';
 import { useAdvocateNoticeModel } from '../../../features/legal-notice/useAdvocateNoticeModel';
 import DemoPressable from '../../../components/DemoPressable';
 import { router, type Href } from 'expo-router';
@@ -215,7 +216,7 @@ const styles = StyleSheet.create({
 
 export default function AdvocateNoticeDraftEditorScreen() {
   const model=useAdvocateNoticeModel('draft-editor');
-  return <AdvocateNoticeDraftEditorView draft={model.data.ADV_NOTICE_DRAFT} navigate={model.navigate}
+  return <NoticeScreenFeedback error={model.error}><AdvocateNoticeDraftEditorView draft={model.data.ADV_NOTICE_DRAFT} navigate={model.navigate}
     onChange={model.onEditSection} onSave={model.onSaveDraft}
-    previewHref={model.path('response')} reviewHref={model.path('review')} />;
+    previewHref={model.path('response')} reviewHref={model.path('review')} /></NoticeScreenFeedback>;
 }

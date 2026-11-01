@@ -41,3 +41,19 @@ test("mobile auth registry covers every root navigator screen and all advocate p
   );
   assert.ok(groups.advocate.some((name) => name.startsWith("advocate/")));
 });
+
+test('mobile source contains no blocking browser alert calls', () => {
+  const root = path.resolve(__dirname, '../../mobile');
+  const violations = [];
+  function inspect(dir) {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      if (['node_modules', 'dist', '.expo', 'assets'].includes(entry.name)) continue;
+      const file = path.join(dir, entry.name);
+      if (entry.isDirectory()) inspect(file);
+      else if (/\.[cm]?[jt]sx?$/.test(entry.name) && /\b(?:window\.|globalThis\.)?alert\s*\(/.test(fs.readFileSync(file, 'utf8')))
+        violations.push(path.relative(root, file));
+    }
+  }
+  inspect(root);
+  assert.deepEqual(violations, [], 'Use inline screen feedback, never a blocking browser alert');
+});

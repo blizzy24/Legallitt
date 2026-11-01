@@ -1,5 +1,6 @@
+import NoticeScreenFeedback from '../../components/NoticeScreenFeedback';
 import { useEffect, useRef, useState } from 'react';
-import { Alert, Linking, Platform } from 'react-native';
+import { Linking, Platform } from 'react-native';
 import { router } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 import * as DocumentPicker from 'expo-document-picker';
@@ -33,7 +34,8 @@ export default function NoticeCourierDetails() {
   const current = useRef(form), loaded = useRef(false), hydrated = useRef(false), timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const queue = useRef<Promise<unknown>>(Promise.resolve());
   const shipment = c.record?.shipments?.find(s=>s.direction==='to_recipient');
-  const alert = (error: unknown) => {const message=error instanceof Error?error.message:String(error); if(Platform.OS==='web') window.alert(message); else Alert.alert(message);};
+  const [error,setError] = useState('');
+  const reportError = (error: unknown) => setError(error instanceof Error ? error.message : String(error));
   const cache = (value: Form) => Platform.OS === 'web' ? Promise.resolve(sessionStorage.setItem(key,JSON.stringify(value))) : SecureStore.setItemAsync(key,JSON.stringify(value));
   const payload = (value: Form): ShipmentDetails => ({
     carrier:value.values[0],waybill:value.values[1],dispatch_date:isoDate(value.values[2]),
@@ -47,6 +49,7 @@ export default function NoticeCourierDetails() {
     queue.current = queue.current.catch(()=>{}).then(async()=>{
       await cache(snapshot);
       if(api && c.id) await c.repository.saveShipment(c.id,payload(snapshot));
+      setError('');
     });
     return queue.current;
   };
@@ -59,18 +62,18 @@ export default function NoticeCourierDetails() {
       let restored=server;
       if(raw){try{const parsed=JSON.parse(raw);if(Array.isArray(parsed.values)&&parsed.values.length===6&&parsed.values.every((v:unknown)=>typeof v==='string')&&typeof parsed.expected==='string'&&(parsed.receipt===null||typeof parsed.receipt==='string'))restored=parsed;}catch{}}
       current.current=restored;setForm(restored);hydrated.current=true;
-    })();
+    })().catch(reportError);
   },[c.record,user,key]);
   const change = (value:Form) => {
     if(!hydrated.current)return;
     current.current=value;setForm(value);c.dirty.current=true;
-    void cache(value).catch(alert);
+    void cache(value).catch(reportError);
     if(timer.current) clearTimeout(timer.current);
-    timer.current=setTimeout(()=>{void save().catch(alert);},500);
+    timer.current=setTimeout(()=>{void save().catch(reportError);},500);
   };
   useEffect(()=>()=>{if(timer.current)clearTimeout(timer.current);},[]);
   const dispatchPath=()=>c.href(`/advocate/notice/${c.id}/dispatch`);
-  const back=()=>{void save().then(()=>router.replace(dispatchPath())).catch(alert);};
+  const back=()=>{void save().then(()=>router.replace(dispatchPath())).catch(reportError);};
   const submit=()=>{void (async()=>{
     const v=current.current;
     if(!v.values[0].trim()||!v.values[1].trim()||!isoDate(v.values[2])) throw new Error(CO_SELF_DETAILS.foot);
@@ -79,7 +82,7 @@ export default function NoticeCourierDetails() {
     if(api&&c.id) await c.repository.bookShipment(c.id,payload(v));
     if(Platform.OS==='web')sessionStorage.removeItem(key);else await SecureStore.deleteItemAsync(key);
     router.replace(dispatchPath());
-  })().catch(alert);};
+  })().catch(reportError);};
   const documents=c.record?.documents??[];
   const receipt=documents.find(d=>d.id===form.receipt);
   const open=(id?:string)=>{if(id)void c.run(async()=>{await Linking.openURL((await c.repository.documentUrl(id)).url);});};
@@ -102,10 +105,10 @@ export default function NoticeCourierDetails() {
     trackRows:CO_SELF_DETAILS.trackRows.map((r,i)=>({...r,value:form.values[i]})),
   };
   const copy=(value:string)=>{if(Platform.OS==='web')void navigator.clipboard?.writeText(value);};
-  return <CourierSelfDetailsView data={data} actions={{values:form.values,expected:form.expected,
+  return <NoticeScreenFeedback error={error || c.error}><CourierSelfDetailsView data={data} actions={{values:form.values,expected:form.expected,
     onField:(i,value)=>change({...current.current,values:current.current.values.map((v,j)=>j===i?value:v)}),
     onExpected:value=>change({...current.current,expected:value}),onBack:back,onSubmit:submit,
     onReceipt:upload,onViewReceipt:()=>{if(fixtureReceipt)void Linking.openURL(fixtureReceipt.uri);else open(receipt?.id);},onViewDocuments:()=>open(documents.find(d=>d.kind==='legal_notice')?.id),
     onCopyId:()=>copy(data.idValue),onCopyTracking:()=>copy(form.values[1]),
-  }} />;
+  }} /></NoticeScreenFeedback>;
 }

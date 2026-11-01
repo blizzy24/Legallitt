@@ -267,11 +267,11 @@ export const FLOW_MAP: Record<string, string> = {
   '/legal-advice/experience': '/legal-advice/datetime', // 122 → 124
   // last: /legal-advice/datetime (124)
   // ── legal-notice ──
-  '/legal-notice/detail': '/legal-notice', // 22 → 23
-  '/legal-notice': '/legal-notice/step1', // 23 → 24
+  '/legal-notice/detail': '/legal-notice', // 23 → entry 22
+  '/legal-notice': '/legal-notice/step1', // 22 → 24
   '/legal-notice/step1': '/legal-notice/step2', // 24 → 25
   '/legal-notice/step2': '/legal-notice/step3', // 25 → 26
-  '/legal-notice/step3': '/legal-notice/step5', // 26 → 27
+  '/legal-notice/step3': '/legal-notice/step4', // intake → documents
   '/legal-notice/step5': '/legal-notice/step6', // 27 → 28
   '/legal-notice/step6': '/legal-notice/scan-pay', // 28 → 29
   '/legal-notice/scan-pay': '/legal-notice/success', // 29 → 30
@@ -282,8 +282,8 @@ export const FLOW_MAP: Record<string, string> = {
   '/legal-notice/delivery': '/legal-notice/delivered', // 440 → 441
   '/legal-notice/delivered': '/cases', // terminal delivery → case list
   '/legal-notice/delivery-proof': '/legal-notice/delivered',
-  '/legal-notice/step4-review': '/legal-notice/step4', // 39 → 91
-  // last: /legal-notice/step4 (91)
+  '/legal-notice/step4': '/legal-notice/step4-review',
+  '/legal-notice/step4-review': '/legal-notice/step5',
   // ── login ──
   // last: /login (134)
   // ── matters ──

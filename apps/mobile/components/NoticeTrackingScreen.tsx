@@ -25,6 +25,7 @@ export type NoticeTrackingAdvocate = {
 };
 export type NoticeTrackingModel = {
   stage: NoticeTrackingStage;
+  error?: string;
   requestId: string; ref: string; noticeType: string; tier: ServiceTier;
   submittedOn: string; submittedAt: string; estimate: { date: string; time: string };
   steps: TrackingStep[];
@@ -61,7 +62,7 @@ export default function NoticeTrackingScreen({ model: m }: { model: NoticeTracki
   return (
     <View style={styles.screen}>
       <View style={[styles.header, { paddingTop: insets.top }]}>
-        <Pressable accessibilityRole="button" accessibilityLabel="Back" hitSlop={10} onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)/home'))}>
+        <Pressable accessibilityRole="button" accessibilityLabel="Back" hitSlop={10} onPress={() => router.replace('/(tabs)/cases')}>
           <ArrowLeft size={t.headerIcon} color={colors.textPrimary} />
         </Pressable>
         <Text style={styles.headerTitle}>Legal Notice Tracking</Text>
@@ -75,6 +76,7 @@ export default function NoticeTrackingScreen({ model: m }: { model: NoticeTracki
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
+        {m.error ? <Text accessibilityRole="alert" style={styles.desc}>{m.error}</Text> : <>
         {changes && Boolean(m.requestId) && (
           <View style={styles.idChip}>
             <Text style={styles.idChipLabel}>REQUEST ID</Text>
@@ -91,15 +93,13 @@ export default function NoticeTrackingScreen({ model: m }: { model: NoticeTracki
             )}
             <Text style={styles.tier}>{m.tier.tierLabel}</Text>
           </View>
-          <Text style={styles.title}>{ready ? 'Your Legal Notice Draft is Ready' : 'Legal Notice Request Submitted'}</Text>
-          {/* A completed case is not asked to review or approve again. */}
-          {m.stage !== 'completed' && (
-            <Text style={styles.desc}>
-              {ready
+          <Text style={styles.title}>{m.stage === 'completed' ? instructedCopy[437].completed.heading : ready ? 'Your Legal Notice Draft is Ready' : 'Legal Notice Request Submitted'}</Text>
+          {/* Completed wording is instructed copy, not drawn (§9.2). */}
+          <Text style={styles.desc}>
+              {m.stage === 'completed' ? instructedCopy[437].completed.body : ready
                 ? 'Your advocate has prepared the legal notice. Please review the draft carefully before approving it for dispatch.'
                 : 'Your request and payment have been received. A verified advocate is preparing your legal notice.'}
-            </Text>
-          )}
+          </Text>
           {!changes && Boolean(m.requestId) && (
             <View style={styles.idBox}>
               <Text style={styles.idLabel}>REQUEST ID</Text>
@@ -268,17 +268,18 @@ export default function NoticeTrackingScreen({ model: m }: { model: NoticeTracki
           </>
         )}
         {/* Once the notice has shipped, 437's primary button is the drawn route to delivery tracking. */}
-        {m.stage === 'dispatched' && (
+        {(m.stage === 'dispatched' || m.stage === 'completed') && (
           <>
             <Text style={[styles.title, styles.decisionTitle]}>Your Decision</Text>
             <Pressable accessibilityRole="button" style={styles.primary} onPress={m.onDelivery}>
               <BadgeCheck size={t.homeIcon} color={ink.onBrand} />
-              <Text style={styles.primaryText}>Approve & Proceed</Text>
+              <Text style={styles.primaryText}>{instructedCopy[437].trackDelivery}</Text>
             </Pressable>
           </>
         )}
         </>
         )}
+        </>}
       </ScrollView>
     </View>
   );

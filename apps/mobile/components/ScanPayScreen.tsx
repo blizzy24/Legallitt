@@ -41,7 +41,7 @@ export default function ScanPayScreen({
   successHref,
   query,
   hold = false,
-  backHref,
+  backHref, onBack,
   requestId,
   onPayment,
   paymentReady = true,
@@ -51,7 +51,7 @@ export default function ScanPayScreen({
   successHref: Href;
   query?: string;
   hold?: boolean;
-  backHref?: Href;
+  backHref?: Href; onBack?: () => void;
   requestId?: string;
   onPayment?: () => void;
   paymentReady?: boolean;
@@ -96,9 +96,9 @@ export default function ScanPayScreen({
         title="Scan & Pay"
         subtitle="UPI Dynamic QR"
         intro="Scan the QR code using any UPI app to complete your payment."
-        onBack={backHref
+        onBack={onBack ?? (backHref
           ? () => router.canGoBack() ? router.back() : router.replace(backHref)
-          : undefined}
+          : undefined)}
       />
       <ScrollView contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + s.cardGap }]} showsVerticalScrollIndicator={false}>
         <View style={styles.card}>

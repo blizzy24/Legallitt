@@ -1,3 +1,4 @@
+import NoticeScreenFeedback from '../../../../components/NoticeScreenFeedback';
 import { useAdvocateNoticeModel } from "../../../../features/legal-notice/useAdvocateNoticeModel";
 import { previewNotice } from '../../../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
@@ -285,5 +286,5 @@ const styles = StyleSheet.create({
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function AdvocateNoticeDraftScreen() {
   const model = useAdvocateNoticeModel("draft");
-  return <AdvocateNoticeDraftScreenView data={model.data} navigate={model.navigate} onChangeSection={model.onEditSection} />;
+  return <NoticeScreenFeedback error={model.error}><AdvocateNoticeDraftScreenView data={model.data} navigate={model.navigate} onChangeSection={model.onEditSection} /></NoticeScreenFeedback>;
 }

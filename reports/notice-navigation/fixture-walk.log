@@ -1,0 +1,11 @@
+fixture parent step1 /legal-notice
+fixture parent step2 /legal-notice/step1
+fixture parent step3 /legal-notice/step2
+fixture parent step4 /legal-notice/step3
+fixture parent step4-review /legal-notice/step4
+fixture parent step5 /legal-notice/step4-review
+fixture parent step6 /legal-notice/step5
+fixture parent scan-pay /legal-notice/step6
+SUCCESS PAID true
+BACK URL http://127.0.0.1:54826/legal-notice/step6 PAID true
+PASS fixtures success -> tracking -> My Cases; browser Back does not reopen payment

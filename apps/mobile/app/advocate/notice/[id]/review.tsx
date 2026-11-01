@@ -1,3 +1,4 @@
+import NoticeScreenFeedback from '../../../../components/NoticeScreenFeedback';
 import { useAdvocateNoticeModel } from "../../../../features/legal-notice/useAdvocateNoticeModel";
 import { useDemoWait } from '../../../../hooks/useDemoAdvance';
 import { previewNotice } from '../../../../components/PreviewNotice';
@@ -651,5 +652,5 @@ const styles = StyleSheet.create({
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function AdvocateNoticeReviewScreen() {
   const model = useAdvocateNoticeModel("review");
-  return <AdvocateNoticeReviewScreenView data={model.data} navigate={model.navigate} reviewState={model.api ? model.controller.record?.status ?? '' : undefined} />;
+  return <NoticeScreenFeedback error={model.error}><AdvocateNoticeReviewScreenView data={model.data} navigate={model.navigate} reviewState={model.api ? model.controller.record?.status ?? '' : undefined} /></NoticeScreenFeedback>;
 }

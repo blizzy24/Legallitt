@@ -1,0 +1,175 @@
+role loaded
+click UserGet Legal Services URL http://localhost:8081/role
+
+click Next URL http://localhost:8081/role
+User
+Get Legal Services
+Lawyer
+Offer Legal Services
+Choose Your Role
+You Have To Choose Your Role What is Your Profession
+Next
+click Log in URL http://localhost:8081/home
+Already have an account? Log in
+Sign up
+LEGALITT CLIENT
+Welcome to Legalitt
+How can we help you today?
+Popular Services
+TOP
+View All
+Legal Advice
+Get guidance from a qualified advocate
+Legal Notice
+Prepare and send a professional notice
+Our Services
+View All
+Legal Advice
+Get guidance from a qualified advocate
+FIR Draft
+Assistance with precise FIR drafting
+Document Forensic
+Examine documents by exp
+click Continue URL http://localhost:8081/login
+LEGALITT
+Login
+Welcome Back
+Login to your verified Legalitt client account
+Email or Mobile Number
+Continue
+OR
+Don’t have an account? Sign Up
+By continuing, you agree to our Terms & Conditions | Privacy Policy
+204 http://127.0.0.1:3001/api/v1/auth/otp/request
+201 http://127.0.0.1:3001/api/v1/auth/otp/request
+verify LEGALITT
+Login
+Verify Your Number
+We’ve sent a 6-digit verification code to
++919999999999
+•
+Change
+Didn’t receive the code?
+Resend OTP in 00:26
+Verify & Continue
+END-TO-END ENCRYPTED SESSION
+By continuing, you agree to Legalitt’s Terms of Service & Privacy Policy.
+inputs [
+  { placeholder: 'Search legal services', maxLength: -1 },
+  { placeholder: 'Email / Mobile No', maxLength: -1 },
+  { placeholder: '', maxLength: 1 },
+  { placeholder: '', maxLength: 1 },
+  { placeholder: '', maxLength: 1 },
+  { placeholder: '', maxLength: 1 },
+  { placeholder: '', maxLength: 1 },
+  { placeholder: '', maxLength: 1 }
+]
+click Verify & Continue URL http://localhost:8081/verify
+LEGALITT
+Login
+Verify Your Number
+We’ve sent a 6-digit verification code to
++919999999999
+•
+Change
+Didn’t receive the code?
+Resend OTP in 00:26
+Verify & Continue
+END-TO-END ENCRYPTED SESSION
+By continuing, you agree to Legalitt’s Terms of Service & Privacy Policy.
+204 http://127.0.0.1:3001/api/v1/auth/otp/verify
+201 http://127.0.0.1:3001/api/v1/auth/otp/verify
+204 http://127.0.0.1:3001/api/v1/me
+200 http://127.0.0.1:3001/api/v1/me
+204 http://127.0.0.1:3001/api/v1/services/legal_notice
+204 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+200 http://127.0.0.1:3001/api/v1/services/legal_notice
+200 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+click Approve & Proceed URL http://localhost:8081/legal-notice/tracking?caseId=114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+Legal Notice Tracking
+Awaiting Your Approval
+Urgent Tier
+Your Legal Notice Draft is Ready
+Your advocate has prepared the legal notice. Please review the draft carefully before approving it for dispatch.
+REQUEST ID
+#LN-2026-0028
+Copy
+NOTICE DETAILS
+Ref: LN-2026-0028
+Notice Type
+Money Recovery
+Service
+URGENT
+Within 5 Days
+Submitted On
+30 Oct 2026
+Current Status
+Awaiting Your Approval
+ASSIGNED ADVOCA
+204 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7/drafts/f8cbbc38-d9bc-40b2-8422-73c64a97e6bf/approve
+201 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7/drafts/f8cbbc38-d9bc-40b2-8422-73c64a97e6bf/approve
+200 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+204 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+204 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+204 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+200 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+click Track Delivery URL http://localhost:8081/legal-notice/tracking?caseId=114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+Legal Notice Tracking
+Urgent Tier
+Your Legal Notice Draft is Ready
+Your advocate has prepared the legal notice. Please review the draft carefully before approving it for dispatch.
+REQUEST ID
+#LN-2026-0028
+Copy
+NOTICE DETAILS
+Ref: LN-2026-0028
+Notice Type
+Money Recovery
+Service
+URGENT
+Within 5 Days
+Submitted On
+30 Oct 2026
+ASSIGNED ADVOCATE
+Verified Advocate
+AS
+Adv. Arjun Sharma
+8+ Years Experience
+204 http://127.0.0.1:3001/api/v1/services/legal_notice
+204 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+BACK -> /legal-notice/tracking
+click Track Delivery URL http://localhost:8081/legal-notice/tracking?caseId=114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+Legal Notice Tracking
+Urgent Tier
+Your Legal Notice Draft is Ready
+Your advocate has prepared the legal notice. Please review the draft carefully before approving it for dispatch.
+REQUEST ID
+#LN-2026-0028
+Copy
+NOTICE DETAILS
+Ref: LN-2026-0028
+Notice Type
+Money Recovery
+Service
+URGENT
+Within 5 Days
+Submitted On
+30 Oct 2026
+ASSIGNED ADVOCATE
+Verified Advocate
+AS
+Adv. Arjun Sharma
+8+ Years Experience
+304 http://127.0.0.1:3001/api/v1/services/legal_notice
+304 http://127.0.0.1:3001/api/v1/cases/114e2ec1-fd06-47b8-b4a0-ffdc44e133f7
+PASS real case approval retains drawn label; dispatched delivery link survives Back

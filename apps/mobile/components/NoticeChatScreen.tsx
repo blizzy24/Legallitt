@@ -31,9 +31,9 @@ export default function NoticeChatScreen({
   messages,
   placeholder,
   valid,
-  validTime, onSend, onAttach, onOpenDocument, verified=true, online=true, typing=true,
+  validTime, onSend, onAttach, onBack, onOpenDocument, verified=true, online=true, typing=true,
 }: {
-  onSend?:(text:string)=>Promise<boolean>; onAttach?:()=>void; onOpenDocument?:(id:string)=>void; verified?:boolean;online?:boolean;typing?:boolean;
+  onBack?:()=>void; onSend?:(text:string)=>Promise<boolean>; onAttach?:()=>void; onOpenDocument?:(id:string)=>void; verified?:boolean;online?:boolean;typing?:boolean;
   variant: 'client' | 'advocate';
   name: string;
   messages: ChatMessage[];
@@ -51,7 +51,7 @@ export default function NoticeChatScreen({
   return (
     <View style={[styles.screen, adv && styles.screenAdv]}>
       <View style={[styles.header, adv ? styles.headerAdv : styles.headerClient, { paddingTop: insets.top + t.statusPad }]}>
-        <Pressable accessibilityRole="button" accessibilityLabel="Back" hitSlop={10} onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)/home'))}>
+        <Pressable accessibilityRole="button" accessibilityLabel="Back" hitSlop={10} onPress={onBack ?? (() => (router.canGoBack() ? router.back() : router.replace('/(tabs)/home')))}>
           <ChevronLeft size={t.backIcon} color={fg} strokeWidth={2.4} />
         </Pressable>
         <View style={styles.who}>

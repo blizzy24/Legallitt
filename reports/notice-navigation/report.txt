@@ -1,0 +1,34 @@
+Legal Notice navigation verification — 30 Oct 2026
+
+Entry: /legal-notice now renders design 22. Learn more opens design 23 at
+/legal-notice/detail; its Back returns to entry. Entry Back goes to Home.
+
+Declared parents cover steps 1–6 (including both step-4 screens), Scan & Pay,
+success, tracking, delivery/confirmation, client chat, and advocate profile.
+Case IDs are preserved. Draft edits save before Back.
+Paid cases redirect old intake/payment routes to tracking; payment also checks
+fresh case state before charging. Fixture payment completion survives browser
+history/reloads, including Chrome back-forward-cache restoration. API pages
+refresh case data on restoration.
+
+Approval retains Approve & Proceed at client_review. After dispatch and at
+completed, Track Delivery remains available. Instructed copy is recorded in
+copy/instructed.ts and architecture section 9.2 beside the Approved block.
+
+Browser verification:
+- API: entry -> all six intake steps -> simulated identity verification ->
+  payment -> success -> tracking -> My Cases. Every declared Back target checked.
+- API: all eight old intake/payment URLs redirected to tracking after payment.
+- API: actual test-case review approval -> dispatch -> delivery -> Back ->
+  delivery again. Test case: 114e2ec1-fd06-47b8-b4a0-ffdc44e133f7.
+- API: completed case ae1275e1-afa7-480e-9670-c1f7c5e6bdd0 retained delivery,
+  delivery confirmation, chat and profile routes; all returned to tracking.
+- Fixtures: declared intake parents, payment success -> tracking -> My Cases,
+  and browser Back into an older page load returned to tracking rather than payment.
+
+Screenshots: entry.png, dispatched-track-delivery.png,
+completed-track-delivery.png. Detailed browser output is in the adjacent logs.
+
+Checks: web export succeeded; all five workspace typechecks passed;
+four focused navigation/auth-registry/no-alert regression tests passed.
+Full mobile smoke: 321 routes, zero failures.

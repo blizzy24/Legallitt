@@ -1,3 +1,4 @@
+import NoticeScreenFeedback from '../../components/NoticeScreenFeedback';
 import { useUploadModel } from "../../features/legal-notice/useUploadModel";
 import IdentityVerification from '../../components/IdentityVerification';
 import { useKyc } from '../../context/kyc';
@@ -52,11 +53,11 @@ const ROWS: { icon: LucideIcon; title: string; subtitle: string }[] = [
   { icon: Crop, title: 'Screenshots', subtitle: 'WhatsApp, Email, etc' },
 ];
 
-export function Step4ScreenView({ onContinue, onUpload, returnTo = "/legal-notice/step4" }: {
-  onContinue: () => void; onUpload: (kind: string) => void; returnTo?: import("expo-router").Href;
+export function Step4ScreenView({ onBack, onContinue, onUpload, returnTo = "/legal-notice/step4" }: {
+  onBack?: () => void; onContinue: () => void; onUpload: (kind: string) => void; returnTo?: import("expo-router").Href;
 }) {
   return (
-    <WizardShell
+    <WizardShell onBack={onBack}
       step={4}
       align="top"
       background="tinted"
@@ -276,5 +277,5 @@ const styles = StyleSheet.create({
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function Step4Screen() {
   const model = useUploadModel('step4');
-  return <Step4ScreenView onContinue={model.onContinue} onUpload={model.onUpload} returnTo={model.returnTo} />;
+  return <NoticeScreenFeedback error={model.error}><Step4ScreenView onBack={model.onBack} onContinue={model.onContinue} onUpload={model.onUpload} returnTo={model.returnTo} /></NoticeScreenFeedback>;
 }

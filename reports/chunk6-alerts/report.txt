@@ -1,0 +1,41 @@
+Follow-up: blocking alerts and Pending subtitle
+
+Removed all five remaining alert handlers from useNoticeLists, useIntakeModel,
+NoticeChat, NoticeCourierDetails and useAdvocateNoticeModel. No browser alert
+calls remain anywhere in the mobile source. Native Alert calls in those handlers
+were removed too.
+
+Models expose their error as data. A shared NoticeScreenFeedback component renders
+nonmodal, accessible text with the tracking error's existing typography. All 37
+route adapters consuming the affected models show that feedback, including intake,
+upload, payment, delivery, list and advocate screens. Chat and courier also surface
+their local load/save/send failures. The designed screen stays mounted so navigation,
+inputs and drafts remain available, including after a failed save. Error-free views
+retain their existing components, copy and measured tokens.
+
+Pending cards compute the subtitle from available values and omit it if empty or
+identical to the title. Cases without a matter type show Legal Notice only once.
+
+Verification:
+- All workspace typechecks passed.
+- Added and passed a regression check rejecting blocking browser alert calls in
+  mobile source; existing mobile route-registry check also passed.
+- Signed in through the real local UI as demo client and demo advocate.
+- Injected failed HTTP responses for My Cases, intake, chat, advocate and courier:
+  inline errors appeared; no browser dialogs or JavaScript exceptions; tabs,
+  navigation and applicable input fields stayed responsive.
+- Failed courier autosave retained the typed field value.
+- Loaded Pending with real API data and confirmed no repeated Legal Notice subtitle.
+- Fixture web export passed. Full route smoke result is in smoke-result.txt.
+
+Screenshots in this folder:
+my-cases-error.png
+intake-error.png
+chat-error.png
+advocate-error.png
+courier-error.png
+courier-save-error-retains-input.png
+pending-no-duplicate.png
+
+Error screenshots deliberately use an injected 'Verification: request failed'
+server response. This is test evidence, not new application copy.

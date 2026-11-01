@@ -3,6 +3,12 @@
  * stays distinguishable; do not reword. */
 export const instructedCopy = {
   437: {
+    trackDelivery: 'Track Delivery',
+    // Chunk 6: project-owner wording, only for the completed lifecycle state.
+    completed: {
+      heading: 'Your Legal Notice Has Been Delivered',
+      body: 'The notice was delivered to the recipient. This case is now complete.',
+    },
     // 28 Oct 2026: Your Decision between approval and dispatch.
     approved: {
       heading: 'Approved',

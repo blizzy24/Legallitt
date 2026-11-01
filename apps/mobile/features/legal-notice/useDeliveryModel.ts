@@ -61,7 +61,8 @@ export function useDeliveryModel(screen: 'delivery' | 'delivered' = 'delivery') 
   };
   const open = (id?:string)=>{void c.run(async()=>{if(id) await Linking.openURL((await c.repository.documentUrl(id)).url);});};
   return {
-    onBack:api ? () => router.replace(c.href('/legal-notice/tracking')) : undefined,
+    error: c.error,
+    onBack: () => router.replace(c.href('/legal-notice/tracking')),
     matterType:api ? record?.matter_type ?? null : noticeMatterType(model.form.issueType ?? undefined),
     data:api?data:undefined, facts:api?facts:undefined, allowDemoAdvance:!api,
     onViewNotice:api?()=>open(notice?.id):undefined,

@@ -69,7 +69,7 @@ export function useNoticeController(stage: NoticeStage, backend: NoticeRepositor
     if (!enabled) return;
     if (stage === "detail") {
       setPricing((await backend.service("legal_notice")).pricing);
-      return;
+      if (!id) return;
     }
     if (stage === "list") {
       let cursor: string | undefined;
@@ -95,6 +95,7 @@ export function useNoticeController(stage: NoticeStage, backend: NoticeRepositor
     useCallback(() => {
       if (!enabled) return;
       let alive = true;
+      let terminalError = false;
       setLoading(true);
       setError("");
       const refresh = async () => {
@@ -103,6 +104,9 @@ export function useNoticeController(stage: NoticeStage, backend: NoticeRepositor
           if (alive) setError("");
         } catch (e) {
           if (alive) {
+            // Missing/inaccessible cases cannot recover through polling. Preserve
+            // the error until a new route/focus explicitly retries.
+            terminalError = e instanceof ApiError && [401, 403, 404].includes(e.status);
             setError(e instanceof Error ? e.message : "Request failed");
             if (e instanceof ApiError && e.status === 401)
               setAuthRequired(true);
@@ -112,12 +116,15 @@ export function useNoticeController(stage: NoticeStage, backend: NoticeRepositor
         }
       };
       void refresh();
+      const restore = () => { if (alive) void refresh(); };
+      if (typeof window !== 'undefined') window.addEventListener('pageshow', restore);
       const timer = setInterval(() => {
-        if (alive && !working.current && !dirty.current) void refresh();
+        if (alive && !terminalError && !working.current && !dirty.current) void refresh();
       }, 5000);
       return () => {
         alive = false;
         clearInterval(timer);
+        if (typeof window !== 'undefined') window.removeEventListener('pageshow', restore);
       };
     }, [load, enabled]),
   );

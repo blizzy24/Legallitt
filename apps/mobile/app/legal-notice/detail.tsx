@@ -1,170 +1,157 @@
-import type { NoticeIntakeModel } from "../../features/legal-notice/screen-model";
-import { useIntakeModel } from "../../features/legal-notice/useIntakeModel";
-import { router } from 'expo-router';
-import { ArrowRight, Check, ChevronRight, Clock, FileSearch, Lock, MapPin, MessageCircle, ShieldCheck, Zap, type LucideIcon } from 'lucide-react-native';
-import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { router, useLocalSearchParams, type Href } from 'expo-router';
+import { ArrowRight, Bell, Check, ChevronLeft, FilePenLine, FileText, Headset, Lock, ShieldCheck, type LucideIcon } from 'lucide-react-native';
+import type { ReactNode } from 'react';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import ServiceHeader from '../../components/ServiceHeader';
-import { colors, font, ink, lnDetail as d } from '../../constants/theme';
-import { useLegalNotice } from '../../context/legalNotice';
-import { shrinkToFit, shrinkToOneLine } from '../../constants/textFit';
-import { rupees, SERVICE_TIERS, tierFor } from '../../data/legalNotice';
+import { noticeHref } from '../../features/legal-notice/navigation';
+import { colors, font, ink, lnInfo as i } from '../../constants/theme';
 
-const BULLETS = [
-  'Acts as evidence in court',
-  'Clearly states your demand',
-  'Opens an opportunity to resolve the dispute',
-  'May help avoid unnecessary litigation',
+const WHY_IT_MATTERS = [
+  'Shows your serious intent',
+  'Provides an opportunity to settle the dispute',
+  'Often helps avoid time and cost of litigation',
+  'Creates a written record of your communication.',
+  'May be legally required in certain matters',
 ];
 
-const REASONS: { icon: LucideIcon; title: string; caption: string; tint: string }[] = [
-  { icon: FileSearch, title: 'Preview', caption: 'Before You Send', tint: '#F6E9DC' },
-  { icon: MapPin, title: 'Track Postal', caption: 'Acknowledgment', tint: '#F7DFDF' },
-  { icon: MessageCircle, title: 'Get Reply', caption: 'Update', tint: '#E1F0E4' },
+const MANDATORY_CASES = [
+  'Dishonour of Cheque (Section 138, N.I. Act)',
+  'Consumer Disputes',
+  'Service matters/ Termination',
+  'Defamation (in many cases)',
+  'Certain property disputes (e.g., eviction, breach of agreement)',
+  'other matters as per specific statutes or contracts',
 ];
 
-// Legal Notice detail / pricing (design/22). Prices come from data/legalNotice.ts so
-// they match the payment screen's Service Fee.
-export function LegalNoticeDetailScreenView({ model }: { model: NoticeIntakeModel }) {
+const HOW_WE_HELP: { icon: LucideIcon; title: string; description: string }[] = [
+  { icon: FilePenLine, title: 'Quick Submission', description: 'Fill in your details and upload documents directly in a structured form.' },
+  { icon: Headset, title: 'Assisted Service', description: 'Our Legalitt support team can help collect the required information step by step.' },
+  { icon: ShieldCheck, title: 'Verified Advocates', description: 'Your request can be reviewed and handled by a verified advocate on the platform.' },
+];
+
+// Legal Notice information page (design/23). Reached from the Legal Notice tiles on
+// design 22’s Learn more link; its action returns to the entry screen.
+export default function LegalNoticeInfoScreen() {
   const insets = useSafeAreaInsets();
-  const { width } = useWindowDimensions();
-  // The tier cards are half the screen, so the speed line runs out of room before
-  // anything else does. Scale it down only where it would otherwise wrap.
-  const speedSize = d.speedSize * (width < d.speedCompactBelow ? d.speedCompactScale : 1);
-  const { form, update } = model;
-  const tierId = form.tier;
-  const tier = model.tiers.find(t => t.id === tierId)!;
+  const {caseId}=useLocalSearchParams<{caseId?:string}>();
 
   return (
     <View style={styles.screen}>
-      <ServiceHeader title="Legal Notice Detail" />
-      <ScrollView contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + d.cardGap }]} showsVerticalScrollIndicator={false}>
-        <View style={[styles.card, styles.hero]}>
-          <View style={styles.heroText}>
-            <View style={styles.heroPill}>
-              <Text style={styles.heroPillText}>FORMAL LEGAL ACTION</Text>
-            </View>
-            <Text style={styles.heroTitle}>Send a Legal Notice</Text>
-            <Text style={styles.heroSub}>Legally drafted. Professionally reviewed. Hassle-free.</Text>
+      <View style={[styles.header, { paddingTop: insets.top + i.headerTop }]}>
+        <Pressable accessibilityRole="button" accessibilityLabel="Back" onPress={() => router.replace(noticeHref('/legal-notice',caseId))} style={styles.circle}>
+          <ChevronLeft size={i.circleIcon} color={colors.textPrimary} />
+        </Pressable>
+        <View style={styles.brand}>
+          <View style={styles.brandRow}>
+            <Text style={styles.brandName}>Legalitt</Text>
+            <View style={styles.brandDot} />
           </View>
-          {/* Illustration placeholder — the file uses a bespoke drawing. */}
-          <View style={styles.heroArt} />
+          <Text style={styles.brandSub}>Find. Connect. Consult. Resolve.</Text>
         </View>
+        <Pressable onPress={() => router.push('/notifications' as Href)} accessibilityRole="button" accessibilityLabel="Notifications" style={[styles.circle, styles.bell]}>
+          <Bell size={i.circleIcon} color={colors.textPrimary} />
+        </Pressable>
+        <View style={[styles.circle, styles.avatar]}>
+          <Text style={styles.avatarText}>RD</Text>
+        </View>
+      </View>
 
-        <View style={styles.card}>
-          <View style={styles.titleRow}>
-            <ShieldCheck size={d.titleIcon} color={colors.textPrimary} />
-            <Text style={styles.cardTitle}>Why send a Legal Notice?</Text>
-          </View>
-          <Text style={styles.lead}>Before you go to court, make your position clear.</Text>
-          <Text style={styles.para}>
-            A legal notice formally communicates your grievance, your demand, and gives the other party an opportunity
-            to respond.
+      <ScrollView contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + i.cardGap }]} showsVerticalScrollIndicator={false}>
+        <View style={styles.pill}>
+          <View style={styles.pillDot} />
+          <Text style={styles.pillText}>FORMAL LEGAL COMMUNICATION</Text>
+        </View>
+        <Text style={styles.title}>Legal Notice</Text>
+        <Text style={styles.subtitle}>Take the right step before the matter goes further.</Text>
+
+        <Card>
+          <CardTitle icon={FileText} text="What is a Legal Notice?" />
+          <Text style={styles.body}>
+            A legal notice is a formal written communication sent to another person or organisation to explain a legal
+            concern, demand action, or ask for a response before taking further legal steps.
           </Text>
-          <View style={styles.bullets}>
-            {BULLETS.map((b) => (
-              <View key={b} style={styles.bulletRow}>
-                <View style={styles.bulletDot} />
-                <Text style={styles.bulletText}>{b}</Text>
-              </View>
+        </Card>
+
+        <Card tinted>
+          <CardTitle icon={ShieldCheck} text="Why is it Important?" />
+          <View style={styles.ticks}>
+            {WHY_IT_MATTERS.map((t) => (
+              <Tick key={t} text={t} />
             ))}
           </View>
-          <Text style={styles.link}>Is a legal notice always required?</Text>
-          <View style={styles.linkRow}>
-            <Text style={styles.link}>What should it contain?</Text>
-            <View style={styles.spacer} />
-            <Text style={styles.learn}>Learn more</Text>
-            <ChevronRight size={d.linkSize} color={colors.textBody} />
+        </Card>
+
+        <Card tinted>
+          <CardTitle icon={ShieldCheck} text="Cases Where Legal Notice is mandatory" />
+          <View style={styles.ticks}>
+            {MANDATORY_CASES.map((t) => (
+              <Tick key={t} text={t} />
+            ))}
           </View>
-        </View>
+        </Card>
 
-        <View style={styles.trust}>
-          <ShieldCheck size={d.trustIcon} color={ink.accent} />
-          <Text style={styles.trustText}>Drafted &amp; reviewed by Verified Advocates</Text>
-          <View style={styles.spacer} />
-          <Lock size={d.trustIcon - 2} color={ink.accent} />
-          <Text style={styles.trustTag}>SECURE</Text>
-        </View>
-
-        <Text style={styles.section}>Why choose Legalitt?</Text>
-        <View style={styles.reasons}>
-          {REASONS.map((r) => {
-            const Icon = r.icon;
-            return (
-              <View key={r.title} style={styles.reason}>
-                <View style={[styles.reasonIcon, { backgroundColor: r.tint }]}>
-                  <Icon size={d.chooseIconGlyph} color={colors.textPrimary} />
-                </View>
-                <Text style={styles.reasonTitle}>{r.title}</Text>
-                <Text style={styles.reasonCaption}>{r.caption}</Text>
-              </View>
-            );
-          })}
-        </View>
-
-        <Text style={[styles.section, styles.pickSection]}>Choose Your Service</Text>
-        <Text style={styles.pickSub}>Select the priority that suits your requirement.</Text>
-        <View style={styles.tiers}>
-          {model.tiers.map((t) => {
-            const selected = t.id === tierId;
-            return (
-              <Pressable
-                key={t.id}
-                accessibilityRole="radio"
-                accessibilityState={{ checked: selected }}
-                onPress={() => update({ tier: t.id })}
-                style={[styles.tier, selected && styles.tierSelected]}
-              >
-                <View style={styles.tierTop}>
-                  <View style={styles.tierChip}>
-                    <Text style={styles.tierChipText}>{t.label}</Text>
+        <Card>
+          <Text style={styles.plainTitle}>How Legalitt Can Help</Text>
+          <View style={styles.subCards}>
+            {HOW_WE_HELP.map((h) => {
+              const Icon = h.icon;
+              return (
+                <View key={h.title} style={styles.subCard}>
+                  <View style={styles.subCardIcon}>
+                    <Icon size={i.subCardIconGlyph} color={ink.accent} />
                   </View>
-                  <View style={styles.spacer} />
-                  <View style={[styles.radio, selected && styles.radioOn]}>
-                    {selected && <Check size={11} color={ink.onBrand} strokeWidth={3} />}
+                  <View style={styles.subCardText}>
+                    <Text style={styles.subCardTitle}>{h.title}</Text>
+                    <Text style={styles.subCardDesc}>{h.description}</Text>
                   </View>
                 </View>
-                <View style={styles.priceRow}>
-                  <Text style={styles.price}>{t.price === null ? '' : rupees(t.price)}</Text>
-                  <Clock size={d.speedIcon} color={colors.textBody} />
-                  <Text style={[styles.speed, { fontSize: speedSize }]} {...shrinkToOneLine()}>
-                    {t.speed}
-                  </Text>
-                </View>
-                <View style={[styles.tierDivider, selected && styles.tierDividerSelected]} />
-                <Text style={styles.tierNote}>
-                  {t.note}
-                </Text>
-              </Pressable>
-            );
-          })}
-        </View>
-
-        <View style={styles.summary}>
-          <Zap size={d.summaryIcon} color={colors.textPrimary} fill={colors.textPrimary} />
-          <Text style={styles.summaryText} numberOfLines={1} {...shrinkToFit()}>
-            Selected: {tier.summary}
-          </Text>
-          <View style={styles.spacer} />
-          <Text style={styles.summaryPrice}>{tier.price === null ? '' : rupees(tier.price)}</Text>
-        </View>
+              );
+            })}
+          </View>
+        </Card>
 
         <Pressable
           accessibilityRole="button"
-          onPress={() => model.continue()}
+          onPress={() => router.replace(noticeHref('/legal-notice',caseId))}
           style={({ pressed }) => [styles.button, pressed && styles.pressed]}
         >
-          <Text style={styles.buttonText}>Get Started</Text>
-          <ArrowRight size={d.buttonIcon} color={ink.onBrand} />
+          <Text style={styles.buttonText}>Send a Legal Notice</Text>
+          <ArrowRight size={i.buttonIcon} color={ink.onBrand} />
         </Pressable>
 
-        <View style={styles.footerRow}>
-          <Lock size={d.footerIcon} color={colors.textBody} />
-          <Text style={styles.footerText}>Your information stays secure and confidential.</Text>
+        <View style={styles.footer}>
+          <Lock size={i.footerIcon} color={ink.accent} />
+          <View style={styles.footerText}>
+            <Text style={styles.footerMain}>Your information is used only to process your legal notice request.</Text>
+            <Text style={styles.footerSub}>Your information is safe and confidential.</Text>
+          </View>
         </View>
-        <Text style={styles.footerNote}>IN COMPLIANCE WITH BAR COUNCIL OF INDIA STANDARDS</Text>
       </ScrollView>
+    </View>
+  );
+}
+
+function Card({ children, tinted = false }: { children: ReactNode; tinted?: boolean }) {
+  return <View style={[styles.card, tinted && styles.cardTinted]}>{children}</View>;
+}
+
+function CardTitle({ icon: Icon, text }: { icon: LucideIcon; text: string }) {
+  return (
+    <View style={styles.cardTitleRow}>
+      <View style={styles.chip}>
+        <Icon size={i.chipIcon} color={ink.accent} />
+      </View>
+      <Text style={styles.cardTitle}>{text}</Text>
+    </View>
+  );
+}
+
+function Tick({ text }: { text: string }) {
+  return (
+    <View style={styles.tickRow}>
+      <Check size={i.tickIcon} color={i.tick} strokeWidth={2.5} />
+      <Text style={styles.tickText}>{text}</Text>
     </View>
   );
 }
@@ -174,347 +161,252 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.appBg,
   },
-  content: {
-    paddingHorizontal: d.padX,
-    paddingTop: d.cardGap,
+  header: {
+    // minHeight, not height: the safe-area inset is added as padding on top of it.
+    minHeight: i.headerHeight,
+    paddingBottom: i.headerBottom,
+    paddingHorizontal: i.padX,
+    backgroundColor: colors.appBg,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
   },
-  card: {
-    borderRadius: d.cardRadius,
+  circle: {
+    width: i.circle,
+    height: i.circle,
+    borderRadius: i.circle / 2,
     backgroundColor: colors.card,
     borderWidth: 1,
     borderColor: colors.border,
-    padding: d.cardPad,
-  },
-  hero: {
-    flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: d.heroPadY,
-  },
-  heroText: {
-    flex: 1,
-    minWidth: 0,
-  },
-  heroPill: {
-    alignSelf: 'flex-start',
-    height: d.heroPillHeight,
-    borderRadius: 5,
-    paddingHorizontal: d.heroPillPadX,
-    backgroundColor: colors.brand,
     justifyContent: 'center',
   },
-  heroPillText: {
-    fontFamily: font.appSemi,
-    fontSize: d.heroPillTextSize,
-    letterSpacing: d.heroPillSpacing,
-    color: ink.onBrand,
+  brand: {
+    flex: 1,
+    minWidth: 0,
+    marginLeft: i.brandGap,
   },
-  heroTitle: {
-    marginTop: d.heroTitleGap,
-    fontFamily: font.appHeading,
-    fontSize: d.heroTitleSize,
-    color: colors.textPrimary,
-  },
-  heroSub: {
-    marginTop: d.heroSubGap,
-    fontFamily: font.appBody,
-    fontSize: d.heroSubSize,
-    lineHeight: d.heroSubLineHeight,
-    color: colors.textBody,
-  },
-  heroArt: {
-    // Placeholder for the document/paper-plane illustration, sized and positioned to
-    // design/22's artwork box so the real asset drops in without a layout change.
-    width: d.heroArtW,
-    height: d.heroArtH,
-    borderRadius: 12,
-    backgroundColor: d.artBg,
-    marginLeft: 8,
-    marginRight: -d.cardPad,
-  },
-  titleRow: {
+  brandRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: d.titleIconGap,
+  },
+  brandName: {
+    fontFamily: font.appHeading,
+    fontSize: i.brandSize,
+    color: colors.textPrimary,
+  },
+  brandDot: {
+    marginLeft: i.brandDotGap,
+    width: i.brandDot,
+    height: i.brandDot,
+    borderRadius: i.brandDot / 2,
+    backgroundColor: colors.brand,
+  },
+  brandSub: {
+    marginTop: i.brandSubGap,
+    fontFamily: font.appBody,
+    fontSize: i.brandSubSize,
+    color: colors.textBody,
+  },
+  bell: {
+    marginRight: i.bellGap,
+  },
+  avatar: {
+    backgroundColor: colors.iconChipBg,
+    borderColor: colors.iconChipBg,
+  },
+  avatarText: {
+    fontFamily: font.appSemi,
+    fontSize: i.brandSubSize + 1,
+    color: ink.accent,
+  },
+  content: {
+    paddingHorizontal: i.padX,
+    paddingTop: i.pillGap,
+  },
+  pill: {
+    alignSelf: 'flex-start',
+    height: i.pillHeight,
+    borderRadius: i.pillHeight / 2,
+    paddingHorizontal: i.pillPadX,
+    backgroundColor: colors.card,
+    borderWidth: 1,
+    borderColor: colors.border,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  pillDot: {
+    width: i.pillDot,
+    height: i.pillDot,
+    borderRadius: i.pillDot / 2,
+    backgroundColor: i.tick,
+    marginRight: i.pillDotGap,
+  },
+  pillText: {
+    fontFamily: font.appSemi,
+    fontSize: i.pillTextSize,
+    letterSpacing: i.pillSpacing,
+    color: colors.textBody,
+  },
+  title: {
+    marginTop: i.titleGap,
+    fontFamily: font.appHeading,
+    fontSize: i.titleSize,
+    color: colors.textPrimary,
+  },
+  subtitle: {
+    marginTop: i.subtitleGap,
+    fontFamily: font.appBody,
+    fontSize: i.subtitleSize,
+    color: colors.textBody,
+  },
+  card: {
+    marginTop: i.cardGap,
+    borderRadius: i.cardRadius,
+    backgroundColor: colors.card,
+    borderWidth: 1,
+    borderColor: colors.border,
+    paddingHorizontal: i.cardPadX,
+    paddingTop: i.cardPadTop,
+    paddingBottom: i.cardPadBottom,
+  },
+  cardTinted: {
+    backgroundColor: i.cardBg,
+    borderColor: i.cardBg,
+  },
+  cardTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  chip: {
+    width: i.chip,
+    height: i.chip,
+    borderRadius: i.chipRadius,
+    backgroundColor: colors.iconChipBg,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: i.chipGap,
   },
   cardTitle: {
     flex: 1,
     minWidth: 0,
     fontFamily: font.appHeading,
-    fontSize: d.titleSize,
+    fontSize: i.cardTitleSize,
     color: colors.textPrimary,
   },
-  lead: {
-    marginTop: d.leadGap,
-    fontFamily: font.appBody,
-    fontSize: d.leadSize,
-    color: colors.textPrimary,
-  },
-  para: {
-    marginTop: d.paraGap,
-    fontFamily: font.appBody,
-    fontSize: d.paraSize,
-    lineHeight: d.paraLineHeight,
-    color: colors.textPrimary,
-  },
-  bullets: {
-    marginTop: d.bulletGap,
-    gap: d.bulletRowGap,
-  },
-  bulletRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  bulletDot: {
-    width: d.bulletDot,
-    height: d.bulletDot,
-    borderRadius: d.bulletDot / 2,
-    backgroundColor: colors.textPrimary,
-    marginLeft: 8,
-    marginRight: d.bulletDotGap,
-  },
-  bulletText: {
-    flex: 1,
-    minWidth: 0,
-    fontFamily: font.appBody,
-    fontSize: d.bulletSize,
-    color: colors.textPrimary,
-  },
-  link: {
-    marginTop: d.linkGap,
-    fontFamily: font.appBody,
-    fontSize: d.linkSize,
-    color: ink.accent,
-  },
-  linkRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  learn: {
-    marginTop: d.linkGap,
-    fontFamily: font.appBody,
-    fontSize: d.linkSize,
-    color: colors.textBody,
-  },
-  spacer: {
-    flex: 1,
-  },
-  trust: {
-    marginTop: d.trustGap,
-    height: d.trustHeight,
-    borderRadius: 8,
-    backgroundColor: d.trustBg,
-    paddingHorizontal: d.trustPadX,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: d.trustIconGap,
-  },
-  trustText: {
-    fontFamily: font.appBody,
-    fontSize: d.trustSize,
-    color: colors.textPrimary,
-  },
-  trustTag: {
-    fontFamily: font.appSemi,
-    fontSize: d.trustTagSize,
-    letterSpacing: 0.5,
-    color: ink.accent,
-  },
-  section: {
-    marginTop: d.sectionGap,
+  plainTitle: {
     fontFamily: font.appHeading,
-    fontSize: d.sectionSize,
+    fontSize: i.cardTitleSize,
     color: colors.textPrimary,
   },
-  reasons: {
-    marginTop: d.chooseGap,
-    flexDirection: 'row',
-    gap: d.chooseCardGap,
+  body: {
+    marginTop: i.bodyGap,
+    fontFamily: font.appBody,
+    fontSize: i.bodySize,
+    lineHeight: i.bodyLineHeight,
+    color: i.body,
   },
-  reason: {
+  ticks: {
+    marginTop: i.tickGap,
+    gap: i.tickRowGap,
+  },
+  tickRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  tickText: {
     flex: 1,
     minWidth: 0,
-    height: d.chooseCardHeight,
-    borderRadius: d.chooseCardRadius,
+    marginLeft: i.tickTextGap,
+    fontFamily: font.appBody,
+    fontSize: i.tickTextSize,
+    lineHeight: i.tickLineHeight,
+    color: colors.textPrimary,
+  },
+  subCards: {
+    marginTop: i.subCardGap,
+    gap: i.subCardRowGap,
+  },
+  subCard: {
+    borderRadius: i.subCardRadius,
+    backgroundColor: i.subCardBg,
+    borderWidth: 1,
+    borderColor: colors.border,
+    paddingHorizontal: i.subCardPadX,
+    paddingVertical: i.subCardPadY,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  subCardIcon: {
+    width: i.subCardIcon,
+    height: i.subCardIcon,
+    borderRadius: i.subCardIconRadius,
     backgroundColor: colors.card,
     borderWidth: 1,
     borderColor: colors.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  reasonIcon: {
-    width: d.chooseIcon,
-    height: d.chooseIcon,
-    borderRadius: d.chooseIcon / 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: d.chooseIconGap,
-  },
-  reasonTitle: {
-    fontFamily: font.appHeading,
-    fontSize: d.chooseTitleSize,
-    color: colors.textPrimary,
-  },
-  reasonCaption: {
-    marginTop: d.chooseCaptionGap,
-    fontFamily: font.appBody,
-    fontSize: d.chooseCaptionSize,
-    color: colors.textBody,
-  },
-  pickSection: {
-    marginTop: d.pickGap,
-  },
-  pickSub: {
-    marginTop: d.pickSubGap,
-    fontFamily: font.appBody,
-    fontSize: d.pickSubSize,
-    color: colors.textBody,
-  },
-  tiers: {
-    marginTop: d.pickCardGap,
-    flexDirection: 'row',
-    gap: d.pickCardColGap,
-  },
-  tier: {
+  subCardText: {
     flex: 1,
     minWidth: 0,
-    height: d.pickCardHeight,
-    borderRadius: d.pickCardRadius,
-    backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: colors.border,
-    padding: d.pickCardPad,
+    marginLeft: i.subCardTextGap,
   },
-  tierSelected: {
-    backgroundColor: d.selectedBg,
-    borderColor: colors.brand,
-  },
-  tierTop: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  tierChip: {
-    height: d.tierHeight,
-    borderRadius: 4,
-    paddingHorizontal: d.tierPadX,
-    backgroundColor: d.tierBg,
-    justifyContent: 'center',
-  },
-  tierChipText: {
-    fontFamily: font.appSemi,
-    fontSize: d.tierTextSize,
-    letterSpacing: 0.4,
-    color: colors.textBody,
-  },
-  radio: {
-    width: d.radio,
-    height: d.radio,
-    borderRadius: d.radio / 2,
-    borderWidth: 1.5,
-    borderColor: colors.border,
-    backgroundColor: colors.card,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  radioOn: {
-    backgroundColor: colors.brand,
-    borderColor: colors.brand,
-  },
-  priceRow: {
-    marginTop: d.priceGap,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: d.speedIconGap,
-  },
-  price: {
+  subCardTitle: {
     fontFamily: font.appHeading,
-    fontSize: d.priceSize,
-    color: colors.textPrimary,
-    marginRight: 2,
-  },
-  speed: {
-    flexShrink: 1,
-    fontFamily: font.appBody,
-    color: colors.textBody,
-  },
-  tierDivider: {
-    marginTop: d.pickDividerGapAbove,
-    height: d.pickDivider,
-    backgroundColor: d.pickDividerIdle,
-  },
-  tierDividerSelected: {
-    backgroundColor: d.pickDividerSelected,
-  },
-  tierNote: {
-    marginTop: d.pickDividerGapBelow,
-    fontFamily: font.appBody,
-    fontSize: d.pickNoteSize,
-    lineHeight: d.pickNoteLineHeight,
-    color: colors.textBody,
-  },
-  summary: {
-    marginTop: d.summaryGap,
-    height: d.summaryHeight,
-    borderRadius: d.summaryRadius,
-    backgroundColor: d.summaryBg,
-    paddingHorizontal: d.summaryPadX,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: d.summaryIconGap,
-  },
-  summaryText: {
-    flexShrink: 1,
-    fontFamily: font.appBody,
-    fontSize: d.summarySize,
+    fontSize: i.subCardTitleSize,
     color: colors.textPrimary,
   },
-  summaryPrice: {
-    fontFamily: font.appHeading,
-    fontSize: d.summaryPriceSize,
-    color: colors.textPrimary,
+  subCardDesc: {
+    marginTop: i.subCardDescGap,
+    fontFamily: font.appBody,
+    fontSize: i.subCardDescSize,
+    lineHeight: i.subCardDescLineHeight,
+    color: i.body,
   },
   button: {
-    marginTop: d.buttonGap,
-    height: d.buttonHeight,
-    borderRadius: d.buttonRadius,
+    marginTop: i.buttonGap,
+    height: i.buttonHeight,
+    borderRadius: i.buttonRadius,
     backgroundColor: colors.brand,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: d.buttonIconGap,
+    gap: i.buttonIconGap,
   },
   pressed: {
     opacity: 0.85,
   },
   buttonText: {
     fontFamily: font.appSemi,
-    fontSize: d.buttonTextSize,
-    color: ink.onBrand,
+    fontSize: i.buttonTextSize,
+    color: colors.textPrimary,
   },
-  footerRow: {
-    marginTop: d.footerGap,
+  footer: {
+    marginTop: i.footerGap,
+    borderRadius: i.footerRadius,
+    backgroundColor: i.footerBg,
+    paddingHorizontal: i.footerPadX,
+    paddingVertical: i.footerPadY,
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: d.footerIconGap,
+    alignItems: 'flex-start',
   },
   footerText: {
+    flex: 1,
+    minWidth: 0,
+    marginLeft: i.footerIconGap,
+  },
+  footerMain: {
     fontFamily: font.appBody,
-    fontSize: d.footerSize,
+    fontSize: i.footerSize,
+    lineHeight: i.footerLineHeight,
+    color: colors.textPrimary,
+  },
+  footerSub: {
+    marginTop: i.footerSubGap,
+    fontFamily: font.appBody,
+    fontSize: i.footerSubSize,
     color: colors.textBody,
   },
-  footerNote: {
-    marginTop: d.footerNoteGap,
-    textAlign: 'center',
-    fontFamily: font.appSemi,
-    fontSize: d.footerNoteSize,
-    lineHeight: d.footerNoteLineHeight,
-    letterSpacing: d.footerNoteSpacing,
-    color: d.noteText,
-  },
 });
-
-// The deployed fixture path remains unchanged; API mode is explicit.
-export default function LegalNoticeDetailScreen() {
-  const { model } = useIntakeModel("detail");
-  return <LegalNoticeDetailScreenView model={model} />;
-}

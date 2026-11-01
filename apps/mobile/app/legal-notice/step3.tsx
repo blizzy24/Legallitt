@@ -1,3 +1,4 @@
+import NoticeScreenFeedback from '../../components/NoticeScreenFeedback';
 import type { NoticeIntakeModel } from "../../features/legal-notice/screen-model";
 import { useIntakeModel } from "../../features/legal-notice/useIntakeModel";
 import { router } from 'expo-router';
@@ -41,7 +42,7 @@ export function Step3ScreenView({ model }: { model: NoticeIntakeModel }) {
   const k = width < q.compactBelow ? q.compactScale : 1;
 
   return (
-    <WizardShell step={3} buttonLabel="Continue" onContinue={model.continue}>
+    <WizardShell onBack={model.back} step={3} buttonLabel="Continue" onContinue={model.continue}>
       <ChatBubble time="10:30 AM" />
       <Text style={styles.title}>Quick Actions</Text>
       <View style={styles.pills}>
@@ -140,5 +141,5 @@ const styles = StyleSheet.create({
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function Step3Screen() {
   const { model } = useIntakeModel("step3");
-  return <Step3ScreenView model={model} />;
+  return <NoticeScreenFeedback error={model.error}><Step3ScreenView model={model} /></NoticeScreenFeedback>;
 }

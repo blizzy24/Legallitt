@@ -1,3 +1,4 @@
+import NoticeScreenFeedback from '../../components/NoticeScreenFeedback';
 import type { NoticeIntakeModel } from "../../features/legal-notice/screen-model";
 import { useIntakeModel } from "../../features/legal-notice/useIntakeModel";
 import { router } from 'expo-router';
@@ -25,7 +26,7 @@ export function Step6ScreenView({ model }: { model: NoticeIntakeModel }) {
 
   return (
     <View style={styles.screen}>
-      <WizardShell
+      <WizardShell onBack={model.back}
         step={6}
         header="leading"
         title="Complete Payment"
@@ -262,5 +263,5 @@ const styles = StyleSheet.create({
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function Step6Screen() {
   const { model } = useIntakeModel("step6");
-  return <Step6ScreenView model={model} />;
+  return <NoticeScreenFeedback error={model.error}><Step6ScreenView model={model} /></NoticeScreenFeedback>;
 }

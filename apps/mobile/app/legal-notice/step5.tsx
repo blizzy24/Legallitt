@@ -1,3 +1,4 @@
+import NoticeScreenFeedback from '../../components/NoticeScreenFeedback';
 import type { NoticeIntakeModel } from "../../features/legal-notice/screen-model";
 import { useIntakeModel } from "../../features/legal-notice/useIntakeModel";
 import { router, type Href } from 'expo-router';
@@ -27,7 +28,7 @@ export function Step5ScreenView({ model }: { model: NoticeIntakeModel }) {
   const docCount = form.documents.length || model.summary.documents;
 
   return (
-    <WizardShell step={5} buttonLabel="Submit & Proceed to Pay" onContinue={model.continue}>
+    <WizardShell onBack={model.back} step={5} buttonLabel="Submit & Proceed to Pay" onContinue={model.continue}>
       <ChatBubble title="Preview Your Case Summary" time="10:32 AM" />
       <View style={styles.card}>
         <Row label="Client Name" value={form.client.fullName || model.summary.client} />
@@ -126,5 +127,5 @@ const styles = StyleSheet.create({
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function Step5Screen() {
   const { model } = useIntakeModel("step5");
-  return <Step5ScreenView model={model} />;
+  return <NoticeScreenFeedback error={model.error}><Step5ScreenView model={model} /></NoticeScreenFeedback>;
 }

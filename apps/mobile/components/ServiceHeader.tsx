@@ -9,11 +9,11 @@ import { colors, font, ink, serviceHeader as h } from '../constants/theme';
 //
 // design/102 (Legal Advice landing) uses the same header WITHOUT the share icon, so
 // `share` turns that one control off rather than forking a twelfth header style.
-export default function ServiceHeader({ title, share = true }: { title: string; share?: boolean }) {
+export default function ServiceHeader({ title, share = true, onBack }: { onBack?: () => void; title: string; share?: boolean }) {
   const insets = useSafeAreaInsets();
   return (
     <View style={[styles.header, { paddingTop: insets.top + h.top }]}>
-      <Pressable accessibilityRole="button" accessibilityLabel="Back" hitSlop={10} onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)/home'))}>
+      <Pressable accessibilityRole="button" accessibilityLabel="Back" hitSlop={10} onPress={onBack ?? (() => (router.canGoBack() ? router.back() : router.replace('/(tabs)/home')))}>
         <ArrowLeft size={h.backIcon} color={colors.textPrimary} />
       </Pressable>
       <Text style={styles.title} numberOfLines={1}>

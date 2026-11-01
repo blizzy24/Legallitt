@@ -3,6 +3,8 @@ import type { InvoiceLine, ServiceTier } from '../../data/legalNotice';
 
 /** Presentation contract: no backend client or data-source flag. */
 export type NoticeIntakeModel = {
+  error?: string;
+  back: () => void;
   form: LegalNoticeForm;
   update: (patch: Partial<LegalNoticeForm>) => void;
   updateClient: (patch: Partial<LegalNoticeForm['client']>) => void;

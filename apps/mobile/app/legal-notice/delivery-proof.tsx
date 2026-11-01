@@ -1,3 +1,4 @@
+import NoticeScreenFeedback from '../../components/NoticeScreenFeedback';
 import { useDeliveryModel } from "../../features/legal-notice/useDeliveryModel";
 import { Image, ScrollView, StyleSheet, type ImageSourcePropType } from "react-native";
 import { NoticeHeader } from "../../components/NoticeDeliveryScreen";
@@ -25,5 +26,5 @@ const s = StyleSheet.create({
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function DeliveryProof() {
   const model = useDeliveryModel();
-  return <DeliveryProofView onBack={model.onBack} source={model.proofSource} />;
+  return <NoticeScreenFeedback error={model.error}><DeliveryProofView onBack={model.onBack} source={model.proofSource} /></NoticeScreenFeedback>;
 }

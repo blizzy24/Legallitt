@@ -59,13 +59,14 @@ export function useNoticeTrackingModel(fixtureStage: 'drafting' | 'review' = 'dr
       paidAmount: invoiceTotal(invoiceLines(model.form.tier)), draftFile: TRACKING.draftFile, allowDemoAdvance: true,
       onViewDraft: () => go(`/documents/file?name=${TRACKING.draftFile}`),
       onApprove: () => go('/legal-notice/delivery'),
-      onRequestChanges: comment => { router.push({ pathname: '/chat/advocate', params: { message: comment } } as Href); },
-      onViewProfile: () => go(`/advocates/${LEGAL_NOTICE_ADVOCATE.id}`),
-      onChat: () => go('/chat/advocate'),
+      onRequestChanges: comment => { router.push({ pathname: '/chat/advocate', params: { message: comment, notice: "1" } } as Href); },
+      onViewProfile: () => go(`/advocates/${LEGAL_NOTICE_ADVOCATE.id}?notice=1`),
+      onChat: () => go('/chat/advocate?notice=1'),
       onDelivery: () => go('/legal-notice/delivery'),
     };
   }
   return {
+    error: c.error,
     stage: stageFor(status), requestId: record?.reference ?? '', ref: record?.reference ?? '',
     noticeType: noticeMatter(record?.matter_type ?? null).noticeType, tier: tierFor(c.tier),
     // The event is a timestamp; the screen's date formatter takes a calendar date.
@@ -87,7 +88,7 @@ export function useNoticeTrackingModel(fixtureStage: 'drafting' | 'review' = 'dr
     onApprove: () => { void c.run(async () => { const draft = await latestDraft(); if (c.id && draft) { await c.repository.approve(c.id, draft.id); await c.load(); } }); },
     onRequestChanges: comment => { void c.run(async () => { const draft = await latestDraft(); if (c.id && draft) { await c.repository.requestChanges(c.id, draft.id, comment); await c.load(); } }); },
     onViewProfile: () => { if (record?.advocate_id) go(`/advocates/${record.advocate_id}`); },
-    onChat: () => go('/chat/advocate'),
+    onChat: () => go('/chat/advocate?notice=1'),
     onDelivery: () => go('/legal-notice/delivery'),
   };
 }

@@ -1,3 +1,4 @@
+import { noticeHref } from '../../features/legal-notice/navigation';
 import {useNoticeProfile} from '../../features/legal-notice/useNoticeProfile';
 import { AdvocateAvatar } from '../../components/AdvocateAvatar';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -30,7 +31,7 @@ import { SAVED_ADVOCATES, advocateProfileById, type AdvocateProfileView, type Ad
 // Optional sections remain hidden when a selected advocate has no supplied values.
 // The lavender-grey palette is local to advocateProfile, as drawn.
 
-export function AdvocateProfileViewScreen({advocate,showBadge=true}:{advocate:AdvocateProfileView;showBadge?:boolean}) {
+export function AdvocateProfileViewScreen({advocate,showBadge=true,onBack}:{advocate:AdvocateProfileView;showBadge?:boolean;onBack?:()=>void}) {
   const insets=useSafeAreaInsets();
   const [expanded, setExpanded] = useState(false);
 
@@ -50,7 +51,7 @@ export function AdvocateProfileViewScreen({advocate,showBadge=true}:{advocate:Ad
           accessibilityRole="button"
           accessibilityLabel="Back"
           hitSlop={10}
-          onPress={() => (router.canGoBack() ? router.back() : router.replace('/advocates'))}
+          onPress={onBack ?? (() => (router.canGoBack() ? router.back() : router.replace('/advocates')))}
         >
           <ChevronLeft size={t.backIcon} color={colors.textPrimary} />
         </Pressable>
@@ -651,7 +652,7 @@ const styles = StyleSheet.create({
 });
 
 export default function AdvocateProfileScreen({profileId}:{profileId?:string}){
- const {id}=useLocalSearchParams<{id:string}>();
+ const {id,caseId,notice:noticeOrigin}=useLocalSearchParams<{id:string;caseId?:string;notice?:string}>();
  const notice=useNoticeProfile();
- return <AdvocateProfileViewScreen showBadge={!notice||notice.verified} advocate={notice??advocateProfileById(profileId??String(id))??SAVED_ADVOCATES[0]} />;
+ return <AdvocateProfileViewScreen onBack={caseId || noticeOrigin === "1" ? () => router.replace(noticeHref("/legal-notice/tracking",caseId)) : undefined} showBadge={!notice||notice.verified} advocate={notice??advocateProfileById(profileId??String(id))??SAVED_ADVOCATES[0]} />;
 }
