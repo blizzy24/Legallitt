@@ -412,6 +412,7 @@ model Shipment {
   receipt_document_id_relation Document? @relation("shipments_receipt_document_id_documents", fields: [receipt_document_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   booked_at                DateTime? @db.Timestamptz(6)
   delivered_at             DateTime? @db.Timestamptz(6)
+  received_by              String?
   pod_document_id          String?   @db.Uuid
   case_id_relation         Case      @relation("shipments_case_id_cases", fields: [case_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   pod_document_id_relation Document? @relation("shipments_pod_document_id_documents", fields: [pod_document_id], references: [id], onDelete: NoAction, onUpdate: NoAction)

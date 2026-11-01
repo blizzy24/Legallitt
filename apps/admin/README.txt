@@ -1,4 +1,4 @@
-Legalitt admin — chunks A–C (local only)
+Legalitt admin — chunks A–D (local only)
 
 Node 22.22+ is required by React Router 8; the repo's Node 22.23.3 works.
 From the repository root:
@@ -32,7 +32,7 @@ Build/typecheck:
   pnpm typecheck
 
 Legal Notices, case detail, sign-in and initial advocate assignment are
-available. Reassignment and delivery actions remain outside this chunk.
+available, together with delivery confirmation. Reassignment remains out of scope.
 The existing progression and delivery simulators remain unchanged.
 
 Admin API: GET /api/v1/admin/cases
@@ -61,7 +61,7 @@ Browser assignment check (creates one development case through real endpoints):
   node --env-file=apps/api/.env.local scripts/admin-assignment-smoke.cjs
 Screenshots go to reports/admin-chunk-b.
 
-No deployment configuration is supplied and nothing has been deployed.
+No admin deployment configuration is supplied; the panel remains local only.
 
 Document origins (project-owner decision, 1 Nov 2026): Client, Advocate,
 Admin, Generated. Generated means the PDFs linked from drafts/document_id or
@@ -81,7 +81,8 @@ GET /api/v1/admin/cases/:id returns a Legal Notice only, admin role required.
 It includes the full newest-first timeline, account and intake contacts,
 origin-grouped documents, draft versions, payments by payer/purpose and shipment
 milestones. Price is the saved pricing row; unconfirmed fees are labelled.
-No absent value gets a label or empty evidence section. Assign is the only write.
+No absent value gets a label or empty evidence section. Assign and dispatched-case
+delivery confirmation are the available writes.
 
 Document preview uses GET /api/v1/admin/cases/documents/:id/preview, guarded as
 admin and by existing case membership. Only PDF/PNG/JPEG get inline disposition;
@@ -99,3 +100,26 @@ Run the detail browser check:
 Screenshots/evidence: reports/admin-chunk-c. It signs in, follows a list link,
 checks four advocate choices, waiting/drafting/delivered/sparse states, opens
 real S3 files, refuses client tokens and asserts the detail UI performs no writes.
+
+Delivery (chunk D): dispatched cases show Confirm delivery. The form uploads a
+PDF/JPEG/PNG through presign -> S3 -> document completion, then calls the existing
+POST /admin/cases/:id/deliver. Received by is optional (blank remains NULL);
+delivery time is entered in the browser's local time zone and sent as ISO UTC.
+The server locks the case and rejects duplicate/stale confirmations with 409.
+Real confirmation records a real event and shipment; earlier demo history stays.
+The human POD is not simulated. The timer and its mode flags are unchanged.
+
+Apply the delivery receiver migration to the local API database before running.
+The approved Dev Core CORS change permits direct browser uploads from exactly
+http://127.0.0.1:5173 alongside http://localhost:8081. Production has no new CORS.
+
+The header's Service fee comes from the case's saved pricing_id; Charged before
+GST, GST paid and Total paid come from its captured service_fee payment. Additional
+fees show the positive difference between that payment base and the saved fee.
+No historical amount is replaced by the current price or recalculated GST.
+
+Run the delivery browser check (creates a labelled development test case):
+  node --env-file=apps/api/.env.local scripts/admin-delivery-smoke.cjs
+Screenshots/evidence: reports/admin-chunk-d. Admin assignment, upload and delivery
+confirmation use the UI; drafting/approval/dispatch use authenticated role APIs.
+The manual PDF explicitly states it is a development test, not actual delivery.

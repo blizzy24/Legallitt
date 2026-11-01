@@ -19,7 +19,7 @@ export function useDeliveryModel(screen: 'delivery' | 'delivered' = 'delivery') 
   const approvedAt=record?.events?.find(e=>e.to_status==='approved')?.created_at;
   // Legal_Notice_Final.pdf, rendered on approval (designs 440 and 441).
   const notice=record?.documents?.find(d=>d.id===record.notice_document_id);
-  const proofId=record?.events?.find(e=>e.to_status==='completed')?.payload.pod_document_id;
+  const proofId=shipment?.pod_document_id??record?.events?.find(e=>e.to_status==='completed')?.payload.pod_document_id;
   const proof=record?.documents?.find(d=>d.id===proofId);
   const [proofSource,setProofSource]=useState<ImageSourcePropType|null>(null);
   useEffect(()=>{
@@ -50,7 +50,7 @@ export function useDeliveryModel(screen: 'delivery' | 'delivered' = 'delivery') 
   const facts:NoticeDeliveryFacts = {
     confirmation:'',deliveredOn:shipment?.delivered_at ? formatDate(calendarDate(shipment.delivered_at)) : '',
     deliveredAt:shipment?.delivered_at ? clockTime(shipment.delivered_at) : '',
-    receivedBy:'',proof:proofSource,proofStatus:proof?'Available':'',signatureStatus:'',
+    receivedBy:shipment?.received_by??'',proof:proofSource,proofStatus:proof?'Available':'',signatureStatus:'',
     // The page count is read from the generated file, never assumed.
     fileMeta:notice?.page_count ? `${completed?'Signed Copy':'Signed copy'} · ${notice.page_count} Pages` : '',
     estimate:'',latestUpdate:'',latestPlace:'',latestTime:'',

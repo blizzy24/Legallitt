@@ -13,6 +13,13 @@ export const ShipmentDetailsSchema = z.strictObject({
   expected_delivery: date,
   receipt_document_id: z.uuid().nullable().optional(),
 });
+export const DeliveryConfirmationSchema = z.strictObject({
+  pod_document_id: z.uuid(),
+  received_by: z.string().trim().max(200).nullable().optional(),
+  // Omitted by existing callers: recording time is the delivery time by default.
+  delivered_at: z.iso.datetime({offset: true}).optional(),
+});
+export type DeliveryConfirmation = z.infer<typeof DeliveryConfirmationSchema>;
 export type ShipmentDetails = z.infer<typeof ShipmentDetailsSchema>;
 // Outbound milestones after dispatch are the Delivery Progress rows of design 440
 // (Pickup Booked, Picked Up, In Transit, Out for Delivery, Delivered). An admin, or
@@ -38,5 +45,5 @@ export type ApiShipment = Required<ShipmentDetails> & {
   status: ShipmentStatus;
   recipient: Record<string, unknown>; simulated: boolean;
   booked_at: string | null; dispatched_at: string | null; delivered_at: string | null;
-  pod_document_id: string | null;
+  pod_document_id: string | null; received_by: string | null;
 };

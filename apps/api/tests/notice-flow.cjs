@@ -271,7 +271,7 @@ test(
       );
       await db.document.update({
         where: { id: proof.id },
-        data: { status: "uploaded" },
+        data: { status: "uploaded", simulated: true },
       });
       const automaticAdmin = {...admin, trigger: 'system', source: 'simulated'};
       await assert.rejects(state.deliver(automaticAdmin, c.id, {pod_document_id: randomUUID()}), {status: 400});

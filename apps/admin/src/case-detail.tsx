@@ -1,3 +1,4 @@
+import { ConfirmDelivery } from './confirm-delivery';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, useParams } from 'react-router';
 import { ApiError, adminBucketFor, type AdminCaseDetail } from '@legalitt/shared';
@@ -24,11 +25,13 @@ function Preview({doc, close}: {doc: AdminCaseDetail['documents'][number]; close
 }
 export function CaseDetail() {
  const {id}=useParams(),{refuse}=useSession(); const [data,setData]=useState<AdminCaseDetail|null>(null),[error,setError]=useState('');
- const [reload,setReload]=useState(0),[assign,setAssign]=useState(false),[preview,setPreview]=useState<AdminCaseDetail['documents'][number]|null>(null);
+ const [reload,setReload]=useState(0),[assign,setAssign]=useState(false),[delivering,setDelivering]=useState(false),[preview,setPreview]=useState<AdminCaseDetail['documents'][number]|null>(null);
  useEffect(()=>{let alive=true;setData(null);setError('');api.adminCase(id!).then(r=>{if(alive)setData(r);}).catch(e=>{
   if(!alive)return;if(e instanceof ApiError && [401,403].includes(e.status))refuse('Admin access required. Sign in again.');else setError(e.message);
  });return()=>{alive=false;};},[id,reload]);
  if(!data)return <main className="case-detail"><Link className="back-link" to="/legal-notices">← Legal Notices</Link>{error?<div className="error" role="alert">{error} <button onClick={()=>setReload(n=>n+1)}>Retry</button></div>:<p role="status">Loading case…</p>}</main>;
+ const charged=data.payments.find(p=>p.purpose==='service_fee'&&p.status==='captured');
+ const additional=charged&&data.pricing?BigInt(charged.base_amount_paise)-BigInt(data.pricing.base_amount_paise):null;
  const d=data, bucket=adminBucketFor(d.status), canAssign=!d.advocate_id && ['paid','assigning','advocate_declined'].includes(d.status);
  const task=canAssign?'Assign an advocate':d.status==='advocate_declined'?'Advocate declined · assignment needs review':d.status==='dispatched'?'Delivery confirmation awaits admin':null;
  const document=(doc: AdminCaseDetail['documents'][number])=><div className="document-row" key={doc.id}>
@@ -41,9 +44,13 @@ export function CaseDetail() {
   <Link className="back-link" to="/legal-notices">← Legal Notices</Link>
   <section className="case-overview"><div className="case-heading"><div><p className="eyebrow">LEGAL NOTICE</p><h1>{d.reference}<Demo show={d.simulated}/></h1><p>{d.contacts.find(c=>c.role==='client')?.name}</p></div><span className={'status '+(bucket??'')}>{label(d.status)}</span></div>
    <dl className="summary-fields"><Field name="Matter" value={d.matter_type?label(d.matter_type):null}/><Field name="Intake issue" value={!d.matter_type&&typeof d.intake.issueType==='string'?label(d.intake.issueType.replaceAll('-','_')):null}/><Field name="Tier" value={d.tier?label(d.tier):null}/>
-    <Field name="Base fee" value={d.pricing?<>{money(d.pricing.base_amount_paise)}{!d.pricing.confirmed&&<small className="unconfirmed">Unconfirmed price</small>}</>:null}/>
-    <Field name="GST" value={d.pricing?`${d.pricing.gst_bps/100}% exclusive`:null}/><Field name="Created" value={date(d.created_at)}/><Field name="Sub-status" value={d.sub_status?label(d.sub_status):null}/></dl>
-   {task&&<div className="admin-attention"><span className="attention-dot"/><div><small>NEEDS ADMIN</small><strong>{task}</strong></div>{canAssign&&<button className="assign" onClick={()=>setAssign(true)}>+ Assign</button>}</div>}
+    <Field name="Service fee" value={d.pricing?<>{money(d.pricing.base_amount_paise)}{!d.pricing.confirmed&&<small className="unconfirmed">Unconfirmed price</small>}</>:null}/>
+    <Field name="Additional fees" value={additional!==null&&additional>0n?money(additional.toString()):null}/>
+    <Field name="Charged before GST" value={charged?money(charged.base_amount_paise):null}/>
+    <Field name="GST paid" value={charged?money(charged.gst_paise):null}/>
+    <Field name="Total paid" value={charged?money(charged.total_paise):null}/>
+    <Field name="GST rate" value={d.pricing?`${d.pricing.gst_bps/100}% exclusive`:null}/><Field name="Created" value={date(d.created_at)}/><Field name="Sub-status" value={d.sub_status?label(d.sub_status):null}/></dl>
+   {task&&<div className="admin-attention"><span className="attention-dot"/><div><small>NEEDS ADMIN</small><strong>{task}</strong></div>{canAssign&&<button className="assign" onClick={()=>setAssign(true)}>+ Assign</button>}{d.status==='dispatched'&&<button className="assign" onClick={()=>setDelivering(true)}>Confirm delivery</button>}</div>}
   </section>
   <section className="people-section"><h2>People</h2><div className="people-grid">{d.contacts.map((c,i)=><article className="person" key={i}><p className="eyebrow">{c.role==='sender'?'SENDER · INTAKE':label(c.role)}</p>{c.name&&<h3>{c.name}</h3>}<dl><Field name="Email" value={c.email}/><Field name="Phone" value={c.phone}/><Field name="Address" value={c.address}/><Field name="Relationship" value={c.relationship}/></dl></article>)}</div></section>
   <nav className="case-sections" aria-label="Case sections">
@@ -62,11 +69,12 @@ export function CaseDetail() {
    {d.documents.length>0&&<section id="documents" className="detail-panel"><div className="section-title"><h2>Documents</h2><span>{d.documents.length} {d.documents.length===1?'file':'files'}</span></div>{(['client','advocate','admin','generated'] as const).map(origin=>{const docs=d.documents.filter(x=>x.origin===origin);return docs.length?<div className="document-group" key={origin}><h3>{label(origin)} <span>{docs.length}</span></h3>{docs.map(document)}</div>:null;})}</section>}
    {d.payments.length>0&&<section id="payments" className="detail-panel"><div className="section-title"><h2>Payments</h2><span>{d.payments.length} {d.payments.length===1?'record':'records'}</span></div>{d.payments.map(p=><article className="payment-row" key={p.id}><div><strong>{label(p.purpose)}<Demo show={p.simulated}/></strong><b>{money(p.total_paise)}</b></div><p>{p.payer.name} · {label(p.payer.role)}</p><p className="payment-state">{label(p.status)} · {date(p.captured_at??p.created_at)}</p><details><summary>Amount breakdown</summary><dl><Field name="Base" value={money(p.base_amount_paise)}/><Field name="GST" value={money(p.gst_paise)}/></dl></details></article>)}</section>}
    {d.shipments.map((s,i)=><section id={i===0?"shipments":undefined} className="detail-panel" key={s.id}><div className="section-title"><h2>Shipment<Demo show={s.simulated}/></h2><span>{label(s.status)}</span></div><dl className="shipment-fields">
-    <Field name="Direction" value={label(s.direction)}/><Field name="Carrier" value={s.carrier}/><Field name="Waybill" value={s.waybill}/><Field name="Dispatch date" value={s.dispatch_date}/><Field name="Booked" value={s.booked_at?date(s.booked_at):null}/><Field name="Dispatched" value={s.dispatched_at?date(s.dispatched_at):null}/><Field name="Expected delivery" value={s.expected_delivery}/><Field name="Delivered" value={s.delivered_at?date(s.delivered_at):null}/><Field name="Courier office" value={s.courier_office}/><Field name="Courier phone" value={s.courier_phone}/><Field name="Tracking URL" value={s.tracking_url}/><Field name="Receipt" value={relatedDoc(s.receipt_document_id)}/><Field name="Proof of delivery" value={relatedDoc(s.pod_document_id)}/>
+    <Field name="Direction" value={label(s.direction)}/><Field name="Carrier" value={s.carrier}/><Field name="Waybill" value={s.waybill}/><Field name="Dispatch date" value={s.dispatch_date}/><Field name="Booked" value={s.booked_at?date(s.booked_at):null}/><Field name="Dispatched" value={s.dispatched_at?date(s.dispatched_at):null}/><Field name="Expected delivery" value={s.expected_delivery}/><Field name="Received by" value={s.received_by}/><Field name="Delivered" value={s.delivered_at?date(s.delivered_at):null}/><Field name="Courier office" value={s.courier_office}/><Field name="Courier phone" value={s.courier_phone}/><Field name="Tracking URL" value={s.tracking_url}/><Field name="Receipt" value={relatedDoc(s.receipt_document_id)}/><Field name="Proof of delivery" value={relatedDoc(s.pod_document_id)}/>
    </dl>{d.events.some(e=>e.payload.shipment_id===s.id)&&<ol className="shipment-milestones">{d.events.filter(e=>e.payload.shipment_id===s.id).slice().reverse().map(e=><li key={e.id}><strong>{e.type === 'status_changed' && e.to_status === 'completed' ? 'Delivered' : eventTitle(e)}<Demo show={e.source==='simulated'}/></strong><time>{date(e.created_at)}</time></li>)}</ol>}</section>)}
   </div></div>
 
   {assign&&<AssignAdvocate caseId={d.id} reference={d.reference} close={()=>setAssign(false)} assigned={()=>{setAssign(false);setReload(n=>n+1);}}/>}
+  {delivering&&<ConfirmDelivery record={d} close={()=>setDelivering(false)} confirmed={()=>{setDelivering(false);setReload(n=>n+1);}}/>}
   {preview&&<Preview doc={preview} close={()=>setPreview(null)}/>}
  </main>;
 }

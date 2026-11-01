@@ -50,7 +50,7 @@ export class AdminCaseDetailRepository {
     const shipments: AdminCaseDetail['shipments'] = row.shipments_case_id_relations.map(s => ({id: s.id, case_id: s.case_id, direction: s.direction, status: s.status as AdminCaseDetail['shipments'][number]['status'],
       carrier: s.carrier, waybill: s.waybill, recipient: obj(s.recipient), dispatch_date: s.dispatch_date?.toISOString().slice(0,10) ?? null,
       courier_office: s.courier_office, courier_phone: s.courier_phone, tracking_url: s.tracking_url, expected_delivery: s.expected_delivery?.toISOString().slice(0,10) ?? null,
-      receipt_document_id: s.receipt_document_id, pod_document_id: s.pod_document_id, simulated: s.simulated,
+      receipt_document_id: s.receipt_document_id, pod_document_id: s.pod_document_id, received_by: s.received_by, simulated: s.simulated,
       booked_at: s.booked_at?.toISOString() ?? null, dispatched_at: s.dispatched_at?.toISOString() ?? null, delivered_at: s.delivered_at?.toISOString() ?? null}));
     return {id: row.id, reference: row.reference, status: row.status as AdminCaseDetail['status'], sub_status: row.sub_status, matter_type: row.matter_type, tier: row.tier,
       simulated: events.some(e => e.source === 'simulated') || documents.some(d => d.simulated) || payments.some(p => p.simulated) || shipments.some(s => s.simulated),

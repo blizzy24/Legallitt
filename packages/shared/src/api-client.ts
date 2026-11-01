@@ -274,9 +274,9 @@ export class ApiClient {
   dispatch(id: string) {
     return this.request<ApiCase>(`/cases/${id}/dispatch`, {});
   }
-  deliver(id: string, pod_document_id: string) {
+  deliver(id: string, pod_document_id: string, details: Omit<import('./shipments').DeliveryConfirmation, 'pod_document_id'> = {}) {
     return this.request<ApiCase>(`/admin/cases/${id}/deliver`, {
-      pod_document_id,
+      pod_document_id, ...details,
     });
   }
   shipmentStatus(id: string, status: import('./shipments').ShipmentStatus) {

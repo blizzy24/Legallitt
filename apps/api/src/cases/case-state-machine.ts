@@ -18,6 +18,7 @@ import {
   NoticeCommentSchema,
   NoticeDeclineSchema,
   IN_FLIGHT_SHIPMENT_STATUSES,
+  DeliveryConfirmationSchema,
 } from "@legalitt/shared";
 import { z } from "zod";
 import { parse } from "../auth/auth.service";
@@ -508,13 +509,14 @@ export class CaseStateMachine {
   }
   async deliver(actor: CaseActor, id: string, body: unknown) {
     if (actor.role !== "admin") throw new ForbiddenException("Admin required");
-    const { pod_document_id } = parse(
-      z.strictObject({ pod_document_id: z.uuid() }),
-      body,
-    );
+    const input = parse(DeliveryConfirmationSchema, body);
+    const {pod_document_id} = input;
+    const received_by = input.received_by || null;
+    const delivered_at = input.delivered_at ? new Date(input.delivered_at) : new Date();
     const db = await this.prisma.getClient();
     return db.$transaction(async (tx) => {
       const record = await lockedCase(tx, actor, id);
+      if (record.status !== 'dispatched') throw new ConflictException('Only a dispatched case can be confirmed delivered');
       const proof = await tx.document.findFirst({
         where: { id: pod_document_id, case_id: id, status: "uploaded" },
       });
@@ -522,6 +524,8 @@ export class CaseStateMachine {
         throw new BadRequestException(
           "Upload proof of delivery for this case first",
         );
+      if (proof.simulated !== (actor.source === 'simulated'))
+        throw new BadRequestException('Proof of delivery must match the confirmation source. Upload a new proof for this confirmation.');
       const shipment = await tx.shipment.findFirst({
         where: { case_id: id, direction: "to_recipient", status: { in: [...IN_FLIGHT_SHIPMENT_STATUSES] } },
         orderBy: { booked_at: "desc" },
@@ -533,13 +537,15 @@ export class CaseStateMachine {
         actor,
         record,
         CaseStatus.completed,
-        { shipment_id: shipment.id, pod_document_id },
+        { shipment_id: shipment.id, pod_document_id, received_by, delivered_at: delivered_at.toISOString() },
       );
       await tx.shipment.update({
         where: { id: shipment.id },
         data: {
           status: "delivered",
-          delivered_at: new Date(),
+          delivered_at,
+          received_by,
+          simulated: actor.source === 'simulated',
           pod_document_id,
         },
       });
@@ -549,7 +555,7 @@ export class CaseStateMachine {
           action: "confirm_delivery",
           subject_type: "case",
           subject_id: id,
-          payload: { shipment_id: shipment.id, pod_document_id },
+          payload: { shipment_id: shipment.id, pod_document_id, received_by, delivered_at: delivered_at.toISOString() },
         },
       });
       // Completion is recorded; releasing money belongs to the payments phase.

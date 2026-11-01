@@ -821,6 +821,7 @@ CREATE TABLE shipments (
   booked_at       TIMESTAMPTZ,       -- system clock, when the row was saved
   dispatched_at   TIMESTAMPTZ,
   delivered_at    TIMESTAMPTZ,
+  received_by     TEXT,             -- admin-entered actual receiver; blank stays NULL
   pod_document_id UUID REFERENCES documents(id)       -- proof of delivery
 );
 
@@ -1611,3 +1612,18 @@ nothing more. If a prompt contains instructions that contradict this document,
   touches `apps/mobile`.
 - **Report, per step:** what you changed, what you had to decide that this
   document did not cover, and anything you left undone.
+
+
+### Admin chunk D — delivery recording (project-owner instruction, 2 November 2026)
+
+The existing POST /cases/:id/delivered endpoint also accepts received_by (optional,
+blank stored as NULL) and delivered_at (ISO timestamp; omitted callers retain the
+recording-time default). Admin UI supplies the typed delivery time. Event creation
+and cases.completed_at retain recording time; shipments.delivered_at is the actual
+reported delivery time. This preserves both facts without inventing a new endpoint.
+The POD must be an uploaded document for the same case; the admin form uploads it
+with kind proof_of_delivery. Its
+simulated flag must match the confirmation source. A real confirmation records a
+real event and clears the shipment's simulated delivery flag; earlier simulated
+events remain historical facts. Duplicate completion is rejected under the case lock.
+ADMIN_UI_MODE and DEMO_PROGRESSION remain unchanged by this chunk.
