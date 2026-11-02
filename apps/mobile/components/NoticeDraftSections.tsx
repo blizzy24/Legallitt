@@ -5,6 +5,7 @@ import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { shrinkToFit } from '../constants/textFit';
 import { ADV_NOTICE_DRAFT } from '../data/advocateSide';
 import { advNoticeDraft as t, colors, font } from '../constants/theme';
+import { instructedCopy } from '../copy/instructed';
 
 /**
  * The six numbered section cards of the drafted legal notice.
@@ -14,13 +15,15 @@ import { advNoticeDraft as t, colors, font } from '../constants/theme';
  * the whole body identical — same six sections, same copy, same card geometry —
  * and only the AI pill and the footer different. Extracted rather than copied.
  *
- * STATIC. The content is fixed strings; nothing was generated. The edit pencils
- * are inert — no editor is specified anywhere in the designs.
+ * Editor values and callbacks come from the controller. The owner-instructed
+ * Offences field is separate from the six designed working sections.
  */
-export default function NoticeDraftSections({ sections = ADV_NOTICE_DRAFT.sections, onEdit, onChange }: {
+export default function NoticeDraftSections({ sections = ADV_NOTICE_DRAFT.sections, onEdit, onChange, offences, onChangeOffences }: {
   sections?: typeof ADV_NOTICE_DRAFT.sections;
   onEdit?: (index: number) => void;
   onChange?: (index: number, value: string) => void;
+  offences?: string;
+  onChangeOffences?: (value: string) => void;
 }) {
   const [editing, setEditing] = useState<number | null>(null);
   return (
@@ -40,6 +43,14 @@ export default function NoticeDraftSections({ sections = ADV_NOTICE_DRAFT.sectio
           </View>
         </View>
       ))}
+      {offences !== undefined && <View style={styles.card}>
+        <Text style={styles.secTitle}>{instructedCopy.legalNoticeDraft.offences}</Text>
+        <View style={styles.body}>
+          <TextInput accessibilityLabel={instructedCopy.legalNoticeDraft.offences}
+            multiline value={offences} onChangeText={onChangeOffences}
+            style={[styles.bodyText, {padding: 0}]} />
+        </View>
+      </View>}
     </>
   );
 }

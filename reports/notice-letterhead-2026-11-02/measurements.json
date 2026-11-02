@@ -1,0 +1,306 @@
+{
+  "source": "design/189-adv-prepare-response.png",
+  "pairedSource": "design/267-adv-ln-response-editor.png",
+  "sourcePixels": [
+    780,
+    1688
+  ],
+  "paperCrop": {
+    "x": 60,
+    "y": 402,
+    "width": 658,
+    "height": 932
+  },
+  "coordinateSystem": "All coordinates below are relative to the cropped paper, in source pixels. Bounds measured directly from raster; font sizes inferred from glyph height and existing drawn text, not font metadata. Convert paper to A4 at scale X=595.28/658 and Y=841.89/932; do not scale whole device frame.",
+  "pairedPaperDifferentPixels": 228,
+  "colors": {
+    "band": "#0B0B0B",
+    "separator": "#EFCE96",
+    "white": "#FFFFFF",
+    "body": "#0B0B0B",
+    "rule": "#9F9F9F",
+    "divider": "#4B4131"
+  },
+  "elements": {
+    "header": {
+      "x": 0,
+      "y": 0,
+      "width": 658,
+      "height": 153
+    },
+    "headerRule": {
+      "x": 0,
+      "y": 153,
+      "width": 658,
+      "height": 4
+    },
+    "logoHexagons": {
+      "x": 31,
+      "y": 20,
+      "width": 38,
+      "height": 48
+    },
+    "logoWordmark": {
+      "x": 78,
+      "y": 28,
+      "width": 128,
+      "height": 37
+    },
+    "firm": {
+      "x": 79,
+      "y": 68,
+      "fontPx": 9
+    },
+    "emailIcon": {
+      "x": 31,
+      "y": 92,
+      "width": 15,
+      "height": 13
+    },
+    "email": {
+      "x": 51,
+      "y": 94,
+      "fontPx": 12
+    },
+    "webIcon": {
+      "x": 31,
+      "y": 113,
+      "width": 15,
+      "height": 15
+    },
+    "web": {
+      "x": 51,
+      "y": 115,
+      "fontPx": 12
+    },
+    "headerDivider": {
+      "x": 328,
+      "y": 21,
+      "width": 1,
+      "height": 116
+    },
+    "advocate": {
+      "centerX": 493,
+      "y": 49,
+      "fontPx": 16
+    },
+    "qualifications": {
+      "centerX": 493,
+      "y": 76,
+      "fontPx": 12
+    },
+    "qualificationsGoldLine": {
+      "x": 391,
+      "y": 80,
+      "width": 206,
+      "height": 1,
+      "diamondEnds": 6
+    },
+    "enrolment": {
+      "centerX": 493,
+      "y": 96,
+      "fontPx": 12
+    },
+    "title": {
+      "centerX": 329,
+      "y": 182,
+      "fontPx": 22
+    },
+    "titleUnderline": {
+      "x": 179,
+      "y": 211,
+      "width": 316,
+      "height": 1
+    },
+    "reference": {
+      "x": 24,
+      "y": 230,
+      "fontPx": 14
+    },
+    "referenceBlank": {
+      "x": 104,
+      "y": 244,
+      "width": 74
+    },
+    "referenceSuffix": {
+      "x": 186,
+      "y": 230
+    },
+    "referenceYearBlank": {
+      "x": 213,
+      "y": 244,
+      "width": 74
+    },
+    "date": {
+      "x": 456,
+      "y": 230,
+      "fontPx": 14
+    },
+    "dateBlank": {
+      "x": 492,
+      "y": 246,
+      "width": 132
+    },
+    "to": {
+      "x": 24,
+      "y": 270,
+      "fontPx": 14
+    },
+    "recipientLines": {
+      "x": 48,
+      "ys": [
+        289,
+        309,
+        329
+      ],
+      "width": 153
+    },
+    "subject": {
+      "x": 27,
+      "y": 358,
+      "fontPx": 14
+    },
+    "subjectBlank": {
+      "x": 90,
+      "y": 372,
+      "width": 448
+    },
+    "intro": {
+      "x": 27,
+      "y": 398,
+      "width": 605,
+      "fontPx": 12,
+      "lineHeight": 22
+    },
+    "facts": {
+      "numberX": 30,
+      "textX": 43,
+      "lineYs": [
+        451,
+        473,
+        495,
+        517,
+        539
+      ],
+      "fontPx": 12,
+      "lineHeight": 22,
+      "right": 632
+    },
+    "therefore": {
+      "x": 27,
+      "y": 555,
+      "fontPx": 12
+    },
+    "demands": {
+      "x": 27,
+      "ys": [
+        582,
+        608
+      ],
+      "fontPx": 12,
+      "lineHeight": 26
+    },
+    "failing": {
+      "x": 27,
+      "y": 641,
+      "width": 605,
+      "fontPx": 12,
+      "lineHeight": 22
+    },
+    "offencesBlank": {
+      "x": 27,
+      "y": 698,
+      "width": 519
+    },
+    "costContinuation": {
+      "x": 549,
+      "y": 690,
+      "fontPx": 12
+    },
+    "costLine": {
+      "x": 27,
+      "y": 712,
+      "fontPx": 12
+    },
+    "copyLine": {
+      "x": 27,
+      "y": 740,
+      "fontPx": 13
+    },
+    "signFor": {
+      "centerX": 515,
+      "y": 766,
+      "fontPx": 14
+    },
+    "signFirm": {
+      "centerX": 515,
+      "y": 787,
+      "fontPx": 14
+    },
+    "place": {
+      "x": 27,
+      "y": 807,
+      "fontPx": 14
+    },
+    "placeBlank": {
+      "x": 78,
+      "y": 821,
+      "width": 153
+    },
+    "signDate": {
+      "x": 27,
+      "y": 833,
+      "fontPx": 14
+    },
+    "signDateBlank": {
+      "x": 78,
+      "y": 843,
+      "width": 153
+    },
+    "signatureBlank": {
+      "x": 460,
+      "y": 842,
+      "width": 110
+    },
+    "footerRule": {
+      "x": 0,
+      "y": 873,
+      "width": 658,
+      "height": 6
+    },
+    "footer": {
+      "x": 0,
+      "y": 879,
+      "width": 658,
+      "height": 53
+    },
+    "disclaimer": {
+      "x": 36,
+      "y": 899,
+      "width": 588,
+      "fontPx": 6,
+      "lineHeight": 8
+    }
+  },
+  "copy": {
+    "firm": "INT LegalConsultants Pvt. Ltd.",
+    "email": "Intlegalconsultantspvtltd@gmail.com",
+    "website": "www.legalitt.com",
+    "enrolment": "Enrollment No :-",
+    "reference": "Reffrence Id",
+    "signFirm": "INT LegalConsultant Pvt. Ltd.",
+    "preserve": "A copy of this Notice has been preserve in my office for record and future reference.",
+    "disclaimer": "Disclaimer : This legal notice has been generated through an automated document preparation platform based solely on the information, statements, and instructions provided by the user. The platform utilizes technology-assisted drafting tools to facilitate document creation and does not independently verify the accuracy, completeness, authenticity, or legal sufficiency of any information supplied by the user."
+  },
+  "assets": {
+    "wordmark": "apps/mobile/assets/legalitt-wordmark-white.png",
+    "mark": "apps/mobile/assets/legalitt-mark.png"
+  },
+  "notes": [
+    "Design189 and267 use the same paper; the surrounding screen action buttons differ.",
+    "Body quantities, names, blank rules and row count are sample placeholders, not a five-fact limit.",
+    "The drawn company name is plural Consultants in header, singular Consultant in signoff. User explicitly specified both, preserve.",
+    "Old mobile tokens use #C9A227 for separator; direct PNG sampling gives #EFCE96. Do not use old tokens as source for print layout.",
+    "No zip file present in repository-wide filename inventory; the already extracted response exports supply the letterhead."
+  ]
+}

@@ -33,7 +33,16 @@ function Blank({ flex, width, value }: { flex?: number; width?: number; value?:s
   return <View style={[styles.blank, flex ? { flex } : null, width ? { width } : null]}>{value ? <Text numberOfLines={1} style={[styles.label,{position:'absolute',bottom:0,left:0,right:0}]}>{value}</Text> : null}</View>;
 }
 
-export type NoticeDocumentFields = {reference:string; date:string; recipient:string[]; subject:string; client:string; father:string; age:string; address:string; facts:string[]; demands:string[]};
+export type NoticeDocumentFields = {
+  reference:string; referenceYear?:string; date:string; recipient:string[]; subject:string;
+  client:string; father:string; age:string; address:string; facts:string[]; demands:string[];
+  offences?:string; cost?:string; place?:string;
+};
+function letterFor(index: number): string {
+  let label='';
+  for(let n=index+1;n>0;n=Math.floor((n-1)/26))label=String.fromCharCode(65+(n-1)%26)+label;
+  return label;
+}
 export default function LegalDocumentPage({ title, advocateName, data = ADV_NOTICE_RESPONSE, fields }: { title: string; advocateName?: string; data?:typeof ADV_NOTICE_RESPONSE; fields?:NoticeDocumentFields }) {
   const r = data;
   return (
@@ -69,17 +78,17 @@ export default function LegalDocumentPage({ title, advocateName, data = ADV_NOTI
           </View>
           <View style={styles.lhDivider} />
           <View style={styles.lhRight}>
-            <Text style={styles.lhAdv} {...shrinkToFit(0.65)}>
+            <Text style={styles.lhAdv} {...(fields ? {} : shrinkToFit(0.65))}>
               {advocateName ?? r.letterhead.advocate}
             </Text>
             {Boolean(r.letterhead.quals) && (
-              <Text style={styles.lhQual} {...shrinkToFit(0.75)}>
+              <Text style={styles.lhQual} {...(fields ? {} : shrinkToFit(0.75))}>
                 {r.letterhead.quals}
               </Text>
             )}
             {/* The letterhead prints facts; the form's blanks below are drawn. */}
             {Boolean(r.letterhead.enrolmentNo) && (
-              <Text style={styles.lhEnrol} {...shrinkToFit(0.7)}>
+              <Text style={styles.lhEnrol} {...(fields ? {} : shrinkToFit(0.7))}>
                 {r.letterhead.enrolment}{' '}
                 <Text style={styles.lhEnrolNo}>{r.letterhead.enrolmentNo}</Text>
               </Text>
@@ -92,53 +101,63 @@ export default function LegalDocumentPage({ title, advocateName, data = ADV_NOTI
           <Text style={styles.docTitle}>{title}</Text>
           <View style={styles.docTitleRule} />
 
-          <View style={styles.row}>
+          {fields ? <View style={styles.metadataRow}>
+            <Text selectable style={[styles.label, styles.metadataReference]}>
+              {r.refLabel}{' '}<Text style={styles.inlineBlank}>{fields.reference}</Text>{' '}
+              {r.refSuffix}{' '}<Text style={styles.inlineBlank}>{fields.referenceYear??''}</Text>
+            </Text>
+            <Text selectable style={styles.label}>{r.dateLabel}{' '}<Text style={styles.inlineBlank}>{fields.date}</Text></Text>
+          </View> : <View style={styles.row}>
             <Text style={styles.label}>{r.refLabel}</Text>
-            <Blank width={52} value={fields?.reference} />
+            <Blank width={52} />
             <Text style={styles.label}>{r.refSuffix}</Text>
             <Blank width={44} />
             <View style={styles.spacer} />
             <Text style={styles.label}>{r.dateLabel}</Text>
-            <Blank width={78} value={fields?.date} />
-          </View>
+            <Blank width={78} />
+          </View>}
 
           <View style={styles.toRow}>
             <Text style={styles.label}>{r.toLabel}</Text>
-            <View style={styles.toLines}>
+            {fields ? <View style={styles.recipientValues}>{fields.recipient.map((line,i)=>(
+              <Text selectable key={i} style={styles.flowText}>{line}</Text>
+            ))}</View> : <View style={styles.toLines}>
               {Array.from({ length: r.toLines }).map((_, i) => (
-                <Blank key={i} width={148} value={fields?.recipient[i]} />
+                <Blank key={i} width={148} />
               ))}
-            </View>
+            </View>}
           </View>
 
-          <View style={styles.row}>
+          {fields ? <Text selectable style={styles.body}>
+            {r.subjectLabel}{' '}<Text style={styles.inlineBlank}>{fields.subject}</Text>
+          </Text> : <View style={styles.row}>
             <Text style={styles.label}>{r.subjectLabel}</Text>
-            <Blank flex={1} value={fields?.subject} />
-          </View>
+            <Blank flex={1} />
+          </View>}
 
-          <Text style={styles.body}>
+          <Text selectable={Boolean(fields)} style={styles.body}>
             {r.intro[0]}
             <Text style={styles.inlineBlank}>{fields ? fields.client : '__________'}</Text>
             {r.intro[1]}
             <Text style={styles.inlineBlank}>{fields ? fields.father : '________'}</Text>
-            {r.intro[2]}
+            {fields?', Age ':r.intro[2]}
             <Text style={styles.inlineBlank}>{fields ? fields.age : '_____'}</Text>
             {r.intro[3]}
             <Text style={styles.inlineBlank}>{fields ? fields.address : '__________'}</Text>
             {r.intro[4]}
           </Text>
 
-          {Array.from({ length: r.clauses }).map((_, i) => (
-            <View key={i} style={styles.clause}>
+          {(fields ? fields.facts : Array.from({ length: r.clauses },()=> '')).map((fact, i) => (
+            <View key={i} style={[styles.clause,fields&&styles.flowClause]}>
               <Text style={styles.clauseN}>{i + 1}.</Text>
-              <Blank flex={1} value={fields?.facts[i]} />
+              {fields ? <Text selectable style={[styles.flowText,styles.clauseValue]}>{fact}</Text> : <Blank flex={1} />}
             </View>
           ))}
 
           <Text style={styles.bodyNext}>{r.thereforeLine}</Text>
-          {r.thereforeItems.map((item, i) => (
-            <Text key={item} style={styles.item}>
-              {item}{fields?.demands[i] ? ` ${fields.demands[i]}` : ''}
+          {(fields ? fields.demands : r.thereforeItems).map((item, i) => (
+            <Text selectable={Boolean(fields)} key={i} style={[styles.item,fields&&styles.flowText]}>
+              {fields ? `${letterFor(i)}. ${item}` : item}
             </Text>
           ))}
 
@@ -148,15 +167,18 @@ export default function LegalDocumentPage({ title, advocateName, data = ADV_NOTI
             {r.failing.mid}
             <Text style={styles.bold}>{r.failing.boldB}</Text>
             {r.failing.tail}
+            {fields ? <Text style={styles.inlineBlank}>{' '}{fields.offences??''}</Text> : null}
           </Text>
-          <View style={styles.row}>
+          {fields ? <Text selectable style={styles.body}>
+            {r.failing.further.trimStart()}<Text style={styles.inlineBlank}>{fields.cost??''}</Text>{r.failing.cost}
+          </Text> : <><View style={styles.row}>
             <Blank flex={1} />
             <Text style={styles.body}>{r.failing.further}</Text>
           </View>
           <Text style={styles.body}>
             <Text style={styles.inlineBlank}>________</Text>
             {r.failing.cost}
-          </Text>
+          </Text></>}
 
           <Text style={styles.bodyNext}>{r.copyLine}</Text>
 
@@ -169,11 +191,11 @@ export default function LegalDocumentPage({ title, advocateName, data = ADV_NOTI
             <View style={styles.footLeft}>
               <View style={styles.row}>
                 <Text style={styles.labelBold}>{r.placeLabel}</Text>
-                <Blank width={108} />
+                {fields ? <Text selectable style={[styles.label,styles.inlineBlank,styles.clauseValue]}>{fields.place??''}</Text> : <Blank width={108} />}
               </View>
               <View style={styles.rowNext}>
                 <Text style={styles.labelBold}>{r.signDateLabel}</Text>
-                <Blank width={108} />
+                {fields ? <Text selectable style={[styles.label,styles.inlineBlank]}>{fields.date}</Text> : <Blank width={108} />}
               </View>
             </View>
             <View style={styles.footSign}>
@@ -230,6 +252,12 @@ const styles = StyleSheet.create({
   },
 
   row: { marginTop: t.rowGap, flexDirection: 'row', alignItems: 'flex-end' },
+  metadataRow: {marginTop:t.rowGap,flexDirection:'row',alignItems:'flex-start',gap:8},
+  metadataReference: {flex:1,minWidth:0},
+  recipientValues: {marginLeft:8,flex:1,minWidth:0},
+  flowText: {fontFamily:font.appBody,fontSize:t.bodySize,lineHeight:t.bodyLineHeight,color:colors.textPrimary},
+  flowClause: {alignItems:'flex-start'},
+  clauseValue: {flex:1,minWidth:0},
   rowNext: { marginTop: 8, flexDirection: 'row', alignItems: 'flex-end' },
   spacer: { flex: 1 },
   label: { marginRight: 5, fontFamily: font.appBody, fontSize: t.labelSize, color: colors.textPrimary },

@@ -2,6 +2,9 @@
  * "Instructed copy"). Kept apart from drawn copy and from the substitutions so it
  * stays distinguishable; do not reword. */
 export const instructedCopy = {
+  // Approved — project-owner notice letterhead instruction, 2 November 2026.
+  // Advocate input fills "for the offences of"; the six editor sections stay.
+  legalNoticeDraft: { offences: 'Offences' },
   // Approved — project-owner intake restructure, 2 November 2026. Additions to
   // designs 24–28; the new demand step reuses their measured theme.
   legalNoticeIntake: {

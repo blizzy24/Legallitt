@@ -1,0 +1,18 @@
+{
+  "id": "8a4bf996-6f82-4402-bc16-8663f9f6573f",
+  "reference": "LN-2026-0046",
+  "status": "client_review",
+  "draft_id": "ec2e48ed-575f-436a-ad12-709baf8279bb",
+  "document_id": "873ccd46-c8ad-4c7c-bf3d-021f0f5339c5",
+  "filename": "Legal_Notice_Draft_v6.pdf",
+  "bytes": 69596,
+  "sha256": "39fd163c5ba6919e3871e9e16f59ec2c22ae376bac217f208f5c2d891f212599",
+  "preview_bytes_identical": true,
+  "document": {
+    "mime_type": "application/pdf",
+    "page_count": 2,
+    "size_bytes": "69596",
+    "simulated": false
+  },
+  "pipeline": "real send-draft endpoint -> generated document validation -> S3 -> authenticated signed URL download"
+}

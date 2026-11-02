@@ -37,16 +37,15 @@ import {
 // from design/188's screen so both routes render one copy. That extraction was
 // verified pixel-identical on the existing route.
 //
-// ⚠ TENTH AI SURFACE IN THIS APP. "AI Assist" is drawn and does nothing — no
-// model, no request, no generated text. Every section below is a fixed string.
-//
-// STATIC, NOT WIRED: the edit pencils open no editor, Save Draft saves nothing,
-// Preview previews nothing, and Continue to Review only navigates.
+// "AI Assist" remains a drawn placeholder. The six working sections and the
+// owner-instructed Offences field save through the controller; Preview renders
+// the supplied letterhead, and Continue to Review submits the saved draft.
 
-export function AdvocateNoticeDraftEditorView({draft, navigate, onChange, onSave, previewHref, reviewHref}: {
+export function AdvocateNoticeDraftEditorView({draft, navigate, onChange, onSave, previewHref, reviewHref, offences, onChangeOffences}: {
   draft: typeof ADV_NOTICE_DRAFT; navigate: typeof router;
   onChange?: (index:number,value:string)=>void; onSave?:()=>void;
   previewHref: Href; reviewHref: Href;
+  offences?:string; onChangeOffences?:(value:string)=>void;
 }) {
   const router=navigate;
   const insets = useSafeAreaInsets();
@@ -94,7 +93,8 @@ export function AdvocateNoticeDraftEditorView({draft, navigate, onChange, onSave
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <NoticeDraftSections sections={d.sections} onChange={onChange} />
+        <NoticeDraftSections sections={d.sections} onChange={onChange}
+          offences={offences} onChangeOffences={onChangeOffences} />
       </ScrollView>
 
       <View style={[styles.footer, { paddingBottom: insets.bottom + 14 }]}>
@@ -218,5 +218,6 @@ export default function AdvocateNoticeDraftEditorScreen() {
   const model=useAdvocateNoticeModel('draft-editor');
   return <NoticeScreenFeedback error={model.error}><AdvocateNoticeDraftEditorView draft={model.data.ADV_NOTICE_DRAFT} navigate={model.navigate}
     onChange={model.onEditSection} onSave={model.onSaveDraft}
+    offences={model.offences} onChangeOffences={model.onEditOffences}
     previewHref={model.path('response')} reviewHref={model.path('review')} /></NoticeScreenFeedback>;
 }

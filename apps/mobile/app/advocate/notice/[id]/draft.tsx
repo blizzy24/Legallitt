@@ -20,10 +20,9 @@ import {
 
 // Draft legal notice (design/188).
 //
-// ⚠ SEVENTH AI SURFACE, third of three in this flow. All six sections are STATIC
-// STRINGS — nothing was generated from the documents reviewed on design/186. The
-// "Legalitt AI" card is the edit assistant and it does nothing: typing into it or
-// pressing a suggestion chip changes no text. The edit pencils are inert too.
+// The six sections are the advocate's editable working draft. Generate Draft
+// saves it and renders the supplied letterhead with the case's intake fields.
+// The separate "Legalitt AI" edit-assistant card remains a drawn placeholder.
 //
 // ⚠ "Step 3 of 5" is a SIXTH STEPPER IDIOM, and a bare text label at that: no dots,
 // no bar, no numbered track. Nothing else in the notice flow shows a step count, so
@@ -32,7 +31,11 @@ import {
 // ⚠ design/188 names the advocate "Adv. Abhishek Sahu" where design/148 has
 // "Abhishek Chouhan", and spells its own chip "Fix Grammer". Both kept as drawn.
 
-export function AdvocateNoticeDraftScreenView({ data, navigate, onChangeSection }: { onChangeSection?: (index: number, value: string) => void; data: { ADV_NOTICE_DRAFT: typeof ADV_NOTICE_DRAFT }; navigate: typeof router }) {
+export function AdvocateNoticeDraftScreenView({ data, navigate, onChangeSection, offences, onChangeOffences }: {
+  onChangeSection?: (index: number, value: string) => void;
+  offences?: string; onChangeOffences?: (value: string) => void;
+  data: { ADV_NOTICE_DRAFT: typeof ADV_NOTICE_DRAFT }; navigate: typeof router;
+}) {
   const { ADV_NOTICE_DRAFT } = data;
   const router = navigate;
   const insets = useSafeAreaInsets();
@@ -81,7 +84,8 @@ export function AdvocateNoticeDraftScreenView({ data, navigate, onChangeSection 
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <NoticeDraftSections onChange={onChangeSection} sections={d.sections} />
+        <NoticeDraftSections onChange={onChangeSection} sections={d.sections}
+          offences={offences} onChangeOffences={onChangeOffences} />
 
         <View style={styles.card}>
           <View style={styles.aiChip}>
@@ -286,5 +290,6 @@ const styles = StyleSheet.create({
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function AdvocateNoticeDraftScreen() {
   const model = useAdvocateNoticeModel("draft");
-  return <NoticeScreenFeedback error={model.error}><AdvocateNoticeDraftScreenView data={model.data} navigate={model.navigate} onChangeSection={model.onEditSection} /></NoticeScreenFeedback>;
+  return <NoticeScreenFeedback error={model.error}><AdvocateNoticeDraftScreenView data={model.data} navigate={model.navigate}
+    onChangeSection={model.onEditSection} offences={model.offences} onChangeOffences={model.onEditOffences} /></NoticeScreenFeedback>;
 }

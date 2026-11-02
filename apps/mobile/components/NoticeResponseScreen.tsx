@@ -29,10 +29,9 @@ import {
 
 // Legal notice response — the rendered document (design/189).
 //
-// ⚠ THE DOCUMENT IS A BLANK FORM. design/188 has just produced a fully drafted
-// notice; design/189 renders a template with empty blanks for every one of those
-// fields. The draft content does not carry forward into the artefact the flow exists
-// to produce. Built as drawn — see the note in data/advocateSide.ts.
+// The supplied design is the blank letterhead form. Its measured layout now
+// receives case and draft values; long entries and lists flow without clipping.
+// Fixture and Property Search uses keep their supplied blank-form rendering.
 //
 // ⚠ The toolbar implies a rich-text editor. This is the SECOND one drawn with no
 // specification — design/180's docket notes was the first. Neither says what
@@ -63,11 +62,11 @@ import {
  */
 export default function NoticeResponseScreen({
   variant,
-  caseId, data = ADV_NOTICE_RESPONSE, fields, navigate = router, onSave,
+  caseId, data = ADV_NOTICE_RESPONSE, fields, navigate = router, onSave, onGenerate,
 }: {
   variant: 'share' | 'generate';
   caseId: string;
-  data?:typeof ADV_NOTICE_RESPONSE; fields?:NoticeDocumentFields; navigate?:typeof router; onSave?:()=>void;
+  data?:typeof ADV_NOTICE_RESPONSE; fields?:NoticeDocumentFields; navigate?:typeof router; onSave?:()=>void; onGenerate?:()=>void;
 }) {
   const { advance } = useDemoAdvance();
   const insets = useSafeAreaInsets();
@@ -153,10 +152,10 @@ export default function NoticeResponseScreen({
 
         <Pressable
           accessibilityRole="button"
-          onPress={() =>
-            // DEMO: the static Generate state follows the flow map (data/flowMap.ts).
-            generate ? advance() : router.push(`/advocate/notice/${id}/review` as Href)
-          }
+          onPress={() => {
+            if(generate){if(onGenerate)onGenerate();else advance();}
+            else router.push(`/advocate/notice/${id}/review` as Href);
+          }}
           style={({ pressed }) => [styles.share, generate && styles.generate, pressed && styles.pressed]}
         >
           <Text

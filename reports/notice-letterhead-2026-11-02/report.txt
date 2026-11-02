@@ -1,0 +1,67 @@
+Legal Notice letterhead — 2 November 2026
+
+Supplied template: design/189-adv-prepare-response.png and matching 267.
+Measured the paper crop x60, y402, width658, height932, independently of the phone frame.
+See measurements.json for element positions and sampled colors.
+
+Stage 1 — generated PDF and API (commit 64e3e71)
+Replaced the invented section-heading layout with the supplied letterhead.
+Bound the assigned advocate/profile, case reference, intake subject/sender/noticee,
+client-selected/custom demands, versioned draft facts/offences, and case-owned
+historical base fee. New urgent/ordinary fees print ₹999/₹699, excluding GST.
+No fixture fallback; old missing values stay blank. Signature remains blank.
+Noto Latin/Devanagari text wraps and paginates. Whole-line ActualText preserves
+logical Unicode through shaping. Both draft and final generation share the renderer.
+Render-only endpoint authenticates the assigned advocate and latest draft, and
+neither changes state nor exposes an unsent document to the client.
+
+Stage 2 — advocate working screens
+Kept all six sections; added the instructed Offences input, saved with each draft.
+Generate Draft saves before rendering/navigation. Both 188 and 267 use the real
+renderer; preview displays the intake/profile fields and all facts/demands without
+clipping or a five-fact cap. No changes to the other services or measured mobile tokens.
+
+Stage 3 — currency instruction
+Gemini and Bedrock prompts require ₹ and Indian grouping for supplied amounts;
+no invented or changed amounts. Existing saved choices are not silently rewritten.
+Real Gemini test returned ₹5,000 in both options; see gemini-currency.json.
+AI_MODE still defaults to simulated. No provider configuration changes.
+
+Verification case: LN-2026-0046 /8a4bf996-6f82-4402-bc16-8663f9f6573f
+A real local database case with clearly synthetic parties/facts, seeded users,
+real Cognito sign-ins, simulated service payment, human admin assignment, and
+advocate-entered offences. Seven facts, including Hindi, plus three demands.
+Generate Draft stayed in_progress. The subsequent real send endpoint stored
+Legal_Notice_Draft_v6.pdf in S3, validated two pages, and returned identical bytes.
+Final case state: client_review. Not approved, dispatched, or sent to an opposing party.
+See verification.json and stored-pdf-verification.json.
+
+Deliverables:
+Legal_Notice_Letterhead.pdf — final selectable two-page generated PDF
+Legal_Notice_Draft_v6.pdf — exact copy downloaded through authenticated S3 URL
+comparison.png /comparison.html — supplied template beside both generated pages
+client-template-crop.png — unmodified cropped reference
+editor.png /editor-offences.png — working editor and instructed field
+response.png /response-editor-267.png — both response screen variants
+generated/page-1.png /generated/page-2.png — PDF rendering evidence
+search-verification.json — independent MuPDF Unicode extraction/search checks
+
+Checks:
+All workspace TypeScript checks passed.
+API tests: 71 passed on local PostgreSQL16. Shared tests: 10 passed.
+Mobile production fixture export passed; final 322-route smoke passed with zero failures and no API calls.
+PDF tests cover 35 facts, long names/unbroken words, pagination bounds, legacy blanks,
+permissions, latest-version guard, historical pricing, exact copy, bold spans, ₹ and Hindi.
+
+Known reader limitation:
+The PDF provides standards-based ActualText. MuPDF extracts the exact Hindi sentence
+and finds लिए. Apple's PDFKit ignores that metadata and reorders a pre-base vowel
+when extracting; its visual rendering remains correct. Both extraction files are
+retained for transparency. No invisible duplicate text layer was added.
+
+Owner decisions still needed (all kept exactly as supplied):
+1. Reffrence Id
+2. has been preserve in my office
+3. Header INT LegalConsultants Pvt. Ltd. versus sign-off INT LegalConsultant Pvt. Ltd.
+
+No AWS infrastructure deployed. No SDK, font or service pricing change.

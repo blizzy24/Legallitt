@@ -1,0 +1,78 @@
+{
+  "id": "8a4bf996-6f82-4402-bc16-8663f9f6573f",
+  "reference": "LN-2026-0046",
+  "status": "in_progress",
+  "draft_id": "ec2e48ed-575f-436a-ad12-709baf8279bb",
+  "subject_line": "Legal notice concerning the matter in dispute",
+  "legal_demand": {
+    "custom": "Pay the outstanding invoice amount of ₹5,000.",
+    "selected": [
+      "Resolve the matter described in this notice.",
+      "Provide a written response to the issues raised in this notice."
+    ]
+  },
+  "sender": {
+    "id": "393f93c9-c962-4022-ba94-91b610a4f02b",
+    "case_id": "8a4bf996-6f82-4402-bc16-8663f9f6573f",
+    "kind": "sender",
+    "name": "Synthetic Sender Test",
+    "age": 41,
+    "father_name": "Synthetic Father Test",
+    "details": {
+      "email": "sender@example.invalid",
+      "mobile": "2025550101",
+      "address": "Synthetic sender address, Mumbai",
+      "fullName": "Synthetic Sender Test"
+    }
+  },
+  "advocate": {
+    "id": "a9442690-6857-47c9-b91c-8c4c210cc6a4",
+    "full_name": "Adv. Arjun Sharma",
+    "profile": {
+      "years_experience": 8,
+      "practice_areas": [
+        "Property Law"
+      ],
+      "bar_council_number": "D/1842/2016",
+      "enrolment_year": 2016,
+      "rating_avg": "4.9",
+      "rating_count": 142,
+      "verification": "approved",
+      "verified_at": "2026-05-01T00:00:00.000Z",
+      "city": "Indore",
+      "state": "Madhya Pradesh",
+      "photo_key": "advocate-05",
+      "bio": "Adv. Arjun Sharma is an experienced legal professional with expertise in civil, criminal, and property matters. He focuses on providing clear legal guidance and professional representation tailored to each client's needs.",
+      "courts": [
+        "District Court",
+        "High Court"
+      ],
+      "languages": [
+        "Hindi",
+        "English"
+      ],
+      "education": "LL.B., LL.M."
+    }
+  },
+  "offences": "not alleged in this synthetic verification case",
+  "facts": 7,
+  "pdf": "reports/notice-letterhead-2026-11-02/Legal_Notice_Letterhead.pdf",
+  "bytes": 69596,
+  "screenshots": [
+    "editor.png",
+    "editor-offences.png",
+    "response.png",
+    "response-editor-267.png"
+  ],
+  "assertions": [
+    "real sign-in for client/advocate/admin",
+    "intake persisted",
+    "service payment captured",
+    "admin assigned advocate",
+    "Generate Draft saved offences and returned PDF",
+    "design 267 Generate Draft with AI calls the render endpoint without submitting",
+    "seven facts retained",
+    "case remains in_progress",
+    "no browser errors"
+  ]
+}

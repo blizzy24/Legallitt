@@ -1,0 +1,14 @@
+{
+  "reader": "MuPDF 1.28.2",
+  "pages": 2,
+  "exactHindiPhrase": true,
+  "searchMatches": {
+    "लिए": 1,
+    "₹5,000": 2,
+    "₹999": 1,
+    "Synthetic Sender Test": 1,
+    "Reffrence Id": 1,
+    "has been preserve": 1
+  },
+  "note": "The PDF includes line-level ActualText to preserve logical Unicode across Indic shaping. Apple PDFKit ignores ActualText and reorders the pre-base vowel during extraction; visual rendering is correct."
+}

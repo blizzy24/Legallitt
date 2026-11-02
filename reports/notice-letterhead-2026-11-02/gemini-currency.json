@@ -1,0 +1,9 @@
+{
+  "mode": "gemini",
+  "synthetic": true,
+  "options": [
+    "Option 1: Pay the full unpaid invoice amount of ₹5,000 immediately.",
+    "Option 2: Contact support to discuss payment terms for the unpaid invoice amount of ₹5,000."
+  ],
+  "simulated": false
+}

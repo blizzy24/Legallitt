@@ -5,7 +5,7 @@ import { backend } from '../../lib/auth';
 export type NoticeRepository = Pick<ApiClient,
   'service' | 'case' | 'cases' | 'requests' | 'createCase' | 'saveIntake' |
   'generateNoticeSubject' | 'generateNoticeDemands' |
-  'submit' | 'pay' | 'accept' | 'start' | 'decline' | 'saveDraft' | 'sendDraft' |
+  'submit' | 'pay' | 'accept' | 'start' | 'decline' | 'saveDraft' | 'renderDraft' | 'sendDraft' |
   'approve' | 'requestChanges' | 'dispatch' | 'presign' | 'upload' |
   'documentUrl' | 'deleteDocument' | 'saveShipment' | 'bookShipment' | 'receiveShipment' | 'caseThread' | 'messages' | 'sendMessage' | 'readMessages'
 >;

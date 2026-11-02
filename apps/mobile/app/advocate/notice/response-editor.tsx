@@ -12,13 +12,14 @@ import NoticeResponseScreen from '../../../components/NoticeResponseScreen';
 // for Review"; 267 has Back / Confirm & Upload and an OUTLINED "Generate Draft
 // with AI". One component, two variants.
 //
-// ⚠ ELEVENTH AI SURFACE IN THIS APP. "Generate Draft with AI" is drawn and does
-// nothing. No model, no request, no generated text.
+// Generate Draft fills the supplied template through the same real render
+// endpoint as design 188; it does not send the draft for client review.
 //
 // STATIC, NOT WIRED: the rich-text toolbar (Paragraph / B / I / U / lists /
 // undo / redo) is inert. No editor engine is specified anywhere in the designs.
 export default function AdvocateNoticeResponseEditorScreen() {
   const model=useAdvocateNoticeModel('response');
   return <NoticeScreenFeedback error={model.error}><NoticeResponseScreen variant="generate" caseId={model.controller.id??'ln-2026-1048'}
-    data={model.data.ADV_NOTICE_RESPONSE} fields={model.documentFields} navigate={model.navigate} onSave={model.onSaveDraft} /></NoticeScreenFeedback>;
+    data={model.data.ADV_NOTICE_RESPONSE} fields={model.documentFields} navigate={model.navigate}
+    onSave={model.onSaveDraft} onGenerate={model.onGenerateDraft} /></NoticeScreenFeedback>;
 }

@@ -1,0 +1,10 @@
+{
+  "workspace_typecheck": "passed: shared, api, mobile, admin, infra",
+  "api_tests": {"passed":71,"failed":0,"skipped":0,"database":"PostgreSQL16"},
+  "shared_tests": {"passed":10,"failed":0},
+  "mobile_export": "passed",
+  "fixture_smoke": {"routes":322,"failures":[],"api_requests":0},
+  "browser_generation": "passed for designs188 and267",
+  "stored_pdf": "real S3 upload/download byte match",
+  "gemini_currency": "real response uses ₹5,000"
+}

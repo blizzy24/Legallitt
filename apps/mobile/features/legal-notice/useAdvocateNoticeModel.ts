@@ -8,7 +8,7 @@ import { useNoticeController, type NoticeStage } from './useNoticeController';
 import * as fixture from '../../data/advocateSide';
 import { noticeMatter } from '../../data/legalNoticeMatter';
 
-export const draftKeys: (keyof NoticeDraftContent)[] = ['sender','recipient','subject','facts','demand','closing'];
+export const draftKeys = ['sender','recipient','subject','facts','demand','closing'] as const satisfies readonly (keyof NoticeDraftContent)[];
 export function useAdvocateNoticeModel(stage: string) {
   const api = DATA_SOURCE === 'api';
   const c=useNoticeController(stage as NoticeStage,undefined,api);
@@ -38,6 +38,10 @@ export function useAdvocateNoticeModel(stage: string) {
     const draft=await c.repository.saveDraft(c.id,c.content);
     c.dirty.current=false;await c.load();return draft;
   };
+  const renderDraft=async()=>{
+    const draft=await saveDraft();
+    if(c.id)await c.repository.renderDraft(c.id,draft.id);
+  };
   const navigateTo=(href:Href,replace=false)=>{
     let value=typeof href==='string'?href:href.pathname;
     if(typeof href!=='string'&&href.params){const q=new URLSearchParams();for(const [key,value] of Object.entries(href.params))if(value!==undefined)q.set(key,String(value));value+='?'+q.toString();}
@@ -46,7 +50,13 @@ export function useAdvocateNoticeModel(stage: string) {
       if(/\/final(\?|$)/.test(value)&&!['approved','dispatching','dispatched','completed'].includes(r?.status??''))throw new Error(fixture.ADV_NOTICE_REVIEW.awaiting.title);
       // 187's drafting choice is where the advocate begins (or resumes) drafting.
       if(stage==='drafting'&&c.id&&['advocate_accepted','changes_requested'].includes(r?.status??''))await c.repository.start(c.id);
-      if((stage==='draft'||stage==='draft-editor')&&/\/(response|review)(\?|$)/.test(value)){const draft=await saveDraft();if(/\/review(\?|$)/.test(value)&&c.id)await c.repository.sendDraft(c.id,draft.id);}
+      if((stage==='draft'||stage==='draft-editor')&&/\/(response|review)(\?|$)/.test(value)){
+        const draft=await saveDraft();
+        if(c.id){
+          if(/\/review(\?|$)/.test(value))await c.repository.sendDraft(c.id,draft.id);
+          else await c.repository.renderDraft(c.id,draft.id);
+        }
+      }
       if(stage==='response'&&/\/review(\?|$)/.test(value)&&c.id){const draft=await saveDraft();await c.repository.sendDraft(c.id,draft.id);}
       if(replace)router.replace(destination);else router.push(destination);
     });
@@ -79,7 +89,8 @@ export function useAdvocateNoticeModel(stage: string) {
       delivery:{...fixture.ADV_NOTICE_RECEIVED.delivery,rows:fixture.ADV_NOTICE_RECEIVED.delivery.rows.map((cell,i)=>({...cell,value:[inbound?.carrier??'',inbound?.waybill??'',when(inbound?.delivered_at),received?user?.name??'':''][i]}))},
     }:fixture.ADV_NOTICE_RECEIVED,
     ADV_NOTICE_REPORT:api?{...fixture.ADV_NOTICE_REPORT,docChip:notice?.id??'',escrowChip:'',payout:''}:fixture.ADV_NOTICE_REPORT,
-    ADV_NOTICE_RESPONSE:api?{...fixture.ADV_NOTICE_RESPONSE,statusChip:'',letterhead:{...fixture.ADV_NOTICE_RESPONSE.letterhead,advocate:user?.name??'',quals:'',enrolmentNo:''}}:fixture.ADV_NOTICE_RESPONSE,
+    ADV_NOTICE_RESPONSE:api?{...fixture.ADV_NOTICE_RESPONSE,statusChip:'',letterhead:{...fixture.ADV_NOTICE_RESPONSE.letterhead,
+      advocate:r?.advocate?.full_name??'',quals:r?.advocate?.profile?.education??'',enrolmentNo:r?.advocate?.profile?.bar_council_number??''}}:fixture.ADV_NOTICE_RESPONSE,
     ADV_NOTICE:api?{...fixture.ADV_NOTICE,clientFee:null,ref:r?.reference??'',refLabel:r?.reference??'',docket:r?.reference??'',verifiedChip:'',
       client:{name:client,initials:client.split(/\s+/).map(v=>v[0]??'').join('').slice(0,2)},matter:matter.label,against:recipient,filingType:matter.label,
       slot:{...fixture.ADV_NOTICE.slot,date:'',time:''},escrowNote:'',
@@ -113,12 +124,24 @@ export function useAdvocateNoticeModel(stage: string) {
       total:total===null?'':`₹${total}/-`,
     }:fixture.ADV_NOTICE_PAYMENT,
   };
-  const documentFields=api?{reference:r?.reference??'',date:c.latest?new Date(c.latest.created_at).toLocaleDateString('en-GB'):'',recipient:c.content.recipient.split('\n'),subject:c.content.subject,
-    client, father:'',age:'',address:r?.details.client?.address??'',facts:c.content.facts.split('\n'),demands:c.content.demand.split('\n')}:undefined;
+  const senderParty=r?.parties?.find(p=>p.kind==='sender');
+  const draftDate=c.latest?new Date(c.latest.created_at):null;
+  const documentFields=api?{reference:r?.reference??'',date:draftDate?.toLocaleDateString('en-GB',{timeZone:'Asia/Kolkata'})??'',
+    referenceYear:draftDate?.toLocaleDateString('en-GB',{year:'numeric',timeZone:'Asia/Kolkata'}).slice(-2)??'',
+    recipient:[recipient,...address.split('\n')].filter(Boolean),subject:r?.subject_line??'',
+    client, father:senderParty?.father_name??'',age:senderParty?.age?.toString()??'',address:r?.details.client?.address??'',
+    facts:c.content.facts.split(/\r?\n/).map(line=>line.trim().replace(/^\d+[.)]\s+/, '')).filter(Boolean),
+    demands:[...(r?.legal_demand?.selected??[]),...(r?.legal_demand?.custom?.trim()?[r.legal_demand.custom.trim()]:[])],
+    offences:c.content.offences??'',place:r?.advocate?.profile?.city??'',
+    cost:r?.pricing?`₹${(Number(r.pricing.base_amount_paise)/100).toLocaleString('en-IN',{maximumFractionDigits:0})}`:'',
+  }:undefined;
   return {error:c.error,data,documentFields,navigate,controller:c,api,total:api?total:fixture.ADV_NOTICE_PAYMENT.totalAmount,path,courierHref,
     onViewDocument:api?(id?:string)=>open(id??notice?.id??draftDoc?.id):undefined,
     onEditSection:api?(index:number,value:string)=>{c.dirty.current=true;c.setContent(prev=>({...prev,[draftKeys[index]]:value}));}:undefined,
-    onSaveDraft:api?()=>{void c.run(saveDraft);}:undefined,
+    offences:c.content.offences??'',
+    onEditOffences:(value:string)=>{c.dirty.current=true;c.setContent(prev=>({...prev,offences:value}));},
+    onSaveDraft:api?()=>{void c.run(stage==='response'?renderDraft:saveDraft);}:undefined,
+    onGenerateDraft:api?()=>{void c.run(renderDraft);}:undefined,
     onConfirmDispatch:()=>{if(!api){router.push(path('report'));return;}void c.run(async()=>{if(c.id){await c.repository.dispatch(c.id);await c.load();}});},
     onSendChoice:(choice:string)=>{let destination:Href=path('delivery');if(choice==='self')destination=courierHref();router.push(destination);},
     onPay:()=>{void c.run(async()=>{if(api&&c.id)await c.repository.pay(c.id,'courier');router.replace(path('paid'));});},
