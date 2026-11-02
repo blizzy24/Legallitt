@@ -1,0 +1,122 @@
+[
+  {
+    "sku": "47P5JUQVXYPSBXFF",
+    "usage": "APS3-Outposts-LoadBalancerUsage",
+    "family": "Load Balancer-Application",
+    "description": "$0.0239 per Hrs for Outposts-LoadBalancerUsage:LoadBalancing:Application in Asia Pacific (Mumbai)",
+    "unit": "Hrs",
+    "USD": "0.0239000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "85KUR6TVZSMFSKY8",
+    "usage": "APS3-TS-LoadBalancerUsage",
+    "family": "Load Balancer-Application",
+    "description": "$0.0053 per associated Application load balancer Trust Store unit-hour ",
+    "unit": "Hrs",
+    "USD": "0.0053000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "9NWEG8RPMZ9GY4E9",
+    "usage": "APS3-LoadBalancerUsage",
+    "family": "Load Balancer-Network",
+    "description": "$0.0239per Network LoadBalancer-hour (or partial hour)",
+    "unit": "Hrs",
+    "USD": "0.0239000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "GW7GQSZ3UDNAPCRM",
+    "usage": "APS3-LoadBalancerUsage",
+    "family": "Load Balancer",
+    "description": "$0.0266 per LoadBalancer-hour (or partial hour)",
+    "unit": "Hrs",
+    "USD": "0.0266000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "HFFD75W4GFXQPHZR",
+    "usage": "APS3-LCUUsage",
+    "family": "Load Balancer-Application",
+    "description": "$0.008 per used Application load balancer capacity unit-hour (or partial hour)",
+    "unit": "LCU-Hrs",
+    "USD": "0.0080000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "J3J9BZ7RPU58PCNV",
+    "usage": "APS3-LCUUsage",
+    "family": "Load Balancer-Network",
+    "description": "$0.006 per used Network load balancer capacity unit-hour (or partial hour)",
+    "unit": "LCU-Hrs",
+    "USD": "0.0060000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "KYYA9H758MN2649H",
+    "usage": "APS3-ReservedLCUUsage",
+    "family": "Load Balancer-Application",
+    "description": "$0.008 per reserved Application load balancer capacity unit-hour",
+    "unit": "ReservedLCU-Hr",
+    "USD": "0.0080000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "SXSGM54V3XBP4Z5Y",
+    "usage": "APS3-Outposts-LCUUsage",
+    "family": "Load Balancer-Application",
+    "description": "$0.0 per LCU-Hrs for Outposts-LCUUsage:LoadBalancing:Application in Asia Pacific (Mumbai)",
+    "unit": "LCU-Hrs",
+    "USD": "0.0000000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "UYRYKW9MKSNJBEEA",
+    "usage": "APS3-DataProcessing-Bytes",
+    "family": "Load Balancer",
+    "description": "$0.008 per GB Data Processed by the LoadBalancer",
+    "unit": "GB",
+    "USD": "0.0080000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "VTN6JTDRTJ347GSS",
+    "usage": "APS3-LoadBalancerUsage",
+    "family": "Load Balancer-Gateway",
+    "description": "$0.0133 per Gateway LoadBalancer-hour (or partial hour) in Asia Pacific (Mumbai)",
+    "unit": "Hrs",
+    "USD": "0.0133000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "WGMKTDUVKHXZ6357",
+    "usage": "APS3-LCUUsage",
+    "family": "Load Balancer-Gateway",
+    "description": "$0.0040 per used Gateway load balancer capacity unit-hour (or partial hour) in Asia Pacific (Mumbai)",
+    "unit": "LCU-Hrs",
+    "USD": "0.0040000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "WJ2MHASNP2ZNKFXX",
+    "usage": "APS3-LoadBalancerUsage",
+    "family": "Load Balancer-Application",
+    "description": "$0.0239 per Application LoadBalancer-hour (or partial hour)",
+    "unit": "Hrs",
+    "USD": "0.0239000000",
+    "begin": "0",
+    "end": "Inf"
+  }
+]

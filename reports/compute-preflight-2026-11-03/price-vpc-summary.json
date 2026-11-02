@@ -1,0 +1,642 @@
+[
+  {
+    "sku": "2UHKQ8KWXBA82NHH",
+    "usage": "APS3-OdbPeering-In-Bytes",
+    "family": "VPC Peering",
+    "description": "$0.01 per GB for APS3-OdbPeering-In-Bytes in Asia Pacific (Mumbai)",
+    "unit": "GB",
+    "USD": "0.0100000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "2UPPN2A5H3ZH39RH",
+    "usage": "APS3-VpcEndpoint-GWLBE-Hours",
+    "family": "VpcEndpoint",
+    "description": "$0.013 per Hrs for VpcEndpoint-GWLBE-Hours:VpcEndpoint in Asia Pacific (Mumbai)",
+    "unit": "Hrs",
+    "USD": "0.0130000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "43SPVERFZBSEN4WG",
+    "usage": "APS3-TransitGateway-Bytes",
+    "family": null,
+    "description": "$0.02 per GB Data Processed by Transit Gateway VPN Attachment",
+    "unit": "GigaBytes",
+    "USD": "0.0200000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "4D3GX82ADTQ4CSFY",
+    "usage": "APS3-VerifiedAccess-DataProcess-Bytes",
+    "family": null,
+    "description": "USD0.02 per GB for VerifiedAccess-DataProcess-Bytes:VerifiedAccess-data in Asia Pacific (Mumbai)",
+    "unit": "GB",
+    "USD": "0.0200000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "4E8SSKAYSZ6H4GV6",
+    "usage": "APS3-TransitGateway-Bytes",
+    "family": null,
+    "description": "$0.02 per GB - data processed by AWS Transit Gateways for Site-to-Site VPN Concentrator attachments",
+    "unit": "GigaBytes",
+    "USD": "0.0200000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "5XHBR8XQJQR282X7",
+    "usage": "APS3-VpcResource-ODB-Provider-Bytes",
+    "family": null,
+    "description": "$0.006 - Per GB charge for provider of ODB Network Resource in Asia Pacific (Mumbai)",
+    "unit": "GB",
+    "USD": "0.0060000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "6TSJ4MD9M37QQ2NW",
+    "usage": "APS3-VerifiedAccess-non-HTTP-App-Hours",
+    "family": null,
+    "description": "USD0.26 per hours for VerifiedAccess-non-HTTP-App-Hours:VerifiedAccess-NonHTTP-Apps in Asia Pacific (Mumbai)",
+    "unit": "hours",
+    "USD": "0.2600000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "6VR53G8XXVRE922C",
+    "usage": "APS3-VerifiedAccess-ConnectionHours",
+    "family": null,
+    "description": "USD0.001 per Hourly for VerifiedAccess-ConnectionHours:VerifiedAccessConnection in Asia Pacific (Mumbai)",
+    "unit": "Hourly",
+    "USD": "0.0010000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "6W863PP8UWFVXTJK",
+    "usage": "APS3-ClientVPN-ConnectionHours",
+    "family": null,
+    "description": "$0.05 per Client VPN Connection Hour",
+    "unit": "Hourly",
+    "USD": "0.0500000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "7SX6DNXR9AZKWVGV",
+    "usage": "APS3-OdbPeering-Out-Bytes",
+    "family": "VPC Peering",
+    "description": "$0.01 per GB for APS3-OdbPeering-Out-Bytes in Asia Pacific (Mumbai)",
+    "unit": "GB",
+    "USD": "0.0100000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "8ACEBZDFK3YSFY8G",
+    "usage": "APS3-VPN-concentrator-site-Usage-Hours:ipsec.1",
+    "family": "Cloud Connectivity",
+    "description": "$0.01 per hour for CreateVpnConnection in Asia Pacific (Mumbai)",
+    "unit": "Hrs",
+    "USD": "0.0100000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "95VZNVNT4UMDUCN4",
+    "usage": "APS3-VPN-Usage-Hours:ipsec.1",
+    "family": "Cloud Connectivity",
+    "description": "$0.05 per VPN Connection-Hour",
+    "unit": "Hrs",
+    "USD": "0.0500000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "9S6UHRXGSXKB9GVW",
+    "usage": "APS3-VpcLattice-Service-Network-ODB-Resource-Hours",
+    "family": null,
+    "description": "$0.13 - Hourly charge to access ODB Network Resource through service-network in Asia Pacific (Mumbai)",
+    "unit": "Hrs",
+    "USD": "0.1300000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "AVY8BN54EJG5Y7K8",
+    "usage": "APS3-PublicIPv4:ContiguousBlock",
+    "family": null,
+    "description": "$0.008 per hour per IPv4 address in contiguous IPv4 block",
+    "unit": "Hrs",
+    "USD": "0.0080000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "BR6XPGP62USBDSNA",
+    "usage": "APS3-VPCLattice-RequestCount-Free",
+    "family": null,
+    "description": "$0 for the first 300,000 Requests per hour processed by VPC Lattice Service (Mumbai)",
+    "unit": "Requests",
+    "USD": "0.0000000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "CSRJTKHMAVNJSJAK",
+    "usage": "APS3-PublicIPv4:IdleAddress",
+    "family": null,
+    "description": "$0.005 per Idle public IPv4 address per hour",
+    "unit": "Hrs",
+    "USD": "0.0050000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "DD4RWNX42EM58UXS",
+    "usage": "APS3-TransitGateway-Hours",
+    "family": null,
+    "description": "$0.07 per hour - Hourly charge for Transit Gateway Site-to-Site VPN Concentrator attachments",
+    "unit": "hour",
+    "USD": "0.0700000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "EC8F25TYGN35RHTQ",
+    "usage": "APS3-TransitGateway-Hours",
+    "family": null,
+    "description": "$0.07 per Transit Gateway VPC Attachment Hour",
+    "unit": "hour",
+    "USD": "0.0700000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "F4K5PFPNRXQAZWQ5",
+    "usage": "APS3-VpcEndpoint-ODB-Resource-Hours",
+    "family": "VpcEndpoint",
+    "description": "$0.026 - Hourly charge to access ODB Network Resource through Resource-endpoint",
+    "unit": "Hrs",
+    "USD": "0.0260000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "FDBC7EQDUADKMUZF",
+    "usage": "APS3-VerifiedAccess-App-Hours",
+    "family": null,
+    "description": "USD0.35 per hours for VerifiedAccess-App-Hours:VerifiedAccess-Apps in Asia Pacific (Mumbai)",
+    "unit": "hours",
+    "USD": "0.3500000000",
+    "begin": "0",
+    "end": "148800"
+  },
+  {
+    "sku": "FDBC7EQDUADKMUZF",
+    "usage": "APS3-VerifiedAccess-App-Hours",
+    "family": null,
+    "description": "USD0.26 per hours for VerifiedAccess-App-Hours:VerifiedAccess-Apps in Asia Pacific (Mumbai)",
+    "unit": "hours",
+    "USD": "0.2600000000",
+    "begin": "148800",
+    "end": "Inf"
+  },
+  {
+    "sku": "FZEPVUP5TCKV6CNW",
+    "usage": "APS3-Analysis-Runs",
+    "family": null,
+    "description": "$0.1 per analysis processed by VPC Reachability Analyzer",
+    "unit": "ReachabilityAnalyses",
+    "USD": "0.1000000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "GF2GP7F5ZXT23QCC",
+    "usage": "APS3-VpcResource-Provider-Bytes",
+    "family": null,
+    "description": "$0.006 per GB for data processed by VPC resource in Asia Pacific (Mumbai)",
+    "unit": "GB",
+    "USD": "0.0060000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "GQS2K894J664YTJU",
+    "usage": "APS3-VPCLattice-RequestCount-Charged",
+    "family": null,
+    "description": "$0.00000013 per Request per hour processed by VPC Lattice Service (Mumbai)",
+    "unit": "Requests",
+    "USD": "0.0000001300",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "GXW8ZBYCT8YWH6CQ",
+    "usage": "APS3-VPCEncryptionControls-hours",
+    "family": "VPC Encryption Controls",
+    "description": "$0.19 per hour for VPCEncryptionControls-hours in Asia Pacific (Mumbai)",
+    "unit": "hour",
+    "USD": "0.1900000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "H28U597Y3E9S7XTS",
+    "usage": "APS3-ClientVPN-EndpointHours",
+    "family": null,
+    "description": "$0.15 per Client VPN Endpoint Association Hour",
+    "unit": "Hourly",
+    "USD": "0.1500000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "H35C98DPMXURRDAZ",
+    "usage": "APS3-TransitGateway-Hours",
+    "family": null,
+    "description": "$0.07 per hour for TransitGateway-Hours:TransitGatewayConnect in Asia Pacific (Mumbai)",
+    "unit": "hour",
+    "USD": "0.0700000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "H6SHSM3KDNNZRM9E",
+    "usage": "APS3-PublicIPv4:InUseAddress",
+    "family": null,
+    "description": "$0.005 per In-use public IPv4 address per hour",
+    "unit": "Hrs",
+    "USD": "0.0050000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "HQEU73ANAVM6HRU3",
+    "usage": "APS3-ENI-Mirror",
+    "family": null,
+    "description": "$0.018 per Traffic Mirroring Source Hour",
+    "unit": "hour",
+    "USD": "0.0180000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "JFB75QKEWJ6ENENJ",
+    "usage": "APS3-VpcLattice-Service-Network-Resource-Hours",
+    "family": null,
+    "description": "$0.13 per hour per VPC resource in a service-network in Asia Pacific (Mumbai)",
+    "unit": "Hrs",
+    "USD": "0.1300000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "KA5HHQNKW5H6RX9W",
+    "usage": "APS3-TransitGateway-Bytes",
+    "family": null,
+    "description": "$0.02 per GB Data Processed by Transit Gateway DirectConnect Attachment",
+    "unit": "GigaBytes",
+    "USD": "0.0200000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "KTBKXTWD4BQ95TXA",
+    "usage": "APS3-VpcEndpoint-Bytes",
+    "family": "VpcEndpoint",
+    "description": "$0.006 per GB for more than 1 PB and less than 5 PB monthly data processed by VPC Endpoints",
+    "unit": "GB",
+    "USD": "0.0060000000",
+    "begin": "1048576",
+    "end": "5242880"
+  },
+  {
+    "sku": "KTBKXTWD4BQ95TXA",
+    "usage": "APS3-VpcEndpoint-Bytes",
+    "family": "VpcEndpoint",
+    "description": "$0.01 per GB for upto 1 PB monthly data processed by VPC Endpoints",
+    "unit": "GB",
+    "USD": "0.0100000000",
+    "begin": "0",
+    "end": "1048576"
+  },
+  {
+    "sku": "KTBKXTWD4BQ95TXA",
+    "usage": "APS3-VpcEndpoint-Bytes",
+    "family": "VpcEndpoint",
+    "description": "$0.004 per GB for more than 5 PB monthly data processed by VPC Endpoints",
+    "unit": "GB",
+    "USD": "0.0040000000",
+    "begin": "5242880",
+    "end": "Inf"
+  },
+  {
+    "sku": "KYJNMNP7PSHTTRCG",
+    "usage": "APS3-TransitGateway-Hours",
+    "family": null,
+    "description": "$0.07 per Transit Gateway VPN Attachment Hour",
+    "unit": "hour",
+    "USD": "0.0700000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "MN9WTHQXJDR36SAG",
+    "usage": "APS3-TransitGateway-Bytes",
+    "family": null,
+    "description": "$0.02 per GB Data Processed by Transit Gateway VPC Attachment",
+    "unit": "GigaBytes",
+    "USD": "0.0200000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "MNBG64XNPYSEYVX5",
+    "usage": "APS3-NetworkInterface-Assessment",
+    "family": null,
+    "description": "$0.002 per ENI processed by VPC Network Access Analyzer ap-south-1",
+    "unit": "NetworkInterface-Assessment",
+    "USD": "0.0020000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "P8JCP6PD89W6QVCT",
+    "usage": "APS3-VpcEndpoint-Resource-Hours",
+    "family": "VpcEndpoint",
+    "description": "$0.026 per hour per VPC resource for VPC endpoint of type 'resource' in  Asia Pacific (Mumbai)",
+    "unit": "Hrs",
+    "USD": "0.0260000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "PWNQZ3EJ76DJK3N8",
+    "usage": "APS3-VpcEndpoint-GWLBE-Bytes",
+    "family": "VpcEndpoint",
+    "description": "Charge for per GB data processed by AWS Gateway Load Balancer VPC Endpoint",
+    "unit": "GB",
+    "USD": "0.0035000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "QCCKV7F2XRC7BVU2",
+    "usage": "APS3-TransitGateway-Hours",
+    "family": null,
+    "description": "$0.07 per Transit Gateway DirectConnect Attachment Hour",
+    "unit": "hour",
+    "USD": "0.0700000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "RMEGV2GENTH82E8T",
+    "usage": "APS3-TGW-Multicast-Consumer-Bytes",
+    "family": null,
+    "description": "$0.02 per GigaBytes for TGW-Multicast-Consumer-Bytes:TransitGatewayVPC in Asia Pacific (Mumbai)",
+    "unit": "GigaBytes",
+    "USD": "0.0200000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "RS32EAHGCWVUYNSQ",
+    "usage": "APS3-VPN-concentrator-Usage-Hours:ipsec.1",
+    "family": "Cloud Connectivity",
+    "description": "$1.95 per hour for CreateVpnConcentrator in Asia Pacific (Mumbai)",
+    "unit": "Hrs",
+    "USD": "1.9500000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "RZP4UFE8YBANMG22",
+    "usage": "APS3-VpcEndpoint-Hours",
+    "family": "VpcEndpoint",
+    "description": "$0.013 per VPC Endpoint Hour",
+    "unit": "Hrs",
+    "USD": "0.0130000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "SPDKHYG4AK8YCZKT",
+    "usage": "APS3-VpcResource-Tunnel-Consumer-Bytes",
+    "family": "VpcEndpoint",
+    "description": "$0.006 from 1 PB to 5 PB - Per GB charge to access CIDR Resources through Tunnel Endpoint",
+    "unit": "GB",
+    "USD": "0.0060000000",
+    "begin": "1048576",
+    "end": "5242880"
+  },
+  {
+    "sku": "SPDKHYG4AK8YCZKT",
+    "usage": "APS3-VpcResource-Tunnel-Consumer-Bytes",
+    "family": "VpcEndpoint",
+    "description": "$0.004 after the first 5 PB - Per GB charge to access CIDR Resources through Tunnel Endpoint",
+    "unit": "GB",
+    "USD": "0.0040000000",
+    "begin": "5242880",
+    "end": "Inf"
+  },
+  {
+    "sku": "SPDKHYG4AK8YCZKT",
+    "usage": "APS3-VpcResource-Tunnel-Consumer-Bytes",
+    "family": "VpcEndpoint",
+    "description": "$0.01 from 0 to 1 PB - Per GB charge to access CIDR Resources through Tunnel Endpoint",
+    "unit": "GB",
+    "USD": "0.0100000000",
+    "begin": "0",
+    "end": "1048576"
+  },
+  {
+    "sku": "SR7S37EVAX5THJPF",
+    "usage": "APS3-IPAddressManager-IP-Hours",
+    "family": null,
+    "description": "$0.00027 per hours for IPAddressManager-IP-Hours:IPAM-Active-IP in Asia Pacific (Mumbai)",
+    "unit": "hours",
+    "USD": "0.0002700000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "T4E62UP5YGM89VV9",
+    "usage": "APS3-VpcEndpoint-Tunnel-Hours",
+    "family": "VpcEndpoint",
+    "description": "$0.026 - Hourly charge to access CIDR resources through Tunnel endpoint",
+    "unit": "Hrs",
+    "USD": "0.0260000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "TKEX66D5WNAB3ZPM",
+    "usage": "APS3-VPCLattice-ConnectionCount-Charged",
+    "family": null,
+    "description": "$0.00000013 per Connection per hour processed by VPC Lattice Service (Mumbai)",
+    "unit": "Connections",
+    "USD": "0.0000001300",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "TNG7WJWQ2GGE7NZ2",
+    "usage": "APS3-VPCLattice-ConnectionCount-Free",
+    "family": null,
+    "description": "$0 for the first 300,000 Connections per hour processed by VPC Lattice Service (Mumbai)",
+    "unit": "Connections",
+    "USD": "0.0000000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "UDXJYCEU5UMQB4CU",
+    "usage": "APS3-OdbPeering-AZ-Out-Bytes",
+    "family": "VPC Peering",
+    "description": "$0.00 per GB for APS3-OdbPeering-AZ-Out-Bytes in Asia Pacific (Mumbai)",
+    "unit": "GB",
+    "USD": "0.0000000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "W5DHSY94NJSY9KD4",
+    "usage": "APS3-VpcEndpoint-Service-Hours",
+    "family": "VpcEndpoint",
+    "description": "$0.05 per hour per active remote region for a VPCE service",
+    "unit": "Hrs",
+    "USD": "0.0500000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "WGSVH3XPDD9U246Z",
+    "usage": "APS3-VpcResource-Consumer-Bytes",
+    "family": "VpcEndpoint",
+    "description": "$0.006 per GB for more than 1 PB and less than 5 PB monthly data processed for VPC resources",
+    "unit": "GB",
+    "USD": "0.0060000000",
+    "begin": "1048576",
+    "end": "5242880"
+  },
+  {
+    "sku": "WGSVH3XPDD9U246Z",
+    "usage": "APS3-VpcResource-Consumer-Bytes",
+    "family": "VpcEndpoint",
+    "description": "$0.004 per GB for more than 5 PB monthly data processed for VPC resources ",
+    "unit": "GB",
+    "USD": "0.0040000000",
+    "begin": "5242880",
+    "end": "Inf"
+  },
+  {
+    "sku": "WGSVH3XPDD9U246Z",
+    "usage": "APS3-VpcResource-Consumer-Bytes",
+    "family": "VpcEndpoint",
+    "description": "$0.01 per GB for upto 1 PB monthly data processed for VPC resources ",
+    "unit": "GB",
+    "USD": "0.0100000000",
+    "begin": "0",
+    "end": "1048576"
+  },
+  {
+    "sku": "WNJM6QUF89WHEF43",
+    "usage": "APS3-TransitGateway-Hours",
+    "family": null,
+    "description": "$0.07 per hour for TransitGateway-Hours:TransitGatewayPeering in Asia Pacific (Mumbai)",
+    "unit": "hour",
+    "USD": "0.0700000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "Y9ACDFKFMVPG5FYK",
+    "usage": "APS3-RouteServer-EndpointHours",
+    "family": "VPC Route Server",
+    "description": "$0.93 per Hour for APS3-RouteServer-EndpointHours in Asia Pacific (Mumbai)",
+    "unit": "Hour",
+    "USD": "0.9300000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "YGV3B4FQZT9JHHSB",
+    "usage": "APS3-VPCLattice-DataProcessing-Bytes",
+    "family": null,
+    "description": "$0.0325 per GB Data Processed by VPC Lattice Service (Mumbai)",
+    "unit": "GB",
+    "USD": "0.0325000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "YNXWFPFVNH4GPGTT",
+    "usage": "APS3-VpcResource-ODB-Consumer-Bytes",
+    "family": "VpcEndpoint",
+    "description": "$0.004 after the first 5 PB - Per GB charge to access ODB Network Resources",
+    "unit": "GB",
+    "USD": "0.0040000000",
+    "begin": "5242880",
+    "end": "Inf"
+  },
+  {
+    "sku": "YNXWFPFVNH4GPGTT",
+    "usage": "APS3-VpcResource-ODB-Consumer-Bytes",
+    "family": "VpcEndpoint",
+    "description": "$0.006 from 1 PB to 5 PB - Per GB charge to access ODB Network Resources",
+    "unit": "GB",
+    "USD": "0.0060000000",
+    "begin": "1048576",
+    "end": "5242880"
+  },
+  {
+    "sku": "YNXWFPFVNH4GPGTT",
+    "usage": "APS3-VpcResource-ODB-Consumer-Bytes",
+    "family": "VpcEndpoint",
+    "description": "$0.01 from 0 to 1 PB - Per GB charge to access ODB Network Resources",
+    "unit": "GB",
+    "USD": "0.0100000000",
+    "begin": "0",
+    "end": "1048576"
+  },
+  {
+    "sku": "YX2V7D7B5BQRWNQV",
+    "usage": "APS3-VPN-large-Usage-Hours:ipsec.1",
+    "family": "Cloud Connectivity",
+    "description": "$0.60 per hour for CreateVpnConnection in Asia Pacific (Mumbai)",
+    "unit": "Hrs",
+    "USD": "0.6000000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "Z2W8N5T53P9VKABP",
+    "usage": "APS3-VPCLattice-Service-Hourly",
+    "family": null,
+    "description": "$0.0325 per Hour per VPC Lattice Service (Mumbai)",
+    "unit": "Hrs",
+    "USD": "0.0325000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "ZCZ44VXNRC3AKSSP",
+    "usage": "APS3-OdbPeering-AZ-In-Bytes",
+    "family": "VPC Peering",
+    "description": "$0.00 per GB for APS3-OdbPeering-AZ-In-Bytes in Asia Pacific (Mumbai)",
+    "unit": "GB",
+    "USD": "0.0000000000",
+    "begin": "0",
+    "end": "Inf"
+  }
+]

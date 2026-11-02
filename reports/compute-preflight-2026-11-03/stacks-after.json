@@ -1,0 +1,14 @@
+[
+    {
+        "Name": "LegalittDev-Core",
+        "Created": "2026-10-20T14:22:47.548000+00:00",
+        "Updated": "2026-11-01T21:53:00.246000+00:00",
+        "Status": "UPDATE_COMPLETE"
+    },
+    {
+        "Name": "CDKToolkit",
+        "Created": "2026-10-20T14:14:27.199000+00:00",
+        "Updated": "2026-10-20T14:14:33.120000+00:00",
+        "Status": "CREATE_COMPLETE"
+    }
+]

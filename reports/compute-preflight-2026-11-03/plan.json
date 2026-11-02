@@ -1,0 +1,9 @@
+{
+  "accountId": "026379630400",
+  "accountPlanType": "PAID",
+  "accountPlanStatus": "ACTIVE",
+  "accountPlanRemainingCredits": {
+    "amount": 117.74,
+    "unit": "USD"
+  }
+}

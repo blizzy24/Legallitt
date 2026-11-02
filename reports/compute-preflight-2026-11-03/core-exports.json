@@ -1,0 +1,39 @@
+{
+    "Exports": [
+        {
+            "ExportingStackId": "arn:aws:cloudformation:ap-south-1:026379630400:stack/CDKToolkit/8ef25880-cc90-11f1-81f1-06fff8437a0d",
+            "Name": "CdkBootstrap-hnb659fds-FileAssetKeyArn",
+            "Value": "AWS_MANAGED_KEY"
+        },
+        {
+            "ExportingStackId": "arn:aws:cloudformation:ap-south-1:026379630400:stack/LegalittDev-Core/b91e2200-cc91-11f1-8bc9-02fff72c1a43",
+            "Name": "LegalittDev-Core:ExportsOutputFnGetAttDocumentsArn9D87F4A8",
+            "Value": "arn:aws:s3:::legalitt-dev-documents-026379630400-ap-south-1"
+        },
+        {
+            "ExportingStackId": "arn:aws:cloudformation:ap-south-1:026379630400:stack/LegalittDev-Core/b91e2200-cc91-11f1-8bc9-02fff72c1a43",
+            "Name": "LegalittDev-Core:ExportsOutputFnGetAttEncryptionKeyArn63627630",
+            "Value": "arn:aws:kms:ap-south-1:026379630400:key/3261c0d9-6ce7-429d-a6e5-82e1de4be98a"
+        },
+        {
+            "ExportingStackId": "arn:aws:cloudformation:ap-south-1:026379630400:stack/LegalittDev-Core/b91e2200-cc91-11f1-8bc9-02fff72c1a43",
+            "Name": "LegalittDev-Core:ExportsOutputRefAppConfiguration4766511E",
+            "Value": "arn:aws:secretsmanager:ap-south-1:026379630400:secret:legalitt-dev/app-config-FztJho"
+        },
+        {
+            "ExportingStackId": "arn:aws:cloudformation:ap-south-1:026379630400:stack/LegalittDev-Core/b91e2200-cc91-11f1-8bc9-02fff72c1a43",
+            "Name": "LegalittDev-Core:ExportsOutputRefDatabaseSecretD7AA9253",
+            "Value": "arn:aws:secretsmanager:ap-south-1:026379630400:secret:legalitt-dev/database-SY4O9G"
+        },
+        {
+            "ExportingStackId": "arn:aws:cloudformation:ap-south-1:026379630400:stack/LegalittDev-Core/b91e2200-cc91-11f1-8bc9-02fff72c1a43",
+            "Name": "LegalittDev-Core:ExportsOutputRefDemoCredentials077E3031",
+            "Value": "arn:aws:secretsmanager:ap-south-1:026379630400:secret:legalitt-dev/demo-auth-OX2woi"
+        },
+        {
+            "ExportingStackId": "arn:aws:cloudformation:ap-south-1:026379630400:stack/LegalittDev-Core/b91e2200-cc91-11f1-8bc9-02fff72c1a43",
+            "Name": "LegalittDev-Core:ExportsOutputRefDocuments2EE553D9",
+            "Value": "legalitt-dev-documents-026379630400-ap-south-1"
+        }
+    ]
+}

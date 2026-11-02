@@ -1,0 +1,242 @@
+[
+  {
+    "sku": "357EHK9N9ANFHP42",
+    "usage": "APS3-RegionalNatGateway-Bytes",
+    "family": "NAT Gateway",
+    "description": "$0.056 per GB data processed by Regional NAT Gateways (TransitGatewayPeering)",
+    "unit": "GB",
+    "USD": "0.0560000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "5NZKRA7Z83EJXBJR",
+    "usage": "APS3-RegionalNatGateway-Hours",
+    "family": "NAT Gateway",
+    "description": "$0.056 per Regional NAT Gateway Hour (CloudWANConnect)",
+    "unit": "Hrs",
+    "USD": "0.0560000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "64BEAW3X74JHEHG2",
+    "usage": "APS3-RegionalNatGateway-Bytes",
+    "family": "NAT Gateway",
+    "description": "Charge for per GB data processed by NAT Gateways",
+    "unit": "GB",
+    "USD": "0.0560000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "8PC9PPP6ZQRKQMBU",
+    "usage": "APS3-RegionalNatGateway-Bytes",
+    "family": "NAT Gateway",
+    "description": "$0.056 per GB data processed by Regional NAT Gateways (TransitGatewayVPC)",
+    "unit": "GB",
+    "USD": "0.0560000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "9ZEP3MPC8TVPZ4NX",
+    "usage": "APS3-RegionalNatGateway-Hours",
+    "family": "NAT Gateway",
+    "description": "$0.056 per Regional NAT Gateway Hour (TransitGatewayConcentratorVPN)",
+    "unit": "Hrs",
+    "USD": "0.0560000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "AMR7XUVHXHT5B3HJ",
+    "usage": "APS3-RegionalNatGateway-Bytes",
+    "family": "NAT Gateway",
+    "description": "$0.056 per GB data processed by Regional NAT Gateways (CloudWANConnect)",
+    "unit": "GB",
+    "USD": "0.0560000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "BR62MFJMH8EW59J4",
+    "usage": "APS3-RegionalNatGateway-Bytes",
+    "family": "NAT Gateway",
+    "description": "$0.056 per GB data processed by Regional NAT Gateways (TransitGatewayConnect)",
+    "unit": "GB",
+    "USD": "0.0560000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "CNUR73JTW2WFBAHS",
+    "usage": "APS3-RegionalNatGateway-Bytes",
+    "family": "NAT Gateway",
+    "description": "$0.056 per GB data processed by Regional NAT Gateways (CloudWANDirectConnect)",
+    "unit": "GB",
+    "USD": "0.0560000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "CVKCNA7F5Q3N6KKT",
+    "usage": "APS3-RegionalNatGateway-Hours",
+    "family": "NAT Gateway",
+    "description": "$0.056 per Regional NAT Gateway Hour (CloudWANDirectConnect)",
+    "unit": "Hrs",
+    "USD": "0.0560000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "DBW8BYVM6STKV3XX",
+    "usage": "APS3-RegionalNatGateway-Hours",
+    "family": "NAT Gateway",
+    "description": "$0.056 per Regional NAT Gateway Hour (CloudWANS2SVPN)",
+    "unit": "Hrs",
+    "USD": "0.0560000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "DJ4GYZ29AWV3WFQX",
+    "usage": "APS3-NatGateway-Hours",
+    "family": "NAT Gateway",
+    "description": "$0.056 per NAT Gateway Hour",
+    "unit": "Hrs",
+    "USD": "0.0560000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "HSDDHBGVH9J34TE2",
+    "usage": "APS3-RegionalNatGateway-Bytes",
+    "family": "NAT Gateway",
+    "description": "$0.056 per GB data processed by Regional NAT Gateways (TransitGatewayDirectConnect)",
+    "unit": "GB",
+    "USD": "0.0560000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "JXX9KQ82VWHNVRA2",
+    "usage": "APS3-RegionalNatGateway-Bytes",
+    "family": "NAT Gateway",
+    "description": "$0.056 per GB data processed by Regional NAT Gateways (TransitGatewayVPN)",
+    "unit": "GB",
+    "USD": "0.0560000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "KEYUAXA8S7KU76KP",
+    "usage": "APS3-RegionalNatGateway-Hours",
+    "family": "NAT Gateway",
+    "description": "$0.056 per Regional NAT Gateway Hour (TransitGatewayDirectConnect)",
+    "unit": "Hrs",
+    "USD": "0.0560000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "PECZM5QN6GRSM5DH",
+    "usage": "APS3-RegionalNatGateway-Hours",
+    "family": "NAT Gateway",
+    "description": "Hourly charge for Regional NAT Gateways",
+    "unit": "Hrs",
+    "USD": "0.0560000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "RKV7XDQY9FWVTBEK",
+    "usage": "APS3-RegionalNatGateway-Hours",
+    "family": "NAT Gateway",
+    "description": "$0.056 per Regional NAT Gateway Hour (CloudWANVPC)",
+    "unit": "Hrs",
+    "USD": "0.0560000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "U3B5F5D6AU5THP8V",
+    "usage": "APS3-NatGateway-Bytes",
+    "family": "NAT Gateway",
+    "description": "$0.056 per GB Data Processed by NAT Gateways",
+    "unit": "GB",
+    "USD": "0.0560000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "U5U9MRUA6Q73AZ8M",
+    "usage": "APS3-RegionalNatGateway-Hours",
+    "family": "NAT Gateway",
+    "description": "$0.056 per Regional NAT Gateway Hour (TransitGatewayConnect)",
+    "unit": "Hrs",
+    "USD": "0.0560000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "XFUJSMZR8TD44VWQ",
+    "usage": "APS3-RegionalNatGateway-Bytes",
+    "family": "NAT Gateway",
+    "description": "$0.056 per GB data processed by Regional NAT Gateways (TransitGatewayConcentratorVPN)",
+    "unit": "GB",
+    "USD": "0.0560000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "YHXCU3BHTZCB3SWJ",
+    "usage": "APS3-RegionalNatGateway-Hours",
+    "family": "NAT Gateway",
+    "description": "$0.056 per Regional NAT Gateway Hour (TransitGatewayVPN)",
+    "unit": "Hrs",
+    "USD": "0.0560000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "YW4GRPW9URQ864KA",
+    "usage": "APS3-RegionalNatGateway-Bytes",
+    "family": "NAT Gateway",
+    "description": "$0.056 per GB data processed by Regional NAT Gateways (CloudWANVPC)",
+    "unit": "GB",
+    "USD": "0.0560000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "YWT2CHZ9DES24AUK",
+    "usage": "APS3-RegionalNatGateway-Bytes",
+    "family": "NAT Gateway",
+    "description": "$0.056 per GB data processed by Regional NAT Gateways (CloudWANS2SVPN)",
+    "unit": "GB",
+    "USD": "0.0560000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "Z4YWXGWXD69GVQYS",
+    "usage": "APS3-RegionalNatGateway-Hours",
+    "family": "NAT Gateway",
+    "description": "$0.056 per Regional NAT Gateway Hour (TransitGatewayVPC)",
+    "unit": "Hrs",
+    "USD": "0.0560000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "ZAYCEHAHWWHP84AF",
+    "usage": "APS3-RegionalNatGateway-Hours",
+    "family": "NAT Gateway",
+    "description": "$0.056 per Regional NAT Gateway Hour (TransitGatewayPeering)",
+    "unit": "Hrs",
+    "USD": "0.0560000000",
+    "begin": "0",
+    "end": "Inf"
+  }
+]

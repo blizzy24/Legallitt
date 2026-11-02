@@ -1,0 +1,189 @@
+Compute preflight — 3 November 2026
+
+Decision: STOP. No deployment was attempted. The recurring cost exceeds the
+project owner's approximately INR 6,000/month gate, and the template includes
+resource services beyond the five named in the deployment instruction.
+Core, production, the mobile configuration and Vercel were not changed.
+No migrations, remote seed or hosted /health check ran because Compute was not
+created. New recurring infrastructure spend from this work: zero.
+
+Account and Free Tier
+
+AWS account get-account-information reports creation on 30 March 2026 at
+07:45:50 UTC (about seven months ago). freetier get-account-plan-state reports
+PAID / ACTIVE and USD 117.74 of remaining credits. These are direct account
+responses, saved in account.json and plan.json.
+
+This account was created after 15 July 2025, so the old twelve-month 750-hour
+RDS/ALB allowance is not the applicable program. RDS t4g.micro and ALB incur
+normal usage charges, against which eligible remaining credits can apply. A
+credit balance is not a recurring free service allowance. The usage API currently
+lists only always-free Glue, Lambda, CloudWatch and KMS usage; it does not list
+RDS or ALB free hours. Absence of unused services in that API alone is not the
+basis of the conclusion: the account creation date and current AWS rules are.
+
+The account-plan response does not supply an exact credit expiry date. AWS's
+published maximum is twelve months from account creation (30 March 2027 here),
+subject to the actual credit terms and earlier exhaustion. The remaining balance
+would cover roughly 1.1 months of the example Compute usage alone, before other
+account usage and any ineligible charges. It is not a durable budget reduction.
+Sources:
+https://aws.amazon.com/rds/faqs/
+https://aws.amazon.com/elasticloadbalancing/pricing/
+https://aws.amazon.com/free/free-tier-faqs/
+
+Monthly cost, from the AWS Pricing API's Mumbai SKUs
+
+Assumptions for comparison only (not applied to deployment parameters): 730 hours,
+one Single-AZ PostgreSQL db.t4g.micro, 20 GiB gp3, one Linux x86 Fargate task at
+0.25 vCPU / 1 GiB, one ALB in two AZs, one shared NAT, three public IPv4 addresses
+(two ALB and one NAT). This is not a load-tested capacity recommendation.
+
+Item                              AWS unit price             USD/month
+RDS instance                      0.021/hour                   15.33000
+RDS gp3                           0.131/GB-month                2.62000
+Fargate CPU                       0.04256/vCPU-hour             7.76720
+Fargate memory                    0.004655/GB-hour              3.39815
+ALB                               0.0239/hour                  17.44700
+One NAT                           0.056/hour                   40.88000
+Three public IPv4 addresses       0.005/address-hour           10.95000
+Fixed baseline                                                 98.39235
+
+For an explicit usage example, add one average ALB LCU (USD 5.84/month), 1 GB
+processed by NAT (USD 0.056), and 1 GB-month ECR storage (USD 0.10):
+USD 104.38835/month before taxes and credits.
+
+INR conversion uses 94.8755 per USD, the 2 November 2026 reference rate published
+by MSEI. This is a planning conversion, not a guaranteed AWS invoice FX rate.
+Fixed baseline: INR 9,335/month before GST; INR 11,015 including 18% GST.
+Example usage: INR 9,904/month before GST; INR 11,687 including 18% GST.
+Even reducing Fargate to its 0.5-GiB minimum leaves INR 9,174 before GST, or
+INR 10,825 including GST, before variable usage. Thus the cost gate fails without
+relying on the example's traffic assumptions, tax treatment or credit offsets.
+
+Excluded from these incremental Compute figures: existing Core charges, extra
+log/SQS requests, data egress and inter-AZ transfer, backups beyond included
+allowances, RDS CPU-credit overage, scaling/redeployment overlap, AI usage, and
+any support plan. There is no workload forecast from which to claim an exact
+future invoice. An ALB LCU is metered usage, not a compulsory reservation.
+
+Selected raw product records, including SKU, price dimension and publication
+version, are in selected-price-products.json. All calculations are in
+estimate.json; original Pricing API responses are retained alongside it.
+Pricing API is served from us-east-1; every selected product is for ap-south-1.
+No client documents or application data were sent to another region.
+Sources:
+https://aws.amazon.com/rds/postgresql/pricing/
+https://aws.amazon.com/fargate/pricing/
+https://aws.amazon.com/elasticloadbalancing/pricing/
+https://aws.amazon.com/vpc/pricing/
+https://aws.amazon.com/ecr/pricing/
+https://aws.amazon.com/tax-help/apac-vat-rates/
+https://www.msei.in/markets/Currency/Historical-Data/RBIReferenceRateArchives
+
+NAT and endpoint findings
+
+infra/src/stack.ts unconditionally creates Nat0 and NatIp0. NatMode accepts only
+single or per_az. per_az additionally creates Nat1 and NatIp1. Fargate tasks have
+no public IP and use the private subnet default routes through NAT.
+
+One NAT plus its own IPv4 costs USD 44.53/month (approximately INR 4,225 before
+GST or INR 4,985 with GST), before per-GB NAT processing. This is already above
+the approximately INR 3,000 assumption. A second NAT adds the same fixed amount.
+
+Replacing NAT with only S3, Secrets Manager and Bedrock endpoints would strand
+other dependencies: private ECR image pulls need ecr.api and ecr.dkr plus S3;
+awslogs needs Logs; authentication needs Cognito. The app also retrieves Cognito
+JWT verification keys, whose private retrieval path would need verification.
+Gemini calls Google's public API and cannot be reached through AWS endpoints.
+
+Mumbai's endpoint-service API confirms Secrets Manager, Bedrock Runtime,
+Cognito IdP, ECR API/Docker, Logs and SQS endpoints exist. An S3 gateway endpoint
+has no endpoint hourly charge. Interface endpoints do: USD 0.013 per endpoint
+per AZ per hour here, plus data processing.
+
+Five interface services for the basic current AWS-only runtime (Secrets Manager,
+ECR API, ECR Docker, Logs, Cognito) cost USD 47.45/month even in ONE AZ, excluding
+S3 gateway routing, traffic and verification of JWT-key access. Adding Bedrock
+Runtime and SQS brings that to USD 66.43/month. Two AZs double those endpoint
+hourly costs. These are illustrations, not tested replacement topologies. They
+are not a saving over the single NAT and do not clear the total budget gate.
+SQS is provisioned by this skeleton; its endpoint is only needed when a private
+consumer/producer actually uses it. Bedrock is likewise optional while AI is
+simulated. Neither optional dependency was used to inflate the five-endpoint
+baseline.
+
+No NAT or endpoint code was changed: the requested three endpoints are
+insufficient, the broader endpoint option exceeds the budget, and the instruction
+explicitly says to stop on that result. Public-addressed Fargate/another outbound
+topology has not been substituted without a decision on that architecture.
+Sources:
+https://docs.aws.amazon.com/cognito/latest/developerguide/vpc-interface-endpoints.html
+https://docs.aws.amazon.com/AmazonECR/latest/userguide/vpc-endpoints.html
+https://aws.amazon.com/privatelink/pricing/
+
+Compute-only diff and full resource inventory
+
+Command (from infra):
+pnpm exec cdk diff 'LegalittDev/Compute' --exclusively --method template --no-lookups --region ap-south-1 --no-color
+
+This compares against deployed AWS state without making a change set or deploying
+any dependency. Compute does not exist. Existing stacks remain LegalittDev-Core
+and CDKToolkit. Every required Core import already exists; none is missing.
+
+The synthesized template contains 42 resources, of which two are conditional:
+40 would be created with NatMode=single; 42 with NatMode=per_az. Normal CDK diff
+hides AWS::CDK::Metadata; it is included below and in resources.csv. A strict diff
+attempt stopped on CDK's existing cross-stack-reference warning; the subsequent
+normal Compute-only diff succeeded. No feature flags were changed to hide it.
+
+All resources (logical IDs and exact CloudFormation types are in resources.csv):
+- 1 VPC: Vpc.
+- 1 Internet gateway and 1 VPC attachment: InternetGateway, GatewayAttachment.
+- 4 subnets: Subnet0, Subnet1 (public), Subnet2, Subnet3 (private).
+- 4 route tables: RouteTable0 through RouteTable3.
+- 4 subnet/table associations: SubnetRouteTable0 through SubnetRouteTable3.
+- 4 routes: InternetRoute0, InternetRoute1, PrivateRoute0, PrivateRoute1.
+- 1 unconditional EIP and NAT: NatIp0, Nat0.
+- 1 conditional EIP and NAT: NatIp1, Nat1 (per_az only).
+- 3 security groups: AlbSecurityGroup, TaskSecurityGroup, DatabaseSecurityGroup.
+- 1 RDS subnet group and 1 DB instance: DatabaseSubnets, Database.
+- 1 Secrets Manager target attachment: SecretAttachment.
+- 1 SQS queue: Jobs.
+- 1 CloudWatch Logs group: ApiLogs.
+- 1 ECR repository: ApiRepository.
+- 1 IAM permissions boundary: RoleBoundary.
+- 2 IAM roles with inline policies: ApiRole, ExecutionRole.
+- 1 ECS cluster, task definition and service: Cluster, Task, ApiService.
+- 1 ALB, target group and HTTPS listener: LoadBalancer, ApiTarget, HttpsListener.
+- 1 CDK metadata resource: CDKMetadata.
+
+ECR, CloudWatch Logs, IAM, Secrets Manager attachment and CDK metadata are outside
+the deployment prompt's literal VPC/RDS/ECS/ALB/SQS list. IAM boundaries are already
+required by architecture step 2, but that does not erase the new scope gate. The
+attachment would populate the existing Core-owned DB secret with connection
+metadata; it does not create another secret, but it does change that secret.
+None of these changes were made.
+
+Other deployment blockers found without making changes
+
+The stack requires CertificateArn and creates only an HTTPS listener. ACM's
+Mumbai certificate list is empty. Deploying before the certificate requires an
+explicit listener decision; no HTTP listener was silently substituted.
+The skeleton's sizing, CIDRs, Postgres minor version and image tag are mandatory
+parameters without defaults. The estimate above is not an assertion that those
+values have already been configured or approved.
+
+Validation and preserved state
+
+- Compute-only template diff succeeded; no deploy or change-set creation.
+- pnpm typecheck passed across the workspace (6 Turbo tasks).
+- Infra suite: 9 tests passed.
+- Before/after stack names, creation/update timestamps and statuses are identical.
+- No tracked source/configuration files were changed. Only this report directory
+  was added. No Core, production, mobile or Vercel changes.
+
+Next decision belongs to the owner: revise the recurring budget or authorize a
+cheaper outbound topology, resolve the supporting-resource scope, and decide how
+to handle the missing certificate. The already approved deployment was not used
+because its stated gates failed.

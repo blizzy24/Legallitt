@@ -1,0 +1,76 @@
+{
+  "freeTierUsages": [
+    {
+      "service": "AWS Glue",
+      "operation": "Request",
+      "usageType": "Catalog-Request",
+      "region": "global",
+      "actualUsageAmount": 7.0,
+      "forecastedUsageAmount": 105.0,
+      "limit": 1000000.0,
+      "unit": "Request",
+      "description": "1000000.0 Request are always free per month as part of AWS Free Usage Tier (Global-Catalog-Request)",
+      "freeTierType": "Always Free"
+    },
+    {
+      "service": "AWS Lambda",
+      "operation": "",
+      "usageType": "Lambda-GB-Second",
+      "region": "global",
+      "actualUsageAmount": 0.0265,
+      "forecastedUsageAmount": 0.39749999999999996,
+      "limit": 400000.0,
+      "unit": "Lambda-GB-Second",
+      "description": "400000.0 Lambda-GB-Second are always free per month as part of AWS Free Usage Tier (Global-Lambda-GB-Second)",
+      "freeTierType": "Always Free"
+    },
+    {
+      "service": "AWS Lambda",
+      "operation": "",
+      "usageType": "Request",
+      "region": "global",
+      "actualUsageAmount": 12.0,
+      "forecastedUsageAmount": 180.0,
+      "limit": 1000000.0,
+      "unit": "Request",
+      "description": "1000000.0 Request are always free per month as part of AWS Free Usage Tier (Global-Request)",
+      "freeTierType": "Always Free"
+    },
+    {
+      "service": "AmazonCloudWatch",
+      "operation": "",
+      "usageType": "TimedStorage-ByteHrs",
+      "region": "global",
+      "actualUsageAmount": 1.21e-06,
+      "forecastedUsageAmount": 1.815e-05,
+      "limit": 5.0,
+      "unit": "GB-Mo",
+      "description": "5.0 GB-Mo are always free per month as part of AWS Free Usage Tier (Global-TimedStorage-ByteHrs)",
+      "freeTierType": "Always Free"
+    },
+    {
+      "service": "AmazonCloudWatch",
+      "operation": "PutLogEvents",
+      "usageType": "DataProcessing-Bytes",
+      "region": "global",
+      "actualUsageAmount": 4.01e-06,
+      "forecastedUsageAmount": 6.015e-05,
+      "limit": 5.0,
+      "unit": "GB",
+      "description": "5.0 GB are always free per month as part of AWS Free Usage Tier (Global-DataProcessing-Bytes)",
+      "freeTierType": "Always Free"
+    },
+    {
+      "service": "AWS Key Management Service",
+      "operation": "",
+      "usageType": "KMS-Requests",
+      "region": "global",
+      "actualUsageAmount": 144.0,
+      "forecastedUsageAmount": 2160.0,
+      "limit": 20000.0,
+      "unit": "Requests",
+      "description": "20000.0 Requests are always free per month as part of AWS Free Usage Tier (Global-KMS-Requests)",
+      "freeTierType": "Always Free"
+    }
+  ]
+}

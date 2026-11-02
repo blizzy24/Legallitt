@@ -1,0 +1,646 @@
+{
+  "rds": {
+    "product": {
+      "productFamily": "Database Instance",
+      "attributes": {
+        "engineCode": "14",
+        "instanceTypeFamily": "T4G",
+        "memory": "1 GiB",
+        "vcpu": "2",
+        "instanceType": "db.t4g.micro",
+        "unbundledLicensing": "FALSE",
+        "usagetype": "APS3-InstanceUsage:db.t4g.micro",
+        "locationType": "AWS Region",
+        "storage": "EBS Only",
+        "normalizationSizeFactor": "0.5",
+        "instanceFamily": "General purpose",
+        "databaseEngine": "PostgreSQL",
+        "regionCode": "ap-south-1",
+        "servicecode": "AmazonRDS",
+        "physicalProcessor": "AWS Graviton2",
+        "licenseModel": "No license required",
+        "currentGeneration": "Yes",
+        "networkPerformance": "Up to 5 Gigabit",
+        "deploymentOption": "Single-AZ",
+        "location": "Asia Pacific (Mumbai)",
+        "servicename": "Amazon Relational Database Service",
+        "processorArchitecture": "64-bit",
+        "operation": "CreateDBInstance:0014"
+      },
+      "sku": "GUT9JVEQBEMZ2FC7"
+    },
+    "serviceCode": "AmazonRDS",
+    "terms": {
+      "OnDemand": {
+        "GUT9JVEQBEMZ2FC7.JRTCKXETXF": {
+          "priceDimensions": {
+            "GUT9JVEQBEMZ2FC7.JRTCKXETXF.6YS6EN2CT7": {
+              "unit": "Hrs",
+              "endRange": "Inf",
+              "description": "$ 0.021 per RDS db.t4g.micro Single-AZ instance hour (or partial hour) running PostgreSQL",
+              "appliesTo": [],
+              "rateCode": "GUT9JVEQBEMZ2FC7.JRTCKXETXF.6YS6EN2CT7",
+              "beginRange": "0",
+              "pricePerUnit": {
+                "USD": "0.0210000000"
+              }
+            }
+          },
+          "sku": "GUT9JVEQBEMZ2FC7",
+          "effectiveDate": "2026-10-01T00:00:00Z",
+          "offerTermCode": "JRTCKXETXF",
+          "termAttributes": {}
+        }
+      },
+      "Reserved": {
+        "GUT9JVEQBEMZ2FC7.4NA7Y494T4": {
+          "priceDimensions": {
+            "GUT9JVEQBEMZ2FC7.4NA7Y494T4.6YS6EN2CT7": {
+              "unit": "Hrs",
+              "endRange": "Inf",
+              "description": "PostgreSQL, db.t4g.micro reserved instance applied",
+              "appliesTo": [],
+              "rateCode": "GUT9JVEQBEMZ2FC7.4NA7Y494T4.6YS6EN2CT7",
+              "beginRange": "0",
+              "pricePerUnit": {
+                "USD": "0.0165000000"
+              }
+            }
+          },
+          "sku": "GUT9JVEQBEMZ2FC7",
+          "effectiveDate": "2026-10-29T07:08:09Z",
+          "offerTermCode": "4NA7Y494T4",
+          "termAttributes": {
+            "LeaseContractLength": "1yr",
+            "OfferingClass": "standard",
+            "PurchaseOption": "No Upfront"
+          }
+        },
+        "GUT9JVEQBEMZ2FC7.6QCMYABX3D": {
+          "priceDimensions": {
+            "GUT9JVEQBEMZ2FC7.6QCMYABX3D.6YS6EN2CT7": {
+              "unit": "Hrs",
+              "endRange": "Inf",
+              "description": "PostgreSQL, db.t4g.micro reserved instance applied",
+              "appliesTo": [],
+              "rateCode": "GUT9JVEQBEMZ2FC7.6QCMYABX3D.6YS6EN2CT7",
+              "beginRange": "0",
+              "pricePerUnit": {
+                "USD": "0.0000000000"
+              }
+            },
+            "GUT9JVEQBEMZ2FC7.6QCMYABX3D.2TG2D8R56U": {
+              "unit": "Quantity",
+              "description": "Upfront Fee",
+              "appliesTo": [],
+              "rateCode": "GUT9JVEQBEMZ2FC7.6QCMYABX3D.2TG2D8R56U",
+              "pricePerUnit": {
+                "USD": "135"
+              }
+            }
+          },
+          "sku": "GUT9JVEQBEMZ2FC7",
+          "effectiveDate": "2026-10-29T07:08:09Z",
+          "offerTermCode": "6QCMYABX3D",
+          "termAttributes": {
+            "LeaseContractLength": "1yr",
+            "OfferingClass": "standard",
+            "PurchaseOption": "All Upfront"
+          }
+        },
+        "GUT9JVEQBEMZ2FC7.NQ3QZPMQV9": {
+          "priceDimensions": {
+            "GUT9JVEQBEMZ2FC7.NQ3QZPMQV9.6YS6EN2CT7": {
+              "unit": "Hrs",
+              "endRange": "Inf",
+              "description": "PostgreSQL, db.t4g.micro reserved instance applied",
+              "appliesTo": [],
+              "rateCode": "GUT9JVEQBEMZ2FC7.NQ3QZPMQV9.6YS6EN2CT7",
+              "beginRange": "0",
+              "pricePerUnit": {
+                "USD": "0.0000000000"
+              }
+            },
+            "GUT9JVEQBEMZ2FC7.NQ3QZPMQV9.2TG2D8R56U": {
+              "unit": "Quantity",
+              "description": "Upfront Fee",
+              "appliesTo": [],
+              "rateCode": "GUT9JVEQBEMZ2FC7.NQ3QZPMQV9.2TG2D8R56U",
+              "pricePerUnit": {
+                "USD": "324"
+              }
+            }
+          },
+          "sku": "GUT9JVEQBEMZ2FC7",
+          "effectiveDate": "2026-10-29T07:08:09Z",
+          "offerTermCode": "NQ3QZPMQV9",
+          "termAttributes": {
+            "LeaseContractLength": "3yr",
+            "OfferingClass": "standard",
+            "PurchaseOption": "All Upfront"
+          }
+        },
+        "GUT9JVEQBEMZ2FC7.HU7G6KETJZ": {
+          "priceDimensions": {
+            "GUT9JVEQBEMZ2FC7.HU7G6KETJZ.2TG2D8R56U": {
+              "unit": "Quantity",
+              "description": "Upfront Fee",
+              "appliesTo": [],
+              "rateCode": "GUT9JVEQBEMZ2FC7.HU7G6KETJZ.2TG2D8R56U",
+              "pricePerUnit": {
+                "USD": "69"
+              }
+            },
+            "GUT9JVEQBEMZ2FC7.HU7G6KETJZ.6YS6EN2CT7": {
+              "unit": "Hrs",
+              "endRange": "Inf",
+              "description": "PostgreSQL, db.t4g.micro reserved instance applied",
+              "appliesTo": [],
+              "rateCode": "GUT9JVEQBEMZ2FC7.HU7G6KETJZ.6YS6EN2CT7",
+              "beginRange": "0",
+              "pricePerUnit": {
+                "USD": "0.0078000000"
+              }
+            }
+          },
+          "sku": "GUT9JVEQBEMZ2FC7",
+          "effectiveDate": "2026-10-29T07:08:09Z",
+          "offerTermCode": "HU7G6KETJZ",
+          "termAttributes": {
+            "LeaseContractLength": "1yr",
+            "OfferingClass": "standard",
+            "PurchaseOption": "Partial Upfront"
+          }
+        },
+        "GUT9JVEQBEMZ2FC7.38NPMPTW36": {
+          "priceDimensions": {
+            "GUT9JVEQBEMZ2FC7.38NPMPTW36.6YS6EN2CT7": {
+              "unit": "Hrs",
+              "endRange": "Inf",
+              "description": "PostgreSQL, db.t4g.micro reserved instance applied",
+              "appliesTo": [],
+              "rateCode": "GUT9JVEQBEMZ2FC7.38NPMPTW36.6YS6EN2CT7",
+              "beginRange": "0",
+              "pricePerUnit": {
+                "USD": "0.0063000000"
+              }
+            },
+            "GUT9JVEQBEMZ2FC7.38NPMPTW36.2TG2D8R56U": {
+              "unit": "Quantity",
+              "description": "Upfront Fee",
+              "appliesTo": [],
+              "rateCode": "GUT9JVEQBEMZ2FC7.38NPMPTW36.2TG2D8R56U",
+              "pricePerUnit": {
+                "USD": "165"
+              }
+            }
+          },
+          "sku": "GUT9JVEQBEMZ2FC7",
+          "effectiveDate": "2026-10-29T07:08:09Z",
+          "offerTermCode": "38NPMPTW36",
+          "termAttributes": {
+            "LeaseContractLength": "3yr",
+            "OfferingClass": "standard",
+            "PurchaseOption": "Partial Upfront"
+          }
+        }
+      }
+    },
+    "version": "20261029070635",
+    "publicationDate": "2026-10-29T07:06:35Z"
+  },
+  "storage": {
+    "product": {
+      "productFamily": "Database Storage",
+      "attributes": {
+        "volumeType": "General Purpose-GP3",
+        "engineCode": "14",
+        "usagetype": "APS3-RDS:GP3-Storage",
+        "locationType": "AWS Region",
+        "maxVolumeSize": "16 TB",
+        "databaseEngine": "PostgreSQL",
+        "storageMedia": "SSD",
+        "regionCode": "ap-south-1",
+        "servicecode": "AmazonRDS",
+        "deploymentOption": "Single-AZ",
+        "location": "Asia Pacific (Mumbai)",
+        "servicename": "Amazon Relational Database Service",
+        "operation": "CreateDBInstance:0014",
+        "minVolumeSize": "5 GB"
+      },
+      "sku": "7Z4F2SQPHDHNHDBP"
+    },
+    "serviceCode": "AmazonRDS",
+    "terms": {
+      "OnDemand": {
+        "7Z4F2SQPHDHNHDBP.JRTCKXETXF": {
+          "priceDimensions": {
+            "7Z4F2SQPHDHNHDBP.JRTCKXETXF.6YS6EN2CT7": {
+              "unit": "GB-Mo",
+              "endRange": "Inf",
+              "description": "$0.131 per GB-month of provisioned GP3 storage running PostgreSQL",
+              "appliesTo": [],
+              "rateCode": "7Z4F2SQPHDHNHDBP.JRTCKXETXF.6YS6EN2CT7",
+              "beginRange": "0",
+              "pricePerUnit": {
+                "USD": "0.1310000000"
+              }
+            }
+          },
+          "sku": "7Z4F2SQPHDHNHDBP",
+          "effectiveDate": "2026-10-01T00:00:00Z",
+          "offerTermCode": "JRTCKXETXF",
+          "termAttributes": {}
+        }
+      }
+    },
+    "version": "20261029070635",
+    "publicationDate": "2026-10-29T07:06:35Z"
+  },
+  "cpu": {
+    "product": {
+      "productFamily": "Compute",
+      "attributes": {
+        "regionCode": "ap-south-1",
+        "servicecode": "AmazonECS",
+        "tenancy": "Shared",
+        "usagetype": "APS3-Fargate-vCPU-Hours:perCPU",
+        "locationType": "AWS Region",
+        "location": "Asia Pacific (Mumbai)",
+        "servicename": "Amazon Elastic Container Service",
+        "cputype": "perCPU",
+        "operation": ""
+      },
+      "sku": "KV4FGA39G96M59TH"
+    },
+    "serviceCode": "AmazonECS",
+    "terms": {
+      "OnDemand": {
+        "KV4FGA39G96M59TH.JRTCKXETXF": {
+          "priceDimensions": {
+            "KV4FGA39G96M59TH.JRTCKXETXF.6YS6EN2CT7": {
+              "unit": "hours",
+              "endRange": "Inf",
+              "description": "AWS Fargate - vCPU  - Asia Pacific (Mumbai)",
+              "appliesTo": [],
+              "rateCode": "KV4FGA39G96M59TH.JRTCKXETXF.6YS6EN2CT7",
+              "beginRange": "0",
+              "pricePerUnit": {
+                "USD": "0.0425600000"
+              }
+            }
+          },
+          "sku": "KV4FGA39G96M59TH",
+          "effectiveDate": "2026-10-01T00:00:00Z",
+          "offerTermCode": "JRTCKXETXF",
+          "termAttributes": {}
+        }
+      }
+    },
+    "version": "20261019224317",
+    "publicationDate": "2026-10-19T22:43:17Z"
+  },
+  "memory": {
+    "product": {
+      "productFamily": "Compute",
+      "attributes": {
+        "regionCode": "ap-south-1",
+        "servicecode": "AmazonECS",
+        "tenancy": "Shared",
+        "usagetype": "APS3-Fargate-GB-Hours",
+        "locationType": "AWS Region",
+        "location": "Asia Pacific (Mumbai)",
+        "servicename": "Amazon Elastic Container Service",
+        "memorytype": "perGB",
+        "operation": ""
+      },
+      "sku": "N4Q5MGA6V9TFA2MG"
+    },
+    "serviceCode": "AmazonECS",
+    "terms": {
+      "OnDemand": {
+        "N4Q5MGA6V9TFA2MG.JRTCKXETXF": {
+          "priceDimensions": {
+            "N4Q5MGA6V9TFA2MG.JRTCKXETXF.6YS6EN2CT7": {
+              "unit": "hours",
+              "endRange": "Inf",
+              "description": "AWS Fargate - Memory  - Asia Pacific (Mumbai)",
+              "appliesTo": [],
+              "rateCode": "N4Q5MGA6V9TFA2MG.JRTCKXETXF.6YS6EN2CT7",
+              "beginRange": "0",
+              "pricePerUnit": {
+                "USD": "0.0046550000"
+              }
+            }
+          },
+          "sku": "N4Q5MGA6V9TFA2MG",
+          "effectiveDate": "2026-10-01T00:00:00Z",
+          "offerTermCode": "JRTCKXETXF",
+          "termAttributes": {}
+        }
+      }
+    },
+    "version": "20261019224317",
+    "publicationDate": "2026-10-19T22:43:17Z"
+  },
+  "alb": {
+    "product": {
+      "productFamily": "Load Balancer-Application",
+      "attributes": {
+        "regionCode": "ap-south-1",
+        "servicecode": "AWSELB",
+        "groupDescription": "LoadBalancer hourly usage by Application Load Balancer",
+        "usagetype": "APS3-LoadBalancerUsage",
+        "locationType": "AWS Region",
+        "location": "Asia Pacific (Mumbai)",
+        "servicename": "Elastic Load Balancing",
+        "operation": "LoadBalancing:Application",
+        "group": "ELB:Balancing"
+      },
+      "sku": "WJ2MHASNP2ZNKFXX"
+    },
+    "serviceCode": "AWSELB",
+    "terms": {
+      "OnDemand": {
+        "WJ2MHASNP2ZNKFXX.JRTCKXETXF": {
+          "priceDimensions": {
+            "WJ2MHASNP2ZNKFXX.JRTCKXETXF.6YS6EN2CT7": {
+              "unit": "Hrs",
+              "endRange": "Inf",
+              "description": "$0.0239 per Application LoadBalancer-hour (or partial hour)",
+              "appliesTo": [],
+              "rateCode": "WJ2MHASNP2ZNKFXX.JRTCKXETXF.6YS6EN2CT7",
+              "beginRange": "0",
+              "pricePerUnit": {
+                "USD": "0.0239000000"
+              }
+            }
+          },
+          "sku": "WJ2MHASNP2ZNKFXX",
+          "effectiveDate": "2026-08-01T00:00:00Z",
+          "offerTermCode": "JRTCKXETXF",
+          "termAttributes": {}
+        }
+      }
+    },
+    "version": "20261102102527",
+    "publicationDate": "2026-11-02T10:25:27Z"
+  },
+  "lcu": {
+    "product": {
+      "productFamily": "Load Balancer-Application",
+      "attributes": {
+        "regionCode": "ap-south-1",
+        "servicecode": "AWSELB",
+        "groupDescription": "Used Application Load Balancer capacity units-hr",
+        "usagetype": "APS3-LCUUsage",
+        "locationType": "AWS Region",
+        "location": "Asia Pacific (Mumbai)",
+        "servicename": "Elastic Load Balancing",
+        "operation": "LoadBalancing:Application",
+        "group": "ELB:Balancing"
+      },
+      "sku": "HFFD75W4GFXQPHZR"
+    },
+    "serviceCode": "AWSELB",
+    "terms": {
+      "OnDemand": {
+        "HFFD75W4GFXQPHZR.JRTCKXETXF": {
+          "priceDimensions": {
+            "HFFD75W4GFXQPHZR.JRTCKXETXF.6YS6EN2CT7": {
+              "unit": "LCU-Hrs",
+              "endRange": "Inf",
+              "description": "$0.008 per used Application load balancer capacity unit-hour (or partial hour)",
+              "appliesTo": [],
+              "rateCode": "HFFD75W4GFXQPHZR.JRTCKXETXF.6YS6EN2CT7",
+              "beginRange": "0",
+              "pricePerUnit": {
+                "USD": "0.0080000000"
+              }
+            }
+          },
+          "sku": "HFFD75W4GFXQPHZR",
+          "effectiveDate": "2026-08-01T00:00:00Z",
+          "offerTermCode": "JRTCKXETXF",
+          "termAttributes": {}
+        }
+      }
+    },
+    "version": "20261102102527",
+    "publicationDate": "2026-11-02T10:25:27Z"
+  },
+  "nat": {
+    "product": {
+      "productFamily": "NAT Gateway",
+      "attributes": {
+        "regionCode": "ap-south-1",
+        "servicecode": "AmazonEC2",
+        "groupDescription": "Hourly charge for NAT Gateways",
+        "usagetype": "APS3-NatGateway-Hours",
+        "locationType": "AWS Region",
+        "location": "Asia Pacific (Mumbai)",
+        "servicename": "Amazon Elastic Compute Cloud",
+        "operation": "NatGateway",
+        "group": "NGW:NatGateway"
+      },
+      "sku": "DJ4GYZ29AWV3WFQX"
+    },
+    "serviceCode": "AmazonEC2",
+    "terms": {
+      "OnDemand": {
+        "DJ4GYZ29AWV3WFQX.JRTCKXETXF": {
+          "priceDimensions": {
+            "DJ4GYZ29AWV3WFQX.JRTCKXETXF.6YS6EN2CT7": {
+              "unit": "Hrs",
+              "endRange": "Inf",
+              "description": "$0.056 per NAT Gateway Hour",
+              "appliesTo": [],
+              "rateCode": "DJ4GYZ29AWV3WFQX.JRTCKXETXF.6YS6EN2CT7",
+              "beginRange": "0",
+              "pricePerUnit": {
+                "USD": "0.0560000000"
+              }
+            }
+          },
+          "sku": "DJ4GYZ29AWV3WFQX",
+          "effectiveDate": "2026-10-01T00:00:00Z",
+          "offerTermCode": "JRTCKXETXF",
+          "termAttributes": {}
+        }
+      }
+    },
+    "version": "20261029175634",
+    "publicationDate": "2026-10-29T17:56:34Z"
+  },
+  "nat_data": {
+    "product": {
+      "productFamily": "NAT Gateway",
+      "attributes": {
+        "regionCode": "ap-south-1",
+        "servicecode": "AmazonEC2",
+        "groupDescription": "Charge for per GB data processed by NatGateways",
+        "usagetype": "APS3-NatGateway-Bytes",
+        "locationType": "AWS Region",
+        "location": "Asia Pacific (Mumbai)",
+        "servicename": "Amazon Elastic Compute Cloud",
+        "operation": "NatGateway",
+        "group": "NGW:NatGateway"
+      },
+      "sku": "U3B5F5D6AU5THP8V"
+    },
+    "serviceCode": "AmazonEC2",
+    "terms": {
+      "OnDemand": {
+        "U3B5F5D6AU5THP8V.JRTCKXETXF": {
+          "priceDimensions": {
+            "U3B5F5D6AU5THP8V.JRTCKXETXF.6YS6EN2CT7": {
+              "unit": "GB",
+              "endRange": "Inf",
+              "description": "$0.056 per GB Data Processed by NAT Gateways",
+              "appliesTo": [],
+              "rateCode": "U3B5F5D6AU5THP8V.JRTCKXETXF.6YS6EN2CT7",
+              "beginRange": "0",
+              "pricePerUnit": {
+                "USD": "0.0560000000"
+              }
+            }
+          },
+          "sku": "U3B5F5D6AU5THP8V",
+          "effectiveDate": "2026-10-01T00:00:00Z",
+          "offerTermCode": "JRTCKXETXF",
+          "termAttributes": {}
+        }
+      }
+    },
+    "version": "20261029175634",
+    "publicationDate": "2026-10-29T17:56:34Z"
+  },
+  "ipv4": {
+    "product": {
+      "attributes": {
+        "regionCode": "ap-south-1",
+        "servicecode": "AmazonVPC",
+        "groupDescription": "Hourly charge for In-use Public IPv4 Addresses",
+        "usagetype": "APS3-PublicIPv4:InUseAddress",
+        "locationType": "AWS Region",
+        "location": "Asia Pacific (Mumbai)",
+        "servicename": "Amazon Virtual Private Cloud",
+        "operation": "",
+        "group": "VPCPublicIPv4Address"
+      },
+      "sku": "H6SHSM3KDNNZRM9E"
+    },
+    "serviceCode": "AmazonVPC",
+    "terms": {
+      "OnDemand": {
+        "H6SHSM3KDNNZRM9E.JRTCKXETXF": {
+          "priceDimensions": {
+            "H6SHSM3KDNNZRM9E.JRTCKXETXF.6YS6EN2CT7": {
+              "unit": "Hrs",
+              "endRange": "Inf",
+              "description": "$0.005 per In-use public IPv4 address per hour",
+              "appliesTo": [],
+              "rateCode": "H6SHSM3KDNNZRM9E.JRTCKXETXF.6YS6EN2CT7",
+              "beginRange": "0",
+              "pricePerUnit": {
+                "USD": "0.0050000000"
+              }
+            }
+          },
+          "sku": "H6SHSM3KDNNZRM9E",
+          "effectiveDate": "2026-10-01T00:00:00Z",
+          "offerTermCode": "JRTCKXETXF",
+          "termAttributes": {}
+        }
+      }
+    },
+    "version": "20261016224321",
+    "publicationDate": "2026-10-16T22:43:21Z"
+  },
+  "endpoint": {
+    "product": {
+      "productFamily": "VpcEndpoint",
+      "attributes": {
+        "regionCode": "ap-south-1",
+        "endpointType": "PrivateLink",
+        "servicecode": "AmazonVPC",
+        "groupDescription": "Hourly charge for VPC Endpoints",
+        "usagetype": "APS3-VpcEndpoint-Hours",
+        "locationType": "AWS Region",
+        "location": "Asia Pacific (Mumbai)",
+        "servicename": "Amazon Virtual Private Cloud",
+        "operation": "VpcEndpoint",
+        "group": "VPCE:VpcEndpoint"
+      },
+      "sku": "RZP4UFE8YBANMG22"
+    },
+    "serviceCode": "AmazonVPC",
+    "terms": {
+      "OnDemand": {
+        "RZP4UFE8YBANMG22.JRTCKXETXF": {
+          "priceDimensions": {
+            "RZP4UFE8YBANMG22.JRTCKXETXF.6YS6EN2CT7": {
+              "unit": "Hrs",
+              "endRange": "Inf",
+              "description": "$0.013 per VPC Endpoint Hour",
+              "appliesTo": [],
+              "rateCode": "RZP4UFE8YBANMG22.JRTCKXETXF.6YS6EN2CT7",
+              "beginRange": "0",
+              "pricePerUnit": {
+                "USD": "0.0130000000"
+              }
+            }
+          },
+          "sku": "RZP4UFE8YBANMG22",
+          "effectiveDate": "2026-10-01T00:00:00Z",
+          "offerTermCode": "JRTCKXETXF",
+          "termAttributes": {}
+        }
+      }
+    },
+    "version": "20261016224321",
+    "publicationDate": "2026-10-16T22:43:21Z"
+  },
+  "ecr": {
+    "product": {
+      "productFamily": "EC2 Container Registry",
+      "attributes": {
+        "regionCode": "ap-south-1",
+        "servicecode": "AmazonECR",
+        "usagetype": "APS3-TimedStorage-ByteHrs",
+        "locationType": "AWS Region",
+        "storageType": "S3",
+        "location": "Asia Pacific (Mumbai)",
+        "servicename": "Amazon EC2 Container Registry (ECR)",
+        "operation": ""
+      },
+      "sku": "WRGBK4S2T45GRPMB"
+    },
+    "serviceCode": "AmazonECR",
+    "terms": {
+      "OnDemand": {
+        "WRGBK4S2T45GRPMB.JRTCKXETXF": {
+          "priceDimensions": {
+            "WRGBK4S2T45GRPMB.JRTCKXETXF.6YS6EN2CT7": {
+              "unit": "GB-Mo",
+              "endRange": "Inf",
+              "description": "$0.10 per GB-month of data storage",
+              "appliesTo": [],
+              "rateCode": "WRGBK4S2T45GRPMB.JRTCKXETXF.6YS6EN2CT7",
+              "beginRange": "0",
+              "pricePerUnit": {
+                "USD": "0.1000000000"
+              }
+            }
+          },
+          "sku": "WRGBK4S2T45GRPMB",
+          "effectiveDate": "2025-11-01T00:00:00Z",
+          "offerTermCode": "JRTCKXETXF",
+          "termAttributes": {}
+        }
+      }
+    },
+    "version": "20260911124425",
+    "publicationDate": "2026-09-11T12:44:25Z"
+  }
+}

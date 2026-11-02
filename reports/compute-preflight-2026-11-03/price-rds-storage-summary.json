@@ -1,0 +1,52 @@
+[
+  {
+    "sku": "2UFYM6NPU3SCMYG2",
+    "usage": "APS3-RDS:PIOPS-Storage-IO2",
+    "family": "Database Storage",
+    "description": "$0.131 per GB-Month of provisioned io2 storage for Single-AZ deployments running PostgreSQL",
+    "unit": "GB-Mo",
+    "USD": "0.1310000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "7Z4F2SQPHDHNHDBP",
+    "usage": "APS3-RDS:GP3-Storage",
+    "family": "Database Storage",
+    "description": "$0.131 per GB-month of provisioned GP3 storage running PostgreSQL",
+    "unit": "GB-Mo",
+    "USD": "0.1310000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "FW8R33J4SMXQCXF5",
+    "usage": "APS3-RDS:GP2-Storage",
+    "family": "Database Storage",
+    "description": "$0.131 per GB-month of provisioned gp2 storage running PostgreSQL",
+    "unit": "GB-Mo",
+    "USD": "0.1310000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "T54T6WRSW85BTVCG",
+    "usage": "APS3-RDS:PIOPS-Storage",
+    "family": "Database Storage",
+    "description": "$0.131 per GB-month of provisioned io1 storage running PostgreSQL",
+    "unit": "GB-Mo",
+    "USD": "0.1310000000",
+    "begin": "0",
+    "end": "Inf"
+  },
+  {
+    "sku": "Y3CYYDVXWDGZ9HQ9",
+    "usage": "APS3-RDS:StorageUsage",
+    "family": "Database Storage",
+    "description": "$0.11 per GB-month of provisioned magnetic storage running PostgreSQL",
+    "unit": "GB-Mo",
+    "USD": "0.1100000000",
+    "begin": "0",
+    "end": "Inf"
+  }
+]

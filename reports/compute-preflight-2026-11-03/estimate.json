@@ -1,0 +1,90 @@
+{
+  "date": "2026-11-03",
+  "hours_per_month": 730,
+  "fx_INR_per_USD": "94.8755",
+  "fx_reference_date": "2026-11-02",
+  "fx_source": "https://www.msei.in/markets/Currency/Historical-Data/RBIReferenceRateArchives",
+  "fx_note": "Illustrative conversion; AWS invoice exchange rate can differ.",
+  "configuration_note": "Sizing assumptions for cost comparison only; no deployment parameters or source were changed.",
+  "items": [
+    {
+      "item": "RDS PostgreSQL db.t4g.micro Single-AZ",
+      "USD": "15.3300000000",
+      "INR_before_GST": "1454.44",
+      "INR_including_18pct_GST": "1716.24"
+    },
+    {
+      "item": "RDS 20 GiB gp3",
+      "USD": "2.6200000000",
+      "INR_before_GST": "248.57",
+      "INR_including_18pct_GST": "293.32"
+    },
+    {
+      "item": "One Linux x86 Fargate task, 0.25 vCPU / 1 GiB",
+      "USD": "11.1653500000",
+      "INR_before_GST": "1059.32",
+      "INR_including_18pct_GST": "1250.00"
+    },
+    {
+      "item": "One ALB",
+      "USD": "17.4470000000",
+      "INR_before_GST": "1655.29",
+      "INR_including_18pct_GST": "1953.25"
+    },
+    {
+      "item": "One NAT Gateway",
+      "USD": "40.8800000000",
+      "INR_before_GST": "3878.51",
+      "INR_including_18pct_GST": "4576.64"
+    },
+    {
+      "item": "Three public IPv4 addresses: two ALB, one NAT",
+      "USD": "10.9500000000",
+      "INR_before_GST": "1038.89",
+      "INR_including_18pct_GST": "1225.89"
+    }
+  ],
+  "fixed_baseline": {
+    "USD": "98.3923500000",
+    "INR_before_GST": "9335.02",
+    "INR_including_18pct_GST": "11015.33"
+  },
+  "example_usage": {
+    "assumptions": [
+      "1 average ALB LCU for 730 hours",
+      "1 GB NAT processed",
+      "1 GB-month ECR image storage"
+    ],
+    "USD": "104.3883500000",
+    "INR_before_GST": "9903.90",
+    "INR_including_18pct_GST": "11686.60"
+  },
+  "absolute_minimum_memory_baseline": {
+    "USD": "96.6932750000",
+    "INR_before_GST": "9173.82",
+    "INR_including_18pct_GST": "10825.11"
+  },
+  "one_nat_including_its_IP": {
+    "USD": "44.5300000000",
+    "INR_before_GST": "4224.81",
+    "INR_including_18pct_GST": "4985.27"
+  },
+  "five_interface_endpoints_one_AZ": {
+    "USD": "47.4500000000",
+    "INR_before_GST": "4501.84",
+    "INR_including_18pct_GST": "5312.17"
+  },
+  "seven_interface_endpoints_one_AZ": {
+    "USD": "66.4300000000",
+    "INR_before_GST": "6302.58",
+    "INR_including_18pct_GST": "7437.04"
+  },
+  "remaining_account_credit_USD": "117.74",
+  "gate": "STOP: exceeds INR 6000 recurring monthly budget before GST or variable usage; additional resource services also require scope review.",
+  "exclusions": [
+    "Existing Core costs",
+    "Additional logs, SQS requests, egress/inter-AZ transfer, backups, burst CPU credits, scaling and AI usage",
+    "Any support plan",
+    "Credit offsets and account-specific tax exemptions"
+  ]
+}

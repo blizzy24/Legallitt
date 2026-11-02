@@ -1,0 +1,12 @@
+[
+  {
+    "sku": "GUT9JVEQBEMZ2FC7",
+    "usage": "APS3-InstanceUsage:db.t4g.micro",
+    "family": "Database Instance",
+    "description": "$ 0.021 per RDS db.t4g.micro Single-AZ instance hour (or partial hour) running PostgreSQL",
+    "unit": "Hrs",
+    "USD": "0.0210000000",
+    "begin": "0",
+    "end": "Inf"
+  }
+]

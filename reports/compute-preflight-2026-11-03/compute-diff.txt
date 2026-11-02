@@ -1,0 +1,131 @@
+AI agent detected
+WARNING No cross-stack-reference strength configured, defaulting to "strong". We recommend you set feature flag "@aws-cdk/core:defaultCrossStackReferences" to "both", then deploy everywhere, then set it to "weak". Alternatively, set it to "strong" explicitly to lock in the current producer-protecting behavior. (See: https://github.com/aws/aws-cdk/blob/main/packages/aws-cdk-lib/README.md#reference-strength) (Construct Annotations)
+   LegalittDev/Compute
+   Acknowledge with 'Annotation::@aws-cdk/core:crossStackReferencesDefaultStrong'
+Stack LegalittDev/Compute (LegalittDev-Compute) (aws://026379630400/ap-south-1)
+IAM Statement Changes
+┌───┬──────────────────────────────────────────────────────────────────────────────────────┬────────┬─────────────────────────────────┬─────────────────────────────────┬───────────┐
+│   │ Resource                                                                             │ Effect │ Action                          │ Principal                       │ Condition │
+├───┼──────────────────────────────────────────────────────────────────────────────────────┼────────┼─────────────────────────────────┼─────────────────────────────────┼───────────┤
+│ + │ ${Compute/ApiLogs.Arn}                                                               │ Allow  │ logs:CreateLogStream            │ AWS:${Compute/ExecutionRole}    │           │
+│   │                                                                                      │        │ logs:PutLogEvents               │                                 │           │
+├───┼──────────────────────────────────────────────────────────────────────────────────────┼────────┼─────────────────────────────────┼─────────────────────────────────┼───────────┤
+│ + │ ${Compute/ApiRepository.Arn}                                                         │ Allow  │ ecr:BatchCheckLayerAvailability │ AWS:${Compute/ExecutionRole}    │           │
+│   │                                                                                      │        │ ecr:BatchGetImage               │                                 │           │
+│   │                                                                                      │        │ ecr:GetDownloadUrlForLayer      │                                 │           │
+├───┼──────────────────────────────────────────────────────────────────────────────────────┼────────┼─────────────────────────────────┼─────────────────────────────────┼───────────┤
+│ + │ ${Compute/ApiRole.Arn}                                                               │ Allow  │ sts:AssumeRole                  │ Service:ecs-tasks.amazonaws.com │           │
+├───┼──────────────────────────────────────────────────────────────────────────────────────┼────────┼─────────────────────────────────┼─────────────────────────────────┼───────────┤
+│ + │ ${Compute/ExecutionRole.Arn}                                                         │ Allow  │ sts:AssumeRole                  │ Service:ecs-tasks.amazonaws.com │           │
+├───┼──────────────────────────────────────────────────────────────────────────────────────┼────────┼─────────────────────────────────┼─────────────────────────────────┼───────────┤
+│ + │ ${Compute/Jobs.Arn}                                                                  │ Allow  │ sqs:ChangeMessageVisibility     │ AWS:${Compute/ApiRole}          │           │
+│   │                                                                                      │        │ sqs:DeleteMessage               │                                 │           │
+│   │                                                                                      │        │ sqs:GetQueueAttributes          │                                 │           │
+│   │                                                                                      │        │ sqs:ReceiveMessage              │                                 │           │
+│   │                                                                                      │        │ sqs:SendMessage                 │                                 │           │
+├───┼──────────────────────────────────────────────────────────────────────────────────────┼────────┼─────────────────────────────────┼─────────────────────────────────┼───────────┤
+│ + │ *                                                                                    │ Allow  │ ecr:GetAuthorizationToken       │ AWS:${Compute/ExecutionRole}    │           │
+├───┼──────────────────────────────────────────────────────────────────────────────────────┼────────┼─────────────────────────────────┼─────────────────────────────────┼───────────┤
+│ + │ {"Fn::ImportValue":"LegalittDev-Core:ExportsOutputFnGetAttDocumentsArn9D87F4A8"}     │ Allow  │ s3:ListBucket                   │ AWS:${Compute/ApiRole}          │           │
+│   │                                                                                      │        │ s3:ListBucketVersions           │                                 │           │
+├───┼──────────────────────────────────────────────────────────────────────────────────────┼────────┼─────────────────────────────────┼─────────────────────────────────┼───────────┤
+│ + │ {"Fn::ImportValue":"LegalittDev-Core:ExportsOutputFnGetAttDocumentsArn9D87F4A8"}/*   │ Allow  │ s3:DeleteObject                 │ AWS:${Compute/ApiRole}          │           │
+│   │                                                                                      │        │ s3:DeleteObjectVersion          │                                 │           │
+│   │                                                                                      │        │ s3:GetObject                    │                                 │           │
+│   │                                                                                      │        │ s3:GetObjectVersion             │                                 │           │
+│   │                                                                                      │        │ s3:PutObject                    │                                 │           │
+├───┼──────────────────────────────────────────────────────────────────────────────────────┼────────┼─────────────────────────────────┼─────────────────────────────────┼───────────┤
+│ + │ {"Fn::ImportValue":"LegalittDev-Core:ExportsOutputFnGetAttEncryptionKeyArn63627630"} │ Allow  │ kms:Decrypt                     │ AWS:${Compute/ApiRole}          │           │
+│   │                                                                                      │        │ kms:DescribeKey                 │                                 │           │
+│   │                                                                                      │        │ kms:Encrypt                     │                                 │           │
+│   │                                                                                      │        │ kms:GenerateDataKey             │                                 │           │
+├───┼──────────────────────────────────────────────────────────────────────────────────────┼────────┼─────────────────────────────────┼─────────────────────────────────┼───────────┤
+│ + │ {"Fn::ImportValue":"LegalittDev-Core:ExportsOutputRefAppConfiguration4766511E"}      │ Allow  │ secretsmanager:DescribeSecret   │ AWS:${Compute/ApiRole}          │           │
+│   │ {"Fn::ImportValue":"LegalittDev-Core:ExportsOutputRefDatabaseSecretD7AA9253"}        │        │ secretsmanager:GetSecretValue   │                                 │           │
+│   │ {"Fn::ImportValue":"LegalittDev-Core:ExportsOutputRefDemoCredentials077E3031"}       │        │                                 │                                 │           │
+└───┴──────────────────────────────────────────────────────────────────────────────────────┴────────┴─────────────────────────────────┴─────────────────────────────────┴───────────┘
+Security Group Changes
+┌───┬──────────────────────────────────────────┬─────┬────────────────────────┬──────────────────────────────┐
+│   │ Group                                    │ Dir │ Protocol               │ Peer                         │
+├───┼──────────────────────────────────────────┼─────┼────────────────────────┼──────────────────────────────┤
+│ + │ ${Compute/AlbSecurityGroup.GroupId}      │ In  │ TCP 443                │ Everyone (IPv4)              │
+├───┼──────────────────────────────────────────┼─────┼────────────────────────┼──────────────────────────────┤
+│ + │ ${Compute/DatabaseSecurityGroup.GroupId} │ In  │ TCP 5432               │ ${Compute/TaskSecurityGroup} │
+├───┼──────────────────────────────────────────┼─────┼────────────────────────┼──────────────────────────────┤
+│ + │ ${Compute/TaskSecurityGroup.GroupId}     │ In  │ TCP ${Compute/ApiPort} │ ${Compute/AlbSecurityGroup}  │
+└───┴──────────────────────────────────────────┴─────┴────────────────────────┴──────────────────────────────┘
+(NOTE: There may be security-related changes not in this list. See https://github.com/aws/aws-cdk/issues/1299)
+
+Parameters
+[+] Parameter Compute/VpcCidr VpcCidr: {"Type":"String","Description":"Approved VPC CIDR; dev and prod must not overlap."}
+[+] Parameter Compute/PublicSubnet1Cidr PublicSubnet1Cidr: {"Type":"String","Description":"Approved subnet CIDR within this stage VPC."}
+[+] Parameter Compute/PublicSubnet2Cidr PublicSubnet2Cidr: {"Type":"String","Description":"Approved subnet CIDR within this stage VPC."}
+[+] Parameter Compute/PrivateSubnet1Cidr PrivateSubnet1Cidr: {"Type":"String","Description":"Approved subnet CIDR within this stage VPC."}
+[+] Parameter Compute/PrivateSubnet2Cidr PrivateSubnet2Cidr: {"Type":"String","Description":"Approved subnet CIDR within this stage VPC."}
+[+] Parameter Compute/NatMode NatMode: {"Type":"String","AllowedValues":["single","per_az"],"Description":"Choose shared NAT or one NAT per AZ."}
+[+] Parameter Compute/DatabaseInstanceClass DatabaseInstanceClass: {"Type":"String","AllowedPattern":"db\\..+","Description":"Approved RDS instance class."}
+[+] Parameter Compute/DatabaseStorageGiB DatabaseStorageGiB: {"Type":"Number","Description":"Approved initial RDS storage.","MinValue":20}
+[+] Parameter Compute/Postgres16Version Postgres16Version: {"Type":"String","AllowedPattern":"16\\.[0-9]+","Description":"Available Postgres 16 minor release in ap-south-1."}
+[+] Parameter Compute/TaskCpu TaskCpu: {"Type":"String","AllowedValues":["256","512","1024","2048","4096","8192","16384"],"Description":"Approved Fargate CPU units."}
+[+] Parameter Compute/TaskMemoryMiB TaskMemoryMiB: {"Type":"String","AllowedPattern":"[0-9]+","Description":"Approved Fargate memory, valid for the chosen CPU."}
+[+] Parameter Compute/TaskCount TaskCount: {"Type":"Number","Description":"Approved desired task count.","MinValue":1}
+[+] Parameter Compute/ApiPort ApiPort: {"Type":"Number","Description":"Container port; also passed to the API as PORT.","MaxValue":65535,"MinValue":1}
+[+] Parameter Compute/ApiImageTag ApiImageTag: {"Type":"String","Description":"Tag of the API image to publish to this stage ECR repository."}
+[+] Parameter Compute/CertificateArn CertificateArn: {"Type":"String","Description":"ACM certificate ARN for the HTTPS ALB listener in ap-south-1."}
+[+] Parameter Compute/BootstrapVersion BootstrapVersion: {"Type":"AWS::SSM::Parameter::Value<String>","Default":"/cdk-bootstrap/hnb659fds/version","Description":"Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"}
+
+Conditions
+[+] Condition Compute/NatPerAz NatPerAz: {"Fn::Equals":[{"Ref":"NatMode"},"per_az"]}
+
+Resources
+[+] AWS::EC2::VPC Compute/Vpc Vpc
+[+] AWS::EC2::InternetGateway Compute/InternetGateway InternetGateway
+[+] AWS::EC2::VPCGatewayAttachment Compute/GatewayAttachment GatewayAttachment
+[+] AWS::EC2::Subnet Compute/Subnet0 Subnet0
+[+] AWS::EC2::Subnet Compute/Subnet1 Subnet1
+[+] AWS::EC2::Subnet Compute/Subnet2 Subnet2
+[+] AWS::EC2::Subnet Compute/Subnet3 Subnet3
+[+] AWS::EC2::RouteTable Compute/RouteTable0 RouteTable0
+[+] AWS::EC2::SubnetRouteTableAssociation Compute/SubnetRouteTable0 SubnetRouteTable0
+[+] AWS::EC2::RouteTable Compute/RouteTable1 RouteTable1
+[+] AWS::EC2::SubnetRouteTableAssociation Compute/SubnetRouteTable1 SubnetRouteTable1
+[+] AWS::EC2::RouteTable Compute/RouteTable2 RouteTable2
+[+] AWS::EC2::SubnetRouteTableAssociation Compute/SubnetRouteTable2 SubnetRouteTable2
+[+] AWS::EC2::RouteTable Compute/RouteTable3 RouteTable3
+[+] AWS::EC2::SubnetRouteTableAssociation Compute/SubnetRouteTable3 SubnetRouteTable3
+[+] AWS::EC2::Route Compute/InternetRoute0 InternetRoute0
+[+] AWS::EC2::Route Compute/InternetRoute1 InternetRoute1
+[+] AWS::EC2::EIP Compute/NatIp0 NatIp0
+[+] AWS::EC2::NatGateway Compute/Nat0 Nat0
+[+] AWS::EC2::EIP Compute/NatIp1 NatIp1
+[+] AWS::EC2::NatGateway Compute/Nat1 Nat1
+[+] AWS::EC2::Route Compute/PrivateRoute0 PrivateRoute0
+[+] AWS::EC2::Route Compute/PrivateRoute1 PrivateRoute1
+[+] AWS::EC2::SecurityGroup Compute/AlbSecurityGroup AlbSecurityGroup
+[+] AWS::EC2::SecurityGroup Compute/TaskSecurityGroup TaskSecurityGroup
+[+] AWS::EC2::SecurityGroup Compute/DatabaseSecurityGroup DatabaseSecurityGroup
+[+] AWS::RDS::DBSubnetGroup Compute/DatabaseSubnets DatabaseSubnets
+[+] AWS::RDS::DBInstance Compute/Database Database
+[+] AWS::SecretsManager::SecretTargetAttachment Compute/SecretAttachment SecretAttachment
+[+] AWS::SQS::Queue Compute/Jobs Jobs
+[+] AWS::Logs::LogGroup Compute/ApiLogs ApiLogs
+[+] AWS::ECR::Repository Compute/ApiRepository ApiRepository
+[+] AWS::IAM::ManagedPolicy Compute/RoleBoundary RoleBoundary
+[+] AWS::IAM::Role Compute/ApiRole ApiRole
+[+] AWS::IAM::Role Compute/ExecutionRole ExecutionRole
+[+] AWS::ECS::Cluster Compute/Cluster Cluster
+[+] AWS::ECS::TaskDefinition Compute/Task Task
+[+] AWS::ElasticLoadBalancingV2::LoadBalancer Compute/LoadBalancer LoadBalancer
+[+] AWS::ElasticLoadBalancingV2::TargetGroup Compute/ApiTarget ApiTarget
+[+] AWS::ElasticLoadBalancingV2::Listener Compute/HttpsListener HttpsListener
+[+] AWS::ECS::Service Compute/ApiService ApiService
+
+Outputs
+[+] Output Compute/ApiHost ApiHost: {"Value":{"Fn::GetAtt":["LoadBalancer","DNSName"]}}
+[+] Output Compute/DatabaseSecretArn DatabaseSecretArn: {"Value":{"Fn::ImportValue":"LegalittDev-Core:ExportsOutputRefDatabaseSecretD7AA9253"}}
+[+] Output Compute/RepositoryUri RepositoryUri: {"Value":{"Fn::GetAtt":["ApiRepository","RepositoryUri"]}}
+
+
+
+✨  Number of stacks with differences: 1
+
