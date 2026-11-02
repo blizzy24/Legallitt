@@ -52,6 +52,37 @@ export const LegalNoticeSubmissionSchema = z.strictObject({
 });
 export type LegalNoticeIntake = z.infer<typeof LegalNoticeIntakeSchema>;
 
+// Owner-instructed seven-step intake. These are dedicated database columns, not
+// keys in cases.details. Keep selected options separate from the client's prose.
+export const LegalDemandSchema = z.strictObject({
+  selected: z.array(text.min(1).max(5000)).max(20),
+  custom: text.max(10000),
+});
+export type LegalDemand = z.infer<typeof LegalDemandSchema>;
+export const NoticeSenderFieldsSchema = z.strictObject({
+  age: z.number().int().positive().nullable().optional(),
+  father_name: text.max(300).nullable().optional(),
+});
+export const NoticeIntakeFieldsSchema = z.strictObject({
+  subject_matter: text.max(10000).nullable().optional(),
+  legal_demand: LegalDemandSchema.nullable().optional(),
+  sender: NoticeSenderFieldsSchema.optional(),
+});
+export type NoticeIntakeFields = z.infer<typeof NoticeIntakeFieldsSchema>;
+export const NoticeReadySchema = z.strictObject({
+  subject_matter: text.min(1).max(10000),
+  subject_line: text.min(1),
+  legal_demand: LegalDemandSchema.refine(v => v.selected.length > 0 || v.custom.length > 0,
+    'Choose a legal demand or write your own'),
+});
+
+// Fixed simulator outputs: no names, dates, amounts, offences or invented facts.
+export const SIMULATED_NOTICE_SUBJECT = 'Legal notice concerning the matter in dispute';
+export const SIMULATED_NOTICE_DEMANDS = [
+  'Resolve the matter described in this notice.',
+  'Provide a written response to the issues raised in this notice.',
+] as const;
+
 /** The advocate's opening message, exactly as drawn on designs 33 and 439 ("relevent" as drawn). */
 export const NOTICE_ADVOCATE_GREETING = 'Hello you can now message me with any case concerns or upload any relevent documents here...';
 

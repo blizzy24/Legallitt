@@ -10,6 +10,8 @@ import {
   CaseStatus,
   LegalNoticeIntakeSchema,
   LegalNoticeSubmissionSchema,
+  NoticeIntakeFieldsSchema,
+  NoticeReadySchema,
   LegalNoticeTierSchema,
   LegalNoticeMatterTypeSchema,
   noticeMatterType,
@@ -23,7 +25,7 @@ import {
 import { z } from "zod";
 import { parse } from "../auth/auth.service";
 import { PrismaService } from "../prisma.service";
-import type { Prisma, PrismaClient } from "../generated/prisma/client";
+import { Prisma, type PrismaClient } from "../generated/prisma/client";
 import { caseScope, type CaseActor } from "./case-access";
 
 export const createCaseSchema = z.strictObject({
@@ -34,6 +36,7 @@ export const createCaseSchema = z.strictObject({
 });
 export const updateCaseSchema = z
   .strictObject({
+    ...NoticeIntakeFieldsSchema.shape,
     tier: LegalNoticeTierSchema.optional(),
     details: LegalNoticeIntakeSchema.optional(),
     matter_type: LegalNoticeMatterTypeSchema.nullable().optional(),
@@ -213,15 +216,53 @@ export class CaseStateMachine {
       const issueType = noticeIssueType(parse(LegalNoticeMatterTypeSchema.nullable(), matterType));
       if (issueType) details.issueType = issueType;
       else delete details.issueType;
+      const subjectMatter = input.subject_matter === undefined ? record.subject_matter : input.subject_matter;
+      const changedSource = matterType !== record.matter_type || subjectMatter !== record.subject_matter;
+      // The new sender values have real columns. Synchronise the existing name
+      // and contact snapshot under the case lock; never store age/father in JSON.
+      if (input.sender || input.details?.client) {
+        const sender = await tx.caseParty.findFirst({where: {case_id: id, kind: 'sender'}});
+        const values = {name: details.client?.fullName ?? '', details: details.client ?? {},
+          ...(input.sender?.age !== undefined ? {age: input.sender.age} : {}),
+          ...(input.sender?.father_name !== undefined ? {father_name: input.sender.father_name || null} : {})};
+        if (sender) await tx.caseParty.update({where: {id: sender.id}, data: values});
+        else await tx.caseParty.create({data: {case_id: id, kind: 'sender', ...values}});
+      }
       return tx.case.update({
         where: { id },
         data: {
           matter_type: matterType,
+          subject_matter: subjectMatter,
+          ...(changedSource ? {subject_line: null} : {}),
+          ...(input.legal_demand !== undefined ? {legal_demand: input.legal_demand ?? Prisma.DbNull} : {}),
           details,
           ...(input.tier ? { tier: input.tier } : {}),
           updated_at: new Date(),
         },
       });
+    });
+  }
+
+  // External AI runs outside the transaction. Discard an answer if the client
+  // changed its inputs (or submitted) while that call was in flight.
+  async recordIntakeAi(actor: CaseActor, id: string,
+    inputs: {matter_type: string; subject_matter: string},
+    result: {task: 'subject'; text: string; simulated: boolean} | {task: 'demands'; options: string[]; simulated: boolean}) {
+    const db = await this.prisma.getClient();
+    return db.$transaction(async tx => {
+      const record = await lockedCase(tx, actor, id);
+      if (actor.role !== 'client') throw new ForbiddenException('Only the client edits intake');
+      if (record.status !== 'draft') throw new ConflictException('Only draft intake can be edited');
+      if (record.matter_type !== inputs.matter_type || record.subject_matter !== inputs.subject_matter)
+        throw new ConflictException('The notice type or subject matter changed. Please try again.');
+      if (result.task === 'subject') await tx.case.update({where: {id}, data: {subject_line: result.text, updated_at: new Date()}});
+      await tx.caseEvent.create({data: {
+        case_id: id, actor_id: actor.id, actor_role: actor.role,
+        type: result.task === 'subject' ? 'subject_generated' : 'demand_options_generated',
+        source: result.simulated ? 'simulated' : 'real',
+        payload: result.task === 'subject' ? {subject_line: result.text} : {options: result.options},
+      }});
+      return result;
     });
   }
 
@@ -251,6 +292,9 @@ export class CaseStateMachine {
     if (to === CaseStatus.submitted) {
       parse(LegalNoticeSubmissionSchema, record.details);
       parse(LegalNoticeTierSchema, record.tier);
+      const intake = await tx.case.findUniqueOrThrow({where: {id: record.id},
+        select: {subject_matter: true, subject_line: true, legal_demand: true}});
+      parse(NoticeReadySchema, intake);
     }
     const updated = await tx.case.update({
       where: { id: record.id },

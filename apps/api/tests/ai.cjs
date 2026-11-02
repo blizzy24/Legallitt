@@ -6,6 +6,7 @@ const {SimulatedAi}=require('../dist/src/ai/simulated-ai');
 const {GeminiAi}=require('../dist/src/ai/gemini-ai');
 const {BedrockAi,validateBedrockConfig}=require('../dist/src/ai/bedrock-ai');
 const {simulatedDraft}=require('../dist/src/demo/simulated-draft');
+const {SIMULATED_NOTICE_SUBJECT,SIMULATED_NOTICE_DEMANDS}=require('@legalitt/shared');
 const tasks=['subject','demands','notice'];
 const geminiConfig={apiKey:'test-key-not-real',model:'gemini-3.5-flash-lite',environment:'dev',nodeEnv:'test'};
 const bedrockConfig={region:'ap-south-1',models:{subject:'amazon.nova-lite-v1:0',demands:'amazon.nova-lite-v1:0',notice:'anthropic.claude-3-5-sonnet-20240620-v1:0'}};
@@ -20,8 +21,8 @@ test('AI default registration is simulated and preserves task-specific shapes',a
     const app=await NestFactory.createApplicationContext(AiModule,{logger:false,abortOnError:false});
     try {
       const ai=app.get(AI);assert.ok(ai instanceof SimulatedAi);
-      assert.deepEqual(await ai.generate({task:'subject',prompt:'synthetic'}),{text:simulatedDraft.subject,simulated:true});
-      assert.deepEqual(await ai.generate({task:'demands',prompt:'synthetic'}),{options:[simulatedDraft.subject,simulatedDraft.facts],simulated:true});
+      assert.deepEqual(await ai.generate({task:'subject',prompt:'synthetic'}),{text:SIMULATED_NOTICE_SUBJECT,simulated:true});
+      assert.deepEqual(await ai.generate({task:'demands',prompt:'synthetic'}),{options:[...SIMULATED_NOTICE_DEMANDS],simulated:true});
       assert.deepEqual(await ai.generate({task:'notice',prompt:'synthetic'}),{text:Object.values(simulatedDraft).filter(Boolean).join('\n\n'),simulated:true});
       await assert.rejects(ai.generate({task:'subject',prompt:' '}),/non-empty prompt/);
       await assert.rejects(ai.generate({task:'unknown',prompt:'synthetic'}),/supported task/);

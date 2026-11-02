@@ -325,7 +325,7 @@ the existing `demo` alias). AI has two explicitly named real providers:
 | `PAYMENTS_MODE` | 2s delay, always succeeds, fake `pay_` id | Razorpay |
 | `PHONE_AUTH_MODE` | accepts `123456` only (§2.9) | SMS via DLT |
 | `NOTIFY_MODE` | writes the `notifications` row, sends nothing | SNS / FCM |
-| `AI_MODE` | reuses the existing labelled simulated draft; task-typed text/options | `gemini` (development only) or `bedrock` |
+| `AI_MODE` | fixed generic subject/demand suggestions; existing labelled simulated notice draft | `gemini` (development only) or `bedrock` |
 | `COURIER_MODE` | waybill is whatever the advocate typed | carrier API |
 | `KYC_MODE` | marks verified after a 3s delay | real provider |
 
@@ -338,8 +338,11 @@ reaches production.
 `{ options: string[], simulated }`. Callers never split prose into options.
 Module registration selects `AI_MODE=simulated|gemini|bedrock` once, defaulting
 to `simulated`; nothing consuming the port reads this flag. The simulator reuses
-the existing fixed draft, and the demo timer is unchanged. No application
-handler consumes the new port in this chunk and it performs no case writes.
+the existing fixed notice draft, and the demo timer is unchanged. The instructed
+Legal Notice intake now consumes the port for subject lines and demand options.
+Those two simulated tasks return fixed generic suggestions, with no invented
+facts, names, amounts or offences. Successful calls record case events with the
+real source column; only subject generation writes `cases.subject_line`.
 
 `AI_MODE=gemini` requires `GEMINI_API_KEY`, `ENVIRONMENT=dev` and a non-production
 `NODE_ENV`, otherwise API startup fails. It uses `GEMINI_MODEL` (default
@@ -659,13 +662,16 @@ CREATE TABLE cases (
   sub_status     TEXT,
   matter_type    TEXT,                     -- what KIND of matter, chosen by the
                                            -- client during intake. Legal Notice
-                                           -- step 3 of 6 offers: property_dispute,
+                                           -- step 1 of 7 offers: property_dispute,
                                            -- money_recovery, tenant_issue,
                                            -- family_dispute, cheque_bounce,
                                            -- consumer_complaint, other.
                                            -- Other services have their own sets.
                                            -- Printed into screen headings and
                                            -- body copy — see §9.2.
+  subject_matter TEXT,                     -- client description, required for new intake
+  subject_line   TEXT,                     -- generated through the AI port
+  legal_demand   JSONB,                    -- {selected: string[], custom: string}
   tier           TEXT,
   title          TEXT,
   details        JSONB NOT NULL DEFAULT '{}',   -- service-specific intake
@@ -699,8 +705,10 @@ CREATE INDEX ON case_events (case_id, created_at);
 CREATE TABLE case_parties (
   id        UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   case_id   UUID NOT NULL REFERENCES cases(id),
-  kind      TEXT NOT NULL,      -- 'accused' | 'witness' | 'opposing' | 'other'
+  kind      TEXT NOT NULL,      -- 'sender' | 'noticee' | 'accused' | 'witness' | 'opposing' | 'other'
   name      TEXT NOT NULL,
+  age       INTEGER,                      -- sender, nullable for existing cases
+  father_name TEXT,                       -- sender's S/o Shri value
   details   JSONB NOT NULL DEFAULT '{}'
 );
 
@@ -1006,6 +1014,8 @@ POST   /cases                         { service_code, tier, details }
 GET    /cases                         ?role=client|advocate &status=
 GET    /cases/:id                     → case + events + documents + drafts
 PATCH  /cases/:id                     intake updates while in draft
+POST   /cases/:id/subject             generate/persist subject from type and subject_matter
+POST   /cases/:id/demand-options      generate selectable demands from the same inputs
 POST   /cases/:id/submit
 GET    /cases/:id/events              → the timeline
 POST   /cases/:id/cancel
@@ -1592,7 +1602,7 @@ not treated as settled.
 
 **Design 440 is NOT a substitution.** Its "Recovery" wording was almost
 registered as one. It is not copy — it is the `matter_type` the client chose at
-intake step 3 of 6, printed into the screen. Those strings are **bound to
+intake step 1 of 7, printed into the screen. Those strings are **bound to
 data**, never replaced:
 
 | Design 440 | Renders as |
@@ -1625,6 +1635,52 @@ Layout, spacing, type and all measured tokens are unchanged in every row above.
 Only the bound data and the listed strings differ.
 
 ---
+
+### Instructed additions — Legal Notice intake (2 November 2026)
+
+> **Approved — project owner, with the client's advocate.** This instruction
+> supersedes the six-step order drawn in designs 24–28. No advocate editor or
+> letterhead-template changes are part of this chunk.
+
+| Step | Screen | Instruction |
+|---|---|---|
+| 1 | Type (26) | Notice type plus required **Subject matter in dispute**, free text |
+| 2 | Noticee (25) | Noticee details |
+| 3 | Sender (24) | Sender details, adding **Age** and **Father’s name (S/o Shri)** |
+| 4 | Legal demand (new, instructed) | AI options, multiple selections allowed, plus custom prose |
+| 5 | Documents | Existing upload, verification and file-review screens |
+| 6 | Review (27) | Show the entered subject matter, generated subject, sender fields and chosen/custom demand |
+| 7 | Payment (28) | Existing prices, calculation and Scan & Pay flow |
+
+All seven steps use the existing wizard theme and a seven-step counter. The new
+screen reuses the chat bubble, flat beige fields and primary button. Added copy
+lives in `apps/mobile/copy/instructed.ts` under `legalNoticeIntake`; its prompts
+are “Choose your legal demand”, “Select all that apply, or write your own.” and
+“Write your own demand”. “Generate options” retries a failed suggestion request.
+Generated options are data. They are never treated as approved legal advice.
+
+Storage: the three new case columns and `case_parties.age` / `father_name` are
+nullable, preserving existing records. `legal_demand` is a dedicated JSONB column
+with `{selected: string[], custom: string}` so the form can reload both inputs
+without guessing which prose was an option. The sender party uses kind `sender`;
+its age/father's name are not duplicated inside `details`. Neither additional
+sender field was specified as required; blank values remain NULL. New submission
+requires type, subject matter, a generated subject and at least one selected or
+custom demand, alongside the existing required party fields.
+
+`POST /cases/:id/subject` and `POST /cases/:id/demand-options` are authenticated,
+client-owned draft operations. They pass only persisted type/subject matter to
+the AI port. A changed source clears the subject line; an in-flight response is
+rejected if its source changed or the case is no longer draft. Errors stay inline.
+Saving precedes navigation. Existing route paths are retained to preserve links;
+the new step is `/legal-notice/demand`. Demo traversal follows the same new order.
+
+| Supplier | Supplies |
+|---|---|
+| Client | Notice type, subject matter, both parties' details, legal demand |
+| Advocate | Offences (“for the offences of ___”), place, date — next chunk |
+| System | Reference ID |
+| Pricing | “Cost of this legal notice” is the service fee: ₹999 urgent / ₹699 ordinary |
 
 ## 10. Working agreement
 

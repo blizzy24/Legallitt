@@ -68,6 +68,9 @@ test(
         details,
       });
       ids.push(c.id);
+      await state.updateDraft(client,c.id,{subject_matter:'Test dispute',legal_demand:{selected:['Test demand'],custom:''}});
+      await state.recordIntakeAi(client,c.id,{matter_type:'property_dispute',subject_matter:'Test dispute'},
+        {task:'subject',text:'Test subject',simulated:true});
       assert.equal(
         (await state.submitForPayment(client, c.id)).status,
         "payment_pending",
@@ -184,7 +187,7 @@ test(
       assert.equal(courier1.total_paise, 29500n);
       assert.equal((await repo.read(client, c.id)).status, 'approved');
       const simulatedEvents = await db.caseEvent.findMany({where: {case_id: c.id, source: 'simulated'}});
-      assert.deepEqual(simulatedEvents.map(e => e.type).sort(), ['courier_payment_captured','notification_created','notification_created','payment_captured']);
+      assert.deepEqual(simulatedEvents.map(e => e.type).sort(), ['courier_payment_captured','notification_created','notification_created','payment_captured','subject_generated']);
       assert.equal(await db.notification.count({where: {case_id: c.id, simulated: true}}), 2);
       await assert.rejects(
         state.saveNoticeDraft(advocate, c.id, {
@@ -290,7 +293,7 @@ test(
         orderBy: { id: "asc" },
       });
       assert.deepEqual(
-        events.filter(e => !['notification_created','courier_payment_captured','shipment_details_saved','shipment_booked','shipment_status_changed','documents_received'].includes(e.type)).map((e) =>
+        events.filter(e => !['subject_generated','notification_created','courier_payment_captured','shipment_details_saved','shipment_booked','shipment_status_changed','documents_received'].includes(e.type)).map((e) =>
           e.type === "draft_saved" ? "draft_saved" : e.to_status,
         ),
         [

@@ -37,6 +37,7 @@ export class ApiClient {
     body: unknown,
     token?: string,
     headers: Record<string, string> = {},
+    timeoutMs?: number,
   ): Promise<Response> {
     if (!this.options.baseUrl)
       throw new ApiError(
@@ -47,7 +48,7 @@ export class ApiClient {
     const controller = new AbortController();
     const timer = setTimeout(
       () => controller.abort(),
-      this.options.timeoutMs ?? 15_000,
+      timeoutMs ?? this.options.timeoutMs ?? 15_000,
     );
     try {
       // Consume the response body before clearing the timeout, including slow bodies.
@@ -146,6 +147,7 @@ export class ApiClient {
     method = body === undefined ? "GET" : "POST",
     explicitToken?: string,
     headers: Record<string, string> = {},
+    timeoutMs?: number,
   ): Promise<T> {
     const authenticated = !path.startsWith("/auth/");
     let tokens = authenticated ? await this.options.getTokens?.() : null;
@@ -157,10 +159,11 @@ export class ApiClient {
       body,
       explicitToken ?? tokens?.idToken,
       headers,
+      timeoutMs,
     );
     if (response.status === 401 && authenticated && tokens?.refreshToken) {
       tokens = await this.refresh(tokens);
-      response = await this.transport(path, method, body, tokens.idToken, headers);
+      response = await this.transport(path, method, body, tokens.idToken, headers, timeoutMs);
     }
     return this.decode<T>(response);
   }
@@ -210,9 +213,17 @@ export class ApiClient {
   }
   saveIntake(
     id: string,
-    input: { details?: LegalNoticeIntake; tier?: "ordinary" | "urgent"; matter_type?: import("./legal-notice").LegalNoticeMatterType | null },
+    input: import('./legal-notice').NoticeIntakeFields & { details?: LegalNoticeIntake; tier?: "ordinary" | "urgent"; matter_type?: import("./legal-notice").LegalNoticeMatterType | null },
   ) {
     return this.request<ApiCase>(`/cases/${id}`, input, "PATCH");
+  }
+  generateNoticeSubject(id: string) {
+    // AI adapters have a 60s bound. Keep their actionable response within the
+    // client deadline without lengthening ordinary case/auth requests.
+    return this.request<{text: string; simulated: boolean}>(`/cases/${id}/subject`, {}, 'POST', undefined, {}, 65_000);
+  }
+  generateNoticeDemands(id: string) {
+    return this.request<{options: string[]; simulated: boolean}>(`/cases/${id}/demand-options`, {}, 'POST', undefined, {}, 65_000);
   }
   submit(id: string) {
     return this.request<ApiCase>(`/cases/${id}/submit`, {});

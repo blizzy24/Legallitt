@@ -57,6 +57,7 @@ test(
           tier: "ordinary",
           details,
           matter_type: "property_dispute",
+          subject_matter: "Test dispute", subject_line: "Test subject", legal_demand: {selected: ["Test demand"], custom: ""},
         },
       });
     };
@@ -280,6 +281,8 @@ test(
             await assert.rejects(
               machine.updateDraft(actor, row.id, { tier: "urgent" }),
             );
+          await machine.updateDraft(client,row.id,{subject_matter:"Test dispute",legal_demand:{selected:["Test demand"],custom:""}});
+          await machine.recordIntakeAi(client,row.id,{matter_type:"property_dispute",subject_matter:"Test dispute"},{task:"subject",text:"Test subject",simulated:true});
           await machine.transition(client, row.id, CaseStatus.submitted);
           await assert.rejects(
             machine.updateDraft(client, row.id, { tier: "urgent" }),
@@ -410,6 +413,7 @@ test(
             });
             assert.equal(created.status, 201);
             ids.push(created.body.id);
+            await db.case.update({where: {id: created.body.id}, data: {subject_matter: "Test dispute", subject_line: "Test subject", legal_demand: {selected: ["Test demand"], custom: ""}}});
             const path = "/" + created.body.id;
             assert.equal((await call("GET", path, other)).status, 404);
             assert.equal(
@@ -474,6 +478,7 @@ test(
       );
     } finally {
       await db.caseEvent.deleteMany({ where: { case_id: { in: ids } } });
+      await db.caseParty.deleteMany({where: {case_id: {in: ids}}});
       await db.case.deleteMany({ where: { id: { in: ids } } });
       await db.user.deleteMany({
         where: { id: { in: actors.map((a) => a.id) } },

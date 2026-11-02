@@ -1,8 +1,11 @@
-AI adapters — no application callers yet
+AI adapters — Legal Notice intake
 ========================================
 Nest registers AI once; consumers inject the AiPort with the AI token.
 No downstream mode branching. The demo timer still uses its existing fixed
-draft directly. No case writes, new endpoints or mobile changes in this chunk.
+draft directly. Legal Notice intake consumes the port for subject lines and
+demand options. The case state machine records the result/provenance, and
+subject generation writes the dedicated subject_line column. Notice drafting
+through this port is not wired to the advocate editor yet.
 
 generate({task:'subject'|'notice', prompt}) -> {text, simulated}
 generate({task:'demands', prompt}) -> {options:string[], simulated}

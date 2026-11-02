@@ -106,6 +106,10 @@ export type ApiCase = {
   status: CaseStatus;
   tier: z.infer<typeof LegalNoticeTierSchema> | null;
   matter_type: import("./legal-notice").LegalNoticeMatterType | null;
+  subject_matter: string | null;
+  subject_line: string | null;
+  legal_demand: import('./legal-notice').LegalDemand | null;
+  parties?: {id: string; kind: string; name: string; age: number | null; father_name: string | null}[];
   /** Legal_Notice_Final.pdf, rendered on the client's approval. */
   notice_document_id: string | null;
   details: LegalNoticeIntake;

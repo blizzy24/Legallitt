@@ -183,6 +183,9 @@ model Case {
   status                            CaseStatus      @default(draft)
   sub_status                        String?
   matter_type                       String?
+  subject_matter                    String?
+  subject_line                      String?
+  legal_demand                      Json?           @db.JsonB
   tier                              String?
   title                             String?
   notice_document_id                String?         @db.Uuid
@@ -239,6 +242,8 @@ model CaseParty {
   case_id          String @db.Uuid
   kind             String
   name             String
+  age              Int?
+  father_name      String?
   details          Json   @default("{}") @db.JsonB
   case_id_relation Case   @relation("case_parties_case_id_cases", fields: [case_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 

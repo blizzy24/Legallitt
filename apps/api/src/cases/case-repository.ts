@@ -43,6 +43,7 @@ export class CaseRepository {
     const record = await db.case.findFirst({
       where: { AND: [caseScope(actor), { id }] },
       include: {
+        case_parties_case_id_relations: true,
         // The advocate's drawn facts (design 437) travel with the case; the id
         // alone would leave the card empty.
         advocate_id_relation:{select:{id:true,full_name:true,advocate_profiles_user_id_relations:{select:{
@@ -67,6 +68,7 @@ export class CaseRepository {
     // Same response for a missing case and an inaccessible case.
     if (!record) throw new NotFoundException("Case not found");
     const {
+      case_parties_case_id_relations: parties,
       advocate_id_relation: advocate,
       case_events_case_id_relations: events,
       documents_case_id_relations: documents,
@@ -89,7 +91,7 @@ export class CaseRepository {
     );
     const reviews = drafts.flatMap((d) => d.draft_reviews_draft_id_relations);
     const {advocate_profiles_user_id_relations: profile = null, ...advocateUser} = advocate ?? {};
-    return { ...caseRecord, advocate: advocate ? {...advocateUser, profile} : advocate, events, documents, drafts, reviews, shipments };
+    return { ...caseRecord, parties, advocate: advocate ? {...advocateUser, profile} : advocate, events, documents, drafts, reviews, shipments };
   }
 
   async list(actor: CaseActor, query: unknown) {
