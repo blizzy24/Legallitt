@@ -1,0 +1,131 @@
+{
+  "case": {
+    "id": "7f65423a-72bb-4ef9-9ff8-a10b8b931f43",
+    "reference": "LN-2026-0050",
+    "status": "completed"
+  },
+  "profiles": 3,
+  "observations": [
+    {
+      "event": "paid → assignment needed",
+      "role": "admin",
+      "before": 0,
+      "unread": 1,
+      "withoutReload": true
+    },
+    {
+      "event": "assigned",
+      "role": "advocate",
+      "before": 0,
+      "unread": 1,
+      "withoutReload": true
+    },
+    {
+      "event": "advocate assigned",
+      "role": "client",
+      "before": 1,
+      "unread": 2,
+      "withoutReload": true
+    },
+    {
+      "event": "draft ready",
+      "role": "client",
+      "before": 2,
+      "unread": 3,
+      "withoutReload": true
+    },
+    {
+      "event": "client approved",
+      "role": "advocate",
+      "before": 0,
+      "unread": 1,
+      "withoutReload": true
+    },
+    {
+      "event": "dispatched → delivery confirmation needed",
+      "role": "admin",
+      "before": 0,
+      "unread": 1,
+      "withoutReload": true
+    },
+    {
+      "event": "notice dispatched",
+      "role": "client",
+      "before": 2,
+      "unread": 3,
+      "withoutReload": true
+    },
+    {
+      "event": "notice delivered",
+      "role": "client",
+      "before": 3,
+      "unread": 4,
+      "withoutReload": true
+    }
+  ],
+  "errors": [],
+  "duplicateDeliveryStatus": 409,
+  "observerReloads": 0,
+  "validation": {
+    "workspaceTypecheck": "All 5 packages clean",
+    "apiTests": {
+      "passed": 72,
+      "failed": 0
+    },
+    "sharedTests": {
+      "passed": 12,
+      "failed": 0
+    },
+    "fixtureMobileSmoke": {
+      "routes": 322,
+      "failures": 0,
+      "apiCalls": 0
+    },
+    "mobileBuild": "passed (fixtures)",
+    "adminBuild": "passed"
+  },
+  "implementation": {
+    "pollIntervalSeconds": 10,
+    "inAppNotifications": "real, transactionally persisted",
+    "outsideDelivery": "simulated; no SNS, FCM, SMS or email wired",
+    "markRead": "on open; mark-all also supported",
+    "membership": "owner and current case membership checked",
+    "pagination": "row cursor, including tied microsecond timestamps"
+  },
+  "letterhead": {
+    "referenceLabel": "Reference Id",
+    "preservationPhrase": "has been preserved in my office",
+    "companyNameUnchanged": [
+      "INT LegalConsultants Pvt. Ltd.",
+      "INT LegalConsultant Pvt. Ltd."
+    ],
+    "companyNameOpenQuestion": 26,
+    "pdf": "corrected-letterhead.pdf"
+  },
+  "screenshots": {
+    "client": {
+      "inbox": "client-notifications.png",
+      "bell": "client-bell.png"
+    },
+    "advocate": {
+      "inbox": "advocate-notifications.png",
+      "bell": "advocate-bell.png"
+    },
+    "admin": {
+      "inbox": "admin-notifications.png",
+      "bell": "admin-bell.png"
+    }
+  },
+  "comparisons": [
+    "three-notifications.png",
+    "three-bell.png"
+  ],
+  "scopeNotes": [
+    "All test data is synthetic. The POD is a real manually uploaded development test file and explicitly says no actual delivery occurred.",
+    "Courier booking and courier payment were prepared through the real API; intake, assignment, draft editing/sending, client approval, dispatch and human delivery confirmation were performed through the UI.",
+    "Additional lifecycle tests cover requested changes, advocate decline and inbound receipt, including duplicate prevention.",
+    "The client design-60 SMS/WhatsApp Configure control keeps its preview notice; outside delivery integration is out of scope.",
+    "Temporary test demo delays were process-only; normal local environment restored after verification.",
+    "No AWS infrastructure deployed."
+  ]
+}

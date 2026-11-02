@@ -1,0 +1,41 @@
+[
+  {
+    "id": "15d0de00-f9ac-4b62-8052-89adf3dd609d",
+    "case_id": "7f65423a-72bb-4ef9-9ff8-a10b8b931f43",
+    "kind": "payment_captured",
+    "title": "Payment Successful",
+    "body": null,
+    "created_at": "2026-11-02T18:56:29.989Z",
+    "read_at": null,
+    "case": {
+      "reference": "LN-2026-0050",
+      "status": "completed"
+    }
+  },
+  {
+    "id": "5fcf370b-a472-4721-b7aa-d6fcde6e6eb4",
+    "case_id": "7f65423a-72bb-4ef9-9ff8-a10b8b931f43",
+    "kind": "client_approved",
+    "title": "Client approved",
+    "body": "LN-2026-0050",
+    "created_at": "2026-11-02T18:56:17.382Z",
+    "read_at": "2026-11-02T18:56:27.321Z",
+    "case": {
+      "reference": "LN-2026-0050",
+      "status": "completed"
+    }
+  },
+  {
+    "id": "dfb922f1-d1b7-4326-8363-8ac91ab107d3",
+    "case_id": "7f65423a-72bb-4ef9-9ff8-a10b8b931f43",
+    "kind": "case_assigned",
+    "title": "A case assigned to you",
+    "body": "LN-2026-0050",
+    "created_at": "2026-11-02T18:55:48.238Z",
+    "read_at": "2026-11-02T18:55:57.381Z",
+    "case": {
+      "reference": "LN-2026-0050",
+      "status": "completed"
+    }
+  }
+]
