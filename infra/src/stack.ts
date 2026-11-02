@@ -12,6 +12,7 @@ import {
 } from "aws-cdk-lib";
 import { Construct } from "constructs";
 import { CoreStack } from "./core";
+import { DevComputeStack } from "./dev-compute";
 
 type Environment = "dev" | "prod";
 // CloudFormation has no resource-level tag API for routes, associations, policies,
@@ -555,9 +556,18 @@ export function createFoundation(app: App): void {
       stackName: `${id}-Core`,
       tags: { environment, application: "legalitt" },
     });
-    new ComputeStack(stage, "Compute", environment, core, {
-      stackName: `${id}-Compute`,
-      tags: { environment, application: "legalitt" },
-    });
+    // Development runs the dev-scale shape (§2.10): no NAT, no load balancer.
+    // Production keeps the full shape; it returns to dev when real clients arrive.
+    if (environment === "dev")
+      new DevComputeStack(stage, "Compute", core, {
+        stackName: `${id}-Compute-DevelopmentOnly`,
+        description: "Legalitt DEVELOPMENT-ONLY compute (no NAT, no load balancer). Not for production.",
+        tags: { environment, application: "legalitt", purpose: "development-only" },
+      });
+    else
+      new ComputeStack(stage, "Compute", environment, core, {
+        stackName: `${id}-Compute`,
+        tags: { environment, application: "legalitt" },
+      });
   }
 }

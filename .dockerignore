@@ -1,0 +1,15 @@
+# Build context for apps/api/Dockerfile: only what the API image needs.
+**/node_modules
+**/dist
+**/.env*
+**/.DS_Store
+.git
+.turbo
+apps/mobile
+apps/admin
+design
+reports
+docs
+infra
+scripts
+**/tests

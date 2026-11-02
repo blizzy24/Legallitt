@@ -20,15 +20,38 @@ for (const [stage, environment] of [
   const json = template.toJSON();
   test(`${stage}: requested resources, isolated networking and encryption`, () => {
     assert.equal(stack.region, "ap-south-1");
-    for (const type of [
-      "AWS::EC2::VPC",
-      "AWS::RDS::DBInstance",
-      "AWS::ECS::Service",
-      "AWS::SQS::Queue",
-      "AWS::ElasticLoadBalancingV2::LoadBalancer",
-    ])
+    for (const type of ["AWS::EC2::VPC", "AWS::RDS::DBInstance", "AWS::ECS::Service"])
       template.resourceCountIs(type, 1);
     template.resourceCountIs("AWS::EC2::Subnet", 4);
+    if (environment === "prod") {
+      template.resourceCountIs("AWS::SQS::Queue", 1);
+      template.resourceCountIs("AWS::ElasticLoadBalancingV2::LoadBalancer", 1);
+      template.hasResourceProperties("AWS::ElasticLoadBalancingV2::Listener", { Protocol: "HTTPS", Port: 443 });
+    } else {
+      // Development-only shape (§2.10): no NAT, no load balancer, no Elastic IP.
+      for (const type of ["AWS::EC2::NatGateway", "AWS::EC2::EIP", "AWS::ElasticLoadBalancingV2::LoadBalancer"])
+        template.resourceCountIs(type, 0);
+      template.hasResourceProperties("AWS::ApiGatewayV2::Api", { ProtocolType: "HTTP" });
+      template.hasResourceProperties("AWS::ApiGatewayV2::Integration", { ConnectionType: "VPC_LINK", IntegrationType: "HTTP_PROXY" });
+      template.hasResourceProperties("AWS::ServiceDiscovery::Service", { DnsConfig: { DnsRecords: [{ Type: "SRV", TTL: 10 }] } });
+      template.hasResourceProperties("AWS::ECS::TaskDefinition", { RuntimePlatform: { CpuArchitecture: "ARM64" } });
+      // The task is reachable only from the VPC link, the database only from the task.
+      const groups = template.findResources("AWS::EC2::SecurityGroup");
+      for (const group of Object.values(groups))
+        for (const rule of group.Properties.SecurityGroupIngress ?? []) {
+          assert.equal(rule.CidrIp, undefined);
+          assert.ok(rule.SourceSecurityGroupId);
+        }
+      const db = Object.values(template.findResources("AWS::RDS::DBInstance"))[0].Properties;
+      const dbSubnets = Object.values(template.findResources("AWS::RDS::DBSubnetGroup"))[0].Properties.SubnetIds.map((s) => s.Ref);
+      const routes = Object.values(template.findResources("AWS::EC2::Route")).map((r) => r.Properties.RouteTableId.Ref);
+      const associations = Object.values(template.findResources("AWS::EC2::SubnetRouteTableAssociation")).map((a) => a.Properties);
+      for (const subnet of dbSubnets)
+        assert.ok(!associations.some((a) => a.SubnetId.Ref === subnet && routes.includes(a.RouteTableId.Ref)), "database subnet has no internet route");
+      assert.equal(db.PubliclyAccessible, false);
+      assert.match(stack.stackName, /DevelopmentOnly/);
+      assert.equal(stack.tags.tagValues().purpose, "development-only");
+    }
     template.hasResourceProperties("AWS::RDS::DBInstance", {
       Engine: "postgres",
       MultiAZ: environment === "prod",
@@ -39,18 +62,11 @@ for (const [stage, environment] of [
       RequiresCompatibilities: ["FARGATE"],
       NetworkMode: "awsvpc",
     });
-    template.hasResourceProperties("AWS::ElasticLoadBalancingV2::Listener", {
-      Protocol: "HTTPS",
-      Port: 443,
-    });
     for (const resource of Object.values(json.Resources)) {
       assert.equal(resource.Metadata.environment, environment);
-      if (resource.Properties?.Tags)
-        assert.ok(
-          resource.Properties.Tags.some(
-            (t) => t.Key === "environment" && t.Value === environment,
-          ),
-        );
+      const tags = resource.Properties?.Tags;
+      if (tags)
+        assert.ok(Array.isArray(tags) ? tags.some((t) => t.Key === "environment" && t.Value === environment) : tags.environment === environment);
     }
   });
   test(`${stage}: bounded task roles and no invented deployment settings`, () => {

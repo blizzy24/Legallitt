@@ -8,8 +8,10 @@ import { PrismaClient } from "./generated/prisma/client";
 
 const databaseSecret = z.object({
   host: z.string().min(1),
-  port: z.number().int().min(1).max(65535),
-  dbname: z.string().min(1),
+  // The RDS secret attachment writes host, port and engine; dbname comes from the
+  // stack (DATABASE_NAME) when the secret does not carry it.
+  port: z.coerce.number().int().min(1).max(65535),
+  dbname: z.string().min(1).optional(),
   username: z.string().min(1),
   password: z.string().min(1),
 });
@@ -31,7 +33,7 @@ export async function createDatabaseClient(): Promise<PrismaClient> {
         adapter: new PrismaPg({
           host: secret.host,
           port: secret.port,
-          database: secret.dbname,
+          database: secret.dbname ?? process.env.DATABASE_NAME,
           user: secret.username,
           password: secret.password,
           ssl: { rejectUnauthorized: true },
