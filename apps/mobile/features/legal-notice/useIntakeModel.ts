@@ -1,7 +1,8 @@
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useLegalNotice } from '../../context/legalNotice';
-import { noticeParents, noticeFinishedIntake, noticePaid } from './navigation';
-import { useCallback, useEffect, useState } from 'react';
+import { noticeParents, noticeFinishedIntake, noticePaid, noticeNext } from './navigation';
+import { useCallback, useEffect, useState, useRef } from 'react';
+import { validateNoticeStep } from './intake-validation';
 import { noticeMatterType, LegalNoticeSubmissionSchema } from '@legalitt/shared';
 import { DATA_SOURCE } from '../../lib/data-source';
 import { EMPTY_FORM, type LegalNoticeForm } from '../../context/legalNotice';
@@ -10,10 +11,6 @@ import { useFixtureIntakeModel } from './useFixtureIntakeModel';
 import { useNoticeController, type NoticeStage } from './useNoticeController';
 import type { NoticeIntakeModel } from './screen-model';
 
-const next: Record<string, string> = {
-  detail: 'step1', step1: 'step2', step2: 'step3', step3: 'step4',
-  step4: 'step4-review', 'step4-review': 'step5', step5: 'step6', step6: 'scan-pay',
-};
 /** Select the data adapter here, never inside a designed view. */
 export function useIntakeModel(stage: string) {
   const {service} = useLocalSearchParams<{service?: string}>();
@@ -27,6 +24,18 @@ export function useIntakeModel(stage: string) {
     if (!service && noticeFinishedIntake.has(stage) && finished) router.replace(c.href('/legal-notice/tracking'));
   }, [stage, finished, c.id, service]));
   const [prices, setPrices] = useState<typeof c.pricing>([]);
+  const [demandOptions, setDemandOptions] = useState<string[]>([]);
+  const requestedOptions = useRef<string | undefined>(undefined);
+  const generateDemands = () => { void c.run(async () => {
+    if (!c.id) return;
+    const result = await c.repository.generateNoticeDemands(c.id);
+    setDemandOptions(result.options);
+  }); };
+  useEffect(() => {
+    if (!api || stage !== 'demand' || c.loading || c.busy || !c.id || c.record?.status !== 'draft' || requestedOptions.current === c.id) return;
+    requestedOptions.current = c.id;
+    generateDemands();
+  }, [api, stage, c.loading, c.busy, c.id, c.record?.status]);
   useEffect(() => {
     if (!api) return;
     let alive = true;
@@ -34,16 +43,28 @@ export function useIntakeModel(stage: string) {
     return () => { alive = false; };
   }, [api]);
   const form: LegalNoticeForm = {
-    client: {...EMPTY_FORM.client, ...c.details.client},
+    client: {...EMPTY_FORM.client, ...c.details.client,
+      age: c.intakeFields.sender?.age == null ? '' : String(c.intakeFields.sender.age),
+      fatherName: c.intakeFields.sender?.father_name ?? ''},
     noticee: {...EMPTY_FORM.noticee, ...c.details.noticee},
     issueType: c.details.issueType ?? null, tier: c.tier,
+    subjectMatter: c.intakeFields.subject_matter ?? '', subjectLine: c.record?.subject_line ?? '',
+    legalDemand: c.intakeFields.legal_demand ?? {selected: [], custom: ''},
     documents: c.record?.documents?.map(d => d.filename) ?? [],
   };
   const update = (patch: Partial<LegalNoticeForm>) => {
+    c.clearError();
     c.dirty.current = true;
     if (patch.tier) c.setTier(patch.tier);
+    const client = patch.client ? (({age, fatherName, ...party}) => party)(patch.client) : undefined;
+    c.setIntakeFields(previous => ({...previous,
+      ...(patch.subjectMatter !== undefined ? {subject_matter: patch.subjectMatter} : {}),
+      ...(patch.legalDemand ? {legal_demand: patch.legalDemand} : {}),
+      ...(patch.client ? {sender: {age: patch.client.age.trim() ? Number(patch.client.age) : null,
+        father_name: patch.client.fatherName || null}} : {}),
+    }));
     c.setDetails(previous => ({...previous,
-      ...(patch.client ? {client:patch.client} : {}),
+      ...(client ? {client} : {}),
       ...(patch.noticee ? {noticee:patch.noticee} : {}),
       ...(patch.issueType ? {issueType:patch.issueType} : {}),
     }));
@@ -57,10 +78,12 @@ export function useIntakeModel(stage: string) {
   const gst = ready ? rows.reduce((sum,p) => sum + (BigInt(p!.base_amount_paise) * BigInt(p!.gst_bps) + 5000n) / 10000n, 0n) : 0n;
   const model: NoticeIntakeModel = {
     error: c.error,
+    busy: c.busy || c.loading,
+    demandOptions: [...new Set([...demandOptions, ...form.legalDemand.selected])], generateDemands,
     back: () => { if(stage === "detail") { router.replace("/(tabs)/home"); return; } void c.run(async () => {
       if (noticePaid(c.record)) { router.replace(c.href('/legal-notice/tracking')); return; }
       if(c.id && c.dirty.current && c.record?.status === 'draft') {
-        await c.repository.saveIntake(c.id,{details:c.details,tier:c.tier,matter_type:noticeMatterType(c.details.issueType)});
+        await c.repository.saveIntake(c.id,c.intakePayload());
         c.dirty.current=false;
       }
       router.replace(c.href(noticeParents[stage] ?? '/legal-notice/tracking'));
@@ -76,11 +99,12 @@ export function useIntakeModel(stage: string) {
       {label:'Goods & Services Tax (GST 18%)',amount:rupees(gst)},
       {label:'Platform fees',amount:rupees(BigInt(platform!.base_amount_paise))},
     ] : [],
-    summary: {client:'',noticeType:'',noticee:[],summary:'',documents:form.documents.length},
+    summary: {client:'',noticeType:'',noticee:[],summary:form.subjectMatter,documents:form.documents.length},
     navigate: path => { if(stage === "detail") c.go(path); else void c.run(() => c.save(path)); },
     continue: () => { void c.run(async () => {
       if (c.loading) return;
-      const destination = '/legal-notice/' + next[stage];
+      validateNoticeStep(stage, form);
+      const destination = '/legal-notice/' + noticeNext[stage];
       if (stage === 'detail') {
         if(c.id) {
           const existing=await c.repository.case(c.id);
@@ -91,10 +115,17 @@ export function useIntakeModel(stage: string) {
         const created = await c.repository.createCase({service_code:'legal_notice',tier:c.tier});
         c.go(destination,created.id);
       } else if (stage === 'step5') {
+        if (c.record?.status === 'payment_pending') { c.go(destination); return; }
         LegalNoticeSubmissionSchema.parse(c.details);
         if (!c.id) return;
-        await c.repository.saveIntake(c.id,{details:c.details,tier:c.tier,matter_type:noticeMatterType(c.details.issueType)});
+        await c.repository.saveIntake(c.id,c.intakePayload());
         if (c.record?.status === 'draft') await c.repository.submit(c.id);
+        c.dirty.current = false;
+        c.go(destination);
+      } else if (stage === 'step3') {
+        if (!c.id) return;
+        await c.repository.saveIntake(c.id,c.intakePayload());
+        await c.repository.generateNoticeSubject(c.id);
         c.dirty.current = false;
         c.go(destination);
       } else if (stage === 'step6') c.go(destination);

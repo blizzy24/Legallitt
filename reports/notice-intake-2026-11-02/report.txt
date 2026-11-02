@@ -1,0 +1,61 @@
+LEGAL NOTICE INTAKE — 2 November 2026
+
+Configuration
+- Haiku 4.5 India-only profile for subject, demands and notice, in separate config values.
+- AI_MODE remains simulated by default. Gemini is development-only.
+- Sonnet 5 is blocked pending the client's AWS Sales request; recorded in architecture §9.1.
+- No AWS infrastructure deployed. Local API restored to its default simulated AI mode.
+
+Implemented order
+1 Type + required subject matter (existing /legal-notice/step3)
+2 Noticee (/legal-notice/step2)
+3 Sender, with Age and Father's name (S/o Shri) (/legal-notice/step1)
+4 Legal demand (/legal-notice/demand)
+5 Documents and document review (/legal-notice/step4 and step4-review)
+6 Review (/legal-notice/step5)
+7 Payment (/legal-notice/step6), then existing Scan & Pay and success
+
+Storage / implementation decisions
+- subject_matter and subject_line are nullable TEXT columns.
+- legal_demand is nullable JSONB {selected: string[], custom: string}, in its own column,
+  so selected options and custom prose can round-trip without parsing one joined string.
+- Sender age is nullable INTEGER; father's name is nullable TEXT on case_parties.
+  Neither was explicitly specified as required; blanks stay NULL.
+- Existing route paths retained; counters, forward routes, declared parents and demo flowMap reordered.
+- Changing type/subject matter invalidates the generated subject. Concurrent stale AI answers are rejected.
+- Age/father's name and demand fields are not buried in cases.details.
+- New screen and copy registered as owner-instructed additions in architecture §9.2.
+- Advocate offences/place/date and letterhead editor integration remain the next chunk.
+
+Verification
+- Simulated AI: LN-2026-0044, reached payment success; subject/demand events source=simulated.
+- Gemini: LN-2026-0045, reached payment success; real subject/demand responses; source=real.
+- Both used two selected options, custom text, a real supporting PDF upload and existing simulated KYC.
+- Back restored age, father's name and demand selections. Direct SQL confirms every new field and a captured payment.
+- Test runs used synthetic names, contacts and dispute information only.
+- Four incomplete synthetic drafts from interrupted test runs were cancelled through the real endpoint.
+- All workspace type checks passed; API suite 67/67; shared suite 10/10.
+- Production fixture web export passed. Route count: 322 (321 before this addition).
+- Full route smoke passed: 322 routes, zero failures, no fixture API calls (mobile-smoke.log).
+
+Screenshots
+simulated/01-type.png
+simulated/02-noticee.png
+simulated/03-sender.png
+simulated/04-demand.png
+simulated/05-documents.png
+simulated/05-document-review.png
+simulated/06-review.png
+simulated/07-payment.png
+simulated/08-success.png
+gemini/01-type.png
+gemini/02-noticee.png
+gemini/03-sender.png
+gemini/04-demand.png
+gemini/05-documents.png
+gemini/05-document-review.png
+gemini/06-review.png
+gemini/07-payment.png
+gemini/08-success.png
+
+Open screenshots.html for the side-by-side gallery.

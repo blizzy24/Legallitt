@@ -1,0 +1,93 @@
+{
+  "mode": "simulated",
+  "id": "64c710a2-2022-473a-bb7f-7a898693bc97",
+  "reference": "LN-2026-0044",
+  "subject_matter": "Synthetic test: an agreed invoice of Rs 5000 remains unpaid after the stated due date.",
+  "subject_line": "Legal notice concerning the matter in dispute",
+  "legal_demand": {
+    "custom": "Please confirm the outstanding balance in writing.",
+    "selected": [
+      "Resolve the matter described in this notice.",
+      "Provide a written response to the issues raised in this notice."
+    ]
+  },
+  "sender": {
+    "id": "b96ba856-ab2a-45e2-ac41-aae0fd1dea53",
+    "case_id": "64c710a2-2022-473a-bb7f-7a898693bc97",
+    "kind": "sender",
+    "name": "Sender Test",
+    "age": 41,
+    "father_name": "Father Test",
+    "details": {
+      "email": "sender@example.invalid",
+      "mobile": "2025550101",
+      "address": "Synthetic sender address, Mumbai",
+      "fullName": "Sender Test"
+    }
+  },
+  "noticee": {
+    "email": "noticee@example.invalid",
+    "mobile": "2025550102",
+    "address": "Synthetic noticee address, Mumbai",
+    "fullName": "Noticee Test",
+    "relationship": "Customer"
+  },
+  "events": [
+    {
+      "type": "subject_generated",
+      "source": "simulated"
+    },
+    {
+      "type": "demand_options_generated",
+      "source": "simulated"
+    },
+    {
+      "type": "demand_options_generated",
+      "source": "simulated"
+    }
+  ],
+  "generated": [
+    {
+      "url": "http://127.0.0.1:3001/api/v1/cases/64c710a2-2022-473a-bb7f-7a898693bc97/subject",
+      "status": 201,
+      "body": {
+        "text": "Legal notice concerning the matter in dispute",
+        "simulated": true
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3001/api/v1/cases/64c710a2-2022-473a-bb7f-7a898693bc97/demand-options",
+      "status": 201,
+      "body": {
+        "options": [
+          "Resolve the matter described in this notice.",
+          "Provide a written response to the issues raised in this notice."
+        ],
+        "simulated": true
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3001/api/v1/cases/64c710a2-2022-473a-bb7f-7a898693bc97/demand-options",
+      "status": 201,
+      "body": {
+        "options": [
+          "Resolve the matter described in this notice.",
+          "Provide a written response to the issues raised in this notice."
+        ],
+        "simulated": true
+      }
+    }
+  ],
+  "paid": true,
+  "screenshots": [
+    "01-type.png",
+    "02-noticee.png",
+    "03-sender.png",
+    "04-demand.png",
+    "05-document-review.png",
+    "05-documents.png",
+    "06-review.png",
+    "07-payment.png",
+    "08-success.png"
+  ]
+}

@@ -18,7 +18,7 @@ export function Step2ScreenView({ model }: { model: NoticeIntakeModel }) {
   const n = form.noticee;
 
   return (
-    <WizardShell onBack={model.back} step={2} buttonLabel="Continue" onContinue={model.continue}>
+    <WizardShell busy={model.busy} onBack={model.back} step={2} totalSteps={7} buttonLabel="Continue" onContinue={model.continue}>
       <ChatBubble title="Who would you like to send the notice to?" time="10:30 AM" />
       <Text style={styles.note}>Note: The person receiving the notice.</Text>
       <View style={styles.fields}>

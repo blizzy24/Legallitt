@@ -1,4 +1,4 @@
-// Legal Notice service: the six-step wizard, payment, tracking and the
+// Legal Notice service: the seven-step wizard, payment, tracking and the
 // service info/detail/identity pages (design/22-39).
 //
 // Measured from the design exports; see the per-block comments for the file and
@@ -76,6 +76,16 @@ export const wizardField = {
   hint: '#9C9892',
 };
 // Step 3 quick-action pills.
+// Owner-instructed demand screen: derive each value from the neighbouring
+// wizard fields instead of introducing a separate visual theme.
+export const intakeDemand = {
+  border: 1,
+  padding: wizardField.padLeft,
+  checkIcon: wizardField.icon - 4,
+  checkRadius: wizardField.radius,
+  lineHeight: wizardField.text * 1.3,
+};
+
 export const quickActions = {
   titleGap: 24,
   titleSize: 14.5,

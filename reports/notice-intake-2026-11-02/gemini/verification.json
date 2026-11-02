@@ -1,0 +1,93 @@
+{
+  "mode": "gemini",
+  "id": "76daa221-fc21-403b-b352-eedd402970eb",
+  "reference": "LN-2026-0045",
+  "subject_matter": "Synthetic test: an agreed invoice of Rs 5000 remains unpaid after the stated due date.",
+  "subject_line": "Legal Notice: Unpaid Invoice of Rs 5000",
+  "legal_demand": {
+    "custom": "Please confirm the outstanding balance in writing.",
+    "selected": [
+      "Demand immediate payment of the agreed invoice amount of Rs 5000",
+      "Request written confirmation of the payment status and dispute resolution terms"
+    ]
+  },
+  "sender": {
+    "id": "ba3c7303-f787-46cc-ba03-db3347280a01",
+    "case_id": "76daa221-fc21-403b-b352-eedd402970eb",
+    "kind": "sender",
+    "name": "Sender Test",
+    "age": 41,
+    "father_name": "Father Test",
+    "details": {
+      "email": "sender@example.invalid",
+      "mobile": "2025550101",
+      "address": "Synthetic sender address, Mumbai",
+      "fullName": "Sender Test"
+    }
+  },
+  "noticee": {
+    "email": "noticee@example.invalid",
+    "mobile": "2025550102",
+    "address": "Synthetic noticee address, Mumbai",
+    "fullName": "Noticee Test",
+    "relationship": "Customer"
+  },
+  "events": [
+    {
+      "type": "subject_generated",
+      "source": "real"
+    },
+    {
+      "type": "demand_options_generated",
+      "source": "real"
+    },
+    {
+      "type": "demand_options_generated",
+      "source": "real"
+    }
+  ],
+  "generated": [
+    {
+      "url": "http://127.0.0.1:3001/api/v1/cases/76daa221-fc21-403b-b352-eedd402970eb/subject",
+      "status": 201,
+      "body": {
+        "text": "Legal Notice: Unpaid Invoice of Rs 5000",
+        "simulated": false
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3001/api/v1/cases/76daa221-fc21-403b-b352-eedd402970eb/demand-options",
+      "status": 201,
+      "body": {
+        "options": [
+          "Demand immediate payment of the agreed invoice amount of Rs 5000",
+          "Request written confirmation of the payment status and dispute resolution terms"
+        ],
+        "simulated": false
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3001/api/v1/cases/76daa221-fc21-403b-b352-eedd402970eb/demand-options",
+      "status": 201,
+      "body": {
+        "options": [
+          "Demand immediate payment of the agreed invoice amount of Rs 5000",
+          "Demand confirmation of payment within the stated due date terms"
+        ],
+        "simulated": false
+      }
+    }
+  ],
+  "paid": true,
+  "screenshots": [
+    "01-type.png",
+    "02-noticee.png",
+    "03-sender.png",
+    "04-demand.png",
+    "05-document-review.png",
+    "05-documents.png",
+    "06-review.png",
+    "07-payment.png",
+    "08-success.png"
+  ]
+}

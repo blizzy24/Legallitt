@@ -2,17 +2,18 @@ import { createContext, useContext, useMemo, useState, useCallback, useEffect, t
 
 import type { ServiceTier } from '../data/legalNotice';
 
-// Form state for the Legal Notice wizard. Plain object, in memory only: nothing is
-// validated and nothing survives a reload.
+// Fixture state for the Legal Notice wizard. The controller persists API data;
+// both adapters validate entered steps before continuing.
 
-export type ClientDetails = {
+type PartyDetails = {
   fullName: string;
   mobile: string;
   email: string;
   address: string;
 };
+export type ClientDetails = PartyDetails & { age: string; fatherName: string };
 
-export type NoticeeDetails = ClientDetails & {
+export type NoticeeDetails = PartyDetails & {
   relationship: string;
 };
 
@@ -29,18 +30,22 @@ export type LegalNoticeForm = {
   client: ClientDetails;
   noticee: NoticeeDetails;
   issueType: IssueType | null;
-  /** Chosen on the detail screen; drives the Service Fee on step 6. */
+  subjectMatter: string;
+  subjectLine: string;
+  legalDemand: import('@legalitt/shared').LegalDemand;
+  /** Chosen on the detail screen; drives the Service Fee on payment step 7. */
   tier: ServiceTier['id'];
   /** Document names the user has "uploaded" — placeholders until real uploads exist. */
   documents: string[];
 };
 
-const EMPTY_CLIENT: ClientDetails = { fullName: '', mobile: '', email: '', address: '' };
+const EMPTY_CLIENT: PartyDetails = { fullName: '', mobile: '', email: '', address: '' };
 
 export const EMPTY_FORM: LegalNoticeForm = {
-  client: EMPTY_CLIENT,
+  client: {...EMPTY_CLIENT, age: '', fatherName: ''},
   noticee: { ...EMPTY_CLIENT, relationship: '' },
   issueType: null,
+  subjectMatter: '', subjectLine: '', legalDemand: {selected: [], custom: ''},
   // design/22 shows URGENT pre-selected.
   tier: 'urgent',
   documents: [],

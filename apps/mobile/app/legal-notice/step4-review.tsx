@@ -37,15 +37,14 @@ const SAMPLE_DOCS: Doc[] = [
 // file's 16pt margins are normalised to the shell. View / replace / delete are
 // non-functional.
 //
-// Both this screen and the upload screen sit at "Step 4 of 6": design/91 and
-// design/39 each draw the stepper on 4, so the wizard's six steps are unchanged and
-// step 4 simply spans two screens.
+// The instructed Documents step is step 5 of 7 and spans upload and review.
+// The original exports numbered both of these screens step 4 of 6.
 export function Step4ReviewScreenView({ onBack, documents, count, onContinue, onAdd, onView, onReplace, onDelete, returnTo = "/legal-notice/step4-review" }: {
   onBack?: () => void; returnTo?: Href; documents: Doc[]; count: number; onContinue: () => void; onAdd: () => void;
   onView: (doc: Doc) => void; onReplace: (doc: Doc) => void; onDelete: (doc: Doc) => void;
 }) {
   return (
-    <WizardShell onBack={onBack} step={4} align="top" background="tinted" buttonLabel="Continue" onContinue={onContinue}>
+    <WizardShell onBack={onBack} step={5} totalSteps={7} align="top" background="tinted" buttonLabel="Continue" onContinue={onContinue}>
       <Text style={styles.title}>Review Your Documents</Text>
       <Text style={styles.subtitle}>Your documents have been uploaded successfully. Review them before continuing.</Text>
 

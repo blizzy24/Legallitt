@@ -1,0 +1,96 @@
+[
+  {
+    "id": "64c710a2-2022-473a-bb7f-7a898693bc97",
+    "reference": "LN-2026-0044",
+    "subject_matter": "Synthetic test: an agreed invoice of Rs 5000 remains unpaid after the stated due date.",
+    "subject_line": "Legal notice concerning the matter in dispute",
+    "legal_demand": {
+      "custom": "Please confirm the outstanding balance in writing.",
+      "selected": [
+        "Resolve the matter described in this notice.",
+        "Provide a written response to the issues raised in this notice."
+      ]
+    },
+    "details": {
+      "client": {
+        "email": "sender@example.invalid",
+        "mobile": "2025550101",
+        "address": "Synthetic sender address, Mumbai",
+        "fullName": "Sender Test"
+      },
+      "noticee": {
+        "email": "noticee@example.invalid",
+        "mobile": "2025550102",
+        "address": "Synthetic noticee address, Mumbai",
+        "fullName": "Noticee Test",
+        "relationship": "Customer"
+      },
+      "issueType": "money-recovery"
+    },
+    "age": 41,
+    "father_name": "Father Test",
+    "documents": 2,
+    "ai_events": [
+      {
+        "type": "subject_generated",
+        "source": "simulated"
+      },
+      {
+        "type": "demand_options_generated",
+        "source": "simulated"
+      },
+      {
+        "type": "demand_options_generated",
+        "source": "simulated"
+      }
+    ],
+    "captured_payments": 1
+  },
+  {
+    "id": "76daa221-fc21-403b-b352-eedd402970eb",
+    "reference": "LN-2026-0045",
+    "subject_matter": "Synthetic test: an agreed invoice of Rs 5000 remains unpaid after the stated due date.",
+    "subject_line": "Legal Notice: Unpaid Invoice of Rs 5000",
+    "legal_demand": {
+      "custom": "Please confirm the outstanding balance in writing.",
+      "selected": [
+        "Demand immediate payment of the agreed invoice amount of Rs 5000",
+        "Request written confirmation of the payment status and dispute resolution terms"
+      ]
+    },
+    "details": {
+      "client": {
+        "email": "sender@example.invalid",
+        "mobile": "2025550101",
+        "address": "Synthetic sender address, Mumbai",
+        "fullName": "Sender Test"
+      },
+      "noticee": {
+        "email": "noticee@example.invalid",
+        "mobile": "2025550102",
+        "address": "Synthetic noticee address, Mumbai",
+        "fullName": "Noticee Test",
+        "relationship": "Customer"
+      },
+      "issueType": "money-recovery"
+    },
+    "age": 41,
+    "father_name": "Father Test",
+    "documents": 1,
+    "ai_events": [
+      {
+        "type": "subject_generated",
+        "source": "real"
+      },
+      {
+        "type": "demand_options_generated",
+        "source": "real"
+      },
+      {
+        "type": "demand_options_generated",
+        "source": "real"
+      }
+    ],
+    "captured_payments": 1
+  }
+]

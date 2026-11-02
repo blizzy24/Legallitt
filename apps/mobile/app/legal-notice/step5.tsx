@@ -9,6 +9,7 @@ import ChatBubble from '../../components/ChatBubble';
 import WizardShell from '../../components/WizardShell';
 import { caseSummary as s, colors, font, wizardBubble as b, wizardCardShadow } from '../../constants/theme';
 import { useLegalNotice, type IssueType } from '../../context/legalNotice';
+import { instructedCopy } from '../../copy/instructed';
 
 const NOTICE_TYPE: Record<IssueType, string> = {
   'property-dispute': 'Property Notice',
@@ -20,7 +21,7 @@ const NOTICE_TYPE: Record<IssueType, string> = {
   other: 'Legal Notice',
 };
 
-// Step 5 — case summary (design/27). The file's card is 353pt wide (inset 18.6) against
+// Instructed step 6 — case summary (design/27). The file's card is 353pt wide (inset 18.6) against
 // the shell's 346; drawn at the shell width.
 export function Step5ScreenView({ model }: { model: NoticeIntakeModel }) {
   const { form } = model;
@@ -28,13 +29,18 @@ export function Step5ScreenView({ model }: { model: NoticeIntakeModel }) {
   const docCount = form.documents.length || model.summary.documents;
 
   return (
-    <WizardShell onBack={model.back} step={5} buttonLabel="Submit & Proceed to Pay" onContinue={model.continue}>
+    <WizardShell busy={model.busy} onBack={model.back} step={6} totalSteps={7} buttonLabel="Submit & Proceed to Pay" onContinue={model.continue}>
       <ChatBubble title="Preview Your Case Summary" time="10:32 AM" />
       <View style={styles.card}>
         <Row label="Client Name" value={form.client.fullName || model.summary.client} />
+        <Row label={instructedCopy.legalNoticeIntake.age} value={form.client.age} />
+        <Row label={instructedCopy.legalNoticeIntake.fatherName} value={form.client.fatherName} />
         <Row label="Notice Type" value={form.issueType ? NOTICE_TYPE[form.issueType] : model.summary.noticeType} />
         <Row label="Notice Details" value={(noticee.length ? noticee : model.summary.noticee).join('\n')} />
         <Row label="Issue Summary" value={model.summary.summary} paragraph />
+        <Row label={instructedCopy.legalNoticeIntake.subjectLine} value={form.subjectLine} paragraph />
+        <Row label={instructedCopy.legalNoticeIntake.legalDemand}
+          value={[...form.legalDemand.selected, form.legalDemand.custom].filter(Boolean).join('\n\n')} paragraph />
 
         <Pressable onPress={() => model.navigate('/legal-notice/step4-review')} accessibilityRole="button" style={styles.box}>
           <View style={styles.boxText}>
@@ -49,6 +55,7 @@ export function Step5ScreenView({ model }: { model: NoticeIntakeModel }) {
 }
 
 function Row({ label, value, paragraph = false }: { label: string; value: string; paragraph?: boolean }) {
+  if (!value) return null;
   return (
     <View style={styles.row}>
       <Text style={styles.label}>{label}</Text>

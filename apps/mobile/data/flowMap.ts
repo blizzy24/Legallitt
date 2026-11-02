@@ -268,10 +268,11 @@ export const FLOW_MAP: Record<string, string> = {
   // last: /legal-advice/datetime (124)
   // ── legal-notice ──
   '/legal-notice/detail': '/legal-notice', // 23 → entry 22
-  '/legal-notice': '/legal-notice/step1', // 22 → 24
-  '/legal-notice/step1': '/legal-notice/step2', // 24 → 25
-  '/legal-notice/step2': '/legal-notice/step3', // 25 → 26
-  '/legal-notice/step3': '/legal-notice/step4', // intake → documents
+  '/legal-notice': '/legal-notice/step3', // owner-instructed type first
+  '/legal-notice/step1': '/legal-notice/demand', // sender → demand
+  '/legal-notice/step2': '/legal-notice/step1', // noticee → sender
+  '/legal-notice/step3': '/legal-notice/step2', // type → noticee
+  '/legal-notice/demand': '/legal-notice/step4', // instructed demand → documents
   '/legal-notice/step5': '/legal-notice/step6', // 27 → 28
   '/legal-notice/step6': '/legal-notice/scan-pay', // 28 → 29
   '/legal-notice/scan-pay': '/legal-notice/success', // 29 → 30

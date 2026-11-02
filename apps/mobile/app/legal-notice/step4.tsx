@@ -20,14 +20,10 @@ import WizardShell from '../../components/WizardShell';
 import { shrinkToFit } from '../../constants/textFit';
 import { colors, font, ink, lnUpload as t } from '../../constants/theme';
 
-// Step 4, first screen — upload supporting documents (design/91).
-//
-// FLOW — design/91 is the upload screen that was missing from the original batch: it
-// produces the state design/39 reviews. The chain is therefore
-//   step3 -> step4 (upload) -> step4-review -> step5 -> step6
-// and both step 4 screens draw the stepper on 4 of 6, so the wizard's six steps are
-// unchanged. The designs do not state this directly; it is inferred from design/39
-// showing files already present with no screen that could have added them.
+// Instructed step 5, first screen — supporting documents (design/91).
+// Design/39 reviews these files. The approved chain is demand → upload →
+// document review → case review → payment. Upload and file review share step 5.
+// The exports originally numbered both document screens step 4 of 6.
 //
 // REPORTED — design/91 REMOVED design/39's Aadhaar Card upload row and replaced it
 // with the Identity Verification card below, which routes to KYC. Identity now goes
@@ -58,7 +54,7 @@ export function Step4ScreenView({ onBack, onContinue, onUpload, returnTo = "/leg
 }) {
   return (
     <WizardShell onBack={onBack}
-      step={4}
+      step={5} totalSteps={7}
       align="top"
       background="tinted"
       buttonLabel="Continue"

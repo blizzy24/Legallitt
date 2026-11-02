@@ -2,6 +2,18 @@
  * "Instructed copy"). Kept apart from drawn copy and from the substitutions so it
  * stays distinguishable; do not reword. */
 export const instructedCopy = {
+  // Approved — project-owner intake restructure, 2 November 2026. Additions to
+  // designs 24–28; the new demand step reuses their measured theme.
+  legalNoticeIntake: {
+    subjectMatter: 'Subject matter in dispute',
+    subjectLine: 'Subject line',
+    age: 'Age', fatherName: 'Father’s name (S/o Shri)',
+    demandTitle: 'Choose your legal demand',
+    demandPrompt: 'Select all that apply, or write your own.',
+    ownDemand: 'Write your own demand',
+    legalDemand: 'Legal demand', generateOptions: 'Generate options',
+    generating: 'Generating options…', saving: 'Please wait…',
+  },
   437: {
     trackDelivery: 'Track Delivery',
     // Chunk 6: project-owner wording, only for the completed lifecycle state.

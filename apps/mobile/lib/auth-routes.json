@@ -234,6 +234,7 @@
     "legal-notice/delivered",
     "legal-notice/delivery-proof",
     "legal-notice/delivery",
+    "legal-notice/demand",
     "legal-notice/detail",
     "legal-notice/index",
     "legal-notice/request-submitted",

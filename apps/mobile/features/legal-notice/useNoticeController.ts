@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 import { router, useFocusEffect, useLocalSearchParams, type Href } from "expo-router";
 import * as DocumentPicker from "expo-document-picker";
-import { noticeMatterType, noticeIssueType, ApiError, DOCUMENT_MAX_BYTES, DocumentMimeSchema, type ApiCase, type LegalNoticeIntake, type NoticeDraftContent } from "@legalitt/shared";
+import { noticeMatterType, noticeIssueType, ApiError, DOCUMENT_MAX_BYTES, DocumentMimeSchema, type ApiCase, type LegalNoticeIntake, type NoticeDraftContent, type NoticeIntakeFields } from "@legalitt/shared";
 import { apiNoticeRepository, type NoticeRepository } from "./repository";
 import { useSession } from "../../context/session";
 
@@ -11,6 +11,7 @@ export type NoticeStage =
   | "step1"
   | "step2"
   | "step3"
+  | "demand"
   | "upload"
   | "summary"
   | "payment"
@@ -43,6 +44,7 @@ export function useNoticeController(stage: NoticeStage, backend: NoticeRepositor
     [items, setItems] = useState<ApiCase[]>([]);
   const [details, setDetails] = useState<LegalNoticeIntake>({}),
     [tier, setTier] = useState<"ordinary" | "urgent">("urgent");
+  const [intakeFields, setIntakeFields] = useState<NoticeIntakeFields>({});
   const [content, setContent] = useState<NoticeDraftContent>(emptyDraft),
     [comment, setComment] = useState("");
   const [carrier, setCarrier] = useState(""),
@@ -88,6 +90,9 @@ export function useNoticeController(stage: NoticeStage, backend: NoticeRepositor
     if (!dirty.current) {
       setDetails({...value.details, issueType: noticeIssueType(value.matter_type)});
       setTier(value.tier ?? "urgent");
+      const sender = value.parties?.find(p => p.kind === 'sender');
+      setIntakeFields({subject_matter: value.subject_matter, legal_demand: value.legal_demand,
+        sender: {age: sender?.age ?? null, father_name: sender?.father_name ?? null}});
       setContent(value.drafts?.at(-1)?.content ?? emptyDraft);
     }
   }, [id, stage, enabled, backend]);
@@ -143,9 +148,10 @@ export function useNoticeController(stage: NoticeStage, backend: NoticeRepositor
       setBusy(false);
     }
   };
+  const intakePayload = () => ({details, tier, matter_type: noticeMatterType(details.issueType), ...intakeFields});
   const save = async (next: string) => {
     if (!id) return;
-    await backend.saveIntake(id, { details, tier, matter_type: noticeMatterType(details.issueType) });
+    await backend.saveIntake(id, intakePayload());
     dirty.current = false;
     go(next);
   };
@@ -177,5 +183,6 @@ export function useNoticeController(stage: NoticeStage, backend: NoticeRepositor
   };
   return { repository: backend, id, advocate, signOut, record, items, details, setDetails, tier, setTier,
     content, setContent, comment, setComment, carrier, setCarrier, waybill, setWaybill,
-    authRequired, busy, error, loading, pricing, dirty, latest, href, go, advocatePath, load, run, save, upload };
+    authRequired, busy, error, loading, pricing, dirty, latest, href, go, advocatePath, load, run, save, upload,
+    intakeFields, setIntakeFields, intakePayload, clearError: () => setError('') };
 }

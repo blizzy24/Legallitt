@@ -7,12 +7,15 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, font, ink, payHeader as ph, wizard as w } from '../constants/theme';
 import PayHeader from './PayHeader';
 import PrimaryButton from './PrimaryButton';
+import { instructedCopy } from '../copy/instructed';
 
 const WIZARD_STEPS = 6;
 
 type Props = {
   /** 1-based step, of WIZARD_STEPS. */
   step: number;
+  totalSteps?: number;
+  busy?: boolean;
   children: ReactNode;
   buttonLabel: string;
   onContinue: () => void;
@@ -38,7 +41,7 @@ type Props = {
 };
 
 export default function WizardShell({
-  step,
+  step, totalSteps = WIZARD_STEPS, busy = false,
   children,
   buttonLabel,
   onContinue, onBack,
@@ -70,18 +73,18 @@ export default function WizardShell({
             <Text style={styles.title}>{title}</Text>
             <Text style={styles.subtitle}>{subtitle}</Text>
           </View>
-          <Stepper step={step} />
+          <Stepper step={step} totalSteps={totalSteps} />
           <Text style={styles.stepLabel}>
-            Step {step} of {WIZARD_STEPS}
+            Step {step} of {totalSteps}
           </Text>
         </View>
       ) : (
         <View>
           <PayHeader title={title} subtitle={subtitle} onBack={goBack} />
           <View style={[styles.header, styles.headerLeading]}>
-            <Stepper step={step} />
+            <Stepper step={step} totalSteps={totalSteps} />
             <Text style={styles.stepLabel}>
-              Step {step} of {WIZARD_STEPS}
+              Step {step} of {totalSteps}
             </Text>
           </View>
         </View>
@@ -102,7 +105,7 @@ export default function WizardShell({
 
       {!hideButton && (
         <View style={[styles.footer, { paddingBottom: insets.bottom + w.bottom, backgroundColor: bg }]}>
-          <PrimaryButton label={buttonLabel} onPress={onContinue} />
+          <PrimaryButton label={busy ? instructedCopy.legalNoticeIntake.saving : buttonLabel} onPress={onContinue} disabled={busy} />
           <View style={styles.safeRow}>
             <Lock size={w.footerIcon} color={colors.textPrimary} />
             <Text style={styles.safeText}>Your information is safe and confidential</Text>
@@ -113,10 +116,10 @@ export default function WizardShell({
   );
 }
 
-function Stepper({ step }: { step: number }) {
-  const items = Array.from({ length: WIZARD_STEPS }, (_, i) => i + 1);
+function Stepper({ step, totalSteps }: { step: number; totalSteps: number }) {
+  const items = Array.from({ length: totalSteps }, (_, i) => i + 1);
   return (
-    <View style={styles.stepper} accessibilityLabel={`Step ${step} of ${WIZARD_STEPS}`}>
+    <View style={styles.stepper} accessibilityLabel={`Step ${step} of ${totalSteps}`}>
       {items.map((n, i) => {
         const done = n <= step;
         // The segment leaving the current circle is already dark in the designs (step 5's

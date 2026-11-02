@@ -6,6 +6,8 @@ import { Ellipsis, FilePenLine, House, IndianRupee, ShoppingCart, Users, type Lu
 import { Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 
 import ChatBubble from '../../components/ChatBubble';
+import FlatField from '../../components/FlatField';
+import { instructedCopy } from '../../copy/instructed';
 import WizardShell from '../../components/WizardShell';
 import { colors, font, ink, quickActions as q, wizardBubble as b, wizardCardShadow } from '../../constants/theme';
 import { useLegalNotice, type IssueType } from '../../context/legalNotice';
@@ -32,7 +34,7 @@ const ROWS: Action[][] = [
   [{ id: 'other', label: 'Any other', icon: Ellipsis }],
 ];
 
-// Step 3 — issue type (design/26). The file shows a timestamp with no bubble above the
+// Instructed step 1 — issue type (design/26). The file shows a timestamp with no bubble above the
 // heading; drawn as is. No selected state is designed: brand border + brand chip here.
 export function Step3ScreenView({ model }: { model: NoticeIntakeModel }) {
   const { form, update } = model;
@@ -42,7 +44,7 @@ export function Step3ScreenView({ model }: { model: NoticeIntakeModel }) {
   const k = width < q.compactBelow ? q.compactScale : 1;
 
   return (
-    <WizardShell onBack={model.back} step={3} buttonLabel="Continue" onContinue={model.continue}>
+    <WizardShell busy={model.busy} onBack={model.back} step={1} totalSteps={7} buttonLabel="Continue" onContinue={model.continue}>
       <ChatBubble time="10:30 AM" />
       <Text style={styles.title}>Quick Actions</Text>
       <View style={styles.pills}>
@@ -88,6 +90,9 @@ export function Step3ScreenView({ model }: { model: NoticeIntakeModel }) {
           </View>
         ))}
       </View>
+      <FlatField icon={FilePenLine} label={instructedCopy.legalNoticeIntake.subjectMatter}
+        required multiline value={form.subjectMatter} onChangeText={subjectMatter => update({subjectMatter})}
+        containerStyle={{marginTop: b.fieldsGap}} />
     </WizardShell>
   );
 }

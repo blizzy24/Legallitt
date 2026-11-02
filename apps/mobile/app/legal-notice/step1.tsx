@@ -10,18 +10,21 @@ import FlatField from '../../components/FlatField';
 import WizardShell from '../../components/WizardShell';
 import { wizardBubble as b, wizardField as f } from '../../constants/theme';
 import { useLegalNotice } from '../../context/legalNotice';
+import { instructedCopy } from '../../copy/instructed';
 
-// Step 1 — the client's own details (design/24). The mobile field's two-person icon is
+// Instructed step 3 — the client's own details (design/24). The mobile field's two-person icon is
 // as drawn.
 export function Step1ScreenView({ model }: { model: NoticeIntakeModel }) {
   const { form, updateClient } = model;
   const c = form.client;
 
   return (
-    <WizardShell onBack={model.back} step={1} buttonLabel="Continue" onContinue={model.continue}>
+    <WizardShell busy={model.busy} onBack={model.back} step={3} totalSteps={7} buttonLabel="Continue" onContinue={model.continue}>
       <ChatBubble title="Please Provide your details!" time="10:32 AM" />
       <View style={styles.fields}>
         <FlatField icon={User} label="Full Name" required value={c.fullName} onChangeText={(t) => updateClient({ fullName: t })} autoComplete="name" />
+        <FlatField icon={User} label={instructedCopy.legalNoticeIntake.age} value={c.age} onChangeText={t => updateClient({age: t})} keyboardType="number-pad" />
+        <FlatField icon={User} label={instructedCopy.legalNoticeIntake.fatherName} value={c.fatherName} onChangeText={t => updateClient({fatherName: t})} />
         <FlatField icon={Users} label="Mobile Number" required value={c.mobile} onChangeText={(t) => updateClient({ mobile: t })} keyboardType="phone-pad" />
         <FlatField icon={Mail} label="Email Address" hint="(Optional)" value={c.email} onChangeText={(t) => updateClient({ email: t })} keyboardType="email-address" autoCapitalize="none" />
         <FlatField icon={MapPin} label="Full Address" required multiline value={c.address} onChangeText={(t) => updateClient({ address: t })} />

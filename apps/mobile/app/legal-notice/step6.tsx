@@ -14,8 +14,8 @@ import { INVOICE, invoiceLines, invoiceTotal, rupees } from '../../data/legalNot
 
 const BAR_HEIGHT = p.barPadTop + 20 + p.barButtonGap + 52 + p.captionGap + 16 + p.barPadBottom;
 
-// Step 6 — Complete Payment (design/28). The file's header reads "Step 3 of 3 ·
-// Final Step" against a "Step 6 of 6" stepper; both say 6 of 6 here. The UPI parent
+// Instructed step 7 — Complete Payment (design/28). The source draws
+// conflicting three/six-step counts; the approved intake now uses seven steps. The UPI parent
 // and its "Scan QR Code" child are both selected in the file: modelled as method +
 // sub-option.
 export function Step6ScreenView({ model }: { model: NoticeIntakeModel }) {
@@ -26,11 +26,11 @@ export function Step6ScreenView({ model }: { model: NoticeIntakeModel }) {
 
   return (
     <View style={styles.screen}>
-      <WizardShell onBack={model.back}
-        step={6}
+      <WizardShell busy={model.busy} onBack={model.back}
+        step={7} totalSteps={7}
         header="leading"
         title="Complete Payment"
-        subtitle="Step 6 of 6"
+        subtitle="Step 7 of 7"
         align="top"
         background="tinted"
         hideButton

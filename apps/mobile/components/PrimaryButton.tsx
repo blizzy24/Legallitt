@@ -6,14 +6,18 @@ type Props = {
   label: string;
   onPress?: () => void;
   style?: StyleProp<ViewStyle>;
+  disabled?: boolean;
 };
 
-export default function PrimaryButton({ label, onPress, style }: Props) {
+export default function PrimaryButton({ label, onPress, style, disabled = false }: Props) {
   return (
     <Pressable
       accessibilityRole="button"
+      disabled={disabled}
+      aria-disabled={disabled}
+      accessibilityState={{disabled}}
       onPress={onPress}
-      style={({ pressed }) => [styles.button, pressed && styles.pressed, style]}
+      style={({ pressed }) => [styles.button, (pressed || disabled) && styles.pressed, style]}
     >
       <Text style={styles.label}>{label}</Text>
     </Pressable>
