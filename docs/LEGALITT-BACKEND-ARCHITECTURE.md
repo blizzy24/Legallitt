@@ -1509,6 +1509,7 @@ before the backend needs it.
 | 8 | Admin panel — scope, designs, price, timeline | Assignment, release |
 | ~~9~~ | ~~Whose profile is design 433~~ — **closed 29 Oct.** 433 is the advocate profile: its header, bar council enrolment, practice areas, availability and client reviews admit no other reading. "Rahul Sharma" is a placeholder name, as the High Court matter drawn on Send Documents is a placeholder matter | — |
 | 24 | **Advocate availability** — design 433 draws an availability block (days, hours, "Slots open"). No data model exists for it | Advocate profile |
+| ~~23~~ | ~~Legal Notice letterhead~~ — **closed 2 Nov.** The project owner identified the supplied Legal Notice Response template (189/267). Generated draft/final PDFs now use this measured letterhead; see the instructed addition below | — |
 | 25 | **Client reviews** — design 433 draws reviews with names, stars and quotes; designs 264–265 draw the advocate's own reviews list. No data model exists | Advocate profile, ratings |
 | 10 | FIR Approved and Changes states — still not supplied | FIR review |
 | 11 | Design 348 — the supplied file is a 1× copy of 381 | Token values |
@@ -1681,6 +1682,53 @@ the new step is `/legal-notice/demand`. Demo traversal follows the same new orde
 | Advocate | Offences (“for the offences of ___”), place, date — next chunk |
 | System | Reference ID |
 | Pricing | “Cost of this legal notice” is the service fee: ₹999 urgent / ₹699 ordinary |
+
+### Instructed addition — Legal Notice letterhead (2 November 2026)
+
+> **Approved — project owner.** The supplied Legal Notice Response (189/267)
+> is the generated notice template. This closes question 23 and supersedes the
+> earlier invented plain PDF. The six editor sections remain the working surface.
+
+The PDF is A4, measured from the paper crop (60,402,658,932) in design 189,
+with selectable Noto Sans / Noto Sans Devanagari text. Header and footer bands,
+company contacts, gold rules, title and signature area follow that crop. Body
+fields wrap; facts have no fixed count and demands are lettered A, B, …, AA.
+Continuation pages repeat the letterhead and disclaimer. The signature stays
+blank for signing by hand. No image of a complete page is used as the document.
+
+| Output | Source |
+|---|---|
+| Advocate / qualifications / Enrollment No | Assigned user's full_name; advocate_profiles.education / bar_council_number |
+| Reference | cases.reference, with the drawn /20 year suffix |
+| Recipient | Noticee name/address from the case intake |
+| Subject | cases.subject_line |
+| Client / S/o Shri / Age / R/o | Sender intake name/address; case_parties.father_name / age |
+| Numbered facts | Saved draft's Background & Facts section |
+| Lettered demands | cases.legal_demand.selected plus nonblank custom demand |
+| Offences | Optional offences in versioned draft content, entered by the advocate |
+| Notice cost | Case's own pricing_id base fee, excluding GST; current urgent ₹999 / ordinary ₹699 |
+| Place / date | Assigned advocate's city; saved draft date (final: approval date), in India time |
+
+| Editor addition | Approved copy | Storage |
+|---|---|---|
+| Offences input, following the six existing sections | `Offences` | drafts.content.offences, optional for legacy drafts; no sample allegation |
+
+The addition's strings live in `apps/mobile/copy/instructed.ts`. Generate Draft
+saves the current draft and calls the authenticated render-only
+`POST /cases/:id/drafts/:draftId/pdf` before opening the response screen. Only the
+assigned advocate can render the latest draft while in_progress. Rendering does
+not send the draft or expose an unsent file to the client. Send and approval use
+the same renderer and the existing real document/S3 pipeline. Missing intake or
+profile values never fall back to another case or a fixture.
+
+**Retained for owner review:** `Reffrence Id` and `has been preserve in my office`
+are deliberately reproduced exactly. The header's `INT LegalConsultants Pvt. Ltd.`
+and sign-off's `INT LegalConsultant Pvt. Ltd.` also retain the drawn plural/singular
+difference. No wording correction is assumed.
+
+AI provider instructions now require ₹ and Indian grouping (₹5,000, ₹1,00,000)
+for supplied monetary amounts. They must not invent or change amounts. Existing
+saved client selections are not silently rewritten.
 
 ## 10. Working agreement
 

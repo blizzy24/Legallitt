@@ -18,6 +18,9 @@ export const NoticeDraftContentSchema = z.strictObject({
   facts: evidenceText,
   demand: evidenceText,
   closing: evidenceText,
+  // Project-owner letterhead instruction: advocate-supplied template field,
+  // separate from the six working sections. Older saved drafts have no value.
+  offences: evidenceText.optional(),
 });
 export type NoticeDraftContent = z.infer<typeof NoticeDraftContentSchema>;
 export const NoticeDraftInputSchema = z.strictObject({
@@ -105,6 +108,8 @@ export type ApiCase = {
   advocate_id: string | null;
   status: CaseStatus;
   tier: z.infer<typeof LegalNoticeTierSchema> | null;
+  /** The case's historical pricing_id relation, never today's service price. */
+  pricing?: {base_amount_paise: string} | null;
   matter_type: import("./legal-notice").LegalNoticeMatterType | null;
   subject_matter: string | null;
   subject_line: string | null;

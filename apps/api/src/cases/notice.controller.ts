@@ -76,6 +76,13 @@ export class NoticeController {
   ) {
     return json(this.cases.read(req.user!, id(value)).then((r) => r.drafts));
   }
+  @Post("cases/:id/drafts/:draftId/pdf") @Roles("advocate") preview(
+    @Req() req: AuthRequest, @Param("id") value: string,
+    @Param("draftId") draft: string, @Body() body: unknown,
+  ) {
+    empty(body);
+    return this.pdf.preview(req.user!, id(value), id(draft));
+  }
   // The PDF is filed first, then the lifecycle moves; if the move is refused the
   // file is discarded, so a case never advances without its document.
   @Post("cases/:id/drafts/:draftId/send") async send(

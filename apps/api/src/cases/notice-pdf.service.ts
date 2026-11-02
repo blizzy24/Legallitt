@@ -1,5 +1,5 @@
 import { BadRequestException, ConflictException, ForbiddenException, Injectable, Logger } from '@nestjs/common';
-import { NoticeDraftInputSchema } from '@legalitt/shared';
+import { NoticeDraftInputSchema, type LegalNoticeIntake, type LegalDemand } from '@legalitt/shared';
 import { parse } from '../auth/auth.service';
 import { PrismaService } from '../prisma.service';
 import { DocumentService } from '../documents/document.service';
@@ -20,8 +20,8 @@ export class NoticePdfService {
     if (actor.role !== 'advocate') throw new ForbiddenException('Assigned advocate required');
     const { record, draft, content } = await this.load(actor, caseId, draftId);
     if (record.status !== 'in_progress') throw new ConflictException('Draft cannot be sent in this state');
-    if (!Object.values(content).some(v => v.trim())) throw new BadRequestException('Enter the draft before sending it');
-    const bytes = await renderNoticePdf({ reference: record.reference, date: new Date(), place: await this.place(record.advocate_id), content });
+    if (!Object.values(content).some(v => v?.trim())) throw new BadRequestException('Enter the draft before sending it');
+    const bytes = await renderNoticePdf(this.template(record, content, draft.created_at));
     const document = await this.file(actor, caseId, `Legal_Notice_Draft_v${draft.version}.pdf`, bytes);
     const db = await this.prisma.getClient();
     await db.draft.update({ where: { id: draftId }, data: { document_id: document.id } });
@@ -35,7 +35,7 @@ export class NoticePdfService {
     if (actor.role !== 'client') throw new ForbiddenException('Case client required');
     const { record, content } = await this.load(actor, caseId, draftId);
     if (record.status !== 'client_review') throw new ConflictException('Invalid case transition');
-    const bytes = await renderNoticePdf({ reference: record.reference, date: approvedAt, place: await this.place(record.advocate_id), content });
+    const bytes = await renderNoticePdf(this.template(record, content, approvedAt));
     return this.file(actor, caseId, 'Legal_Notice_Final.pdf', bytes);
   }
 
@@ -52,16 +52,44 @@ export class NoticePdfService {
 
   private async load(actor: CaseActor, caseId: string, draftId: string) {
     const db = await this.prisma.getClient();
-    const record = await db.case.findFirst({ where: { AND: [caseScope(actor), { id: caseId }] } });
+    const record = await db.case.findFirst({ where: { AND: [caseScope(actor), { id: caseId }] }, include: {
+      case_parties_case_id_relations: true,
+      pricing_id_relation: {select: {base_amount_paise: true}},
+      advocate_id_relation: {select: {full_name: true, advocate_profiles_user_id_relations: {
+        select: {education: true, bar_council_number: true, city: true},
+      }}},
+    }});
     if (!record) throw new ConflictException('Case not found');
     const draft = await db.draft.findFirst({ where: { case_id: caseId, kind: 'legal_notice' }, orderBy: { version: 'desc' } });
     if (!draft || draft.id !== draftId) throw new ConflictException('Refresh to use the latest draft');
     return { record, draft, content: parse(NoticeDraftInputSchema.shape.content, draft.content) };
   }
-  private async place(advocateId: string | null) {
-    if (!advocateId) return null;
-    const db = await this.prisma.getClient();
-    return (await db.advocateProfile.findUnique({ where: { user_id: advocateId }, select: { city: true } }))?.city ?? null;
+  /** Render-only preview: no state transition and no unsent document exposed to
+   * the client. Sending/approval continue to file through the real S3 pipeline. */
+  async preview(actor: CaseActor, caseId: string, draftId: string) {
+    if (actor.role !== 'advocate') throw new ForbiddenException('Assigned advocate required');
+    const {record, draft, content} = await this.load(actor, caseId, draftId);
+    if (record.status !== 'in_progress') throw new ConflictException('Draft cannot be generated in this state');
+    const bytes = await renderNoticePdf(this.template(record, content, draft.created_at));
+    return {filename: `Legal_Notice_Draft_v${draft.version}.pdf`, pdf_base64: Buffer.from(bytes).toString('base64')};
+  }
+
+  private template(record: Awaited<ReturnType<NoticePdfService['load']>>['record'],
+    content: Awaited<ReturnType<NoticePdfService['load']>>['content'], date: Date) {
+    const details = record.details as LegalNoticeIntake;
+    const sender = record.case_parties_case_id_relations.find(p => p.kind === 'sender');
+    const advocate = record.advocate_id_relation;
+    const profile = advocate?.advocate_profiles_user_id_relations;
+    const demand = record.legal_demand as LegalDemand | null;
+    return {reference: record.reference, date, content, place: profile?.city,
+      advocate: {name: advocate?.full_name, qualifications: profile?.education, enrolment: profile?.bar_council_number},
+      sender: {name: details.client?.fullName, father: sender?.father_name, age: sender?.age, address: details.client?.address},
+      recipient: {name: details.noticee?.fullName, address: details.noticee?.address},
+      subject: record.subject_line,
+      demands: [...(demand?.selected ?? []), ...(demand?.custom?.trim() ? [demand.custom.trim()] : [])],
+      // This case's agreed base fee, never today's pricing row or the GST total.
+      serviceFeePaise: record.pricing_id_relation?.base_amount_paise,
+    };
   }
   private async file(actor: CaseActor, caseId: string, filename: string, bytes: Uint8Array) {
     const ticket = await this.documents.presign(actor, { case_id: caseId, kind: 'legal_notice', filename, mime: 'application/pdf' });

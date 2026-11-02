@@ -254,6 +254,9 @@ export class ApiClient {
   drafts(id: string) {
     return this.request<ApiDraft[]>(`/cases/${id}/drafts`);
   }
+  renderDraft(id: string, draftId: string) {
+    return this.request<{filename: string; pdf_base64: string}>(`/cases/${id}/drafts/${draftId}/pdf`, {}, 'POST', undefined, {}, 60_000);
+  }
   sendDraft(id: string, draftId: string) {
     return this.request<ApiCase>(`/cases/${id}/drafts/${draftId}/send`, {});
   }
