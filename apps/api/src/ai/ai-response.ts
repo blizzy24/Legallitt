@@ -11,9 +11,10 @@ export function validateRequest(request: AiRequest): void {
   if (!requestSchema.safeParse(request).success) throw new Error('AI request requires a supported task and a non-empty prompt');
 }
 export function formatInstruction(task: AiTask): string {
-  return task === 'demands'
+  const format = task === 'demands'
     ? 'Return only a JSON object with an options array containing at least two distinct non-empty strings. No markdown fences or surrounding prose.'
     : 'Return only the requested text. Do not invent facts absent from the prompt.';
+  return `${format} For Indian rupee amounts supplied in the prompt, use the ₹ symbol with Indian digit grouping (for example, ₹5,000 and ₹1,00,000), not Rs or INR. Do not invent or change amounts.`;
 }
 export function decodeResponse<T extends AiTask>(task:T, text:string, simulated:boolean): AiResults[T] {
   if (task === 'demands') {

@@ -11,6 +11,13 @@ const tasks=['subject','demands','notice'];
 const geminiConfig={apiKey:'test-key-not-real',model:'gemini-3.5-flash-lite',environment:'dev',nodeEnv:'test'};
 const bedrockConfig={region:'ap-south-1',models:{subject:'amazon.nova-lite-v1:0',demands:'amazon.nova-lite-v1:0',notice:'anthropic.claude-3-5-sonnet-20240620-v1:0'}};
 const resultText=task=>task==='demands'?JSON.stringify({options:['First synthetic option','Second synthetic option']}):'Synthetic response';
+function assertRupeeInstruction(instruction) {
+  assert.match(instruction,/Indian rupee amounts supplied in the prompt/);
+  assert.match(instruction,/₹ symbol with Indian digit grouping/);
+  assert.ok(instruction.includes('₹5,000') && instruction.includes('₹1,00,000'));
+  assert.match(instruction,/not Rs or INR/);
+  assert.match(instruction,/Do not invent or change amounts/);
+}
 async function withEnv(values,work) {
   const old=Object.fromEntries(Object.keys(values).map(k=>[k,process.env[k]]));
   try {for(const [k,v]of Object.entries(values)){if(v===undefined)delete process.env[k];else process.env[k]=v;}return await work();}
@@ -58,6 +65,7 @@ test('Gemini calls fixed Google host with structured options and no key in URL',
     assert.equal(url,'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent');
     assert.equal(init.headers['x-goog-api-key'],'test-key-not-real');assert.equal(init.redirect,'error');
     assert.equal(body.contents[0].parts[0].text,'Synthetic prompt');
+    assertRupeeInstruction(body.systemInstruction.parts[0].text);
     assert.equal(body.generationConfig.responseMimeType,task==='demands'?'application/json':undefined);
     if(task==='demands')assert.equal(body.generationConfig.responseJsonSchema.properties.options.minItems,2);
   }
@@ -85,7 +93,7 @@ test('Bedrock calls Mumbai, permits audited India profiles and rejects all other
   const config={...bedrockConfig,models:{subject:'amazon.subject-model:0',demands:'amazon.demands-model:0',notice:'anthropic.notice-model:0'}};
   const calls=[];let task,closed=false;
   const ai=new BedrockAi(config,{async send(command,options){calls.push(command.input);assert.ok(options.abortSignal);return{stopReason:'end_turn',output:{message:{content:[{text:resultText(task)}]}}};},destroy(){closed=true;}});
-  for(task of tasks){const result=await ai.generate({task,prompt:'Synthetic prompt'});assert.equal(result.simulated,false);assert.equal(calls.at(-1).modelId,config.models[task]);if(task==='demands')assert.equal(result.options.length,2);else assert.equal(result.text,'Synthetic response');}
+  for(task of tasks){const result=await ai.generate({task,prompt:'Synthetic prompt'});assert.equal(result.simulated,false);assert.equal(calls.at(-1).modelId,config.models[task]);assertRupeeInstruction(calls.at(-1).system[0].text);if(task==='demands')assert.equal(result.options.length,2);else assert.equal(result.text,'Synthetic response');}
   assert.equal(calls.length,3);ai.onModuleDestroy();assert.equal(closed,true);
 });
 test('Bedrock defaults all tasks to Haiku and changes only the configured task to Sonnet',async()=>{
