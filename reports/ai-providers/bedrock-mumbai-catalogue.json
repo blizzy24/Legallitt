@@ -1,0 +1,38 @@
+[
+    {
+        "modelId": "amazon.nova-lite-v1:0",
+        "inferenceTypesSupported": [
+            "INFERENCE_PROFILE"
+        ],
+        "lifecycle": {
+            "status": "ACTIVE",
+            "startOfLifeTime": "2024-12-03T08:00:00+00:00"
+        }
+    },
+    {
+        "modelId": "anthropic.claude-3-5-sonnet-20240620-v1:0",
+        "inferenceTypesSupported": [
+            "INFERENCE_PROFILE"
+        ],
+        "lifecycle": {
+            "status": "LEGACY",
+            "startOfLifeTime": "2024-06-20T08:00:00+00:00",
+            "endOfLifeTime": "2026-11-13T08:00:00+00:00",
+            "legacyTime": "2026-10-10T08:00:00+00:00",
+            "publicExtendedAccessTime": "2026-10-10T08:00:00+00:00"
+        }
+    },
+    {
+        "modelId": "anthropic.claude-3-5-sonnet-20241022-v2:0",
+        "inferenceTypesSupported": [
+            "INFERENCE_PROFILE"
+        ],
+        "lifecycle": {
+            "status": "LEGACY",
+            "startOfLifeTime": "2024-10-22T08:00:00+00:00",
+            "endOfLifeTime": "2026-11-13T08:00:00+00:00",
+            "legacyTime": "2026-10-10T08:00:00+00:00",
+            "publicExtendedAccessTime": "2026-10-10T08:00:00+00:00"
+        }
+    }
+]

@@ -1,0 +1,90 @@
+{
+  "at": "2026-11-02T12:06:04.418Z",
+  "requests": [
+    {
+      "task": "subject",
+      "prompt": "Synthetic adapter test. Write a short subject line about returning a borrowed blue umbrella. No people, case, or real dispute exists."
+    },
+    {
+      "task": "demands",
+      "prompt": "Synthetic adapter test. Offer two distinct polite options for returning a borrowed blue umbrella. No people, case, or real dispute exists."
+    },
+    {
+      "task": "notice",
+      "prompt": "Synthetic adapter test, not legal advice. Write a short clearly labelled fictional notice requesting return of a borrowed blue umbrella. No people, case, or real dispute exists. Do not invent names, dates, statutes, deadlines or amounts."
+    }
+  ],
+  "results": [
+    {
+      "mode": "simulated",
+      "task": "subject",
+      "result": {
+        "text": "SIMULATED DRAFT",
+        "simulated": true
+      }
+    },
+    {
+      "mode": "simulated",
+      "task": "demands",
+      "result": {
+        "options": [
+          "SIMULATED DRAFT",
+          "No advocate wrote this draft. No real event occurred."
+        ],
+        "simulated": true
+      }
+    },
+    {
+      "mode": "simulated",
+      "task": "notice",
+      "result": {
+        "text": "SIMULATED DRAFT\n\nNo advocate wrote this draft. No real event occurred.",
+        "simulated": true
+      }
+    },
+    {
+      "mode": "gemini",
+      "task": "subject",
+      "error": "Gemini AI (gemini-2.5-flash-lite, task=subject) NOT_FOUND: This model models/gemini-2.5-flash-lite is no longer available to new users. Please update your code to use models/gemini-3.5-flash-lite for the latest features and improvements. We recommend you to use the Interactions API (https://ai.google.dev/gemini-api/docs/get-started)."
+    },
+    {
+      "mode": "gemini",
+      "task": "demands",
+      "error": "Gemini AI (gemini-2.5-flash-lite, task=demands) NOT_FOUND: This model models/gemini-2.5-flash-lite is no longer available to new users. Please update your code to use models/gemini-3.5-flash-lite for the latest features and improvements. We recommend you to use the Interactions API (https://ai.google.dev/gemini-api/docs/get-started)."
+    },
+    {
+      "mode": "gemini",
+      "task": "notice",
+      "error": "Gemini AI (gemini-2.5-flash-lite, task=notice) NOT_FOUND: This model models/gemini-2.5-flash-lite is no longer available to new users. Please update your code to use models/gemini-3.5-flash-lite for the latest features and improvements. We recommend you to use the Interactions API (https://ai.google.dev/gemini-api/docs/get-started)."
+    },
+    {
+      "mode": "bedrock",
+      "task": "subject",
+      "error": "Bedrock AI (amazon.nova-lite-v1:0, task=subject) ValidationException: ap-south-1: Invocation of model ID amazon.nova-lite-v1:0 with on-demand throughput isn’t supported. Retry your request with the ID or ARN of an inference profile that contains this model.. No alternate region, model or inference profile was attempted."
+    },
+    {
+      "mode": "bedrock",
+      "task": "demands",
+      "error": "Bedrock AI (amazon.nova-lite-v1:0, task=demands) ValidationException: ap-south-1: Invocation of model ID amazon.nova-lite-v1:0 with on-demand throughput isn’t supported. Retry your request with the ID or ARN of an inference profile that contains this model.. No alternate region, model or inference profile was attempted."
+    },
+    {
+      "mode": "bedrock",
+      "task": "notice",
+      "error": "Bedrock AI (anthropic.claude-3-5-sonnet-20240620-v1:0, task=notice) ValidationException: ap-south-1: Invocation of model ID anthropic.claude-3-5-sonnet-20240620-v1:0 with on-demand throughput isn’t supported. Retry your request with the ID or ARN of an inference profile that contains this model.. No alternate region, model or inference profile was attempted."
+    }
+  ],
+  "guards": [
+    {
+      "ENVIRONMENT": "prod",
+      "NODE_ENV": "development",
+      "rejected": true,
+      "error": "Gemini AI is development-only: ENVIRONMENT must be dev and NODE_ENV must not be production"
+    },
+    {
+      "ENVIRONMENT": "dev",
+      "NODE_ENV": "production",
+      "rejected": true,
+      "error": "Gemini AI is development-only: ENVIRONMENT must be dev and NODE_ENV must not be production"
+    }
+  ]
+}

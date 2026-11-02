@@ -1,3 +1,4 @@
+import { AiModule } from './ai/ai.module';
 import {AdminCaseDetailRepository} from './admin-cases/admin-case-detail';
 import {AdminAdvocatesController, AdminAdvocatesRepository} from './admin-cases/admin-advocates';
 import {AdminCasesController} from './admin-cases/admin-cases.controller';
@@ -42,7 +43,7 @@ export class HealthController {
 }
 
 @Module({
-  imports: [CourierModule, AdminUiModule, DemoModule, DatabaseModule, PhoneAuthModule, PaymentsModule, NotificationsModule],
+  imports: [AiModule, CourierModule, AdminUiModule, DemoModule, DatabaseModule, PhoneAuthModule, PaymentsModule, NotificationsModule],
   controllers: [AdminAdvocatesController, AdminCasesController, NoticeMessagesController,
     PaymentsController,
     HealthController,

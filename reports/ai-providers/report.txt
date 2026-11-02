@@ -1,0 +1,70 @@
+AI adapters — 2 November 2026
+=============================
+Implemented one task-typed AiPort with simulated, Gemini and Bedrock adapters.
+AI_MODE defaults to simulated and is read only during module registration.
+Subject/notice return text; demands returns an options array. Real adapters
+return simulated:false, the fixed simulator returns true. No application
+handler consumes the new port yet. The demo timer and mobile are untouched.
+
+Gemini
+------
+All three synthetic requests succeeded against gemini-3.5-flash-lite using
+the user-supplied key from ignored apps/api/.env.local. No key was printed or
+committed. The default is configurable through GEMINI_MODEL.
+The first candidate, gemini-2.5-flash-lite, returned NOT_FOUND: unavailable to
+new users. Google's response named 3.5 Flash-Lite as the replacement; its
+current pricing documents a free tier. The default was changed explicitly
+and the same requests rerun. There is no fallback on request failure.
+
+Verified Nest registration refuses ENVIRONMENT=prod even with a valid key,
+and also refuses NODE_ENV=production when ENVIRONMENT=dev. Unit tests cover
+missing ENVIRONMENT, staging, missing key, malformed/blocked/truncated output,
+provider errors and key/prompt redaction. Synthetic dev data only; the free
+tier permits Google to use prompts for product improvement.
+
+Bedrock
+-------
+Actual direct Converse calls in ap-south-1 returned ValidationException:
+"Invocation of model ID ... with on-demand throughput isn’t supported."
+This happened for both amazon.nova-lite-v1:0 (subject and demands) and
+anthropic.claude-3-5-sonnet-20240620-v1:0 (notice).
+
+The Mumbai catalogue lists Nova Lite as ACTIVE, inference-profile-only. Both
+Claude 3.5 Sonnet versions are LEGACY, inference-profile-only, with catalogue
+endOfLifeTime 2026-11-13. The APAC profiles include regions outside India.
+They were inspected but never invoked. The adapter rejects profile IDs/ARNs,
+pins the Mumbai endpoint and never tries an alternative region or model.
+Each task has its own model-ID environment setting.
+
+An earlier direct CLI attempt was blocked by AWS account verification; later
+adapter calls reached the model restriction above. The final limitation is
+not a missing key or a transport error: direct invocation of the requested
+models is unsupported in Mumbai. No in-region replacement was selected. No
+AWS resources, permissions or subscriptions were modified or deployed.
+
+Verification
+------------
+pnpm typecheck: 6/6 workspace tasks passed.
+pnpm --filter @legalitt/api test:local: 65 passed, 0 failed, 0 skipped.
+Eight AI regression tests added, including compile-time return shapes and
+missing-AWS-credentials startup in an isolated process.
+External verification script: all simulated/Gemini tasks pass; Bedrock errors
+are explicit. It intentionally exits 1 when any provider is blocked, retaining
+the evidence instead of presenting the run as a successful production setup.
+No mobile files changed; no mobile smoke was required for this adapter chunk.
+
+Evidence files in this folder:
+  verification.json              final requests, responses, errors and guards
+  initial-verification.json      original Gemini 2.5 rejection
+  bedrock-mumbai-catalogue.json   read-only model availability/lifecycle
+  bedrock-profile-regions.json   profile destinations (never invoked)
+
+Architecture §§2.8, 2.11 and 9.1 updated. Both subject/demand generation and
+notice drafting remain on the simulated-capability register until integrated;
+the register names the dev-only Gemini and intended production Bedrock adapters.
+
+Primary sources:
+  https://ai.google.dev/gemini-api/docs/pricing
+  https://ai.google.dev/api/generate-content
+  https://docs.aws.amazon.com/bedrock/latest/userguide/models-region-compatibility.html
+  https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_Converse.html

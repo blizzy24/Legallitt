@@ -149,10 +149,27 @@ The restructure happens **before** any backend code exists. Moving the Expo app
 later touches `app.json` paths, EAS config and the Vercel build settings, and
 gets worse the longer it waits.
 
-### 2.8 AI: Claude on Bedrock
+### 2.8 AI: task-specific models behind one port
 
 Sonnet-tier for FIR and legal notice drafting, where instruction-following and
 long context matter. Haiku-tier for case summaries and chat.
+
+The approved AI adapter chunk (2 November 2026) adds a port only; no demand,
+subject or drafting screen calls it yet. For the three implemented tasks,
+Bedrock uses Amazon Nova Lite for subject lines and demand options, and Claude
+3.5 Sonnet for notices. Each model is independently configurable through
+`BEDROCK_SUBJECT_MODEL_ID`, `BEDROCK_DEMANDS_MODEL_ID` and
+`BEDROCK_NOTICE_MODEL_ID`. Defaults are `amazon.nova-lite-v1:0` for the first
+two and `anthropic.claude-3-5-sonnet-20240620-v1:0` for notices. Summary/chat
+models and other services are outside this chunk.
+
+The Bedrock adapter pins the runtime endpoint to `ap-south-1` and accepts direct
+foundation model IDs only. Cross-region inference profiles and automatic model
+fallbacks are prohibited. On 2 November 2026 the Mumbai catalogue listed both
+requested models as inference-profile-only; actual direct calls rejected
+on-demand invocation. The listed APAC profiles include non-India regions and
+were not invoked. A working in-region model choice remains unresolved; the
+adapter reports the provider error rather than silently changing the choice.
 
 **Verify in the Bedrock console which Claude models are enabled in ap-south-1
 before committing.** If the preferred model is not available in-region, Bedrock
@@ -275,7 +292,7 @@ no missing route, no disabled button. The contract in §5 is written once and
 never changes when the simulator is replaced.
 
 **2. The simulator is one named file behind an interface.** Each capability has
-a port and two adapters:
+a port, a simulated adapter and one or more real adapters:
 
 ```
 apps/api/src/payments/payments.port.ts          ← the interface
@@ -300,20 +317,40 @@ simulated response carries `"simulated": true` in the API payload and the
 nothing unusual — a payment looks like a payment. But the database always knows
 what was real, so demo data can be identified and cleared before launch.
 
-**Flags.** One per capability, same shape, all defaulting to `simulated`:
+**Flags.** One per capability, defaulting to `simulated` (phone auth also accepts
+the existing `demo` alias). AI has two explicitly named real providers:
 
-| Flag | `simulated` behaviour | `live` behaviour |
+| Flag | `simulated` behaviour | Real adapter |
 |---|---|---|
 | `PAYMENTS_MODE` | 2s delay, always succeeds, fake `pay_` id | Razorpay |
 | `PHONE_AUTH_MODE` | accepts `123456` only (§2.9) | SMS via DLT |
 | `NOTIFY_MODE` | writes the `notifications` row, sends nothing | SNS / FCM |
-| `AI_MODE` | returns a fixed, sensible draft per service | Bedrock |
+| `AI_MODE` | reuses the existing labelled simulated draft; task-typed text/options | `gemini` (development only) or `bedrock` |
 | `COURIER_MODE` | waybill is whatever the advocate typed | carrier API |
 | `KYC_MODE` | marks verified after a 3s delay | real provider |
 
 A build with any flag on `live` must fail to start if its real credentials are
 missing. Never silently fall back — a silent fallback is how a demo payment
 reaches production.
+
+**AI port.** `generate({ task, prompt })` is typed by task: `subject` and
+`notice` return `{ text, simulated }`; `demands` returns
+`{ options: string[], simulated }`. Callers never split prose into options.
+Module registration selects `AI_MODE=simulated|gemini|bedrock` once, defaulting
+to `simulated`; nothing consuming the port reads this flag. The simulator reuses
+the existing fixed draft, and the demo timer is unchanged. No application
+handler consumes the new port in this chunk and it performs no case writes.
+
+`AI_MODE=gemini` requires `GEMINI_API_KEY`, `ENVIRONMENT=dev` and a non-production
+`NODE_ENV`, otherwise API startup fails. It uses `GEMINI_MODEL` (default
+`gemini-3.5-flash-lite`, verified against Google's current free-tier offering).
+The free tier permits product-improvement use of prompts, so only synthetic dev
+data may be sent. The earlier 2.5 Flash-Lite candidate was rejected for new users
+by Google during verification; there is no runtime model fallback.
+`AI_MODE=bedrock` requires resolvable AWS credentials at startup and the region
+and per-task configuration in §2.8. Both real adapters return `simulated: false`.
+Missing credentials, blocked/truncated/invalid responses and provider failures
+are explicit errors, never simulated success.
 
 **No bypasses in real handlers.** A simulator must satisfy the real validation,
 not be excused from it. No handler may contain "skip this check when the caller
@@ -1519,7 +1556,8 @@ empty, or explicitly accepted in writing by the client, before production.
 | Payments | `PAYMENTS_MODE=simulated` | No Razorpay test keys yet | Client supplies test keys with Route enabled |
 | Phone OTP | `PHONE_AUTH_MODE=demo` | DLT registration not started (1–2 week lead) | DLT template approved |
 | Notifications | `NOTIFY_MODE=simulated` | No SNS/FCM setup yet | Compute stack deployed |
-| AI drafting | `AI_MODE=simulated` | Bedrock not wired; keeps cost at zero during build | Step 11 |
+| AI subject lines and demand options | `AI_MODE=simulated` | Fixed labelled responses by default. Gemini adapter is development-only; Bedrock Nova Lite adapter exists but direct Mumbai invocation is unsupported. Neither is wired to the application yet | Subject/demand integration and approved in-region production model access |
+| AI notice drafting | `AI_MODE=simulated` | Existing labelled draft reused. Gemini adapter is development-only; Bedrock Claude 3.5 Sonnet adapter exists but direct Mumbai invocation is unsupported. Demo timer remains unchanged | Step 11 and approved in-region production model access |
 | Advocate assignment | `DEMO_PROGRESSION=on` | Admin assigns (§9), but no admin panel exists. **Without this every case stops at `paid` and nothing after it can be reached** | Admin panel built |
 | Demo progression | `DEMO_PROGRESSION=on` | Stands in for people with no screen yet — see §2.12. Calls real endpoints only | Admin panel built |
 | Delivery confirmation | `ADMIN_UI_MODE=simulated` | Admin marks delivered (§9), but no admin panel exists yet. The **endpoint is real**; only the screen is missing. The shipment advances one drawn milestone at a time (§2.12), and delivery with a simulated proof follows Out for Delivery | Admin panel built |

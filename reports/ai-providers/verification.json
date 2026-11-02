@@ -1,0 +1,102 @@
+{
+  "at": "2026-11-02T12:07:15.182Z",
+  "requests": [
+    {
+      "task": "subject",
+      "prompt": "Synthetic adapter test. Write a short subject line about returning a borrowed blue umbrella. No people, case, or real dispute exists."
+    },
+    {
+      "task": "demands",
+      "prompt": "Synthetic adapter test. Offer two distinct polite options for returning a borrowed blue umbrella. No people, case, or real dispute exists."
+    },
+    {
+      "task": "notice",
+      "prompt": "Synthetic adapter test, not legal advice. Write a short clearly labelled fictional notice requesting return of a borrowed blue umbrella. No people, case, or real dispute exists. Do not invent names, dates, statutes, deadlines or amounts."
+    }
+  ],
+  "results": [
+    {
+      "mode": "simulated",
+      "task": "subject",
+      "result": {
+        "text": "SIMULATED DRAFT",
+        "simulated": true
+      }
+    },
+    {
+      "mode": "simulated",
+      "task": "demands",
+      "result": {
+        "options": [
+          "SIMULATED DRAFT",
+          "No advocate wrote this draft. No real event occurred."
+        ],
+        "simulated": true
+      }
+    },
+    {
+      "mode": "simulated",
+      "task": "notice",
+      "result": {
+        "text": "SIMULATED DRAFT\n\nNo advocate wrote this draft. No real event occurred.",
+        "simulated": true
+      }
+    },
+    {
+      "mode": "gemini",
+      "task": "subject",
+      "result": {
+        "text": "Returning your blue umbrella",
+        "simulated": false
+      }
+    },
+    {
+      "mode": "gemini",
+      "task": "demands",
+      "result": {
+        "options": [
+          "I can drop off the blue umbrella at your porch tomorrow morning.",
+          "Would it be convenient for me to leave the blue umbrella at your front desk?"
+        ],
+        "simulated": false
+      }
+    },
+    {
+      "mode": "gemini",
+      "task": "notice",
+      "result": {
+        "text": "NOTICE: RETURN OF PROPERTY\n\nThis is a formal request for the return of the borrowed blue umbrella. Please arrange to return the item at your earliest convenience. \n\nNo legal action, dispute, or liability is implied or asserted.",
+        "simulated": false
+      }
+    },
+    {
+      "mode": "bedrock",
+      "task": "subject",
+      "error": "Bedrock AI (amazon.nova-lite-v1:0, task=subject) ValidationException: ap-south-1: Invocation of model ID amazon.nova-lite-v1:0 with on-demand throughput isn’t supported. Retry your request with the ID or ARN of an inference profile that contains this model.. No alternate region, model or inference profile was attempted."
+    },
+    {
+      "mode": "bedrock",
+      "task": "demands",
+      "error": "Bedrock AI (amazon.nova-lite-v1:0, task=demands) ValidationException: ap-south-1: Invocation of model ID amazon.nova-lite-v1:0 with on-demand throughput isn’t supported. Retry your request with the ID or ARN of an inference profile that contains this model.. No alternate region, model or inference profile was attempted."
+    },
+    {
+      "mode": "bedrock",
+      "task": "notice",
+      "error": "Bedrock AI (anthropic.claude-3-5-sonnet-20240620-v1:0, task=notice) ValidationException: ap-south-1: Invocation of model ID anthropic.claude-3-5-sonnet-20240620-v1:0 with on-demand throughput isn’t supported. Retry your request with the ID or ARN of an inference profile that contains this model.. No alternate region, model or inference profile was attempted."
+    }
+  ],
+  "guards": [
+    {
+      "ENVIRONMENT": "prod",
+      "NODE_ENV": "development",
+      "rejected": true,
+      "error": "Gemini AI is development-only: ENVIRONMENT must be dev and NODE_ENV must not be production"
+    },
+    {
+      "ENVIRONMENT": "dev",
+      "NODE_ENV": "production",
+      "rejected": true,
+      "error": "Gemini AI is development-only: ENVIRONMENT must be dev and NODE_ENV must not be production"
+    }
+  ]
+}
