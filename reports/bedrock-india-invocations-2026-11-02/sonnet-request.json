@@ -1,0 +1,16 @@
+{
+  "modelId": "in.anthropic.claude-sonnet-5",
+  "messages": [
+    {
+      "role": "user",
+      "content": [
+        {
+          "text": "Reply with exactly OK and nothing else."
+        }
+      ]
+    }
+  ],
+  "inferenceConfig": {
+    "maxTokens": 64
+  }
+}

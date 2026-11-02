@@ -1,0 +1,16 @@
+{
+  "modelId": "in.anthropic.claude-haiku-4-5-20251001-v1:0",
+  "messages": [
+    {
+      "role": "user",
+      "content": [
+        {
+          "text": "Reply with exactly OK and nothing else."
+        }
+      ]
+    }
+  ],
+  "inferenceConfig": {
+    "maxTokens": 64
+  }
+}

@@ -1,0 +1,28 @@
+India-only Bedrock invocation check — 2 November 2026
+
+Exactly one Converse call per model, AWS_MAX_ATTEMPTS=1 (no automatic retries).
+Endpoint: https://bedrock-runtime.ap-south-1.amazonaws.com
+Prompt: Reply with exactly OK and nothing else.
+Max output tokens: 64.
+
+Haiku: used the canonical ID returned by GetInferenceProfile:
+in.anthropic.claude-haiku-4-5-20251001-v1:0
+Succeeded. Text OK, stopReason end_turn, inputTokens 15, outputTokens 4,
+totalTokens 19, no cache tokens, latencyMs 459. CLI exit 0, no stderr.
+This is a real successful India-profile call using the Mumbai endpoint and the
+existing credentials. No ap-south-2 credential was supplied. The response does
+not disclose which destination processed the request.
+
+Sonnet: in.anthropic.claude-sonnet-5
+Failed with AccessDeniedException, CLI exit 254, no response body. Exact reason:
+anthropic.claude-sonnet-5 is not available for this account. You can explore other available models on Amazon Bedrock. For additional access options, contact AWS Sales at https://aws.amazon.com/contact-us/sales-support/
+
+AWS did not request agreement acceptance in this error; it directed the account
+owner to AWS Sales for access options. The earlier AUTHORIZED/AVAILABLE metadata
+was not sufficient to establish invocation access. This refusal was not the
+Hyderabad credential error.
+
+No additional inference attempts, access acceptance, subscriptions, region
+changes, environment edits or application configuration changes were made.
+Both models have not returned a real response, so configuration stays unchanged.
+Raw requests, stdout, stderr and CLI exit codes are saved alongside this report.

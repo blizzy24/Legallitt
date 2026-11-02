@@ -1,0 +1,124 @@
+Mumbai Bedrock availability and prices — 2 November 2026
+
+Read-only audit. No models, configuration, permissions or deployments changed.
+No inference requests made in this audit; catalogue/access checks are not a
+legal-drafting benchmark.
+
+Calls made:
+  aws bedrock list-foundation-models --region ap-south-1
+  aws bedrock list-inference-profiles --region ap-south-1
+  aws pricing get-products --service-code AmazonBedrock
+    --filters Type=TERM_MATCH,Field=regionCode,Value=ap-south-1 --region us-east-1
+The last command accesses the pricing catalogue, not model inference. No client
+information or prompts are sent to the US pricing endpoint.
+
+Results: 87 model entries; 46 expose ON_DEMAND directly in Mumbai (42 text-output
+models and four embedding models). The other entries are profile/provisioned
+options. No assumption that a Mumbai price proves Mumbai availability: models
+were selected from ListFoundationModels first, then joined to pricing SKUs.
+
+Plausible shortlist (an engineering assessment, not measured legal quality):
+- Short subject lines/options: Ministral 3 8B. Compact, supports structured
+  outputs; USD 0.18 input / 0.18 output per million tokens.
+- Stronger candidate for both tasks: Qwen3 235B A22B Instruct 2507. Instruction
+  tuned, multilingual, 256K context; USD 0.26 / 1.04.
+- Notice drafting: Mistral Large 3. Reasoning/multilingual model with 256K context
+  and 32K max output; USD 0.59 / 1.76. Compare with Qwen on approved examples.
+All three returned AUTHORIZED, entitlement AVAILABLE, agreement AVAILABLE and
+region AVAILABLE from GetFoundationModelAvailability in this account. Quality,
+latency, schema adherence and factual fidelity still need workload evaluation.
+The advocate-review requirement remains essential to the existing flow.
+
+Prices below are USD per 1,000,000 text tokens, standard on-demand, excluding tax,
+cache, batch, flex, priority and provisioned pricing. AWS Price List unit 1K tokens
+was multiplied by 1000. Claude/Cohere use the pricing page's Mumbai feed because
+the matching rates were absent from AmazonBedrock GetProducts. Claude 3 entries
+show the published base tariff; they are LEGACY, with catalogue EOL 13 Nov 2026
+and an extended-access flag. Do not base a new deployment or a guaranteed legacy
+billing quote on those entries. No special extended tariff was verified.
+
+Model | Input USD/M | Output USD/M | Notes
+Titan Multimodal Embeddings G1 | 1 | N/A | Embedding only; neither requested generation task; Also USD 0.00007 per image; no generated-token charge
+Titan Text Embeddings V2 | 0.024 | N/A | Embedding only; neither requested generation task
+Claude 3 Haiku | 0.25 | 1.25 | LEGACY; catalogue EOL 2026-11-13; not recommended for new work; published base tariff shown
+Claude 3 Sonnet | 3 | 15 | LEGACY; catalogue EOL 2026-11-13; not recommended for new work; published base tariff shown
+Embed English | 0.1 | N/A | Embedding only; neither requested generation task
+Embed Multilingual | 0.1 | N/A | Embedding only; neither requested generation task
+DeepSeek V3.2 | 0.74 | 2.22 | 
+DeepSeek-V3.1 | 0.682424 | 1.976678 | 
+Gemma 3 12B IT | 0.11 | 0.34 | 
+Gemma 3 27B PT | 0.27 | 0.45 | 
+Gemma 3 4B IT | 0.05 | 0.09 | 
+Llama 3 70B Instruct | 3.18 | 4.2 | 
+Llama 3 8B Instruct | 0.36 | 0.72 | 
+MiniMax M2 | 0.35 | 1.41 | 
+MiniMax M2.1 | 0.36 | 1.44 | 
+MiniMax M2.5 | 0.36 | 1.44 | 
+Devstral 2 123B | 0.48 | 2.4 | Code-specialised; not shortlisted
+Magistral Small 2509 | 0.59 | 1.76 | 
+Ministral 14B 3.0 | 0.24 | 0.24 | 
+Ministral 3 8B | 0.18 | 0.18 | 
+Ministral 3B | 0.12 | 0.12 | 
+Mistral 7B Instruct | 0.18 | 0.24 | 
+Mistral Large (24.02) | 4.8 | 14.4 | 
+Mistral Large 3 | 0.59 | 1.76 | 
+Mixtral 8x7B Instruct | 0.54 | 0.84 | 
+Voxtral Mini 3B 2507 | 0.05 | 0.05 | Audio-specialised; not shortlisted
+Voxtral Small 24B 2507 | 0.12 | 0.35 | Audio-specialised; not shortlisted
+Kimi K2 Thinking | 0.71 | 2.94 | 
+Kimi K2.5 | 0.72 | 3.6 | 
+NVIDIA Nemotron 3 Super 120B A12B | 0.18 | 0.78 | 
+NVIDIA Nemotron Nano 12B v2 VL BF16 | 0.24 | 0.71 | 
+NVIDIA Nemotron Nano 9B v2 | 0.07 | 0.27 | 
+Nemotron Nano 3 30B | 0.07 | 0.28 | 
+GPT OSS Safeguard 120B | 0.18 | 0.71 | Safety classifier; not a general drafting model
+GPT OSS Safeguard 20B | 0.08 | 0.24 | Safety classifier; not a general drafting model
+gpt-oss-120b | 0.18 | 0.71 | 
+gpt-oss-20b | 0.08 | 0.35 | 
+Qwen3 235B A22B 2507 | 0.26 | 1.04 | 
+Qwen3 32B (dense) | 0.18 | 0.71 | 
+Qwen3 Coder 480B A35B Instruct | 0.53 | 2.12 | Code-specialised; not shortlisted
+Qwen3 Next 80B A3B | 0.18 | 1.41 | 
+Qwen3 VL 235B A22B | 0.62 | 3.13 | 
+Qwen3-Coder-30B-A3B-Instruct | 0.18 | 0.71 | Code-specialised; not shortlisted
+GLM 4.7 | 0.72 | 2.64 | 
+GLM 4.7 Flash | 0.08 | 0.48 | 
+GLM 5 | 1.2 | 3.84 | 
+
+Titan multimodal embeddings additionally costs USD 0.00007 per input image.
+Embedding output is not generated text: N/A is not a free text-output rate.
+Code-specialised, speech-specialised and safeguard models are listed for
+completeness, not shortlisted as legal drafting models.
+
+Inference profiles: 46 returned. APAC routes include regions outside India;
+global profiles are not India-restricted. Six India-only profiles list exactly
+Mumbai (ap-south-1) and Hyderabad (ap-south-2):
+  in.openai.gpt-5.6-terra
+  in.openai.gpt-5.6-luna
+  in.anthropic.claude-sonnet-5
+  in.anthropic.claude-opus-5
+  in.anthropic.claude-haiku-4-5-20251001-v1:0
+  in.moonshotai.kimi-k3
+These do NOT meet the direct-Mumbai/no-profile requirement and are excluded from
+the price table/shortlist. Their existence corrects the broader idea that every
+cross-region profile must leave India. Current application adapter deliberately
+rejects every profile; this audit does not change that behaviour.
+Nova Lite and Claude 3.5 Sonnet still do not offer direct Mumbai invocation in
+the returned catalogue. This does not mean Mumbai has no usable alternatives.
+
+Evidence in this directory:
+- foundation-models.json: complete returned foundation-model catalogue.
+- inference-profile-regions.json: every profile and its destination regions.
+  Empty region string in a global-profile ARN denotes global scope; it is not
+  interpreted as India-only.
+- direct-model-prices.csv: all 46 direct models with exact model IDs and prices.
+- price-evidence.json: matched Mumbai SKUs/rates and their publication dates.
+
+Primary references:
+https://aws.amazon.com/bedrock/pricing/
+https://b0.p.awsstatic.com/pricing/2.0/meteredUnitMaps/bedrockfoundationmodels/USD/current/bedrockfoundationmodels.json
+https://docs.aws.amazon.com/bedrock/latest/userguide/models-region-compatibility.html
+https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-mistral-ai-ministral-3-8b.html
+https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-qwen-qwen3-235b-a22b-2507.html
+https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-mistral-ai-mistral-large-3.html
+https://aws.amazon.com/blogs/machine-learning/amazon-bedrock-expands-claude-model-availability-to-india-cross-region-inference/

@@ -1,0 +1,71 @@
+{
+  "checked_at": "2026-11-02T12:33:27.792320+00:00",
+  "checks": [
+    {
+      "requested_region": "ap-south-1",
+      "requested_model_id": "anthropic.claude-sonnet-5",
+      "response": {
+        "modelId": "anthropic.claude-sonnet-5",
+        "agreementAvailability": {
+          "status": "NOT_AVAILABLE"
+        },
+        "authorizationStatus": "AUTHORIZED",
+        "entitlementAvailability": "AVAILABLE",
+        "regionAvailability": "AVAILABLE"
+      }
+    },
+    {
+      "requested_region": "ap-south-2",
+      "requested_model_id": "anthropic.claude-sonnet-5",
+      "error": {
+        "code": "UnrecognizedClientException",
+        "message": "The security token included in the request is invalid."
+      },
+      "note": "No entitlement conclusion drawn from this failed credential check."
+    },
+    {
+      "requested_region": "ap-south-1",
+      "requested_model_id": "anthropic.claude-opus-5",
+      "response": {
+        "modelId": "anthropic.claude-opus-5",
+        "agreementAvailability": {
+          "status": "NOT_AVAILABLE"
+        },
+        "authorizationStatus": "AUTHORIZED",
+        "entitlementAvailability": "AVAILABLE",
+        "regionAvailability": "AVAILABLE"
+      }
+    },
+    {
+      "requested_region": "ap-south-2",
+      "requested_model_id": "anthropic.claude-opus-5",
+      "error": {
+        "code": "UnrecognizedClientException",
+        "message": "The security token included in the request is invalid."
+      },
+      "note": "No entitlement conclusion drawn from this failed credential check."
+    },
+    {
+      "requested_region": "ap-south-1",
+      "requested_model_id": "anthropic.claude-haiku-4-5-20251001-v1:0",
+      "response": {
+        "modelId": "anthropic.claude-haiku-4-5-20251001-v1",
+        "agreementAvailability": {
+          "status": "NOT_AVAILABLE"
+        },
+        "authorizationStatus": "AUTHORIZED",
+        "entitlementAvailability": "AVAILABLE",
+        "regionAvailability": "AVAILABLE"
+      }
+    },
+    {
+      "requested_region": "ap-south-2",
+      "requested_model_id": "anthropic.claude-haiku-4-5-20251001-v1:0",
+      "error": {
+        "code": "UnrecognizedClientException",
+        "message": "The security token included in the request is invalid."
+      },
+      "note": "No entitlement conclusion drawn from this failed credential check."
+    }
+  ]
+}

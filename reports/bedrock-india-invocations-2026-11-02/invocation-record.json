@@ -1,0 +1,26 @@
+{
+  "recorded_at": "2026-11-02T12:37:22.871787+00:00",
+  "source_region": "ap-south-1",
+  "endpoint": "https://bedrock-runtime.ap-south-1.amazonaws.com",
+  "max_attempts_per_model": 1,
+  "automatic_retries": 0,
+  "prompt": "Reply with exactly OK and nothing else.",
+  "calls": [
+    {
+      "name": "haiku",
+      "model_id": "in.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "exit_code": 0,
+      "request_file": "haiku-request.json",
+      "response_file": "haiku-response.json",
+      "stderr_file": "haiku-stderr.txt"
+    },
+    {
+      "name": "sonnet",
+      "model_id": "in.anthropic.claude-sonnet-5",
+      "exit_code": 254,
+      "request_file": "sonnet-request.json",
+      "response_file": "sonnet-response.json",
+      "stderr_file": "sonnet-stderr.txt"
+    }
+  ]
+}

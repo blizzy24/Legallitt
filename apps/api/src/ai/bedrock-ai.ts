@@ -5,13 +5,22 @@ import { AiProviderError, safeProviderMessage } from './ai-error';
 
 export type BedrockConfig = { region:string; models:Record<AiTask,string> };
 type Runtime = {send(command:ConverseCommand, options:{abortSignal:AbortSignal}):Promise<ConverseCommandOutput>;destroy():void};
+// GetInferenceProfile audited 2026-11-02: these three definitions contain only
+// Mumbai and Hyderabad. Explicit IDs, not a blanket allowance of any profile.
+// Sonnet stays configurable for the day the client's AWS Sales request succeeds.
+const indiaProfiles=new Set([
+  'in.anthropic.claude-haiku-4-5-20251001-v1:0',
+  'in.anthropic.claude-sonnet-5',
+  'in.anthropic.claude-opus-5',
+]);
 export function validateBedrockConfig(config:BedrockConfig):void {
-  if(config.region!=='ap-south-1') throw new Error('Bedrock AI must run in ap-south-1; cross-region routing is forbidden');
+  if(config.region!=='ap-south-1') throw new Error('Bedrock AI calls must originate in ap-south-1; client data must stay in India');
   for(const [task,model] of Object.entries(config.models)) {
-    // Only direct foundation IDs. No inference-profile ARNs, prompt ARNs,
-    // provisioned/custom-model ARNs, or geographic/global routing prefixes.
+    if(indiaProfiles.has(model)) continue;
+    // Direct foundation IDs remain supported. Unreviewed profiles, ARNs,
+    // and all geographic/global profiles that can leave India are rejected.
     if(!/^[a-z0-9-]+\.[a-z0-9][a-z0-9.:-]*$/.test(model)||/^(apac|us|eu|global|au|jp|in|ca)\./.test(model))
-      throw new Error(`Bedrock ${task} model must be a direct foundation model ID; inference profiles and cross-region routing are forbidden`);
+      throw new Error(`Bedrock ${task} model must be a direct foundation model ID or an approved India-only profile; other routing is forbidden`);
   }
 }
 export class BedrockAi implements AiPort {

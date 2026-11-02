@@ -1,0 +1,4144 @@
+[
+  {
+    "modelId": "amazon.titan-embed-image-v1",
+    "direction": "input",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Input tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "usagetype": "APS3-TitanEmbeddingsG1-Image-input-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "servicename": "Amazon Bedrock",
+          "operation": "",
+          "titanModel": "Titan Embeddings G1 Image"
+        },
+        "sku": "7QEZFNXKS3Y9ZBWN"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "7QEZFNXKS3Y9ZBWN.JRTCKXETXF": {
+            "priceDimensions": {
+              "7QEZFNXKS3Y9ZBWN.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.001 per 1K tokens for TitanEmbeddingsG1-Image-input-tokens in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "7QEZFNXKS3Y9ZBWN.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0010000000"
+                }
+              }
+            },
+            "sku": "7QEZFNXKS3Y9ZBWN",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "amazon.titan-embed-text-v2:0",
+    "direction": "input",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Input tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "usagetype": "APS3-TitanEmbeddingV2-Text-input-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "servicename": "Amazon Bedrock",
+          "operation": "InvokeModelInference",
+          "titanModel": "TitanEmbeddingsV2-Text-input"
+        },
+        "sku": "2XPPP4SFDN73K3D3"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "2XPPP4SFDN73K3D3.JRTCKXETXF": {
+            "priceDimensions": {
+              "2XPPP4SFDN73K3D3.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.000024 per 1K tokens for TitanEmbeddingV2-Text-input-tokens in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "2XPPP4SFDN73K3D3.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0000240000"
+                }
+              }
+            },
+            "sku": "2XPPP4SFDN73K3D3",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "anthropic.claude-3-haiku-20240307-v1:0",
+    "direction": "input",
+    "source": "AWS pricing page regional feed",
+    "key": "VyNbHgvueu9t3GqHDuhu4CdfmTf9Ud2oS1-wBjZod6M",
+    "rate": {
+      "rateCode": "53EURK8VE6S29K56.4799GE89SK.6YS6EN2CT7",
+      "price": "0.2500000000",
+      "RegionlessRateCode": "VyNbHgvueu9t3GqHDuhu4CdfmTf9Ud2oS1-wBjZod6M"
+    },
+    "manifest": {
+      "serviceId": "bedrockfoundationmodels",
+      "accessType": "publish",
+      "esIndex": "plc-bedrockfoundationmodels-usd-20261012084008",
+      "hawkFilePublicationDate": "2026-10-12T08:40:08Z",
+      "ETLIngestionTriggerDate": "2026-10-12T08:40:08Z",
+      "currencyCode": "USD",
+      "source": "bedrockfoundationmodels",
+      "isMapped": "true"
+    }
+  },
+  {
+    "modelId": "anthropic.claude-3-haiku-20240307-v1:0",
+    "direction": "output",
+    "source": "AWS pricing page regional feed",
+    "key": "B5I_6erlMxJmwe3h14gcmdWWSgMYkQXzBRpVm_JIliI",
+    "rate": {
+      "rateCode": "A3KC5B25SKJJDRKA.4799GE89SK.6YS6EN2CT7",
+      "price": "1.2500000000",
+      "RegionlessRateCode": "B5I_6erlMxJmwe3h14gcmdWWSgMYkQXzBRpVm_JIliI"
+    },
+    "manifest": {
+      "serviceId": "bedrockfoundationmodels",
+      "accessType": "publish",
+      "esIndex": "plc-bedrockfoundationmodels-usd-20261012084008",
+      "hawkFilePublicationDate": "2026-10-12T08:40:08Z",
+      "ETLIngestionTriggerDate": "2026-10-12T08:40:08Z",
+      "currencyCode": "USD",
+      "source": "bedrockfoundationmodels",
+      "isMapped": "true"
+    }
+  },
+  {
+    "modelId": "anthropic.claude-3-sonnet-20240229-v1:0",
+    "direction": "input",
+    "source": "AWS pricing page regional feed",
+    "key": "gXhNg4mwIGMxYkwThgih3cPjIm4HB-qaNCATaO9cbfI",
+    "rate": {
+      "rateCode": "CD98B587EF7W6DQC.4799GE89SK.6YS6EN2CT7",
+      "price": "3.0000000000",
+      "RegionlessRateCode": "gXhNg4mwIGMxYkwThgih3cPjIm4HB-qaNCATaO9cbfI"
+    },
+    "manifest": {
+      "serviceId": "bedrockfoundationmodels",
+      "accessType": "publish",
+      "esIndex": "plc-bedrockfoundationmodels-usd-20261012084008",
+      "hawkFilePublicationDate": "2026-10-12T08:40:08Z",
+      "ETLIngestionTriggerDate": "2026-10-12T08:40:08Z",
+      "currencyCode": "USD",
+      "source": "bedrockfoundationmodels",
+      "isMapped": "true"
+    }
+  },
+  {
+    "modelId": "anthropic.claude-3-sonnet-20240229-v1:0",
+    "direction": "output",
+    "source": "AWS pricing page regional feed",
+    "key": "5gxDEaHD_RvHQmN_9-P-wQWy9zTGssbRnqhm-c9IKpk",
+    "rate": {
+      "rateCode": "5B8NNVSHJXS6Y749.4799GE89SK.6YS6EN2CT7",
+      "price": "15.0000000000",
+      "RegionlessRateCode": "5gxDEaHD_RvHQmN_9-P-wQWy9zTGssbRnqhm-c9IKpk"
+    },
+    "manifest": {
+      "serviceId": "bedrockfoundationmodels",
+      "accessType": "publish",
+      "esIndex": "plc-bedrockfoundationmodels-usd-20261012084008",
+      "hawkFilePublicationDate": "2026-10-12T08:40:08Z",
+      "ETLIngestionTriggerDate": "2026-10-12T08:40:08Z",
+      "currencyCode": "USD",
+      "source": "bedrockfoundationmodels",
+      "isMapped": "true"
+    }
+  },
+  {
+    "modelId": "cohere.embed-english-v3",
+    "direction": "input",
+    "source": "AWS pricing page regional feed",
+    "key": "o6D6VMtr0a7lrEhKdpbULQNPhvSgRESGfStc1V6mVZM",
+    "rate": {
+      "rateCode": "TS78N5WTV7HGSE3D.4799GE89SK.6YS6EN2CT7",
+      "price": "0.1000000000",
+      "RegionlessRateCode": "o6D6VMtr0a7lrEhKdpbULQNPhvSgRESGfStc1V6mVZM"
+    },
+    "manifest": {
+      "serviceId": "bedrockfoundationmodels",
+      "accessType": "publish",
+      "esIndex": "plc-bedrockfoundationmodels-usd-20261012084008",
+      "hawkFilePublicationDate": "2026-10-12T08:40:08Z",
+      "ETLIngestionTriggerDate": "2026-10-12T08:40:08Z",
+      "currencyCode": "USD",
+      "source": "bedrockfoundationmodels",
+      "isMapped": "true"
+    }
+  },
+  {
+    "modelId": "cohere.embed-multilingual-v3",
+    "direction": "input",
+    "source": "AWS pricing page regional feed",
+    "key": "njSOF-nIWNC3ZKc10M9pbz5UibLJpZz9tCeqdOQOaKc",
+    "rate": {
+      "rateCode": "ZRFYWH77URDNX5Z5.4799GE89SK.6YS6EN2CT7",
+      "price": "0.1000000000",
+      "RegionlessRateCode": "njSOF-nIWNC3ZKc10M9pbz5UibLJpZz9tCeqdOQOaKc"
+    },
+    "manifest": {
+      "serviceId": "bedrockfoundationmodels",
+      "accessType": "publish",
+      "esIndex": "plc-bedrockfoundationmodels-usd-20261012084008",
+      "hawkFilePublicationDate": "2026-10-12T08:40:08Z",
+      "ETLIngestionTriggerDate": "2026-10-12T08:40:08Z",
+      "currencyCode": "USD",
+      "source": "bedrockfoundationmodels",
+      "isMapped": "true"
+    }
+  },
+  {
+    "modelId": "deepseek.v3.2",
+    "direction": "input",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Input tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "DeepSeek",
+          "usagetype": "APS3-deepseek.v3.2-input-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "DeepSeek v3.2",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "VTC36A8NM4YCNM9N"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "VTC36A8NM4YCNM9N.JRTCKXETXF": {
+            "priceDimensions": {
+              "VTC36A8NM4YCNM9N.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00074 per 1K input tokens for DeepSeek v3.2 in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "VTC36A8NM4YCNM9N.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0007400000"
+                }
+              }
+            },
+            "sku": "VTC36A8NM4YCNM9N",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "deepseek.v3.2",
+    "direction": "output",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Output tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "DeepSeek",
+          "usagetype": "APS3-deepseek.v3.2-output-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "DeepSeek v3.2",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "Y635Y77ZERMH256N"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "Y635Y77ZERMH256N.JRTCKXETXF": {
+            "priceDimensions": {
+              "Y635Y77ZERMH256N.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00222 per 1K output tokens for DeepSeek v3.2 in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "Y635Y77ZERMH256N.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0022200000"
+                }
+              }
+            },
+            "sku": "Y635Y77ZERMH256N",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "deepseek.v3-v1:0",
+    "direction": "input",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Input tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "DeepSeek",
+          "usagetype": "APS3-DeepSeek-V3.1-input-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "DeepSeek V3.1",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "DYPNVHJPY6ZJ9K83"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "DYPNVHJPY6ZJ9K83.JRTCKXETXF": {
+            "priceDimensions": {
+              "DYPNVHJPY6ZJ9K83.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.000682424 per 1K input tokens for DeepSeek V3.1 in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "DYPNVHJPY6ZJ9K83.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0006824240"
+                }
+              }
+            },
+            "sku": "DYPNVHJPY6ZJ9K83",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "deepseek.v3-v1:0",
+    "direction": "output",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Output tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "DeepSeek",
+          "usagetype": "APS3-DeepSeek-V3.1-output-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "DeepSeek V3.1",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "56QY3MVN29RFYRFT"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "56QY3MVN29RFYRFT.JRTCKXETXF": {
+            "priceDimensions": {
+              "56QY3MVN29RFYRFT.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.001976678 per 1K output tokens for DeepSeek V3.1 in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "56QY3MVN29RFYRFT.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0019766780"
+                }
+              }
+            },
+            "sku": "56QY3MVN29RFYRFT",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "google.gemma-3-12b-it",
+    "direction": "input",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Input tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Google",
+          "usagetype": "APS3-Gemma-3-12B-IT-input-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Gemma 3 12B",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "4ZPCG3V65V8TFGFC"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "4ZPCG3V65V8TFGFC.JRTCKXETXF": {
+            "priceDimensions": {
+              "4ZPCG3V65V8TFGFC.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00011 per 1K input tokens for Gemma 3 12B in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "4ZPCG3V65V8TFGFC.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0001100000"
+                }
+              }
+            },
+            "sku": "4ZPCG3V65V8TFGFC",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "google.gemma-3-12b-it",
+    "direction": "output",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Output tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Google",
+          "usagetype": "APS3-Gemma-3-12B-IT-output-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Gemma 3 12B",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "6C338T2V2QMV5TXJ"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "6C338T2V2QMV5TXJ.JRTCKXETXF": {
+            "priceDimensions": {
+              "6C338T2V2QMV5TXJ.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00034 per 1K output tokens for Gemma 3 12B in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "6C338T2V2QMV5TXJ.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0003400000"
+                }
+              }
+            },
+            "sku": "6C338T2V2QMV5TXJ",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "google.gemma-3-27b-it",
+    "direction": "input",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Input tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Google",
+          "usagetype": "APS3-Gemma-3-27B-IT-input-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Gemma 3 27B",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "8PHK9P2YCPZ3E6VW"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "8PHK9P2YCPZ3E6VW.JRTCKXETXF": {
+            "priceDimensions": {
+              "8PHK9P2YCPZ3E6VW.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00027 per 1K input tokens for Gemma 3 27B in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "8PHK9P2YCPZ3E6VW.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0002700000"
+                }
+              }
+            },
+            "sku": "8PHK9P2YCPZ3E6VW",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "google.gemma-3-27b-it",
+    "direction": "output",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Output tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Google",
+          "usagetype": "APS3-Gemma-3-27B-IT-output-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Gemma 3 27B",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "TMPHMGXYEJNXRGPS"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "TMPHMGXYEJNXRGPS.JRTCKXETXF": {
+            "priceDimensions": {
+              "TMPHMGXYEJNXRGPS.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00045 per 1K output tokens for Gemma 3 27B in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "TMPHMGXYEJNXRGPS.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0004500000"
+                }
+              }
+            },
+            "sku": "TMPHMGXYEJNXRGPS",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "google.gemma-3-4b-it",
+    "direction": "input",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Input tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Google",
+          "usagetype": "APS3-Gemma-3-4B-IT-input-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Gemma 3 4B",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "BB4EDZ8N8H3CY8EC"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "BB4EDZ8N8H3CY8EC.JRTCKXETXF": {
+            "priceDimensions": {
+              "BB4EDZ8N8H3CY8EC.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00005 per 1K input tokens for Gemma 3 4B in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "BB4EDZ8N8H3CY8EC.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0000500000"
+                }
+              }
+            },
+            "sku": "BB4EDZ8N8H3CY8EC",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "google.gemma-3-4b-it",
+    "direction": "output",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Output tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Google",
+          "usagetype": "APS3-Gemma-3-4B-IT-output-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Gemma 3 4B",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "94UQ6JTBCCB982BM"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "94UQ6JTBCCB982BM.JRTCKXETXF": {
+            "priceDimensions": {
+              "94UQ6JTBCCB982BM.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00009 per 1K output tokens for Gemma 3 4B in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "94UQ6JTBCCB982BM.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0000900000"
+                }
+              }
+            },
+            "sku": "94UQ6JTBCCB982BM",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "meta.llama3-70b-instruct-v1:0",
+    "direction": "input",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Input tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Meta",
+          "usagetype": "APS3-Llama3-70B-input-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Llama 3 70B",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "QAKNG3TTD8CJE79W"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "QAKNG3TTD8CJE79W.JRTCKXETXF": {
+            "priceDimensions": {
+              "QAKNG3TTD8CJE79W.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00318 per 1K tokens for Llama3-70B-input-tokens in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "QAKNG3TTD8CJE79W.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0031800000"
+                }
+              }
+            },
+            "sku": "QAKNG3TTD8CJE79W",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "meta.llama3-70b-instruct-v1:0",
+    "direction": "output",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Output tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Meta",
+          "usagetype": "APS3-Llama3-70B-output-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Llama 3 70B",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "38QG2H2K5TTZ8ZVU"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "38QG2H2K5TTZ8ZVU.JRTCKXETXF": {
+            "priceDimensions": {
+              "38QG2H2K5TTZ8ZVU.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.0042 per 1K tokens for Llama3-70B-output-tokens in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "38QG2H2K5TTZ8ZVU.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0042000000"
+                }
+              }
+            },
+            "sku": "38QG2H2K5TTZ8ZVU",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "meta.llama3-8b-instruct-v1:0",
+    "direction": "input",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Input tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Meta",
+          "usagetype": "APS3-Llama3-8B-input-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Llama 3 8B",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "E3C4B9RCMQTK3U66"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "E3C4B9RCMQTK3U66.JRTCKXETXF": {
+            "priceDimensions": {
+              "E3C4B9RCMQTK3U66.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00036 per 1K tokens for Llama3-8B-input-tokens in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "E3C4B9RCMQTK3U66.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0003600000"
+                }
+              }
+            },
+            "sku": "E3C4B9RCMQTK3U66",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "meta.llama3-8b-instruct-v1:0",
+    "direction": "output",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Output tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Meta",
+          "usagetype": "APS3-Llama3-8B-output-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Llama 3 8B",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "G2ZY6ZC9BZPBMR9H"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "G2ZY6ZC9BZPBMR9H.JRTCKXETXF": {
+            "priceDimensions": {
+              "G2ZY6ZC9BZPBMR9H.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00072 per 1K tokens for Llama3-8B-output-tokens in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "G2ZY6ZC9BZPBMR9H.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0007200000"
+                }
+              }
+            },
+            "sku": "G2ZY6ZC9BZPBMR9H",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "minimax.minimax-m2",
+    "direction": "input",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Input tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Minimax AI",
+          "usagetype": "APS3-Minimax-M2-input-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Minimax M2",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "XMZQMQ5KFJZTPWT8"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "XMZQMQ5KFJZTPWT8.JRTCKXETXF": {
+            "priceDimensions": {
+              "XMZQMQ5KFJZTPWT8.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00035 per 1K input tokens for Minimax M2 in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "XMZQMQ5KFJZTPWT8.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0003500000"
+                }
+              }
+            },
+            "sku": "XMZQMQ5KFJZTPWT8",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "minimax.minimax-m2",
+    "direction": "output",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Output tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Minimax AI",
+          "usagetype": "APS3-Minimax-M2-output-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Minimax M2",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "2VF694UJQC4B2XU5"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "2VF694UJQC4B2XU5.JRTCKXETXF": {
+            "priceDimensions": {
+              "2VF694UJQC4B2XU5.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00141 per 1K output tokens for Minimax M2 in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "2VF694UJQC4B2XU5.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0014100000"
+                }
+              }
+            },
+            "sku": "2VF694UJQC4B2XU5",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "minimax.minimax-m2.1",
+    "direction": "input",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Input tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Minimax AI",
+          "usagetype": "APS3-minimax.minimax-m2.1-input-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Minimax M2.1",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "DB65NUWPGZZVH2AH"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "DB65NUWPGZZVH2AH.JRTCKXETXF": {
+            "priceDimensions": {
+              "DB65NUWPGZZVH2AH.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00036 per 1K input tokens for Minimax M2.1 in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "DB65NUWPGZZVH2AH.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0003600000"
+                }
+              }
+            },
+            "sku": "DB65NUWPGZZVH2AH",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "minimax.minimax-m2.1",
+    "direction": "output",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Output tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Minimax AI",
+          "usagetype": "APS3-minimax.minimax-m2.1-output-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Minimax M2.1",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "5N6CGT2Y65VDG346"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "5N6CGT2Y65VDG346.JRTCKXETXF": {
+            "priceDimensions": {
+              "5N6CGT2Y65VDG346.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00144 per 1K output tokens for Minimax M2.1 in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "5N6CGT2Y65VDG346.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0014400000"
+                }
+              }
+            },
+            "sku": "5N6CGT2Y65VDG346",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "minimax.minimax-m2.5",
+    "direction": "input",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Input tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Minimax AI",
+          "usagetype": "APS3-minimax.minimax-m2.5-input-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "MiniMax M2.5",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "4DCV6Y6SV24JHU4Z"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "4DCV6Y6SV24JHU4Z.JRTCKXETXF": {
+            "priceDimensions": {
+              "4DCV6Y6SV24JHU4Z.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "USD 0.00036 per 1K tokens for APS3-minimax.minimax-m2.5-input-tokens in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "4DCV6Y6SV24JHU4Z.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0003600000"
+                }
+              }
+            },
+            "sku": "4DCV6Y6SV24JHU4Z",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "minimax.minimax-m2.5",
+    "direction": "output",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Output tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Minimax AI",
+          "usagetype": "APS3-minimax.minimax-m2.5-output-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "MiniMax M2.5",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "FXYE5P8GH7ZUMDWW"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "FXYE5P8GH7ZUMDWW.JRTCKXETXF": {
+            "priceDimensions": {
+              "FXYE5P8GH7ZUMDWW.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "USD 0.00144 per 1K tokens for APS3-minimax.minimax-m2.5-output-tokens in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "FXYE5P8GH7ZUMDWW.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0014400000"
+                }
+              }
+            },
+            "sku": "FXYE5P8GH7ZUMDWW",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "mistral.devstral-2-123b",
+    "direction": "input",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Input tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Mistral AI",
+          "usagetype": "APS3-mistral.devstral-2-123b-input-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Devstral",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "MWTQT4PY635XD3VK"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "MWTQT4PY635XD3VK.JRTCKXETXF": {
+            "priceDimensions": {
+              "MWTQT4PY635XD3VK.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00048 per 1K input tokens for Devstral in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "MWTQT4PY635XD3VK.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0004800000"
+                }
+              }
+            },
+            "sku": "MWTQT4PY635XD3VK",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "mistral.devstral-2-123b",
+    "direction": "output",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Output tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Mistral AI",
+          "usagetype": "APS3-mistral.devstral-2-123b-output-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Devstral",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "ZD2RHHR5W5XKNUF3"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "ZD2RHHR5W5XKNUF3.JRTCKXETXF": {
+            "priceDimensions": {
+              "ZD2RHHR5W5XKNUF3.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.0024 per 1K output tokens for Devstral in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "ZD2RHHR5W5XKNUF3.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0024000000"
+                }
+              }
+            },
+            "sku": "ZD2RHHR5W5XKNUF3",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "mistral.magistral-small-2509",
+    "direction": "input",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Input tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Mistral",
+          "usagetype": "APS3-Magistral-Small-2509-input-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Magistral Small 1.2",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "875XWZQ9Y4DNS4XJ"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "875XWZQ9Y4DNS4XJ.JRTCKXETXF": {
+            "priceDimensions": {
+              "875XWZQ9Y4DNS4XJ.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00059 per 1K input tokens for Magistral Small 1.2 in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "875XWZQ9Y4DNS4XJ.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0005900000"
+                }
+              }
+            },
+            "sku": "875XWZQ9Y4DNS4XJ",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "mistral.magistral-small-2509",
+    "direction": "output",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Output tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Mistral",
+          "usagetype": "APS3-Magistral-Small-2509-output-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Magistral Small 1.2",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "2CA46US47ADAAEXB"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "2CA46US47ADAAEXB.JRTCKXETXF": {
+            "priceDimensions": {
+              "2CA46US47ADAAEXB.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00176 per 1K output tokens for Magistral Small 1.2 in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "2CA46US47ADAAEXB.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0017600000"
+                }
+              }
+            },
+            "sku": "2CA46US47ADAAEXB",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "mistral.ministral-3-14b-instruct",
+    "direction": "input",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Input tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Mistral",
+          "usagetype": "APS3-Ministral-3-14b-Instruct-input-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Ministral 14B 3.0",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "XBJ9BZW9WT6CKSP9"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "XBJ9BZW9WT6CKSP9.JRTCKXETXF": {
+            "priceDimensions": {
+              "XBJ9BZW9WT6CKSP9.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00024 per 1K input tokens for Ministral 14B 3.0 in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "XBJ9BZW9WT6CKSP9.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0002400000"
+                }
+              }
+            },
+            "sku": "XBJ9BZW9WT6CKSP9",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "mistral.ministral-3-14b-instruct",
+    "direction": "output",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Output tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Mistral",
+          "usagetype": "APS3-Ministral-3-14b-Instruct-output-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Ministral 14B 3.0",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "XVJC9XVF7RZEUA3J"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "XVJC9XVF7RZEUA3J.JRTCKXETXF": {
+            "priceDimensions": {
+              "XVJC9XVF7RZEUA3J.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00024 per 1K output tokens for Ministral 14B 3.0 in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "XVJC9XVF7RZEUA3J.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0002400000"
+                }
+              }
+            },
+            "sku": "XVJC9XVF7RZEUA3J",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "mistral.ministral-3-8b-instruct",
+    "direction": "input",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Input tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Mistral",
+          "usagetype": "APS3-Ministral-3-8b-Instruct-input-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Ministral 8B 3.0",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "H2VP6N54EQ4R2SYN"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "H2VP6N54EQ4R2SYN.JRTCKXETXF": {
+            "priceDimensions": {
+              "H2VP6N54EQ4R2SYN.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00018 per 1K input tokens for Ministral 8B 3.0 in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "H2VP6N54EQ4R2SYN.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0001800000"
+                }
+              }
+            },
+            "sku": "H2VP6N54EQ4R2SYN",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "mistral.ministral-3-8b-instruct",
+    "direction": "output",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Output tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Mistral",
+          "usagetype": "APS3-Ministral-3-8b-Instruct-output-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Ministral 8B 3.0",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "WQ9X84PYHCHJNVUJ"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "WQ9X84PYHCHJNVUJ.JRTCKXETXF": {
+            "priceDimensions": {
+              "WQ9X84PYHCHJNVUJ.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00018 per 1K output tokens for Ministral 8B 3.0 in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "WQ9X84PYHCHJNVUJ.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0001800000"
+                }
+              }
+            },
+            "sku": "WQ9X84PYHCHJNVUJ",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "mistral.ministral-3-3b-instruct",
+    "direction": "input",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Input tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Mistral",
+          "usagetype": "APS3-Ministral-3-3b-Instruct-input-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Ministral 3B 3.0",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "3QPDEH6WU934G8AB"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "3QPDEH6WU934G8AB.JRTCKXETXF": {
+            "priceDimensions": {
+              "3QPDEH6WU934G8AB.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00012 per 1K input tokens for Ministral 3B 3.0 in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "3QPDEH6WU934G8AB.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0001200000"
+                }
+              }
+            },
+            "sku": "3QPDEH6WU934G8AB",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "mistral.ministral-3-3b-instruct",
+    "direction": "output",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Output tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Mistral",
+          "usagetype": "APS3-Ministral-3-3b-Instruct-output-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Ministral 3B 3.0",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "HFBZ5RTPQYG8YSE3"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "HFBZ5RTPQYG8YSE3.JRTCKXETXF": {
+            "priceDimensions": {
+              "HFBZ5RTPQYG8YSE3.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00012 per 1K output tokens for Ministral 3B 3.0 in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "HFBZ5RTPQYG8YSE3.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0001200000"
+                }
+              }
+            },
+            "sku": "HFBZ5RTPQYG8YSE3",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "mistral.mistral-7b-instruct-v0:2",
+    "direction": "input",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Input tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Mistral",
+          "usagetype": "APS3-Mistral7B-input-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Mistral 7B",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "KWFPTYVQ9QQDJG92"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "KWFPTYVQ9QQDJG92.JRTCKXETXF": {
+            "priceDimensions": {
+              "KWFPTYVQ9QQDJG92.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00018 per 1K tokens for Mistral7B-input-tokens in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "KWFPTYVQ9QQDJG92.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0001800000"
+                }
+              }
+            },
+            "sku": "KWFPTYVQ9QQDJG92",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "mistral.mistral-7b-instruct-v0:2",
+    "direction": "output",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Output tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Mistral",
+          "usagetype": "APS3-Mistral7B-output-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Mistral 7B",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "YQN2XPUT8UMEECJ4"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "YQN2XPUT8UMEECJ4.JRTCKXETXF": {
+            "priceDimensions": {
+              "YQN2XPUT8UMEECJ4.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00024 per 1K tokens for Mistral7B-output-tokens in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "YQN2XPUT8UMEECJ4.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0002400000"
+                }
+              }
+            },
+            "sku": "YQN2XPUT8UMEECJ4",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "mistral.mistral-large-2402-v1:0",
+    "direction": "input",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Input tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Mistral",
+          "usagetype": "APS3-MistralLarge-input-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Mistral Large",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "SEW5QZ2WQ2UTHMF4"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "SEW5QZ2WQ2UTHMF4.JRTCKXETXF": {
+            "priceDimensions": {
+              "SEW5QZ2WQ2UTHMF4.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.0048 per 1K tokens for MistralLarge-input-tokens in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "SEW5QZ2WQ2UTHMF4.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0048000000"
+                }
+              }
+            },
+            "sku": "SEW5QZ2WQ2UTHMF4",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "mistral.mistral-large-2402-v1:0",
+    "direction": "output",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Output tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Mistral",
+          "usagetype": "APS3-MistralLarge-output-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Mistral Large",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "SND2VRFUGKKSB5Y6"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "SND2VRFUGKKSB5Y6.JRTCKXETXF": {
+            "priceDimensions": {
+              "SND2VRFUGKKSB5Y6.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.0144 per 1K tokens for MistralLarge-output-tokens in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "SND2VRFUGKKSB5Y6.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0144000000"
+                }
+              }
+            },
+            "sku": "SND2VRFUGKKSB5Y6",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "mistral.mistral-large-3-675b-instruct",
+    "direction": "input",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Input tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Mistral",
+          "usagetype": "APS3-Mistral-Large-3-675b-Instruct-input-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Mistral Large 3",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "DYEVUXUA4S6XE7XF"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "DYEVUXUA4S6XE7XF.JRTCKXETXF": {
+            "priceDimensions": {
+              "DYEVUXUA4S6XE7XF.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00059 per 1K input tokens for Mistral Large 3 in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "DYEVUXUA4S6XE7XF.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0005900000"
+                }
+              }
+            },
+            "sku": "DYEVUXUA4S6XE7XF",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "mistral.mistral-large-3-675b-instruct",
+    "direction": "output",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Output tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Mistral",
+          "usagetype": "APS3-Mistral-Large-3-675b-Instruct-output-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Mistral Large 3",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "VXZWPMYZ52QQASD8"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "VXZWPMYZ52QQASD8.JRTCKXETXF": {
+            "priceDimensions": {
+              "VXZWPMYZ52QQASD8.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00176 per 1K output tokens for Mistral Large 3 in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "VXZWPMYZ52QQASD8.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0017600000"
+                }
+              }
+            },
+            "sku": "VXZWPMYZ52QQASD8",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "mistral.mixtral-8x7b-instruct-v0:1",
+    "direction": "input",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Input tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Mistral",
+          "usagetype": "APS3-Mixtral8x7B-input-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Mixtral 8x7B",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "ZVT2WYWN9BD489AE"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "ZVT2WYWN9BD489AE.JRTCKXETXF": {
+            "priceDimensions": {
+              "ZVT2WYWN9BD489AE.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00054 per 1K tokens for Mistral8x7B-input-tokens in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "ZVT2WYWN9BD489AE.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0005400000"
+                }
+              }
+            },
+            "sku": "ZVT2WYWN9BD489AE",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "mistral.mixtral-8x7b-instruct-v0:1",
+    "direction": "output",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Output tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Mistral",
+          "usagetype": "APS3-Mixtral8x7B-output-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Mixtral 8x7B",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "R2PU8KERVJQT2ETG"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "R2PU8KERVJQT2ETG.JRTCKXETXF": {
+            "priceDimensions": {
+              "R2PU8KERVJQT2ETG.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00084 per 1K tokens for Mixtral8x7B-output-tokens in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "R2PU8KERVJQT2ETG.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0008400000"
+                }
+              }
+            },
+            "sku": "R2PU8KERVJQT2ETG",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "mistral.voxtral-mini-3b-2507",
+    "direction": "input",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Input tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Mistral",
+          "usagetype": "APS3-Voxtral-Mini-3B-2507-input-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Voxtral Mini 1.0",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "PS9VSXWRQ3P6E94W"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "PS9VSXWRQ3P6E94W.JRTCKXETXF": {
+            "priceDimensions": {
+              "PS9VSXWRQ3P6E94W.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00005 per 1K input tokens for Voxtral Mini 1.0 in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "PS9VSXWRQ3P6E94W.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0000500000"
+                }
+              }
+            },
+            "sku": "PS9VSXWRQ3P6E94W",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "mistral.voxtral-mini-3b-2507",
+    "direction": "output",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Output tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Mistral",
+          "usagetype": "APS3-Voxtral-Mini-3B-2507-output-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Voxtral Mini 1.0",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "USH6GRY4K2FDE29J"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "USH6GRY4K2FDE29J.JRTCKXETXF": {
+            "priceDimensions": {
+              "USH6GRY4K2FDE29J.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00005 per 1K output tokens for Voxtral Mini 1.0 in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "USH6GRY4K2FDE29J.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0000500000"
+                }
+              }
+            },
+            "sku": "USH6GRY4K2FDE29J",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "mistral.voxtral-small-24b-2507",
+    "direction": "input",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Input tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Mistral",
+          "usagetype": "APS3-Voxtral-Mini-24B-2507-input-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Voxtral Small 1.0",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "NBVAV9BAJZB58H8H"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "NBVAV9BAJZB58H8H.JRTCKXETXF": {
+            "priceDimensions": {
+              "NBVAV9BAJZB58H8H.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00012 per 1K input tokens for Voxtral Small 1.0 in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "NBVAV9BAJZB58H8H.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0001200000"
+                }
+              }
+            },
+            "sku": "NBVAV9BAJZB58H8H",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "mistral.voxtral-small-24b-2507",
+    "direction": "output",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Output tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Mistral",
+          "usagetype": "APS3-Voxtral-Mini-24B-2507-output-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Voxtral Small 1.0",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "VYPCC3MJPSZ4QQKQ"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "VYPCC3MJPSZ4QQKQ.JRTCKXETXF": {
+            "priceDimensions": {
+              "VYPCC3MJPSZ4QQKQ.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00035 per 1K output tokens for Voxtral Small 1.0 in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "VYPCC3MJPSZ4QQKQ.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0003500000"
+                }
+              }
+            },
+            "sku": "VYPCC3MJPSZ4QQKQ",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "moonshot.kimi-k2-thinking",
+    "direction": "input",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Input tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Kimi AI",
+          "usagetype": "APS3-Kimi-K2-Thinking-input-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Kimi K2 Thinking",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "8JJXUXFKAWT4H6CY"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "8JJXUXFKAWT4H6CY.JRTCKXETXF": {
+            "priceDimensions": {
+              "8JJXUXFKAWT4H6CY.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00071 per 1K input tokens for Kimi K2 Thinking in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "8JJXUXFKAWT4H6CY.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0007100000"
+                }
+              }
+            },
+            "sku": "8JJXUXFKAWT4H6CY",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "moonshot.kimi-k2-thinking",
+    "direction": "output",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Output tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Kimi AI",
+          "usagetype": "APS3-Kimi-K2-Thinking-output-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Kimi K2 Thinking",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "JJBGWDV93BCZW75H"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "JJBGWDV93BCZW75H.JRTCKXETXF": {
+            "priceDimensions": {
+              "JJBGWDV93BCZW75H.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00294 per 1K output tokens for Kimi K2 Thinking in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "JJBGWDV93BCZW75H.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0029400000"
+                }
+              }
+            },
+            "sku": "JJBGWDV93BCZW75H",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "moonshotai.kimi-k2.5",
+    "direction": "input",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Input tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Moonshot AI",
+          "usagetype": "APS3-moonshotai.kimi-k2.5-input-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Kimi K2.5",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "BJRSW5PKERV8BZQS"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "BJRSW5PKERV8BZQS.JRTCKXETXF": {
+            "priceDimensions": {
+              "BJRSW5PKERV8BZQS.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00072 per 1K input tokens for Kimi K2.5 in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "BJRSW5PKERV8BZQS.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0007200000"
+                }
+              }
+            },
+            "sku": "BJRSW5PKERV8BZQS",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "moonshotai.kimi-k2.5",
+    "direction": "output",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Output tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Moonshot AI",
+          "usagetype": "APS3-moonshotai.kimi-k2.5-output-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Kimi K2.5",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "8AW9S8AMWU38H2XF"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "8AW9S8AMWU38H2XF.JRTCKXETXF": {
+            "priceDimensions": {
+              "8AW9S8AMWU38H2XF.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.0036 per 1K output tokens for Kimi K2.5 in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "8AW9S8AMWU38H2XF.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0036000000"
+                }
+              }
+            },
+            "sku": "8AW9S8AMWU38H2XF",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "nvidia.nemotron-super-3-120b",
+    "direction": "input",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Input tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Nvidia",
+          "usagetype": "APS3-nvidia.nemotron-super-3-120b-input-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "NVIDIA Nemotron 3 Super 120B A12B",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "ZYMMFTWNCFDRVGU7"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "ZYMMFTWNCFDRVGU7.JRTCKXETXF": {
+            "priceDimensions": {
+              "ZYMMFTWNCFDRVGU7.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "USD 0.00018 per 1K tokens for APS3-nvidia.nemotron-super-3-120b-input-tokens in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "ZYMMFTWNCFDRVGU7.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0001800000"
+                }
+              }
+            },
+            "sku": "ZYMMFTWNCFDRVGU7",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "nvidia.nemotron-super-3-120b",
+    "direction": "output",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Output tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Nvidia",
+          "usagetype": "APS3-nvidia.nemotron-super-3-120b-output-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "NVIDIA Nemotron 3 Super 120B A12B",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "MGWMUBJNCX9YME8A"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "MGWMUBJNCX9YME8A.JRTCKXETXF": {
+            "priceDimensions": {
+              "MGWMUBJNCX9YME8A.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "USD 0.00078 per 1K tokens for APS3-nvidia.nemotron-super-3-120b-output-tokens in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "MGWMUBJNCX9YME8A.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0007800000"
+                }
+              }
+            },
+            "sku": "MGWMUBJNCX9YME8A",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "nvidia.nemotron-nano-12b-v2",
+    "direction": "input",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Input tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Nvidia",
+          "usagetype": "APS3-Nemotron-Nano-12B-V2-VL-BF16-input-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "NVIDIA Nemotron Nano 2 VL",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "K823VBB3JEZ7F6XP"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "K823VBB3JEZ7F6XP.JRTCKXETXF": {
+            "priceDimensions": {
+              "K823VBB3JEZ7F6XP.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00024 per 1K input tokens for NVIDIA Nemotron Nano 2 VL in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "K823VBB3JEZ7F6XP.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0002400000"
+                }
+              }
+            },
+            "sku": "K823VBB3JEZ7F6XP",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "nvidia.nemotron-nano-12b-v2",
+    "direction": "output",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Output tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Nvidia",
+          "usagetype": "APS3-Nemotron-Nano-12B-V2-VL-BF16-output-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "NVIDIA Nemotron Nano 2 VL",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "JK787RGRCVF3QXXT"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "JK787RGRCVF3QXXT.JRTCKXETXF": {
+            "priceDimensions": {
+              "JK787RGRCVF3QXXT.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00071 per 1K output tokens for NVIDIA Nemotron Nano 2 VL in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "JK787RGRCVF3QXXT.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0007100000"
+                }
+              }
+            },
+            "sku": "JK787RGRCVF3QXXT",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "nvidia.nemotron-nano-9b-v2",
+    "direction": "input",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Input tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Nvidia",
+          "usagetype": "APS3-Nemotron-Nano-9B-V2-input-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "NVIDIA Nemotron Nano 2",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "8TG4D79AKBPB79M2"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "8TG4D79AKBPB79M2.JRTCKXETXF": {
+            "priceDimensions": {
+              "8TG4D79AKBPB79M2.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00007 per 1K input tokens for NVIDIA Nemotron Nano 2 in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "8TG4D79AKBPB79M2.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0000700000"
+                }
+              }
+            },
+            "sku": "8TG4D79AKBPB79M2",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "nvidia.nemotron-nano-9b-v2",
+    "direction": "output",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Output tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Nvidia",
+          "usagetype": "APS3-Nemotron-Nano-9B-V2-output-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "NVIDIA Nemotron Nano 2",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "DPHRY2XBBPPQFRWP"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "DPHRY2XBBPPQFRWP.JRTCKXETXF": {
+            "priceDimensions": {
+              "DPHRY2XBBPPQFRWP.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00027 per 1K output tokens for NVIDIA Nemotron Nano 2 in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "DPHRY2XBBPPQFRWP.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0002700000"
+                }
+              }
+            },
+            "sku": "DPHRY2XBBPPQFRWP",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "nvidia.nemotron-nano-3-30b",
+    "direction": "input",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Input tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Nvidia",
+          "usagetype": "APS3-Nemotron-Nano-3-30B-input-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Nemotron Nano 3 30B",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "7MXKGMRB6TMEE69K"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "7MXKGMRB6TMEE69K.JRTCKXETXF": {
+            "priceDimensions": {
+              "7MXKGMRB6TMEE69K.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00007 per 1K input tokens for Nemotron Nano 3 30B in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "7MXKGMRB6TMEE69K.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0000700000"
+                }
+              }
+            },
+            "sku": "7MXKGMRB6TMEE69K",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "nvidia.nemotron-nano-3-30b",
+    "direction": "output",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Output tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Nvidia",
+          "usagetype": "APS3-Nemotron-Nano-3-30B-output-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Nemotron Nano 3 30B",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "YHR56CA7UJBEMZV7"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "YHR56CA7UJBEMZV7.JRTCKXETXF": {
+            "priceDimensions": {
+              "YHR56CA7UJBEMZV7.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00028 per 1K output tokens for Nemotron Nano 3 30B in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "YHR56CA7UJBEMZV7.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0002800000"
+                }
+              }
+            },
+            "sku": "YHR56CA7UJBEMZV7",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "openai.gpt-oss-safeguard-120b",
+    "direction": "input",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Input tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "OpenAI",
+          "usagetype": "APS3-GPT-OSS-Safeguard-120B-input-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "GPT OSS Safeguard 120B",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "VY2GZRJ8UB2AKKE3"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "VY2GZRJ8UB2AKKE3.JRTCKXETXF": {
+            "priceDimensions": {
+              "VY2GZRJ8UB2AKKE3.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00018 per 1K input tokens for GPT OSS Safeguard 120B in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "VY2GZRJ8UB2AKKE3.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0001800000"
+                }
+              }
+            },
+            "sku": "VY2GZRJ8UB2AKKE3",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "openai.gpt-oss-safeguard-120b",
+    "direction": "output",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Output tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "OpenAI",
+          "usagetype": "APS3-GPT-OSS-Safeguard-120B-output-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "GPT OSS Safeguard 120B",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "Y6ZA4FSUHTQJ4ER6"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "Y6ZA4FSUHTQJ4ER6.JRTCKXETXF": {
+            "priceDimensions": {
+              "Y6ZA4FSUHTQJ4ER6.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00071 per 1K output tokens for GPT OSS Safeguard 120B in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "Y6ZA4FSUHTQJ4ER6.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0007100000"
+                }
+              }
+            },
+            "sku": "Y6ZA4FSUHTQJ4ER6",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "openai.gpt-oss-safeguard-20b",
+    "direction": "input",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Input tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "OpenAI",
+          "usagetype": "APS3-GPT-OSS-Safeguard-20B-input-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "GPT OSS Safeguard 20B",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "6FPQFSMUA2AQ3AFH"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "6FPQFSMUA2AQ3AFH.JRTCKXETXF": {
+            "priceDimensions": {
+              "6FPQFSMUA2AQ3AFH.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00008 per 1K input tokens for GPT OSS Safeguard 20B in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "6FPQFSMUA2AQ3AFH.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0000800000"
+                }
+              }
+            },
+            "sku": "6FPQFSMUA2AQ3AFH",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "openai.gpt-oss-safeguard-20b",
+    "direction": "output",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Output tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "OpenAI",
+          "usagetype": "APS3-GPT-OSS-Safeguard-20B-output-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "GPT OSS Safeguard 20B",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "5NXGTCEYSKU23394"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "5NXGTCEYSKU23394.JRTCKXETXF": {
+            "priceDimensions": {
+              "5NXGTCEYSKU23394.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00024 per 1K output tokens for GPT OSS Safeguard 20B in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "5NXGTCEYSKU23394.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0002400000"
+                }
+              }
+            },
+            "sku": "5NXGTCEYSKU23394",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "openai.gpt-oss-120b-1:0",
+    "direction": "input",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Input tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "OpenAI",
+          "usagetype": "APS3-gpt-oss-120b-input-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "gpt-oss-120b",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "J8ZENAZ7XSKMXJCW"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "J8ZENAZ7XSKMXJCW.JRTCKXETXF": {
+            "priceDimensions": {
+              "J8ZENAZ7XSKMXJCW.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00018 per 1K input tokens for gpt-oss-120b in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "J8ZENAZ7XSKMXJCW.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0001800000"
+                }
+              }
+            },
+            "sku": "J8ZENAZ7XSKMXJCW",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "openai.gpt-oss-120b-1:0",
+    "direction": "output",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Output tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "OpenAI",
+          "usagetype": "APS3-gpt-oss-120b-output-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "gpt-oss-120b",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "D7H86UEF56VJRUB7"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "D7H86UEF56VJRUB7.JRTCKXETXF": {
+            "priceDimensions": {
+              "D7H86UEF56VJRUB7.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00071 per 1K output tokens for gpt-oss-120b in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "D7H86UEF56VJRUB7.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0007100000"
+                }
+              }
+            },
+            "sku": "D7H86UEF56VJRUB7",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "openai.gpt-oss-20b-1:0",
+    "direction": "input",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Input tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "OpenAI",
+          "usagetype": "APS3-gpt-oss-20b-input-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "gpt-oss-20b",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "7ZN64NFEZEP84F3X"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "7ZN64NFEZEP84F3X.JRTCKXETXF": {
+            "priceDimensions": {
+              "7ZN64NFEZEP84F3X.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00008 per 1K input tokens for gpt-oss-20b in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "7ZN64NFEZEP84F3X.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0000800000"
+                }
+              }
+            },
+            "sku": "7ZN64NFEZEP84F3X",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "openai.gpt-oss-20b-1:0",
+    "direction": "output",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Output tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "OpenAI",
+          "usagetype": "APS3-gpt-oss-20b-output-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "gpt-oss-20b",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "NPGB8W2WZRM48FYU"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "NPGB8W2WZRM48FYU.JRTCKXETXF": {
+            "priceDimensions": {
+              "NPGB8W2WZRM48FYU.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00035 per 1K output tokens for gpt-oss-20b in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "NPGB8W2WZRM48FYU.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0003500000"
+                }
+              }
+            },
+            "sku": "NPGB8W2WZRM48FYU",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "qwen.qwen3-235b-a22b-2507-v1:0",
+    "direction": "input",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Input tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Qwen",
+          "usagetype": "APS3-Qwen3-235B-A22B-input-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Qwen3 235B A22B 2507",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "G88GQR9SATV8MKGK"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "G88GQR9SATV8MKGK.JRTCKXETXF": {
+            "priceDimensions": {
+              "G88GQR9SATV8MKGK.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00026 per 1K input tokens for Qwen3 235B A22B 2507 in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "G88GQR9SATV8MKGK.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0002600000"
+                }
+              }
+            },
+            "sku": "G88GQR9SATV8MKGK",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "qwen.qwen3-235b-a22b-2507-v1:0",
+    "direction": "output",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Output tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Qwen",
+          "usagetype": "APS3-Qwen3-235B-A22B-output-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Qwen3 235B A22B 2507",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "MCF4G5ZABV3TRKFQ"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "MCF4G5ZABV3TRKFQ.JRTCKXETXF": {
+            "priceDimensions": {
+              "MCF4G5ZABV3TRKFQ.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00104 per 1K output tokens for Qwen3 235B A22B 2507 in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "MCF4G5ZABV3TRKFQ.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0010400000"
+                }
+              }
+            },
+            "sku": "MCF4G5ZABV3TRKFQ",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "qwen.qwen3-32b-v1:0",
+    "direction": "input",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Input tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Qwen",
+          "usagetype": "APS3-Qwen3-32B-input-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Qwen3 32B",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "MQGTDJ8CP9R3JR29"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "MQGTDJ8CP9R3JR29.JRTCKXETXF": {
+            "priceDimensions": {
+              "MQGTDJ8CP9R3JR29.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00018 per 1K input tokens for Qwen3 32B in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "MQGTDJ8CP9R3JR29.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0001800000"
+                }
+              }
+            },
+            "sku": "MQGTDJ8CP9R3JR29",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "qwen.qwen3-32b-v1:0",
+    "direction": "output",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Output tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Qwen",
+          "usagetype": "APS3-Qwen3-32B-output-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Qwen3 32B",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "DKF3UAFTPX8WGQA6"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "DKF3UAFTPX8WGQA6.JRTCKXETXF": {
+            "priceDimensions": {
+              "DKF3UAFTPX8WGQA6.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00071 per 1K output tokens for Qwen3 32B in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "DKF3UAFTPX8WGQA6.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0007100000"
+                }
+              }
+            },
+            "sku": "DKF3UAFTPX8WGQA6",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "qwen.qwen3-coder-480b-a35b-v1:0",
+    "direction": "input",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Input tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Qwen",
+          "usagetype": "APS3-Qwen3Coder-480B-A35B-input-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Qwen3 Coder 480B A35B",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "CZNX343ZQWRB4KFP"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "CZNX343ZQWRB4KFP.JRTCKXETXF": {
+            "priceDimensions": {
+              "CZNX343ZQWRB4KFP.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00053 per 1K input tokens for Qwen3 Coder 480B A35B in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "CZNX343ZQWRB4KFP.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0005300000"
+                }
+              }
+            },
+            "sku": "CZNX343ZQWRB4KFP",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "qwen.qwen3-coder-480b-a35b-v1:0",
+    "direction": "output",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Output tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Qwen",
+          "usagetype": "APS3-Qwen3Coder-480B-A35B-output-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Qwen3 Coder 480B A35B",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "EAC2NG46FC7HVBBJ"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "EAC2NG46FC7HVBBJ.JRTCKXETXF": {
+            "priceDimensions": {
+              "EAC2NG46FC7HVBBJ.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00212 per 1K output tokens for Qwen3 Coder 480B A35B in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "EAC2NG46FC7HVBBJ.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0021200000"
+                }
+              }
+            },
+            "sku": "EAC2NG46FC7HVBBJ",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "qwen.qwen3-next-80b-a3b",
+    "direction": "input",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Input tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Qwen",
+          "usagetype": "APS3-qwen3-next-80b-a3b-input-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "qwen3-next-80b-a3b",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "TQACTTAGDQDVH3GA"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "TQACTTAGDQDVH3GA.JRTCKXETXF": {
+            "priceDimensions": {
+              "TQACTTAGDQDVH3GA.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00018 per 1K input tokens for qwen3-next-80b-a3b in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "TQACTTAGDQDVH3GA.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0001800000"
+                }
+              }
+            },
+            "sku": "TQACTTAGDQDVH3GA",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "qwen.qwen3-next-80b-a3b",
+    "direction": "output",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Output tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Qwen",
+          "usagetype": "APS3-qwen3-next-80b-a3b-output-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "qwen3-next-80b-a3b",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "27WBUGEQ29HQH8X5"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "27WBUGEQ29HQH8X5.JRTCKXETXF": {
+            "priceDimensions": {
+              "27WBUGEQ29HQH8X5.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00141 per 1K output tokens for qwen3-next-80b-a3b in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "27WBUGEQ29HQH8X5.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0014100000"
+                }
+              }
+            },
+            "sku": "27WBUGEQ29HQH8X5",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "qwen.qwen3-vl-235b-a22b",
+    "direction": "input",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Input tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Qwen",
+          "usagetype": "APS3-Qwen3-VL-235B-A22B-input-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Qwen3 VL 235B A22B",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "HGBPF6XSVCBFVNQ8"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "HGBPF6XSVCBFVNQ8.JRTCKXETXF": {
+            "priceDimensions": {
+              "HGBPF6XSVCBFVNQ8.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00062 per 1K input tokens for Qwen3 VL 235B A22B in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "HGBPF6XSVCBFVNQ8.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0006200000"
+                }
+              }
+            },
+            "sku": "HGBPF6XSVCBFVNQ8",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "qwen.qwen3-vl-235b-a22b",
+    "direction": "output",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Output tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Qwen",
+          "usagetype": "APS3-Qwen3-VL-235B-A22B-output-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Qwen3 VL 235B A22B",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "EUDEZEQ95SNBM6E6"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "EUDEZEQ95SNBM6E6.JRTCKXETXF": {
+            "priceDimensions": {
+              "EUDEZEQ95SNBM6E6.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00313 per 1K output tokens for Qwen3 VL 235B A22B in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "EUDEZEQ95SNBM6E6.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0031300000"
+                }
+              }
+            },
+            "sku": "EUDEZEQ95SNBM6E6",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "qwen.qwen3-coder-30b-a3b-v1:0",
+    "direction": "input",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Input tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Qwen",
+          "usagetype": "APS3-Qwen3Coder-30B-A3B-input-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Qwen3 Coder 30B A3B",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "Q8EZ4STASYYAERK8"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "Q8EZ4STASYYAERK8.JRTCKXETXF": {
+            "priceDimensions": {
+              "Q8EZ4STASYYAERK8.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00018 per 1K input tokens for Qwen3 Coder 30B A3B in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "Q8EZ4STASYYAERK8.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0001800000"
+                }
+              }
+            },
+            "sku": "Q8EZ4STASYYAERK8",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "qwen.qwen3-coder-30b-a3b-v1:0",
+    "direction": "output",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Output tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Qwen",
+          "usagetype": "APS3-Qwen3Coder-30B-A3B-output-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "Qwen3 Coder 30B A3B",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "DBDS5GSDWT7V2M5Y"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "DBDS5GSDWT7V2M5Y.JRTCKXETXF": {
+            "priceDimensions": {
+              "DBDS5GSDWT7V2M5Y.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00071 per 1K output tokens for Qwen3 Coder 30B A3B in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "DBDS5GSDWT7V2M5Y.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0007100000"
+                }
+              }
+            },
+            "sku": "DBDS5GSDWT7V2M5Y",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "zai.glm-4.7",
+    "direction": "input",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Input tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Z AI",
+          "usagetype": "APS3-zai.glm-4.7-input-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "GLM 4.7",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "GQBGFVWWYKJVN67A"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "GQBGFVWWYKJVN67A.JRTCKXETXF": {
+            "priceDimensions": {
+              "GQBGFVWWYKJVN67A.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00072 per 1K input tokens for GLM 4.7 in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "GQBGFVWWYKJVN67A.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0007200000"
+                }
+              }
+            },
+            "sku": "GQBGFVWWYKJVN67A",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "zai.glm-4.7",
+    "direction": "output",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Output tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Z AI",
+          "usagetype": "APS3-zai.glm-4.7-output-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "GLM 4.7",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "6BSWCC5UQWY9XKM8"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "6BSWCC5UQWY9XKM8.JRTCKXETXF": {
+            "priceDimensions": {
+              "6BSWCC5UQWY9XKM8.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00264 per 1K output tokens for GLM 4.7 in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "6BSWCC5UQWY9XKM8.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0026400000"
+                }
+              }
+            },
+            "sku": "6BSWCC5UQWY9XKM8",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "zai.glm-4.7-flash",
+    "direction": "input",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Input tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Z AI",
+          "usagetype": "APS3-zai.glm-4.7-flash-input-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "GLM 4.7 Flash",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "TAYPCWUJW2RUDSGM"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "TAYPCWUJW2RUDSGM.JRTCKXETXF": {
+            "priceDimensions": {
+              "TAYPCWUJW2RUDSGM.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00008 per 1K input tokens for GLM 4.7 Flash in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "TAYPCWUJW2RUDSGM.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0000800000"
+                }
+              }
+            },
+            "sku": "TAYPCWUJW2RUDSGM",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "zai.glm-4.7-flash",
+    "direction": "output",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Output tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Z AI",
+          "usagetype": "APS3-zai.glm-4.7-flash-output-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "GLM 4.7 Flash",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "JF7EWC9A2UGUPJWZ"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "JF7EWC9A2UGUPJWZ.JRTCKXETXF": {
+            "priceDimensions": {
+              "JF7EWC9A2UGUPJWZ.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "$0.00048 per 1K output tokens for GLM 4.7 Flash in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "JF7EWC9A2UGUPJWZ.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0004800000"
+                }
+              }
+            },
+            "sku": "JF7EWC9A2UGUPJWZ",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "zai.glm-5",
+    "direction": "input",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Input tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Z AI",
+          "usagetype": "APS3-zai.glm5-input-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "GLM 5",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "YXANSWVDFE2KUYWZ"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "YXANSWVDFE2KUYWZ.JRTCKXETXF": {
+            "priceDimensions": {
+              "YXANSWVDFE2KUYWZ.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "USD 0.0012 per 1K tokens for APS3-zai.glm5-input-tokens in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "YXANSWVDFE2KUYWZ.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0012000000"
+                }
+              }
+            },
+            "sku": "YXANSWVDFE2KUYWZ",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  },
+  {
+    "modelId": "zai.glm-5",
+    "direction": "output",
+    "priceProduct": {
+      "product": {
+        "productFamily": "Amazon Bedrock",
+        "attributes": {
+          "regionCode": "ap-south-1",
+          "inferenceType": "Output tokens",
+          "servicecode": "AmazonBedrock",
+          "feature": "On-demand Inference",
+          "provider": "Z AI",
+          "usagetype": "APS3-zai.glm5-output-tokens",
+          "locationType": "AWS Region",
+          "location": "Asia Pacific (Mumbai)",
+          "model": "GLM 5",
+          "servicename": "Amazon Bedrock",
+          "operation": ""
+        },
+        "sku": "ZCC5X4F4JDSECUST"
+      },
+      "serviceCode": "AmazonBedrock",
+      "terms": {
+        "OnDemand": {
+          "ZCC5X4F4JDSECUST.JRTCKXETXF": {
+            "priceDimensions": {
+              "ZCC5X4F4JDSECUST.JRTCKXETXF.6YS6EN2CT7": {
+                "unit": "1K tokens",
+                "endRange": "Inf",
+                "description": "USD 0.00384 per 1K tokens for APS3-zai.glm5-output-tokens in Asia Pacific (Mumbai)",
+                "appliesTo": [],
+                "rateCode": "ZCC5X4F4JDSECUST.JRTCKXETXF.6YS6EN2CT7",
+                "beginRange": "0",
+                "pricePerUnit": {
+                  "USD": "0.0038400000"
+                }
+              }
+            },
+            "sku": "ZCC5X4F4JDSECUST",
+            "effectiveDate": "2026-10-01T00:00:00Z",
+            "offerTermCode": "JRTCKXETXF",
+            "termAttributes": {}
+          }
+        }
+      },
+      "version": "20261030160456",
+      "publicationDate": "2026-10-30T16:04:56Z"
+    }
+  }
+]

@@ -1,0 +1,107 @@
+{
+  "checked_at": "2026-11-02T12:33:27.792320+00:00",
+  "page_url": "https://aws.amazon.com/bedrock/pricing/",
+  "feed_url": "https://b0.p.awsstatic.com/pricing/2.0/meteredUnitMaps/bedrockfoundationmodels/USD/current/bedrockfoundationmodels.json",
+  "feed_manifest": {
+    "serviceId": "bedrockfoundationmodels",
+    "accessType": "publish",
+    "esIndex": "plc-bedrockfoundationmodels-usd-20261012084008",
+    "hawkFilePublicationDate": "2026-10-12T08:40:08Z",
+    "ETLIngestionTriggerDate": "2026-10-12T08:40:08Z",
+    "currencyCode": "USD",
+    "source": "bedrockfoundationmodels",
+    "isMapped": "true"
+  },
+  "prices": [
+    {
+      "model_label_on_pricing_page": "Claude Opus 5",
+      "pricing_section": "Geo and In-region Cross-region Inference",
+      "region": "Asia Pacific (Mumbai)",
+      "currency": "USD",
+      "tier": "standard on-demand",
+      "rates": [
+        {
+          "direction": "input",
+          "usd_per_million_tokens": "5.5000000000",
+          "sku": "44XM93Y4F8V5HR2Y",
+          "rate": {
+            "rateCode": "44XM93Y4F8V5HR2Y.4799GE89SK.6YS6EN2CT7",
+            "price": "5.5000000000",
+            "RegionlessRateCode": "sbDyhkVnyuv89NUdw3WYcdUXx2XDClLi7M9dfY3bfHw"
+          }
+        },
+        {
+          "direction": "output",
+          "usd_per_million_tokens": "27.5000000000",
+          "sku": "Y7MPSGURWDREN7HX",
+          "rate": {
+            "rateCode": "Y7MPSGURWDREN7HX.4799GE89SK.6YS6EN2CT7",
+            "price": "27.5000000000",
+            "RegionlessRateCode": "vSiE91iz_fxFqUIW9kHDsurE1OjxXxQhXPK2clqyutQ"
+          }
+        }
+      ],
+      "source_row_html": "<tr><td>Claude Opus 5</td><td>{priceOf!bedrockfoundationmodels/bedrockfoundationmodels!sbDyhkVnyuv89NUdw3WYcdUXx2XDClLi7M9dfY3bfHw}</td><td>{priceOf!bedrockfoundationmodels/bedrockfoundationmodels!vSiE91iz_fxFqUIW9kHDsurE1OjxXxQhXPK2clqyutQ}</td><td>{priceOf!bedrockfoundationmodels/bedrockfoundationmodels!Y8elKk_m79kgy6Hau6IkYYEoiBPC2xK7xXE3rv8GhiQ!opt}</td><td>{priceOf!bedrockfoundationmodels/bedrockfoundationmodels!jr2G30ahEjFSXzwA2ARH22ptHP9GSQ8PrmemV0BjczA!opt}</td><td>{priceOf!bedrockfoundationmodels/bedrockfoundationmodels!1FWkRNFWciUov_Yrxgsx3BVPH6SrycbSr604JBOAOx8}</td><td>{priceOf!bedrockfoundationmodels/bedrockfoundationmodels!i7Xrzid4TW7SxYNqGWG4O5mhx3avnGv8HL0atI-owg4}</td><td>{priceOf!bedrockfoundationmodels/bedrockfoundationmodels!h3sQHM6hAKf6yGLSnX79GUrrt3GgGijlgfWP1gBz2RM}</td></tr>"
+    },
+    {
+      "model_label_on_pricing_page": "Claude Sonnet 5",
+      "pricing_section": "Geo and In-region Cross-region Inference",
+      "region": "Asia Pacific (Mumbai)",
+      "currency": "USD",
+      "tier": "standard on-demand",
+      "rates": [
+        {
+          "direction": "input",
+          "usd_per_million_tokens": "2.2000000000",
+          "sku": "XNRPHRUCHMKD6N8X",
+          "rate": {
+            "rateCode": "XNRPHRUCHMKD6N8X.4799GE89SK.6YS6EN2CT7",
+            "price": "2.2000000000",
+            "RegionlessRateCode": "0meD3eg3xTCe1YqUrj1HDmWyteo0gZpD8Q1w5_DPJuE"
+          }
+        },
+        {
+          "direction": "output",
+          "usd_per_million_tokens": "11.0000000000",
+          "sku": "MZQ2H986VSRYPDYS",
+          "rate": {
+            "rateCode": "MZQ2H986VSRYPDYS.4799GE89SK.6YS6EN2CT7",
+            "price": "11.0000000000",
+            "RegionlessRateCode": "x-9apWAZ9XBlwrcCtKg-Xaoe600hBcVGRja38YOQbjg"
+          }
+        }
+      ],
+      "source_row_html": "<tr><td>Claude Sonnet 5</td><td>{priceOf!bedrockfoundationmodels/bedrockfoundationmodels!0meD3eg3xTCe1YqUrj1HDmWyteo0gZpD8Q1w5_DPJuE!opt}</td><td>{priceOf!bedrockfoundationmodels/bedrockfoundationmodels!x-9apWAZ9XBlwrcCtKg-Xaoe600hBcVGRja38YOQbjg!opt}</td><td>N/A</td><td>N/A</td><td>{priceOf!bedrockfoundationmodels/bedrockfoundationmodels!-eWC-eGx03FxAcQGG9Coa3aKyhgllPDuUX0hwM0AMa8!opt}</td><td>{priceOf!bedrockfoundationmodels/bedrockfoundationmodels!muoeiy0SBvtDrcQjPZJ6HUJmcGJ8pBAF-p7h-8ByFGY!opt}</td><td>{priceOf!bedrockfoundationmodels/bedrockfoundationmodels!sBYQU4yw_R4avjvOa8unCccACMoBMVZ8ecjh8gp06-M!opt}</td></tr>"
+    },
+    {
+      "model_label_on_pricing_page": "Claude 4.5 Haiku",
+      "pricing_section": "Geo and In-region Cross-region Inference",
+      "region": "Asia Pacific (Mumbai)",
+      "currency": "USD",
+      "tier": "standard on-demand",
+      "rates": [
+        {
+          "direction": "input",
+          "usd_per_million_tokens": "1.1000000000",
+          "sku": "FNJPM4E389P8R7K4",
+          "rate": {
+            "rateCode": "FNJPM4E389P8R7K4.4799GE89SK.6YS6EN2CT7",
+            "price": "1.1000000000",
+            "RegionlessRateCode": "APY9uM3JGxEtL5H9EDm5AwcPdLxfrWr-RFMq0UellFs"
+          }
+        },
+        {
+          "direction": "output",
+          "usd_per_million_tokens": "5.5000000000",
+          "sku": "AXM8Q9RYEVCZ3VC3",
+          "rate": {
+            "rateCode": "AXM8Q9RYEVCZ3VC3.4799GE89SK.6YS6EN2CT7",
+            "price": "5.5000000000",
+            "RegionlessRateCode": "O6zZHzgP5kfAsKpsBRIEEOBkSjbbqAoskrV4twdrBE4"
+          }
+        }
+      ],
+      "source_row_html": "<tr><td>Claude 4.5 Haiku</td><td>{priceOf!bedrockfoundationmodels/bedrockfoundationmodels!APY9uM3JGxEtL5H9EDm5AwcPdLxfrWr-RFMq0UellFs}</td><td>{priceOf!bedrockfoundationmodels/bedrockfoundationmodels!O6zZHzgP5kfAsKpsBRIEEOBkSjbbqAoskrV4twdrBE4}</td><td>{priceOf!bedrockfoundationmodels/bedrockfoundationmodels!03OdAcs5iDRbkrNByVOR2ywGY16dSqcQ_E-KH6M1LMI!opt}</td><td>{priceOf!bedrockfoundationmodels/bedrockfoundationmodels!3HGzHYMPOLfiR_Cd5EwGZ3oa1jeMs-NNpoBjWYRP0WQ!opt}</td><td>{priceOf!bedrockfoundationmodels/bedrockfoundationmodels!Bs7_e4_YEGlfe1s_L00S2eI5Fq09QQuvny4xWloBrK8}</td><td>{priceOf!bedrockfoundationmodels/bedrockfoundationmodels!FSqWbTSpn_0Cgs-ddQNOV87aAl2a8TKj5aXcHFzeZOE!opt}</td><td>{priceOf!bedrockfoundationmodels/bedrockfoundationmodels!0J492Ik4K_Rokv7K1-rXIeTzHBZ-F2BxYmOP9Qmm0Ys}</td></tr>"
+    }
+  ]
+}

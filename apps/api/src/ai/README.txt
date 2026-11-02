@@ -17,18 +17,20 @@ Configuration (restart API to change adapters):
   ENVIRONMENT                   must be dev for gemini
   NODE_ENV                      must not be production for gemini
   AWS_REGION / AWS_DEFAULT_REGION  must be ap-south-1 for bedrock
-  BEDROCK_SUBJECT_MODEL_ID       default amazon.nova-lite-v1:0
-  BEDROCK_DEMANDS_MODEL_ID        default amazon.nova-lite-v1:0
-  BEDROCK_NOTICE_MODEL_ID        default anthropic.claude-3-5-sonnet-20240620-v1:0
+  BEDROCK_SUBJECT_MODEL_ID       default in.anthropic.claude-haiku-4-5-20251001-v1:0
+  BEDROCK_DEMANDS_MODEL_ID        default in.anthropic.claude-haiku-4-5-20251001-v1:0
+  BEDROCK_NOTICE_MODEL_ID        default in.anthropic.claude-haiku-4-5-20251001-v1:0
 
 Bedrock resolves the standard AWS credential chain at registration. Missing
 credentials fail startup. Access/model entitlement errors are reported on
-invocation. The runtime endpoint is pinned to Mumbai, profile IDs and ARNs are
-rejected, and no alternative region/model/provider is attempted on failure.
-No changes to IAM, model subscriptions, infrastructure or account verification
-are made by this module. Both requested models currently require inference
-profiles in Mumbai; the listed APAC profiles route outside India. They were
-not used. Production integration needs a separately approved in-region model.
+invocation. The runtime endpoint is pinned to Mumbai. Direct model IDs and the
+three audited India-only profiles (Haiku 4.5, Sonnet 5 and Opus 5) are accepted;
+APAC/global/unreviewed profiles and ARNs remain rejected. No alternative
+region/model/provider is attempted on failure. All tasks currently use Haiku.
+Sonnet 5 returned AccessDeniedException requiring an AWS Sales request on the
+client's account. Once granted, set BEDROCK_NOTICE_MODEL_ID to
+in.anthropic.claude-sonnet-5 to change drafting alone. No code change needed.
+No IAM, model agreements, subscriptions or infrastructure changes are made here.
 
 Gemini is for synthetic development data only. Google can use free-tier prompts
 for product improvement. The key is sent in a header, never in a URL. Provider

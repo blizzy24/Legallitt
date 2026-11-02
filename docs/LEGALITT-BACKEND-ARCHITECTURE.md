@@ -154,28 +154,28 @@ gets worse the longer it waits.
 Sonnet-tier for FIR and legal notice drafting, where instruction-following and
 long context matter. Haiku-tier for case summaries and chat.
 
-The approved AI adapter chunk (2 November 2026) adds a port only; no demand,
-subject or drafting screen calls it yet. For the three implemented tasks,
-Bedrock uses Amazon Nova Lite for subject lines and demand options, and Claude
-3.5 Sonnet for notices. Each model is independently configurable through
-`BEDROCK_SUBJECT_MODEL_ID`, `BEDROCK_DEMANDS_MODEL_ID` and
-`BEDROCK_NOTICE_MODEL_ID`. Defaults are `amazon.nova-lite-v1:0` for the first
-two and `anthropic.claude-3-5-sonnet-20240620-v1:0` for notices. Summary/chat
-models and other services are outside this chunk.
+The AI port exposes subject lines, demand options and notice drafting. The
+project owner's 2 November 2026 decision configures all three Bedrock tasks to
+`in.anthropic.claude-haiku-4-5-20251001-v1:0`. Each remains independently
+configurable through `BEDROCK_SUBJECT_MODEL_ID`, `BEDROCK_DEMANDS_MODEL_ID` and
+`BEDROCK_NOTICE_MODEL_ID`. Once access is granted, notice drafting can switch to
+`in.anthropic.claude-sonnet-5` by configuration alone. Summary/chat models and
+other services are outside this chunk.
 
-The Bedrock adapter pins the runtime endpoint to `ap-south-1` and accepts direct
-foundation model IDs only. Cross-region inference profiles and automatic model
-fallbacks are prohibited. On 2 November 2026 the Mumbai catalogue listed both
-requested models as inference-profile-only; actual direct calls rejected
-on-demand invocation. The listed APAC profiles include non-India regions and
-were not invoked. A working in-region model choice remains unresolved; the
-adapter reports the provider error rather than silently changing the choice.
+**The requirement is India residency, not single-region inference.** The API
+calls the Mumbai runtime endpoint. Direct foundation IDs and the three audited
+India-only Claude profiles (Haiku 4.5, Sonnet 5, Opus 5) are allowed; APAC/global,
+unreviewed profiles and profile ARNs are rejected. GetInferenceProfile confirms
+these profiles route only to Mumbai and Hyderabad. No automatic model/provider
+fallback occurs. The earlier no-profile constraint is superseded.
 
-**Verify in the Bedrock console which Claude models are enabled in ap-south-1
-before committing.** If the preferred model is not available in-region, Bedrock
-routes through a cross-region inference profile and case data leaves India.
-For an app holding legal matters and identity documents that is a DPDP
-decision, not a convenience — prefer an in-region model even one tier down.
+A real Mumbai invocation of Haiku 4.5 succeeded on 2 November 2026. Sonnet 5
+returned AccessDeniedException: unavailable for this account, with instructions
+to contact AWS Sales at https://aws.amazon.com/contact-us/sales-support/.
+The client/account owner must request access; the agent does not accept model
+agreements or change account access. Bedrock stays Haiku-only until that is
+granted and verified. `AI_MODE` still defaults to `simulated`; Gemini remains
+the development-only real provider. Evidence: `reports/bedrock-india-invocations-2026-11-02/`.
 
 **Human approval is a state machine rule, not a UI rule.** AI output is written
 to `drafts` with `generated_by = 'ai'` and is never sent anywhere by the system.
@@ -1556,8 +1556,8 @@ empty, or explicitly accepted in writing by the client, before production.
 | Payments | `PAYMENTS_MODE=simulated` | No Razorpay test keys yet | Client supplies test keys with Route enabled |
 | Phone OTP | `PHONE_AUTH_MODE=demo` | DLT registration not started (1–2 week lead) | DLT template approved |
 | Notifications | `NOTIFY_MODE=simulated` | No SNS/FCM setup yet | Compute stack deployed |
-| AI subject lines and demand options | `AI_MODE=simulated` | Fixed labelled responses by default. Gemini adapter is development-only; Bedrock Nova Lite adapter exists but direct Mumbai invocation is unsupported. Neither is wired to the application yet | Subject/demand integration and approved in-region production model access |
-| AI notice drafting | `AI_MODE=simulated` | Existing labelled draft reused. Gemini adapter is development-only; Bedrock Claude 3.5 Sonnet adapter exists but direct Mumbai invocation is unsupported. Demo timer remains unchanged | Step 11 and approved in-region production model access |
+| AI subject lines and demand options | `AI_MODE=simulated` | Fixed labelled responses by default; Gemini is development-only. Bedrock is configured to the verified India-only Haiku 4.5 profile | Intake integration and client-approved activation |
+| AI notice drafting | `AI_MODE=simulated` | Existing labelled draft reused; Gemini is development-only. Bedrock is Haiku 4.5 only until Sonnet 5 access is granted. Sonnet 5 requires an AWS Sales request on the client’s account; no automatic fallback | Step 11; client requests Sonnet 5 access through AWS Sales before an optional per-task config swap |
 | Advocate assignment | `DEMO_PROGRESSION=on` | Admin assigns (§9), but no admin panel exists. **Without this every case stops at `paid` and nothing after it can be reached** | Admin panel built |
 | Demo progression | `DEMO_PROGRESSION=on` | Stands in for people with no screen yet — see §2.12. Calls real endpoints only | Admin panel built |
 | Delivery confirmation | `ADMIN_UI_MODE=simulated` | Admin marks delivered (§9), but no admin panel exists yet. The **endpoint is real**; only the screen is missing. The shipment advances one drawn milestone at a time (§2.12), and delivery with a simulated proof follows Out for Delivery | Admin panel built |

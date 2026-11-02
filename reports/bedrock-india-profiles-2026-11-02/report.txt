@@ -1,0 +1,65 @@
+India-only Claude profiles — 2 November 2026
+
+Recommendation: Haiku 4.5 for subject lines and demand options; Sonnet 5 for
+notice drafting. Haiku is the lower-cost fast model for short tasks. Sonnet is
+plausible for longer document synthesis at 40% of Opus 5's token rates. This is
+a recommendation for the owner's selection, not a measured legal-quality result.
+Opus should earn its 2.5x Sonnet price through task-specific evaluation before
+becoming the default. All drafted notices retain advocate review.
+
+Standard on-demand Mumbai rates, USD per million tokens, before tax:
+Model           Input   Output   Mumbai input SKU   Mumbai output SKU
+Haiku 4.5       1.10    5.50     FNJPM4E389P8R7K4   AXM8Q9RYEVCZ3VC3
+Sonnet 5        2.20    11.00    XNRPHRUCHMKD6N8X   MZQ2H986VSRYPDYS
+Opus 5          5.50    27.50    44XM93Y4F8V5HR2Y   Y7MPSGURWDREN7HX
+
+Rates are from the AWS pricing page's Geo and In-region Cross-region Inference
+section, resolved using its Asia Pacific (Mumbai) feed. These are not global,
+batch, cache or priority prices. Feed publication: 2026-10-12T08:40:08Z; retrieved
+2 November 2026. Exact rate codes and source HTML rows are saved separately.
+
+GetInferenceProfile, queried through ap-south-1:
+  in.anthropic.claude-sonnet-5
+  in.anthropic.claude-opus-5
+  in.anthropic.claude-haiku-4-5-20251001-v1:0
+All are ACTIVE, SYSTEM_DEFINED. Every models[] contains exactly two model ARNs:
+  arn:aws:bedrock:ap-south-1::foundation-model/<model-id>
+  arn:aws:bedrock:ap-south-2::foundation-model/<model-id>
+No other destinations. Mumbai and Hyderabad are both Indian regions. This is
+verified from the profile definitions, not inferred merely from the in. prefix.
+
+Account access (GetFoundationModelAvailability on underlying foundation IDs):
+For all three in ap-south-1:
+  authorizationStatus = AUTHORIZED
+  entitlementAvailability = AVAILABLE
+  regionAvailability = AVAILABLE
+  agreementAvailability.status = NOT_AVAILABLE
+The response supplies no agreement errorMessage. Do not misrepresent this as
+all access gates passing or successful model invocation.
+
+Additional checks directly against ap-south-2 all failed with:
+  UnrecognizedClientException:
+  The security token included in the request is invalid.
+This leaves the independent Hyderabad account check unverified. It does not
+change the destination list. No claim is made that a Mumbai profile invocation
+will fail or succeed based solely on this separate control-plane error.
+No inference request was sent, agreement accepted, region enabled, credentials
+changed, or permissions modified. An inference/access validation is still needed
+before treating the selected models as ready for application traffic.
+
+Evidence:
+  profile-definitions.json: GetInferenceProfile responses and derived region sets.
+    Account segment of profile ARN redacted; destination model ARNs untouched.
+  account-access.json: Mumbai responses and Hyderabad errors for every model.
+  mumbai-pricing-evidence.json: Mumbai SKUs/rate codes, feed metadata, exact rows.
+
+No application configuration, environment file, source code or AWS resource was
+changed. The current adapter's no-profile restriction remains until the owner
+chooses and authorizes the implementation change.
+
+Sources:
+https://aws.amazon.com/bedrock/pricing/
+https://b0.p.awsstatic.com/pricing/2.0/meteredUnitMaps/bedrockfoundationmodels/USD/current/bedrockfoundationmodels.json
+https://aws.amazon.com/blogs/machine-learning/amazon-bedrock-expands-claude-model-availability-to-india-cross-region-inference/
+https://aws.amazon.com/blogs/machine-learning/introducing-claude-sonnet-5-on-aws-anthropics-most-capable-sonnet-model/
+https://aws.amazon.com/about-aws/whats-new/2025/10/claude-4-5-haiku-anthropic-amazon-bedrock/

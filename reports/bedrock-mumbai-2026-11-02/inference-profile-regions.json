@@ -1,0 +1,446 @@
+[
+  {
+    "id": "apac.anthropic.claude-3-5-sonnet-20240620-v1:0",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-south-1",
+      "ap-southeast-1",
+      "ap-southeast-2"
+    ]
+  },
+  {
+    "id": "apac.anthropic.claude-3-sonnet-20240229-v1:0",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-south-1",
+      "ap-southeast-1",
+      "ap-southeast-2"
+    ]
+  },
+  {
+    "id": "apac.anthropic.claude-3-haiku-20240307-v1:0",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-south-1",
+      "ap-southeast-1",
+      "ap-southeast-2"
+    ]
+  },
+  {
+    "id": "apac.anthropic.claude-3-5-sonnet-20241022-v2:0",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-northeast-3",
+      "ap-south-1",
+      "ap-southeast-1",
+      "ap-southeast-2"
+    ]
+  },
+  {
+    "id": "apac.anthropic.claude-3-7-sonnet-20250219-v1:0",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-northeast-3",
+      "ap-south-1",
+      "ap-south-2",
+      "ap-southeast-1",
+      "ap-southeast-2"
+    ]
+  },
+  {
+    "id": "apac.amazon.nova-micro-v1:0",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-northeast-3",
+      "ap-south-1",
+      "ap-southeast-1",
+      "ap-southeast-2"
+    ]
+  },
+  {
+    "id": "apac.amazon.nova-lite-v1:0",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-northeast-3",
+      "ap-south-1",
+      "ap-southeast-1",
+      "ap-southeast-2"
+    ]
+  },
+  {
+    "id": "apac.amazon.nova-pro-v1:0",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-northeast-3",
+      "ap-south-1",
+      "ap-southeast-1",
+      "ap-southeast-2"
+    ]
+  },
+  {
+    "id": "global.cohere.embed-v4:0",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "",
+      "ap-south-1"
+    ]
+  },
+  {
+    "id": "global.twelvelabs.pegasus-1-2-v1:0",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "",
+      "ap-south-1"
+    ]
+  },
+  {
+    "id": "global.amazon.nova-2-lite-v1:0",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "",
+      "ap-south-1"
+    ]
+  },
+  {
+    "id": "global.anthropic.claude-opus-4-5-20251101-v1:0",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "",
+      "ap-south-1"
+    ]
+  },
+  {
+    "id": "global.anthropic.claude-opus-4-6-v1",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "",
+      "ap-south-1"
+    ]
+  },
+  {
+    "id": "global.anthropic.claude-sonnet-4-5-20250929-v1:0",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "",
+      "ap-south-1"
+    ]
+  },
+  {
+    "id": "global.anthropic.claude-fable-5",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "",
+      "ap-south-1"
+    ]
+  },
+  {
+    "id": "global.openai.gpt-5.6-sol",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "",
+      "ap-south-1"
+    ]
+  },
+  {
+    "id": "in.openai.gpt-5.6-terra",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "ap-south-1",
+      "ap-south-2"
+    ]
+  },
+  {
+    "id": "in.openai.gpt-5.6-luna",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "ap-south-1",
+      "ap-south-2"
+    ]
+  },
+  {
+    "id": "global.xai.grok-4.6",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "",
+      "ap-south-1"
+    ]
+  },
+  {
+    "id": "global.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "",
+      "ap-south-1"
+    ]
+  },
+  {
+    "id": "global.anthropic.claude-fable-5-1",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "",
+      "ap-south-1"
+    ]
+  },
+  {
+    "id": "in.anthropic.claude-sonnet-5",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "ap-south-1",
+      "ap-south-2"
+    ]
+  },
+  {
+    "id": "in.anthropic.claude-opus-5",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "ap-south-1",
+      "ap-south-2"
+    ]
+  },
+  {
+    "id": "in.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "ap-south-1",
+      "ap-south-2"
+    ]
+  },
+  {
+    "id": "global.twelvelabs.pegasus-1-5-v1:0",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "",
+      "ap-south-1"
+    ]
+  },
+  {
+    "id": "global.openai.gpt-6-sol",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "",
+      "ap-south-1"
+    ]
+  },
+  {
+    "id": "global.openai.gpt-5.4",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "",
+      "ap-south-1"
+    ]
+  },
+  {
+    "id": "global.openai.gpt-5.5",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "",
+      "ap-south-1"
+    ]
+  },
+  {
+    "id": "global.anthropic.claude-opus-5",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "",
+      "ap-south-1"
+    ]
+  },
+  {
+    "id": "global.anthropic.claude-opus-4-8",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "",
+      "ap-south-1"
+    ]
+  },
+  {
+    "id": "global.anthropic.claude-sonnet-5",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "",
+      "ap-south-1"
+    ]
+  },
+  {
+    "id": "global.anthropic.claude-opus-4-7",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "",
+      "ap-south-1"
+    ]
+  },
+  {
+    "id": "global.xai.grok-4.7",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "",
+      "ap-south-1"
+    ]
+  },
+  {
+    "id": "global.openai.gpt-6-astra",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "",
+      "ap-south-1"
+    ]
+  },
+  {
+    "id": "global.openai.gpt-6.1-sol",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "",
+      "ap-south-1"
+    ]
+  },
+  {
+    "id": "global.zai.glm-5.3",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "",
+      "ap-south-1"
+    ]
+  },
+  {
+    "id": "global.moonshotai.kimi-k3",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "",
+      "ap-south-1"
+    ]
+  },
+  {
+    "id": "in.moonshotai.kimi-k3",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "ap-south-1",
+      "ap-south-2"
+    ]
+  },
+  {
+    "id": "global.anthropic.claude-haiku-5-5",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "",
+      "ap-south-1"
+    ]
+  },
+  {
+    "id": "global.anthropic.claude-sonnet-5-5",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "",
+      "ap-south-1"
+    ]
+  },
+  {
+    "id": "global.anthropic.claude-sonnet-4-6",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "",
+      "ap-south-1"
+    ]
+  },
+  {
+    "id": "global.openai.gpt-5.6-luna",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "",
+      "ap-south-1"
+    ]
+  },
+  {
+    "id": "global.openai.gpt-6-luna",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "",
+      "ap-south-1"
+    ]
+  },
+  {
+    "id": "global.openai.gpt-6.1-terra",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "",
+      "ap-south-1"
+    ]
+  },
+  {
+    "id": "global.anthropic.claude-opus-5-5",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "",
+      "ap-south-1"
+    ]
+  },
+  {
+    "id": "global.openai.gpt-5.6-terra",
+    "status": "ACTIVE",
+    "type": "SYSTEM_DEFINED",
+    "regions": [
+      "",
+      "ap-south-1"
+    ]
+  }
+]

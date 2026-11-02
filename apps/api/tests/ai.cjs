@@ -76,9 +76,9 @@ test('Gemini errors are actionable, redact credentials/prompts, and never fall b
     await assert.rejects(ai.generate({task:'demands',prompt:'test'}),/InvalidResponse/);
   }
 });
-test('Bedrock stays in Mumbai, rejects routing profiles, and uses independent task models',async()=>{
+test('Bedrock calls Mumbai, permits audited India profiles and rejects all other routing',async()=>{
   assert.throws(()=>validateBedrockConfig({...bedrockConfig,region:'us-east-1'}),/ap-south-1/);
-  for(const model of ['apac.amazon.nova-lite-v1:0','global.anthropic.claude-sonnet','arn:aws:bedrock:ap-south-1:123:inference-profile/example','https://elsewhere/model']){
+  for(const model of ['in.anthropic.unreviewed','apac.amazon.nova-lite-v1:0','global.anthropic.claude-sonnet','arn:aws:bedrock:ap-south-1:123:inference-profile/example','https://elsewhere/model']){
     assert.throws(()=>validateBedrockConfig({...bedrockConfig,models:{...bedrockConfig.models,subject:model}}),/direct foundation model ID/);
   }
   const config={...bedrockConfig,models:{subject:'amazon.subject-model:0',demands:'amazon.demands-model:0',notice:'anthropic.notice-model:0'}};
@@ -86,6 +86,21 @@ test('Bedrock stays in Mumbai, rejects routing profiles, and uses independent ta
   const ai=new BedrockAi(config,{async send(command,options){calls.push(command.input);assert.ok(options.abortSignal);return{stopReason:'end_turn',output:{message:{content:[{text:resultText(task)}]}}};},destroy(){closed=true;}});
   for(task of tasks){const result=await ai.generate({task,prompt:'Synthetic prompt'});assert.equal(result.simulated,false);assert.equal(calls.at(-1).modelId,config.models[task]);if(task==='demands')assert.equal(result.options.length,2);else assert.equal(result.text,'Synthetic response');}
   assert.equal(calls.length,3);ai.onModuleDestroy();assert.equal(closed,true);
+});
+test('Bedrock defaults all tasks to Haiku and changes only the configured task to Sonnet',async()=>{
+  const create=BedrockAi.create,calls=[];
+  BedrockAi.create=async config=>new BedrockAi(config,{async send(command){calls.push(command.input);return{stopReason:'end_turn',output:{message:{content:[{text:JSON.stringify({options:['One','Two']})}]}}};},destroy(){}});
+  try {
+    await withEnv({AI_MODE:'bedrock',AWS_REGION:'ap-south-1',BEDROCK_SUBJECT_MODEL_ID:undefined,BEDROCK_DEMANDS_MODEL_ID:undefined,BEDROCK_NOTICE_MODEL_ID:undefined},async()=>{
+      let ai=await aiAdapter();
+      for(const task of tasks)await ai.generate({task,prompt:'Synthetic'});
+      assert.deepEqual(calls.map(c=>c.modelId),tasks.map(()=>'in.anthropic.claude-haiku-4-5-20251001-v1:0'));
+      process.env.BEDROCK_NOTICE_MODEL_ID='in.anthropic.claude-sonnet-5';
+      ai=await aiAdapter();calls.length=0;
+      for(const task of tasks)await ai.generate({task,prompt:'Synthetic'});
+      assert.deepEqual(calls.map(c=>c.modelId),['in.anthropic.claude-haiku-4-5-20251001-v1:0','in.anthropic.claude-haiku-4-5-20251001-v1:0','in.anthropic.claude-sonnet-5']);
+    });
+  }finally{BedrockAi.create=create;}
 });
 test('Bedrock exposes region/model rejection and does not retry with another model',async()=>{
   let calls=0;

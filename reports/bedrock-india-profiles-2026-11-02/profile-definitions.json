@@ -1,0 +1,83 @@
+{
+  "checked_at": "2026-11-02T12:33:27.792320+00:00",
+  "profiles": [
+    {
+      "requested_region": "ap-south-1",
+      "response": {
+        "inferenceProfileName": "IN Anthropic Claude Sonnet 5",
+        "description": "Routes requests to Claude Sonnet 5 in ap-south-2, ap-south-1.",
+        "createdAt": "2026-09-14T17:38:36.679000+00:00",
+        "updatedAt": "2026-09-14T17:38:36.679000+00:00",
+        "inferenceProfileArn": "arn:aws:bedrock:ap-south-1:<account-id-redacted>:inference-profile/in.anthropic.claude-sonnet-5",
+        "models": [
+          {
+            "modelArn": "arn:aws:bedrock:ap-south-2::foundation-model/anthropic.claude-sonnet-5"
+          },
+          {
+            "modelArn": "arn:aws:bedrock:ap-south-1::foundation-model/anthropic.claude-sonnet-5"
+          }
+        ],
+        "inferenceProfileId": "in.anthropic.claude-sonnet-5",
+        "status": "ACTIVE",
+        "type": "SYSTEM_DEFINED"
+      },
+      "derived_destination_regions": [
+        "ap-south-1",
+        "ap-south-2"
+      ],
+      "note": "Account segment of profile ARN redacted; destination model ARNs preserved verbatim."
+    },
+    {
+      "requested_region": "ap-south-1",
+      "response": {
+        "inferenceProfileName": "IN Anthropic Claude Opus 5",
+        "description": "Routes requests to Claude Opus 5 in ap-south-2, ap-south-1.",
+        "createdAt": "2026-09-14T17:39:45.764000+00:00",
+        "updatedAt": "2026-09-14T17:39:45.764000+00:00",
+        "inferenceProfileArn": "arn:aws:bedrock:ap-south-1:<account-id-redacted>:inference-profile/in.anthropic.claude-opus-5",
+        "models": [
+          {
+            "modelArn": "arn:aws:bedrock:ap-south-2::foundation-model/anthropic.claude-opus-5"
+          },
+          {
+            "modelArn": "arn:aws:bedrock:ap-south-1::foundation-model/anthropic.claude-opus-5"
+          }
+        ],
+        "inferenceProfileId": "in.anthropic.claude-opus-5",
+        "status": "ACTIVE",
+        "type": "SYSTEM_DEFINED"
+      },
+      "derived_destination_regions": [
+        "ap-south-1",
+        "ap-south-2"
+      ],
+      "note": "Account segment of profile ARN redacted; destination model ARNs preserved verbatim."
+    },
+    {
+      "requested_region": "ap-south-1",
+      "response": {
+        "inferenceProfileName": "IN Anthropic Claude Haiku 4.5",
+        "description": "Routes requests to Claude Haiku 4.5 in ap-south-2, ap-south-1.",
+        "createdAt": "2026-09-14T17:40:18.353000+00:00",
+        "updatedAt": "2026-09-14T17:40:18.353000+00:00",
+        "inferenceProfileArn": "arn:aws:bedrock:ap-south-1:<account-id-redacted>:inference-profile/in.anthropic.claude-haiku-4-5-20251001-v1:0",
+        "models": [
+          {
+            "modelArn": "arn:aws:bedrock:ap-south-2::foundation-model/anthropic.claude-haiku-4-5-20251001-v1:0"
+          },
+          {
+            "modelArn": "arn:aws:bedrock:ap-south-1::foundation-model/anthropic.claude-haiku-4-5-20251001-v1:0"
+          }
+        ],
+        "inferenceProfileId": "in.anthropic.claude-haiku-4-5-20251001-v1:0",
+        "status": "ACTIVE",
+        "type": "SYSTEM_DEFINED"
+      },
+      "derived_destination_regions": [
+        "ap-south-1",
+        "ap-south-2"
+      ],
+      "note": "Account segment of profile ARN redacted; destination model ARNs preserved verbatim."
+    }
+  ]
+}
