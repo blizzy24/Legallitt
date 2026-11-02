@@ -1,3 +1,4 @@
+import { NotificationsController, NotificationRepository } from './notifications/notifications.controller';
 import { AiModule } from './ai/ai.module';
 import { NoticeIntakeAiController } from './cases/notice-intake-ai';
 import {AdminCaseDetailRepository} from './admin-cases/admin-case-detail';
@@ -45,7 +46,7 @@ export class HealthController {
 
 @Module({
   imports: [AiModule, CourierModule, AdminUiModule, DemoModule, DatabaseModule, PhoneAuthModule, PaymentsModule, NotificationsModule],
-  controllers: [NoticeIntakeAiController, AdminAdvocatesController, AdminCasesController, NoticeMessagesController,
+  controllers: [NotificationsController, NoticeIntakeAiController, AdminAdvocatesController, AdminCasesController, NoticeMessagesController,
     PaymentsController,
     HealthController,
     AuthController,
@@ -55,7 +56,7 @@ export class HealthController {
     ServicesController,
     DocumentController,
   ],
-  providers: [AdminCaseDetailRepository, AdminAdvocatesRepository, AdminCasesRepository, NoticeMessages,
+  providers: [NotificationRepository, AdminCaseDetailRepository, AdminAdvocatesRepository, AdminCasesRepository, NoticeMessages,
     ShipmentService,
     NoticePdfService,
     PaymentsService,

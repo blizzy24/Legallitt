@@ -1,3 +1,4 @@
+const inbox = () => new (require('../dist/src/notifications/in-app-notifications').InAppNotifications)(new (require('../dist/src/notifications/simulated-notifications').SimulatedNotifications)());
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const { randomUUID } = require("node:crypto");
@@ -36,7 +37,7 @@ test(
       }),
     });
     const prisma = { getClient: async () => db };
-    const machine = new CaseStateMachine(prisma);
+    const machine = new CaseStateMachine(prisma, inbox());
     const client = { id: randomUUID(), role: "client" },
       other = { id: randomUUID(), role: "client" },
       advocate = { id: randomUUID(), role: "advocate" },
@@ -142,7 +143,7 @@ test(
                 const result = await machine.transition(actor, row.id, to);
                 assert.equal(result.status, to);
                 const events = await db.caseEvent.findMany({
-                  where: { case_id: row.id },
+                  where: { case_id: row.id, type: {not: "notification_created"} },
                 });
                 assert.equal(events.length, 1);
                 assert.equal(events[0].from_status, from);
@@ -477,6 +478,7 @@ test(
         },
       );
     } finally {
+      await db.notification.deleteMany({where:{OR:[{case_id:{in:ids}},{user_id:{in:actors.map(a=>a.id)}}]}});
       await db.caseEvent.deleteMany({ where: { case_id: { in: ids } } });
       await db.caseParty.deleteMany({where: {case_id: {in: ids}}});
       await db.case.deleteMany({ where: { id: { in: ids } } });

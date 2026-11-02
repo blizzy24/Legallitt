@@ -1,3 +1,4 @@
+import { NOTIFICATIONS, type NotificationsPort } from '../notifications/notifications.port';
 import { BadRequestException, ConflictException, ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import { ShipmentDetailsSchema, ShipmentStatusInputSchema, nextShipmentStatus, type ShipmentStatus } from '@legalitt/shared';
 import { PrismaService } from '../prisma.service';
@@ -8,7 +9,7 @@ import { lockedCase, appendCaseEvent } from './case-state-machine';
 
 @Injectable()
 export class ShipmentService {
-  constructor(private readonly prisma: PrismaService, @Inject(COURIER) private readonly courier: CourierPort) {}
+  constructor(private readonly prisma: PrismaService, @Inject(COURIER) private readonly courier: CourierPort, @Inject(NOTIFICATIONS) private readonly notifications: NotificationsPort) {}
   async receive(actor: CaseActor, caseId: string) {
     if (actor.role !== 'advocate') throw new ForbiddenException('Assigned advocate required');
     const db = await this.prisma.getClient();
@@ -23,6 +24,7 @@ export class ShipmentService {
         from_status:record.status,to_status:record.status,
         payload:{shipment_id:shipment.id,confirmation_source:'advocate'},
       });
+      await this.notifications.send(tx, {user_id: actor.id, case_id: caseId, kind: 'documents_received', title: 'Documents received', body: record.reference});
       return delivered;
     });
   }

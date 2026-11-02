@@ -8,3 +8,5 @@ export * from './api-client';
 
 export * from './shipments';
 export * from './admin-api';
+export * from './notifications';
+export * from './notification-feed';

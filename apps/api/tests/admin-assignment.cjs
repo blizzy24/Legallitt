@@ -1,3 +1,4 @@
+const inbox = () => new (require('../dist/src/notifications/in-app-notifications').InAppNotifications)(new (require('../dist/src/notifications/simulated-notifications').SimulatedNotifications)());
 const test=require('node:test');
 const assert=require('node:assert/strict');
 const {randomUUID}=require('node:crypto');
@@ -9,7 +10,7 @@ const {DemoProgression}=require('../dist/src/demo/demo-progression');
 
 test('picker eligibility/load, real assignment event, and stale timer cannot overwrite a human', {skip:!process.env.LEGALITT_TEST_DATABASE_URL},async()=>{
  const db=new PrismaClient({adapter:new PrismaPg({connectionString:process.env.LEGALITT_TEST_DATABASE_URL})});
- const prisma={getClient:async()=>db}, state=new CaseStateMachine(prisma), repo=new AdminAdvocatesRepository(prisma);
+ const prisma={getClient:async()=>db}, state=new CaseStateMachine(prisma, inbox()), repo=new AdminAdvocatesRepository(prisma);
  const users=['client','admin','advocate','advocate','advocate','advocate'].map(role=>({id:randomUUID(),role,cognito_sub:randomUUID(),full_name:'Assignment test'}));
  const [client,admin,approved,pending,suspended,other]=users;
  const cases=[];
@@ -50,6 +51,7 @@ test('picker eligibility/load, real assignment event, and stale timer cannot ove
   assert.equal(outcomes.find(r=>r.status==='rejected').reason.status,409);
   assert.equal(await db.caseEvent.count({where:{case_id:race,to_status:'assigned'}}),1);
  } finally {
+  await db.notification.deleteMany({where:{OR:[{case_id:{in:cases}},{user_id:{in:users.map(u=>u.id)}}]}});
   await db.adminAction.deleteMany({where:{subject_id:{in:cases}}});
   await db.caseEvent.deleteMany({where:{case_id:{in:cases}}});await db.case.deleteMany({where:{id:{in:cases}}});
   await db.advocateProfile.deleteMany({where:{user_id:{in:users.map(u=>u.id)}}});await db.user.deleteMany({where:{id:{in:users.map(u=>u.id)}}});await db.$disconnect();

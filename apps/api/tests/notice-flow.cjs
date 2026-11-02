@@ -1,3 +1,4 @@
+const inbox = () => new (require('../dist/src/notifications/in-app-notifications').InAppNotifications)(new (require('../dist/src/notifications/simulated-notifications').SimulatedNotifications)());
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const { randomUUID } = require("node:crypto");
@@ -38,8 +39,8 @@ test(
     });
     const prisma = { getClient: async () => db };
     const {ShipmentService} = require('../dist/src/cases/shipment.service');
-    const shipmentService = new ShipmentService(prisma, {simulated:true});
-    const state = new CaseStateMachine(prisma),
+    const shipmentService = new ShipmentService(prisma, {simulated:true}, inbox());
+    const state = new CaseStateMachine(prisma, inbox()),
       repo = new CaseRepository(prisma);
     const [client, other, advocate, otherAdvocate, admin] = [
       "client",
@@ -78,7 +79,7 @@ test(
       const {PaymentsService} = require('../dist/src/payments/payments.service');
       const {SimulatedPayments} = require('../dist/src/payments/simulated-payments');
       const {SimulatedNotifications} = require('../dist/src/notifications/simulated-notifications');
-      const payments = new PaymentsService(prisma, state, new SimulatedPayments(), new SimulatedNotifications());
+      const payments = new PaymentsService(prisma, state, new SimulatedPayments(), inbox());
       await assert.rejects(payments.intent(other, {case_id: c.id, purpose: 'service_fee'}, randomUUID()), {status: 404});
       const key = randomUUID();
       const payment = await payments.intent(client, {case_id: c.id, purpose: 'service_fee'}, key);
@@ -187,8 +188,8 @@ test(
       assert.equal(courier1.total_paise, 29500n);
       assert.equal((await repo.read(client, c.id)).status, 'approved');
       const simulatedEvents = await db.caseEvent.findMany({where: {case_id: c.id, source: 'simulated'}});
-      assert.deepEqual(simulatedEvents.map(e => e.type).sort(), ['courier_payment_captured','notification_created','notification_created','payment_captured','subject_generated']);
-      assert.equal(await db.notification.count({where: {case_id: c.id, simulated: true}}), 2);
+      assert.deepEqual(simulatedEvents.map(e => e.type).sort(), ['courier_payment_captured','payment_captured','subject_generated']);
+      assert.equal(await db.notification.count({where: {case_id: c.id, simulated: true}}), 0);
       await assert.rejects(
         state.saveNoticeDraft(advocate, c.id, {
           kind: "legal_notice",

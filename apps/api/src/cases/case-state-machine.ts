@@ -1,9 +1,12 @@
+import { NOTIFICATIONS, type NotificationsPort } from '../notifications/notifications.port';
+import { notifyCaseTransition } from '../notifications/case-notifications';
 import { requireDemoMode } from '../auth/demo';
 import {
   BadRequestException,
   ConflictException,
   ForbiddenException,
   Injectable,
+  Inject,
   NotFoundException,
 } from "@nestjs/common";
 import {
@@ -146,7 +149,7 @@ function permit(actor: CaseActor, from: CaseStatus, to: CaseStatus) {
 
 @Injectable()
 export class CaseStateMachine {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService, @Inject(NOTIFICATIONS) private readonly notifications: NotificationsPort) {}
 
   async create(actor: CaseActor, body: unknown) {
     if (actor.role !== "client")
@@ -316,6 +319,7 @@ export class CaseStateMachine {
         payload: actor.trigger === "system" ? {...payload, actor: "system"} : payload,
       },
     });
+    await notifyCaseTransition(tx, this.notifications, updated);
     return updated;
   }
   // Every operational action shares this transaction-local status/event writer.

@@ -1,3 +1,4 @@
+const inbox = () => new (require('../dist/src/notifications/in-app-notifications').InAppNotifications)(new (require('../dist/src/notifications/simulated-notifications').SimulatedNotifications)());
 const test=require('node:test'),assert=require('node:assert/strict'),{randomUUID}=require('node:crypto');
 const {PrismaClient}=require('../dist/src/generated/prisma/client');const {PrismaPg}=require('@prisma/adapter-pg');
 const {CaseStateMachine}=require('../dist/src/cases/case-state-machine');
@@ -6,7 +7,7 @@ const {SimulatedAdminUi}=require('../dist/src/admin-ui/simulated-admin-ui');
 const {DemoProgression}=require('../dist/src/demo/demo-progression');
 test('human delivery persists receiver/time, real source and POD; duplicates and stale timer cannot overwrite', {skip:!process.env.LEGALITT_TEST_DATABASE_URL},async()=>{
  const db=new PrismaClient({adapter:new PrismaPg({connectionString:process.env.LEGALITT_TEST_DATABASE_URL})});
- const state=new CaseStateMachine({getClient:async()=>db});
+ const state=new CaseStateMachine({getClient:async()=>db}, inbox());
  const actors=['client','advocate','admin'].map(role=>({id:randomUUID(),role,cognito_sub:randomUUID(),full_name:'Delivery '+role}));const [client,adv,admin]=actors;
  const ids=[],docs=[];
  async function setup(){const id=randomUUID();ids.push(id);await db.case.create({data:{id,reference:'DELIVERYTEST-'+id,service_code:'legal_notice',client_id:client.id,advocate_id:adv.id,status:'dispatched'}});const shipment=await db.shipment.create({data:{case_id:id,direction:'to_recipient',status:'out_for_delivery',simulated:true}});
@@ -28,7 +29,7 @@ test('human delivery persists receiver/time, real source and POD; duplicates and
   const blank=await setup();await state.deliver(admin,blank.id,{pod_document_id:blank.proof.id,received_by:'  '});assert.equal((await db.shipment.findUnique({where:{id:blank.shipment.id}})).received_by,null);
   const concurrent=await setup();const outcomes=await Promise.allSettled([state.deliver(admin,concurrent.id,{pod_document_id:concurrent.proof.id}),state.deliver(admin,concurrent.id,{pod_document_id:concurrent.proof.id})]);assert.equal(outcomes.filter(r=>r.status==='fulfilled').length,1);assert.equal(outcomes.find(r=>r.status==='rejected').reason.status,409);
   const simulated=await setup();await db.document.update({where:{id:simulated.proof.id},data:{simulated:true}});await state.deliver({...admin,trigger:'system',source:'simulated'},simulated.id,{pod_document_id:simulated.proof.id});assert.equal((await db.shipment.findUnique({where:{id:simulated.shipment.id}})).simulated,true);
- }finally{await db.adminAction.deleteMany({where:{subject_id:{in:ids}}});await db.caseEvent.deleteMany({where:{case_id:{in:ids}}});await db.shipment.deleteMany({where:{case_id:{in:ids}}});await db.document.deleteMany({where:{id:{in:docs}}});await db.case.deleteMany({where:{id:{in:ids}}});await db.user.deleteMany({where:{id:{in:actors.map(a=>a.id)}}});await db.$disconnect();}
+ }finally{await db.notification.deleteMany({where:{OR:[{case_id:{in:ids}},{user_id:{in:actors.map(a=>a.id)}}]}});await db.adminAction.deleteMany({where:{subject_id:{in:ids}}});await db.caseEvent.deleteMany({where:{case_id:{in:ids}}});await db.shipment.deleteMany({where:{case_id:{in:ids}}});await db.document.deleteMany({where:{id:{in:docs}}});await db.case.deleteMany({where:{id:{in:ids}}});await db.user.deleteMany({where:{id:{in:actors.map(a=>a.id)}}});await db.$disconnect();}
 });
 test('completed case is excluded by timer and simulator returns without authentication/upload',async()=>{
  const oldFetch=global.fetch;global.fetch=()=>{throw Error('Completed case must not call HTTP');};

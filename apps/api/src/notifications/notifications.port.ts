@@ -4,3 +4,7 @@ export type NotificationInput = {user_id: string; case_id?: string; kind: string
 export interface NotificationsPort {
   send(tx: Prisma.TransactionClient, input: NotificationInput): Promise<{id: string; simulated: boolean}>;
 }
+/** Outside delivery only; inbox persistence never depends on this adapter. */
+export interface NotificationDeliveryPort {
+  send(input: NotificationInput): Promise<{simulated: boolean}>;
+}

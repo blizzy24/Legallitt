@@ -1510,6 +1510,7 @@ before the backend needs it.
 | ~~9~~ | ~~Whose profile is design 433~~ — **closed 29 Oct.** 433 is the advocate profile: its header, bar council enrolment, practice areas, availability and client reviews admit no other reading. "Rahul Sharma" is a placeholder name, as the High Court matter drawn on Send Documents is a placeholder matter | — |
 | 24 | **Advocate availability** — design 433 draws an availability block (days, hours, "Slots open"). No data model exists for it | Advocate profile |
 | ~~23~~ | ~~Legal Notice letterhead~~ — **closed 2 Nov.** The project owner identified the supplied Legal Notice Response template (189/267). Generated draft/final PDFs now use this measured letterhead; see the instructed addition below | — |
+| 26 | **Registered company name** — the supplied letterhead says `INT LegalConsultants Pvt. Ltd.` in the header and `INT LegalConsultant Pvt. Ltd.` in the sign-off. Both remain exactly as drawn until the client confirms | Letterhead |
 | 25 | **Client reviews** — design 433 draws reviews with names, stars and quotes; designs 264–265 draw the advocate's own reviews list. No data model exists | Advocate profile, ratings |
 | 10 | FIR Approved and Changes states — still not supplied | FIR review |
 | 11 | Design 348 — the supplied file is a 1× copy of 381 | Token values |
@@ -1566,7 +1567,7 @@ empty, or explicitly accepted in writing by the client, before production.
 |---|---|---|---|
 | Payments | `PAYMENTS_MODE=simulated` | No Razorpay test keys yet | Client supplies test keys with Route enabled |
 | Phone OTP | `PHONE_AUTH_MODE=demo` | DLT registration not started (1–2 week lead) | DLT template approved |
-| Notifications | `NOTIFY_MODE=simulated` | No SNS/FCM setup yet | Compute stack deployed |
+| Push, SMS and email | `NOTIFY_MODE=simulated` | No SNS/FCM/SMS/email integration yet; only outside delivery is simulated | Providers configured |
 | AI subject lines and demand options | `AI_MODE=simulated` | Fixed labelled responses by default; Gemini is development-only. Bedrock is configured to the verified India-only Haiku 4.5 profile | Intake integration and client-approved activation |
 | AI notice drafting | `AI_MODE=simulated` | Existing labelled draft reused; Gemini is development-only. Bedrock is Haiku 4.5 only until Sonnet 5 access is granted. Sonnet 5 requires an AWS Sales request on the client’s account; no automatic fallback | Step 11; client requests Sonnet 5 access through AWS Sales before an optional per-task config swap |
 | Advocate assignment | `DEMO_PROGRESSION=on` | Admin assigns (§9), but no admin panel exists. **Without this every case stops at `paid` and nothing after it can be reached** | Admin panel built |
@@ -1574,6 +1575,19 @@ empty, or explicitly accepted in writing by the client, before production.
 | Delivery confirmation | `ADMIN_UI_MODE=simulated` | Admin marks delivered (§9), but no admin panel exists yet. The **endpoint is real**; only the screen is missing. The shipment advances one drawn milestone at a time (§2.12), and delivery with a simulated proof follows Out for Delivery | Admin panel built |
 | Courier tracking | `COURIER_MODE=simulated` | Manual courier in v1 by decision, not by gap | Only if the client later buys a carrier API |
 | KYC | `KYC_MODE=simulated` | No provider chosen | Provider chosen |
+
+**In-app notifications are real (3 Nov 2026).** Each notification is a real row,
+created in the same transaction as its case action. `NOTIFY_MODE` affects only
+outside delivery, never inbox availability. New in-app rows are `simulated = false`
+and their `notification_created` events have `source = real`; the case action's
+own event independently retains its real/simulated provenance. Historical rows
+remain readable. Client (60), advocate (150) and admin inboxes share a 10-second
+polling feed. Unread counts come from `read_at`; opening marks read and navigates
+with the case ID, resolving its current state. No polling changes routes.
+GET `/notifications` is user-scoped and cursor-paginated; POST
+`/notifications/:id/read` and `/notifications/read-all` only affect that user.
+Case membership is rechecked. No push, SMS, email or preferences integration is
+part of this chunk; design 60's Configure action retains the preview notice.
 
 The one thing still to check is item 14 in §8: whether any AI surface reaches a
 client without an advocate in between. If one does, it needs either an advocate
@@ -1625,6 +1639,8 @@ designs already use for the notice recipient — not a term invented here.
 
 | Design | Original | Replacement |
 |---|---|---|
+| 189 / 267 (Approved — project owner, 3 Nov 2026) | `Reffrence Id` | `Reference Id` |
+| 189 / 267 (Approved — project owner, 3 Nov 2026) | `has been preserve in my office` | `has been preserved in my office` |
 | 194 | `to your advocate` | `to the <Party>` |
 | 194 | `Your advocate needs the physical documents for the case` | `The signed notice must reach the <Party> by post.` |
 | 286 | `Your advocate can use the tracking number to check the shipment.` | `You can use the tracking number to check the shipment.` |
@@ -1721,8 +1737,8 @@ not send the draft or expose an unsent file to the client. Send and approval use
 the same renderer and the existing real document/S3 pipeline. Missing intake or
 profile values never fall back to another case or a fixture.
 
-**Retained for owner review:** `Reffrence Id` and `has been preserve in my office`
-are deliberately reproduced exactly. The header's `INT LegalConsultants Pvt. Ltd.`
+**Approved — project owner, 3 Nov 2026:** `Reffrence Id` becomes `Reference Id`;
+`has been preserve in my office` becomes `has been preserved in my office`. The header's `INT LegalConsultants Pvt. Ltd.`
 and sign-off's `INT LegalConsultant Pvt. Ltd.` also retain the drawn plural/singular
 difference. No wording correction is assumed.
 
@@ -1769,3 +1785,25 @@ simulated flag must match the confirmation source. A real confirmation records a
 real event and clears the shipment's simulated delivery flag; earlier simulated
 events remain historical facts. Duplicate completion is rejected under the case lock.
 ADMIN_UI_MODE and DEMO_PROGRESSION remain unchanged by this chunk.
+
+
+### Instructed addition — in-app notifications (3 Nov 2026)
+
+> **Approved — project owner.** Surface real in-app rows for all three roles,
+> with unread bell counts, mark-read and case navigation, polling without reload.
+> The admin inbox uses the panel theme; mobile screens use designs 60 and 150.
+
+Notification titles use the instructed event descriptions, with the real case
+reference as the body, never fixture names or invented message content:
+
+| Recipient | Events / titles |
+|---|---|
+| Client | Advocate assigned; Draft ready to review; Notice dispatched; Notice delivered |
+| Advocate | A case assigned to you; Client approved; Client requested changes; Documents received |
+| Admin | A paid case needs an advocate; An advocate declined; A case needs delivery confirmed |
+
+The existing Payment Successful notification remains. Loading notifications…,
+No notifications, Load more and Retry are the operational empty/loading/error
+states. Mark all as read is drawn. The SMS/WhatsApp preferences control is drawn
+but outside delivery remains out of scope. No notification can infer a case's
+latest action from its old title; links resolve against the current lifecycle.

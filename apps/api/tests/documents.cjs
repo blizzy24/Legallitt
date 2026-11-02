@@ -501,6 +501,8 @@ test(
         },
       );
     } finally {
+      // Inbox rows reference users independently of the document case.
+      await db.notification.deleteMany({where:{user_id:{in:actors.map(a=>a.id)}}});
       await db.document.deleteMany({ where: { case_id: caseId } });
       await db.case.deleteMany({ where: { id: caseId } });
       await db.user.deleteMany({
