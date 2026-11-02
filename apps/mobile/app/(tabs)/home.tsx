@@ -1,3 +1,4 @@
+import NotificationBell from '../../components/NotificationBell';
 import { router, type Href } from 'expo-router';
 import { Bell, ChevronLeft, Search } from 'lucide-react-native';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
@@ -160,10 +161,7 @@ function MemberHeader() {
         <Text style={styles.greeting}>Hello, Rahul</Text>
         <Text style={styles.subtitle}>How can we help you today?</Text>
       </View>
-      <Pressable onPress={() => router.push('/notifications' as Href)} accessibilityRole="button" accessibilityLabel="Notifications" style={styles.bell}>
-        <Bell size={home.bellIcon} color={ink.accent} />
-        <View style={styles.dot} />
-      </Pressable>
+      <NotificationBell size={home.bellIcon} color={ink.accent} style={styles.bell}/>
       <View style={styles.avatar}>
         <Text style={styles.initials}>RS</Text>
       </View>

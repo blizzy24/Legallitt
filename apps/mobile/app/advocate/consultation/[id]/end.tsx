@@ -1,3 +1,4 @@
+import NotificationBell from '../../../../components/NotificationBell';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
   ArrowLeft,
@@ -35,10 +36,7 @@ export default function AdvocateEndScreen() {
         <Text style={styles.headerTitle} numberOfLines={1}>
           Requests
         </Text>
-        <View style={styles.bellWrap}>
-          <Bell size={h.bell} color={colors.textPrimary} />
-          <View style={styles.bellDot} />
-        </View>
+        <NotificationBell advocate size={h.bell} color={colors.textPrimary} style={styles.bellWrap}/>
         <View style={styles.avatar}>
           <UserRound size={h.avatarGlyph} color={ink.onBrand} />
         </View>

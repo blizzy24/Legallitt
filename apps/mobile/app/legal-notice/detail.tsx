@@ -1,3 +1,4 @@
+import NotificationBell from '../../components/NotificationBell';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import { ArrowRight, Bell, Check, ChevronLeft, FilePenLine, FileText, Headset, Lock, ShieldCheck, type LucideIcon } from 'lucide-react-native';
 import type { ReactNode } from 'react';
@@ -49,9 +50,7 @@ export default function LegalNoticeInfoScreen() {
           </View>
           <Text style={styles.brandSub}>Find. Connect. Consult. Resolve.</Text>
         </View>
-        <Pressable onPress={() => router.push('/notifications' as Href)} accessibilityRole="button" accessibilityLabel="Notifications" style={[styles.circle, styles.bell]}>
-          <Bell size={i.circleIcon} color={colors.textPrimary} />
-        </Pressable>
+        <NotificationBell size={i.circleIcon} color={colors.textPrimary} style={[styles.circle, styles.bell]}/>
         <View style={[styles.circle, styles.avatar]}>
           <Text style={styles.avatarText}>RD</Text>
         </View>

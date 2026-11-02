@@ -1,3 +1,4 @@
+import {useNotifications} from '../../context/notifications';
 import { router } from 'expo-router';
 import {
   CalendarDays,
@@ -22,17 +23,7 @@ import { advNotifications as t, colors, font } from '../../constants/theme';
 // Lives outside the (advocate) tab group for the same reason as availability: the
 // design draws no tab bar.
 //
-// REPORTED — NONE OF THE SIX ROWS HAS A DESIGNED DESTINATION. Every row draws a
-// chevron, and no file in the batch shows where any of them leads — not the case
-// request, not the payment, not the message, not the legal-notice request. They are
-// inert. Six chevrons that go nowhere is six screens nobody has specified.
-//
-// "Mark all as read" works and clears every unread dot.
-//
-// Drawn as-is, with the file's errors intact: "New cases Request" (casing) and
-// "Rahul sharma has request a constitution regarding of divorce metter", which
-// should almost certainly read "has requested a consultation regarding a divorce
-// matter" — four errors in one line, including "constitution" for "consultation".
+// Live rows use the same measured view; opening marks read and resolves the case's current state.
 
 const ICONS: Record<AdvNotification['icon'], typeof CalendarDays> = {
   calendar: CalendarDays,
@@ -45,7 +36,7 @@ const ICONS: Record<AdvNotification['icon'], typeof CalendarDays> = {
 
 export default function AdvocateNotificationsScreen() {
   const insets = useSafeAreaInsets();
-  const [read, setRead] = useState<string[]>([]);
+  const feed = useNotifications();
 
   const sections: { key: 'today' | 'earlier'; label: string }[] = [
     { key: 'today', label: 'TODAY' },
@@ -60,7 +51,7 @@ export default function AdvocateNotificationsScreen() {
           accessibilityLabel="Back"
           hitSlop={10}
           onPress={() =>
-            router.canGoBack() ? router.back() : router.replace('/(advocate)/dashboard')
+            router.replace('/(advocate)/dashboard')
           }
         >
           <ChevronLeft size={t.backIcon} color={colors.brandDark} />
@@ -71,7 +62,7 @@ export default function AdvocateNotificationsScreen() {
         <Pressable
           accessibilityRole="button"
           hitSlop={8}
-          onPress={() => setRead(ADV_NOTIFICATIONS.map((n) => n.id))}
+          onPress={() => {void feed.readAll();}}
         >
           <Text style={styles.action} {...shrinkToFit(0.8)}>
             Mark all as read
@@ -83,16 +74,19 @@ export default function AdvocateNotificationsScreen() {
         contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 28 }]}
         showsVerticalScrollIndicator={false}
       >
-        {sections.map((s) => (
+        {!!feed.error && <Pressable onPress={feed.refresh}><Text accessibilityRole="alert" style={styles.rowBody}>{feed.error}</Text></Pressable>}
+        {feed.loading && <Text style={styles.rowBody}>Loading notifications…</Text>}
+        {!feed.loading && !feed.error && !feed.items.length && <Text style={styles.rowBody}>No notifications</Text>}
+        {sections.filter(s => feed.items.some(n => (n.group === 'TODAY' ? 'today' : 'earlier') === s.key)).map((s) => (
           <View key={s.key}>
             <Text style={styles.section} {...shrinkToFit(0.8)}>
               {s.label}
             </Text>
-            {ADV_NOTIFICATIONS.filter((n) => n.section === s.key).map((n) => {
-              const Icon = ICONS[n.icon];
-              const unread = n.unread && !read.includes(n.id);
+            {feed.items.filter((n) => (n.group === 'TODAY' ? 'today' : 'earlier') === s.key).map((n) => {
+              const Icon = ICONS[n.icon === 'request' ? 'document' : n.icon];
+              const unread = n.unread;
               return (
-                <View key={n.id} style={styles.row}>
+                <Pressable key={n.id} accessibilityRole="button" onPress={() => {void feed.open(n.id);}} style={styles.row}>
                   <View style={styles.icon}>
                     <Icon size={t.iconGlyph} color={colors.brandDark} />
                   </View>
@@ -101,7 +95,7 @@ export default function AdvocateNotificationsScreen() {
                     <Text style={styles.rowTitle} {...shrinkToFit(0.75)}>
                       {n.title}
                     </Text>
-                    <Text style={styles.rowBody}>{n.body}</Text>
+                    {!!n.body && <Text style={styles.rowBody}>{n.body}</Text>}
                   </View>
 
                   <View style={styles.rowRight}>
@@ -113,11 +107,12 @@ export default function AdvocateNotificationsScreen() {
                     </View>
                     <ChevronRight size={t.chevron} color={colors.brandDark} />
                   </View>
-                </View>
+                </Pressable>
               );
             })}
           </View>
         ))}
+        {feed.more && <Pressable onPress={feed.loadMore}><Text style={styles.action}>Load more</Text></Pressable>}
       </ScrollView>
     </View>
   );

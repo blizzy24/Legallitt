@@ -13,3 +13,17 @@ a {color:#f5a66f}.back-link {display:inline-block; margin-bottom:22px; font-size
 .case-timeline {max-height:none}.case-spine {min-width:0}.case-spine .drafts-panel {margin-top:20px}
 .case-sections {display:flex; gap:18px; flex-wrap:wrap; margin:0 0 18px; font-size:11px}.case-sections a {text-decoration:none; color:#acb1c0; padding:5px 0}.case-sections a:hover {color:var(--accent)}.case-sections span {color:#69758b; margin-left:5px}.detail-panel {scroll-margin-top:20px}
 .delivery-dialog {max-width:600px}.delivery-dialog label {display:flex;flex-direction:column;gap:9px;font-size:12px;margin-top:24px}.delivery-dialog label small {color:var(--muted);font-size:10px}.delivery-dialog input {width:100%}.delivery-dialog input[type=file] {font-size:11px;padding:15px;background:#12141a;border-style:dashed}.delivery-dialog input::file-selector-button {background:#292d38;border:1px solid #454b59;border-radius:4px;color:#e5e6ec;margin-right:10px;padding:6px 10px}.delivery-shipment {display:flex;flex-direction:column;gap:5px;padding:14px 16px;border:1px solid var(--line);border-radius:7px;font-size:12px}.delivery-shipment span {font-size:11px;color:var(--muted)}.upload-help {font-size:10px;margin-top:8px}.upload-status {font-size:12px;margin-top:12px;overflow-wrap:anywhere}.uploaded {color:#8ec9a3}.delivery-dialog .primary {margin-top:24px}
+
+/* In-app notifications: the same dark surface and orange accent as the notices list. */
+.notification-bell{position:relative;display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;margin-left:auto;color:var(--text,#eae8e4);border:1px solid var(--border,#303033);border-radius:8px}
+.notification-bell span{position:absolute;top:-5px;right:-7px;min-width:18px;height:18px;padding:0 4px;display:grid;place-items:center;border-radius:10px;background:#ec7c3c;color:#171719;font-size:10px;font-weight:700}
+.workspace>header .notification-bell+.role{margin-left:0}
+.notifications-page{padding:32px;max-width:1180px;margin:0 auto;width:100%}
+.notifications-page .page-title{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:24px}
+.notifications-page h1{margin:4px 0 8px}.notifications-page .eyebrow{font-size:11px;letter-spacing:2px;color:#eb874f}
+.notification-list{border:1px solid #313034;border-radius:12px;overflow:hidden;background:#1e1e21}
+.notification-row{width:100%;display:flex;align-items:center;gap:16px;text-align:left;border:0;border-bottom:1px solid #303034;border-radius:0;padding:20px;background:transparent;color:inherit}
+.notification-row:last-child{border-bottom:0}.notification-row:hover{background:#28272a}.notification-row.unread{background:#29231f}
+.notification-marker{width:7px;height:7px;flex-shrink:0;border-radius:50%;background:transparent}.unread .notification-marker{background:#ef8748}
+.notification-text{display:flex;flex-direction:column;gap:7px;flex:1;min-width:0}.notification-text strong{font-weight:600;font-size:14px}.notification-text>span,.notification-row time{font-size:12px;color:#aaa6a2}.notification-row time{white-space:nowrap}.notification-more{margin-top:18px}
+@media(max-width:700px){.notifications-page{padding:20px}.notification-row{padding:16px;flex-wrap:wrap}.notification-row time{font-size:11px}.notifications-page .page-title{align-items:flex-start}}

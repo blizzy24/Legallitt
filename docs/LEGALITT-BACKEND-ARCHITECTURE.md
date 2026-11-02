@@ -1746,6 +1746,27 @@ AI provider instructions now require ₹ and Indian grouping (₹5,000, ₹1,00,
 for supplied monetary amounts. They must not invent or change amounts. Existing
 saved client selections are not silently rewritten.
 
+### Instructed addition — in-app notifications (3 Nov 2026)
+
+> **Approved — project owner.** Surface real in-app rows for all three roles,
+> with unread bell counts, mark-read and case navigation, polling without reload.
+> The admin inbox uses the panel theme; mobile screens use designs 60 and 150.
+
+Notification titles use the instructed event descriptions, with the real case
+reference as the body, never fixture names or invented message content:
+
+| Recipient | Events / titles |
+|---|---|
+| Client | Advocate assigned; Draft ready to review; Notice dispatched; Notice delivered |
+| Advocate | A case assigned to you; Client approved; Client requested changes; Documents received |
+| Admin | A paid case needs an advocate; An advocate declined; A case needs delivery confirmed |
+
+The existing Payment Successful notification remains. Loading notifications…,
+No notifications, Load more and Retry are the operational empty/loading/error
+states. Mark all as read is drawn. The SMS/WhatsApp preferences control is drawn
+but outside delivery remains out of scope. No notification can infer a case's
+latest action from its old title; links resolve against the current lifecycle.
+
 ## 10. Working agreement
 
 This document is the only specification for the backend. **§1a governs
@@ -1785,25 +1806,3 @@ simulated flag must match the confirmation source. A real confirmation records a
 real event and clears the shipment's simulated delivery flag; earlier simulated
 events remain historical facts. Duplicate completion is rejected under the case lock.
 ADMIN_UI_MODE and DEMO_PROGRESSION remain unchanged by this chunk.
-
-
-### Instructed addition — in-app notifications (3 Nov 2026)
-
-> **Approved — project owner.** Surface real in-app rows for all three roles,
-> with unread bell counts, mark-read and case navigation, polling without reload.
-> The admin inbox uses the panel theme; mobile screens use designs 60 and 150.
-
-Notification titles use the instructed event descriptions, with the real case
-reference as the body, never fixture names or invented message content:
-
-| Recipient | Events / titles |
-|---|---|
-| Client | Advocate assigned; Draft ready to review; Notice dispatched; Notice delivered |
-| Advocate | A case assigned to you; Client approved; Client requested changes; Documents received |
-| Admin | A paid case needs an advocate; An advocate declined; A case needs delivery confirmed |
-
-The existing Payment Successful notification remains. Loading notifications…,
-No notifications, Load more and Retry are the operational empty/loading/error
-states. Mark all as read is drawn. The SMS/WhatsApp preferences control is drawn
-but outside delivery remains out of scope. No notification can infer a case's
-latest action from its old title; links resolve against the current lifecycle.

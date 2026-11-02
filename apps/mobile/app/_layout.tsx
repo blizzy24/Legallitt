@@ -1,3 +1,4 @@
+import {NotificationsProvider} from '../context/notifications';
 import {
   Inter_400Regular,
   Inter_500Medium,
@@ -80,6 +81,7 @@ export default function RootLayout() {
 function App() {
   return (
     <SessionProvider>
+      <NotificationsProvider>
       <ProfileProvider>
         <LegalNoticeProvider>
           <FirProvider>
@@ -96,6 +98,7 @@ function App() {
           </FirProvider>
         </LegalNoticeProvider>
       </ProfileProvider>
+    </NotificationsProvider>
     </SessionProvider>
   );
 }

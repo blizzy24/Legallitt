@@ -1,3 +1,4 @@
+import {NotificationsProvider, Notifications, NotificationBell} from './notifications';
 import { CaseDetail } from './case-detail';
 import { StrictMode, useState, type FormEvent } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -40,11 +41,11 @@ function Shell() {
       <div className="identity"><span>{user.name}</span><small>ADMIN</small><button onClick={logout}>Sign out</button></div>
     </aside>
     {drawer && <button className="scrim" aria-label="Close navigation" onClick={() => setDrawer(false)}/>}
-    <div className="workspace"><header><button className="menu" aria-label="Toggle navigation" aria-expanded={drawer} onClick={() => setDrawer(!drawer)}>☰</button><span>Legal Notices</span><span className="role">ADMIN</span></header><Outlet/></div>
+    <div className="workspace"><header><button className="menu" aria-label="Toggle navigation" aria-expanded={drawer} onClick={() => setDrawer(!drawer)}>☰</button><span>Legal Notices</span><NotificationBell/><span className="role">ADMIN</span></header><Outlet/></div>
   </div>;
 }
-createRoot(document.getElementById('root')!).render(<StrictMode><BrowserRouter><SessionProvider><Routes>
+createRoot(document.getElementById('root')!).render(<StrictMode><BrowserRouter><SessionProvider><NotificationsProvider><Routes>
   <Route path="/sign-in" element={<SignIn/>}/>
-  <Route element={<Shell/>}><Route path="/legal-notices" element={<Notices/>}/><Route path="/legal-notices/:id" element={<CaseDetail/>}/></Route>
+  <Route element={<Shell/>}><Route path="/notifications" element={<Notifications/>}/><Route path="/legal-notices" element={<Notices/>}/><Route path="/legal-notices/:id" element={<CaseDetail/>}/></Route>
   <Route path="*" element={<Navigate to="/legal-notices" replace/>}/>
-</Routes></SessionProvider></BrowserRouter></StrictMode>);
+</Routes></NotificationsProvider></SessionProvider></BrowserRouter></StrictMode>);

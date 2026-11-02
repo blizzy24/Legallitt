@@ -1,3 +1,4 @@
+import NotificationBell from './NotificationBell';
 import type { LegalNoticeMatterType } from "@legalitt/shared";
 import { noticeMatter } from "../data/legalNoticeMatter";
 import { router, type Href } from "expo-router";
@@ -67,7 +68,7 @@ export function NoticeHeader({ title, onBack }: { title: string; onBack?: () => 
         <ArrowLeft color={t.ink} size={t.headerIcon} />
       </Pressable>
       <Text style={s.headerTitle}>{title}</Text>
-      <Bell size={t.headerIcon} color={t.brand} />
+      <NotificationBell size={t.headerIcon} color={t.brand}/>
       <View
         style={[s.tile, { backgroundColor: t.brand, borderRadius: t.disc }]}
       >

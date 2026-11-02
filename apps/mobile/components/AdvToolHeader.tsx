@@ -1,3 +1,4 @@
+import NotificationBell from './NotificationBell';
 import { router, type Href } from 'expo-router';
 import { Bell, ChevronLeft, MessageSquare } from 'lucide-react-native';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
@@ -43,7 +44,7 @@ export default function AdvToolHeader({
       {icons ? (
         <>
           <MessageSquare size={h.glyph} color={colour} strokeWidth={2} />
-          <Bell size={h.glyph} color={colour} strokeWidth={2} style={styles.bell} />
+          <NotificationBell advocate size={h.glyph} color={colour} style={styles.bell}/>
         </>
       ) : null}
     </View>

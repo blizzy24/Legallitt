@@ -1,3 +1,4 @@
+import NotificationBell from '../../components/NotificationBell';
 import NoticeScreenFeedback from '../../components/NoticeScreenFeedback';
 import {useNoticeLists} from "../../features/legal-notice/useNoticeLists";
 import { router, type Href } from 'expo-router';
@@ -56,10 +57,7 @@ export function CasesScreenView({ stats, active, hearings, pending, closed = [],
             <Text style={styles.title}>My Cases</Text>
             <Text style={styles.subtitle}>Track and manage your legal matters in one place.</Text>
           </View>
-          <Pressable onPress={() => router.push('/notifications' as Href)} accessibilityRole="button" accessibilityLabel="Notifications" style={styles.bell}>
-            <Bell size={t.bellIcon} color={colors.textPrimary} />
-            <View style={styles.bellDot} />
-          </Pressable>
+          <NotificationBell size={t.bellIcon} color={colors.textPrimary} style={styles.bell}/>
         </View>
 
         <SegmentedControl segments={SEGMENTS} value={tab} onChange={setTab} style={styles.segmented} />

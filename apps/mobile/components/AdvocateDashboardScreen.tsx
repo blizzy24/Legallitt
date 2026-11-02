@@ -1,3 +1,4 @@
+import NotificationBell from './NotificationBell';
 import { router, type Href } from 'expo-router';
 import {
   Bell,
@@ -81,15 +82,7 @@ export default function AdvocateDashboardScreen({self, stats, events, dateLine, 
               {self.standing}
             </Text>
           </View>}
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Notifications"
-            onPress={() => router.push('/advocate/notifications')}
-            style={styles.bell}
-          >
-            <Bell size={t.bellIcon} color={colors.textPrimary} />
-            {unread && <View style={styles.bellDot} />}
-          </Pressable>
+          <NotificationBell advocate size={t.bellIcon} color={colors.textPrimary} style={styles.bell}/>
           <Pressable accessibilityLabel="Advocate settings" onPress={() => router.push('/advocate/settings')} style={styles.avatar}>
             <Text style={styles.avatarText}>{self.initials}</Text>
           </Pressable>

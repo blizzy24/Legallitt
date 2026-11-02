@@ -1,3 +1,4 @@
+import NotificationBell from '../../../../components/NotificationBell';
 import { previewNotice } from '../../../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import {
@@ -53,15 +54,7 @@ export default function AdvocateConsultationRoomScreen() {
         <Text style={styles.headerTitle} numberOfLines={1}>
           Requests
         </Text>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Notifications"
-          onPress={() => router.push('/advocate/notifications')}
-          style={styles.bellWrap}
-        >
-          <Bell size={h.bell} color={colors.textPrimary} />
-          <View style={styles.bellDot} />
-        </Pressable>
+        <NotificationBell advocate size={h.bell} color={colors.textPrimary} style={styles.bellWrap}/>
         <View style={styles.avatar}>
           <UserRound size={h.avatarGlyph} color={ink.onBrand} />
         </View>
