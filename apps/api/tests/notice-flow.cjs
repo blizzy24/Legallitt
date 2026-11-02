@@ -78,7 +78,6 @@ test(
       );
       const {PaymentsService} = require('../dist/src/payments/payments.service');
       const {SimulatedPayments} = require('../dist/src/payments/simulated-payments');
-      const {SimulatedNotifications} = require('../dist/src/notifications/simulated-notifications');
       const payments = new PaymentsService(prisma, state, new SimulatedPayments(), inbox());
       await assert.rejects(payments.intent(other, {case_id: c.id, purpose: 'service_fee'}, randomUUID()), {status: 404});
       const key = randomUUID();
@@ -127,6 +126,10 @@ test(
       assert.equal(receiptEvent.payload.shipment_id,inbound.id);
       await shipmentService.receive(advocate,c.id);
       assert.equal(await db.caseEvent.count({where:{case_id:c.id,type:'documents_received'}}),1);
+      const receiptNotifications = await db.notification.findMany({where:{case_id:c.id,kind:'documents_received'}});
+      assert.equal(receiptNotifications.length,1);
+      assert.equal(receiptNotifications[0].user_id,advocate.id);
+      assert.equal(receiptNotifications[0].simulated,false);
       const declinedCase = await db.case.create({data: {reference:'TEST-DECLINE-'+randomUUID(), service_code:'legal_notice', client_id:client.id, advocate_id:advocate.id, status:'assigned'}});
       ids.push(declinedCase.id);
       await state.decline(advocate, declinedCase.id, {});

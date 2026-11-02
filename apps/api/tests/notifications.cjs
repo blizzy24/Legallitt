@@ -37,6 +37,13 @@ test('real role inboxes: lifecycle recipients, atomicity, pagination, unread own
   await assert.rejects(broken.transition(advocate,rollback.id,'client_review'),/Inbox transaction failure/);
   assert.equal((await db.case.findUnique({where:{id:rollback.id}})).status,'in_progress');
   assert.equal(await db.notification.count({where:{case_id:rollback.id}}),0);assert.equal(await db.caseEvent.count({where:{case_id:rollback.id}}),0);
+  const tied=await make('assigned');
+  await db.notification.createMany({data:Array.from({length:4},()=>({user_id:client.id,case_id:tied.id,kind:'test',title:'Tied timestamp test'}))});
+  await db.$executeRaw`UPDATE notifications SET created_at = '2030-01-01T01:02:03.123456Z'::timestamptz WHERE case_id = ${tied.id}::uuid`;
+  let cursor;const seen=[];
+  do {const page=await repo.list(client,{limit:'2',...(cursor?{cursor}:{})});seen.push(...page.items.map(n=>n.id));cursor=page.next_cursor;}while(cursor);
+  assert.equal(seen.length,new Set(seen).size);
+  assert.equal(seen.length,await db.notification.count({where:{user_id:client.id}}));
   const first=await repo.list(client,{limit:'2'});assert.equal(first.items.length,2);assert.ok(first.next_cursor);assert.ok(first.unread_count>2);
   const second=await repo.list(client,{limit:'2',cursor:first.next_cursor});assert.ok(second.items.every(n=>!first.items.some(p=>p.id===n.id)));
   await assert.rejects(repo.list(client,{cursor:'bad'}),{status:400});

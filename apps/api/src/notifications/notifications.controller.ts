@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Param, Query, Req, UseGuards, Injectable, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Param, Query, Req, UseGuards, Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { z } from 'zod';
 import { AuthGuard, type AuthRequest } from '../auth/auth.controller';
 import { parse } from '../auth/auth.service';
@@ -23,10 +23,13 @@ export class NotificationRepository {
     }
     const db = await this.prisma.getClient();
     const scope = this.scope(actor);
+    if (after && !await db.notification.findFirst({where: {...scope, id: after[1]}, select: {id: true}}))
+      throw new BadRequestException('Invalid notification cursor');
     const [rows, unread_count] = await db.$transaction([
-      db.notification.findMany({where: {AND: [scope, ...(after ? [{OR: [
-        {created_at: {lt: new Date(after[0])}}, {created_at: new Date(after[0]), id: {lt: after[1]}},
-      ]}] : [])]}, orderBy: [{created_at: 'desc'}, {id: 'desc'}], take: limit + 1,
+      // Anchor to the actual row: JS Date drops PostgreSQL's microseconds.
+      // Reconstructing its timestamp would skip tied rows at a page boundary.
+      db.notification.findMany({where: scope, ...(after ? {cursor: {id: after[1]}, skip: 1} : {}),
+        orderBy: [{created_at: 'desc'}, {id: 'desc'}], take: limit + 1,
         select: {id: true, case_id: true, kind: true, title: true, body: true, created_at: true, read_at: true,
           case_id_relation: {select: {reference: true, status: true}}}}),
       db.notification.count({where: {...scope, read_at: null}}),
