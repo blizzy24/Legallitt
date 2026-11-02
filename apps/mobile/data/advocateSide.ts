@@ -2218,7 +2218,7 @@ export const ADV_NOTICE_DRAFT = {
 // "INT LegalConsultant Pvt. Ltd." — singular against plural, same document.
 //
 // ⚠ design/189 misspells "Reffrence Id" and writes "has been preserve in my office".
-// Both kept as drawn.
+// Both corrected by the project owner on 3 Nov 2026; see substitutions[189] and §9.2.
 //
 // ⚠ At the drawn scale the body runs at roughly 7pt on a 390pt screen, which is
 // below legible size on a device. Reproduced at the drawn proportions because it is
@@ -2241,8 +2241,8 @@ export const ADV_NOTICE_RESPONSE = {
     enrolmentNo: '821/2017',
   },
   docTitle: 'LEGAL NOTICE',
-  /** ⚠ "Reffrence" as drawn. */
-  refLabel: 'Reffrence Id',
+  /** Project-owner spelling correction; §9.2. */
+  refLabel: designSubstitutions[189].referenceLabel.after,
   refSuffix: '/20',
   dateLabel: 'Date:',
   toLabel: 'To,',
@@ -2268,7 +2268,7 @@ export const ADV_NOTICE_RESPONSE = {
     cost: ' as the cost of this legal notice.',
   },
   /** ⚠ "has been preserve" as drawn. */
-  copyLine: 'A copy of this Notice has been preserve in my office for record and future reference.',
+  copyLine: designSubstitutions[189].preservedCopy.after,
   signFor: 'For',
   signFirm: 'INT LegalConsultant Pvt. Ltd.',
   placeLabel: 'Place :',

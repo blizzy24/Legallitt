@@ -14,10 +14,10 @@ test('the supplied letterhead contains selectable case fields, all demands, exac
   assert.equal(Buffer.from(draft.subarray(0, 5)).toString(), '%PDF-');
   const {pages, text} = await readPdfText(draft);
   assert.equal(pages.length, 1);
-  for (const value of ['LEGAL NOTICE', 'Reffrence Id LN-2026-0001', 'Noticee Name', 'Intake subject',
+  for (const value of ['LEGAL NOTICE', 'Reference Id LN-2026-0001', 'Noticee Name', 'Intake subject',
     'S/o Shri Father Name, Age 41', '1.First fact.', '2.Second fact.', 'A.Pay ₹1,00,000.',
     'C.Preserve the account records.', 'offences of Specified offences', 'pay ₹699 as the cost',
-    'has been preserve in my office', 'Place : Indore', 'INT LegalConsultants Pvt. Ltd.',
+    'has been preserved in my office', 'Place : Indore', 'INT LegalConsultants Pvt. Ltd.',
     'INT LegalConsultant Pvt. Ltd.', 'automated document preparation platform']) assert.ok(text.includes(value), value);
   for (const value of ['Unused working demand', 'Unused working closing', 'Test subject', 'BACKGROUND & FACTS'])
     assert.ok(!text.includes(value), value);

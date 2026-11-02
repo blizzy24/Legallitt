@@ -10,9 +10,9 @@ export const noticeLetterhead = {
   ink: '#111111', band: '#0B0B0B', gold: '#EFCE96', white: '#FFFFFF',
   firm: 'INT LegalConsultants Pvt. Ltd.',
   email: 'Intlegalconsultantspvtltd@gmail.com', website: 'www.legalitt.com',
-  // These two typos are deliberately retained at the project owner's request.
-  referenceLabel: 'Reffrence Id',
-  copy: 'A copy of this Notice has been preserve in my office for record and future reference.',
+  // Project-owner corrections, 3 Nov 2026; architecture §9.2. Company names remain as drawn.
+  referenceLabel: 'Reference Id',
+  copy: 'A copy of this Notice has been preserved in my office for record and future reference.',
   signFirm: 'INT LegalConsultant Pvt. Ltd.',
   disclaimer: 'Disclaimer : This legal notice has been generated through an automated document preparation platform based solely on the information, statements, and instructions provided by the user. The platform utilizes technology-assisted drafting tools to facilitate document creation and does not independently verify the accuracy, completeness, authenticity, or legal sufficiency of any information supplied by the user.',
 } as const;

@@ -3,6 +3,14 @@
  * Corrected client exports should only require updating this file.
  */
 export const designSubstitutions = {
+  189: {
+    // Approved — project owner, 3 Nov 2026. Also used by the repeated template on 267.
+    referenceLabel: {before: 'Reffrence Id', after: 'Reference Id'},
+    preservedCopy: {
+      before: 'A copy of this Notice has been preserve in my office for record and future reference.',
+      after: 'A copy of this Notice has been preserved in my office for record and future reference.',
+    },
+  },
   286: {
     trackingHelp: {
       before: 'Your advocate can use the tracking number to check the shipment.',
