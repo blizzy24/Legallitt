@@ -1,0 +1,10 @@
+{
+    "tasks": [
+        {
+            "taskArn": "arn:aws:ecs:ap-south-1:026379630400:task/legalitt-dev-cluster/c50c1f30a4cb4d169f73f1b4a9dc87e8",
+            "taskDefinitionArn": "arn:aws:ecs:ap-south-1:026379630400:task-definition/legalitt-dev-ops:2",
+            "lastStatus": "PROVISIONING"
+        }
+    ],
+    "failures": []
+}

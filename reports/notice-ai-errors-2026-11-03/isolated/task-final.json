@@ -1,0 +1,32 @@
+[
+    {
+        "task": "arn:aws:ecs:ap-south-1:026379630400:task/legalitt-dev-cluster/c50c1f30a4cb4d169f73f1b4a9dc87e8",
+        "status": "STOPPED",
+        "started": "2026-11-03T17:39:46.201000+05:30",
+        "stopped": "2026-11-03T17:40:15.972000+05:30",
+        "reason": "Essential container in task exited",
+        "containers": [
+            {
+                "name": "ops",
+                "exitCode": 1,
+                "image": "026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api:notice-ai-errors-20261103",
+                "imageDigest": "sha256:6c429333e78f406ca25f6ce1cfe01c14728e02f97cb4c4e6f87241145f5808fd"
+            }
+        ]
+    },
+    {
+        "task": "arn:aws:ecs:ap-south-1:026379630400:task/legalitt-dev-cluster/51733580740c4f818cd57645d80f9c59",
+        "status": "STOPPED",
+        "started": "2026-11-03T17:40:52.069000+05:30",
+        "stopped": "2026-11-03T17:41:21.884000+05:30",
+        "reason": "Essential container in task exited",
+        "containers": [
+            {
+                "name": "ops",
+                "exitCode": 0,
+                "image": "026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api:notice-ai-errors-20261103",
+                "imageDigest": "sha256:6c429333e78f406ca25f6ce1cfe01c14728e02f97cb4c4e6f87241145f5808fd"
+            }
+        ]
+    }
+]

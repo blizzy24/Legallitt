@@ -1,0 +1,31 @@
+[
+    {
+        "OutputKey": "ApiUrl",
+        "OutputValue": "https://gvycg0n3u8.execute-api.ap-south-1.amazonaws.com",
+        "Description": "HTTPS base URL (development only)"
+    },
+    {
+        "OutputKey": "TaskSubnetIds",
+        "OutputValue": "subnet-060f72908da2419ee,subnet-0ad9da8fd0e033afd"
+    },
+    {
+        "OutputKey": "DatabaseSecretArn",
+        "OutputValue": "arn:aws:secretsmanager:ap-south-1:026379630400:secret:legalitt-dev/database-SY4O9G"
+    },
+    {
+        "OutputKey": "TaskSecurityGroupId",
+        "OutputValue": "sg-09a3b6978c7950214"
+    },
+    {
+        "OutputKey": "ClusterName",
+        "OutputValue": "legalitt-dev-cluster"
+    },
+    {
+        "OutputKey": "RepositoryUri",
+        "OutputValue": "026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api"
+    },
+    {
+        "OutputKey": "OpsTaskDefinitionArn",
+        "OutputValue": "arn:aws:ecs:ap-south-1:026379630400:task-definition/legalitt-dev-ops:2"
+    }
+]

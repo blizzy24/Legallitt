@@ -1,5 +1,5 @@
 // One-off dev ECS ops task, using the exact deployed image. Run via `node -e`
-// from /app/apps/api. Requires explicit approval to launch the verification task.
+// from /repo/apps/api. Requires explicit approval to launch the verification task.
 // It changes no running service or credentials. Only a labelled synthetic draft
 // receives two failure audit events. The upstream transport alone is injected;
 // Cognito, HTTP guards, controllers, CloudWatch and the RDS audit are real.
@@ -30,7 +30,7 @@ async function main() {
     assert.equal(login.status, 201);
     const session = await login.json(); assert.equal(session.user.role, 'client');
     const headers = {'Content-Type':'application/json', Authorization:'Bearer ' + session.tokens.idToken};
-    const read = async path => {const r = await fetch(base + path, {headers});assert.ok(r.ok());return r.json();};
+    const read = async path => {const r = await fetch(base + path, {headers});assert.ok(r.ok);return r.json();};
     const record = await read('/api/v1/cases/' + id);
     assert.equal(record.status, 'draft');assert.equal(record.client_id, session.user.id);
     assert.match(record.subject_matter, /^Synthetic testing case only\./);

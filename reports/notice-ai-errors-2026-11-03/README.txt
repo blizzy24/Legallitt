@@ -65,9 +65,11 @@ Deployed verification:
   live/generated-demands.png, live-check.txt.
 - No provider error occurred in that live check. This does not verify the live
   failure path. Upstream 429/503 behavior is verified locally above.
-- A separate, isolated ECS verification task is prepared to exercise the same
-  deployed image against real Cognito/RDS/CloudWatch with injected upstream
-  failures, without disrupting the main API. Launch awaits separate approval.
+- Owner-approved isolated ECS verification is complete. It used the exact
+  deployed image, real Cognito, real HTTP handlers, RDS and CloudWatch, with
+  upstream 429/503 injected only in that task. The deployed browser replayed
+  those exact HTTP responses and then retried against the public API. Both
+  friendly errors and both real retries passed. See isolated/README.txt.
 - deployment-readback.json and task-readback.json identify the deployed stack,
   task/image and configuration (ARNs only, no secret values).
 - deploy-diff.txt, deploy.txt, health.json record the rollout.

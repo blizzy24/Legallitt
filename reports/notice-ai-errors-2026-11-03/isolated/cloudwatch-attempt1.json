@@ -1,0 +1,322 @@
+[
+    {
+        "timestamp": 1793707789122,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[NestFactory] \u001b[39m\u001b[32mStarting Nest application...\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789213,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[InstanceLoader] \u001b[39m\u001b[32mAiModule dependencies initialized\u001b[39m\u001b[38;5;3m +92ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789213,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[InstanceLoader] \u001b[39m\u001b[32mCourierModule dependencies initialized\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789214,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[InstanceLoader] \u001b[39m\u001b[32mDatabaseModule dependencies initialized\u001b[39m\u001b[38;5;3m +1ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789214,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[InstanceLoader] \u001b[39m\u001b[32mPaymentsModule dependencies initialized\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789214,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[InstanceLoader] \u001b[39m\u001b[32mNotificationsModule dependencies initialized\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789215,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[InstanceLoader] \u001b[39m\u001b[32mAdminUiModule dependencies initialized\u001b[39m\u001b[38;5;3m +1ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789215,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[InstanceLoader] \u001b[39m\u001b[32mPhoneAuthModule dependencies initialized\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789216,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[InstanceLoader] \u001b[39m\u001b[32mDemoModule dependencies initialized\u001b[39m\u001b[38;5;3m +1ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789217,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[InstanceLoader] \u001b[39m\u001b[32mAppModule dependencies initialized\u001b[39m\u001b[38;5;3m +1ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789220,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RoutesResolver] \u001b[39m\u001b[32mNotificationsController {/api/v1/notifications}:\u001b[39m\u001b[38;5;3m +2ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789221,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/notifications, GET} route\u001b[39m\u001b[38;5;3m +2ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789222,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/notifications/read-all, POST} route\u001b[39m\u001b[38;5;3m +1ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789223,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/notifications/:id/read, POST} route\u001b[39m\u001b[38;5;3m +1ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789223,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RoutesResolver] \u001b[39m\u001b[32mNoticeIntakeAiController {/api/v1/cases}:\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789223,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/cases/:id/subject, POST} route\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789223,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/cases/:id/demand-options, POST} route\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789224,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RoutesResolver] \u001b[39m\u001b[32mAdminAdvocatesController {/api/v1/admin/advocates}:\u001b[39m\u001b[38;5;3m +1ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789224,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/admin/advocates, GET} route\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789224,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RoutesResolver] \u001b[39m\u001b[32mAdminCasesController {/api/v1/admin/cases}:\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789224,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/admin/cases/documents/:documentId/preview, GET} route\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789225,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/admin/cases/:id, GET} route\u001b[39m\u001b[38;5;3m +1ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789225,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/admin/cases, GET} route\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789225,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RoutesResolver] \u001b[39m\u001b[32mNoticeMessagesController {/api/v1}:\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789226,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/cases/:id/thread, GET} route\u001b[39m\u001b[38;5;3m +1ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789226,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/threads/:id/messages, GET} route\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789226,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/threads/:id/messages, POST} route\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789226,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/threads/:id/read, POST} route\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789226,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RoutesResolver] \u001b[39m\u001b[32mPaymentsController {/api/v1/payments}:\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789226,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/payments/intents, POST} route\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789227,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RoutesResolver] \u001b[39m\u001b[32mHealthController {/health}:\u001b[39m\u001b[38;5;3m +1ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789227,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/health, GET} route\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789227,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RoutesResolver] \u001b[39m\u001b[32mAuthController {/api/v1/auth}:\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789227,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/auth/register, POST} route\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789227,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/auth/confirm, POST} route\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789228,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/auth/resend, POST} route\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789228,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/auth/login, POST} route\u001b[39m\u001b[38;5;3m +1ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789228,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/auth/refresh, POST} route\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789228,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/auth/otp/request, POST} route\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789228,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/auth/otp/verify, POST} route\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789228,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RoutesResolver] \u001b[39m\u001b[32mMeController {/api/v1/me}:\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789228,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/me, GET} route\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789229,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/me, PATCH} route\u001b[39m\u001b[38;5;3m +1ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789229,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RoutesResolver] \u001b[39m\u001b[32mCaseController {/api/v1/cases}:\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789229,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/cases, POST} route\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789230,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/cases, GET} route\u001b[39m\u001b[38;5;3m +1ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789230,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/cases/:id, GET} route\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789230,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/cases/:id, PATCH} route\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789230,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/cases/:id/submit, POST} route\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789230,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/cases/:id/cancel, POST} route\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789230,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/cases/:id/events, GET} route\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789231,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RoutesResolver] \u001b[39m\u001b[32mNoticeController {/api/v1}:\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789231,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/advocate/requests, GET} route\u001b[39m\u001b[38;5;3m +1ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789231,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/cases/:id/accept, POST} route\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789231,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/cases/:id/start, POST} route\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789231,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/cases/:id/decline, POST} route\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789231,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/cases/:id/drafts, POST} route\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789232,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/cases/:id/drafts, GET} route\u001b[39m\u001b[38;5;3m +1ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789232,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/cases/:id/drafts/:draftId/pdf, POST} route\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789232,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/cases/:id/drafts/:draftId/send, POST} route\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789232,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/cases/:id/drafts/:draftId/approve, POST} route\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789232,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/cases/:id/drafts/:draftId/request-changes, POST} route\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789232,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/admin/cases/:id/assign, POST} route\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789233,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/cases/:id/shipment/received, POST} route\u001b[39m\u001b[38;5;3m +1ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789233,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/cases/:id/shipment, POST} route\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789233,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/cases/:id/shipment/book, POST} route\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789233,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/cases/:id/dispatch, POST} route\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789233,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/admin/cases/:id/shipment/status, POST} route\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789234,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/admin/cases/:id/deliver, POST} route\u001b[39m\u001b[38;5;3m +1ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789234,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/cases/:id/delivered, POST} route\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789234,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RoutesResolver] \u001b[39m\u001b[32mServicesController {/api/v1/services}:\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789234,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/services, GET} route\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789234,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/services/:code, GET} route\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789234,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RoutesResolver] \u001b[39m\u001b[32mDocumentController {/api/v1/documents}:\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789234,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/documents/presign, POST} route\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789235,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/documents/:id/complete, POST} route\u001b[39m\u001b[38;5;3m +1ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789235,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/documents/:id/url, GET} route\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789235,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[RouterExplorer] \u001b[39m\u001b[32mMapped {/api/v1/documents/:id, DELETE} route\u001b[39m\u001b[38;5;3m +0ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707789237,
+        "message": "\u001b[32m[Nest] 1  - \u001b[39m11/03/2026, 12:09:49 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[NestApplication] \u001b[39m\u001b[32mNest application successfully started\u001b[39m\u001b[38;5;3m +2ms\u001b[39m"
+    },
+    {
+        "timestamp": 1793707792022,
+        "message": "NOTICE_AI_FAILURE_CHECK_FAILED TypeError r.ok is not a function"
+    }
+]

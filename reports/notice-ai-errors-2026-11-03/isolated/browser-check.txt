@@ -1,0 +1,16 @@
+Reached /home
+Reached /step2
+Reached /step4
+{
+  "reference": "LN-2026-0012",
+  "messages": {
+    "subject": "Couldn’t generate the subject just now. Please try again.",
+    "demand-options": "Couldn’t generate suggestions just now. Try again, or type your own."
+  },
+  "eventCodes": [
+    "RESOURCE_EXHAUSTED",
+    "UNAVAILABLE"
+  ],
+  "retries": "passed",
+  "errors": []
+}

@@ -1,0 +1,39 @@
+{
+  "cluster": "legalitt-dev-cluster",
+  "taskDefinition": "arn:aws:ecs:ap-south-1:026379630400:task-definition/legalitt-dev-ops:2",
+  "launchType": "FARGATE",
+  "networkConfiguration": {
+    "awsvpcConfiguration": {
+      "subnets": [
+        "subnet-060f72908da2419ee",
+        "subnet-0ad9da8fd0e033afd"
+      ],
+      "securityGroups": [
+        "sg-09a3b6978c7950214"
+      ],
+      "assignPublicIp": "ENABLED"
+    }
+  },
+  "overrides": {
+    "containerOverrides": [
+      {
+        "name": "ops",
+        "command": [
+          "node",
+          "-e",
+          "// One-off dev ECS ops task, using the exact deployed image. Run via `node -e`\n// from /app/apps/api. Requires explicit approval to launch the verification task.\n// It changes no running service or credentials. Only a labelled synthetic draft\n// receives two failure audit events. The upstream transport alone is injected;\n// Cognito, HTTP guards, controllers, CloudWatch and the RDS audit are real.\nconst assert = require('node:assert/strict');\nprocess.env.AI_MODE = 'simulated';\nprocess.env.DEMO_PROGRESSION = 'off';\nprocess.env.ADMIN_UI_MODE = 'live';\nconst {NestFactory} = require('@nestjs/core');\nconst {AppModule} = require('./dist/src/app.module');\nconst {AI} = require('./dist/src/ai/ai.port');\nconst {GeminiAi} = require('./dist/src/ai/gemini-ai');\nconst {demoPassword} = require('./dist/src/phone-auth/demo-accounts');\nasync function main() {\n  assert.equal(process.env.ENVIRONMENT, 'dev');\n  assert.equal(process.env.VERIFY_NOTICE_AI_FAILURES, '1');\n  const id = process.env.VERIFY_CASE_ID;\n  assert.match(id, /^[0-9a-f-]{36}$/);\n  const app = await NestFactory.create(AppModule);\n  const ai = app.get(AI);\n  ai.generate = request => new GeminiAi({apiKey:'synthetic-verification-key', model:'gemini-3.5-flash-lite', environment:'dev', nodeEnv:'development'},\n    async () => Response.json({error:{status: request.task === 'subject' ? 'RESOURCE_EXHAUSTED' : 'UNAVAILABLE', message:'Controlled verification: upstream unavailable'}},\n      {status: request.task === 'subject' ? 429 : 503})).generate(request);\n  try {\n    await app.listen(0, '127.0.0.1');\n    const base = await app.getUrl();\n    const login = await fetch(base + '/api/v1/auth/login', {method:'POST', headers:{'Content-Type':'application/json'},\n      body:JSON.stringify({email:'demo-client@legalitt.invalid',password:await demoPassword()})});\n    assert.equal(login.status, 201);\n    const session = await login.json(); assert.equal(session.user.role, 'client');\n    const headers = {'Content-Type':'application/json', Authorization:'Bearer ' + session.tokens.idToken};\n    const read = async path => {const r = await fetch(base + path, {headers});assert.ok(r.ok());return r.json();};\n    const record = await read('/api/v1/cases/' + id);\n    assert.equal(record.status, 'draft');assert.equal(record.client_id, session.user.id);\n    assert.match(record.subject_matter, /^Synthetic testing case only\\./);\n    const results = [];\n    for (const endpoint of ['subject', 'demand-options']) {\n      const r = await fetch(base + '/api/v1/cases/' + id + '/' + endpoint, {method:'POST',headers,body:'{}'});\n      const response = await r.json();assert.equal(r.status, 502);\n      assert.match(response.message, /^Couldn\u2019t generate/);\n      assert.doesNotMatch(response.message, /RESOURCE_EXHAUSTED|UNAVAILABLE|Gemini/);\n      results.push({endpoint,status:r.status,response});\n    }\n    const after = await read('/api/v1/cases/' + id);\n    assert.equal(after.status, record.status);assert.equal(after.subject_line, record.subject_line);\n    assert.deepEqual(after.legal_demand, record.legal_demand);\n    const events = (await read('/api/v1/cases/' + id + '/events')).items.filter(e=>e.type.endsWith('_generation_failed'));\n    assert.ok(events.some(e=>e.payload.code==='RESOURCE_EXHAUSTED'));\n    assert.ok(events.some(e=>e.payload.code==='UNAVAILABLE'));\n    console.log('NOTICE_AI_FAILURE_CHECK ' + JSON.stringify({id,reference:record.reference,\n      method:'Isolated ECS task, deployed image, injected upstream 429/503, real Cognito/HTTP/RDS/CloudWatch; main API unmodified',results,events}));\n  } finally {await app.close();}\n}\nmain().catch(e=>{console.error('NOTICE_AI_FAILURE_CHECK_FAILED', e.name, e.message);process.exitCode=1;});\n"
+        ],
+        "environment": [
+          {
+            "name": "VERIFY_NOTICE_AI_FAILURES",
+            "value": "1"
+          },
+          {
+            "name": "VERIFY_CASE_ID",
+            "value": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce"
+          }
+        ]
+      }
+    ]
+  }
+}

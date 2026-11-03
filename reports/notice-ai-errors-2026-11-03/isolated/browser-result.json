@@ -1,0 +1,54 @@
+{
+  "reference": "LN-2026-0012",
+  "id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+  "method": "Deployed site replays exact isolated-task HTTP responses; upstream faults injected only in that task; live Cognito/RDS/CloudWatch and normal public-API retries",
+  "messages": {
+    "subject": "Couldn’t generate the subject just now. Please try again.",
+    "demand-options": "Couldn’t generate suggestions just now. Try again, or type your own."
+  },
+  "replayed": [
+    "subject",
+    "demand-options"
+  ],
+  "subjectPreserved": true,
+  "customDemandSaved": true,
+  "retries": "Both succeeded against the public Gemini API integration",
+  "reached": "/legal-notice/step4",
+  "events": [
+    {
+      "source": "real",
+      "id": "77",
+      "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+      "type": "subject_generation_failed",
+      "actor_id": "aadf5486-cb3e-4379-b7aa-6def2f688d84",
+      "actor_role": "client",
+      "from_status": null,
+      "to_status": null,
+      "payload": {
+        "code": "RESOURCE_EXHAUSTED",
+        "task": "subject",
+        "model": "gemini-3.5-flash-lite",
+        "provider": "Gemini"
+      },
+      "created_at": "2026-11-03T12:10:57.734Z"
+    },
+    {
+      "source": "real",
+      "id": "78",
+      "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+      "type": "demand_options_generation_failed",
+      "actor_id": "aadf5486-cb3e-4379-b7aa-6def2f688d84",
+      "actor_role": "client",
+      "from_status": null,
+      "to_status": null,
+      "payload": {
+        "code": "UNAVAILABLE",
+        "task": "demands",
+        "model": "gemini-3.5-flash-lite",
+        "provider": "Gemini"
+      },
+      "created_at": "2026-11-03T12:10:57.922Z"
+    }
+  ],
+  "errors": []
+}
