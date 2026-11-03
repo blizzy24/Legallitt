@@ -1,0 +1,73 @@
+Walk of LN-2026-0015 on the deployed site, 4 Nov 2026 (UTC times). Request bodies for /auth/* are redacted.
+
+23:22:34.196 ROUTE https://legalitt-5.vercel.app/login
+23:22:34.589   >> POST /auth/refresh [redacted]
+23:22:35.022    POST /auth/refresh 201
+23:22:35.145    GET /me 200
+23:22:43.261   >> POST /auth/login [redacted]
+23:22:43.676    POST /auth/login 201
+23:22:43.731 ROUTE https://legalitt-5.vercel.app/home
+23:22:59.095 ROUTE https://legalitt-5.vercel.app/cases
+23:22:59.204    GET /cases?limit=100 200
+23:23:51.092 ROUTE https://legalitt-5.vercel.app/legal-notice/tracking?caseId=a694ed94-2b6c-43ab-9eda-369be9163221
+23:23:51.183    GET /services/legal_notice 200
+23:23:51.405    GET /cases/a694ed94-2b6c-43ab-9eda-369be9163221 200
+23:24:03.734   >> POST /cases/a694ed94-2b6c-43ab-9eda-369be9163221/drafts/13c79ba3-57bc-464a-bdec-44a91f387d65/approve {}
+23:24:12.200    POST /cases/a694ed94-2b6c-43ab-9eda-369be9163221/drafts/13c79ba3-57bc-464a-bdec-44a91f387d65/approve 201
+23:24:12.386    GET /cases/a694ed94-2b6c-43ab-9eda-369be9163221 200
+23:24:49.193 ROUTE https://legalitt-5.vercel.app/login
+23:24:58.555   >> POST /auth/login [redacted]
+23:24:59.126    POST /auth/login 201
+23:24:59.192 ROUTE https://legalitt-5.vercel.app/dashboard
+23:24:59.250    GET /cases?limit=100 200
+23:25:03.803 ROUTE https://legalitt-5.vercel.app/matters
+23:25:15.493 ROUTE https://legalitt-5.vercel.app/advocate/notice/a694ed94-2b6c-43ab-9eda-369be9163221/final?caseId=a694ed94-2b6c-43ab-9eda-369be9163221
+23:25:15.552    GET /services/courier 200
+23:25:15.684    GET /cases/a694ed94-2b6c-43ab-9eda-369be9163221 200
+23:25:25.693 ROUTE https://legalitt-5.vercel.app/advocate/notice/a694ed94-2b6c-43ab-9eda-369be9163221/dispatch?caseId=a694ed94-2b6c-43ab-9eda-369be9163221
+23:25:36.008 ROUTE https://legalitt-5.vercel.app/advocate/notice/a694ed94-2b6c-43ab-9eda-369be9163221/send?caseId=a694ed94-2b6c-43ab-9eda-369be9163221
+23:25:46.394 ROUTE https://legalitt-5.vercel.app/courier/self/details?noticeOutbound=1&caseId=a694ed94-2b6c-43ab-9eda-369be9163221
+23:26:02.514   >> POST /cases/a694ed94-2b6c-43ab-9eda-369be9163221/shipment {"carrier":"TEST ONLY - MANUAL COURIER","waybill":"TEST-LN-2026-0015","courier_office":"TEST ONLY office, Mumbai"}
+23:26:02.691    POST /cases/a694ed94-2b6c-43ab-9eda-369be9163221/shipment 201
+23:26:13.595    GET /cases/a694ed94-2b6c-43ab-9eda-369be9163221 200
+23:26:13.619   >> POST /cases/a694ed94-2b6c-43ab-9eda-369be9163221/shipment {"dispatch_date":"2026-11-04"}
+23:26:13.712    POST /cases/a694ed94-2b6c-43ab-9eda-369be9163221/shipment 201
+23:26:15.897    GET /cases/a694ed94-2b6c-43ab-9eda-369be9163221 200
+23:26:15.920   >> POST /cases/a694ed94-2b6c-43ab-9eda-369be9163221/shipment/book {}
+23:26:15.996    POST /cases/a694ed94-2b6c-43ab-9eda-369be9163221/shipment/book 201
+23:26:16.093 ROUTE https://legalitt-5.vercel.app/advocate/notice/a694ed94-2b6c-43ab-9eda-369be9163221/dispatch?caseId=a694ed94-2b6c-43ab-9eda-369be9163221
+23:26:30.221   >> POST /cases/a694ed94-2b6c-43ab-9eda-369be9163221/dispatch {}
+23:26:30.481    POST /cases/a694ed94-2b6c-43ab-9eda-369be9163221/dispatch 201
+23:26:30.560    GET /cases/a694ed94-2b6c-43ab-9eda-369be9163221 200
+23:26:41.083    GET /cases/a694ed94-2b6c-43ab-9eda-369be9163221 200
+23:26:46.102    GET /cases/a694ed94-2b6c-43ab-9eda-369be9163221 200
+23:26:51.179    GET /cases/a694ed94-2b6c-43ab-9eda-369be9163221 200
+23:26:56.090    GET /cases/a694ed94-2b6c-43ab-9eda-369be9163221 200
+23:27:12.185 ROUTE https://legalitt-admin-panel.vercel.app/
+23:27:12.683 ROUTE https://legalitt-admin-panel.vercel.app/sign-in
+23:27:16.016   >> POST /auth/login [redacted]
+23:27:16.415    POST /auth/login 201
+23:27:16.484 ROUTE https://legalitt-admin-panel.vercel.app/legal-notices
+23:27:16.591    GET /admin/cases?service=legal_notice&search=&limit=20 200
+23:27:20.183 ROUTE https://legalitt-admin-panel.vercel.app/legal-notices/a694ed94-2b6c-43ab-9eda-369be9163221
+23:27:20.276    GET /admin/cases/a694ed94-2b6c-43ab-9eda-369be9163221 200
+23:27:37.377   >> POST /documents/presign {"case_id":"a694ed94-2b6c-43ab-9eda-369be9163221","kind":"proof_of_delivery","filename":"test-pod-0015.pdf","mime":"application/pdf"}
+23:27:37.448    POST /documents/presign 201
+23:27:37.636   >> POST /documents/0d3f9c1b-7ec2-4004-932c-855b73670f98/complete {}
+23:27:38.777    POST /documents/0d3f9c1b-7ec2-4004-932c-855b73670f98/complete 201
+23:27:38.778   >> POST /documents/0d3f9c1b-7ec2-4004-932c-855b73670f98/complete {}
+23:27:38.816    POST /documents/0d3f9c1b-7ec2-4004-932c-855b73670f98/complete 201
+23:27:38.862   >> POST /admin/cases/a694ed94-2b6c-43ab-9eda-369be9163221/deliver {"pod_document_id":"0d3f9c1b-7ec2-4004-932c-855b73670f98","received_by":"TEST ONLY receiver","delivered_at":"2026-11-03T23:28:00.000Z"}
+23:27:38.981    POST /admin/cases/a694ed94-2b6c-43ab-9eda-369be9163221/deliver 201
+23:27:39.298    GET /admin/cases/a694ed94-2b6c-43ab-9eda-369be9163221 200
+23:27:58.629 ROUTE https://legalitt-5.vercel.app/login
+23:27:58.985    GET /me 200
+23:28:02.257 ROUTE https://legalitt-5.vercel.app/login
+23:28:11.267   >> POST /auth/login [redacted]
+23:28:11.620    POST /auth/login 201
+23:28:11.661 ROUTE https://legalitt-5.vercel.app/home
+23:28:16.461 ROUTE https://legalitt-5.vercel.app/cases
+23:28:16.546    GET /cases?limit=100 200
+23:28:30.457 ROUTE https://legalitt-5.vercel.app/legal-notice/tracking?caseId=a694ed94-2b6c-43ab-9eda-369be9163221
+23:28:30.500    GET /cases/a694ed94-2b6c-43ab-9eda-369be9163221 200
+23:28:30.531    GET /services/legal_notice 200
