@@ -40,6 +40,8 @@ for (const [stage, env] of [
       assert.deepEqual(bucket.CorsConfiguration.CorsRules[0].AllowedOrigins, [
         "http://localhost:8081",
         "http://127.0.0.1:5173",
+        "https://legalitt-5.vercel.app",
+        "https://legalitt-admin-panel.vercel.app",
       ]);
     else assert.equal(bucket.CorsConfiguration, undefined);
     assert.ok(

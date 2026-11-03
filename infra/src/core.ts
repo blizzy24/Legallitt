@@ -104,7 +104,12 @@ export class CoreStack extends Stack {
             CorsConfiguration: {
               CorsRules: [
                 {
-                  AllowedOrigins: ["http://localhost:8081", "http://127.0.0.1:5173"],
+                  AllowedOrigins: [
+                    "http://localhost:8081",
+                    "http://127.0.0.1:5173",
+                    "https://legalitt-5.vercel.app",
+                    "https://legalitt-admin-panel.vercel.app",
+                  ],
                   AllowedMethods: ["POST", "GET", "HEAD"],
                   AllowedHeaders: ["Content-Type"],
                   ExposedHeaders: ["ETag"],
