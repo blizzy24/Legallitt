@@ -25,6 +25,7 @@ import {
   NoticeDeclineSchema,
   IN_FLIGHT_SHIPMENT_STATUSES,
   DeliveryConfirmationSchema,
+  type LegalNoticeIntake,
 } from "@legalitt/shared";
 import { z } from "zod";
 import { parse } from "../auth/auth.service";
@@ -385,8 +386,13 @@ export class CaseStateMachine {
       const advocate = await tx.user.findFirst({
         where: { id: advocate_id, role: "advocate", status: "active",
           advocate_profiles_user_id_relations: {is: {verification: "approved"}} },
+        select: { id: true, advocate_profiles_user_id_relations: { select: { city: true } } },
       });
       if (!advocate) throw new BadRequestException("Choose an active, approved advocate");
+      // The notice prints the advocate's city as its Place. Without one the
+      // advocate could never generate the draft, so the work is refused here.
+      if (!advocate.advocate_profiles_user_id_relations?.city?.trim())
+        throw new BadRequestException("This advocate has no city on their profile. Add one before assigning work.");
       if (record.status === "paid" || record.status === "advocate_declined")
         record = await this.advance(tx, actor, record, CaseStatus.assigning);
       if (record.status !== "assigning")
@@ -643,23 +649,72 @@ export function appendCaseEvent(tx: Prisma.TransactionClient, data: Prisma.CaseE
   return tx.caseEvent.create({data});
 }
 
-// Explicit dev-seed entry point; never called by a request handler. Keep all
-// case/event writes in this owner, including authorised development fixtures.
-export async function seedDevelopmentNotice(db: PrismaClient, input: {
-  seedKey: string; clientId: string; advocateId?: string; status: 'in_progress' | 'assigning'; sparse?: boolean; pricingId: string;
-}) {
+// Development seed (seed-demo.ts) only; never called by a request handler. New
+// seeded cases are built through the real create/intake/submit/payment/assign
+// path; these two helpers are the only seed-specific writes, kept in this owner.
+
+/** Marks a case created through the real path as development seed data. */
+export async function tagDevelopmentSeed(db: PrismaClient, caseId: string, seedKey: string) {
   requireDemoMode();
   return db.$transaction(async tx => {
+    await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${'admin-seed:' + seedKey}))::text`;
+    if (await tx.caseEvent.findFirst({where: {type: 'development_seed', payload: {path: ['seed_key'], equals: seedKey}}})) return;
+    const record = await tx.case.findUniqueOrThrow({where: {id: caseId}, select: {status: true}});
+    await appendCaseEvent(tx, {case_id: caseId, type: 'development_seed', source: 'simulated',
+      from_status: record.status, to_status: record.status, payload: {actor: 'system', seed_key: seedKey}});
+  });
+}
+
+export type DevelopmentSeedIntake = {
+  tier: 'ordinary' | 'urgent';
+  details: LegalNoticeIntake;
+  subject_matter: string;
+  subject_line: string;
+  legal_demand: {selected: string[]; custom: string};
+  sender: {age?: number | null; father_name?: string | null};
+};
+
+/** One-time completion of seeded cases written past submit before the seed used
+ * the real path. Validated by the same schemas submit applies; status unchanged;
+ * recorded as development_seed_repaired. Cases that went through submit are left alone. */
+export async function repairDevelopmentSeed(db: PrismaClient, input: {seedKey: string; intake: DevelopmentSeedIntake; pricingIdForTier: (tier: string) => Promise<string>}) {
+  requireDemoMode();
+  const details = parse(LegalNoticeSubmissionSchema, input.intake.details);
+  parse(NoticeReadySchema, {subject_matter: input.intake.subject_matter, subject_line: input.intake.subject_line, legal_demand: input.intake.legal_demand});
+  return db.$transaction(async tx => {
     await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${'admin-seed:' + input.seedKey}))::text`;
-    if (await tx.caseEvent.findFirst({where: {type: 'development_seed', payload: {path: ['seed_key'], equals: input.seedKey}}})) return;
-    const [seq] = await tx.$queryRaw<{value: bigint}[]>`SELECT nextval('legal_notice_reference_seq') AS value`;
-    const record = await tx.case.create({data: {
-      reference: `LN-${new Date().getUTCFullYear()}-${seq.value.toString().padStart(4, '0')}`,
-      service_code: 'legal_notice', client_id: input.clientId, advocate_id: input.advocateId, status: input.status,
-      ...(input.sparse ? {} : {tier: 'ordinary', pricing_id: input.pricingId, matter_type: 'tenant_issue',
-        details: {client: {fullName: 'Demo client'}, noticee: {fullName: 'Demo noticee', email: 'demo-noticee@legalitt.invalid'}, issueType: 'tenant-issue'}}),
+    const tag = await tx.caseEvent.findFirst({where: {type: 'development_seed', payload: {path: ['seed_key'], equals: input.seedKey}}});
+    if (!tag) return 'absent' as const;
+    const caseId = tag.case_id;
+    if (await tx.caseEvent.findFirst({where: {case_id: caseId, type: 'development_seed_repaired'}})) return 'already' as const;
+    if (await tx.caseEvent.findFirst({where: {case_id: caseId, to_status: CaseStatus.submitted}})) return 'valid' as const;
+    const record = await tx.case.findUniqueOrThrow({where: {id: caseId}});
+    // A case that already has a tier and pricing keeps them: only absent facts are supplied.
+    const tier = record.tier ?? input.intake.tier;
+    const pricingId = record.pricing_id ?? await input.pricingIdForTier(tier);
+    if (!await tx.servicePricing.findFirst({where: {id: pricingId, service_code: 'legal_notice', tier}}))
+      throw new ConflictException('Seed pricing does not match the case tier');
+    const previous = parse(LegalNoticeIntakeSchema, record.details);
+    const filled = [
+      !record.subject_line && 'subject',
+      !previous.client?.fullName?.trim() && 'sender_name', !previous.client?.address?.trim() && 'sender_address',
+      !previous.noticee?.fullName?.trim() && 'recipient_name', !previous.noticee?.address?.trim() && 'recipient_address',
+      !record.pricing_id && 'service_fee',
+    ].filter(Boolean) as string[];
+    const matterType = noticeMatterType(details.issueType);
+    await tx.case.update({where: {id: caseId}, data: {
+      details, matter_type: matterType, tier, pricing_id: pricingId,
+      subject_matter: input.intake.subject_matter, subject_line: input.intake.subject_line,
+      legal_demand: input.intake.legal_demand, updated_at: new Date(),
     }});
-    await appendCaseEvent(tx, {case_id: record.id, type: 'development_seed', source: 'simulated', to_status: input.status,
-      payload: {actor: 'system', seed_key: input.seedKey}});
+    const party = {name: details.client.fullName, details: details.client,
+      age: input.intake.sender.age ?? null, father_name: input.intake.sender.father_name ?? null};
+    const sender = await tx.caseParty.findFirst({where: {case_id: caseId, kind: 'sender'}});
+    if (sender) await tx.caseParty.update({where: {id: sender.id}, data: party});
+    else await tx.caseParty.create({data: {case_id: caseId, kind: 'sender', ...party}});
+    await appendCaseEvent(tx, {case_id: caseId, type: 'development_seed_repaired', source: 'simulated',
+      from_status: record.status, to_status: record.status,
+      payload: {actor: 'system', seed_key: input.seedKey, filled, replaced_placeholders: true}});
+    return 'repaired' as const;
   });
 }

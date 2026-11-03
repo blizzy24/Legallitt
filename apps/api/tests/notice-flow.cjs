@@ -62,7 +62,7 @@ test(
             full_name: "Test identity",
           },
         });
-      await db.advocateProfile.create({data:{user_id:advocate.id,verification:"approved"}});
+      await db.advocateProfile.create({data:{user_id:advocate.id,verification:"approved",city:"Indore"}});
       const c = await state.create(client, {
         service_code: "legal_notice",
         tier: "ordinary",

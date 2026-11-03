@@ -36,6 +36,13 @@ test('picker eligibility/load, real assignment event, and stale timer cannot ove
   await db.advocateProfile.update({where:{user_id:approved.id},data:{verification:'rejected'}});
   await assert.rejects(state.assign(admin,id,{advocate_id:approved.id}),{status:400});
   await db.advocateProfile.update({where:{user_id:approved.id},data:{verification:'approved'}});
+  // The notice prints the advocate's city as its Place: no city, no work, and not in the picker.
+  for(const city of [null,'   ']){
+   await db.advocateProfile.update({where:{user_id:approved.id},data:{city}});
+   await assert.rejects(state.assign(admin,id,{advocate_id:approved.id}),{status:400,message:/no city/});
+   assert.ok(!(await repo.list(admin)).items.some(a=>a.id===approved.id));
+  }
+  await db.advocateProfile.update({where:{user_id:approved.id},data:{city:'Indore'}});
   const assigned=await state.assign(admin,id,{advocate_id:approved.id});
   assert.equal(assigned.status,'assigned');assert.equal(assigned.advocate_id,approved.id);
   const event=await db.caseEvent.findFirstOrThrow({where:{case_id:id,to_status:'assigned'}});

@@ -1,4 +1,3 @@
-import { seedDevelopmentNotice } from '../src/cases/case-state-machine';
 import {
   AdminCreateUserCommand,
   AdminGetUserCommand,
@@ -13,6 +12,15 @@ import {
 import { z } from "zod";
 import { demoAccounts, demoPassword, requireDemoMode } from "../src/auth/demo";
 import { createDatabaseClient } from "../src/database";
+import { CaseStatus } from "@legalitt/shared";
+import type { PrismaClient } from "../src/generated/prisma/client";
+import { CaseStateMachine, repairDevelopmentSeed, tagDevelopmentSeed } from "../src/cases/case-state-machine";
+import type { CaseActor } from "../src/cases/case-access";
+import { PaymentsService } from "../src/payments/payments.service";
+import { SimulatedPayments } from "../src/payments/simulated-payments";
+import { InAppNotifications } from "../src/notifications/in-app-notifications";
+import { SimulatedNotifications } from "../src/notifications/simulated-notifications";
+import { SEED_NOTICES } from "./seed-notices";
 
 // Design 437's advocate card, value for value. bar_council_state is not drawn
 // anywhere, so it is not invented.
@@ -135,24 +143,61 @@ async function main() {
         await db.advocateProfile.upsert({where: {user_id: row.id}, create: {user_id: row.id, ...profile}, update: profile});
       }
     }
-    const client = await db.user.findUniqueOrThrow({where: {email: demoAccounts.client.email}});
-    const pricing = await db.servicePricing.findFirstOrThrow({where: {service_code: 'legal_notice', tier: 'ordinary', effective_to: null}, orderBy: {effective_from: 'desc'}});
-    const samples: {key: string; advocate_id?: string; status: 'in_progress' | 'assigning'; sparse?: boolean}[] = [];
-    for (const extra of extraAdvocates) {
-      const advocate = await db.user.findUniqueOrThrow({where: {email: extra.email}});
-      for (let i = 0; i < extra.load; i++) samples.push({key: extra.email + ':' + i, advocate_id: advocate.id, status: 'in_progress'});
-    }
-    samples.push({key: 'waiting', status: 'assigning'}, {key: 'sparse', status: 'assigning', sparse: true});
-    for (const sample of samples) {
-      await seedDevelopmentNotice(db, {seedKey: sample.key, clientId: client.id, advocateId: sample.advocate_id,
-        status: sample.status, sparse: sample.sparse, pricingId: pricing.id});
-    }
+    await seedNotices(db);
     console.log("Seeded six dev accounts and idempotent demo workload cases; no mail or SMS sent.");
   } finally {
     secrets.destroy();
     cognito.destroy();
     await db.$disconnect();
   }
+}
+// Every seeded case goes through the real path a client's case takes: create,
+// intake, subject, submit (with its validation and pricing), simulated payment,
+// then the admin's assignment and the advocate's acceptance. A rerun resumes a
+// case from where it stands. Cases seeded before this path existed are completed
+// in place once (repairDevelopmentSeed) instead of being recreated.
+async function seedNotices(db: PrismaClient) {
+  const prisma = { getClient: async () => db } as never;
+  const notifications = new InAppNotifications(new SimulatedNotifications());
+  const state = new CaseStateMachine(prisma, notifications);
+  const payments = new PaymentsService(prisma, state, new SimulatedPayments(), notifications);
+  const actor = async (email: string, role: CaseActor["role"]): Promise<CaseActor> =>
+    ({ id: (await db.user.findUniqueOrThrow({ where: { email } })).id, role, source: "simulated" });
+  const client = await actor(demoAccounts.client.email, "client");
+  const admin = await actor("demo-admin@legalitt.invalid", "admin");
+  const pricingIdForTier = async (tier: string) => (await db.servicePricing.findFirstOrThrow({
+    where: { service_code: "legal_notice", tier, variant: null, effective_to: null }, orderBy: { effective_from: "desc" } })).id;
+  const summary: string[] = [];
+  for (const seed of SEED_NOTICES) {
+    const tag = await db.caseEvent.findFirst({ where: { type: "development_seed", payload: { path: ["seed_key"], equals: seed.key } } });
+    const advocate = seed.advocateEmail ? await actor(seed.advocateEmail, "advocate") : undefined;
+    let id = tag?.case_id;
+    if (id) {
+      const repaired = await repairDevelopmentSeed(db, { seedKey: seed.key, intake: seed.intake, pricingIdForTier });
+      if (repaired === "repaired" || repaired === "already") { summary.push(`${seed.key}: ${repaired}`); continue; }
+    } else {
+      id = (await state.create(client, { service_code: "legal_notice", tier: seed.intake.tier })).id;
+      await tagDevelopmentSeed(db, id, seed.key);
+    }
+    const { intake } = seed;
+    const status = async () => (await db.case.findUniqueOrThrow({ where: { id }, select: { status: true } })).status;
+    if ((await status()) === CaseStatus.draft) {
+      const record = await state.updateDraft(client, id, { tier: intake.tier, details: intake.details,
+        subject_matter: intake.subject_matter, legal_demand: intake.legal_demand, sender: intake.sender });
+      await state.recordIntakeAi(client, id, { matter_type: record.matter_type!, subject_matter: intake.subject_matter },
+        { task: "subject", text: intake.subject_line, simulated: true });
+      await state.submitForPayment(client, id);
+    }
+    if ((await status()) === CaseStatus.payment_pending)
+      await payments.intent(client, { case_id: id, purpose: "service_fee" }, `development-seed:${seed.key}:service_fee`);
+    if (advocate) {
+      if ((await status()) === CaseStatus.paid) await state.assign(admin, id, { advocate_id: advocate.id });
+      if ((await status()) === CaseStatus.assigned) await state.transition(advocate, id, CaseStatus.advocate_accepted);
+      if ((await status()) === CaseStatus.advocate_accepted) await state.startDrafting(advocate, id);
+    }
+    summary.push(`${seed.key}: ${await status()}`);
+  }
+  console.log("Seed notices: " + summary.join("; "));
 }
 main().catch(() => {
   console.error("Demo seed failed; check dev configuration and permissions.");

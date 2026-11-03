@@ -21,7 +21,8 @@ export class AdminAdvocatesRepository {
         _count: {select: {cases_advocate_id_relations: {where: {status: {in: workload}}}}}},
       orderBy: [{full_name: 'asc'}, {id: 'asc'}],
     });
-    const items = rows.map(row => ({id: row.id, name: row.full_name,
+    // Only advocates who can be assigned: the notice needs the advocate's city as its Place.
+    const items = rows.filter(row => row.advocate_profiles_user_id_relations?.city?.trim()).map(row => ({id: row.id, name: row.full_name,
       practice_areas: row.advocate_profiles_user_id_relations!.practice_areas,
       city: row.advocate_profiles_user_id_relations!.city,
       open_cases: row._count.cases_advocate_id_relations}));

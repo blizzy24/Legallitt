@@ -31,24 +31,47 @@ test('admin detail: boundaries, sparse data, origins, payer, timeline and shipme
  }
 });
 
-test('development workload seed is guarded, idempotent and visibly simulated', {skip:!process.env.LEGALITT_TEST_DATABASE_URL}, async()=>{
- const {seedDevelopmentNotice}=require('../dist/src/cases/case-state-machine');
+test('development seed: tagged through the real path, legacy seeds completed once and validated', {skip:!process.env.LEGALITT_TEST_DATABASE_URL}, async()=>{
+ const {tagDevelopmentSeed,repairDevelopmentSeed}=require('../dist/src/cases/case-state-machine');
  const oldEnv=process.env.ENVIRONMENT,oldNode=process.env.NODE_ENV;
  const db=new PrismaClient({adapter:new PrismaPg({connectionString:process.env.LEGALITT_TEST_DATABASE_URL})});
- const clientId=randomUUID(),seedKey='test-'+randomUUID();
+ const clientId=randomUUID(),seedKey='test-'+randomUUID(),freshKey='test-'+randomUUID();
+ const pricing=await db.servicePricing.findFirstOrThrow({where:{service_code:'legal_notice',tier:'ordinary',variant:null,effective_to:null}});
+ const intake={tier:'ordinary',details:{client:{fullName:'Sunita Mehra',mobile:'9000000101',address:'B-14, Malviya Nagar, Jaipur'},noticee:{fullName:'Rajeev Mehra',mobile:'9000000102',email:'rajeev@example.com',address:'22, Vaishali Nagar, Jaipur'},issueType:'family-dispute'},
+  subject_matter:'Maintenance unpaid since June 2025.',subject_line:'Legal notice for non-payment of agreed maintenance',legal_demand:{selected:['Pay the outstanding maintenance.'],custom:''},sender:{age:41,father_name:'Ramesh Chandra Sharma'}};
+ const pricingIdForTier=async()=>pricing.id;
  try {
   process.env.ENVIRONMENT='prod';process.env.NODE_ENV='production';
-  await assert.rejects(seedDevelopmentNotice({},{}),{status:503});
+  await assert.rejects(tagDevelopmentSeed({},randomUUID(),seedKey),{status:503});
+  await assert.rejects(repairDevelopmentSeed({},{seedKey,intake,pricingIdForTier}),{status:503});
   process.env.ENVIRONMENT='dev';process.env.NODE_ENV='test';
   await db.user.create({data:{id:clientId,cognito_sub:randomUUID(),full_name:'Seed test',role:'client'}});
-  const input={seedKey,clientId,status:'assigning',sparse:true,pricingId:randomUUID()};
-  await seedDevelopmentNotice(db,input);await seedDevelopmentNotice(db,input);
-  const events=await db.caseEvent.findMany({where:{type:'development_seed',payload:{path:['seed_key'],equals:seedKey}}});
-  assert.equal(events.length,1);assert.equal(events[0].source,'simulated');assert.equal(events[0].actor_id,null);
-  assert.equal(await db.case.count({where:{client_id:clientId}}),1);
+  // A legacy seed: written straight to assigning with placeholder intake and no pricing.
+  const legacy=await db.case.create({data:{reference:'SEEDTEST-'+randomUUID(),service_code:'legal_notice',client_id:clientId,status:'assigning'}});
+  await db.caseEvent.create({data:{case_id:legacy.id,type:'development_seed',source:'simulated',to_status:'assigning',payload:{actor:'system',seed_key:seedKey}}});
+  assert.equal(await repairDevelopmentSeed(db,{seedKey:'absent-'+randomUUID(),intake,pricingIdForTier}),'absent');
+  // The submit schemas still apply: an intake missing a required field is refused.
+  await assert.rejects(repairDevelopmentSeed(db,{seedKey,intake:{...intake,subject_line:''},pricingIdForTier}));
+  await assert.rejects(repairDevelopmentSeed(db,{seedKey,intake:{...intake,details:{...intake.details,noticee:{...intake.details.noticee,address:''}}},pricingIdForTier}));
+  assert.equal(await repairDevelopmentSeed(db,{seedKey,intake,pricingIdForTier}),'repaired');
+  assert.equal(await repairDevelopmentSeed(db,{seedKey,intake,pricingIdForTier}),'already');
+  const after=await db.case.findUniqueOrThrow({where:{id:legacy.id}});
+  assert.equal(after.status,'assigning');assert.equal(after.pricing_id,pricing.id);assert.equal(after.subject_line,intake.subject_line);
+  assert.equal(after.matter_type,'family_dispute');assert.equal(after.details.noticee.address,intake.details.noticee.address);
+  const sender=await db.caseParty.findFirstOrThrow({where:{case_id:legacy.id,kind:'sender'}});
+  assert.equal(sender.age,41);assert.equal(sender.father_name,'Ramesh Chandra Sharma');
+  const repairs=await db.caseEvent.findMany({where:{case_id:legacy.id,type:'development_seed_repaired'}});
+  assert.equal(repairs.length,1);assert.equal(repairs[0].source,'simulated');assert.equal(repairs[0].to_status,'assigning');
+  assert.deepEqual(repairs[0].payload.filled.sort(),['recipient_address','recipient_name','sender_address','sender_name','service_fee','subject']);
+  // A case that went through submit is never rewritten.
+  const fresh=await db.case.create({data:{reference:'SEEDTEST-'+randomUUID(),service_code:'legal_notice',client_id:clientId,status:'draft'}});
+  await tagDevelopmentSeed(db,fresh.id,freshKey);await tagDevelopmentSeed(db,fresh.id,freshKey);
+  assert.equal(await db.caseEvent.count({where:{type:'development_seed',payload:{path:['seed_key'],equals:freshKey}}}),1);
+  await db.caseEvent.create({data:{case_id:fresh.id,type:'status_changed',from_status:'draft',to_status:'submitted'}});
+  assert.equal(await repairDevelopmentSeed(db,{seedKey:freshKey,intake,pricingIdForTier}),'valid');
  }finally{
   const ids=(await db.case.findMany({where:{client_id:clientId},select:{id:true}})).map(c=>c.id);
-  await db.caseEvent.deleteMany({where:{case_id:{in:ids}}});await db.case.deleteMany({where:{id:{in:ids}}});await db.user.deleteMany({where:{id:clientId}});await db.$disconnect();
+  await db.caseParty.deleteMany({where:{case_id:{in:ids}}});await db.caseEvent.deleteMany({where:{case_id:{in:ids}}});await db.case.deleteMany({where:{id:{in:ids}}});await db.user.deleteMany({where:{id:clientId}});await db.$disconnect();
   if(oldEnv===undefined)delete process.env.ENVIRONMENT;else process.env.ENVIRONMENT=oldEnv;
   if(oldNode===undefined)delete process.env.NODE_ENV;else process.env.NODE_ENV=oldNode;
  }
