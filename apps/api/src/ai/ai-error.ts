@@ -1,7 +1,7 @@
 /** Provider failures are explicit. Never attach requests, prompts or credentials
  * to an exception (they may reach application logs). */
 export class AiProviderError extends Error {
-  constructor(provider:string, model:string, task:string, code:string, detail:string, readonly requestId?:string) {
+  constructor(readonly provider:string, readonly model:string, readonly task:string, readonly code:string, detail:string, readonly requestId?:string) {
     super(`${provider} AI (${model}, task=${task}) ${code}: ${detail}`);
     this.name='AiProviderError';
   }

@@ -1,0 +1,48 @@
+{
+  "verification": "Local UI + real local HTTP handlers/database; upstream failures injected; existing simulator used only for successful retry",
+  "subjectMessage": "Couldn’t generate the subject just now. Please try again.",
+  "demandsMessage": "Couldn’t generate suggestions just now. Try again, or type your own.",
+  "recoveredTo": "/legal-notice/step4",
+  "customDemand": "Keep my own demand.",
+  "events": [
+    {
+      "source": "real",
+      "id": "4788",
+      "case_id": "533d9595-743e-4a06-b45f-3bf3c1b36184",
+      "type": "subject_generation_failed",
+      "actor_id": "71b1fdac-229d-40ca-8881-11107c160e24",
+      "actor_role": "client",
+      "from_status": null,
+      "to_status": null,
+      "payload": {
+        "code": "RESOURCE_EXHAUSTED",
+        "task": "subject",
+        "model": "gemini-3.5-flash-lite",
+        "provider": "Gemini"
+      },
+      "created_at": "2026-11-03T11:43:44.472Z"
+    },
+    {
+      "source": "real",
+      "id": "4790",
+      "case_id": "533d9595-743e-4a06-b45f-3bf3c1b36184",
+      "type": "demand_options_generation_failed",
+      "actor_id": "71b1fdac-229d-40ca-8881-11107c160e24",
+      "actor_role": "client",
+      "from_status": null,
+      "to_status": null,
+      "payload": {
+        "code": "UNAVAILABLE",
+        "task": "demands",
+        "model": "gemini-3.5-flash-lite",
+        "provider": "Gemini"
+      },
+      "created_at": "2026-11-03T11:43:45.961Z"
+    }
+  ],
+  "logs": [
+    "Notice subject generation failed (case=533d9595-743e-4a06-b45f-3bf3c1b36184, code=RESOURCE_EXHAUSTED): Gemini AI (gemini-3.5-flash-lite, task=subject) RESOURCE_EXHAUSTED: Quota exceeded",
+    "Notice demands generation failed (case=533d9595-743e-4a06-b45f-3bf3c1b36184, code=UNAVAILABLE): Gemini AI (gemini-3.5-flash-lite, task=demands) UNAVAILABLE: Provider unavailable"
+  ],
+  "errors": []
+}

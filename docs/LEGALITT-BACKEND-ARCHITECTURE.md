@@ -1761,6 +1761,26 @@ rejected if its source changed or the case is no longer draft. Errors stay inlin
 Saving precedes navigation. Existing route paths are retained to preserve links;
 the new step is `/legal-notice/demand`. Demo traversal follows the same new order.
 
+> **Approved — project owner, 3 November 2026:** AI failures use plain,
+> actionable client copy in both development and production. Provider codes stay
+> in server logs and the case-event audit, not in the intake's error message.
+
+| Operation | Instructed error copy |
+|---|---|
+| Subject generation (step 1 / design 26) | Couldn’t generate the subject just now. Please try again. |
+| Demand generation (step 4) | Couldn’t generate suggestions just now. Try again, or type your own. |
+
+These API-owned strings live in `apps/api/src/copy/instructed.ts`. The subject
+screen has no manual subject-line field, so it promises only retry. Existing
+Continue / Generate options behaviour and the custom-demand input are unchanged.
+Failed attempts write `subject_generation_failed` or
+`demand_options_generation_failed` with `source=real`, the client actor and a
+payload containing task, provider/model when known, the actual error code and
+provider request ID when available. Never store the prompt, credential or party
+details in these diagnostic payloads. Failure does not change case status or
+overwrite saved intake. If the audit write itself fails, log that failure while
+retaining the same plain client error.
+
 | Supplier | Supplies |
 |---|---|
 | Client | Notice type, subject matter, both parties' details, legal demand |

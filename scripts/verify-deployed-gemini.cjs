@@ -37,8 +37,9 @@ async function main() {
   page.on('dialog', dialog => { errors.push('Unexpected blocking dialog'); void dialog.dismiss(); });
   const responseFor = name => page.waitForResponse(r => r.url().endsWith('/' + name) && r.request().method() === 'POST', { timeout: 90000 });
   async function errorVisible(name) {
-    await page.waitForFunction(() => [...document.querySelectorAll('[role="alert"]')].some(e => e.textContent.includes('RESOURCE_EXHAUSTED')), { timeout: 45000 });
+    await page.waitForFunction(() => [...document.querySelectorAll('[role="alert"]')].some(e => e.textContent.includes('Couldn’t generate')), { timeout: 45000 });
     const message = await page.$eval('[role="alert"]', e => e.textContent);
+    assert.ok(!/Gemini|RESOURCE_EXHAUSTED|gemini-/.test(message));
     await page.screenshot({ path: path.join(out, name + '-rate-limit.png'), fullPage: true });
     return message;
   }
@@ -54,7 +55,9 @@ async function main() {
       if (request.url().startsWith(base + '/') && request.method() === 'POST' && failures.has(name)) {
         failures.delete(name); injected.push(name);
         void request.respond({ status: 502, contentType: 'application/json', headers: { 'Access-Control-Allow-Origin': client },
-          body: JSON.stringify({ statusCode: 502, error: 'Bad Gateway', message: `Gemini AI (gemini-3.5-flash-lite, task=${name === 'subject' ? 'subject' : 'demands'}) RESOURCE_EXHAUSTED: Quota exceeded. Please retry.` }) });
+          body: JSON.stringify({ statusCode: 502, error: 'Bad Gateway', message: name === 'subject'
+            ? 'Couldn’t generate the subject just now. Please try again.'
+            : 'Couldn’t generate suggestions just now. Try again, or type your own.' }) });
       } else void request.continue();
     });
     if (process.env.DEPLOYED_GEMINI_CASE_ID) {

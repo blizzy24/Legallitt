@@ -1,0 +1,116 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 2.68kB 0.0s done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/node:22-bookworm-slim
+#2 DONE 2.1s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 238B 0.0s done
+#3 DONE 0.0s
+
+#4 [build  1/13] FROM docker.io/library/node:22-bookworm-slim@sha256:4b150b48b4116e2a22f2c39cc27025fbf4f153e2078fd3b14d159fdb5c7279da
+#4 resolve docker.io/library/node:22-bookworm-slim@sha256:4b150b48b4116e2a22f2c39cc27025fbf4f153e2078fd3b14d159fdb5c7279da 0.0s done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 2.58MB 0.1s done
+#5 DONE 0.1s
+
+#6 [build  2/13] RUN apt-get update && apt-get install -y --no-install-recommends openssl ca-certificates && rm -rf /var/lib/apt/lists/*
+#6 CACHED
+
+#7 [build  6/13] COPY packages/shared/package.json packages/shared/
+#7 CACHED
+
+#8 [build  5/13] COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+#8 CACHED
+
+#9 [build  7/13] COPY apps/api/package.json apps/api/
+#9 CACHED
+
+#10 [build  9/13] COPY tsconfig.json ./
+#10 CACHED
+
+#11 [build  3/13] RUN corepack enable && corepack prepare pnpm@10.34.7 --activate
+#11 CACHED
+
+#12 [build  4/13] WORKDIR /repo
+#12 CACHED
+
+#13 [build  8/13] RUN pnpm install --frozen-lockfile --filter @legalitt/api... --config.only-built-dependencies=prisma --config.only-built-dependencies=@prisma/engines
+#13 CACHED
+
+#14 [build 10/13] COPY packages/shared packages/shared
+#14 CACHED
+
+#15 [build 11/13] COPY apps/api apps/api
+#15 DONE 0.2s
+
+#16 [stage-1 3/8] ADD https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem /etc/ssl/rds/global-bundle.pem
+#16 DONE 0.6s
+
+#17 [build 12/13] RUN pnpm --filter @legalitt/shared build && pnpm --filter @legalitt/api build
+#17 1.008
+#17 1.008 > @legalitt/shared@0.0.0 build /repo/packages/shared
+#17 1.008 > tsc
+#17 1.008
+#17 2.938
+#17 2.938 > @legalitt/api@0.0.0 build /repo/apps/api
+#17 2.938 > prisma generate && tsc
+#17 2.938
+#17 3.837 Loaded Prisma config from prisma.config.ts.
+#17 3.837
+#17 4.227 Prisma schema loaded from prisma/schema.prisma.
+#17 4.792
+#17 4.792 ✔ Generated Prisma Client (7.10.1) to ./src/generated/prisma in 434ms
+#17 4.792
+#17 DONE 10.3s
+
+#18 [build 13/13] RUN cd apps/api && pnpm exec prisma version >/dev/null
+#18 0.996 Loaded Prisma config from prisma.config.ts.
+#18 0.996
+#18 1.508 Prisma schema loaded from prisma/schema.prisma.
+#18 1.512 ┌─────────────────────────────────────────────────────────┐
+#18 1.512 │  Update available 7.10.1 -> 8.0.0-rc.29                 │
+#18 1.512 │                                                         │
+#18 1.512 │  This is a major update - please follow the guide at    │
+#18 1.512 │  https://pris.ly/d/major-version-upgrade                │
+#18 1.512 │                                                         │
+#18 1.512 │  Run the following to update                            │
+#18 1.512 │    npm i --save-dev prisma@latest                       │
+#18 1.512 │    npm i @prisma/client@latest                          │
+#18 1.512 └─────────────────────────────────────────────────────────┘
+#18 DONE 1.5s
+
+#19 [stage-1 3/8] ADD https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem /etc/ssl/rds/global-bundle.pem
+#19 CACHED
+
+#20 [stage-1 4/8] RUN chmod 0755 /etc/ssl/rds && chmod 0644 /etc/ssl/rds/global-bundle.pem
+#20 CACHED
+
+#21 [stage-1 5/8] RUN cd /tmp && awk '/BEGIN CERT/{n++} {print > ("cert-" n ".pem")}' /etc/ssl/rds/global-bundle.pem  && for f in cert-*.pem; do if openssl x509 -noout -subject -in "$f" | grep -q "ap-south-1 Root CA RSA2048 G1"; then cp "$f" /etc/ssl/rds/ap-south-1-rsa2048-g1.pem; fi; done  && rm -f cert-*.pem && test -s /etc/ssl/rds/ap-south-1-rsa2048-g1.pem && chmod 0644 /etc/ssl/rds/ap-south-1-rsa2048-g1.pem
+#21 CACHED
+
+#22 [stage-1 6/8] WORKDIR /repo
+#22 CACHED
+
+#23 [stage-1 7/8] COPY --from=build /repo /repo
+#23 DONE 4.7s
+
+#24 [stage-1 8/8] WORKDIR /repo/apps/api
+#24 DONE 0.1s
+
+#25 exporting to image
+#25 exporting layers
+#25 exporting layers 13.2s done
+#25 exporting manifest sha256:c7363f05eb25a3f7b56eaaa2dbe5263952bc1f29122ede9101691b0f9b6214b0 done
+#25 exporting config sha256:fe1ac325a532ba6b36c147019bff5c71c74fbacb810f9fcb9fed291c9379f988 done
+#25 exporting attestation manifest sha256:0dff013c2eed48828f472848ac47d915d10eba7c345c1e30ddd598ac9cec3d97 0.0s done
+#25 exporting manifest list sha256:6c429333e78f406ca25f6ce1cfe01c14728e02f97cb4c4e6f87241145f5808fd done
+#25 naming to docker.io/library/legalitt-api:notice-ai-errors-20261103 done
+#25 unpacking to docker.io/library/legalitt-api:notice-ai-errors-20261103
+#25 unpacking to docker.io/library/legalitt-api:notice-ai-errors-20261103 6.0s done
+#25 DONE 19.2s

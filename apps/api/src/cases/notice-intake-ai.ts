@@ -2,6 +2,8 @@ import { BadGatewayException, BadRequestException, Body, ConflictException, Cont
 import { z } from 'zod';
 import { LegalDemandSchema, NoticeIntakeFieldsSchema } from '@legalitt/shared';
 import { AI, type AiPort } from '../ai/ai.port';
+import { AiProviderError } from '../ai/ai-error';
+import { noticeAiFailureCopy } from '../copy/instructed';
 import { AuthGuard, type AuthRequest } from '../auth/auth.controller';
 import { parse } from '../auth/auth.service';
 import { CaseRepository } from './case-repository';
@@ -50,11 +52,21 @@ export class NoticeIntakeAiController {
         result = {task, ...answer} as const;
       }
     } catch (error) {
-      // Provider errors are diagnostic; never log the client prompt.
-      const detail = error instanceof Error ? error.message : 'AI request failed';
-      this.logger.error(`Notice ${task} generation failed: ${detail}`);
-      throw new BadGatewayException(process.env.NODE_ENV === 'production'
-        ? 'Could not generate suggestions. Please try again.' : detail);
+      // Adapters redact prompts/credentials before creating AiProviderError.
+      // Unknown exceptions may contain input values: log their type only.
+      const failure = error instanceof AiProviderError
+        ? { task, provider: error.provider, model: error.model, code: error.code,
+          ...(error.requestId ? {request_id: error.requestId} : {}) }
+        : { task, code: error instanceof Error ? error.name : 'UnknownError' };
+      this.logger.error(`Notice ${task} generation failed (case=${id}, code=${failure.code}): ${error instanceof AiProviderError ? error.message : 'Unexpected generation failure'}`);
+      try {
+        await this.state.recordIntakeAiFailure(req.user!, id, failure);
+      } catch {
+        // Preserve the actionable response even if the audit database is down.
+        // The original provider code remains in the log above.
+        this.logger.error(`Could not record Notice ${task} generation failure (case=${id}, code=${failure.code})`);
+      }
+      throw new BadGatewayException(noticeAiFailureCopy[task]);
     }
     await this.state.recordIntakeAi(req.user!, id, inputs, result);
     const {task: _task, ...response} = result;

@@ -1,0 +1,82 @@
+TAP version 13
+# Subtest: AI default registration is simulated and preserves task-specific shapes
+ok 1 - AI default registration is simulated and preserves task-specific shapes
+  ---
+  duration_ms: 8.997791
+  type: 'test'
+  ...
+# Subtest: Gemini refuses registration outside dev, in production, or without credentials
+ok 2 - Gemini refuses registration outside dev, in production, or without credentials
+  ---
+  duration_ms: 5.269208
+  type: 'test'
+  ...
+# Subtest: Gemini calls fixed Google host with structured options and no key in URL
+ok 3 - Gemini calls fixed Google host with structured options and no key in URL
+  ---
+  duration_ms: 10.958042
+  type: 'test'
+  ...
+# Subtest: Gemini errors are actionable, redact credentials/prompts, and never fall back
+ok 4 - Gemini errors are actionable, redact credentials/prompts, and never fall back
+  ---
+  duration_ms: 2.424333
+  type: 'test'
+  ...
+# Subtest: Bedrock calls Mumbai, permits audited India profiles and rejects all other routing
+ok 5 - Bedrock calls Mumbai, permits audited India profiles and rejects all other routing
+  ---
+  duration_ms: 0.724458
+  type: 'test'
+  ...
+# Subtest: Bedrock defaults all tasks to Haiku and changes only the configured task to Sonnet
+ok 6 - Bedrock defaults all tasks to Haiku and changes only the configured task to Sonnet
+  ---
+  duration_ms: 0.6125
+  type: 'test'
+  ...
+# Subtest: Bedrock exposes region/model rejection and does not retry with another model
+ok 7 - Bedrock exposes region/model rejection and does not retry with another model
+  ---
+  duration_ms: 0.236709
+  type: 'test'
+  ...
+# Subtest: Bedrock missing AWS credentials fails module registration
+ok 8 - Bedrock missing AWS credentials fails module registration
+  ---
+  duration_ms: 194.072875
+  type: 'test'
+  ...
+# Subtest: AI port compile-time contract gives demand options and text only for text tasks
+ok 9 - AI port compile-time contract gives demand options and text only for text tasks
+  ---
+  duration_ms: 386.490417
+  type: 'test'
+  ...
+# Subtest: AI failures keep provider diagnostics in attributed events/logs, return plain HTTP errors, and preserve retry
+ok 10 - AI failures keep provider diagnostics in attributed events/logs, return plain HTTP errors, and preserve retry
+  ---
+  duration_ms: 445.3075
+  type: 'test'
+  ...
+# Subtest: audit failures do not leak diagnostics or replace the actionable intake error
+ok 11 - audit failures do not leak diagnostics or replace the actionable intake error
+  ---
+  duration_ms: 0.758166
+  type: 'test'
+  ...
+# Subtest: seven-step intake persists columns/parties, authorises AI, rejects stale answers and requires completion
+ok 12 - seven-step intake persists columns/parties, authorises AI, rejects stale answers and requires completion
+  ---
+  duration_ms: 203.842792
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2023.543

@@ -269,6 +269,22 @@ export class CaseStateMachine {
     });
   }
 
+  async recordIntakeAiFailure(actor: CaseActor, id: string,
+    failure: {task: 'subject' | 'demands'; code: string; provider?: string; model?: string; request_id?: string}) {
+    const db = await this.prisma.getClient();
+    return db.$transaction(async tx => {
+      await lockedCase(tx, actor, id);
+      if (actor.role !== 'client') throw new ForbiddenException('Only the client edits intake');
+      // Audit the attempt even if intake changed while the provider was running.
+      // No prompt, credential, party details, generated value or state change.
+      return tx.caseEvent.create({data: {
+        case_id: id, actor_id: actor.id, actor_role: actor.role,
+        type: failure.task === 'subject' ? 'subject_generation_failed' : 'demand_options_generation_failed',
+        source: 'real', payload: failure,
+      }});
+    });
+  }
+
   private async advance(
     tx: Prisma.TransactionClient,
     actor: CaseActor,
