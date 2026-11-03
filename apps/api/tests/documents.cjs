@@ -228,7 +228,18 @@ test(
         filename: mime === "image/png" ? "evidence.png" : "evidence.pdf",
         mime,
       });
-    try {
+    // node 24.1: `await t.test()` does not wait; clean up after all subtests.
+    t.after(async () => {
+      // Inbox rows reference users independently of the document case.
+      await db.notification.deleteMany({where:{user_id:{in:actors.map(a=>a.id)}}});
+      await db.document.deleteMany({ where: { case_id: caseId } });
+      await db.case.deleteMany({ where: { id: caseId } });
+      await db.user.deleteMany({
+        where: { id: { in: actors.map((a) => a.id) } },
+      });
+      await db.$disconnect();
+    });
+    {
       for (const actor of actors)
         await db.user.create({
           data: {
@@ -500,15 +511,6 @@ test(
           }
         },
       );
-    } finally {
-      // Inbox rows reference users independently of the document case.
-      await db.notification.deleteMany({where:{user_id:{in:actors.map(a=>a.id)}}});
-      await db.document.deleteMany({ where: { case_id: caseId } });
-      await db.case.deleteMany({ where: { id: caseId } });
-      await db.user.deleteMany({
-        where: { id: { in: actors.map((a) => a.id) } },
-      });
-      await db.$disconnect();
     }
   },
 );

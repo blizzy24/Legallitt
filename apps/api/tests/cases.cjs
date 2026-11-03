@@ -80,7 +80,18 @@ test(
             ].includes(to)
           ? advocate
           : admin;
-    try {
+    // node 24.1: `await t.test()` does not wait; clean up after all subtests.
+    t.after(async () => {
+      await db.notification.deleteMany({where:{OR:[{case_id:{in:ids}},{user_id:{in:actors.map(a=>a.id)}}]}});
+      await db.caseEvent.deleteMany({ where: { case_id: { in: ids } } });
+      await db.caseParty.deleteMany({where: {case_id: {in: ids}}});
+      await db.case.deleteMany({ where: { id: { in: ids } } });
+      await db.user.deleteMany({
+        where: { id: { in: actors.map((a) => a.id) } },
+      });
+      await db.$disconnect();
+    });
+    {
       await db.service.upsert({
         where: { code: "legal_notice" },
         create: { code: "legal_notice", name: "Legal Notice" },
@@ -477,15 +488,6 @@ test(
           }
         },
       );
-    } finally {
-      await db.notification.deleteMany({where:{OR:[{case_id:{in:ids}},{user_id:{in:actors.map(a=>a.id)}}]}});
-      await db.caseEvent.deleteMany({ where: { case_id: { in: ids } } });
-      await db.caseParty.deleteMany({where: {case_id: {in: ids}}});
-      await db.case.deleteMany({ where: { id: { in: ids } } });
-      await db.user.deleteMany({
-        where: { id: { in: actors.map((a) => a.id) } },
-      });
-      await db.$disconnect();
     }
   },
 );
