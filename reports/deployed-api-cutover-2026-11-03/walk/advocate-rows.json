@@ -1,0 +1,28 @@
+[
+  {
+    "id": "ec2b475d-d62f-43c1-bf24-ce3b977ada26",
+    "case_id": "a1dffec9-35ab-45b8-bee5-c1f15feb3846",
+    "kind": "client_approved",
+    "title": "Client approved",
+    "body": "LN-2026-0007",
+    "created_at": "2026-11-03T08:01:59.597Z",
+    "read_at": "2026-11-03T08:02:10.939Z",
+    "case": {
+      "reference": "LN-2026-0007",
+      "status": "completed"
+    }
+  },
+  {
+    "id": "b4a1610b-d6b9-41e2-92d1-24e95246d8ed",
+    "case_id": "a1dffec9-35ab-45b8-bee5-c1f15feb3846",
+    "kind": "case_assigned",
+    "title": "A case assigned to you",
+    "body": "LN-2026-0007",
+    "created_at": "2026-11-03T08:01:26.186Z",
+    "read_at": "2026-11-03T08:01:35.091Z",
+    "case": {
+      "reference": "LN-2026-0007",
+      "status": "completed"
+    }
+  }
+]

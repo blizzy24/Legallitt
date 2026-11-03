@@ -1,0 +1,1637 @@
+{
+ "Parameters": {
+  "VpcCidr": {
+   "Type": "String",
+   "Description": "Approved VPC CIDR; dev and prod must not overlap."
+  },
+  "PublicSubnet1Cidr": {
+   "Type": "String",
+   "Description": "Approved subnet CIDR within this stage VPC."
+  },
+  "PublicSubnet2Cidr": {
+   "Type": "String",
+   "Description": "Approved subnet CIDR within this stage VPC."
+  },
+  "PrivateSubnet1Cidr": {
+   "Type": "String",
+   "Description": "Approved subnet CIDR within this stage VPC."
+  },
+  "PrivateSubnet2Cidr": {
+   "Type": "String",
+   "Description": "Approved subnet CIDR within this stage VPC."
+  },
+  "NatMode": {
+   "Type": "String",
+   "AllowedValues": [
+    "single",
+    "per_az"
+   ],
+   "Description": "Choose shared NAT or one NAT per AZ."
+  },
+  "DatabaseInstanceClass": {
+   "Type": "String",
+   "AllowedPattern": "db\\..+",
+   "Description": "Approved RDS instance class."
+  },
+  "DatabaseStorageGiB": {
+   "Type": "Number",
+   "Description": "Approved initial RDS storage.",
+   "MinValue": 20
+  },
+  "Postgres16Version": {
+   "Type": "String",
+   "AllowedPattern": "16\\.[0-9]+",
+   "Description": "Available Postgres 16 minor release in ap-south-1."
+  },
+  "TaskCpu": {
+   "Type": "String",
+   "AllowedValues": [
+    "256",
+    "512",
+    "1024",
+    "2048",
+    "4096",
+    "8192",
+    "16384"
+   ],
+   "Description": "Approved Fargate CPU units."
+  },
+  "TaskMemoryMiB": {
+   "Type": "String",
+   "AllowedPattern": "[0-9]+",
+   "Description": "Approved Fargate memory, valid for the chosen CPU."
+  },
+  "TaskCount": {
+   "Type": "Number",
+   "Description": "Approved desired task count.",
+   "MinValue": 1
+  },
+  "ApiPort": {
+   "Type": "Number",
+   "Description": "Container port; also passed to the API as PORT.",
+   "MaxValue": 65535,
+   "MinValue": 1
+  },
+  "ApiImageTag": {
+   "Type": "String",
+   "Description": "Tag of the API image to publish to this stage ECR repository."
+  },
+  "CertificateArn": {
+   "Type": "String",
+   "Description": "ACM certificate ARN for the HTTPS ALB listener in ap-south-1."
+  },
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Conditions": {
+  "NatPerAz": {
+   "Fn::Equals": [
+    {
+     "Ref": "NatMode"
+    },
+    "per_az"
+   ]
+  }
+ },
+ "Resources": {
+  "Vpc": {
+   "Type": "AWS::EC2::VPC",
+   "Properties": {
+    "CidrBlock": {
+     "Ref": "VpcCidr"
+    },
+    "EnableDnsSupport": true,
+    "EnableDnsHostnames": true,
+    "Tags": [
+     {
+      "Key": "environment",
+      "Value": "prod"
+     },
+     {
+      "Key": "application",
+      "Value": "legalitt"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "LegalittProd/Compute/Vpc",
+    "environment": "prod"
+   }
+  },
+  "InternetGateway": {
+   "Type": "AWS::EC2::InternetGateway",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "environment",
+      "Value": "prod"
+     },
+     {
+      "Key": "application",
+      "Value": "legalitt"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "LegalittProd/Compute/InternetGateway",
+    "environment": "prod"
+   }
+  },
+  "GatewayAttachment": {
+   "Type": "AWS::EC2::VPCGatewayAttachment",
+   "Properties": {
+    "VpcId": {
+     "Ref": "Vpc"
+    },
+    "InternetGatewayId": {
+     "Ref": "InternetGateway"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "LegalittProd/Compute/GatewayAttachment",
+    "environment": "prod"
+   }
+  },
+  "Subnet0": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "VpcId": {
+     "Ref": "Vpc"
+    },
+    "CidrBlock": {
+     "Ref": "PublicSubnet1Cidr"
+    },
+    "AvailabilityZone": {
+     "Fn::Select": [
+      0,
+      {
+       "Fn::GetAZs": "ap-south-1"
+      }
+     ]
+    },
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+     {
+      "Key": "environment",
+      "Value": "prod"
+     },
+     {
+      "Key": "application",
+      "Value": "legalitt"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "LegalittProd/Compute/Subnet0",
+    "environment": "prod"
+   }
+  },
+  "Subnet1": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "VpcId": {
+     "Ref": "Vpc"
+    },
+    "CidrBlock": {
+     "Ref": "PublicSubnet2Cidr"
+    },
+    "AvailabilityZone": {
+     "Fn::Select": [
+      1,
+      {
+       "Fn::GetAZs": "ap-south-1"
+      }
+     ]
+    },
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+     {
+      "Key": "environment",
+      "Value": "prod"
+     },
+     {
+      "Key": "application",
+      "Value": "legalitt"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "LegalittProd/Compute/Subnet1",
+    "environment": "prod"
+   }
+  },
+  "Subnet2": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "VpcId": {
+     "Ref": "Vpc"
+    },
+    "CidrBlock": {
+     "Ref": "PrivateSubnet1Cidr"
+    },
+    "AvailabilityZone": {
+     "Fn::Select": [
+      0,
+      {
+       "Fn::GetAZs": "ap-south-1"
+      }
+     ]
+    },
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "environment",
+      "Value": "prod"
+     },
+     {
+      "Key": "application",
+      "Value": "legalitt"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "LegalittProd/Compute/Subnet2",
+    "environment": "prod"
+   }
+  },
+  "Subnet3": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "VpcId": {
+     "Ref": "Vpc"
+    },
+    "CidrBlock": {
+     "Ref": "PrivateSubnet2Cidr"
+    },
+    "AvailabilityZone": {
+     "Fn::Select": [
+      1,
+      {
+       "Fn::GetAZs": "ap-south-1"
+      }
+     ]
+    },
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "environment",
+      "Value": "prod"
+     },
+     {
+      "Key": "application",
+      "Value": "legalitt"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "LegalittProd/Compute/Subnet3",
+    "environment": "prod"
+   }
+  },
+  "RouteTable0": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "VpcId": {
+     "Ref": "Vpc"
+    },
+    "Tags": [
+     {
+      "Key": "environment",
+      "Value": "prod"
+     },
+     {
+      "Key": "application",
+      "Value": "legalitt"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "LegalittProd/Compute/RouteTable0",
+    "environment": "prod"
+   }
+  },
+  "SubnetRouteTable0": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "SubnetId": {
+     "Ref": "Subnet0"
+    },
+    "RouteTableId": {
+     "Ref": "RouteTable0"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "LegalittProd/Compute/SubnetRouteTable0",
+    "environment": "prod"
+   }
+  },
+  "RouteTable1": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "VpcId": {
+     "Ref": "Vpc"
+    },
+    "Tags": [
+     {
+      "Key": "environment",
+      "Value": "prod"
+     },
+     {
+      "Key": "application",
+      "Value": "legalitt"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "LegalittProd/Compute/RouteTable1",
+    "environment": "prod"
+   }
+  },
+  "SubnetRouteTable1": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "SubnetId": {
+     "Ref": "Subnet1"
+    },
+    "RouteTableId": {
+     "Ref": "RouteTable1"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "LegalittProd/Compute/SubnetRouteTable1",
+    "environment": "prod"
+   }
+  },
+  "RouteTable2": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "VpcId": {
+     "Ref": "Vpc"
+    },
+    "Tags": [
+     {
+      "Key": "environment",
+      "Value": "prod"
+     },
+     {
+      "Key": "application",
+      "Value": "legalitt"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "LegalittProd/Compute/RouteTable2",
+    "environment": "prod"
+   }
+  },
+  "SubnetRouteTable2": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "SubnetId": {
+     "Ref": "Subnet2"
+    },
+    "RouteTableId": {
+     "Ref": "RouteTable2"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "LegalittProd/Compute/SubnetRouteTable2",
+    "environment": "prod"
+   }
+  },
+  "RouteTable3": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "VpcId": {
+     "Ref": "Vpc"
+    },
+    "Tags": [
+     {
+      "Key": "environment",
+      "Value": "prod"
+     },
+     {
+      "Key": "application",
+      "Value": "legalitt"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "LegalittProd/Compute/RouteTable3",
+    "environment": "prod"
+   }
+  },
+  "SubnetRouteTable3": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "SubnetId": {
+     "Ref": "Subnet3"
+    },
+    "RouteTableId": {
+     "Ref": "RouteTable3"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "LegalittProd/Compute/SubnetRouteTable3",
+    "environment": "prod"
+   }
+  },
+  "InternetRoute0": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "RouteTable0"
+    },
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "InternetGateway"
+    }
+   },
+   "DependsOn": [
+    "GatewayAttachment"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "LegalittProd/Compute/InternetRoute0",
+    "environment": "prod"
+   }
+  },
+  "InternetRoute1": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "RouteTable1"
+    },
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "InternetGateway"
+    }
+   },
+   "DependsOn": [
+    "GatewayAttachment"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "LegalittProd/Compute/InternetRoute1",
+    "environment": "prod"
+   }
+  },
+  "NatIp0": {
+   "Type": "AWS::EC2::EIP",
+   "Properties": {
+    "Domain": "vpc",
+    "Tags": [
+     {
+      "Key": "environment",
+      "Value": "prod"
+     },
+     {
+      "Key": "application",
+      "Value": "legalitt"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "LegalittProd/Compute/NatIp0",
+    "environment": "prod"
+   }
+  },
+  "Nat0": {
+   "Type": "AWS::EC2::NatGateway",
+   "Properties": {
+    "SubnetId": {
+     "Ref": "Subnet0"
+    },
+    "AllocationId": {
+     "Fn::GetAtt": [
+      "NatIp0",
+      "AllocationId"
+     ]
+    },
+    "Tags": [
+     {
+      "Key": "environment",
+      "Value": "prod"
+     },
+     {
+      "Key": "application",
+      "Value": "legalitt"
+     }
+    ]
+   },
+   "DependsOn": [
+    "GatewayAttachment"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "LegalittProd/Compute/Nat0",
+    "environment": "prod"
+   }
+  },
+  "NatIp1": {
+   "Type": "AWS::EC2::EIP",
+   "Properties": {
+    "Domain": "vpc",
+    "Tags": [
+     {
+      "Key": "environment",
+      "Value": "prod"
+     },
+     {
+      "Key": "application",
+      "Value": "legalitt"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "LegalittProd/Compute/NatIp1",
+    "environment": "prod"
+   },
+   "Condition": "NatPerAz"
+  },
+  "Nat1": {
+   "Type": "AWS::EC2::NatGateway",
+   "Properties": {
+    "SubnetId": {
+     "Ref": "Subnet1"
+    },
+    "AllocationId": {
+     "Fn::GetAtt": [
+      "NatIp1",
+      "AllocationId"
+     ]
+    },
+    "Tags": [
+     {
+      "Key": "environment",
+      "Value": "prod"
+     },
+     {
+      "Key": "application",
+      "Value": "legalitt"
+     }
+    ]
+   },
+   "DependsOn": [
+    "GatewayAttachment"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "LegalittProd/Compute/Nat1",
+    "environment": "prod"
+   },
+   "Condition": "NatPerAz"
+  },
+  "PrivateRoute0": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "RouteTable2"
+    },
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "NatGatewayId": {
+     "Ref": "Nat0"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "LegalittProd/Compute/PrivateRoute0",
+    "environment": "prod"
+   }
+  },
+  "PrivateRoute1": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "RouteTable3"
+    },
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "NatGatewayId": {
+     "Fn::If": [
+      "NatPerAz",
+      {
+       "Ref": "Nat1"
+      },
+      {
+       "Ref": "Nat0"
+      }
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "LegalittProd/Compute/PrivateRoute1",
+    "environment": "prod"
+   }
+  },
+  "AlbSecurityGroup": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "VpcId": {
+     "Ref": "Vpc"
+    },
+    "GroupDescription": "HTTPS ingress to Legalitt",
+    "SecurityGroupIngress": [
+     {
+      "IpProtocol": "tcp",
+      "FromPort": 443,
+      "ToPort": 443,
+      "CidrIp": "0.0.0.0/0"
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "environment",
+      "Value": "prod"
+     },
+     {
+      "Key": "application",
+      "Value": "legalitt"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "LegalittProd/Compute/AlbSecurityGroup",
+    "environment": "prod"
+   }
+  },
+  "TaskSecurityGroup": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "VpcId": {
+     "Ref": "Vpc"
+    },
+    "GroupDescription": "ALB to API only",
+    "SecurityGroupIngress": [
+     {
+      "IpProtocol": "tcp",
+      "FromPort": {
+       "Ref": "ApiPort"
+      },
+      "ToPort": {
+       "Ref": "ApiPort"
+      },
+      "SourceSecurityGroupId": {
+       "Ref": "AlbSecurityGroup"
+      }
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "environment",
+      "Value": "prod"
+     },
+     {
+      "Key": "application",
+      "Value": "legalitt"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "LegalittProd/Compute/TaskSecurityGroup",
+    "environment": "prod"
+   }
+  },
+  "DatabaseSecurityGroup": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "VpcId": {
+     "Ref": "Vpc"
+    },
+    "GroupDescription": "API to Postgres only",
+    "SecurityGroupIngress": [
+     {
+      "IpProtocol": "tcp",
+      "FromPort": 5432,
+      "ToPort": 5432,
+      "SourceSecurityGroupId": {
+       "Ref": "TaskSecurityGroup"
+      }
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "environment",
+      "Value": "prod"
+     },
+     {
+      "Key": "application",
+      "Value": "legalitt"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "LegalittProd/Compute/DatabaseSecurityGroup",
+    "environment": "prod"
+   }
+  },
+  "DatabaseSubnets": {
+   "Type": "AWS::RDS::DBSubnetGroup",
+   "Properties": {
+    "DBSubnetGroupDescription": "Private database subnets",
+    "SubnetIds": [
+     {
+      "Ref": "Subnet2"
+     },
+     {
+      "Ref": "Subnet3"
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "environment",
+      "Value": "prod"
+     },
+     {
+      "Key": "application",
+      "Value": "legalitt"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "LegalittProd/Compute/DatabaseSubnets",
+    "environment": "prod"
+   }
+  },
+  "Database": {
+   "Type": "AWS::RDS::DBInstance",
+   "Properties": {
+    "DBInstanceIdentifier": "legalitt-prod-database",
+    "DBName": "legalitt",
+    "Engine": "postgres",
+    "EngineVersion": {
+     "Ref": "Postgres16Version"
+    },
+    "DBInstanceClass": {
+     "Ref": "DatabaseInstanceClass"
+    },
+    "AllocatedStorage": {
+     "Ref": "DatabaseStorageGiB"
+    },
+    "StorageType": "gp3",
+    "StorageEncrypted": true,
+    "KmsKeyId": {
+     "Fn::ImportValue": "LegalittProd-Core:ExportsOutputFnGetAttEncryptionKeyArn63627630"
+    },
+    "MultiAZ": true,
+    "PubliclyAccessible": false,
+    "DeletionProtection": true,
+    "MasterUsername": {
+     "Fn::Join": [
+      "",
+      [
+       "{{resolve:secretsmanager:",
+       {
+        "Fn::ImportValue": "LegalittProd-Core:ExportsOutputRefDatabaseSecretD7AA9253"
+       },
+       ":SecretString:username}}"
+      ]
+     ]
+    },
+    "MasterUserPassword": {
+     "Fn::Join": [
+      "",
+      [
+       "{{resolve:secretsmanager:",
+       {
+        "Fn::ImportValue": "LegalittProd-Core:ExportsOutputRefDatabaseSecretD7AA9253"
+       },
+       ":SecretString:password}}"
+      ]
+     ]
+    },
+    "DBSubnetGroupName": {
+     "Ref": "DatabaseSubnets"
+    },
+    "VPCSecurityGroups": [
+     {
+      "Ref": "DatabaseSecurityGroup"
+     }
+    ],
+    "Port": "5432",
+    "Tags": [
+     {
+      "Key": "environment",
+      "Value": "prod"
+     },
+     {
+      "Key": "application",
+      "Value": "legalitt"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "LegalittProd/Compute/Database",
+    "environment": "prod"
+   }
+  },
+  "SecretAttachment": {
+   "Type": "AWS::SecretsManager::SecretTargetAttachment",
+   "Properties": {
+    "SecretId": {
+     "Fn::ImportValue": "LegalittProd-Core:ExportsOutputRefDatabaseSecretD7AA9253"
+    },
+    "TargetId": {
+     "Ref": "Database"
+    },
+    "TargetType": "AWS::RDS::DBInstance"
+   },
+   "Metadata": {
+    "aws:cdk:path": "LegalittProd/Compute/SecretAttachment",
+    "environment": "prod"
+   }
+  },
+  "Jobs": {
+   "Type": "AWS::SQS::Queue",
+   "Properties": {
+    "QueueName": "legalitt-prod-jobs",
+    "SqsManagedSseEnabled": true,
+    "Tags": [
+     {
+      "Key": "environment",
+      "Value": "prod"
+     },
+     {
+      "Key": "application",
+      "Value": "legalitt"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "LegalittProd/Compute/Jobs",
+    "environment": "prod"
+   }
+  },
+  "ApiLogs": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": "/legalitt-prod/api",
+    "Tags": [
+     {
+      "Key": "environment",
+      "Value": "prod"
+     },
+     {
+      "Key": "application",
+      "Value": "legalitt"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "LegalittProd/Compute/ApiLogs",
+    "environment": "prod"
+   }
+  },
+  "ApiRepository": {
+   "Type": "AWS::ECR::Repository",
+   "Properties": {
+    "RepositoryName": "legalitt-prod-api",
+    "ImageScanningConfiguration": {
+     "ScanOnPush": true
+    },
+    "ImageTagMutability": "IMMUTABLE",
+    "Tags": [
+     {
+      "Key": "environment",
+      "Value": "prod"
+     },
+     {
+      "Key": "application",
+      "Value": "legalitt"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "LegalittProd/Compute/ApiRepository",
+    "environment": "prod"
+   }
+  },
+  "RoleBoundary": {
+   "Type": "AWS::IAM::ManagedPolicy",
+   "Properties": {
+    "ManagedPolicyName": "legalitt-prod-boundary",
+    "PolicyDocument": {
+     "Version": "2012-10-17",
+     "Statement": [
+      {
+       "Effect": "Allow",
+       "Action": [
+        "s3:ListBucket",
+        "s3:ListBucketVersions"
+       ],
+       "Resource": [
+        {
+         "Fn::ImportValue": "LegalittProd-Core:ExportsOutputFnGetAttDocumentsArn9D87F4A8"
+        }
+       ]
+      },
+      {
+       "Effect": "Allow",
+       "Action": [
+        "s3:GetObject",
+        "s3:GetObjectVersion",
+        "s3:PutObject",
+        "s3:DeleteObject",
+        "s3:DeleteObjectVersion"
+       ],
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::ImportValue": "LegalittProd-Core:ExportsOutputFnGetAttDocumentsArn9D87F4A8"
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Effect": "Allow",
+       "Action": [
+        "kms:Decrypt",
+        "kms:Encrypt",
+        "kms:GenerateDataKey",
+        "kms:DescribeKey"
+       ],
+       "Resource": [
+        {
+         "Fn::ImportValue": "LegalittProd-Core:ExportsOutputFnGetAttEncryptionKeyArn63627630"
+        }
+       ]
+      },
+      {
+       "Effect": "Allow",
+       "Action": [
+        "secretsmanager:GetSecretValue",
+        "secretsmanager:DescribeSecret"
+       ],
+       "Resource": [
+        {
+         "Fn::ImportValue": "LegalittProd-Core:ExportsOutputRefDatabaseSecretD7AA9253"
+        },
+        {
+         "Fn::ImportValue": "LegalittProd-Core:ExportsOutputRefAppConfiguration4766511E"
+        }
+       ]
+      },
+      {
+       "Effect": "Allow",
+       "Action": [
+        "sqs:SendMessage",
+        "sqs:ReceiveMessage",
+        "sqs:DeleteMessage",
+        "sqs:ChangeMessageVisibility",
+        "sqs:GetQueueAttributes"
+       ],
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "Jobs",
+          "Arn"
+         ]
+        }
+       ]
+      },
+      {
+       "Effect": "Allow",
+       "Action": [
+        "ecr:GetAuthorizationToken"
+       ],
+       "Resource": [
+        "*"
+       ]
+      },
+      {
+       "Effect": "Allow",
+       "Action": [
+        "ecr:BatchCheckLayerAvailability",
+        "ecr:GetDownloadUrlForLayer",
+        "ecr:BatchGetImage"
+       ],
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "ApiRepository",
+          "Arn"
+         ]
+        }
+       ]
+      },
+      {
+       "Effect": "Allow",
+       "Action": [
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+       ],
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "ApiLogs",
+          "Arn"
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "LegalittProd/Compute/RoleBoundary",
+    "environment": "prod"
+   }
+  },
+  "ApiRole": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "RoleName": "legalitt-prod-apirole",
+    "PermissionsBoundary": {
+     "Ref": "RoleBoundary"
+    },
+    "AssumeRolePolicyDocument": {
+     "Version": "2012-10-17",
+     "Statement": [
+      {
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       },
+       "Action": "sts:AssumeRole"
+      }
+     ]
+    },
+    "Policies": [
+     {
+      "PolicyName": "legalitt-prod-apirole",
+      "PolicyDocument": {
+       "Version": "2012-10-17",
+       "Statement": [
+        {
+         "Effect": "Allow",
+         "Action": [
+          "s3:ListBucket",
+          "s3:ListBucketVersions"
+         ],
+         "Resource": [
+          {
+           "Fn::ImportValue": "LegalittProd-Core:ExportsOutputFnGetAttDocumentsArn9D87F4A8"
+          }
+         ]
+        },
+        {
+         "Effect": "Allow",
+         "Action": [
+          "s3:GetObject",
+          "s3:GetObjectVersion",
+          "s3:PutObject",
+          "s3:DeleteObject",
+          "s3:DeleteObjectVersion"
+         ],
+         "Resource": [
+          {
+           "Fn::Join": [
+            "",
+            [
+             {
+              "Fn::ImportValue": "LegalittProd-Core:ExportsOutputFnGetAttDocumentsArn9D87F4A8"
+             },
+             "/*"
+            ]
+           ]
+          }
+         ]
+        },
+        {
+         "Effect": "Allow",
+         "Action": [
+          "kms:Decrypt",
+          "kms:Encrypt",
+          "kms:GenerateDataKey",
+          "kms:DescribeKey"
+         ],
+         "Resource": [
+          {
+           "Fn::ImportValue": "LegalittProd-Core:ExportsOutputFnGetAttEncryptionKeyArn63627630"
+          }
+         ]
+        },
+        {
+         "Effect": "Allow",
+         "Action": [
+          "secretsmanager:GetSecretValue",
+          "secretsmanager:DescribeSecret"
+         ],
+         "Resource": [
+          {
+           "Fn::ImportValue": "LegalittProd-Core:ExportsOutputRefDatabaseSecretD7AA9253"
+          },
+          {
+           "Fn::ImportValue": "LegalittProd-Core:ExportsOutputRefAppConfiguration4766511E"
+          }
+         ]
+        },
+        {
+         "Effect": "Allow",
+         "Action": [
+          "sqs:SendMessage",
+          "sqs:ReceiveMessage",
+          "sqs:DeleteMessage",
+          "sqs:ChangeMessageVisibility",
+          "sqs:GetQueueAttributes"
+         ],
+         "Resource": [
+          {
+           "Fn::GetAtt": [
+            "Jobs",
+            "Arn"
+           ]
+          }
+         ]
+        }
+       ]
+      }
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "environment",
+      "Value": "prod"
+     },
+     {
+      "Key": "application",
+      "Value": "legalitt"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "LegalittProd/Compute/ApiRole",
+    "environment": "prod"
+   }
+  },
+  "ExecutionRole": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "RoleName": "legalitt-prod-executionrole",
+    "PermissionsBoundary": {
+     "Ref": "RoleBoundary"
+    },
+    "AssumeRolePolicyDocument": {
+     "Version": "2012-10-17",
+     "Statement": [
+      {
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       },
+       "Action": "sts:AssumeRole"
+      }
+     ]
+    },
+    "Policies": [
+     {
+      "PolicyName": "legalitt-prod-executionrole",
+      "PolicyDocument": {
+       "Version": "2012-10-17",
+       "Statement": [
+        {
+         "Effect": "Allow",
+         "Action": [
+          "ecr:GetAuthorizationToken"
+         ],
+         "Resource": [
+          "*"
+         ]
+        },
+        {
+         "Effect": "Allow",
+         "Action": [
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:BatchGetImage"
+         ],
+         "Resource": [
+          {
+           "Fn::GetAtt": [
+            "ApiRepository",
+            "Arn"
+           ]
+          }
+         ]
+        },
+        {
+         "Effect": "Allow",
+         "Action": [
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+         ],
+         "Resource": [
+          {
+           "Fn::GetAtt": [
+            "ApiLogs",
+            "Arn"
+           ]
+          }
+         ]
+        }
+       ]
+      }
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "environment",
+      "Value": "prod"
+     },
+     {
+      "Key": "application",
+      "Value": "legalitt"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "LegalittProd/Compute/ExecutionRole",
+    "environment": "prod"
+   }
+  },
+  "Cluster": {
+   "Type": "AWS::ECS::Cluster",
+   "Properties": {
+    "ClusterName": "legalitt-prod-cluster",
+    "Tags": [
+     {
+      "Key": "environment",
+      "Value": "prod"
+     },
+     {
+      "Key": "application",
+      "Value": "legalitt"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "LegalittProd/Compute/Cluster",
+    "environment": "prod"
+   }
+  },
+  "Task": {
+   "Type": "AWS::ECS::TaskDefinition",
+   "Properties": {
+    "Family": "legalitt-prod-api",
+    "RequiresCompatibilities": [
+     "FARGATE"
+    ],
+    "NetworkMode": "awsvpc",
+    "Cpu": {
+     "Ref": "TaskCpu"
+    },
+    "Memory": {
+     "Ref": "TaskMemoryMiB"
+    },
+    "TaskRoleArn": {
+     "Fn::GetAtt": [
+      "ApiRole",
+      "Arn"
+     ]
+    },
+    "ExecutionRoleArn": {
+     "Fn::GetAtt": [
+      "ExecutionRole",
+      "Arn"
+     ]
+    },
+    "ContainerDefinitions": [
+     {
+      "Name": "api",
+      "Image": {
+       "Fn::Join": [
+        ":",
+        [
+         {
+          "Fn::GetAtt": [
+           "ApiRepository",
+           "RepositoryUri"
+          ]
+         },
+         {
+          "Ref": "ApiImageTag"
+         }
+        ]
+       ]
+      },
+      "Essential": true,
+      "PortMappings": [
+       {
+        "ContainerPort": {
+         "Ref": "ApiPort"
+        },
+        "Protocol": "tcp"
+       }
+      ],
+      "Environment": [
+       {
+        "Name": "PORT",
+        "Value": {
+         "Ref": "ApiPort"
+        }
+       },
+       {
+        "Name": "ENVIRONMENT",
+        "Value": "prod"
+       },
+       {
+        "Name": "NODE_ENV",
+        "Value": "production"
+       },
+       {
+        "Name": "PHONE_AUTH_MODE",
+        "Value": "live"
+       },
+       {
+        "Name": "AUTH_CONFIG_SECRET_ARN",
+        "Value": {
+         "Fn::ImportValue": "LegalittProd-Core:ExportsOutputRefAppConfiguration4766511E"
+        }
+       },
+       {
+        "Name": "AWS_REGION",
+        "Value": "ap-south-1"
+       },
+       {
+        "Name": "DATABASE_SECRET_ARN",
+        "Value": {
+         "Fn::ImportValue": "LegalittProd-Core:ExportsOutputRefDatabaseSecretD7AA9253"
+        }
+       },
+       {
+        "Name": "DOCUMENT_BUCKET",
+        "Value": {
+         "Fn::ImportValue": "LegalittProd-Core:ExportsOutputRefDocuments2EE553D9"
+        }
+       },
+       {
+        "Name": "JOB_QUEUE_URL",
+        "Value": {
+         "Ref": "Jobs"
+        }
+       }
+      ],
+      "LogConfiguration": {
+       "LogDriver": "awslogs",
+       "Options": {
+        "awslogs-group": {
+         "Ref": "ApiLogs"
+        },
+        "awslogs-region": "ap-south-1",
+        "awslogs-stream-prefix": "api"
+       }
+      }
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "environment",
+      "Value": "prod"
+     },
+     {
+      "Key": "application",
+      "Value": "legalitt"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "LegalittProd/Compute/Task",
+    "environment": "prod"
+   }
+  },
+  "LoadBalancer": {
+   "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+   "Properties": {
+    "Name": "legalitt-prod-api",
+    "Scheme": "internet-facing",
+    "Type": "application",
+    "Subnets": [
+     {
+      "Ref": "Subnet0"
+     },
+     {
+      "Ref": "Subnet1"
+     }
+    ],
+    "SecurityGroups": [
+     {
+      "Ref": "AlbSecurityGroup"
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "environment",
+      "Value": "prod"
+     },
+     {
+      "Key": "application",
+      "Value": "legalitt"
+     }
+    ]
+   },
+   "DependsOn": [
+    "InternetRoute0",
+    "InternetRoute1"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "LegalittProd/Compute/LoadBalancer",
+    "environment": "prod"
+   }
+  },
+  "ApiTarget": {
+   "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+   "Properties": {
+    "VpcId": {
+     "Ref": "Vpc"
+    },
+    "Protocol": "HTTP",
+    "Port": {
+     "Ref": "ApiPort"
+    },
+    "TargetType": "ip",
+    "HealthCheckPath": "/health",
+    "Matcher": {
+     "HttpCode": "200"
+    },
+    "Tags": [
+     {
+      "Key": "environment",
+      "Value": "prod"
+     },
+     {
+      "Key": "application",
+      "Value": "legalitt"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "LegalittProd/Compute/ApiTarget",
+    "environment": "prod"
+   }
+  },
+  "HttpsListener": {
+   "Type": "AWS::ElasticLoadBalancingV2::Listener",
+   "Properties": {
+    "LoadBalancerArn": {
+     "Ref": "LoadBalancer"
+    },
+    "Port": 443,
+    "Protocol": "HTTPS",
+    "Certificates": [
+     {
+      "CertificateArn": {
+       "Ref": "CertificateArn"
+      }
+     }
+    ],
+    "DefaultActions": [
+     {
+      "Type": "forward",
+      "TargetGroupArn": {
+       "Ref": "ApiTarget"
+      }
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "LegalittProd/Compute/HttpsListener",
+    "environment": "prod"
+   }
+  },
+  "ApiService": {
+   "Type": "AWS::ECS::Service",
+   "Properties": {
+    "ServiceName": "legalitt-prod-api",
+    "Cluster": {
+     "Ref": "Cluster"
+    },
+    "LaunchType": "FARGATE",
+    "TaskDefinition": {
+     "Ref": "Task"
+    },
+    "DesiredCount": {
+     "Ref": "TaskCount"
+    },
+    "EnableECSManagedTags": true,
+    "PropagateTags": "SERVICE",
+    "NetworkConfiguration": {
+     "AwsvpcConfiguration": {
+      "AssignPublicIp": "DISABLED",
+      "Subnets": [
+       {
+        "Ref": "Subnet2"
+       },
+       {
+        "Ref": "Subnet3"
+       }
+      ],
+      "SecurityGroups": [
+       {
+        "Ref": "TaskSecurityGroup"
+       }
+      ]
+     }
+    },
+    "LoadBalancers": [
+     {
+      "ContainerName": "api",
+      "ContainerPort": {
+       "Ref": "ApiPort"
+      },
+      "TargetGroupArn": {
+       "Ref": "ApiTarget"
+      }
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "environment",
+      "Value": "prod"
+     },
+     {
+      "Key": "application",
+      "Value": "legalitt"
+     }
+    ]
+   },
+   "DependsOn": [
+    "HttpsListener",
+    "PrivateRoute0",
+    "PrivateRoute1",
+    "SecretAttachment"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "LegalittProd/Compute/ApiService",
+    "environment": "prod"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/yXHwQ2DMAxA0Vm4Exc5BwbIACA6QZoYyVCcKnHaQ8XuKOL0/0PA0cLQ+V8xIe7mzS/4P9WHvXerzD77g5Ryg0sSWTlJw0Il1Ryo/VT1U/XsJUWCrTy+iIAWbLcVZpOrKB8Ey90LMjCez3EAAAA="
+   },
+   "Metadata": {
+    "aws:cdk:path": "LegalittProd/Compute/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "ApiHost": {
+   "Value": {
+    "Fn::GetAtt": [
+     "LoadBalancer",
+     "DNSName"
+    ]
+   }
+  },
+  "DatabaseSecretArn": {
+   "Value": {
+    "Fn::ImportValue": "LegalittProd-Core:ExportsOutputRefDatabaseSecretD7AA9253"
+   }
+  },
+  "RepositoryUri": {
+   "Value": {
+    "Fn::GetAtt": [
+     "ApiRepository",
+     "RepositoryUri"
+    ]
+   }
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

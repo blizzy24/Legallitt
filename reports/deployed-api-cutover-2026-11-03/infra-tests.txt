@@ -1,0 +1,72 @@
+
+> @legalitt/infra@0.0.0 test /Users/riya/Documents/14/infra
+> pnpm build && node --test tests/*.cjs
+
+
+> @legalitt/infra@0.0.0 build /Users/riya/Documents/14/infra
+> tsc
+
+TAP version 13
+# Subtest: LegalittDev Core has no compute resources or dependencies
+ok 1 - LegalittDev Core has no compute resources or dependencies
+  ---
+  duration_ms: 43.110667
+  type: 'test'
+  ...
+# Subtest: LegalittProd Core has no compute resources or dependencies
+ok 2 - LegalittProd Core has no compute resources or dependencies
+  ---
+  duration_ms: 11.51025
+  type: 'test'
+  ...
+# Subtest: public signup cannot grant admin; Cognito has no custom OTP handlers
+ok 3 - public signup cannot grant admin; Cognito has no custom OTP handlers
+  ---
+  duration_ms: 0.707083
+  type: 'test'
+  ...
+# Subtest: LegalittDev: requested resources, isolated networking and encryption
+ok 4 - LegalittDev: requested resources, isolated networking and encryption
+  ---
+  duration_ms: 4.132459
+  type: 'test'
+  ...
+# Subtest: LegalittDev: bounded task roles and no invented deployment settings
+ok 5 - LegalittDev: bounded task roles and no invented deployment settings
+  ---
+  duration_ms: 0.525375
+  type: 'test'
+  ...
+# Subtest: LegalittDev: template parses through CDK CloudFormation resource schemas
+ok 6 - LegalittDev: template parses through CDK CloudFormation resource schemas
+  ---
+  duration_ms: 932.679125
+  type: 'test'
+  ...
+# Subtest: LegalittProd: requested resources, isolated networking and encryption
+ok 7 - LegalittProd: requested resources, isolated networking and encryption
+  ---
+  duration_ms: 1.389875
+  type: 'test'
+  ...
+# Subtest: LegalittProd: bounded task roles and no invented deployment settings
+ok 8 - LegalittProd: bounded task roles and no invented deployment settings
+  ---
+  duration_ms: 0.51575
+  type: 'test'
+  ...
+# Subtest: LegalittProd: template parses through CDK CloudFormation resource schemas
+ok 9 - LegalittProd: template parses through CDK CloudFormation resource schemas
+  ---
+  duration_ms: 62.402875
+  type: 'test'
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1528.637416

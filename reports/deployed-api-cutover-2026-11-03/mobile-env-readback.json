@@ -1,0 +1,18 @@
+[
+  {
+    "key": "EXPO_PUBLIC_API_URL",
+    "value": "https://gvycg0n3u8.execute-api.ap-south-1.amazonaws.com",
+    "target": [
+      "production"
+    ],
+    "type": "plain"
+  },
+  {
+    "key": "EXPO_PUBLIC_DATA_SOURCE",
+    "value": "api",
+    "target": [
+      "production"
+    ],
+    "type": "plain"
+  }
+]

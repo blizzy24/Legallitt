@@ -1,0 +1,21 @@
+[
+  {
+    "role": "client",
+    "login": 201,
+    "identity": 200
+  },
+  {
+    "role": "advocate",
+    "login": 201,
+    "identity": 200
+  },
+  {
+    "role": "admin",
+    "login": 201,
+    "identity": 200
+  },
+  {
+    "corsPreflightBefore": 204,
+    "allowOrigin": null
+  }
+]

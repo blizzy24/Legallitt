@@ -1,0 +1,41 @@
+{
+  "id": "prj_gRLd0GHo14ZL5CHnrZA9O0RhW6Ye",
+  "name": "legalitt",
+  "accountId": "team_9yoBK7UP3uqdM6AaUzUuC8J5",
+  "rootDirectory": "apps/mobile",
+  "framework": null,
+  "nodeVersion": "22.x",
+  "buildCommand": "pnpm build",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "outputDirectory": "dist",
+  "sourceFilesOutsideRootDirectory": true,
+  "link": {
+    "type": "github",
+    "repo": "Legallitt",
+    "repoId": 1411858512,
+    "org": "blizzy24",
+    "productionBranch": "main"
+  },
+  "targets": {
+    "production": {
+      "id": "dpl_5mkrQ3v5bcgX3BcNdiwxkK1FqLdt",
+      "url": "legalitt-aaxjzl3y7-blizzard7.vercel.app",
+      "alias": [
+        "legalitt-5.vercel.app",
+        "legalitt-blizzard7.vercel.app",
+        "legalitt-git-main-blizzard7.vercel.app"
+      ],
+      "readyState": "READY",
+      "target": "production"
+    },
+    "preview": {
+      "id": "dpl_DMqAd8e1Fh54xXfDMduRE1FWxvSM",
+      "url": "legalitt-doc6zwwoo-blizzard7.vercel.app",
+      "alias": [
+        "legalitt-git-chore-monorepo-blizzard7.vercel.app"
+      ],
+      "readyState": "READY",
+      "target": null
+    }
+  }
+}

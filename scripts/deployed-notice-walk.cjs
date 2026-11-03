@@ -2,6 +2,7 @@
 // real UI mutations and real S3 uploads. Requires explicit deployed hostnames.
 // No credentials, tokens or signed document URLs are written to the report.
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+const {createHash}=require('node:crypto');
 const puppeteer=require('puppeteer-core');
 const {ApiClient}=require('../packages/shared/dist');
 const {PDFDocument,StandardFonts}=require('../apps/api/node_modules/pdf-lib');
@@ -104,19 +105,40 @@ async function main(){
   const dispatchedAdmin=await count('admin'),dispatchedClient=await count('client');await click(v,'Confirm Dispatch');await observe('admin',dispatchedAdmin,'dispatched → delivery confirmation needed');await observe('client',dispatchedClient,'notice dispatched');
   await a.goto(panel+'/notifications',{waitUntil:'networkidle0'});await openNotice(a,'A case needs delivery confirmed',record.reference);await a.waitForSelector('.admin-attention .assign');await a.click('.admin-attention .assign');await a.waitForSelector('input[name="proof"]');await(await a.$('input[name="proof"]')).uploadFile(file);await a.type('input[name="received_by"]','Deployment Test Recipient');await a.waitForSelector('.uploaded',{timeout:90000});await a.screenshot({path:path.join(out,'confirm-delivery.png')});
   const deliveredBefore=await count('client');await a.click('.delivery-dialog button[type="submit"]');await a.waitForFunction(()=>!document.querySelector('.delivery-dialog'));await observe('client',deliveredBefore,'notice delivered');
-  record=await api.client.case(id);assert.equal(record.status,'completed');assert.equal(record.shipments[0].simulated,false);
+  record=await api.client.case(id);assert.equal(record.status,'completed');
+  const outbound=record.shipments.find(s=>s.direction==='to_recipient');assert.equal(outbound.simulated,false);
+  const proof=record.documents.find(d=>d.id===outbound.pod_document_id);assert.equal(proof.simulated,false);
+  for(const state of ['assigned','advocate_accepted','in_progress','client_review','approved','dispatched','completed']) {
+   assert.equal(record.events.find(e=>e.type==='status_changed'&&e.to_status===state)?.source,'real',state+' must be performed through the signed-in UI');
+  }
   for(const role of ['client','advocate','admin']){
    const page=work[role];await page.goto(role==='admin'?panel+'/notifications':mobile+(role==='client'?'/notifications':'/advocate/notifications'),{waitUntil:'networkidle0'});await page.waitForFunction(ref=>document.body.innerText.includes(ref),{},record.reference);await page.screenshot({path:path.join(out,role+'-notifications.png'),fullPage:role==='admin'});
    const rows=await api[role].request('/notifications?limit=100');fs.writeFileSync(path.join(out,role+'-rows.json'),JSON.stringify(rows.items.filter(n=>n.case_id===id),null,2));
   }
   // Opening an old assignment alert now must open the finished case, never acceptance.
   await openNotice(work.advocate,'A case assigned to you',record.reference);await route(work.advocate,'/report');
-  await openNotice(work.client,'Notice delivered',record.reference);await route(work.client,'/delivery');await work.client.waitForFunction(()=>document.body.innerText.includes('Deployment Test Recipient'));await work.client.screenshot({path:path.join(out,'client-delivered-441.png'),fullPage:true});await a.goto(panel+'/legal-notices/'+id,{waitUntil:'networkidle0'});await a.screenshot({path:path.join(out,'admin-case-completed.png'),fullPage:true});
+  await openNotice(work.client,'Notice delivered',record.reference);await route(work.client,'/delivery');
+  await work.client.screenshot({path:path.join(out,'client-delivery-440.png')});
+  await click(work.client,'View Delivery Confirmation');await route(work.client,'/delivered');
+  await work.client.waitForFunction(()=>document.body.innerText.includes('Deployment Test Recipient'));
+  await work.client.screenshot({path:path.join(out,'client-delivered-441.png')});
+  const proofResponse=work.client.waitForResponse(r=>r.request().method()==='GET'&&r.url().includes('/documents/'+proof.id+'/url'));
+  await click(work.client,'View Proof');
+  const proofUrl=await(await proofResponse).json();
+  const bytes=await work.client.evaluate(async url=>{const r=await fetch(url);if(!r.ok)throw new Error('POD HTTP '+r.status);return [...new Uint8Array(await r.arrayBuffer())];},proofUrl.url);
+  const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
+  assert.equal(hash(Buffer.from(bytes)),hash(fs.readFileSync(file)),'The client must read the exact PDF the admin uploaded');
+  await a.goto(panel+'/legal-notices/'+id,{waitUntil:'networkidle0'});await a.screenshot({path:path.join(out,'admin-case-completed.png'),fullPage:true});
   const after=await api.client.request('/notifications?limit=100');assert.ok(after.items.find(n=>n.case_id===id&&n.kind==='notice_delivered').read_at);
   const duplicate=await fetch(base+'/api/v1/cases/'+id+'/delivered',{method:'POST',headers:{Authorization:'Bearer '+sessions.admin.tokens.idToken,'Content-Type':'application/json'},body:JSON.stringify({pod_document_id:record.shipments[0].pod_document_id})});assert.equal(duplicate.status,409);
-  assert.deepEqual(errors,[]);fs.writeFileSync(path.join(out,'verification.json'),JSON.stringify({urls:{mobile,admin:panel,api:base},case:{id,reference:record.reference,status:record.status},profiles:3,uiSignIn:true,uiCourierDetails:true,observations:evidence,errors,duplicateDeliveryStatus:duplicate.status,observerReloads:0},null,2));
+  assert.deepEqual(errors,[]);fs.writeFileSync(path.join(out,'verification.json'),JSON.stringify({urls:{mobile,admin:panel,api:base},case:{id,reference:record.reference,status:record.status},profiles:3,uiSignIn:true,uiCourierDetails:true,deliveryRoute:'/legal-notice/delivered',podBrowserVerified:true,observations:evidence,errors,duplicateDeliveryStatus:duplicate.status,observerReloads:0},null,2));
   for(const name of fs.readdirSync(out).filter(n=>n.includes('-failure.'))) fs.unlinkSync(path.join(out,name));
   console.log('PASS',record.reference,'three profiles; zero observer reloads');
- }catch(e){for(const[role,page]of Object.entries(work)){await page.screenshot({path:path.join(out,role+'-failure.png')}).catch(()=>{});fs.writeFileSync(path.join(out,role+'-failure.txt'),await page.evaluate(()=>document.body.innerText).catch(()=>''));}throw e;}finally{await browser.close();}
+ }catch(e){for(const[role,page]of Object.entries(work)){await page.screenshot({path:path.join(out,role+'-failure.png')}).catch(()=>{});fs.writeFileSync(path.join(out,role+'-failure.txt'),await page.evaluate(()=>document.body.innerText).catch(()=>''));}throw e;}finally{
+  // Chrome's PDF viewer can hold Browser.close open after the read check.
+  // This process belongs only to this test's temporary browser profiles.
+  const cleanup=setTimeout(()=>{browser.process()?.kill('SIGKILL');browser.disconnect();},5000);
+  try{await browser.close();}finally{clearTimeout(cleanup);}
+ }
 }
 main().catch(e=>{console.error(e);process.exitCode=1;});

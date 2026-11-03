@@ -1,0 +1,28 @@
+[
+  {
+    "id": "eea2bb10-905f-439d-b062-7d22f42b88b4",
+    "case_id": "a1dffec9-35ab-45b8-bee5-c1f15feb3846",
+    "kind": "delivery_confirmation_needed",
+    "title": "A case needs delivery confirmed",
+    "body": "LN-2026-0007",
+    "created_at": "2026-11-03T08:02:17.315Z",
+    "read_at": "2026-11-03T08:02:25.528Z",
+    "case": {
+      "reference": "LN-2026-0007",
+      "status": "completed"
+    }
+  },
+  {
+    "id": "a5426a95-df55-4798-b1bd-198f57420cab",
+    "case_id": "a1dffec9-35ab-45b8-bee5-c1f15feb3846",
+    "kind": "assignment_needed",
+    "title": "A paid case needs an advocate",
+    "body": "LN-2026-0007",
+    "created_at": "2026-11-03T08:01:20.509Z",
+    "read_at": "2026-11-03T08:01:25.651Z",
+    "case": {
+      "reference": "LN-2026-0007",
+      "status": "completed"
+    }
+  }
+]

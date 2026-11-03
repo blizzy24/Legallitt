@@ -1,0 +1,27 @@
+{
+  "id": "dpl_7iF5cDoiawTqvw16g8PuvU2Demkr",
+  "url": "legalitt-7t9u6rv44-blizzard7.vercel.app",
+  "readyState": "READY",
+  "errorMessage": null,
+  "alias": [
+    "legalitt-5.vercel.app",
+    "legalitt-blizzard7.vercel.app",
+    "legalitt-git-main-blizzard7.vercel.app"
+  ],
+  "projectSettings": {
+    "buildCommand": "pnpm build",
+    "devCommand": null,
+    "framework": null,
+    "commandForIgnoringBuildStep": null,
+    "installCommand": "pnpm install --frozen-lockfile",
+    "outputDirectory": "dist",
+    "speedInsights": {
+      "id": "zeFqvZCZi6jSC2jE8iqBEaVcAyB",
+      "hasData": false
+    },
+    "webAnalytics": {
+      "id": "vlr6FML5n6cFM1egVjzFsLxZ4"
+    },
+    "nodeVersion": "22.x"
+  }
+}

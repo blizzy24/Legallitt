@@ -1,0 +1,79 @@
+{
+  "urls": {
+    "mobile": "https://legalitt-5.vercel.app",
+    "admin": "https://legalitt-admin-panel.vercel.app",
+    "api": "https://gvycg0n3u8.execute-api.ap-south-1.amazonaws.com"
+  },
+  "case": {
+    "id": "a1dffec9-35ab-45b8-bee5-c1f15feb3846",
+    "reference": "LN-2026-0007",
+    "status": "completed"
+  },
+  "profiles": 3,
+  "uiSignIn": true,
+  "uiCourierDetails": true,
+  "observations": [
+    {
+      "event": "paid \u2192 assignment needed",
+      "role": "admin",
+      "before": 0,
+      "unread": 1,
+      "withoutReload": true
+    },
+    {
+      "event": "assigned",
+      "role": "advocate",
+      "before": 0,
+      "unread": 1,
+      "withoutReload": true
+    },
+    {
+      "event": "advocate assigned",
+      "role": "client",
+      "before": 1,
+      "unread": 2,
+      "withoutReload": true
+    },
+    {
+      "event": "draft ready",
+      "role": "client",
+      "before": 2,
+      "unread": 3,
+      "withoutReload": true
+    },
+    {
+      "event": "client approved",
+      "role": "advocate",
+      "before": 0,
+      "unread": 1,
+      "withoutReload": true
+    },
+    {
+      "event": "dispatched \u2192 delivery confirmation needed",
+      "role": "admin",
+      "before": 0,
+      "unread": 1,
+      "withoutReload": true
+    },
+    {
+      "event": "notice dispatched",
+      "role": "client",
+      "before": 2,
+      "unread": 3,
+      "withoutReload": true
+    },
+    {
+      "event": "notice delivered",
+      "role": "client",
+      "before": 3,
+      "unread": 4,
+      "withoutReload": true
+    }
+  ],
+  "errors": [],
+  "duplicateDeliveryStatus": 409,
+  "observerReloads": 0,
+  "deliveryRoute": "/legal-notice/delivered",
+  "podBrowserVerified": true,
+  "deliveryEvidence": "delivery-verification.json"
+}

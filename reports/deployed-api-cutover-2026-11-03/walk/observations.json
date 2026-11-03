@@ -1,0 +1,58 @@
+[
+  {
+    "event": "paid → assignment needed",
+    "role": "admin",
+    "before": 0,
+    "unread": 1,
+    "withoutReload": true
+  },
+  {
+    "event": "assigned",
+    "role": "advocate",
+    "before": 0,
+    "unread": 1,
+    "withoutReload": true
+  },
+  {
+    "event": "advocate assigned",
+    "role": "client",
+    "before": 1,
+    "unread": 2,
+    "withoutReload": true
+  },
+  {
+    "event": "draft ready",
+    "role": "client",
+    "before": 2,
+    "unread": 3,
+    "withoutReload": true
+  },
+  {
+    "event": "client approved",
+    "role": "advocate",
+    "before": 0,
+    "unread": 1,
+    "withoutReload": true
+  },
+  {
+    "event": "dispatched → delivery confirmation needed",
+    "role": "admin",
+    "before": 0,
+    "unread": 1,
+    "withoutReload": true
+  },
+  {
+    "event": "notice dispatched",
+    "role": "client",
+    "before": 2,
+    "unread": 3,
+    "withoutReload": true
+  },
+  {
+    "event": "notice delivered",
+    "role": "client",
+    "before": 3,
+    "unread": 4,
+    "withoutReload": true
+  }
+]

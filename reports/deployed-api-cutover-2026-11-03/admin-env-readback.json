@@ -1,0 +1,10 @@
+[
+  {
+    "key": "VITE_API_BASE_URL",
+    "value": "https://gvycg0n3u8.execute-api.ap-south-1.amazonaws.com",
+    "target": [
+      "production"
+    ],
+    "type": "plain"
+  }
+]

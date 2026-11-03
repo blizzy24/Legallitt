@@ -1,0 +1,20 @@
+{
+  "id": "prj_blvW2lCDYQwiHDQPQ2mqH19YsI3V",
+  "name": "legalitt-admin-panel",
+  "accountId": "team_9yoBK7UP3uqdM6AaUzUuC8J5",
+  "rootDirectory": "apps/admin",
+  "framework": "vite",
+  "nodeVersion": "22.x",
+  "buildCommand": "pnpm --filter @legalitt/admin... build",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "outputDirectory": "dist",
+  "sourceFilesOutsideRootDirectory": true,
+  "ssoProtection": {
+    "deploymentType": "all_except_custom_domains"
+  },
+  "repository": {
+    "repo": "Legallitt",
+    "org": "blizzy24",
+    "productionBranch": "main"
+  }
+}

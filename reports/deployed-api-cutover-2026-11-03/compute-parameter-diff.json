@@ -1,0 +1,6 @@
+{
+  "CorsOrigins": {
+    "before": "",
+    "after": "https://legalitt-5.vercel.app,https://legalitt-admin-panel.vercel.app"
+  }
+}

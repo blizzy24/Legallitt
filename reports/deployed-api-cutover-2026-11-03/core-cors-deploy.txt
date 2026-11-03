@@ -1,0 +1,32 @@
+AI agent detected
+
+✨  Synthesis time: 1.44s
+
+LegalittDev-Core: start: Building LegalittDev-Core Template
+LegalittDev-Core: success: Built LegalittDev-Core Template
+LegalittDev-Core: start: Publishing LegalittDev-Core Template (026379630400-ap-south-1-996372fa)
+LegalittDev-Core: success: Published LegalittDev-Core Template (026379630400-ap-south-1-996372fa)
+LegalittDev-Core: creating CloudFormation changeset...
+LegalittDev/Core (LegalittDev-Core): deploying... [1/1]
+
+✅  LegalittDev/Core (LegalittDev-Core)
+
+✨  Deployment time: 32.01s
+
+Outputs:
+LegalittDevCoreDA55DEA3.BucketName = legalitt-dev-documents-026379630400-ap-south-1
+LegalittDevCoreDA55DEA3.ClientId = og76uiguq7mjq5e17oi5nalm4
+LegalittDevCoreDA55DEA3.ConfigurationSecretArn = arn:aws:secretsmanager:ap-south-1:026379630400:secret:legalitt-dev/app-config-FztJho
+LegalittDevCoreDA55DEA3.DemoCredentialsSecretArn = arn:aws:secretsmanager:ap-south-1:026379630400:secret:legalitt-dev/demo-auth-OX2woi
+LegalittDevCoreDA55DEA3.ExportsOutputFnGetAttDocumentsArn9D87F4A8 = arn:aws:s3:::legalitt-dev-documents-026379630400-ap-south-1
+LegalittDevCoreDA55DEA3.ExportsOutputFnGetAttEncryptionKeyArn63627630 = arn:aws:kms:ap-south-1:026379630400:key/3261c0d9-6ce7-429d-a6e5-82e1de4be98a
+LegalittDevCoreDA55DEA3.ExportsOutputRefAppConfiguration4766511E = arn:aws:secretsmanager:ap-south-1:026379630400:secret:legalitt-dev/app-config-FztJho
+LegalittDevCoreDA55DEA3.ExportsOutputRefDatabaseSecretD7AA9253 = arn:aws:secretsmanager:ap-south-1:026379630400:secret:legalitt-dev/database-SY4O9G
+LegalittDevCoreDA55DEA3.ExportsOutputRefDemoCredentials077E3031 = arn:aws:secretsmanager:ap-south-1:026379630400:secret:legalitt-dev/demo-auth-OX2woi
+LegalittDevCoreDA55DEA3.ExportsOutputRefDocuments2EE553D9 = legalitt-dev-documents-026379630400-ap-south-1
+LegalittDevCoreDA55DEA3.UserPoolId = ap-south-1_u98M4TfS9
+Stack ARN:
+arn:aws:cloudformation:ap-south-1:026379630400:stack/LegalittDev-Core/b91e2200-cc91-11f1-8bc9-02fff72c1a43
+
+✨  Total time: 47.19s
+

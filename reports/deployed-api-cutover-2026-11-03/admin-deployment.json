@@ -1,0 +1,27 @@
+{
+  "id": "dpl_7U7kYksjLzeSFQWyKNtzZwJMiPv8",
+  "url": "legalitt-admin-panel-b6giu9ypv-blizzard7.vercel.app",
+  "readyState": "READY",
+  "errorMessage": null,
+  "alias": [
+    "legalitt-admin-panel.vercel.app",
+    "legalitt-admin-panel-blizzard7.vercel.app",
+    "legalitt-admin-panel-git-main-blizzard7.vercel.app"
+  ],
+  "projectSettings": {
+    "buildCommand": "pnpm --filter @legalitt/admin... build",
+    "devCommand": null,
+    "framework": "vite",
+    "commandForIgnoringBuildStep": null,
+    "installCommand": "pnpm install --frozen-lockfile",
+    "outputDirectory": "dist",
+    "speedInsights": {
+      "id": "8g1ySuPzAbhdlYLs6sAAc868uJ6",
+      "hasData": false
+    },
+    "webAnalytics": {
+      "id": "sPd1yv1htxArSFswaCf7NBPnG"
+    },
+    "nodeVersion": "22.x"
+  }
+}

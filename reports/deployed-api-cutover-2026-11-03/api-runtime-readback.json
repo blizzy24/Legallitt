@@ -1,0 +1,75 @@
+{
+    "image": "026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api:9e9d2611e7e7",
+    "cpu": "256",
+    "memory": "512",
+    "environment": [
+        {
+            "name": "DOCUMENT_BUCKET",
+            "value": "legalitt-dev-documents-026379630400-ap-south-1"
+        },
+        {
+            "name": "AWS_REGION",
+            "value": "ap-south-1"
+        },
+        {
+            "name": "DATABASE_NAME",
+            "value": "legalitt"
+        },
+        {
+            "name": "PORT",
+            "value": "3001"
+        },
+        {
+            "name": "DEMO_PROGRESSION",
+            "value": "on"
+        },
+        {
+            "name": "ENVIRONMENT",
+            "value": "dev"
+        },
+        {
+            "name": "AUTH_CONFIG_SECRET_ARN",
+            "value": "arn:aws:secretsmanager:ap-south-1:026379630400:secret:legalitt-dev/app-config-FztJho"
+        },
+        {
+            "name": "CORS_ORIGINS",
+            "value": "https://legalitt-5.vercel.app,https://legalitt-admin-panel.vercel.app"
+        },
+        {
+            "name": "DEMO_ASSIGN_DELAY_MS",
+            "value": "30000"
+        },
+        {
+            "name": "DEMO_DRAFT_START_DELAY_MS",
+            "value": "30000"
+        },
+        {
+            "name": "DEMO_AUTH_SECRET_ARN",
+            "value": "arn:aws:secretsmanager:ap-south-1:026379630400:secret:legalitt-dev/demo-auth-OX2woi"
+        },
+        {
+            "name": "DEMO_SHIPMENT_STEP_MS",
+            "value": "5000"
+        },
+        {
+            "name": "PHONE_AUTH_MODE",
+            "value": "demo"
+        },
+        {
+            "name": "DATABASE_SECRET_ARN",
+            "value": "arn:aws:secretsmanager:ap-south-1:026379630400:secret:legalitt-dev/database-SY4O9G"
+        },
+        {
+            "name": "NODE_ENV",
+            "value": "development"
+        },
+        {
+            "name": "DEMO_DISPATCH_DELAY_MS",
+            "value": "30000"
+        },
+        {
+            "name": "DEMO_DRAFT_DONE_DELAY_MS",
+            "value": "30000"
+        }
+    ]
+}

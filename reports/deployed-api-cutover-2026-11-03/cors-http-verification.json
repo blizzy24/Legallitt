@@ -1,0 +1,45 @@
+[
+  {
+    "service": "api",
+    "origin": "https://legalitt-5.vercel.app",
+    "status": 204,
+    "allowedOrigin": "https://legalitt-5.vercel.app"
+  },
+  {
+    "service": "api",
+    "origin": "https://legalitt-admin-panel.vercel.app",
+    "status": 204,
+    "allowedOrigin": "https://legalitt-admin-panel.vercel.app"
+  },
+  {
+    "service": "api",
+    "origin": "https://unapproved.example.invalid",
+    "status": 204,
+    "allowedOrigin": null
+  },
+  {
+    "service": "bucket",
+    "origin": "https://legalitt-5.vercel.app",
+    "status": 200,
+    "allowedOrigin": "https://legalitt-5.vercel.app"
+  },
+  {
+    "service": "bucket",
+    "origin": "https://legalitt-admin-panel.vercel.app",
+    "status": 200,
+    "allowedOrigin": "https://legalitt-admin-panel.vercel.app"
+  },
+  {
+    "service": "bucket",
+    "origin": "https://unapproved.example.invalid",
+    "status": 403,
+    "allowedOrigin": null
+  },
+  {
+    "service": "health",
+    "status": 200,
+    "body": {
+      "status": "ok"
+    }
+  }
+]

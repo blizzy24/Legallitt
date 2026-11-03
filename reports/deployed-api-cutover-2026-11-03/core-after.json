@@ -1,0 +1,693 @@
+{
+    "TemplateBody": {
+        "Resources": {
+            "EncryptionKey": {
+                "Type": "AWS::KMS::Key",
+                "Properties": {
+                    "EnableKeyRotation": true,
+                    "KeyPolicy": {
+                        "Version": "2012-10-17",
+                        "Statement": [
+                            {
+                                "Effect": "Allow",
+                                "Principal": {
+                                    "AWS": {
+                                        "Fn::Sub": "arn:${AWS::Partition}:iam::${AWS::AccountId}:root"
+                                    }
+                                },
+                                "Action": "kms:*",
+                                "Resource": "*"
+                            }
+                        ]
+                    },
+                    "Tags": [
+                        {
+                            "Key": "environment",
+                            "Value": "dev"
+                        },
+                        {
+                            "Key": "application",
+                            "Value": "legalitt"
+                        }
+                    ]
+                },
+                "UpdateReplacePolicy": "Retain",
+                "DeletionPolicy": "Retain",
+                "Metadata": {
+                    "aws:cdk:path": "LegalittDev/Core/EncryptionKey",
+                    "environment": "dev"
+                }
+            },
+            "KeyAlias": {
+                "Type": "AWS::KMS::Alias",
+                "Properties": {
+                    "AliasName": "alias/legalitt-dev",
+                    "TargetKeyId": {
+                        "Ref": "EncryptionKey"
+                    }
+                },
+                "Metadata": {
+                    "aws:cdk:path": "LegalittDev/Core/KeyAlias",
+                    "environment": "dev"
+                }
+            },
+            "Documents": {
+                "Type": "AWS::S3::Bucket",
+                "Properties": {
+                    "BucketName": {
+                        "Fn::Sub": "legalitt-dev-documents-${AWS::AccountId}-${AWS::Region}"
+                    },
+                    "BucketEncryption": {
+                        "ServerSideEncryptionConfiguration": [
+                            {
+                                "ServerSideEncryptionByDefault": {
+                                    "SSEAlgorithm": "aws:kms",
+                                    "KMSMasterKeyID": {
+                                        "Fn::GetAtt": [
+                                            "EncryptionKey",
+                                            "Arn"
+                                        ]
+                                    }
+                                },
+                                "BucketKeyEnabled": true
+                            }
+                        ]
+                    },
+                    "PublicAccessBlockConfiguration": {
+                        "BlockPublicAcls": true,
+                        "BlockPublicPolicy": true,
+                        "IgnorePublicAcls": true,
+                        "RestrictPublicBuckets": true
+                    },
+                    "OwnershipControls": {
+                        "Rules": [
+                            {
+                                "ObjectOwnership": "BucketOwnerEnforced"
+                            }
+                        ]
+                    },
+                    "VersioningConfiguration": {
+                        "Status": "Enabled"
+                    },
+                    "CorsConfiguration": {
+                        "CorsRules": [
+                            {
+                                "AllowedOrigins": [
+                                    "http://localhost:8081",
+                                    "http://127.0.0.1:5173",
+                                    "https://legalitt-5.vercel.app",
+                                    "https://legalitt-admin-panel.vercel.app"
+                                ],
+                                "AllowedMethods": [
+                                    "POST",
+                                    "GET",
+                                    "HEAD"
+                                ],
+                                "AllowedHeaders": [
+                                    "Content-Type"
+                                ],
+                                "ExposedHeaders": [
+                                    "ETag"
+                                ],
+                                "MaxAge": 300
+                            }
+                        ]
+                    },
+                    "Tags": [
+                        {
+                            "Key": "environment",
+                            "Value": "dev"
+                        },
+                        {
+                            "Key": "application",
+                            "Value": "legalitt"
+                        }
+                    ]
+                },
+                "UpdateReplacePolicy": "Retain",
+                "DeletionPolicy": "Retain",
+                "Metadata": {
+                    "aws:cdk:path": "LegalittDev/Core/Documents",
+                    "environment": "dev"
+                }
+            },
+            "DocumentsPolicy": {
+                "Type": "AWS::S3::BucketPolicy",
+                "Properties": {
+                    "Bucket": {
+                        "Ref": "Documents"
+                    },
+                    "PolicyDocument": {
+                        "Version": "2012-10-17",
+                        "Statement": [
+                            {
+                                "Effect": "Deny",
+                                "Principal": "*",
+                                "Action": "s3:*",
+                                "Resource": [
+                                    {
+                                        "Fn::GetAtt": [
+                                            "Documents",
+                                            "Arn"
+                                        ]
+                                    },
+                                    {
+                                        "Fn::Join": [
+                                            "",
+                                            [
+                                                {
+                                                    "Fn::GetAtt": [
+                                                        "Documents",
+                                                        "Arn"
+                                                    ]
+                                                },
+                                                "/*"
+                                            ]
+                                        ]
+                                    }
+                                ],
+                                "Condition": {
+                                    "Bool": {
+                                        "aws:SecureTransport": "false"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                },
+                "Metadata": {
+                    "aws:cdk:path": "LegalittDev/Core/DocumentsPolicy",
+                    "environment": "dev"
+                }
+            },
+            "DatabaseSecret": {
+                "Type": "AWS::SecretsManager::Secret",
+                "Properties": {
+                    "Name": "legalitt-dev/database",
+                    "KmsKeyId": {
+                        "Fn::GetAtt": [
+                            "EncryptionKey",
+                            "Arn"
+                        ]
+                    },
+                    "GenerateSecretString": {
+                        "SecretStringTemplate": "{\"username\":\"legalitt\"}",
+                        "GenerateStringKey": "password",
+                        "PasswordLength": 32,
+                        "ExcludeCharacters": "\"@/\\"
+                    },
+                    "Tags": [
+                        {
+                            "Key": "environment",
+                            "Value": "dev"
+                        },
+                        {
+                            "Key": "application",
+                            "Value": "legalitt"
+                        }
+                    ]
+                },
+                "UpdateReplacePolicy": "Retain",
+                "DeletionPolicy": "Retain",
+                "Metadata": {
+                    "aws:cdk:path": "LegalittDev/Core/DatabaseSecret",
+                    "environment": "dev"
+                }
+            },
+            "AuthBoundary": {
+                "Type": "AWS::IAM::ManagedPolicy",
+                "Properties": {
+                    "PolicyDocument": {
+                        "Version": "2012-10-17",
+                        "Statement": [
+                            {
+                                "Effect": "Allow",
+                                "Action": [
+                                    "logs:CreateLogStream",
+                                    "logs:PutLogEvents"
+                                ],
+                                "Resource": {
+                                    "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/legalitt-dev-auth-*:log-stream:*"
+                                }
+                            },
+                            {
+                                "Effect": "Deny",
+                                "Action": "*",
+                                "Resource": "*",
+                                "Condition": {
+                                    "StringEquals": {
+                                        "aws:ResourceTag/environment": "prod"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                },
+                "Metadata": {
+                    "aws:cdk:path": "LegalittDev/Core/AuthBoundary",
+                    "environment": "dev"
+                }
+            },
+            "AuthRole": {
+                "Type": "AWS::IAM::Role",
+                "Properties": {
+                    "PermissionsBoundary": {
+                        "Ref": "AuthBoundary"
+                    },
+                    "AssumeRolePolicyDocument": {
+                        "Version": "2012-10-17",
+                        "Statement": [
+                            {
+                                "Effect": "Allow",
+                                "Principal": {
+                                    "Service": "lambda.amazonaws.com"
+                                },
+                                "Action": "sts:AssumeRole"
+                            }
+                        ]
+                    },
+                    "Policies": [
+                        {
+                            "PolicyName": "auth-logs",
+                            "PolicyDocument": {
+                                "Version": "2012-10-17",
+                                "Statement": [
+                                    {
+                                        "Effect": "Allow",
+                                        "Action": [
+                                            "logs:CreateLogStream",
+                                            "logs:PutLogEvents"
+                                        ],
+                                        "Resource": {
+                                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/legalitt-dev-auth-*:log-stream:*"
+                                        }
+                                    },
+                                    {
+                                        "Effect": "Deny",
+                                        "Action": "*",
+                                        "Resource": "*",
+                                        "Condition": {
+                                            "StringEquals": {
+                                                "aws:ResourceTag/environment": "prod"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ],
+                    "Tags": [
+                        {
+                            "Key": "environment",
+                            "Value": "dev"
+                        },
+                        {
+                            "Key": "application",
+                            "Value": "legalitt"
+                        }
+                    ]
+                },
+                "Metadata": {
+                    "aws:cdk:path": "LegalittDev/Core/AuthRole",
+                    "environment": "dev"
+                }
+            },
+            "preSignupLogs": {
+                "Type": "AWS::Logs::LogGroup",
+                "Properties": {
+                    "LogGroupName": "/aws/lambda/legalitt-dev-auth-preSignup",
+                    "Tags": [
+                        {
+                            "Key": "environment",
+                            "Value": "dev"
+                        },
+                        {
+                            "Key": "application",
+                            "Value": "legalitt"
+                        }
+                    ]
+                },
+                "UpdateReplacePolicy": "Retain",
+                "DeletionPolicy": "Retain",
+                "Metadata": {
+                    "aws:cdk:path": "LegalittDev/Core/preSignupLogs",
+                    "environment": "dev"
+                }
+            },
+            "preSignupTrigger": {
+                "Type": "AWS::Lambda::Function",
+                "Properties": {
+                    "FunctionName": "legalitt-dev-auth-preSignup",
+                    "Runtime": "nodejs22.x",
+                    "Handler": "index.preSignup",
+                    "Role": {
+                        "Fn::GetAtt": [
+                            "AuthRole",
+                            "Arn"
+                        ]
+                    },
+                    "Code": {
+                        "ZipFile": "\"use strict\";\nexports.preSignup = async (event) => {\n  const role = event.request.userAttributes[\"custom:role\"];\n  const adminProvisioning = event.triggerSource === \"PreSignUp_AdminCreateUser\";\n  if (\n    ![\"client\", \"advocate\", ...(adminProvisioning ? [\"admin\"] : [])].includes(\n      role,\n    )\n  ) {\n    throw new Error(\"Invalid registration role\");\n  }\n  // Verification remains Cognito's job; do not auto-confirm email or phone.\n  return event;\n};\n"
+                    },
+                    "Environment": {
+                        "Variables": {
+                            "ENVIRONMENT": "dev"
+                        }
+                    },
+                    "Tags": [
+                        {
+                            "Key": "environment",
+                            "Value": "dev"
+                        },
+                        {
+                            "Key": "application",
+                            "Value": "legalitt"
+                        }
+                    ]
+                },
+                "DependsOn": [
+                    "preSignupLogs"
+                ],
+                "Metadata": {
+                    "aws:cdk:path": "LegalittDev/Core/preSignupTrigger",
+                    "environment": "dev"
+                }
+            },
+            "UserPool": {
+                "Type": "AWS::Cognito::UserPool",
+                "Properties": {
+                    "UserPoolName": "legalitt-dev-users",
+                    "UsernameAttributes": [
+                        "email",
+                        "phone_number"
+                    ],
+                    "UsernameConfiguration": {
+                        "CaseSensitive": false
+                    },
+                    "AutoVerifiedAttributes": [
+                        "email"
+                    ],
+                    "Schema": [
+                        {
+                            "Name": "role",
+                            "AttributeDataType": "String",
+                            "Mutable": false,
+                            "Required": false,
+                            "StringAttributeConstraints": {
+                                "MinLength": "5",
+                                "MaxLength": "8"
+                            }
+                        }
+                    ],
+                    "UserPoolTags": {
+                        "environment": "dev",
+                        "application": "legalitt"
+                    },
+                    "LambdaConfig": {
+                        "PreSignUp": {
+                            "Fn::GetAtt": [
+                                "preSignupTrigger",
+                                "Arn"
+                            ]
+                        }
+                    }
+                },
+                "UpdateReplacePolicy": "Retain",
+                "DeletionPolicy": "Retain",
+                "Metadata": {
+                    "aws:cdk:path": "LegalittDev/Core/UserPool",
+                    "environment": "dev"
+                }
+            },
+            "preSignupInvoke": {
+                "Type": "AWS::Lambda::Permission",
+                "Properties": {
+                    "FunctionName": {
+                        "Fn::GetAtt": [
+                            "preSignupTrigger",
+                            "Arn"
+                        ]
+                    },
+                    "Action": "lambda:InvokeFunction",
+                    "Principal": "cognito-idp.amazonaws.com",
+                    "SourceArn": {
+                        "Fn::GetAtt": [
+                            "UserPool",
+                            "Arn"
+                        ]
+                    },
+                    "SourceAccount": "026379630400"
+                },
+                "Metadata": {
+                    "aws:cdk:path": "LegalittDev/Core/preSignupInvoke",
+                    "environment": "dev"
+                }
+            },
+            "UserPoolClient": {
+                "Type": "AWS::Cognito::UserPoolClient",
+                "Properties": {
+                    "UserPoolId": {
+                        "Ref": "UserPool"
+                    },
+                    "ClientName": "legalitt-dev-app",
+                    "GenerateSecret": false,
+                    "ExplicitAuthFlows": [
+                        "ALLOW_USER_PASSWORD_AUTH",
+                        "ALLOW_REFRESH_TOKEN_AUTH"
+                    ],
+                    "PreventUserExistenceErrors": "ENABLED",
+                    "EnableTokenRevocation": true,
+                    "ReadAttributes": [
+                        "email",
+                        "email_verified",
+                        "phone_number",
+                        "phone_number_verified",
+                        "name",
+                        "custom:role"
+                    ],
+                    "WriteAttributes": [
+                        "email",
+                        "phone_number",
+                        "name",
+                        "custom:role"
+                    ]
+                },
+                "Metadata": {
+                    "aws:cdk:path": "LegalittDev/Core/UserPoolClient",
+                    "environment": "dev"
+                }
+            },
+            "AppConfiguration": {
+                "Type": "AWS::SecretsManager::Secret",
+                "Properties": {
+                    "Name": "legalitt-dev/app-config",
+                    "KmsKeyId": {
+                        "Fn::GetAtt": [
+                            "EncryptionKey",
+                            "Arn"
+                        ]
+                    },
+                    "SecretString": {
+                        "Fn::Join": [
+                            "",
+                            [
+                                "{\"userPoolId\":\"",
+                                {
+                                    "Ref": "UserPool"
+                                },
+                                "\",\"clientId\":\"",
+                                {
+                                    "Ref": "UserPoolClient"
+                                },
+                                "\",\"bucketName\":\"",
+                                {
+                                    "Ref": "Documents"
+                                },
+                                "\",\"region\":\"ap-south-1\"}"
+                            ]
+                        ]
+                    },
+                    "Tags": [
+                        {
+                            "Key": "environment",
+                            "Value": "dev"
+                        },
+                        {
+                            "Key": "application",
+                            "Value": "legalitt"
+                        }
+                    ]
+                },
+                "UpdateReplacePolicy": "Retain",
+                "DeletionPolicy": "Retain",
+                "Metadata": {
+                    "aws:cdk:path": "LegalittDev/Core/AppConfiguration",
+                    "environment": "dev"
+                }
+            },
+            "DemoCredentials": {
+                "Type": "AWS::SecretsManager::Secret",
+                "Properties": {
+                    "Name": "legalitt-dev/demo-auth",
+                    "KmsKeyId": {
+                        "Fn::GetAtt": [
+                            "EncryptionKey",
+                            "Arn"
+                        ]
+                    },
+                    "GenerateSecretString": {
+                        "SecretStringTemplate": "{}",
+                        "GenerateStringKey": "password",
+                        "PasswordLength": 32,
+                        "ExcludeCharacters": "\"@/\\",
+                        "RequireEachIncludedType": true
+                    },
+                    "Tags": [
+                        {
+                            "Key": "environment",
+                            "Value": "dev"
+                        },
+                        {
+                            "Key": "application",
+                            "Value": "legalitt"
+                        }
+                    ]
+                },
+                "UpdateReplacePolicy": "Retain",
+                "DeletionPolicy": "Retain",
+                "Metadata": {
+                    "aws:cdk:path": "LegalittDev/Core/DemoCredentials",
+                    "environment": "dev"
+                }
+            },
+            "CDKMetadata": {
+                "Type": "AWS::CDK::Metadata",
+                "Properties": {
+                    "Analytics": "v2:deflate64:H4sIAAAAAAAA/zPSMzI31jNQTCwv1k1OydbNyUzSqw4uSUzO1nFOywtKLc4vLUpOBbH9S0sKSktqdfLyU1L1sor1y4yM9IyM9YwVs4ozM3WLSvNKMnNT9YIgNAAdH3q8VwAAAA=="
+                },
+                "Metadata": {
+                    "aws:cdk:path": "LegalittDev/Core/CDKMetadata/Default"
+                }
+            }
+        },
+        "Outputs": {
+            "DemoCredentialsSecretArn": {
+                "Value": {
+                    "Ref": "DemoCredentials"
+                }
+            },
+            "UserPoolId": {
+                "Value": {
+                    "Ref": "UserPool"
+                }
+            },
+            "ClientId": {
+                "Value": {
+                    "Ref": "UserPoolClient"
+                }
+            },
+            "BucketName": {
+                "Value": {
+                    "Ref": "Documents"
+                }
+            },
+            "ConfigurationSecretArn": {
+                "Value": {
+                    "Ref": "AppConfiguration"
+                }
+            },
+            "ExportsOutputFnGetAttEncryptionKeyArn63627630": {
+                "Value": {
+                    "Fn::GetAtt": [
+                        "EncryptionKey",
+                        "Arn"
+                    ]
+                },
+                "Export": {
+                    "Name": "LegalittDev-Core:ExportsOutputFnGetAttEncryptionKeyArn63627630"
+                }
+            },
+            "ExportsOutputRefDatabaseSecretD7AA9253": {
+                "Value": {
+                    "Ref": "DatabaseSecret"
+                },
+                "Export": {
+                    "Name": "LegalittDev-Core:ExportsOutputRefDatabaseSecretD7AA9253"
+                }
+            },
+            "ExportsOutputFnGetAttDocumentsArn9D87F4A8": {
+                "Value": {
+                    "Fn::GetAtt": [
+                        "Documents",
+                        "Arn"
+                    ]
+                },
+                "Export": {
+                    "Name": "LegalittDev-Core:ExportsOutputFnGetAttDocumentsArn9D87F4A8"
+                }
+            },
+            "ExportsOutputRefAppConfiguration4766511E": {
+                "Value": {
+                    "Ref": "AppConfiguration"
+                },
+                "Export": {
+                    "Name": "LegalittDev-Core:ExportsOutputRefAppConfiguration4766511E"
+                }
+            },
+            "ExportsOutputRefDemoCredentials077E3031": {
+                "Value": {
+                    "Ref": "DemoCredentials"
+                },
+                "Export": {
+                    "Name": "LegalittDev-Core:ExportsOutputRefDemoCredentials077E3031"
+                }
+            },
+            "ExportsOutputRefDocuments2EE553D9": {
+                "Value": {
+                    "Ref": "Documents"
+                },
+                "Export": {
+                    "Name": "LegalittDev-Core:ExportsOutputRefDocuments2EE553D9"
+                }
+            }
+        },
+        "Parameters": {
+            "BootstrapVersion": {
+                "Type": "AWS::SSM::Parameter::Value<String>",
+                "Default": "/cdk-bootstrap/hnb659fds/version",
+                "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+            }
+        },
+        "Rules": {
+            "CheckBootstrapVersion": {
+                "Assertions": [
+                    {
+                        "Assert": {
+                            "Fn::Not": [
+                                {
+                                    "Fn::Contains": [
+                                        [
+                                            "1",
+                                            "2",
+                                            "3",
+                                            "4",
+                                            "5"
+                                        ],
+                                        {
+                                            "Ref": "BootstrapVersion"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+                    }
+                ]
+            }
+        }
+    },
+    "StagesAvailable": [
+        "Original",
+        "Processed"
+    ]
+}

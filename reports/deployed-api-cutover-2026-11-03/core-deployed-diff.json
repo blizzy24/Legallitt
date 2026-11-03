@@ -1,0 +1,15 @@
+[
+  {
+    "path": "/Resources/Documents/Properties/CorsConfiguration/CorsRules/0/AllowedOrigins",
+    "before": [
+      "http://localhost:8081",
+      "http://127.0.0.1:5173"
+    ],
+    "after": [
+      "http://localhost:8081",
+      "http://127.0.0.1:5173",
+      "https://legalitt-5.vercel.app",
+      "https://legalitt-admin-panel.vercel.app"
+    ]
+  }
+]

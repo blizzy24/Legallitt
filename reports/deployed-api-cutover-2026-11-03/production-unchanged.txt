@@ -1,0 +1,1 @@
+Fresh synth comparison using identical source with only the two CORS additions removed: Dev Compute, Prod Core and Prod Compute structurally identical. Dev Core differs only in AllowedOrigins. Earlier cached production baseline was stale; replaced with this fresh baseline.

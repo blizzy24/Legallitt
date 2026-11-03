@@ -1,0 +1,20 @@
+{
+  "domains": [
+    {
+      "name": "legalitt-admin-panel.vercel.app",
+      "apexName": "vercel.app",
+      "projectId": "prj_blvW2lCDYQwiHDQPQ2mqH19YsI3V",
+      "redirect": null,
+      "gitBranch": null,
+      "customEnvironmentId": null,
+      "updatedAt": 1793692348106,
+      "createdAt": 1793692348106,
+      "verified": true
+    }
+  ],
+  "pagination": {
+    "count": 1,
+    "next": null,
+    "prev": 1793692348106
+  }
+}

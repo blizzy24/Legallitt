@@ -1,0 +1,47 @@
+{
+  "reference": "LN-2026-0007",
+  "id": "a1dffec9-35ab-45b8-bee5-c1f15feb3846",
+  "route": "/legal-notice/delivered",
+  "receivedBy": "Deployment Test Recipient",
+  "podSimulated": false,
+  "deliverySimulated": false,
+  "podBrowserReadStatus": 200,
+  "podSha256": "dbc1ab5a696dcbb2f34090976814e10a34352063cabc758ebf3e0223ad6d3746",
+  "humanTransitions": [
+    {
+      "to": "assigned",
+      "role": "admin",
+      "source": "real"
+    },
+    {
+      "to": "advocate_accepted",
+      "role": "advocate",
+      "source": "real"
+    },
+    {
+      "to": "in_progress",
+      "role": "advocate",
+      "source": "real"
+    },
+    {
+      "to": "client_review",
+      "role": "advocate",
+      "source": "real"
+    },
+    {
+      "to": "approved",
+      "role": "client",
+      "source": "real"
+    },
+    {
+      "to": "dispatched",
+      "role": "advocate",
+      "source": "real"
+    },
+    {
+      "to": "completed",
+      "role": "admin",
+      "source": "real"
+    }
+  ]
+}
