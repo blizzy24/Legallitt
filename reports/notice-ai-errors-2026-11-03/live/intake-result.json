@@ -1,0 +1,87 @@
+{
+  "reference": "LN-2026-0012",
+  "caseId": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+  "subjectMatter": "Synthetic testing case only. An unpaid invoice for ₹5,000 for website design services. The client requests payment of the outstanding invoice and written confirmation of settlement.",
+  "subject": {
+    "text": "Legal Notice for Recovery of Unpaid Invoice of ₹5,000 for Website Design Services",
+    "simulated": false
+  },
+  "demands": {
+    "options": [
+      "Demand immediate payment of the outstanding invoice amount of ₹5,000 for website design services",
+      "Demand written confirmation of settlement regarding the unpaid invoice"
+    ],
+    "simulated": false
+  },
+  "saved": {
+    "subject_line": "Legal Notice for Recovery of Unpaid Invoice of ₹5,000 for Website Design Services",
+    "legal_demand": {
+      "custom": "",
+      "selected": [
+        "Demand immediate payment of the outstanding invoice amount of ₹5,000 for website design services"
+      ]
+    }
+  },
+  "events": [
+    {
+      "source": "real",
+      "id": "75",
+      "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+      "type": "subject_generated",
+      "actor_id": "aadf5486-cb3e-4379-b7aa-6def2f688d84",
+      "actor_role": "client",
+      "from_status": null,
+      "to_status": null,
+      "payload": {
+        "subject_line": "Legal Notice for Recovery of Unpaid Invoice of ₹5,000 for Website Design Services"
+      },
+      "created_at": "2026-11-03T11:56:06.104Z"
+    },
+    {
+      "source": "real",
+      "id": "76",
+      "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+      "type": "demand_options_generated",
+      "actor_id": "aadf5486-cb3e-4379-b7aa-6def2f688d84",
+      "actor_role": "client",
+      "from_status": null,
+      "to_status": null,
+      "payload": {
+        "options": [
+          "Demand immediate payment of the outstanding invoice amount of ₹5,000 for website design services",
+          "Demand written confirmation of settlement regarding the unpaid invoice"
+        ]
+      },
+      "created_at": "2026-11-03T11:56:09.536Z"
+    }
+  ],
+  "generationResponses": [
+    {
+      "endpoint": "subject",
+      "status": 201,
+      "body": {
+        "text": "Legal Notice for Recovery of Unpaid Invoice of ₹5,000 for Website Design Services",
+        "simulated": false
+      }
+    },
+    {
+      "endpoint": "demand-options",
+      "status": 201,
+      "body": {
+        "options": [
+          "Demand immediate payment of the outstanding invoice amount of ₹5,000 for website design services",
+          "Demand written confirmation of settlement regarding the unpaid invoice"
+        ],
+        "simulated": false
+      }
+    }
+  ],
+  "failureChecks": {
+    "method": "Unmodified deployed requests: only naturally occurring provider failures recorded; no injected response",
+    "subjectError": null,
+    "demandsError": null,
+    "failurePathExercised": false,
+    "reached": "/legal-notice/step4"
+  },
+  "browserErrors": []
+}

@@ -1,6 +1,8 @@
 Legal Notice AI error copy — 3 November 2026
 
-Implemented and verified locally. Deployment/push approval is pending.
+Commit f8f946b pushed to main. Image notice-ai-errors-20261103 published and
+deployed to LegalittDev-Compute-DevelopmentOnly on 3 November 2026.
+CloudFormation UPDATE_COMPLETE; ECS task legalitt-dev-api:4 stable; /health OK.
 
 Subject generation now returns:
 Couldn’t generate the subject just now. Please try again.
@@ -49,9 +51,23 @@ browser-result.json — messages, real audit rows and captured sanitized logs
 browser-check.txt — browser-check result
 api-tests.txt / typecheck.txt / image-build.txt — checks
 
-Deployment scope, once approved:
+Completed deployment scope:
 Publish the built image to the existing legalitt-dev-api ECR repository and
 deploy only LegalittDev/Compute with ApiImageTag=notice-ai-errors-20261103.
 That replaces the API/ops image revisions, retaining Gemini mode, model, secret
 reference and all existing infrastructure. No migration, Core, production,
 Bedrock, mobile configuration or Vercel change is needed.
+
+Deployed verification:
+- The actual legalitt-5.vercel.app intake, with unmodified API requests, created
+  synthetic draft LN-2026-0012 and reached Documents. Subject and demands both
+  came from Gemini. No browser errors. Evidence: live/intake-result.json,
+  live/generated-demands.png, live-check.txt.
+- No provider error occurred in that live check. This does not verify the live
+  failure path. Upstream 429/503 behavior is verified locally above.
+- A separate, isolated ECS verification task is prepared to exercise the same
+  deployed image against real Cognito/RDS/CloudWatch with injected upstream
+  failures, without disrupting the main API. Launch awaits separate approval.
+- deployment-readback.json and task-readback.json identify the deployed stack,
+  task/image and configuration (ARNs only, no secret values).
+- deploy-diff.txt, deploy.txt, health.json record the rollout.

@@ -1,0 +1,22 @@
+Reached /home
+Reached /step3
+Reached /step2
+Reached /step1
+Reached /demand
+Reached /step4
+{
+  "reference": "LN-2026-0012",
+  "subject": {
+    "text": "Legal Notice for Recovery of Unpaid Invoice of ₹5,000 for Website Design Services",
+    "simulated": false
+  },
+  "demands": {
+    "options": [
+      "Demand immediate payment of the outstanding invoice amount of ₹5,000 for website design services",
+      "Demand written confirmation of settlement regarding the unpaid invoice"
+    ],
+    "simulated": false
+  },
+  "errors": [],
+  "recoveredTo": "/legal-notice/step4"
+}

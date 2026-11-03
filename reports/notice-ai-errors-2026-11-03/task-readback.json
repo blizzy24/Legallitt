@@ -1,0 +1,93 @@
+{
+    "task": "arn:aws:ecs:ap-south-1:026379630400:task-definition/legalitt-dev-api:4",
+    "containers": [
+        {
+            "name": "api",
+            "image": "026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api:notice-ai-errors-20261103",
+            "environment": [
+                {
+                    "name": "DOCUMENT_BUCKET",
+                    "value": "legalitt-dev-documents-026379630400-ap-south-1"
+                },
+                {
+                    "name": "AWS_REGION",
+                    "value": "ap-south-1"
+                },
+                {
+                    "name": "DATABASE_NAME",
+                    "value": "legalitt"
+                },
+                {
+                    "name": "PORT",
+                    "value": "3001"
+                },
+                {
+                    "name": "DEMO_PROGRESSION",
+                    "value": "on"
+                },
+                {
+                    "name": "ENVIRONMENT",
+                    "value": "dev"
+                },
+                {
+                    "name": "AUTH_CONFIG_SECRET_ARN",
+                    "value": "arn:aws:secretsmanager:ap-south-1:026379630400:secret:legalitt-dev/app-config-FztJho"
+                },
+                {
+                    "name": "CORS_ORIGINS",
+                    "value": "https://legalitt-5.vercel.app,https://legalitt-admin-panel.vercel.app"
+                },
+                {
+                    "name": "DEMO_ASSIGN_DELAY_MS",
+                    "value": "30000"
+                },
+                {
+                    "name": "DEMO_DRAFT_START_DELAY_MS",
+                    "value": "30000"
+                },
+                {
+                    "name": "DEMO_AUTH_SECRET_ARN",
+                    "value": "arn:aws:secretsmanager:ap-south-1:026379630400:secret:legalitt-dev/demo-auth-OX2woi"
+                },
+                {
+                    "name": "DEMO_SHIPMENT_STEP_MS",
+                    "value": "5000"
+                },
+                {
+                    "name": "PHONE_AUTH_MODE",
+                    "value": "demo"
+                },
+                {
+                    "name": "DATABASE_SECRET_ARN",
+                    "value": "arn:aws:secretsmanager:ap-south-1:026379630400:secret:legalitt-dev/database-SY4O9G"
+                },
+                {
+                    "name": "NODE_ENV",
+                    "value": "development"
+                },
+                {
+                    "name": "GEMINI_MODEL",
+                    "value": "gemini-3.5-flash-lite"
+                },
+                {
+                    "name": "DEMO_DISPATCH_DELAY_MS",
+                    "value": "30000"
+                },
+                {
+                    "name": "DEMO_DRAFT_DONE_DELAY_MS",
+                    "value": "30000"
+                },
+                {
+                    "name": "AI_MODE",
+                    "value": "gemini"
+                }
+            ],
+            "secrets": [
+                {
+                    "name": "GEMINI_API_KEY",
+                    "valueFrom": "arn:aws:secretsmanager:ap-south-1:026379630400:secret:legalitt-dev/gemini-api-key-PbZXqB"
+                }
+            ]
+        }
+    ]
+}
