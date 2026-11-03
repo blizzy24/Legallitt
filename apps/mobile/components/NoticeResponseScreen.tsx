@@ -1,3 +1,5 @@
+import { useRef } from 'react';
+import NoticeDraftFeedback, {type NoticeDraftFeedbackProps} from './NoticeDraftFeedback';
 import { useDemoAdvance } from '../hooks/useDemoAdvance';
 import { router, type Href } from 'expo-router';
 import {
@@ -62,8 +64,9 @@ import {
  */
 export default function NoticeResponseScreen({
   variant,
-  caseId, data = ADV_NOTICE_RESPONSE, fields, navigate = router, onSave, onGenerate,
+  caseId, data = ADV_NOTICE_RESPONSE, fields, navigate = router, onSave, onGenerate, feedback,
 }: {
+  feedback?:NoticeDraftFeedbackProps;
   variant: 'share' | 'generate';
   caseId: string;
   data?:typeof ADV_NOTICE_RESPONSE; fields?:NoticeDocumentFields; navigate?:typeof router; onSave?:()=>void; onGenerate?:()=>void;
@@ -75,6 +78,7 @@ export default function NoticeResponseScreen({
   const router = navigate;
   const e = AT_RESPONSE_EDITOR;
   const generate = variant === 'generate';
+  const scroll = useRef<ScrollView>(null);
 
   return (
     <View style={styles.screen}>
@@ -95,7 +99,7 @@ export default function NoticeResponseScreen({
         </Pressable>
       </View>
 
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView ref={scroll} onContentSizeChange={()=>{if(feedback?.error)scroll.current?.scrollToEnd({animated:true});}} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.headingRow}>
           <Text style={styles.heading} {...shrinkToFit(0.75)}>
             {r.heading}
@@ -150,6 +154,7 @@ export default function NoticeResponseScreen({
           </View>
         </View>
 
+        <NoticeDraftFeedback {...feedback} />
         <Pressable
           accessibilityRole="button"
           onPress={() => {

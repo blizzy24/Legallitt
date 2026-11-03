@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Linking } from 'react-native';
 import { router, type Href } from 'expo-router';
-import { CompliancePeriodSchema, DEFAULT_NOTICE_POLICY, noticeClosing, NOTICE_ADVOCATE_GREETING, NOTICE_EDITABLE_DRAFT_FIELDS, unchangedNoticeIntakeFields, type NoticeDraftContent } from '@legalitt/shared';
+import { CompliancePeriodSchema, DEFAULT_NOTICE_POLICY, noticeClosing, NoticePdfProblemSchema, NOTICE_ADVOCATE_GREETING, NOTICE_EDITABLE_DRAFT_FIELDS, unchangedNoticeIntakeFields, type NoticeDraftContent } from '@legalitt/shared';
 import { DATA_SOURCE } from '../../lib/data-source';
 import { useSession } from '../../context/session';
 import { useNoticeController, type NoticeStage } from './useNoticeController';
@@ -33,7 +33,7 @@ export function useAdvocateNoticeModel(stage: string) {
   // These are the existing letterhead's fixed paragraphs, not draft.closing,
   // which the PDF does not use. Period and consequences follow the service policy.
   const closingCopy=fixture.ADV_NOTICE_RESPONSE.failing;
-  const closingCost=r?.pricing?`₹${(Number(r.pricing.base_amount_paise)/100).toLocaleString('en-IN',{maximumFractionDigits:0})}`:'________';
+  const closingCost=r?.pricing?`₹${(Number(r.pricing.base_amount_paise)/100).toLocaleString('en-IN',{maximumFractionDigits:0})}`:'';
   const validDays=CompliancePeriodSchema.safeParse(/^\d+$/.test(c.complianceDays)?Number(c.complianceDays):NaN);
   const policy=r?.notice_policy??DEFAULT_NOTICE_POLICY;
   // A required-offence policy is validated on save; incomplete edits must still render.
@@ -41,7 +41,7 @@ export function useAdvocateNoticeModel(stage: string) {
     validDays.success?validDays.data:null,c.content.offences);
   const fixedClosing=r?[
     closing.compliance, closing.consequence,
-    closingCopy.further.trimStart()+closingCost+closingCopy.cost,
+    closingCost ? closingCopy.further.trimStart()+closingCost+closingCopy.cost : '',
     fixture.ADV_NOTICE_RESPONSE.copyLine,
   ].filter(Boolean).join('\n\n'):'';
   const path=(suffix:string)=>c.href(`/advocate/notice/${c.id ?? (api ? '' : 'ln-2026-1048')}/${suffix}`);
@@ -156,7 +156,10 @@ export function useAdvocateNoticeModel(stage: string) {
     offences:c.content.offences??'',place:r?.advocate?.profile?.city??'',
     cost:r?.pricing?`₹${(Number(r.pricing.base_amount_paise)/100).toLocaleString('en-IN',{maximumFractionDigits:0})}`:'',
   }:undefined;
-  return {error:c.error,data,documentFields,navigate,controller:c,api,intakeSections,total:api?total:fixture.ADV_NOTICE_PAYMENT.totalAmount,path,courierHref,
+  const problem=NoticePdfProblemSchema.safeParse(c.errorDetails);
+  const feedback={error:c.error,missingFields:problem.success?problem.data.missing_fields:[],
+    onContactClient:api&&c.id?()=>{void c.run(async()=>{await saveDraft();router.push(path('chat'));});}:undefined};
+  return {error:c.error,feedback,data,documentFields,navigate,controller:c,api,intakeSections,total:api?total:fixture.ADV_NOTICE_PAYMENT.totalAmount,path,courierHref,
     onViewDocument:api?(id?:string)=>open(id??notice?.id??draftDoc?.id):undefined,
     onEditSection:api?(index:number,value:string)=>{
       const key=draftKeys[index];

@@ -39,7 +39,7 @@ test('numbered facts grow past five and paginate without losing content or colli
     }
   }
 });
-test('long names, long words and sparse fields stay printable without fabricated case values', async () => {
+test('long names and long words stay printable without fabricated case values', async () => {
   const longName = 'Advocate ' + 'Long Name '.repeat(12);
   const long = await readPdfText(await renderNoticePdf({...input, advocate: {...input.advocate, name: longName},
     sender: {...input.sender, name: 'Very long sender name '.repeat(20)}, subject: 'X'.repeat(400)}));
@@ -47,17 +47,12 @@ test('long names, long words and sparse fields stay printable without fabricated
   assert.equal((long.text.match(/X/g) ?? []).length, 400);
   for (const page of long.pages) for (const run of page.runs)
     assert.ok(run.x + run.width <= page.width + 0.1, `long value stays within paper: ${run.text}`);
-  const sparse = await readPdfText(await renderNoticePdf({reference: 'LN-2026-SPARSE', date: input.date,
-    content: {...content, facts: '', offences: ''}}));
-  assert.equal(sparse.pages.length, 1);
-  assert.ok(!sparse.text.includes('Test Recipient'));
-  assert.ok(!sparse.text.includes('Test subject'));
-  assert.ok(!sparse.text.includes('₹699'));
+
 });
 test('what the advocate typed is printable: rupee sign, typographic quotes and dashes, Devanagari', async () => {
   const typed = 'Mr. राम कुमार — “funds insufficient” – ₹2,50,000 ‘ok’ … यह केवल परीक्षण के लिए है।';
   assert.deepEqual(unsupportedCharacters(typed), []);
-  const bytes = await renderNoticePdf({ ...input, recipient: {name: typed}, content: { ...content, facts: typed } });
+  const bytes = await renderNoticePdf({ ...input, recipient: {...input.recipient, name: typed}, content: { ...content, facts: typed } });
   assert.equal((await PDFDocument.load(bytes)).getPageCount(), 1);
   const result = await readPdfText(bytes);
   assert.ok(result.text.includes('₹2,50,000'));
@@ -83,5 +78,27 @@ test('the compliance sentence precedes consequences; criminal clause is conditio
       assert.ok(!contains('for the offences of'));
     }
     assert.ok(!text.includes('____'),'complete intake leaves no underscore holes in either PDF');
+  }
+});
+
+
+test('missing required fields reject together before any PDF is produced', async () => {
+  await assert.rejects(renderNoticePdf({reference:'LN-TEST', date:input.date, content}), error => {
+    assert.equal(error.code,'notice_fields_missing');
+    assert.deepEqual(error.missing_fields,['subject','sender_name','sender_address','recipient_name','recipient_address','service_fee','place']);
+    for (const label of ['Subject line','Sender name','Sender address','Recipient name','Recipient address','Service fee','Place']) assert.ok(error.message.includes(label));
+    return true;
+  });
+});
+
+test('optional father and age omit their phrases independently; no generated fill-in blanks', async () => {
+  for (const [father,age] of [[null,null],['  ',null],['Father Name',null],[null,41]]) {
+    const bytes=await renderNoticePdf({...input,sender:{...input.sender,father,age},serviceFeePaise:0n,content:{...content,offences:''}});
+    const {text}=await readPdfText(bytes), normalized=text.replace(/\s/g,'');
+    assert.equal(text.includes('S/o Shri'), Boolean(father?.trim()));
+    assert.equal(text.includes('Age '), age!=null);
+    assert.ok(normalized.includes('R/oSenderRoad,Indore'));
+    assert.ok(text.includes('pay ₹0 as the cost'));
+    assert.ok(!text.includes('____'));
   }
 });

@@ -1,0 +1,22 @@
+{
+  "realHttp": true,
+  "isolatedTestDatabase": true,
+  "syntheticAuthentication": true,
+  "missingFields": [
+    "subject",
+    "sender_name",
+    "sender_address",
+    "recipient_name",
+    "recipient_address",
+    "service_fee",
+    "place"
+  ],
+  "errorSurvivesPolling": true,
+  "chatPreservesCaseId": true,
+  "factsSavedBeforeChat": true,
+  "pdfs": [
+    "notice-without-offence.pdf",
+    "notice-with-offence.pdf"
+  ],
+  "errors": []
+}

@@ -1915,8 +1915,35 @@ No value means no row. These UI labels live in `copy/instructed.ts`.
 for subject, sender name, father's name, sender address, offences, and place.
 Separate fallbacks printed underscores for age and service fee, and ruled blanks
 for an entirely missing recipient. This affects final PDFs as well as previews.
-This chunk removes the offences blank. The other missing-data rules await an
-owner decision; the intentional hand-signature line remains.
+The offences blank was removed first. The owner subsequently approved the
+remaining rules below; the intentional hand-signature line remains.
+
+> **Approved — project owner, 4 Nov 2026.** Block PDF generation if subject,
+> sender name/address, recipient name/address, service fee or place is absent.
+> Report every missing field together at the generation action. Omit the whole
+> S/o Shri and Age phrases when their optional values are absent. Keep the
+> signature line for signing by hand.
+
+One shared completeness rule applies to render-only previews, sent drafts and
+final PDFs, before rendering or document upload. Whitespace counts as missing;
+a recorded zero fee is a value. No renderer-generated underscores or ruled
+recipient blanks remain. Full missing-field feedback is adjacent to
+Generate/Preview/Send, stays visible through polling, and preserves saved draft
+work. Existing case chat is linked for confirming missing filing details (with
+save-before-navigation). It does not edit the filing. Feedback copy is registered
+in `copy/instructed.ts`; it explicitly says paid filing corrections need the
+project administrator, profile editing is not connected, and missing pricing
+needs correction rather than another payment.
+
+**Upstream audit:** new submissions validate sender and noticee names/addresses,
+subject matter/subject line and demands; payment requires the case's pricing row.
+Paid intake is immutable. Therefore those absent values indicate a legacy,
+seeded, imported or otherwise inconsistent record, not a valid current intake.
+**Place can be absent on a normally assigned case:** approved advocate eligibility
+does not require profile city, and the profile editor is still static. No fake
+edit-profile link is offered. Completing that profile workflow/verification
+requirement is a separate gap; this change does not silently alter assignment
+eligibility. Optional father/age remain optional, as approved.
 
 **Separate subsequent chunk — advocate overrides:** use structured sender
 name, father's name, age and address, mirroring the intake and letterhead.

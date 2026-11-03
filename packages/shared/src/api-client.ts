@@ -16,6 +16,7 @@ export class ApiError extends Error {
     message: string,
     readonly status: number,
     readonly code: "http" | "offline" | "timeout" | "configuration" = "http",
+    readonly details?: unknown,
   ) {
     super(message);
     this.name = "ApiError";
@@ -138,6 +139,7 @@ export class ApiClient {
             ? data.message.join("; ")
             : "Request failed",
         response.status,
+        'http', data,
       );
     return data as T;
   }

@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import fontkit, * as kit from '@pdf-lib/fontkit';
 import { PDFDocument, rgb, type PDFFont, type PDFPage, type PDFImage, type RGB, PDFOperator, PDFOperatorNames, PDFName, PDFHexString } from 'pdf-lib';
-import { DEFAULT_NOTICE_POLICY, noticeClosing, type NoticePolicy, type NoticeDraftContent } from '@legalitt/shared';
+import { DEFAULT_NOTICE_POLICY, noticeClosing, noticePdfProblem, noticeSenderIntroduction, type NoticePolicy, type NoticeDraftContent } from '@legalitt/shared';
 import { noticeLetterhead as t } from './notice-letterhead';
 
 export type NoticePdfInput = {
@@ -37,7 +37,6 @@ const color = (hex: string) => rgb(...[1, 3, 5].map(i => parseInt(hex.slice(i,i+
 const INK=color(t.ink), GOLD=color(t.gold), WHITE=color(t.white), BAND=color(t.band);
 const X=(px:number)=>px*t.width/t.sourceWidth, Y=(px:number)=>px*t.height/t.sourceHeight;
 const BODY=X(t.bodySize), LEAD=Y(t.leading), LEFT=X(t.left), RIGHT=X(t.right), BOTTOM=Y(852);
-const nonempty=(value?:string|null)=>value?.trim() || '________';
 const paragraphs=(text:string)=>text.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
 const dateText=(date:Date)=>date.toLocaleDateString('en-GB',{timeZone:'Asia/Kolkata'});
 type Span={text:string; weight?:Weight};
@@ -172,12 +171,10 @@ class Letter {
     else this.paragraph(date,0,X(14),Y(21));
     this.gap(18);this.paragraph('To,',0,X(14),Y(21));
     const recipient=[i.recipient?.name,i.recipient?.address].filter(Boolean).flatMap(v=>paragraphs(v!));
-    if(recipient.length)recipient.forEach(s=>this.paragraph(s,X(21)));
-    else {for(let n=0;n<3;n++){this.line(X(47),this.top+Y(4),X(201));this.gap(20);}}
+    recipient.forEach(s=>this.paragraph(s,X(21)));
     this.gap(20);
-    this.paragraph([{text:'Subject: ',weight:'bold'},{text:nonempty(i.subject)}]);this.gap(17);
-    const s=i.sender;
-    this.paragraph(`Under instructions and authority from my client Mr. ${nonempty(s?.name)} S/o Shri ${nonempty(s?.father)}, Age ${s?.age??'____'} R/o ${nonempty(s?.address)}, I hereby serve upon you this Legal Notice as under:`);
+    this.paragraph([{text:'Subject: ',weight:'bold'},{text:i.subject!.trim()}]);this.gap(17);
+    this.paragraph(noticeSenderIntroduction(i.sender!));
     this.gap(8);
     paragraphs(i.content.facts).forEach((fact,n)=>this.numbered(`${n+1}.`,fact.replace(/^\d+[.)]\s+/,'')));
     this.gap(7);this.ensure(2*LEAD);
@@ -192,19 +189,21 @@ class Letter {
     this.paragraph(closing.consequence.split(/(civil proceedings(?: and)?|criminal complaint \/ FIR)/g)
       .map((text,index)=>({text,weight:index%2?'bold' as const:'regular' as const})));
     this.gap(7);
-    const fee=i.serviceFeePaise==null?'________':`₹${(Number(i.serviceFeePaise)/100).toLocaleString('en-IN',{maximumFractionDigits:0})}`;
+    const fee=`₹${(Number(i.serviceFeePaise)/100).toLocaleString('en-IN',{maximumFractionDigits:0})}`;
     this.paragraph(`Further you are hereby called to pay ${fee} as the cost of this legal notice.`);
     this.gap(10);this.paragraph(t.copy);this.gap(12);
     this.ensure(Y(92));
     this.text('For',X(505),this.top,X(14));this.top+=Y(22);
     this.text(t.signFirm,X(422),this.top,X(14));this.top+=Y(20);
-    this.paragraph(`Place : ${nonempty(i.place)}`,0,X(14),Y(26));
+    this.paragraph(`Place : ${i.place!.trim()}`,0,X(14),Y(26));
     this.paragraph(`Date : ${dateText(i.date)}`,0,X(14),Y(26));
     this.line(X(460),this.top-Y(8),X(570)); // Blank: signed only by hand.
   }
 }
 
 export async function renderNoticePdf(input:NoticePdfInput):Promise<Uint8Array>{
+  const problem=noticePdfProblem(input);
+  if(problem)throw Object.assign(new Error(problem.message),problem);
   const pdf=await PDFDocument.create();pdf.registerFontkit(fontkit);
   pdf.setTitle(input.reference);pdf.setCreationDate(input.date);pdf.setModificationDate(input.date);
   const embed=(data:Buffer)=>pdf.embedFont(data,{subset:true});

@@ -1,4 +1,3 @@
-import NoticeScreenFeedback from '../../../components/NoticeScreenFeedback';
 import {useAdvocateNoticeModel} from '../../../features/legal-notice/useAdvocateNoticeModel';
 import NoticeResponseScreen from '../../../components/NoticeResponseScreen';
 
@@ -19,7 +18,7 @@ import NoticeResponseScreen from '../../../components/NoticeResponseScreen';
 // undo / redo) is inert. No editor engine is specified anywhere in the designs.
 export default function AdvocateNoticeResponseEditorScreen() {
   const model=useAdvocateNoticeModel('response');
-  return <NoticeScreenFeedback error={model.error}><NoticeResponseScreen variant="generate" caseId={model.controller.id??'ln-2026-1048'}
+  return <NoticeResponseScreen feedback={model.feedback} variant="generate" caseId={model.controller.id??'ln-2026-1048'}
     data={model.data.ADV_NOTICE_RESPONSE} fields={model.documentFields} navigate={model.navigate}
-    onSave={model.onSaveDraft} onGenerate={model.onGenerateDraft} /></NoticeScreenFeedback>;
+    onSave={model.onSaveDraft} onGenerate={model.onGenerateDraft} />;
 }

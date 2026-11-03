@@ -14,6 +14,12 @@ export const instructedCopy = {
     fromIntake: 'From client intake — review before use',
     fromFiling: 'From client’s filing',
     fixedTemplate: 'Fixed template text — not editable',
+    // Approved — owner-required actionable PDF completeness feedback, 4 Nov 2026.
+    missingTitle: 'Complete these fields before generating',
+    filingCorrection: 'Ask the client to confirm the missing filing details, then ask the project administrator to correct the saved case. Paid filings cannot be edited here.',
+    contactClient: 'Open client chat',
+    placeCorrection: 'Ask the project administrator to complete your profile city. Profile editing is not connected yet.',
+    feeCorrection: 'Ask the project administrator to restore this case’s agreed pricing. Do not pay again.',
   },
   // Approved — project-owner intake restructure, 2 November 2026. Additions to
   // designs 24–28; the new demand step reuses their measured theme.

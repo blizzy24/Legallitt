@@ -1,5 +1,5 @@
 import { BadRequestException, ConflictException, ForbiddenException, Injectable, Logger } from '@nestjs/common';
-import { NoticeDraftInputSchema, NoticePolicySchema, noticeClosing, type LegalNoticeIntake, type LegalDemand } from '@legalitt/shared';
+import { NoticeDraftInputSchema, NoticePolicySchema, noticeClosing, noticePdfProblem, type LegalNoticeIntake, type LegalDemand } from '@legalitt/shared';
 import { parse } from '../auth/auth.service';
 import { PrismaService } from '../prisma.service';
 import { DocumentService } from '../documents/document.service';
@@ -80,12 +80,12 @@ export class NoticePdfService {
     const compliancePeriodDays = draft.compliance_period_days ?? null;
     try { noticeClosing(closingPolicy, compliancePeriodDays, content.offences); }
     catch (e) { throw new BadRequestException(e instanceof Error ? e.message : 'Invalid notice closing'); }
-    const details = record.details as LegalNoticeIntake;
+    const details = (record.details ?? {}) as LegalNoticeIntake;
     const sender = record.case_parties_case_id_relations.find(p => p.kind === 'sender');
     const advocate = record.advocate_id_relation;
     const profile = advocate?.advocate_profiles_user_id_relations;
     const demand = record.legal_demand as LegalDemand | null;
-    return {reference: record.reference, date, content, compliancePeriodDays, closingPolicy, place: profile?.city,
+    const template = {reference: record.reference, date, content, compliancePeriodDays, closingPolicy, place: profile?.city,
       advocate: {name: advocate?.full_name, qualifications: profile?.education, enrolment: profile?.bar_council_number},
       sender: {name: details.client?.fullName, father: sender?.father_name, age: sender?.age, address: details.client?.address},
       recipient: {name: details.noticee?.fullName, address: details.noticee?.address},
@@ -94,6 +94,9 @@ export class NoticePdfService {
       // This case's agreed base fee, never today's pricing row or the GST total.
       serviceFeePaise: record.pricing_id_relation?.base_amount_paise,
     };
+    const problem = noticePdfProblem(template);
+    if (problem) throw new BadRequestException(problem);
+    return template;
   }
   private async file(actor: CaseActor, caseId: string, filename: string, bytes: Uint8Array) {
     const ticket = await this.documents.presign(actor, { case_id: caseId, kind: 'legal_notice', filename, mime: 'application/pdf' });

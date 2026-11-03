@@ -148,7 +148,16 @@ test('seven-step intake persists columns/parties, authorises AI, rejects stale a
     await api[0].saveIntake(c.id, {legal_demand: {selected:[],custom:''}});
     await assert.rejects(api[0].submit(c.id), {status:400});
     await api[0].saveIntake(c.id, {legal_demand});
+    // These required PDF sources cannot disappear through the normal paid intake.
+    const complete=(await api[0].case(c.id)).details;
+    for (const party of ['client','noticee']) for (const field of ['fullName','address']) {
+      await api[0].saveIntake(c.id,{details:{[party]:{[field]:'   '}}});
+      await assert.rejects(api[0].submit(c.id),{status:400});
+      assert.equal((await api[0].case(c.id)).status,'draft');
+      await api[0].saveIntake(c.id,{details:complete});
+    }
     assert.equal((await api[0].submit(c.id)).status, 'payment_pending');
+    assert.ok((await api[0].case(c.id)).pricing,'payment submission binds this case’s pricing');
     await assert.rejects(api[0].generateNoticeSubject(c.id), {status:409});
     await assert.rejects(api[0].saveIntake(c.id, {sender:{age:42}}), {status:409});
   } finally {

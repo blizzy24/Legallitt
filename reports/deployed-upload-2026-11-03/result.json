@@ -1,0 +1,94 @@
+{
+  "reference": "LN-2026-0009",
+  "caseId": "7c50886b-eefa-49b6-aa50-c3e4646d5191",
+  "clientUrl": "https://legalitt-5.vercel.app/legal-notice/step4?caseId=7c50886b-eefa-49b6-aa50-c3e4646d5191",
+  "adminUrl": "https://legalitt-admin-panel.vercel.app/legal-notices/7c50886b-eefa-49b6-aa50-c3e4646d5191",
+  "document": {
+    "id": "ab41b33a-ba22-411c-b8b4-836b86611fc9",
+    "filename": "deployed-upload-verification.pdf",
+    "status": "uploaded",
+    "pages": 1,
+    "bytes": 1015,
+    "simulated": false
+  },
+  "uploadMethod": "POST",
+  "network": [
+    {
+      "role": "client",
+      "host": "legalitt-dev-documents-026379630400-ap-south-1.s3.ap-south-1.amazonaws.com",
+      "method": "POST",
+      "status": 204,
+      "contentType": "multipart/form-data; boundary=----WebKitFormBoundaryaoa7dBA4sJBHQDC6",
+      "requestHeaderNames": [
+        "sec-ch-ua-platform",
+        "referer",
+        "user-agent",
+        "sec-ch-ua",
+        "content-type",
+        "sec-ch-ua-mobile"
+      ],
+      "allowedOrigin": "https://legalitt-5.vercel.app"
+    },
+    {
+      "role": "admin",
+      "host": "legalitt-dev-documents-026379630400-ap-south-1.s3.ap-south-1.amazonaws.com",
+      "method": "GET",
+      "status": 200,
+      "requestHeaderNames": [
+        "referer",
+        "upgrade-insecure-requests",
+        "user-agent",
+        "sec-ch-ua",
+        "sec-ch-ua-mobile",
+        "sec-ch-ua-platform"
+      ],
+      "responseType": "application/pdf"
+    },
+    {
+      "role": "admin",
+      "host": "legalitt-dev-documents-026379630400-ap-south-1.s3.ap-south-1.amazonaws.com",
+      "method": "GET",
+      "status": 200,
+      "requestHeaderNames": [
+        "referer",
+        "upgrade-insecure-requests",
+        "user-agent",
+        "sec-ch-ua",
+        "sec-ch-ua-mobile",
+        "sec-ch-ua-platform"
+      ],
+      "responseType": "application/pdf"
+    },
+    {
+      "role": "admin",
+      "host": "legalitt-dev-documents-026379630400-ap-south-1.s3.ap-south-1.amazonaws.com",
+      "method": "GET",
+      "status": 200,
+      "requestHeaderNames": [
+        "sec-ch-ua-platform",
+        "referer",
+        "user-agent",
+        "sec-ch-ua",
+        "sec-ch-ua-mobile"
+      ],
+      "allowedOrigin": "https://legalitt-admin-panel.vercel.app",
+      "responseType": "application/pdf"
+    },
+    {
+      "role": "admin",
+      "host": "legalitt-dev-documents-026379630400-ap-south-1.s3.ap-south-1.amazonaws.com",
+      "method": "GET",
+      "status": 200,
+      "requestHeaderNames": [
+        "upgrade-insecure-requests",
+        "user-agent",
+        "sec-ch-ua",
+        "sec-ch-ua-mobile",
+        "sec-ch-ua-platform"
+      ]
+    }
+  ],
+  "previewStatus": 200,
+  "sha256Match": true,
+  "browserErrors": []
+}

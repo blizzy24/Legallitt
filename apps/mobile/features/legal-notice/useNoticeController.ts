@@ -55,6 +55,9 @@ export function useNoticeController(stage: NoticeStage, backend: NoticeRepositor
   const [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
     [loading, setLoading] = useState(true);
+  // A successful background read must not erase a failed save/generation.
+  // Action feedback stays until the next explicit action or screen focus.
+  const [actionError, setActionError] = useState<Error | null>(null);
   const [pricing, setPricing] = useState<
     Awaited<ReturnType<typeof backend.service>>["pricing"]
   >([]);
@@ -106,6 +109,7 @@ export function useNoticeController(stage: NoticeStage, backend: NoticeRepositor
       let terminalError = false;
       setLoading(true);
       setError("");
+      setActionError(null);
       const refresh = async () => {
         try {
           await load();
@@ -141,10 +145,11 @@ export function useNoticeController(stage: NoticeStage, backend: NoticeRepositor
     working.current = true;
     setBusy(true);
     setError("");
+    setActionError(null);
     try {
       await action();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Request failed");
+      setActionError(e instanceof Error ? e : new Error("Request failed"));
       if (e instanceof ApiError && e.status === 401) setAuthRequired(true);
     } finally {
       working.current = false;
@@ -186,6 +191,8 @@ export function useNoticeController(stage: NoticeStage, backend: NoticeRepositor
   };
   return { repository: backend, id, advocate, signOut, record, items, details, setDetails, tier, setTier,
     complianceDays, setComplianceDays, content, setContent, comment, setComment, carrier, setCarrier, waybill, setWaybill,
-    authRequired, busy, error, loading, pricing, dirty, latest, href, go, advocatePath, load, run, save, upload,
-    intakeFields, setIntakeFields, intakePayload, clearError: () => setError('') };
+    authRequired, busy, error: actionError?.message ?? error,
+    errorDetails: actionError instanceof ApiError ? actionError.details : undefined,
+    loading, pricing, dirty, latest, href, go, advocatePath, load, run, save, upload,
+    intakeFields, setIntakeFields, intakePayload, clearError: () => {setError(''); setActionError(null);} };
 }

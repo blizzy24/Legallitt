@@ -1,0 +1,7 @@
+AI agent detected
+Stack LegalittDev/Core (LegalittDev-Core) (aws://026379630400/ap-south-1)
+There were no differences
+
+
+✨  Number of stacks with differences: 0
+

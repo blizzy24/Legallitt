@@ -1,4 +1,5 @@
 import { Globe, Mail } from 'lucide-react-native';
+import { noticeSenderIntroduction } from '@legalitt/shared';
 import { Image, StyleSheet, Text, View } from 'react-native';
 
 
@@ -136,17 +137,18 @@ export default function LegalDocumentPage({ title, advocateName, data = ADV_NOTI
             <Blank flex={1} />
           </View>}
 
-          <Text selectable={Boolean(fields)} style={styles.body}>
+          {fields ? <Text selectable style={styles.body}>{noticeSenderIntroduction({name:fields.client,
+            father:fields.father,age:fields.age ? Number(fields.age) : null,address:fields.address})}</Text> : <Text style={styles.body}>
             {r.intro[0]}
-            <Text style={styles.inlineBlank}>{fields ? fields.client : '__________'}</Text>
+            <Text style={styles.inlineBlank}>{'__________'}</Text>
             {r.intro[1]}
-            <Text style={styles.inlineBlank}>{fields ? fields.father : '________'}</Text>
-            {fields?', Age ':r.intro[2]}
-            <Text style={styles.inlineBlank}>{fields ? fields.age : '_____'}</Text>
+            <Text style={styles.inlineBlank}>{'________'}</Text>
+            {r.intro[2]}
+            <Text style={styles.inlineBlank}>{'_____'}</Text>
             {r.intro[3]}
-            <Text style={styles.inlineBlank}>{fields ? fields.address : '__________'}</Text>
+            <Text style={styles.inlineBlank}>{'__________'}</Text>
             {r.intro[4]}
-          </Text>
+          </Text>}
 
           {(fields ? fields.facts : Array.from({ length: r.clauses },()=> '')).map((fact, i) => (
             <View key={i} style={[styles.clause,fields&&styles.flowClause]}>

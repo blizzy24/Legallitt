@@ -1,4 +1,4 @@
-import NoticeScreenFeedback from '../../../components/NoticeScreenFeedback';
+import NoticeDraftFeedback, {type NoticeDraftFeedbackProps} from '../../../components/NoticeDraftFeedback';
 import { useAdvocateNoticeModel } from '../../../features/legal-notice/useAdvocateNoticeModel';
 import DemoPressable from '../../../components/DemoPressable';
 import { router, type Href } from 'expo-router';
@@ -41,7 +41,8 @@ import {
 // are read-only; facts and offences save through the controller. Preview renders
 // the supplied letterhead, and Continue to Review submits the saved draft.
 
-export function AdvocateNoticeDraftEditorView({draft, navigate, onChange, onSave, previewHref, reviewHref, offences, onChangeOffences, intakeSections, complianceDays, onChangeComplianceDays}: {
+export function AdvocateNoticeDraftEditorView({draft, navigate, onChange, onSave, previewHref, reviewHref, offences, onChangeOffences, intakeSections, complianceDays, onChangeComplianceDays, feedback}: {
+  feedback?:NoticeDraftFeedbackProps;
   draft: typeof ADV_NOTICE_DRAFT; navigate: typeof router;
   onChange?: (index:number,value:string)=>void; onSave?:()=>void;
   previewHref: Href; reviewHref: Href;
@@ -100,6 +101,7 @@ export function AdvocateNoticeDraftEditorView({draft, navigate, onChange, onSave
       </ScrollView>
 
       <View style={[styles.footer, { paddingBottom: insets.bottom + 14 }]}>
+        {feedback?.error && <ScrollView style={{maxHeight:260}}><NoticeDraftFeedback {...feedback} /></ScrollView>}
         <View style={styles.btnRow}>
           <DemoPressable accessibilityRole="button" onPress={onSave} style={styles.btn}>
             <Text style={styles.btnText} {...shrinkToFit(0.8)}>
@@ -218,9 +220,9 @@ const styles = StyleSheet.create({
 
 export default function AdvocateNoticeDraftEditorScreen() {
   const model=useAdvocateNoticeModel('draft-editor');
-  return <NoticeScreenFeedback error={model.error}><AdvocateNoticeDraftEditorView draft={model.data.ADV_NOTICE_DRAFT} navigate={model.navigate}
+  return <AdvocateNoticeDraftEditorView feedback={model.feedback} draft={model.data.ADV_NOTICE_DRAFT} navigate={model.navigate}
     onChange={model.onEditSection} onSave={model.onSaveDraft}
     offences={model.offences} onChangeOffences={model.onEditOffences}
     intakeSections={model.intakeSections} complianceDays={model.complianceDays} onChangeComplianceDays={model.onEditComplianceDays}
-    previewHref={model.path('response')} reviewHref={model.path('review')} /></NoticeScreenFeedback>;
+    previewHref={model.path('response')} reviewHref={model.path('review')} />;
 }

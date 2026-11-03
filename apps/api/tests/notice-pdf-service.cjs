@@ -19,7 +19,7 @@ function harness() {
   let caseQuery, draftQuery;
   const db = {case: {findFirst: async query => {
     caseQuery = query;
-    return query.where.AND[0].advocate_id === actor.id ? record : null;
+    return (query.where.AND[0].advocate_id === actor.id || query.where.AND[0].client_id === 'client-id') ? record : null;
   }}, draft: {findFirst: async query => {draftQuery = query; return draft;}}};
   const documents = new Proxy({}, {get() {throw new Error('Preview must not upload, publish or mutate a document');}});
   return {record, draft, service: new NoticePdfService({getClient: async () => db}, documents),
@@ -54,15 +54,6 @@ test('letterhead preview binds intake, assigned profile and the case historical 
     assert.ok(caseQuery.include.pricing_id_relation);
     assert.deepEqual(draftQuery.orderBy, {version: 'desc'});
 
-    // Legacy cases stay blank when the authoritative intake/profile is absent.
-    h.record.subject_line = null; h.record.legal_demand = null; h.record.details = {};
-    h.record.case_parties_case_id_relations = []; h.record.advocate_id_relation = null;
-    h.record.pricing_id_relation = null;
-    await h.service.preview(actor, 'case-id', 'latest-draft');
-    assert.equal(supplied.subject, null); assert.deepEqual(supplied.demands, []);
-    assert.equal(supplied.sender.name, undefined); assert.equal(supplied.sender.father, undefined);
-    assert.equal(supplied.recipient.name, undefined); assert.equal(supplied.serviceFeePaise, undefined);
-    assert.equal(supplied.advocate.name, undefined); assert.equal(supplied.place, undefined);
   } finally {pdfModule.renderNoticePdf = original;}
 });
 
@@ -74,5 +65,24 @@ test('render-only preview refuses clients, admins, another advocate, stale draft
   for (const status of ['assigned', 'client_review', 'approved', 'dispatched', 'completed']) {
     h.record.status = status;
     await assert.rejects(h.service.preview(actor, 'case-id', 'latest-draft'), {status: 409});
+  }
+});
+
+
+test('preview, send and final reject every missing field before rendering or touching S3', async () => {
+  for (const operation of ['preview','draft','final']) {
+    const h=harness();
+    h.record.details={client:{fullName:' ',address:''}};
+    h.record.subject_line=null; h.record.pricing_id_relation=null;
+    h.record.advocate_id_relation.advocate_profiles_user_id_relations.city=null;
+    if(operation==='final')h.record.status='client_review';
+    await assert.rejects(h.service[operation](operation==='final'?{id:'client-id',role:'client'}:actor,'case-id','latest-draft',new Date()), error=>{
+      assert.equal(error.status,400);
+      const response=error.getResponse();
+      assert.equal(response.code,'notice_fields_missing');
+      assert.deepEqual(response.missing_fields,['subject','sender_name','sender_address','recipient_name','recipient_address','service_fee','place']);
+      for(const label of ['Subject line','Sender name','Sender address','Recipient name','Recipient address','Service fee','Place'])assert.ok(response.message.includes(label));
+      return true;
+    });
   }
 });

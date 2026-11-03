@@ -1,0 +1,13 @@
+{
+  "code": "notice_fields_missing",
+  "message": "Cannot generate this notice. Missing fields: Subject line; Sender name; Sender address; Recipient name; Recipient address; Service fee; Place (advocate’s city).",
+  "missing_fields": [
+    "subject",
+    "sender_name",
+    "sender_address",
+    "recipient_name",
+    "recipient_address",
+    "service_fee",
+    "place"
+  ]
+}

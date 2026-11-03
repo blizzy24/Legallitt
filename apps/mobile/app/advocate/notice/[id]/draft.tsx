@@ -1,4 +1,5 @@
-import NoticeScreenFeedback from '../../../../components/NoticeScreenFeedback';
+import { useRef } from 'react';
+import NoticeDraftFeedback, {type NoticeDraftFeedbackProps} from '../../../../components/NoticeDraftFeedback';
 import { useAdvocateNoticeModel } from "../../../../features/legal-notice/useAdvocateNoticeModel";
 import { previewNotice } from '../../../../components/PreviewNotice';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
@@ -31,7 +32,8 @@ import {
 // ⚠ design/188 names the advocate "Adv. Abhishek Sahu" where design/148 has
 // "Abhishek Chouhan", and spells its own chip "Fix Grammer". Both kept as drawn.
 
-export function AdvocateNoticeDraftScreenView({ data, navigate, onChangeSection, offences, onChangeOffences, intakeSections, complianceDays, onChangeComplianceDays }: {
+export function AdvocateNoticeDraftScreenView({ data, navigate, onChangeSection, offences, onChangeOffences, intakeSections, complianceDays, onChangeComplianceDays, feedback }: {
+  feedback?: NoticeDraftFeedbackProps;
   onChangeSection?: (index: number, value: string) => void;
   offences?: string; onChangeOffences?: (value: string) => void;
   intakeSections?: readonly number[];
@@ -43,6 +45,7 @@ export function AdvocateNoticeDraftScreenView({ data, navigate, onChangeSection,
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
   const d = ADV_NOTICE_DRAFT;
+  const scroll = useRef<ScrollView>(null);
 
   return (
     <View style={styles.screen}>
@@ -85,7 +88,7 @@ export function AdvocateNoticeDraftScreenView({ data, navigate, onChangeSection,
         </Pressable>
       </View>
 
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView ref={scroll} onContentSizeChange={()=>{if(feedback?.error)scroll.current?.scrollToEnd({animated:true});}} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <NoticeDraftSections onChange={onChangeSection} sections={d.sections}
           offences={offences} onChangeOffences={onChangeOffences} intakeSections={intakeSections} complianceDays={complianceDays} onChangeComplianceDays={onChangeComplianceDays} />
 
@@ -117,6 +120,7 @@ export function AdvocateNoticeDraftScreenView({ data, navigate, onChangeSection,
           </View>
         </View>
 
+        <NoticeDraftFeedback {...feedback} />
         <Pressable
           accessibilityRole="button"
           onPress={() => router.push(`/advocate/notice/${id}/response` as Href)}
@@ -292,6 +296,6 @@ const styles = StyleSheet.create({
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function AdvocateNoticeDraftScreen() {
   const model = useAdvocateNoticeModel("draft");
-  return <NoticeScreenFeedback error={model.error}><AdvocateNoticeDraftScreenView data={model.data} navigate={model.navigate}
-    onChangeSection={model.onEditSection} offences={model.offences} onChangeOffences={model.onEditOffences} intakeSections={model.intakeSections} complianceDays={model.complianceDays} onChangeComplianceDays={model.onEditComplianceDays} /></NoticeScreenFeedback>;
+  return <AdvocateNoticeDraftScreenView feedback={model.feedback} data={model.data} navigate={model.navigate}
+    onChangeSection={model.onEditSection} offences={model.offences} onChangeOffences={model.onEditOffences} intakeSections={model.intakeSections} complianceDays={model.complianceDays} onChangeComplianceDays={model.onEditComplianceDays} />;
 }

@@ -159,3 +159,12 @@ test("a refresh finishing after sign-out cannot restore the old session", async 
   await assert.rejects(request, { status: 401 });
   assert.equal(tokens, null);
 });
+
+
+test('structured PDF field errors survive the HTTP client for actionable editor feedback', async () => {
+  const body={code:'notice_fields_missing',message:'Cannot generate this notice. Missing fields: Subject line; Place (advocate’s city).',missing_fields:['subject','place']};
+  const api=new ApiClient({baseUrl:'https://api.invalid',fetch:async()=>json(body,400)});
+  await assert.rejects(api.renderDraft('case','draft'),error=>{
+    assert.equal(error.status,400);assert.deepEqual(error.details,body);return true;
+  });
+});

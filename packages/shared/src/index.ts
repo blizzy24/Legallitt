@@ -6,6 +6,7 @@ export * from './documents';
 export * from './notice-api';
 export * from './notice-draft';
 export * from './notice-policy';
+export * from './notice-pdf-fields';
 export * from './api-client';
 
 export * from './shipments';
