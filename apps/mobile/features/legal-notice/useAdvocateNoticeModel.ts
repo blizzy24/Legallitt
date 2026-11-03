@@ -50,8 +50,11 @@ export function useAdvocateNoticeModel(stage: string) {
   const open=(id?:string)=>{if(id)void c.run(async()=>{await Linking.openURL((await c.repository.documentUrl(id)).url);});};
   const saveDraft=async()=>{
     if(!c.id)throw new Error('Select a request from My Cases.');
+    if(!r || c.loading)throw new Error('The draft is still loading. Please try again.');
     if(!validDays.success)throw new Error('Enter a whole number of days, at least 1.');
-    if(!c.dirty.current && c.latest?.compliance_period_days)return c.latest;
+    const policyChanged=(Object.keys(policy) as Array<keyof typeof policy>)
+      .some(key=>c.latest?.closing_policy?.[key]!==policy[key]);
+    if(!c.dirty.current && !policyChanged && c.latest?.compliance_period_days)return c.latest;
     const draft=await c.repository.saveDraft(c.id,c.content,validDays.data);
     c.dirty.current=false;await c.load();return draft;
   };
