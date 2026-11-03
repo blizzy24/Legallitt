@@ -1,0 +1,15 @@
+[
+    {
+        "status": "RUNNING",
+        "health": "HEALTHY",
+        "taskDefinition": "arn:aws:ecs:ap-south-1:026379630400:task-definition/legalitt-dev-api:5",
+        "containers": [
+            {
+                "image": "026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api:demo-step-switches-20261103",
+                "digest": "sha256:3394c022f22194360b6e73cff493df41ae1df337b7d5570de6a39edb8cfd8ac8",
+                "status": "RUNNING",
+                "health": "HEALTHY"
+            }
+        ]
+    }
+]

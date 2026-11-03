@@ -1,0 +1,543 @@
+{
+  "events": [
+    {
+      "source": "real",
+      "id": "74",
+      "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+      "type": "case_created",
+      "actor_id": "aadf5486-cb3e-4379-b7aa-6def2f688d84",
+      "actor_role": "client",
+      "from_status": null,
+      "to_status": "draft",
+      "payload": {},
+      "created_at": "2026-11-03T11:56:03.649Z"
+    },
+    {
+      "source": "real",
+      "id": "75",
+      "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+      "type": "subject_generated",
+      "actor_id": "aadf5486-cb3e-4379-b7aa-6def2f688d84",
+      "actor_role": "client",
+      "from_status": null,
+      "to_status": null,
+      "payload": {
+        "subject_line": "Legal Notice for Recovery of Unpaid Invoice of ₹5,000 for Website Design Services"
+      },
+      "created_at": "2026-11-03T11:56:06.104Z"
+    },
+    {
+      "source": "real",
+      "id": "76",
+      "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+      "type": "demand_options_generated",
+      "actor_id": "aadf5486-cb3e-4379-b7aa-6def2f688d84",
+      "actor_role": "client",
+      "from_status": null,
+      "to_status": null,
+      "payload": {
+        "options": [
+          "Demand immediate payment of the outstanding invoice amount of ₹5,000 for website design services",
+          "Demand written confirmation of settlement regarding the unpaid invoice"
+        ]
+      },
+      "created_at": "2026-11-03T11:56:09.536Z"
+    },
+    {
+      "source": "real",
+      "id": "77",
+      "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+      "type": "subject_generation_failed",
+      "actor_id": "aadf5486-cb3e-4379-b7aa-6def2f688d84",
+      "actor_role": "client",
+      "from_status": null,
+      "to_status": null,
+      "payload": {
+        "code": "RESOURCE_EXHAUSTED",
+        "task": "subject",
+        "model": "gemini-3.5-flash-lite",
+        "provider": "Gemini"
+      },
+      "created_at": "2026-11-03T12:10:57.734Z"
+    },
+    {
+      "source": "real",
+      "id": "78",
+      "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+      "type": "demand_options_generation_failed",
+      "actor_id": "aadf5486-cb3e-4379-b7aa-6def2f688d84",
+      "actor_role": "client",
+      "from_status": null,
+      "to_status": null,
+      "payload": {
+        "code": "UNAVAILABLE",
+        "task": "demands",
+        "model": "gemini-3.5-flash-lite",
+        "provider": "Gemini"
+      },
+      "created_at": "2026-11-03T12:10:57.922Z"
+    },
+    {
+      "source": "real",
+      "id": "79",
+      "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+      "type": "subject_generated",
+      "actor_id": "aadf5486-cb3e-4379-b7aa-6def2f688d84",
+      "actor_role": "client",
+      "from_status": null,
+      "to_status": null,
+      "payload": {
+        "subject_line": "Legal Notice for Recovery of Unpaid Invoice of ₹5,000 for Website Design Services"
+      },
+      "created_at": "2026-11-03T12:11:56.071Z"
+    },
+    {
+      "source": "real",
+      "id": "80",
+      "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+      "type": "demand_options_generated",
+      "actor_id": "aadf5486-cb3e-4379-b7aa-6def2f688d84",
+      "actor_role": "client",
+      "from_status": null,
+      "to_status": null,
+      "payload": {
+        "options": [
+          "Demand immediate payment of the outstanding invoice amount of ₹5,000 for website design services.",
+          "Demand written confirmation of settlement regarding the unpaid invoice."
+        ]
+      },
+      "created_at": "2026-11-03T12:11:59.151Z"
+    },
+    {
+      "source": "real",
+      "id": "81",
+      "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+      "type": "status_changed",
+      "actor_id": "aadf5486-cb3e-4379-b7aa-6def2f688d84",
+      "actor_role": "client",
+      "from_status": "draft",
+      "to_status": "submitted",
+      "payload": {},
+      "created_at": "2026-11-03T12:22:31.207Z"
+    },
+    {
+      "source": "real",
+      "id": "82",
+      "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+      "type": "status_changed",
+      "actor_id": "aadf5486-cb3e-4379-b7aa-6def2f688d84",
+      "actor_role": "client",
+      "from_status": "submitted",
+      "to_status": "payment_pending",
+      "payload": {},
+      "created_at": "2026-11-03T12:22:31.214Z"
+    },
+    {
+      "source": "simulated",
+      "id": "83",
+      "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+      "type": "payment_captured",
+      "actor_id": "aadf5486-cb3e-4379-b7aa-6def2f688d84",
+      "actor_role": "client",
+      "from_status": "payment_pending",
+      "to_status": "paid",
+      "payload": {
+        "payment_id": "5a975e3e-0f6c-4c24-9236-a663c6aba5dd"
+      },
+      "created_at": "2026-11-03T12:22:35.479Z"
+    },
+    {
+      "source": "real",
+      "id": "84",
+      "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+      "type": "notification_created",
+      "actor_id": null,
+      "actor_role": null,
+      "from_status": null,
+      "to_status": null,
+      "payload": {
+        "notification_id": "1a6aaf4b-7f33-416e-b0cc-d2240cde5dab"
+      },
+      "created_at": "2026-11-03T12:22:35.505Z"
+    },
+    {
+      "source": "real",
+      "id": "85",
+      "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+      "type": "notification_created",
+      "actor_id": null,
+      "actor_role": null,
+      "from_status": null,
+      "to_status": null,
+      "payload": {
+        "notification_id": "4ff75af6-2976-40fd-a8fc-afe898e543df"
+      },
+      "created_at": "2026-11-03T12:22:35.512Z"
+    },
+    {
+      "source": "real",
+      "id": "86",
+      "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+      "type": "status_changed",
+      "actor_id": "09d8b13d-0734-4362-bcf3-07c31d57f628",
+      "actor_role": "admin",
+      "from_status": "paid",
+      "to_status": "assigning",
+      "payload": {},
+      "created_at": "2026-11-03T12:24:05.006Z"
+    },
+    {
+      "source": "real",
+      "id": "87",
+      "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+      "type": "status_changed",
+      "actor_id": "09d8b13d-0734-4362-bcf3-07c31d57f628",
+      "actor_role": "admin",
+      "from_status": "assigning",
+      "to_status": "assigned",
+      "payload": {
+        "advocate_id": "08c69d48-858a-4dc3-aa7b-514576881ecf"
+      },
+      "created_at": "2026-11-03T12:24:05.017Z"
+    },
+    {
+      "source": "real",
+      "id": "88",
+      "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+      "type": "notification_created",
+      "actor_id": null,
+      "actor_role": null,
+      "from_status": null,
+      "to_status": null,
+      "payload": {
+        "notification_id": "1d7beb28-2ebf-44e3-8d76-b2b7bbfbdbf6"
+      },
+      "created_at": "2026-11-03T12:24:05.022Z"
+    },
+    {
+      "source": "real",
+      "id": "89",
+      "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+      "type": "notification_created",
+      "actor_id": null,
+      "actor_role": null,
+      "from_status": null,
+      "to_status": null,
+      "payload": {
+        "notification_id": "1bb4fc56-0149-4e8f-b1b0-d5ca24e810af"
+      },
+      "created_at": "2026-11-03T12:24:05.025Z"
+    },
+    {
+      "source": "real",
+      "id": "90",
+      "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+      "type": "status_changed",
+      "actor_id": "08c69d48-858a-4dc3-aa7b-514576881ecf",
+      "actor_role": "advocate",
+      "from_status": "assigned",
+      "to_status": "advocate_accepted",
+      "payload": {},
+      "created_at": "2026-11-03T12:24:15.901Z"
+    },
+    {
+      "source": "real",
+      "id": "91",
+      "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+      "type": "status_changed",
+      "actor_id": "08c69d48-858a-4dc3-aa7b-514576881ecf",
+      "actor_role": "advocate",
+      "from_status": "advocate_accepted",
+      "to_status": "in_progress",
+      "payload": {},
+      "created_at": "2026-11-03T12:24:18.185Z"
+    },
+    {
+      "source": "real",
+      "id": "92",
+      "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+      "type": "draft_saved",
+      "actor_id": "08c69d48-858a-4dc3-aa7b-514576881ecf",
+      "actor_role": "advocate",
+      "from_status": "in_progress",
+      "to_status": "in_progress",
+      "payload": {
+        "version": 1,
+        "draft_id": "629752a1-90fd-470d-9e87-71f3aca9dd17"
+      },
+      "created_at": "2026-11-03T12:24:23.839Z"
+    },
+    {
+      "source": "real",
+      "id": "93",
+      "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+      "type": "status_changed",
+      "actor_id": "08c69d48-858a-4dc3-aa7b-514576881ecf",
+      "actor_role": "advocate",
+      "from_status": "in_progress",
+      "to_status": "client_review",
+      "payload": {
+        "version": 1,
+        "draft_id": "629752a1-90fd-470d-9e87-71f3aca9dd17"
+      },
+      "created_at": "2026-11-03T12:24:33.107Z"
+    },
+    {
+      "source": "real",
+      "id": "94",
+      "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+      "type": "notification_created",
+      "actor_id": null,
+      "actor_role": null,
+      "from_status": null,
+      "to_status": null,
+      "payload": {
+        "notification_id": "c6782740-d1f7-4399-85e7-9ed5f80e1b65"
+      },
+      "created_at": "2026-11-03T12:24:33.116Z"
+    },
+    {
+      "source": "real",
+      "id": "95",
+      "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+      "type": "status_changed",
+      "actor_id": "aadf5486-cb3e-4379-b7aa-6def2f688d84",
+      "actor_role": "client",
+      "from_status": "client_review",
+      "to_status": "approved",
+      "payload": {
+        "draft_id": "629752a1-90fd-470d-9e87-71f3aca9dd17",
+        "notice_document_id": "7a4582dd-dcd0-436b-bc73-0b60061f29ad"
+      },
+      "created_at": "2026-11-03T12:24:44.493Z"
+    },
+    {
+      "source": "real",
+      "id": "96",
+      "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+      "type": "notification_created",
+      "actor_id": null,
+      "actor_role": null,
+      "from_status": null,
+      "to_status": null,
+      "payload": {
+        "notification_id": "692daf9d-df30-4c44-bc03-9444a46ba4d6"
+      },
+      "created_at": "2026-11-03T12:24:44.502Z"
+    },
+    {
+      "source": "simulated",
+      "id": "97",
+      "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+      "type": "shipment_details_saved",
+      "actor_id": "08c69d48-858a-4dc3-aa7b-514576881ecf",
+      "actor_role": "advocate",
+      "from_status": "approved",
+      "to_status": "approved",
+      "payload": {
+        "shipment_id": "71757dba-7929-4dd2-97d6-3a2e898f1d53"
+      },
+      "created_at": "2026-11-03T12:24:59.811Z"
+    },
+    {
+      "source": "simulated",
+      "id": "98",
+      "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+      "type": "shipment_booked",
+      "actor_id": "08c69d48-858a-4dc3-aa7b-514576881ecf",
+      "actor_role": "advocate",
+      "from_status": "approved",
+      "to_status": "approved",
+      "payload": {
+        "shipment_id": "71757dba-7929-4dd2-97d6-3a2e898f1d53"
+      },
+      "created_at": "2026-11-03T12:24:59.911Z"
+    },
+    {
+      "source": "real",
+      "id": "99",
+      "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+      "type": "status_changed",
+      "actor_id": "08c69d48-858a-4dc3-aa7b-514576881ecf",
+      "actor_role": "advocate",
+      "from_status": "approved",
+      "to_status": "dispatching",
+      "payload": {},
+      "created_at": "2026-11-03T12:25:01.065Z"
+    },
+    {
+      "source": "real",
+      "id": "100",
+      "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+      "type": "status_changed",
+      "actor_id": "08c69d48-858a-4dc3-aa7b-514576881ecf",
+      "actor_role": "advocate",
+      "from_status": "dispatching",
+      "to_status": "dispatched",
+      "payload": {
+        "carrier": "TEST ONLY - MANUAL COURIER",
+        "waybill": "TEST-LN-2026-0012",
+        "shipment_id": "71757dba-7929-4dd2-97d6-3a2e898f1d53"
+      },
+      "created_at": "2026-11-03T12:25:01.086Z"
+    },
+    {
+      "source": "real",
+      "id": "101",
+      "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+      "type": "notification_created",
+      "actor_id": null,
+      "actor_role": null,
+      "from_status": null,
+      "to_status": null,
+      "payload": {
+        "notification_id": "ae68d769-0f70-4bc5-a8fb-cd60d4165e39"
+      },
+      "created_at": "2026-11-03T12:25:01.097Z"
+    },
+    {
+      "source": "real",
+      "id": "102",
+      "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+      "type": "notification_created",
+      "actor_id": null,
+      "actor_role": null,
+      "from_status": null,
+      "to_status": null,
+      "payload": {
+        "notification_id": "bccf8bf1-94aa-43bc-a25f-dcb7ac0f816a"
+      },
+      "created_at": "2026-11-03T12:25:01.102Z"
+    },
+    {
+      "source": "simulated",
+      "id": "103",
+      "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+      "type": "shipment_status_changed",
+      "actor_id": null,
+      "actor_role": null,
+      "from_status": "dispatched",
+      "to_status": "dispatched",
+      "payload": {
+        "to": "pickup_booked",
+        "from": "dispatched",
+        "actor": "system",
+        "shipment_id": "71757dba-7929-4dd2-97d6-3a2e898f1d53"
+      },
+      "created_at": "2026-11-03T12:25:07.520Z"
+    },
+    {
+      "source": "simulated",
+      "id": "104",
+      "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+      "type": "shipment_status_changed",
+      "actor_id": null,
+      "actor_role": null,
+      "from_status": "dispatched",
+      "to_status": "dispatched",
+      "payload": {
+        "to": "picked_up",
+        "from": "pickup_booked",
+        "actor": "system",
+        "shipment_id": "71757dba-7929-4dd2-97d6-3a2e898f1d53"
+      },
+      "created_at": "2026-11-03T12:25:13.038Z"
+    },
+    {
+      "source": "simulated",
+      "id": "105",
+      "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+      "type": "shipment_status_changed",
+      "actor_id": null,
+      "actor_role": null,
+      "from_status": "dispatched",
+      "to_status": "dispatched",
+      "payload": {
+        "to": "in_transit",
+        "from": "picked_up",
+        "actor": "system",
+        "shipment_id": "71757dba-7929-4dd2-97d6-3a2e898f1d53"
+      },
+      "created_at": "2026-11-03T12:25:19.035Z"
+    },
+    {
+      "source": "simulated",
+      "id": "106",
+      "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+      "type": "shipment_status_changed",
+      "actor_id": null,
+      "actor_role": null,
+      "from_status": "dispatched",
+      "to_status": "dispatched",
+      "payload": {
+        "to": "out_for_delivery",
+        "from": "in_transit",
+        "actor": "system",
+        "shipment_id": "71757dba-7929-4dd2-97d6-3a2e898f1d53"
+      },
+      "created_at": "2026-11-03T12:25:25.117Z"
+    },
+    {
+      "source": "real",
+      "id": "107",
+      "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+      "type": "status_changed",
+      "actor_id": "09d8b13d-0734-4362-bcf3-07c31d57f628",
+      "actor_role": "admin",
+      "from_status": "dispatched",
+      "to_status": "completed",
+      "payload": {
+        "received_by": "TEST ONLY - no real notice recipient",
+        "shipment_id": "71757dba-7929-4dd2-97d6-3a2e898f1d53",
+        "delivered_at": "2026-11-03T12:28:00.000Z",
+        "pod_document_id": "dfafc46d-a315-40e0-b2e9-6812c054a089"
+      },
+      "created_at": "2026-11-03T12:28:18.662Z"
+    },
+    {
+      "source": "real",
+      "id": "108",
+      "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+      "type": "notification_created",
+      "actor_id": null,
+      "actor_role": null,
+      "from_status": null,
+      "to_status": null,
+      "payload": {
+        "notification_id": "e99ec756-f55c-45a2-a4a0-b34da9aece7c"
+      },
+      "created_at": "2026-11-03T12:28:18.665Z"
+    }
+  ],
+  "shipment": {
+    "id": "71757dba-7929-4dd2-97d6-3a2e898f1d53",
+    "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+    "direction": "to_recipient",
+    "carrier": "TEST ONLY - MANUAL COURIER",
+    "waybill": "TEST-LN-2026-0012",
+    "status": "delivered",
+    "recipient": {
+      "email": "recipient@example.invalid",
+      "mobile": "2025550102",
+      "address": "Synthetic test address, Mumbai",
+      "fullName": "TEST ONLY - no real notice recipient",
+      "relationship": "Test only"
+    },
+    "dispatch_date": "2026-11-03T00:00:00.000Z",
+    "courier_office": "",
+    "courier_phone": "",
+    "tracking_url": "",
+    "expected_delivery": null,
+    "receipt_document_id": null,
+    "simulated": false,
+    "dispatched_at": "2026-11-03T12:25:01.070Z",
+    "booked_at": "2026-11-03T12:24:59.804Z",
+    "delivered_at": "2026-11-03T12:28:00.000Z",
+    "received_by": "TEST ONLY - no real notice recipient",
+    "pod_document_id": "dfafc46d-a315-40e0-b2e9-6812c054a089"
+  },
+  "proof": {
+    "id": "dfafc46d-a315-40e0-b2e9-6812c054a089",
+    "simulated": false
+  }
+}

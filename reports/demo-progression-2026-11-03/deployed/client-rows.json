@@ -1,0 +1,67 @@
+[
+  {
+    "id": "e99ec756-f55c-45a2-a4a0-b34da9aece7c",
+    "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+    "kind": "notice_delivered",
+    "title": "Notice delivered",
+    "body": "LN-2026-0012",
+    "created_at": "2026-11-03T12:28:18.663Z",
+    "read_at": null,
+    "case": {
+      "reference": "LN-2026-0012",
+      "status": "completed"
+    }
+  },
+  {
+    "id": "ae68d769-0f70-4bc5-a8fb-cd60d4165e39",
+    "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+    "kind": "notice_dispatched",
+    "title": "Notice dispatched",
+    "body": "LN-2026-0012",
+    "created_at": "2026-11-03T12:25:01.090Z",
+    "read_at": null,
+    "case": {
+      "reference": "LN-2026-0012",
+      "status": "completed"
+    }
+  },
+  {
+    "id": "c6782740-d1f7-4399-85e7-9ed5f80e1b65",
+    "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+    "kind": "draft_ready",
+    "title": "Draft ready to review",
+    "body": "LN-2026-0012",
+    "created_at": "2026-11-03T12:24:33.114Z",
+    "read_at": "2026-11-03T12:24:39.906Z",
+    "case": {
+      "reference": "LN-2026-0012",
+      "status": "completed"
+    }
+  },
+  {
+    "id": "1d7beb28-2ebf-44e3-8d76-b2b7bbfbdbf6",
+    "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+    "kind": "advocate_assigned",
+    "title": "Advocate assigned",
+    "body": "LN-2026-0012",
+    "created_at": "2026-11-03T12:24:05.021Z",
+    "read_at": null,
+    "case": {
+      "reference": "LN-2026-0012",
+      "status": "completed"
+    }
+  },
+  {
+    "id": "4ff75af6-2976-40fd-a8fc-afe898e543df",
+    "case_id": "65ca3bca-229d-4dc6-9d4a-c89ea420dcce",
+    "kind": "payment_captured",
+    "title": "Payment Successful",
+    "body": null,
+    "created_at": "2026-11-03T12:22:35.510Z",
+    "read_at": null,
+    "case": {
+      "reference": "LN-2026-0012",
+      "status": "completed"
+    }
+  }
+]

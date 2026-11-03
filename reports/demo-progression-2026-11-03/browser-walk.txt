@@ -1,0 +1,71 @@
+Click Continue
+Route /home
+Click Continue
+Route /dashboard
+Click Sign in
+Route /legal-notices
+Click Upload Agreement
+Click Verify identity
+Route /kyc/choose
+Click Continue
+Route /kyc/digilocker/connect
+Click Continue to DigiLocker
+Route /kyc/digilocker/verified
+Click Continue
+Route /step4
+Click Continue
+Route /step4-review
+Click Continue
+Route /step5
+Click Submit & Proceed to Pay
+Route /step6
+Click Pay
+Route /scan-pay
+Click Pay using UPI App
+Route /success
+paid → assignment needed admin 3
+PASS paid unchanged for 80 seconds
+assigned advocate 3
+advocate assigned client 10
+Route /fee
+Click Accept & Schedule
+Route /documents
+Click Send
+Route /drafting
+Click Continue with AI Generation
+Route /draft
+Click Edit Sender Details
+Click Edit Recipient Details
+Click Edit Subject
+Click Edit Background & Facts
+Click Edit Legal Demand
+Click Edit Response Time & Closing
+Click Generate Draft
+Route /response
+Click Share for Review
+Route /review
+draft ready client 11
+Route /tracking
+Click Approve & Proceed
+client approved advocate 3
+Route /final
+Click Continue to Send
+Route /dispatch
+Click Continue to Send
+Route /send
+Click Send by YourselfSend the documents directly to the recipient.Use any courier or delivery service.
+Click Continue
+Route /courier/self/details
+Click Submit Delivery Details
+Route /dispatch
+Click Confirm Dispatch
+dispatched → delivery confirmation needed admin 3
+notice dispatched client 11
+PASS Out for Delivery held 40 seconds, no POD. Waiting for screenshot review.
+notice delivered client 12
+Route /report
+Route /delivery
+Click View Delivery Confirmation
+Route /delivered
+Click View Proof
+PASS LN-2026-0012 three profiles; zero observer reloads

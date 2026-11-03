@@ -1,0 +1,51 @@
+
+> legalitt@0.0.0 typecheck /Users/riya/Documents/14
+> turbo run typecheck
+
+
+   • turbo 2.11.9
+   • Packages in scope: @legalitt/admin, @legalitt/api, @legalitt/infra, @legalitt/mobile, @legalitt/shared
+   • Running typecheck in 5 packages
+   • Remote caching disabled
+
+@legalitt/shared:build: cache hit, replaying logs 674d12357e0061e1
+@legalitt/infra:typecheck: cache hit, replaying logs 90c654cbea112c39
+@legalitt/shared:typecheck: cache hit, replaying logs 09d9dde41ff9d037
+@legalitt/shared:build: 
+@legalitt/shared:build: > @legalitt/shared@0.0.0 build /Users/riya/Documents/14/packages/shared
+@legalitt/shared:build: > tsc
+@legalitt/shared:build: 
+@legalitt/shared:typecheck: 
+@legalitt/shared:typecheck: > @legalitt/shared@0.0.0 typecheck /Users/riya/Documents/14/packages/shared
+@legalitt/shared:typecheck: > tsc --noEmit
+@legalitt/shared:typecheck: 
+@legalitt/infra:typecheck: 
+@legalitt/infra:typecheck: > @legalitt/infra@0.0.0 typecheck /Users/riya/Documents/14/infra
+@legalitt/infra:typecheck: > tsc --noEmit
+@legalitt/infra:typecheck: 
+@legalitt/admin:typecheck: cache hit, replaying logs 76bbe79561ea0250
+@legalitt/api:typecheck: cache hit, replaying logs 13e14eb33a35f953
+@legalitt/api:typecheck: 
+@legalitt/api:typecheck: > @legalitt/api@0.0.0 typecheck /Users/riya/Documents/14/apps/api
+@legalitt/api:typecheck: > prisma generate && tsc --noEmit
+@legalitt/api:typecheck: 
+@legalitt/api:typecheck: Loaded Prisma config from prisma.config.ts.
+@legalitt/api:typecheck: 
+@legalitt/api:typecheck: Prisma schema loaded from prisma/schema.prisma.
+@legalitt/api:typecheck: 
+@legalitt/api:typecheck: ✔ Generated Prisma Client (7.10.1) to ./src/generated/prisma in 140ms
+@legalitt/api:typecheck: 
+@legalitt/mobile:typecheck: cache miss, executing edd67dda1fe49c1d
+@legalitt/admin:typecheck: 
+@legalitt/admin:typecheck: > @legalitt/admin@0.0.0 typecheck /Users/riya/Documents/14/apps/admin
+@legalitt/admin:typecheck: > tsc --noEmit
+@legalitt/admin:typecheck: 
+@legalitt/mobile:typecheck: 
+@legalitt/mobile:typecheck: > @legalitt/mobile@1.0.0 typecheck /Users/riya/Documents/14/apps/mobile
+@legalitt/mobile:typecheck: > tsc --noEmit
+@legalitt/mobile:typecheck: 
+
+ Tasks:    6 successful, 6 total
+Cached:    5 cached, 6 total
+  Time:    29.808s 
+

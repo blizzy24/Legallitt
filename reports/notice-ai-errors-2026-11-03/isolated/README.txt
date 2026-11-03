@@ -62,3 +62,8 @@ task-result.json — actual isolated-task HTTP responses and RDS events
 cloudwatch.json — successful task's CloudWatch logs
 task-final.json / log-retention.json — stopped tasks and 14-day retention
 task-request*.json / task-start*.json / cloudwatch-attempt1.json — attempt audit
+
+Later verification: this same labelled draft was advanced to completed in the
+approved progression rollout walk. Its earlier no-payment/no-shipment findings
+above describe the isolated AI test at that time. See
+reports/demo-progression-2026-11-03/README.txt for the later workflow and uploads.

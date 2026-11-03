@@ -1,0 +1,36 @@
+AI agent detected
+dist/stack.js:452:13
+WARNING Parameters/GeminiSecretArn: Parameter 'GeminiSecretArn' appears to be a password but does not have NoEcho set to true (CloudFormation Validate)
+   LegalittDev/Compute aws-cdk-lib.Stack
+   Acknowledge with 'CloudFormation-Validate::W2509'
+
+WARNING No cross-stack-reference strength configured, defaulting to "strong". We recommend you set feature flag "@aws-cdk/core:defaultCrossStackReferences" to "both", then deploy everywhere, then set it to "weak". Alternatively, set it to "strong" explicitly to lock in the current producer-protecting behavior. (See: https://github.com/aws/aws-cdk/blob/main/packages/aws-cdk-lib/README.md#reference-strength) (Construct Annotations)
+   LegalittDev/Compute
+   Acknowledge with 'Annotation::@aws-cdk/core:crossStackReferencesDefaultStrong'
+
+✨  Synthesis time: 1.42s
+
+LegalittDev-Compute-DevelopmentOnly: start: Building LegalittDev-Compute-DevelopmentOnly Template
+LegalittDev-Compute-DevelopmentOnly: success: Built LegalittDev-Compute-DevelopmentOnly Template
+LegalittDev-Compute-DevelopmentOnly: start: Publishing LegalittDev-Compute-DevelopmentOnly Template (026379630400-ap-south-1-1cb08e04)
+LegalittDev-Compute-DevelopmentOnly: success: Published LegalittDev-Compute-DevelopmentOnly Template (026379630400-ap-south-1-1cb08e04)
+LegalittDev-Compute-DevelopmentOnly: creating CloudFormation changeset...
+LegalittDev/Compute (LegalittDev-Compute-DevelopmentOnly): deploying... [1/1]
+
+✅  LegalittDev/Compute (LegalittDev-Compute-DevelopmentOnly)
+
+✨  Deployment time: 218.22s
+
+Outputs:
+LegalittDevCompute61559419.ApiUrl = https://gvycg0n3u8.execute-api.ap-south-1.amazonaws.com
+LegalittDevCompute61559419.ClusterName = legalitt-dev-cluster
+LegalittDevCompute61559419.DatabaseSecretArn = arn:aws:secretsmanager:ap-south-1:026379630400:secret:legalitt-dev/database-SY4O9G
+LegalittDevCompute61559419.OpsTaskDefinitionArn = arn:aws:ecs:ap-south-1:026379630400:task-definition/legalitt-dev-ops:3
+LegalittDevCompute61559419.RepositoryUri = 026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api
+LegalittDevCompute61559419.TaskSecurityGroupId = sg-09a3b6978c7950214
+LegalittDevCompute61559419.TaskSubnetIds = subnet-060f72908da2419ee,subnet-0ad9da8fd0e033afd
+Stack ARN:
+arn:aws:cloudformation:ap-south-1:026379630400:stack/LegalittDev-Compute-DevelopmentOnly/6a722080-d717-11f1-acc7-0affd88faab9
+
+✨  Total time: 233.86s
+

@@ -1,0 +1,63 @@
+{
+    "revision": 5,
+    "containers": [
+        {
+            "name": "api",
+            "image": "026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api:demo-step-switches-20261103",
+            "environment": [
+                {
+                    "name": "DEMO_PROGRESSION",
+                    "value": "on"
+                },
+                {
+                    "name": "DEMO_SHIPMENT_STEP_MS",
+                    "value": "5000"
+                },
+                {
+                    "name": "DEMO_ASSIGNMENT",
+                    "value": "off"
+                },
+                {
+                    "name": "DEMO_DISPATCH_DELAY_MS",
+                    "value": "30000"
+                },
+                {
+                    "name": "DEMO_DRAFT_DONE_DELAY_MS",
+                    "value": "30000"
+                },
+                {
+                    "name": "DEMO_DRAFT_START",
+                    "value": "off"
+                },
+                {
+                    "name": "DEMO_ASSIGN_DELAY_MS",
+                    "value": "30000"
+                },
+                {
+                    "name": "DEMO_DRAFT_START_DELAY_MS",
+                    "value": "30000"
+                },
+                {
+                    "name": "DEMO_DISPATCH",
+                    "value": "off"
+                },
+                {
+                    "name": "DEMO_DELIVERY_CONFIRMATION",
+                    "value": "off"
+                },
+                {
+                    "name": "DEMO_AUTH_SECRET_ARN",
+                    "value": "arn:aws:secretsmanager:ap-south-1:026379630400:secret:legalitt-dev/demo-auth-OX2woi"
+                },
+                {
+                    "name": "DEMO_DRAFT_SUBMIT",
+                    "value": "off"
+                },
+                {
+                    "name": "DEMO_SHIPMENT_MILESTONES",
+                    "value": "on"
+                }
+            ]
+        }
+    ]
+}
