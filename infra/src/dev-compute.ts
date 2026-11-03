@@ -87,6 +87,11 @@ export class DevComputeStack extends Stack {
       allowedPattern: "ap-south-1_[A-Za-z0-9]+",
     });
     const corsOrigins = parameter("CorsOrigins", "Comma-separated browser origins the API admits; may be empty.");
+    // Provision the credential directly in Secrets Manager, never as a CFN value.
+    // ECS resolves this ARN at task startup; the existing adapter reads its env.
+    const geminiSecret = parameter("GeminiSecretArn", "ARN of the dev Gemini API key secret (raw string); never the credential itself.", {
+      allowedPattern: "arn:aws:secretsmanager:ap-south-1:[0-9]{12}:secret:legalitt-dev/gemini-api-key-[A-Za-z0-9]{6}",
+    });
     // false for the first create, so a rolled-back create can delete the instance;
     // set true once the stack is CREATE_COMPLETE.
     const dbProtection = parameter("DatabaseDeletionProtection", "RDS deletion protection (true after the first create).", {
@@ -241,6 +246,8 @@ export class DevComputeStack extends Stack {
       allow(["ecr:GetAuthorizationToken"], ["*"]),
       allow(["ecr:BatchCheckLayerAvailability", "ecr:GetDownloadUrlForLayer", "ecr:BatchGetImage"], [arn(repository)]),
       allow(["logs:CreateLogStream", "logs:PutLogEvents"], [arn(logs)]),
+      // Secret injection is performed by ECS, not by the application/ops roles.
+      allow(["secretsmanager:GetSecretValue"], [geminiSecret.valueAsString]),
     ];
     const boundary = resource("RoleBoundary", "AWS::IAM::ManagedPolicy", {
       ManagedPolicyName: `${prefix}-boundary`,
@@ -313,11 +320,15 @@ export class DevComputeStack extends Stack {
           Image: image,
           Essential: true,
           PortMappings: [{ ContainerPort: port.valueAsNumber, Protocol: "tcp" }],
+          Secrets: [{ Name: "GEMINI_API_KEY", ValueFrom: geminiSecret.valueAsString }],
           Environment: [
             ...sharedEnvironment,
             { Name: "PORT", Value: port.valueAsString },
             { Name: "PHONE_AUTH_MODE", Value: "demo" },
             { Name: "CORS_ORIGINS", Value: corsOrigins.valueAsString },
+            // Owner-approved testing deployment only; module defaults stay simulated.
+            { Name: "AI_MODE", Value: "gemini" },
+            { Name: "GEMINI_MODEL", Value: "gemini-3.5-flash-lite" },
             // §2.12: the demo progression, with the same intervals as local development.
             { Name: "DEMO_PROGRESSION", Value: "on" },
             { Name: "DEMO_ASSIGN_DELAY_MS", Value: "30000" },

@@ -1,0 +1,85 @@
+{
+  "reference": "LN-2026-0010",
+  "caseId": "f57b7ba1-2fc5-445e-a2a9-7774bf6b2fb5",
+  "subjectMatter": "Synthetic testing case only. An unpaid invoice for ₹5,000 for website design services. The client requests payment of the outstanding invoice and written confirmation of settlement.",
+  "subject": {
+    "text": "Legal Notice for Recovery of ₹5,000 for Website Design Services",
+    "simulated": false
+  },
+  "demands": {
+    "options": [
+      "Demand immediate payment of the outstanding invoice amount of ₹5,000 for website design services",
+      "Demand written confirmation of settlement regarding the unpaid website design services"
+    ],
+    "simulated": false
+  },
+  "saved": {
+    "subject_line": "Legal Notice for Recovery of ₹5,000 for Website Design Services",
+    "legal_demand": {
+      "custom": "Written confirmation of payment.",
+      "selected": [
+        "Demand immediate payment of the outstanding invoice amount of ₹5,000 for website design services"
+      ]
+    }
+  },
+  "events": [
+    {
+      "source": "real",
+      "id": "68",
+      "case_id": "f57b7ba1-2fc5-445e-a2a9-7774bf6b2fb5",
+      "type": "subject_generated",
+      "actor_id": "aadf5486-cb3e-4379-b7aa-6def2f688d84",
+      "actor_role": "client",
+      "from_status": null,
+      "to_status": null,
+      "payload": {
+        "subject_line": "Legal Notice: Unpaid Invoice of ₹5,000 for Website Design Services"
+      },
+      "created_at": "2026-11-03T11:18:25.701Z"
+    },
+    {
+      "source": "real",
+      "id": "69",
+      "case_id": "f57b7ba1-2fc5-445e-a2a9-7774bf6b2fb5",
+      "type": "subject_generated",
+      "actor_id": "aadf5486-cb3e-4379-b7aa-6def2f688d84",
+      "actor_role": "client",
+      "from_status": null,
+      "to_status": null,
+      "payload": {
+        "subject_line": "Legal Notice for Recovery of ₹5,000 for Website Design Services"
+      },
+      "created_at": "2026-11-03T11:19:34.167Z"
+    },
+    {
+      "source": "real",
+      "id": "70",
+      "case_id": "f57b7ba1-2fc5-445e-a2a9-7774bf6b2fb5",
+      "type": "demand_options_generated",
+      "actor_id": "aadf5486-cb3e-4379-b7aa-6def2f688d84",
+      "actor_role": "client",
+      "from_status": null,
+      "to_status": null,
+      "payload": {
+        "options": [
+          "Demand immediate payment of the outstanding invoice amount of ₹5,000 for website design services",
+          "Demand written confirmation of settlement regarding the unpaid website design services"
+        ]
+      },
+      "created_at": "2026-11-03T11:19:38.028Z"
+    }
+  ],
+  "failureChecks": {
+    "method": "Browser-only injected HTTP 502 matching the API provider-error response; retries are real deployed requests",
+    "injected": [
+      "subject",
+      "demand-options"
+    ],
+    "subjectError": "Gemini AI (gemini-3.5-flash-lite, task=subject) RESOURCE_EXHAUSTED: Quota exceeded. Please retry.",
+    "demandsError": "Gemini AI (gemini-3.5-flash-lite, task=demands) RESOURCE_EXHAUSTED: Quota exceeded. Please retry.",
+    "subjectPreserved": true,
+    "demandsCustomInputUsable": true,
+    "recoveredTo": "/legal-notice/step4"
+  },
+  "browserErrors": []
+}

@@ -1,0 +1,64 @@
+TAP version 13
+# Subtest: AI default registration is simulated and preserves task-specific shapes
+ok 1 - AI default registration is simulated and preserves task-specific shapes
+  ---
+  duration_ms: 8.431583
+  type: 'test'
+  ...
+# Subtest: Gemini refuses registration outside dev, in production, or without credentials
+ok 2 - Gemini refuses registration outside dev, in production, or without credentials
+  ---
+  duration_ms: 5.502709
+  type: 'test'
+  ...
+# Subtest: Gemini calls fixed Google host with structured options and no key in URL
+ok 3 - Gemini calls fixed Google host with structured options and no key in URL
+  ---
+  duration_ms: 11.520125
+  type: 'test'
+  ...
+# Subtest: Gemini errors are actionable, redact credentials/prompts, and never fall back
+ok 4 - Gemini errors are actionable, redact credentials/prompts, and never fall back
+  ---
+  duration_ms: 2.793083
+  type: 'test'
+  ...
+# Subtest: Bedrock calls Mumbai, permits audited India profiles and rejects all other routing
+ok 5 - Bedrock calls Mumbai, permits audited India profiles and rejects all other routing
+  ---
+  duration_ms: 0.782209
+  type: 'test'
+  ...
+# Subtest: Bedrock defaults all tasks to Haiku and changes only the configured task to Sonnet
+ok 6 - Bedrock defaults all tasks to Haiku and changes only the configured task to Sonnet
+  ---
+  duration_ms: 0.650125
+  type: 'test'
+  ...
+# Subtest: Bedrock exposes region/model rejection and does not retry with another model
+ok 7 - Bedrock exposes region/model rejection and does not retry with another model
+  ---
+  duration_ms: 0.256875
+  type: 'test'
+  ...
+# Subtest: Bedrock missing AWS credentials fails module registration
+ok 8 - Bedrock missing AWS credentials fails module registration
+  ---
+  duration_ms: 219.389583
+  type: 'test'
+  ...
+# Subtest: AI port compile-time contract gives demand options and text only for text tasks
+ok 9 - AI port compile-time contract gives demand options and text only for text tasks
+  ---
+  duration_ms: 451.448125
+  type: 'test'
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1177.8925

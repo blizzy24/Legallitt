@@ -1,0 +1,99 @@
+AI agent detected
+dist/stack.js:452:13
+WARNING Parameters/GeminiSecretArn: Parameter 'GeminiSecretArn' appears to be a password but does not have NoEcho set to true (CloudFormation Validate)
+   LegalittDev/Compute aws-cdk-lib.Stack
+   Acknowledge with 'CloudFormation-Validate::W2509'
+
+WARNING No cross-stack-reference strength configured, defaulting to "strong". We recommend you set feature flag "@aws-cdk/core:defaultCrossStackReferences" to "both", then deploy everywhere, then set it to "weak". Alternatively, set it to "strong" explicitly to lock in the current producer-protecting behavior. (See: https://github.com/aws/aws-cdk/blob/main/packages/aws-cdk-lib/README.md#reference-strength) (Construct Annotations)
+   LegalittDev/Compute
+   Acknowledge with 'Annotation::@aws-cdk/core:crossStackReferencesDefaultStrong'
+Stack LegalittDev/Compute (LegalittDev-Compute-DevelopmentOnly) (aws://026379630400/ap-south-1)
+IAM Statement Changes
+┌───┬────────────────────────────┬────────┬───────────────────────────────┬──────────────────────────────┬───────────┐
+│   │ Resource                   │ Effect │ Action                        │ Principal                    │ Condition │
+├───┼────────────────────────────┼────────┼───────────────────────────────┼──────────────────────────────┼───────────┤
+│ + │ ${Compute/GeminiSecretArn} │ Allow  │ secretsmanager:GetSecretValue │ AWS:${Compute/ExecutionRole} │           │
+└───┴────────────────────────────┴────────┴───────────────────────────────┴──────────────────────────────┴───────────┘
+(NOTE: There may be security-related changes not in this list. See https://github.com/aws/aws-cdk/issues/1299)
+
+Parameters
+[+] Parameter Compute/GeminiSecretArn GeminiSecretArn: {"Type":"String","AllowedPattern":"arn:aws:secretsmanager:ap-south-1:[0-9]{12}:secret:legalitt-dev/gemini-api-key-[A-Za-z0-9]{6}","Description":"ARN of the dev Gemini API key secret (raw string); never the credential itself."}
+
+Resources
+[~] AWS::IAM::ManagedPolicy Compute/RoleBoundary RoleBoundary
+ └─ [~] PolicyDocument
+     └─ [~] .Statement:
+         └─ @@ -128,6 +128,17 @@
+            [ ]   ]
+            [ ] },
+            [ ] {
+            [+]   "Effect": "Allow",
+            [+]   "Action": [
+            [+]     "secretsmanager:GetSecretValue"
+            [+]   ],
+            [+]   "Resource": [
+            [+]     {
+            [+]       "Ref": "GeminiSecretArn"
+            [+]     }
+            [+]   ]
+            [+] },
+            [+] {
+            [ ]   "Effect": "Deny",
+            [ ]   "Action": "*",
+            [ ]   "Resource": "*",
+[~] AWS::IAM::Role Compute/ExecutionRole ExecutionRole
+ └─ [~] Policies
+     └─ @@ -43,6 +43,17 @@
+        [ ]           ]
+        [ ]         }
+        [ ]       ]
+        [+]     },
+        [+]     {
+        [+]       "Effect": "Allow",
+        [+]       "Action": [
+        [+]         "secretsmanager:GetSecretValue"
+        [+]       ],
+        [+]       "Resource": [
+        [+]         {
+        [+]           "Ref": "GeminiSecretArn"
+        [+]         }
+        [+]       ]
+        [ ]     }
+        [ ]   ]
+        [ ] }
+[~] AWS::ECS::TaskDefinition Compute/Task Task replace
+ └─ [~] ContainerDefinitions (requires replacement)
+     └─ @@ -26,6 +26,14 @@
+        [ ]     "Protocol": "tcp"
+        [ ]   }
+        [ ] ],
+        [+] "Secrets": [
+        [+]   {
+        [+]     "Name": "GEMINI_API_KEY",
+        [+]     "ValueFrom": {
+        [+]       "Ref": "GeminiSecretArn"
+        [+]     }
+        [+]   }
+        [+] ],
+        [ ] "Environment": [
+        [ ]   {
+        [ ]     "Name": "ENVIRONMENT",
+        @@ -84,6 +92,14 @@
+        [ ]   }
+        [ ] },
+        [ ] {
+        [+]   "Name": "AI_MODE",
+        [+]   "Value": "gemini"
+        [+] },
+        [+] {
+        [+]   "Name": "GEMINI_MODEL",
+        [+]   "Value": "gemini-3.5-flash-lite"
+        [+] },
+        [+] {
+        [ ]   "Name": "DEMO_PROGRESSION",
+        [ ]   "Value": "on"
+        [ ] },
+
+
+
+✨  Number of stacks with differences: 1

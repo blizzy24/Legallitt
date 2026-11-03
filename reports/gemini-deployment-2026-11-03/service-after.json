@@ -1,0 +1,12 @@
+{
+    "running": 1,
+    "pending": 0,
+    "deployments": [
+        {
+            "status": "PRIMARY",
+            "rollout": "COMPLETED",
+            "task": "arn:aws:ecs:ap-south-1:026379630400:task-definition/legalitt-dev-api:3",
+            "running": 1
+        }
+    ]
+}

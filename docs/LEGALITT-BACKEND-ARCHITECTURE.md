@@ -413,6 +413,17 @@ and per-task configuration in §2.8. Both real adapters return `simulated: false
 Missing credentials, blocked/truncated/invalid responses and provider failures
 are explicit errors, never simulated success.
 
+Testing deployment instruction (3 November 2026): the deployed development API
+selects `AI_MODE=gemini`, `GEMINI_MODEL=gemini-3.5-flash-lite`. The module default
+remains simulated. `legalitt-dev/gemini-api-key` holds the credential as a raw
+Secrets Manager string. Dev Compute receives only its ARN in
+`GeminiSecretArn`; ECS `Secrets.ValueFrom` injects `GEMINI_API_KEY` at task
+startup. Only the execution role reads that secret. No credential is placed in
+CloudFormation, task-definition environment values, source or logs. Rotation
+requires restarting the task to load the new version. This uses the existing
+adapter unchanged; `ENVIRONMENT=dev` and non-production `NODE_ENV` remain
+mandatory. No Bedrock permissions are added, and production is unchanged.
+
 **No bypasses in real handlers.** A simulator must satisfy the real validation,
 not be excused from it. No handler may contain "skip this check when the caller
 is the simulator" — such a branch is a live bypass sitting in production code,
@@ -1626,7 +1637,7 @@ empty, or explicitly accepted in writing by the client, before production.
 | Payments | `PAYMENTS_MODE=simulated` | No Razorpay test keys yet | Client supplies test keys with Route enabled |
 | Phone OTP | `PHONE_AUTH_MODE=demo` | DLT registration not started (1–2 week lead) | DLT template approved |
 | Push, SMS and email | `NOTIFY_MODE=simulated` | No SNS/FCM/SMS/email integration yet; only outside delivery is simulated | Providers configured |
-| AI subject lines and demand options | `AI_MODE=simulated` | Fixed labelled responses by default; Gemini is development-only. Bedrock is configured to the verified India-only Haiku 4.5 profile | Intake integration and client-approved activation |
+| AI subject lines and demand options | Module default `AI_MODE=simulated`; deployed dev `AI_MODE=gemini` | Real Gemini 3.5 Flash-Lite generation enabled for synthetic testing on 3 Nov 2026; fixed labelled responses remain the default elsewhere. Gemini is development-only. Bedrock is configured to the verified India-only Haiku 4.5 profile | Production-provider activation remains pending |
 | AI notice drafting | `AI_MODE=simulated` | Existing labelled draft reused; Gemini is development-only. Bedrock is Haiku 4.5 only until Sonnet 5 access is granted. Sonnet 5 requires an AWS Sales request on the client’s account; no automatic fallback | Step 11; client requests Sonnet 5 access through AWS Sales before an optional per-task config swap |
 | Advocate assignment | `DEMO_PROGRESSION=on` | Admin assigns (§9), but no admin panel exists. **Without this every case stops at `paid` and nothing after it can be reached** | Admin panel built |
 | Demo progression | `DEMO_PROGRESSION=on` | Stands in for people with no screen yet — see §2.12. Calls real endpoints only | Admin panel built |
