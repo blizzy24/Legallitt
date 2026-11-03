@@ -1,0 +1,12 @@
+{
+    "taskDefinition": "arn:aws:ecs:ap-south-1:026379630400:task-definition/legalitt-dev-api:5",
+    "running": 1,
+    "desired": 1,
+    "deployments": [
+        {
+            "state": "COMPLETED",
+            "taskDefinition": "arn:aws:ecs:ap-south-1:026379630400:task-definition/legalitt-dev-api:5",
+            "running": 1
+        }
+    ]
+}

@@ -107,8 +107,10 @@ complete and the link to 441 appears. Both checks have zero browser errors.
   client-out-for-delivery-fixed-local.png
   client-delivered-timeline-fixed-local.png
   timeline-waiting-check.json; timeline-completed-check.json
-The public Vercel frontend is unchanged; this correction needs a separate rollout
-from the approved Compute-only deployment.
+The public Vercel frontend was unchanged during that initial check. The owner
+subsequently approved the additional frontend rollout: dbbeb62 is now pushed and
+live at legalitt-5.vercel.app (deployment dpl_ERbbmuqyko7vEzowdnAMMnsXvNr1).
+See live-after-fix/ for the new verification against the public deployment.
 
 Retained test data / cleanup
 
@@ -125,3 +127,8 @@ Timeline correction checks: all six workspace typechecks pass; fixture and API
 exports pass; full mobile smoke passes at 322 routes with zero failures and no
 fixture case/document API calls. See timeline-typecheck.txt, timeline-smoke.txt,
 and timeline-browser.txt.
+
+Public follow-up verification is complete: live-after-fix/README.txt records
+fresh case LN-2026-0013 holding paid until admin assignment, then holding Out for
+Delivery with the corrected live client timeline and no POD. It remains awaiting
+manual admin delivery confirmation for inspection.

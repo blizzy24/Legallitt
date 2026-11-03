@@ -1,0 +1,43 @@
+Vercel CLI 64.3.1
+Fetching deployment "legalitt-der5vnq4r-blizzard7.vercel.app" in blizzard7
+> Fetched deployment "legalitt-der5vnq4r-blizzard7.vercel.app" in blizzard7 [2m]
+
+  General
+
+    id		dpl_ERbbmuqyko7vEzowdnAMMnsXvNr1
+    name	legalitt
+    target	production
+    status	● Ready
+    url		https://legalitt-der5vnq4r-blizzard7.vercel.app
+    created	Tue Nov 03 2026 18:04:33 GMT+0530 (India Standard Time) [3m ago]
+
+
+  Build Machine
+
+    requested build machine basic
+    actual assigned cores   2 vCPU (actual assignment)
+    memory                  8192 MiB
+    selection type          fixed
+    selection source        plan-default
+
+
+  Duration
+
+    build duration	2m 46s
+    post-build duration	unavailable
+    billable duration	unavailable
+    CPU Minutes Usage	unavailable
+
+
+  Aliases
+
+    ╶ https://legalitt-5.vercel.app
+    ╶ https://legalitt-blizzard7.vercel.app
+    ╶ https://legalitt-git-main-blizzard7.vercel.app
+    
+
+  Builds
+
+    ╶ .        [0ms]
+    
+

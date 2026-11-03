@@ -1,0 +1,31 @@
+{
+  "id": "8d6ebcd9-02b3-469c-bdac-1f95a8ebe33d",
+  "url": "https://legalitt-5.vercel.app/legal-notice/delivery?caseId=8d6ebcd9-02b3-469c-bdac-1f95a8ebe33d",
+  "observations": [
+    {
+      "at": "2026-11-03T12:41:23.964Z",
+      "active": "Shipment Created  ACTIVE"
+    },
+    {
+      "at": "2026-11-03T12:41:27.975Z",
+      "active": "Pickup Booked  ACTIVE"
+    },
+    {
+      "at": "2026-11-03T12:41:33.002Z",
+      "active": "Picked Up  ACTIVE"
+    },
+    {
+      "at": "2026-11-03T12:41:38.025Z",
+      "active": "In Transit  ACTIVE"
+    },
+    {
+      "at": "2026-11-03T12:41:43.041Z",
+      "active": "Out for Delivery  ACTIVE"
+    }
+  ],
+  "reloads": 0,
+  "responseInterception": false,
+  "shipment": "out_for_delivery",
+  "pod": null,
+  "errors": []
+}

@@ -1,0 +1,74 @@
+{
+  "urls": {
+    "mobile": "https://legalitt-5.vercel.app",
+    "admin": "https://legalitt-admin-panel.vercel.app",
+    "api": "https://gvycg0n3u8.execute-api.ap-south-1.amazonaws.com"
+  },
+  "case": {
+    "id": "8d6ebcd9-02b3-469c-bdac-1f95a8ebe33d",
+    "reference": "LN-2026-0013",
+    "status": "dispatched"
+  },
+  "profiles": 3,
+  "uiSignIn": true,
+  "paidHoldSeconds": 80,
+  "outForDeliveryHoldSeconds": 40,
+  "shipment": "out_for_delivery",
+  "pod": null,
+  "clientActiveMilestone": "Out for Delivery",
+  "deliveredPending": true,
+  "adminConfirmationPending": true,
+  "observations": [
+    {
+      "event": "paid → assignment needed",
+      "role": "admin",
+      "before": 2,
+      "unread": 3,
+      "withoutReload": true
+    },
+    {
+      "event": "assigned",
+      "role": "advocate",
+      "before": 2,
+      "unread": 3,
+      "withoutReload": true
+    },
+    {
+      "event": "advocate assigned",
+      "role": "client",
+      "before": 12,
+      "unread": 13,
+      "withoutReload": true
+    },
+    {
+      "event": "draft ready",
+      "role": "client",
+      "before": 13,
+      "unread": 14,
+      "withoutReload": true
+    },
+    {
+      "event": "client approved",
+      "role": "advocate",
+      "before": 2,
+      "unread": 3,
+      "withoutReload": true
+    },
+    {
+      "event": "dispatched → delivery confirmation needed",
+      "role": "admin",
+      "before": 2,
+      "unread": 3,
+      "withoutReload": true
+    },
+    {
+      "event": "notice dispatched",
+      "role": "client",
+      "before": 13,
+      "unread": 14,
+      "withoutReload": true
+    }
+  ],
+  "errors": [],
+  "observerReloads": 0
+}

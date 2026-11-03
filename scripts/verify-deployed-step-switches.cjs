@@ -7,7 +7,7 @@ const puppeteer=require('puppeteer-core');
 const {ApiClient}=require('../packages/shared/dist');
 const {PDFDocument,StandardFonts}=require('../apps/api/node_modules/pdf-lib');
 const {demoAccounts,demoPassword,requireDemoMode}=require('../apps/api/dist/src/auth/demo');
-const out=path.resolve('reports/demo-progression-2026-11-03/deployed'),mobile='https://legalitt-5.vercel.app',panel=process.env.DEPLOYED_ADMIN_URL,base='https://gvycg0n3u8.execute-api.ap-south-1.amazonaws.com';
+const out=path.resolve(process.env.PROGRESSION_REPORT_DIR??'reports/demo-progression-2026-11-03/deployed'),mobile='https://legalitt-5.vercel.app',panel=process.env.DEPLOYED_ADMIN_URL,base='https://gvycg0n3u8.execute-api.ap-south-1.amazonaws.com';
 const delay=ms=>new Promise(r=>setTimeout(r,ms));
 async function click(page,label,role='button') {
  console.log('Click', label); await page.bringToFront();
@@ -145,6 +145,20 @@ async function main(){
   fs.writeFileSync(path.join(out,'client-out-for-delivery.txt'),await p.evaluate(()=>document.body.innerText));
   record=await api.client.case(id);
   fs.writeFileSync(path.join(out,'waiting-ready.json'),JSON.stringify({id,reference:record.reference,status:record.status,shipment:record.shipments.find(s=>s.direction==='to_recipient'),documents:record.documents.map(d=>({id:d.id,filename:d.filename,simulated:d.simulated})),events:record.events},null,2));
+  const waitingText=await p.evaluate(()=>document.body.innerText);
+  assert.match(waitingText,/Out for Delivery\s+ACTIVE/);
+  assert.doesNotMatch(waitingText,/Delivered\s+ACTIVE|View Delivery Confirmation/);
+  if(process.env.STOP_AT_OUT_FOR_DELIVERY==='1'){
+   for(const state of ['assigned','advocate_accepted','in_progress','client_review','approved','dispatched'])assert.equal(record.events.find(e=>e.type==='status_changed'&&e.to_status===state)?.source,'real');
+   assert.deepEqual(record.events.filter(e=>e.type==='shipment_status_changed').map(e=>({to:e.payload.to,source:e.source,actor:e.payload.actor})),['pickup_booked','picked_up','in_transit','out_for_delivery'].map(to=>({to,source:'simulated',actor:'system'})));
+   await a.goto(panel+'/legal-notices/'+id,{waitUntil:'networkidle0'});
+   await a.waitForFunction(()=>document.body.innerText.includes('Confirm delivery'));
+   await a.screenshot({path:path.join(out,'admin-awaiting-delivery-confirmation.png'),fullPage:true});
+   assert.deepEqual(errors,[]);
+   fs.writeFileSync(path.join(out,'verification.json'),JSON.stringify({urls:{mobile,admin:panel,api:base},case:{id,reference:record.reference,status:record.status},profiles:3,uiSignIn:true,paidHoldSeconds:80,outForDeliveryHoldSeconds:40,shipment:'out_for_delivery',pod:null,clientActiveMilestone:'Out for Delivery',deliveredPending:true,adminConfirmationPending:true,observations:evidence,errors,observerReloads:0},null,2));
+   console.log('PASS',record.reference,'paid holds; human assignment and dispatch; Out for Delivery active, no POD; waiting for admin');
+   return;
+  }
   console.log('PASS Out for Delivery held 40 seconds, no POD. Waiting for screenshot review.');
   for(let n=0;!fs.existsSync(path.join(out,'continue-to-admin'))&&n<900;n++)await delay(1000);
   assert.ok(fs.existsSync(path.join(out,'continue-to-admin')),'Screenshot review required before manual delivery');

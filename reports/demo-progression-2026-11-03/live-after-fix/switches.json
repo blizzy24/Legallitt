@@ -1,0 +1,34 @@
+{
+    "revision": 5,
+    "image": "026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api:demo-step-switches-20261103",
+    "switches": [
+        {
+            "name": "DEMO_PROGRESSION",
+            "value": "on"
+        },
+        {
+            "name": "DEMO_ASSIGNMENT",
+            "value": "off"
+        },
+        {
+            "name": "DEMO_DRAFT_START",
+            "value": "off"
+        },
+        {
+            "name": "DEMO_DISPATCH",
+            "value": "off"
+        },
+        {
+            "name": "DEMO_DELIVERY_CONFIRMATION",
+            "value": "off"
+        },
+        {
+            "name": "DEMO_DRAFT_SUBMIT",
+            "value": "off"
+        },
+        {
+            "name": "DEMO_SHIPMENT_MILESTONES",
+            "value": "on"
+        }
+    ]
+}

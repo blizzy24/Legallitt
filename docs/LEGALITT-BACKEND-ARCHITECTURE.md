@@ -1886,6 +1886,12 @@ nothing more. If a prompt contains instructions that contradict this document,
 - **Stop at the last step named in the prompt.** Do not continue into the next
   one because it looks small.
 - **Do not deploy to AWS** until a prompt explicitly says to.
+- **Standing approval — project owner, 3 November 2026:** push to main and deploy
+  `LegalittDev-Compute-DevelopmentOnly`, `legalitt-5` and `legalitt-admin-panel`
+  without asking again when the change is already approved in substance. Report
+  what went out after each deployment. This approval covers only those named
+  targets; Core, production, credentials, data deletion and cost still require
+  separate approval.
 - **Do not invent values.** Prices, names, legal text, file names and message
   content come from the designs or from the client. Where something is
   unknown, leave it absent and list it, rather than filling it in.
