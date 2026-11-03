@@ -1,0 +1,5 @@
+LN-2026-0001 demo-advocate-3 status=in_progress save=201 generate=201 Legal_Notice_Draft_v1.pdf pages=2
+LN-2026-0002 demo-advocate-4 status=in_progress save=201 generate=201 Legal_Notice_Draft_v1.pdf pages=2
+LN-2026-0003 demo-advocate-4 status=in_progress save=201 generate=201 Legal_Notice_Draft_v1.pdf pages=2
+LN-2026-0004 demo-advocate-4 status=in_progress save=201 generate=201 Legal_Notice_Draft_v1.pdf pages=2
+LN-2026-0006 admin row: {"id":"f5da4cf2-9dee-45c0-9f20-abf92284d536","reference":"LN-2026-0006","client":{"id":"aadf5486-cb3e-4379-b7aa-6def2f688d84","name":"Demo client"},"matter_type":"consumer_complaint","parties":[{"kind":"sender","name":"Kavita Iyer"},{"kind":"noticee","name":"The Manager, Sunrise Home Appliances"}],"advocate":null,"documents":{"client":0,"admin":0,"generated":0,"advocate":0},"simulated_documents":{
