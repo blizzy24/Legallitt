@@ -1,0 +1,22 @@
+LN-2026-0001 demo-advocate-3 save=201 generate=201 pages=2
+  reference: "Reference Id LN-2026-0001Date: 04/11/2026T"
+  intro: "Mrs. Sunita Mehra W/o Shri Rajeev Mehra, Age 41"
+  "/20 " present=false  "____" present=false
+LN-2026-0002 demo-advocate-4 save=201 generate=201 pages=2
+  reference: "Reference Id LN-2026-0002Date: 04/11/2026T"
+  intro: "undefined"
+  "/20 " present=false  "____" present=false
+LN-2026-0003 demo-advocate-4 save=201 generate=201 pages=2
+  reference: "Reference Id LN-2026-0003Date: 04/11/2026T"
+  intro: "Ms. Priya Kulkarni D/o Shri Prakash Kulkarni, Age 36"
+  "/20 " present=false  "____" present=false
+LN-2026-0004 demo-advocate-4 save=201 generate=201 pages=2
+  reference: "Reference Id LN-2026-0004Date: 04/11/2026T"
+  intro: "Mr. Rohan Agarwal S/o Shri Suresh Agarwal, Age 33"
+  "/20 " present=false  "____" present=false
+LN-2026-0001 admin detail (status in_progress, advocate Demo Advocate Kabir): Title=Mrs. Age=41 Relation=W/o Relative=Rajeev Mehra -> "Mrs. Sunita Mehra W/o Shri Rajeev Mehra, Age 41"
+LN-2026-0002 admin detail (status in_progress, advocate Demo Advocate Meera): Title=Mr. Age=58 Relation=S/o Relative=Vasant Deshpande -> "Mr. Anil Deshpande S/o Shri Vasant Deshpande, Age 58"
+LN-2026-0003 admin detail (status in_progress, advocate Demo Advocate Meera): Title=Ms. Age=36 Relation=D/o Relative=Prakash Kulkarni -> "Ms. Priya Kulkarni D/o Shri Prakash Kulkarni, Age 36"
+LN-2026-0004 admin detail (status in_progress, advocate Demo Advocate Meera): Title=Mr. Age=33 Relation=S/o Relative=Suresh Agarwal -> "Mr. Rohan Agarwal S/o Shri Suresh Agarwal, Age 33"
+LN-2026-0005 admin detail (status assigning, advocate none): Title=Mr. Age=47 Relation=S/o Relative=Gurcharan Singh Bedi -> "Mr. Harpreet Singh Bedi S/o Shri Gurcharan Singh Bedi, Age 47"
+LN-2026-0006 admin detail (status assigning, advocate none): Title=Ms. Age=39 Relation=D/o Relative=Venkatesh Iyer -> "Ms. Kavita Iyer D/o Shri Venkatesh Iyer, Age 39"
