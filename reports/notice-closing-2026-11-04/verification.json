@@ -1,0 +1,20 @@
+{
+  "case": {
+    "id": "a694ed94-2b6c-43ab-9eda-369be9163221",
+    "reference": "LN-2026-0015"
+  },
+  "defaultDays": 15,
+  "savedDays": 7,
+  "invalidFractionRejected": true,
+  "unsavedEditsSurvivedPolling": true,
+  "withOffence": {
+    "pages": 2,
+    "filename": "Legal_Notice_Draft_v6.pdf"
+  },
+  "withoutOffence": {
+    "pages": 2,
+    "filename": "Legal_Notice_Draft_v7.pdf"
+  },
+  "clientSawSentPeriod": true,
+  "errors": []
+}

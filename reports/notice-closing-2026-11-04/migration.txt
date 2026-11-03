@@ -1,0 +1,10 @@
+2026-11-03T18:57:41 Loaded Prisma config from prisma.config.ts.
+2026-11-03T18:57:41 Prisma schema loaded from prisma/schema.prisma.
+2026-11-03T18:57:41 Datasource "db": PostgreSQL database "legalitt", schema "public" at "legalitt-dev-database.c1mu80ok42w3.ap-south-1.rds.amazonaws.com:5432"
+2026-11-03T18:57:42 12 migrations found in prisma/migrations
+2026-11-03T18:57:42 Applying migration `202611040001_notice_compliance`
+2026-11-03T18:57:42 The following migration(s) have been applied:
+2026-11-03T18:57:42 migrations/
+2026-11-03T18:57:42   └─ 202611040001_notice_compliance/
+2026-11-03T18:57:42     └─ migration.sql
+2026-11-03T18:57:42 All migrations have been successfully applied.
