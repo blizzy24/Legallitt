@@ -1,4 +1,4 @@
-Legalitt admin — chunks A–D (local only)
+Legalitt admin — chunks A–D
 
 Node 22.22+ is required by React Router 8; the repo's Node 22.23.3 works.
 From the repository root:
@@ -61,7 +61,24 @@ Browser assignment check (creates one development case through real endpoints):
   node --env-file=apps/api/.env.local scripts/admin-assignment-smoke.cjs
 Screenshots go to reports/admin-chunk-b.
 
-No admin deployment configuration is supplied; the panel remains local only.
+Vercel deployment:
+  Root Directory: apps/admin
+  Include source files outside the Root Directory: enabled
+  Framework: Vite
+  Install Command: pnpm install --frozen-lockfile
+  Build Command: pnpm --filter @legalitt/admin... build
+  Output Directory: dist
+  Node.js: 22.x
+  Production environment variable:
+    VITE_API_BASE_URL=https://gvycg0n3u8.execute-api.ap-south-1.amazonaws.com
+
+The build command compiles packages/shared before the admin app. vercel.json
+also supplies the SPA fallback, so refreshing /legal-notices/:id works. The
+root .vercelignore includes both frontend workspaces. VITE_API_BASE_URL is a
+public build-time value: setting it requires a new deployment. The local dev
+proxy remains unchanged when this variable is absent. Before using a deployed
+hostname, add that exact origin to both the API's CorsOrigins parameter and the
+Dev documents bucket through CDK; preview hostnames are not implicitly allowed.
 
 Document origins (project-owner decision, 1 Nov 2026): Client, Advocate,
 Admin, Generated. Generated means the PDFs linked from drafts/document_id or

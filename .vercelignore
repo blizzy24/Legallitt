@@ -1,4 +1,4 @@
-# Only mobile and shared workspace sources are needed for the web build.
+# The mobile, admin and shared workspaces are needed for the web builds.
 # Keep root package.json, pnpm lock/workspace files, tsconfig and turbo config.
 /design/
 /reports/
@@ -6,7 +6,6 @@
 /scripts/
 /infra/
 /apps/api/
-/apps/admin/
 /AGENTS.md
 /CLAUDE.md
 
