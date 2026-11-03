@@ -185,10 +185,8 @@ export function AdvocateNoticeFinalScreenView({ data, navigate, onDownload }: { 
           </Text>
           <ArrowRight size={t.ctaIcon} color={ink.onBrand} style={styles.ctaIcon} />
         </Pressable>
-        {/* ⚠ Names a courier the next screen still lets you choose. */}
-        <Text style={styles.cap} {...shrinkToFit(0.75)}>
-          {f.ctaCaption}
-        </Text>
+        {/* Owner decision, 4 Nov 2026: the drawn "Takes you to Send via Blue Dart" caption
+            is not shown; no delivery partner exists (§9.1). */}
       </View>
     </View>
   );

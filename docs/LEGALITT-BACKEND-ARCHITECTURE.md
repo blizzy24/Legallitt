@@ -1604,7 +1604,7 @@ before the backend needs it.
 | 13 | DPDP consent text and retention periods | Compliance |
 | 14 | Is any AI output client-facing without an advocate between? Check the AI chat screens (160–182, 170) | AI gating |
 | 15 | Which identity documents are accepted for each flow? Aadhaar must be masked if used at all (§6d) | ID proof uploads |
-| 16 | The advocate pays the courier out of pocket (196–198). Is that cost reimbursed, deducted from the payout, or absorbed by the advocate? The schema records the payment either way; the **payout calculation** needs the answer | Payouts, advocate wallet |
+| 16 | The advocate pays the courier out of pocket (196–198). Is that cost reimbursed, deducted from the payout, or absorbed by the advocate? The schema records the payment either way; the **payout calculation** needs the answer. **Still open (4 Nov 2026):** while the delivery partner is not built (§9.1) the notice flow takes no courier payment | Payouts, advocate wallet |
 | 17 | Designs 194–195 are drawn for client → advocate delivery, but Legal Notice dispatch is advocate → noticee. Approve the substituted wording in §9.2, or supply corrected screens | Dispatch screens |
 | 18 | Design 185 lets an advocate decline a request without giving a reason. Built as drawn. Was that intended? Whoever reassigns the case sees no explanation, and repeated unexplained declines can't be spotted | Assignment, advocate quality |
 | 19 | **No design shows "Your Decision" after the client approves.** The section has a drawn before-state (437) and nothing after. What does the client see between approving and dispatch starting? | Tracking screen 440 |
@@ -1634,6 +1634,7 @@ is re-litigated mid-build.
 | Unbuilt capabilities | **Simulated behind the API, never skipped in the app** (§2.11). The whole flow runs end to end from the first build | 2026-10-26 |
 | Auth audit trail | New `auth_events` table. `case_events.case_id` stays `NOT NULL` — sign-in has no case, and weakening the spine to fit one event type is the wrong trade | 2026-10-26 |
 | Outbound dispatch flow | Courier payment → **design 286** courier-details form → back to the dispatch screen. Designs **199–202 are not reused** — they ask the advocate to confirm *receiving* documents, which is the client → advocate direction and contradicts admin-only delivery confirmation | 2026-10-27 |
+| Outbound delivery partner | **Superseded in part.** The Legalitt Delivery Partner choice is removed until a partner exists (§9.1): Send (194) → **286** → back to the dispatch screen (193); no courier payment. Complete courier details (Courier Name, Tracking Number, Dispatch Date) book the shipment on save; a later save returns it to draft only if it blanks one of those three, and dispatch is then refused until they are re-entered. Q16 (courier cost) stays open | 2026-11-04 |
 | Delivery confirmation with no admin panel | The admin endpoint and state transition are **real now**. Only the screen is missing, so in simulated mode a dispatched case auto-confirms after a delay (§9.1). Nothing about the flow changes when the panel arrives | 2026-10-27 |
 | Who owns a system-generated document | A **seeded admin user**, the same owner a real admin upload would have — not the client, and not an invented system account. `documents.owner_id` means who produced the document; read access comes from case membership | 2026-10-27 |
 | Design 286's extra fields | **Schema adapts to the design** (§1a). `shipments` gains dispatch_date, courier_office, courier_phone, tracking_url, expected_delivery and receipt_document_id. A drawn input is never dropped because a table lacked a column | 2026-10-27 |
@@ -1660,6 +1661,7 @@ empty, or explicitly accepted in writing by the client, before production.
 | Advocate draft and dispatch actions | `DEMO_DRAFT_START`, `DEMO_DRAFT_SUBMIT`, `DEMO_DISPATCH` (**all off by default**, master required) | Optional unattended demo only; real advocate screens exist. Calls real endpoints | Explicitly disable for human testing / production |
 | Delivery confirmation | `DEMO_DELIVERY_CONFIRMATION=on` (**off by default**) + master + `ADMIN_UI_MODE=simulated` | Optional unattended demo only; real admin POD upload and confirmation exist. Uses the same validation and labelled simulated POD | Explicitly disable for human testing / production |
 | Courier tracking | `DEMO_SHIPMENT_MILESTONES=on` (default, master required) | No carrier integration; advances only through Out for Delivery, never confirms delivery | Only if the client later buys a carrier API |
+| Legalitt delivery partner | **Not built** — no flag; the choice is removed | No carrier booking or pickup exists (decision: courier integration is manual in v1). Since 4 Nov 2026 the advocate's Send screen (194) offers only Send by Yourself and goes to the 286 courier-details form; designs 195–198 (partner delivery details, courier payment) are kept in code but unreachable from the notice flow, so no courier fee is taken. Who bears the courier cost stays open (**Q16**) | A carrier or pickup partner is integrated and Q16 is answered |
 | KYC | `KYC_MODE=simulated` | No provider chosen | Provider chosen |
 
 **In-app notifications are real (3 Nov 2026).** Each notification is a real row,
@@ -1970,6 +1972,34 @@ No notifications, Load more and Retry are the operational empty/loading/error
 states. Mark all as read is drawn. The SMS/WhatsApp preferences control is drawn
 but outside delivery remains out of scope. No notification can infer a case's
 latest action from its old title; links resolve against the current lifecycle.
+
+### Instructed addition — outbound dispatch (4 November 2026)
+
+> **Approved — project owner, 4 Nov 2026.** The Legalitt Delivery Partner is not
+> built (§9.1), so its choice is removed; the dispatch screen shows real state.
+
+**Not shown while the partner is unbuilt** (drawn strings, kept in the fixtures):
+- 192 and 193: `Takes you to Send via Blue Dart`.
+- 194: `Choose how you want to send your physical documents.`, `Choose how to send`,
+  `Tap an option`, the Legalitt Delivery Partner option (its 194 `partnerDelivery`
+  substitution included), `You can send them yourself or use Legalitt Delivery.` and
+  `Next: Book Legalitt Delivery Partner pickup`. Send by Yourself is shown selected,
+  as design 284 draws it. 195–198 are unreachable from the notice flow.
+
+**Added on 193, every string reused from drawn copy:**
+- A dispatched case shows `Notice Dispatched` (the 437 tracking step) with neither action.
+- Once booked, a courier card in 286's labels: `COURIER DETAILS`, `COURIER`,
+  `TRACKING NO.`, `DISPATCH DATE`.
+- Confirm Dispatch is disabled until the details are booked, with 286's line
+  `Complete required fields: Courier Name, Tracking Number, Dispatch Date` under it.
+  The disabled look (reduced opacity) is not drawn. Provisional.
+- Back returns to 192.
+
+**Added on 286:** `Dispatch Date: DD/MM/YYYY` and `Expected Delivery Date: DD/MM/YYYY`
+under a date that is not a real date. Unpadded dates (5/11/2026) are accepted.
+Empty values take their rows with them (Delivery ID, Send To rows, tracking rows, receipt).
+
+Status: Provisional.
 
 ## 10. Working agreement
 

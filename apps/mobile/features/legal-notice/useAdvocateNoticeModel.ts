@@ -83,6 +83,19 @@ export function useAdvocateNoticeModel(stage: string) {
   };
   const navigate:typeof router=api?{...router,push:(href)=>navigateTo(href),replace:(href)=>navigateTo(href,true)}:router;
   const inbound=r?.shipments?.find(s=>s.direction==='to_advocate');
+  // Design 193's state, from the case and its latest outbound shipment. Confirm Dispatch
+  // is offered only when dispatch() can succeed: approved, with booked complete details.
+  const outbound=r?.shipments?.filter(s=>s.direction==='to_recipient')
+    .sort((a,b)=>Date.parse(b.booked_at??'')-Date.parse(a.booked_at??''))[0];
+  // Fixture mode has no state (as drawn); API mode cannot confirm until the case has loaded.
+  const dispatchState=!api?undefined:r?{loaded:true,
+    dispatched:['dispatched','completed'].includes(r.status),
+    canConfirm:['approved','dispatching'].includes(r.status)&&outbound?.status==='booked'
+      &&Boolean(outbound.carrier?.trim()&&outbound.waybill?.trim()&&outbound.dispatch_date),
+    // A date-only column: shown as stored, not shifted into the device's time zone.
+    courier:outbound&&outbound.status!=='draft'?{carrier:outbound.carrier??'',waybill:outbound.waybill??'',
+      dispatchDate:outbound.dispatch_date?outbound.dispatch_date.slice(0,10).split('-').reverse().join('/'):''}:null,
+  }:{loaded:false,dispatched:false,canConfirm:false,courier:null};
   const received=r?.events?.find(e=>e.type==='documents_received');
   const inboundRecipient=inbound?.recipient as {fullName?:string; name?:string; address?:string}|undefined;
   const inboundName=inboundRecipient?.fullName??inboundRecipient?.name??'';
@@ -158,7 +171,7 @@ export function useAdvocateNoticeModel(stage: string) {
   const problem=NoticePdfProblemSchema.safeParse(c.errorDetails);
   const feedback={error:c.error,missingFields:problem.success?problem.data.missing_fields:[],
     onContactClient:api&&c.id?()=>{void c.run(async()=>{await saveDraft();router.push(path('chat'));});}:undefined};
-  return {error:c.error,feedback,data,documentFields,navigate,controller:c,api,intakeSections,total:api?total:fixture.ADV_NOTICE_PAYMENT.totalAmount,path,courierHref,
+  return {error:c.error,feedback,data,documentFields,navigate,controller:c,api,intakeSections,total:api?total:fixture.ADV_NOTICE_PAYMENT.totalAmount,path,courierHref,dispatchState,
     onViewDocument:api?(id?:string)=>open(id??notice?.id??draftDoc?.id):undefined,
     onEditSection:api?(index:number,value:string)=>{
       const key=draftKeys[index];
@@ -171,8 +184,9 @@ export function useAdvocateNoticeModel(stage: string) {
     onEditOffences:(value:string)=>{c.dirty.current=true;c.setContent(prev=>({...prev,offences:value}));},
     onSaveDraft:api?()=>{void c.run(stage==='response'?renderDraft:saveDraft);}:undefined,
     onGenerateDraft:api?()=>{void c.run(renderDraft);}:undefined,
-    onConfirmDispatch:()=>{if(!api){router.push(path('report'));return;}void c.run(async()=>{if(c.id){await c.repository.dispatch(c.id);await c.load();}});},
-    onSendChoice:(choice:string)=>{let destination:Href=path('delivery');if(choice==='self')destination=courierHref();router.push(destination);},
+    onConfirmDispatch:()=>{if(!api){router.push(path('report'));return;}if(!dispatchState?.canConfirm)return;void c.run(async()=>{if(c.id){await c.repository.dispatch(c.id);await c.load();}});},
+    // The delivery partner is not built (§9.1): both routes open the courier-details form.
+    onSendChoice:()=>{router.push(courierHref());},
     onPay:()=>{void c.run(async()=>{if(api&&c.id)await c.repository.pay(c.id,'courier');router.replace(path('paid'));});},
     onReceive:()=>{void c.run(async()=>{if(api&&c.id)await c.repository.receiveShipment(c.id);router.replace(path('received'));});},
     onAccept:()=>{void c.run(async()=>{if(api&&c.id&&r?.status==='assigned'){await c.repository.accept(c.id);

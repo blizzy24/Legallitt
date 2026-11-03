@@ -218,6 +218,10 @@ test(
       await assert.rejects(shipmentService.save(otherAdvocate, c.id, {carrier: 'Forbidden'}), {status: 404});
       await assert.rejects(state.dispatch(admin, c.id, {}), {status: 403});
       await assert.rejects(state.dispatch(advocate, c.id, {}), {status: 400});
+      // An empty save before any details exist creates no shipment and no event.
+      for (const empty of [{}, {carrier: '   '}]) await assert.rejects(shipmentService.save(advocate, c.id, empty), {status: 400});
+      assert.equal(await db.shipment.count({where: {case_id: c.id, direction: 'to_recipient'}}), 0);
+      assert.equal(await db.caseEvent.count({where: {case_id: c.id, type: {in: ['shipment_details_saved', 'shipment_booked']}}}), 0);
       const saved = await shipmentService.save(advocate, c.id, {carrier: 'Test carrier'});
       assert.equal(saved.status, 'draft');
       assert.equal((await repo.read(client, c.id)).status, 'approved');
@@ -237,6 +241,26 @@ test(
       assert.equal(completeShipment.pod_document_id, null);
       assert.equal(completeShipment.dispatched_at, null);
       assert.equal((await repo.read(client, c.id)).status, 'approved');
+      // Owner decision, 4 Nov 2026: a save after booking never returns the shipment to
+      // draft (the form's Back and autosave did, which blocked dispatch); a save that
+      // changes nothing writes nothing; complete details book on a plain save; blanking
+      // a required field un-books, and dispatch then refuses.
+      const shipmentEvents = () => db.caseEvent.count({where: {case_id: c.id, type: {in: ['shipment_details_saved', 'shipment_booked']}}});
+      const beforeNoop = await shipmentEvents();
+      assert.equal((await shipmentService.save(advocate, c.id, {carrier: 'Test carrier', waybill: 'Test waybill', dispatch_date: '2020-01-02'})).status, 'booked');
+      assert.equal((await shipmentService.save(advocate, c.id, {})).status, 'booked');
+      assert.equal(await shipmentEvents(), beforeNoop, 'unchanged saves write no event');
+      assert.equal((await shipmentService.save(advocate, c.id, {courier_office: 'Edited office'})).status, 'booked');
+      const edited = await db.caseEvent.findFirst({where: {case_id: c.id, type: 'shipment_details_saved'}, orderBy: {id: 'desc'}});
+      assert.deepEqual(edited.payload.changed, ['courier_office']);
+      assert.equal(edited.payload.shipment_status, 'booked');
+      assert.equal((await shipmentService.save(advocate, c.id, {waybill: ''})).status, 'draft');
+      await assert.rejects(state.dispatch(advocate, c.id, {}), {status: 400});
+      assert.equal((await repo.read(client, c.id)).status, 'approved');
+      const rebooked = await shipmentService.save(advocate, c.id, {waybill: 'Test waybill'});
+      assert.equal(rebooked.status, 'booked');
+      assert.equal((await db.caseEvent.findFirst({where: {case_id: c.id}, orderBy: {id: 'desc'}})).type, 'shipment_booked');
+      assert.equal(rebooked.courier_office, 'Edited office', 'fields not sent keep their saved value');
       await state.dispatch(advocate, c.id, {});
       const dispatched = await db.shipment.findUnique({where: {id: saved.id}});
       assert.ok(dispatched.dispatched_at);

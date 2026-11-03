@@ -18,7 +18,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import CourierHeader from './CourierHeader';
 import { shrinkToFit } from '../constants/textFit';
 import { CO_SELF_DETAILS } from '../data/courier';
-import { courierSelfDetails as t, courierGreen as g, font, ink } from '../constants/theme';
+import { courierSelfDetails as t, courierGreen as g, colors, font, ink } from '../constants/theme';
 import { clientDocHref } from '../data/docLinks';
 
 // Client — enter the courier details after sending the documents yourself
@@ -43,6 +43,8 @@ export type CourierDetailsActions = {
   onExpected: (value: string) => void; onSubmit: () => void; onBack: () => void;
   onReceipt: () => void; onViewReceipt: () => void; onViewDocuments: () => void;
   onCopyId: () => void; onCopyTracking: () => void;
+  /** A message shown under a field, keyed by field index (6 is Expected Delivery). */
+  fieldErrors?: Record<number, string>;
 };
 export function CourierSelfDetailsView({data = CO_SELF_DETAILS, actions}: {data?: typeof CO_SELF_DETAILS; actions?: CourierDetailsActions}) {
   const insets = useSafeAreaInsets();
@@ -78,7 +80,8 @@ export function CourierSelfDetailsView({data = CO_SELF_DETAILS, actions}: {data?
           </View>
         </View>
 
-        <View style={styles.card}>
+        {/* Empty-state rule throughout: a missing value takes its label (or row) with it. */}
+        {d.idValue ? <View style={styles.card}>
           <View style={styles.row}>
             <Text style={styles.idLabel} {...shrinkToFit(0.8)}>
               {d.idLabel}
@@ -99,7 +102,7 @@ export function CourierSelfDetailsView({data = CO_SELF_DETAILS, actions}: {data?
               {d.idNote}
             </Text>
           </View>
-        </View>
+        </View> : null}
 
         <View style={styles.card}>
           <Text style={styles.formTitle} {...shrinkToFit(0.8)}>
@@ -122,6 +125,7 @@ export function CourierSelfDetailsView({data = CO_SELF_DETAILS, actions}: {data?
                   <Link2 size={t.inputGlyph} color={t.inkMuted} strokeWidth={2} />
                 ) : null}
               </View>
+              {actions?.fieldErrors?.[index] ? <Text accessibilityRole="alert" style={styles.fieldError}>{actions.fieldErrors[index]}</Text> : null}
             </View>
           ))}
         </View>
@@ -145,6 +149,7 @@ export function CourierSelfDetailsView({data = CO_SELF_DETAILS, actions}: {data?
             {actions ? <TextInput accessibilityLabel={d.expectedLabel} value={actions.expected} onChangeText={actions.onExpected} placeholder={d.expectedPlaceholder} style={[styles.inputText, {flex: 1, padding: 0}]} /> : <Text style={styles.inputText} {...shrinkToFit(0.8)}>{d.expectedPlaceholder}</Text>}
             <Calendar size={t.inputGlyph} color={t.inkMuted} strokeWidth={2} />
           </View>
+          {actions?.fieldErrors?.[6] ? <Text accessibilityRole="alert" style={styles.fieldError}>{actions.fieldErrors[6]}</Text> : null}
 
           <Text style={[styles.label, styles.receiptLabel]} {...shrinkToFit(0.8)}>
             {d.receiptLabel}
@@ -158,7 +163,7 @@ export function CourierSelfDetailsView({data = CO_SELF_DETAILS, actions}: {data?
           <Text style={styles.uploadNote} {...shrinkToFit(0.8)}>
             {d.uploadNote}
           </Text>
-          <View style={styles.receipt}>
+          {d.receiptFile ? <View style={styles.receipt}>
             <View style={styles.receiptTile}>
               <FileText size={t.receiptGlyph} color={t.inkMuted} strokeWidth={2} />
             </View>
@@ -184,7 +189,7 @@ export function CourierSelfDetailsView({data = CO_SELF_DETAILS, actions}: {data?
                 {d.receiptReplace}
               </Text>
             </Pressable>
-          </View>
+          </View> : null}
         </View>
 
         <View style={styles.card}>
@@ -232,7 +237,7 @@ export function CourierSelfDetailsView({data = CO_SELF_DETAILS, actions}: {data?
             </View>
           </View>
           <View style={styles.table}>
-            {d.sendRows.map((r, i) => (
+            {d.sendRows.filter((r) => r.value).map((r, i) => (
               <View key={r.label} style={[styles.tableRow, i > 0 && styles.tableRowNext]}>
                 <Text style={styles.tableLabel} {...shrinkToFit(0.8)}>
                   {r.label}
@@ -259,8 +264,9 @@ export function CourierSelfDetailsView({data = CO_SELF_DETAILS, actions}: {data?
             </Text>
           </View>
           <Text style={styles.trackBody}>{d.trackBody}</Text>
+          {d.trackRows.some((r) => r.value) ? <>
           <View style={styles.trackBox}>
-            {d.trackRows.map((r, i) => (
+            {d.trackRows.filter((r) => r.value).map((r, i) => (
               <View key={r.label} style={[styles.tableRow, i > 0 && styles.trackRowNext]}>
                 <Text style={styles.tableLabel} {...shrinkToFit(0.8)}>
                   {r.label}
@@ -277,6 +283,7 @@ export function CourierSelfDetailsView({data = CO_SELF_DETAILS, actions}: {data?
               {d.trackCopy}
             </Text>
           </Pressable>
+          </> : null}
         </View>
 
         <View style={styles.imp}>
@@ -314,6 +321,7 @@ export function CourierSelfDetailsView({data = CO_SELF_DETAILS, actions}: {data?
 }
 
 const styles = StyleSheet.create({
+  fieldError: { marginTop: 6, fontFamily: font.appBody, fontSize: 12.5, color: colors.danger },
   screen: { flex: 1, backgroundColor: t.bg },
   content: {},
   flex: { flex: 1 },

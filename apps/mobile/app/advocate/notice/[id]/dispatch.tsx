@@ -2,7 +2,7 @@ import NoticeScreenFeedback from '../../../../components/NoticeScreenFeedback';
 import { useAdvocateNoticeModel } from "../../../../features/legal-notice/useAdvocateNoticeModel";
 import { previewNotice } from '../../../../components/PreviewNotice';
 import DemoPressable from '../../../../components/DemoPressable';
-import { router, useLocalSearchParams, type Href } from 'expo-router';
+import { router, router as appRouter, useLocalSearchParams, type Href } from 'expo-router';
 import {
   ArrowLeft,
   ArrowRight,
@@ -23,24 +23,29 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { shrinkToFit } from '../../../../constants/textFit';
 import { ADV_NOTICE_DISPATCH, ADV_NOTICE_RECIPIENT } from '../../../../data/advocateSide';
+import { CO_SELF_DETAILS } from '../../../../data/courier';
+import { TRACKING_STEPS } from '../../../../data/legalNotice';
 import { advNoticeDispatch as t, colors, font, ink } from '../../../../constants/theme';
 
 // Prepare for dispatch (design/193).
 //
-// ⚠ TWO PRIMARY ACTIONS, no stated relationship. The screen ends with "Continue to
-// Send →" and then "Confirm Dispatch", both styled as the primary. Nothing says
-// which advances the flow, whether Confirm Dispatch is terminal, or what happens to
-// the other. Built as drawn, with Continue to Send routing onward and Confirm
-// Dispatch inert.
+// The two primary actions (architecture line 1636): Continue to Send opens the
+// courier-details form (286), which returns here; Confirm Dispatch dispatches.
+// Owner decision, 4 November 2026: in API mode the screen shows the case's real state.
+// Once the courier details are booked they appear here (in 286's own labels) and
+// Confirm Dispatch is enabled; until then it is disabled with 286's required-fields
+// line. A dispatched case shows "Notice Dispatched" and offers neither action.
+// Back returns to Final (192), the screen before this one.
 //
-// ⚠ The caption again hardcodes Blue Dart, where design/194 still offers a choice
-// and design/200 tracks under DHL Express.
+// The drawn "Takes you to Send via Blue Dart" caption is not shown: no delivery
+// partner exists (§9.1).
 //
 // ⚠ design/193 draws two Done and two Pending checklist rows but NO INTERACTION for
 // completing them. The pending rows are made tappable here, since a checklist you
 // cannot check is not a checklist — the design shows states but not the transition.
 
-export function AdvocateNoticeDispatchScreenView({ data, navigate, onDownload, onConfirm }: { onDownload?: (id?: string) => void; onConfirm?: () => void; data: { ADV_NOTICE_DISPATCH: typeof ADV_NOTICE_DISPATCH; ADV_NOTICE_RECIPIENT: typeof ADV_NOTICE_RECIPIENT }; navigate: typeof router }) {
+export type DispatchState = {loaded: boolean; dispatched: boolean; canConfirm: boolean; courier: {carrier: string; waybill: string; dispatchDate: string} | null};
+export function AdvocateNoticeDispatchScreenView({ data, navigate, onDownload, onConfirm, state }: { onDownload?: (id?: string) => void; onConfirm?: () => void; state?: DispatchState; data: { ADV_NOTICE_DISPATCH: typeof ADV_NOTICE_DISPATCH; ADV_NOTICE_RECIPIENT: typeof ADV_NOTICE_RECIPIENT }; navigate: typeof router }) {
   const { ADV_NOTICE_DISPATCH, ADV_NOTICE_RECIPIENT } = data;
   const router = navigate;
   const insets = useSafeAreaInsets();
@@ -49,6 +54,13 @@ export function AdvocateNoticeDispatchScreenView({ data, navigate, onDownload, o
   const [done, setDone] = useState<string[]>(
     d.checklist.filter((c) => c.done).map((c) => c.id),
   );
+  const dispatched = state?.dispatched ?? false;
+  const canConfirm = state ? state.canConfirm : true;
+  const courierRows = state?.courier ? [
+    { label: CO_SELF_DETAILS.trackRows[0].label, value: state.courier.carrier },
+    { label: CO_SELF_DETAILS.trackRows[1].label, value: state.courier.waybill },
+    { label: CO_SELF_DETAILS.fields[2].label.toUpperCase(), value: state.courier.dispatchDate },
+  ].filter((row) => row.value) : [];
 
   return (
     <View style={styles.screen}>
@@ -57,7 +69,9 @@ export function AdvocateNoticeDispatchScreenView({ data, navigate, onDownload, o
           accessibilityRole="button"
           accessibilityLabel="Back"
           hitSlop={8}
-          onPress={() => (router.canGoBack() ? router.back() : router.replace('/matters' as Href))}
+          // Straight to expo-router (the model's guarded navigate waits for the case to
+          // load); pops back to Final when it is in the stack, otherwise replaces this screen.
+          onPress={() => appRouter.dismissTo(`/advocate/notice/${id}/final` as Href)}
         >
           <ArrowLeft size={t.backIcon} color={colors.textPrimary} />
         </Pressable>
@@ -77,15 +91,15 @@ export function AdvocateNoticeDispatchScreenView({ data, navigate, onDownload, o
           <View style={styles.readyText}>
             <View style={styles.readyTitleRow}>
               <Text style={styles.readyTitle} {...shrinkToFit(0.7)}>
-                {d.ready.title}
+                {dispatched ? TRACKING_STEPS[5].title : d.ready.title}
               </Text>
-              <View style={styles.readyChip}>
+              {dispatched ? null : <View style={styles.readyChip}>
                 <Text style={styles.readyChipText} {...shrinkToFit(0.8)}>
                   {d.ready.chip}
                 </Text>
-              </View>
+              </View>}
             </View>
-            <Text style={styles.readyBody}>{d.ready.body}</Text>
+            {dispatched ? null : <Text style={styles.readyBody}>{d.ready.body}</Text>}
           </View>
         </View>
 
@@ -148,6 +162,22 @@ export function AdvocateNoticeDispatchScreenView({ data, navigate, onDownload, o
           </View>
         </View>
 
+        {courierRows.length ? <View style={styles.card}>
+          <View style={styles.labelRow}>
+            <Truck size={t.labelIcon} color={colors.textPrimary} />
+            <Text style={styles.label} {...shrinkToFit(0.8)}>
+              {CO_SELF_DETAILS.formTitle.toUpperCase()}
+            </Text>
+          </View>
+          {courierRows.map((row) => (
+            <View key={row.label} style={styles.courierRow}>
+              <Text style={styles.courierLabel} {...shrinkToFit(0.8)}>{row.label}</Text>
+              <Text selectable style={styles.courierValue}>{row.value}</Text>
+            </View>
+          ))}
+        </View> : null}
+
+        {dispatched ? null : <>
         <View style={styles.card}>
           <View style={styles.labelRow}>
             <ListChecks size={t.labelIcon} color={colors.textPrimary} />
@@ -207,25 +237,25 @@ export function AdvocateNoticeDispatchScreenView({ data, navigate, onDownload, o
           </Text>
           <ArrowRight size={t.ctaIcon} color={ink.onBrand} style={styles.ctaIcon} />
         </Pressable>
-        {/* ⚠ Names a courier design/194 still lets you choose. */}
-        <Text style={styles.cap} {...shrinkToFit(0.75)}>
-          {d.ctaCaption}
-        </Text>
+        </>}
       </ScrollView>
 
-      {/* ⚠ Second primary action; see the note at the top of this file. Inert. */}
-      <View style={[styles.bar, { paddingBottom: insets.bottom + 12 }]}>
+      {dispatched ? null : <View style={[styles.bar, { paddingBottom: insets.bottom + 12 }]}>
         <DemoPressable
+          // Keep the real handler: DemoPressable treats a missing onPress as a demo advance.
           onPress={onConfirm}
+          disabled={!canConfirm}
           accessibilityRole="button"
-          style={({ pressed }) => [styles.confirm, pressed && styles.pressed]}
+          accessibilityState={{ disabled: !canConfirm }}
+          style={({ pressed }) => [styles.confirm, !canConfirm && styles.confirmOff, pressed && styles.pressed]}
         >
           <SendHorizontal size={t.confirmIcon} color={ink.onBrand} />
           <Text style={styles.confirmText} {...shrinkToFit(0.75)}>
             {d.confirm}
           </Text>
         </DemoPressable>
-      </View>
+        {canConfirm || !(state?.loaded ?? true) ? null : <Text style={styles.cap}>{CO_SELF_DETAILS.foot}</Text>}
+      </View>}
     </View>
   );
 }
@@ -485,11 +515,15 @@ const styles = StyleSheet.create({
     fontSize: t.confirmSize,
     color: ink.onBrand,
   },
+  confirmOff: { opacity: 0.45 },
+  courierRow: { marginTop: t.rowGap, flexDirection: 'row', alignItems: 'center' },
+  courierLabel: { width: '40%', fontFamily: font.appSemi, fontSize: t.rowSubSize, letterSpacing: t.labelSpacing, color: colors.textBody },
+  courierValue: { flex: 1, minWidth: 0, fontFamily: font.appHeading, fontSize: t.rowTitleSize, color: colors.textPrimary },
   pressed: { opacity: 0.85 },
 });
 
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function AdvocateNoticeDispatchScreen() {
   const model = useAdvocateNoticeModel("dispatch");
-  return <NoticeScreenFeedback error={model.error}><AdvocateNoticeDispatchScreenView data={model.data} navigate={model.navigate} onDownload={model.onViewDocument} onConfirm={model.onConfirmDispatch} /></NoticeScreenFeedback>;
+  return <NoticeScreenFeedback error={model.error}><AdvocateNoticeDispatchScreenView data={model.data} navigate={model.navigate} onDownload={model.onViewDocument} onConfirm={model.onConfirmDispatch} state={model.dispatchState} /></NoticeScreenFeedback>;
 }

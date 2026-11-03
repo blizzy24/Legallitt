@@ -20,7 +20,6 @@ import {
   Truck,
   UserRound,
 } from 'lucide-react-native';
-import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -40,7 +39,13 @@ import { advDocHref } from '../../../../data/docLinks';
 // the matter "High Court Representation / #HCR-2026-1048", where the same journey
 // has been a Legal Notice under LN-2026-1048 since design/185. Both as drawn.
 //
-// View, Copy and the chips are inert. The two options select.
+// View, Copy and the chips are inert.
+//
+// Owner decision, 4 November 2026: the Legalitt Delivery Partner is not built (§9.1),
+// so the choice is removed until it is. Only Send by Yourself is offered, selected as
+// design/284 draws it, and Continue opens the courier-details form (design/286). The
+// partner screens (195–198) stay in the code but are unreachable from this flow.
+// The two lines that promise Legalitt Delivery are not shown.
 
 const CHIP_ICONS = [FileText, Gavel, IdCard];
 
@@ -50,7 +55,7 @@ export function AdvocateNoticeSendScreenView({ data, navigate, onChoice }: { onC
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
   const s = ADV_NOTICE_SEND;
-  const [choice, setChoice] = useState<'self' | 'partner'>('partner');
+  const choice = 'self' as const;
 
   return (
     <View style={styles.screen}>
@@ -72,7 +77,7 @@ export function AdvocateNoticeSendScreenView({ data, navigate, onChoice }: { onC
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <Text style={styles.intro}>{s.intro}</Text>
+        {/* The drawn intro ("Choose how you want to send…") is not shown: there is no choice. */}
 
         <View style={styles.card}>
           <View style={styles.svc}>
@@ -138,33 +143,21 @@ export function AdvocateNoticeSendScreenView({ data, navigate, onChoice }: { onC
                 </View>
               );
             })}
-            {/* ⚠ Inferred overflow counter — the design clips this chip. */}
-            <View style={[styles.chip, styles.chipMore]}>
+            {/* ⚠ Inferred overflow counter — the design clips this chip. Absent when empty. */}
+            {s.docChipOverflow ? <View style={[styles.chip, styles.chipMore]}>
               <Text style={[styles.chipText, styles.chipMoreText]} numberOfLines={1}>
                 {s.docChipOverflow}
               </Text>
-            </View>
+            </View> : null}
           </ScrollView>
         </View>
 
-        <View style={styles.chooseRow}>
-          <Text style={styles.choose} {...shrinkToFit(0.75)}>
-            {s.chooseTitle}
-          </Text>
-          <Text style={styles.chooseHint} {...shrinkToFit(0.8)}>
-            {s.chooseHint}
-          </Text>
-        </View>
-
-        {s.options.map((o) => {
-          const selected = choice === o.id;
+        {s.options.filter((o) => o.id === choice).map((o) => {
+          const selected = true;
           return (
-            <Pressable
+            <View
               key={o.id}
-              accessibilityRole="radio"
-              accessibilityState={{ selected }}
-              onPress={() => setChoice(o.id)}
-              style={[styles.opt, selected && styles.optSel]}
+              style={[styles.opt, styles.optFirst, selected && styles.optSel]}
             >
               <View style={styles.optRow}>
                 <View style={[styles.optTile, selected && styles.optTileSel]}>
@@ -200,7 +193,7 @@ export function AdvocateNoticeSendScreenView({ data, navigate, onChoice }: { onC
                   {selected && <Check size={t.pickIcon} color={ink.onBrand} />}
                 </View>
               </View>
-            </Pressable>
+            </View>
           );
         })}
 
@@ -235,7 +228,6 @@ export function AdvocateNoticeSendScreenView({ data, navigate, onChoice }: { onC
           </View>
           <View style={styles.noteText}>
             <Text style={styles.noteTitle}>{s.note.title}</Text>
-            <Text style={styles.noteBody}>{s.note.body}</Text>
           </View>
         </View>
       </ScrollView>
@@ -243,7 +235,7 @@ export function AdvocateNoticeSendScreenView({ data, navigate, onChoice }: { onC
       <View style={[styles.bar, { paddingBottom: insets.bottom + 12 }]}>
         <Pressable
           accessibilityRole="button"
-          onPress={() => onChoice ? onChoice(choice) : router.push(`/advocate/notice/${id}/delivery` as Href)}
+          onPress={() => onChoice ? onChoice(choice) : router.push(`/courier/self/details?noticeOutbound=1&caseId=${id}` as Href)}
           style={({ pressed }) => [styles.cta, pressed && styles.pressed]}
         >
           <Text style={styles.ctaText} {...shrinkToFit(0.8)}>
@@ -251,9 +243,6 @@ export function AdvocateNoticeSendScreenView({ data, navigate, onChoice }: { onC
           </Text>
           <ArrowRight size={t.ctaIcon} color={ink.onBrand} style={styles.ctaIcon} />
         </Pressable>
-        <Text style={styles.cap} {...shrinkToFit(0.75)}>
-          {s.ctaCaption}
-        </Text>
       </View>
     </View>
   );
@@ -366,16 +355,6 @@ const styles = StyleSheet.create({
   chipMore: { backgroundColor: t.chipMoreBg },
   chipMoreText: { marginLeft: 0, fontFamily: font.appSemi, color: t.chipMoreColour },
 
-  chooseRow: { marginTop: t.chooseGap, flexDirection: 'row', alignItems: 'center' },
-  choose: {
-    flex: 1,
-    minWidth: 0,
-    marginRight: 10,
-    fontFamily: font.appHeading,
-    fontSize: t.chooseSize,
-    color: colors.textPrimary,
-  },
-  chooseHint: { fontFamily: font.appBody, fontSize: t.chooseHintSize, color: colors.textBody },
 
   opt: {
     marginTop: t.optGap,
@@ -384,6 +363,8 @@ const styles = StyleSheet.create({
     padding: t.optPad,
   },
   optSel: { backgroundColor: t.optSelBg },
+  // The removed choice heading's spacing, so the card sits where the options began.
+  optFirst: { marginTop: t.chooseGap },
   optRow: { flexDirection: 'row' },
   optTile: {
     width: t.optTile,
@@ -503,13 +484,6 @@ const styles = StyleSheet.create({
   },
   ctaText: { flexShrink: 1, fontFamily: font.appHeading, fontSize: t.ctaSize, color: ink.onBrand },
   ctaIcon: { marginLeft: t.ctaIconGap },
-  cap: {
-    marginTop: t.capGap,
-    textAlign: 'center',
-    fontFamily: font.appBody,
-    fontSize: t.capSize,
-    color: colors.textBody,
-  },
   pressed: { opacity: 0.85 },
 });
 

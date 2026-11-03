@@ -7,6 +7,18 @@ import { COURIER, type CourierPort } from '../courier/courier.port';
 import type { CaseActor } from './case-access';
 import { lockedCase, appendCaseEvent } from './case-state-machine';
 
+const DETAIL_KEYS = ['carrier', 'waybill', 'dispatch_date', 'courier_office', 'courier_phone', 'tracking_url', 'expected_delivery', 'receipt_document_id'] as const;
+type Details = Record<(typeof DETAIL_KEYS)[number], string | null>;
+const day = (value: Date | null) => value ? value.toISOString().slice(0, 10) : null;
+const emptyDetails = (): Details => Object.fromEntries(DETAIL_KEYS.map(key => [key, null])) as Details;
+// Stored values in the request's own form, so an unchanged field compares equal.
+const shipmentDetails = (s: {carrier: string | null; waybill: string | null; dispatch_date: Date | null; courier_office: string | null;
+  courier_phone: string | null; tracking_url: string | null; expected_delivery: Date | null; receipt_document_id: string | null}): Details => ({
+  carrier: s.carrier || null, waybill: s.waybill || null, dispatch_date: day(s.dispatch_date), courier_office: s.courier_office || null,
+  courier_phone: s.courier_phone || null, tracking_url: s.tracking_url || null, expected_delivery: day(s.expected_delivery),
+  receipt_document_id: s.receipt_document_id || null,
+});
+
 @Injectable()
 export class ShipmentService {
   constructor(private readonly prisma: PrismaService, @Inject(COURIER) private readonly courier: CourierPort, @Inject(NOTIFICATIONS) private readonly notifications: NotificationsPort) {}
@@ -52,6 +64,11 @@ export class ShipmentService {
       return updated;
     });
   }
+  /** Saves the advocate's courier details (design 286). Owner decision, 4 November
+   * 2026: complete details (Courier Name, Tracking Number, Dispatch Date) are a booked
+   * shipment, so a save never undoes a booking; blanking a required field returns it to
+   * draft. Only supplied fields change, and a save that changes nothing writes nothing.
+   * `book` additionally refuses incomplete details. */
   async save(actor: CaseActor, caseId: string, body: unknown, book = false) {
     if (actor.role !== 'advocate') throw new ForbiddenException('Assigned advocate required');
     const input = parse(ShipmentDetailsSchema, body);
@@ -61,25 +78,32 @@ export class ShipmentService {
       if (!['approved', 'dispatching'].includes(record.status)) throw new ConflictException('Courier details can only be saved before dispatch');
       const prior = await tx.shipment.findFirst({where: {case_id: caseId, direction: 'to_recipient'}, orderBy: [{booked_at: 'desc'}, {id: 'desc'}]});
       if (prior && !['draft', 'booked'].includes(prior.status)) throw new ConflictException('Shipment already dispatched');
-      const values = {...prior, ...input};
-      if (book && (!values.carrier?.trim() || !values.waybill?.trim() || !values.dispatch_date))
-        throw new BadRequestException('Courier Name, Tracking Number and Dispatch Date are required');
-      if (input.receipt_document_id) {
-        const receipt = await tx.document.findFirst({where: {id: input.receipt_document_id, case_id: caseId, status: 'uploaded'}});
+      const before = prior ? shipmentDetails(prior) : emptyDetails();
+      const after = {...before, ...Object.fromEntries(Object.entries(input).map(([key, value]) => [key, value || null]))} as Details;
+      const complete = Boolean(after.carrier?.trim() && after.waybill?.trim() && after.dispatch_date);
+      if (book && !complete) throw new BadRequestException('Courier Name, Tracking Number and Dispatch Date are required');
+      const changed = DETAIL_KEYS.filter(key => after[key] !== before[key]);
+      if (changed.includes('receipt_document_id') && after.receipt_document_id) {
+        const receipt = await tx.document.findFirst({where: {id: after.receipt_document_id, case_id: caseId, status: 'uploaded'}});
         if (!receipt) throw new BadRequestException('Upload the courier receipt for this case first');
       }
-      const data = {...input,
-        ...(input.dispatch_date !== undefined ? {dispatch_date: input.dispatch_date ? new Date(input.dispatch_date + 'T00:00:00Z') : null} : {}),
-        ...(input.expected_delivery !== undefined ? {expected_delivery: input.expected_delivery ? new Date(input.expected_delivery + 'T00:00:00Z') : null} : {}),
-        status: book ? 'booked' : 'draft', simulated: this.courier.simulated,
+      const status = complete ? 'booked' : 'draft';
+      if (prior && !changed.length && prior.status === status) return prior;
+      // Nothing to save and nothing saved yet: create no empty shipment and no event.
+      if (!prior && !changed.length) throw new BadRequestException('Enter the courier details first');
+      const data = {...after,
+        dispatch_date: after.dispatch_date ? new Date(after.dispatch_date + 'T00:00:00Z') : null,
+        expected_delivery: after.expected_delivery ? new Date(after.expected_delivery + 'T00:00:00Z') : null,
+        status, simulated: this.courier.simulated,
       };
       const shipment = prior ? await tx.shipment.update({where: {id: prior.id}, data}) : await tx.shipment.create({data: {
         ...data, case_id: caseId, direction: 'to_recipient', booked_at: new Date(),
         recipient: (record.details as {noticee?: object}).noticee ?? {},
       }});
-      await appendCaseEvent(tx, {case_id: caseId, type: book ? 'shipment_booked' : 'shipment_details_saved',
+      const booked = status === 'booked' && prior?.status !== 'booked';
+      await appendCaseEvent(tx, {case_id: caseId, type: booked ? 'shipment_booked' : 'shipment_details_saved',
         source: this.courier.simulated ? 'simulated' : 'real', actor_id: actor.id, actor_role: actor.role,
-        from_status: record.status, to_status: record.status, payload: {shipment_id: shipment.id},
+        from_status: record.status, to_status: record.status, payload: {shipment_id: shipment.id, changed, shipment_status: status},
       });
       return shipment;
     });

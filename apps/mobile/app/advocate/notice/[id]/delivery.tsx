@@ -67,14 +67,15 @@ function AddressBlock({
         <Text style={styles.blockName} {...shrinkToFit(0.75)}>
           {name}
         </Text>
-        <Text style={styles.blockLine}>{address}</Text>
-        <Text style={styles.blockLine}>{cityLine}</Text>
-        <View style={styles.blockMobile}>
+        {/* Empty-state rule: a missing value takes its line (and label) with it. */}
+        {address ? <Text style={styles.blockLine}>{address}</Text> : null}
+        {cityLine ? <Text style={styles.blockLine}>{cityLine}</Text> : null}
+        {mobile ? <View style={styles.blockMobile}>
           <Phone size={t.blockMobileIcon} color={colors.textBody} />
           <Text style={styles.blockMobileText} {...shrinkToFit(0.75)}>
             {mobile}
           </Text>
-        </View>
+        </View> : null}
       </View>
     </View>
   );
@@ -202,7 +203,8 @@ export function AdvocateNoticeDeliveryScreenView({ data, navigate }: { data: { A
           </Pressable>
         </View>
 
-        <View style={styles.card}>
+        {/* Empty-state rule: a cell without a value is not drawn; no cells, no block. */}
+        {d.delivery.cells.some((c) => c.value) ? <View style={styles.card}>
           <View style={styles.labelRow}>
             <Package size={t.labelIcon} color={colors.brandDark} />
             <Text style={styles.label} {...shrinkToFit(0.75)}>
@@ -210,7 +212,7 @@ export function AdvocateNoticeDeliveryScreenView({ data, navigate }: { data: { A
             </Text>
           </View>
           <View style={styles.cells}>
-            {d.delivery.cells.map((c) => (
+            {d.delivery.cells.filter((c) => c.value).map((c) => (
               <View key={c.label} style={styles.cell}>
                 <Text style={styles.cellLabel} {...shrinkToFit(0.7)}>
                   {c.label}
@@ -221,7 +223,7 @@ export function AdvocateNoticeDeliveryScreenView({ data, navigate }: { data: { A
               </View>
             ))}
           </View>
-        </View>
+        </View> : null}
 
         <View style={styles.card}>
           <View style={styles.feeRow}>
