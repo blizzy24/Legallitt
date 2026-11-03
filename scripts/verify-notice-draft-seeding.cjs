@@ -9,6 +9,7 @@ const base = 'https://gvycg0n3u8.execute-api.ap-south-1.amazonaws.com';
 const mobile = 'https://legalitt-5.vercel.app';
 const out = path.resolve('reports/notice-draft-seeding-2026-11-03');
 const phase = process.env.NOTICE_EDITOR_PHASE;
+const resume = process.env.NOTICE_EDITOR_RESUME === '1';
 const dist = process.env.NOTICE_EDITOR_EXPORT;
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 const labels = ['Sender Details', 'Recipient Details', 'Subject', 'Background & Facts', 'Legal Demand', 'Response Time & Closing'];
@@ -21,8 +22,12 @@ async function click(page, label) {
 }
 async function fill(page, label, value) {
   const el = await page.waitForSelector(`textarea[aria-label=${JSON.stringify(label)}],input[aria-label=${JSON.stringify(label)}]`);
-  await el.evaluate(e => e.scrollIntoView({ block: 'center' })); await el.click({ clickCount: 3 });
-  await el.press('Backspace'); if (value) await el.type(value, { delay: 1 }); await el.evaluate(e => e.blur());
+  await el.evaluate(e => e.scrollIntoView({ block: 'center' })); await el.click();
+  // Triple-click selects only one paragraph in a multiline textarea.
+  await el.evaluate(e => e.select()); await el.press('Backspace');
+  if (value) await el.type(value, { delay: 1 });
+  assert.equal(await el.evaluate(e => e.value), value, 'all textarea content replaced');
+  await el.evaluate(e => e.blur());
 }
 async function sections(page) {
   return page.evaluate(labels => labels.map((label, i) => {
@@ -64,7 +69,7 @@ async function main() {
     await api.advocate.accept(record.id); await api.advocate.start(record.id);
     record = await api.advocate.case(record.id);
   }
-  const seed = seedNoticeDraft(record), errors = [];
+  const seed = seedNoticeDraft(record), errors = [], draftsAtStart = record.drafts.length;
   const browser = await puppeteer.launch({ executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', headless: true });
   try {
     const page = await browser.newPage(); await page.setViewport({ width: 430, height: 950 });
@@ -97,20 +102,22 @@ async function main() {
       console.log('PASS before: six blank sections; no draft created on open', record.reference); return;
     }
     await page.waitForFunction(() => document.body.innerText.includes('From client’s filing'));
-    assert.deepEqual((await sections(page)).slice(0, 5), [seed.sender, seed.recipient, seed.subject, seed.facts, seed.demand]);
+    if (!resume) assert.deepEqual((await sections(page)).slice(0, 5), [seed.sender, seed.recipient, seed.subject, seed.facts, seed.demand]);
     const text = await page.evaluate(() => document.body.innerText);
     assert.equal(text.split('From client’s filing').length - 1, 4);
-    assert.ok(text.includes('From client intake — review before use'));
+    if (!resume) assert.ok(text.includes('From client intake — review before use'));
     assert.ok(text.includes('Fixed template text — not editable'));
     assert.ok(!text.includes('Amit Verma') && !text.includes('₹2,85,000'));
     const edits = await page.$$eval('[aria-label^="Edit "]', els => els.map(e => e.getAttribute('aria-label')));
     assert.deepEqual(edits, ['Edit Background & Facts']);
     for (const label of labels.filter(l => l !== 'Background & Facts')) assert.equal(await page.$(`textarea[aria-label=${JSON.stringify(label)}],input[aria-label=${JSON.stringify(label)}]`), null);
-    assert.equal(await page.$eval('[aria-label="Offences"]', e => e.value), '');
-    await shot(page, phase + '-draft-188-seeded');
-    assert.equal((await api.advocate.case(record.id)).drafts.length, 0, 'opening does not create a record');
+    if (!resume) {
+      assert.equal(await page.$eval('[aria-label="Offences"]', e => e.value), '');
+      await shot(page, phase + '-draft-188-seeded');
+    }
+    assert.equal((await api.advocate.case(record.id)).drafts.length, draftsAtStart, 'opening does not create a record');
     await route(editorRoute); await page.waitForFunction(() => document.body.innerText.includes('From client’s filing'));
-    await shot(page, phase + '-editor-266-seeded');
+    if (!resume) await shot(page, phase + '-editor-266-seeded');
     await route(draftRoute); await page.waitForFunction(() => document.body.innerText.includes('From client’s filing'));
     await click(page, 'Edit Background & Facts');
     const facts = '1. TEST ONLY: advocate reviewed the synthetic invoice.\n2. The test amount remains ₹5,000.';
@@ -119,7 +126,7 @@ async function main() {
     await delay(6200);
     assert.equal(await page.$eval('[aria-label="Background & Facts"]', e => e.value), facts);
     assert.ok(!(await page.evaluate(() => document.body.innerText)).includes('From client intake — review before use'));
-    assert.equal((await api.advocate.case(record.id)).drafts.length, 0, 'unsaved edits remain local');
+    assert.equal((await api.advocate.case(record.id)).drafts.length, draftsAtStart, 'unsaved edits remain local');
     if (phase === 'deployed') {
       const rendered = page.waitForResponse(r => /\/drafts\/[^/]+\/pdf$/.test(r.url()) && r.request().method() === 'POST', { timeout: 90000 });
       await click(page, 'Generate Draft'); const response = await rendered; assert.equal(response.status(), 201);
@@ -146,6 +153,11 @@ async function main() {
     assert.deepEqual(errors, []);
     fs.writeFileSync(path.join(out, phase + '.json'), JSON.stringify({ case: { id: record.id, reference: record.reference }, publicDeployment: phase === 'deployed', seededSections: 5, editable: ['Background & Facts', 'Offences'], readOnly: labels.filter(l => l !== 'Background & Facts'), pollingPreservedEdits: true, savedAndReloaded: phase === 'deployed', deliberateBlankPreserved: phase === 'deployed', errors }, null, 2));
     console.log('PASS', phase, record.reference, 'seeded, two editable sections, no fixture leakage');
-  } finally { await browser.close(); }
+  } finally {
+    // Chrome's PDF viewer can keep Browser.close pending after generation.
+    // This is only the browser created by this test, never a user profile.
+    const cleanup = setTimeout(() => { browser.process()?.kill('SIGKILL'); browser.disconnect(); }, 5000);
+    try { await browser.close(); } finally { clearTimeout(cleanup); }
+  }
 }
 main().catch(e => { console.error(e.message); process.exitCode = 1; });
