@@ -6,6 +6,11 @@ import { shrinkToFit } from '../constants/textFit';
 import { ADV_NOTICE_DRAFT } from '../data/advocateSide';
 import { advNoticeDraft as t, colors, font } from '../constants/theme';
 import { instructedCopy } from '../copy/instructed';
+import { NOTICE_EDITABLE_DRAFT_FIELDS, NOTICE_FILING_DRAFT_FIELDS } from '@legalitt/shared';
+
+const sectionKeys = ['sender', 'recipient', 'subject', 'facts', 'demand', 'closing'] as const;
+const filingSections = sectionKeys.map((key, index) => NOTICE_FILING_DRAFT_FIELDS.some(field => field === key) ? index : -1);
+const editableSections = sectionKeys.map((key, index) => NOTICE_EDITABLE_DRAFT_FIELDS.some(field => field === key) ? index : -1);
 
 /**
  * The six numbered section cards of the drafted legal notice.
@@ -15,15 +20,17 @@ import { instructedCopy } from '../copy/instructed';
  * the whole body identical — same six sections, same copy, same card geometry —
  * and only the AI pill and the footer different. Extracted rather than copied.
  *
- * Editor values and callbacks come from the controller. The owner-instructed
- * Offences field is separate from the six designed working sections.
+ * Editor values and callbacks come from the controller. Only Background & Facts
+ * and the owner-instructed Offences field are editable; the other sections show
+ * the filing/template sources used by the PDF.
  */
-export default function NoticeDraftSections({ sections = ADV_NOTICE_DRAFT.sections, onEdit, onChange, offences, onChangeOffences }: {
+export default function NoticeDraftSections({ sections = ADV_NOTICE_DRAFT.sections, onEdit, onChange, offences, onChangeOffences, intakeSections = [] }: {
   sections?: typeof ADV_NOTICE_DRAFT.sections;
   onEdit?: (index: number) => void;
   onChange?: (index: number, value: string) => void;
   offences?: string;
   onChangeOffences?: (value: string) => void;
+  intakeSections?: readonly number[];
 }) {
   const [editing, setEditing] = useState<number | null>(null);
   return (
@@ -34,12 +41,15 @@ export default function NoticeDraftSections({ sections = ADV_NOTICE_DRAFT.sectio
             <Text style={styles.secTitle} {...shrinkToFit(0.75)}>
               {s.n}. {s.title}
             </Text>
-            <Pressable accessibilityRole="button" accessibilityLabel={`Edit ${s.title}`} hitSlop={8} onPress={() => {setEditing(index);onEdit?.(index);}}>
+            {editableSections.includes(index) && <Pressable accessibilityRole="button" accessibilityLabel={`Edit ${s.title}`} hitSlop={8} onPress={() => {setEditing(index);onEdit?.(index);}}>
               <Pencil size={t.pencil} color={colors.textPrimary} />
-            </Pressable>
+            </Pressable>}
           </View>
+          {filingSections.includes(index) ? <Text style={styles.intakeNote}>{instructedCopy.legalNoticeDraft.fromFiling}</Text>
+            : sectionKeys[index] === 'closing' ? <Text style={styles.intakeNote}>{instructedCopy.legalNoticeDraft.fixedTemplate}</Text>
+            : intakeSections.includes(index) && <Text style={styles.intakeNote}>{instructedCopy.legalNoticeDraft.fromIntake}</Text>}
           <View style={styles.body}>
-            <>{onChange && editing === index ? <TextInput accessibilityLabel={s.title} multiline autoFocus value={s.body} onChangeText={value=>onChange(index,value)} style={[styles.bodyText,{padding:0}]} /> : <Text style={styles.bodyText}>{s.body}</Text>}</>
+            <>{onChange && editing === index && editableSections.includes(index) ? <TextInput accessibilityLabel={s.title} multiline autoFocus value={s.body} onChangeText={value=>onChange(index,value)} style={[styles.bodyText,{padding:0}]} /> : <Text style={styles.bodyText}>{s.body}</Text>}</>
           </View>
         </View>
       ))}
@@ -63,6 +73,7 @@ const styles = StyleSheet.create({
     padding: t.cardPad,
   },
   secHead: { flexDirection: 'row', alignItems: 'center' },
+  intakeNote: { marginTop: t.bodyGap, fontFamily: font.appBody, fontSize: t.stepSize, color: colors.textBody },
   secTitle: {
     flex: 1,
     minWidth: 0,

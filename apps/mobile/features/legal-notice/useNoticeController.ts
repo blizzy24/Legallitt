@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 import { router, useFocusEffect, useLocalSearchParams, type Href } from "expo-router";
 import * as DocumentPicker from "expo-document-picker";
-import { noticeMatterType, noticeIssueType, ApiError, DOCUMENT_MAX_BYTES, DocumentMimeSchema, type ApiCase, type LegalNoticeIntake, type NoticeDraftContent, type NoticeIntakeFields } from "@legalitt/shared";
+import { noticeMatterType, noticeIssueType, noticeDraftOnOpen, ApiError, DOCUMENT_MAX_BYTES, DocumentMimeSchema, type ApiCase, type LegalNoticeIntake, type NoticeDraftContent, type NoticeIntakeFields } from "@legalitt/shared";
 import { apiNoticeRepository, type NoticeRepository } from "./repository";
 import { useSession } from "../../context/session";
 
@@ -32,6 +32,7 @@ const emptyDraft: NoticeDraftContent = {
   facts: "",
   demand: "",
   closing: "",
+  offences: "",
 };
 
 /** Data and actions extracted from the legacy renderer; no screen markup lives here. */
@@ -93,7 +94,7 @@ export function useNoticeController(stage: NoticeStage, backend: NoticeRepositor
       const sender = value.parties?.find(p => p.kind === 'sender');
       setIntakeFields({subject_matter: value.subject_matter, legal_demand: value.legal_demand,
         sender: {age: sender?.age ?? null, father_name: sender?.father_name ?? null}});
-      setContent(value.drafts?.at(-1)?.content ?? emptyDraft);
+      setContent(noticeDraftOnOpen(value));
     }
   }, [id, stage, enabled, backend]);
   useFocusEffect(

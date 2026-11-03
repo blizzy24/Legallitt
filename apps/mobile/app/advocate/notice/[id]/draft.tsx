@@ -20,8 +20,8 @@ import {
 
 // Draft legal notice (design/188).
 //
-// The six sections are the advocate's editable working draft. Generate Draft
-// saves it and renders the supplied letterhead with the case's intake fields.
+// Filing sections and the template closing are read-only. The advocate edits
+// Background & Facts and Offences; Generate Draft saves and renders them.
 // The separate "Legalitt AI" edit-assistant card remains a drawn placeholder.
 //
 // ⚠ "Step 3 of 5" is a SIXTH STEPPER IDIOM, and a bare text label at that: no dots,
@@ -31,9 +31,10 @@ import {
 // ⚠ design/188 names the advocate "Adv. Abhishek Sahu" where design/148 has
 // "Abhishek Chouhan", and spells its own chip "Fix Grammer". Both kept as drawn.
 
-export function AdvocateNoticeDraftScreenView({ data, navigate, onChangeSection, offences, onChangeOffences }: {
+export function AdvocateNoticeDraftScreenView({ data, navigate, onChangeSection, offences, onChangeOffences, intakeSections }: {
   onChangeSection?: (index: number, value: string) => void;
   offences?: string; onChangeOffences?: (value: string) => void;
+  intakeSections?: readonly number[];
   data: { ADV_NOTICE_DRAFT: typeof ADV_NOTICE_DRAFT }; navigate: typeof router;
 }) {
   const { ADV_NOTICE_DRAFT } = data;
@@ -85,7 +86,7 @@ export function AdvocateNoticeDraftScreenView({ data, navigate, onChangeSection,
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <NoticeDraftSections onChange={onChangeSection} sections={d.sections}
-          offences={offences} onChangeOffences={onChangeOffences} />
+          offences={offences} onChangeOffences={onChangeOffences} intakeSections={intakeSections} />
 
         <View style={styles.card}>
           <View style={styles.aiChip}>
@@ -291,5 +292,5 @@ const styles = StyleSheet.create({
 export default function AdvocateNoticeDraftScreen() {
   const model = useAdvocateNoticeModel("draft");
   return <NoticeScreenFeedback error={model.error}><AdvocateNoticeDraftScreenView data={model.data} navigate={model.navigate}
-    onChangeSection={model.onEditSection} offences={model.offences} onChangeOffences={model.onEditOffences} /></NoticeScreenFeedback>;
+    onChangeSection={model.onEditSection} offences={model.offences} onChangeOffences={model.onEditOffences} intakeSections={model.intakeSections} /></NoticeScreenFeedback>;
 }

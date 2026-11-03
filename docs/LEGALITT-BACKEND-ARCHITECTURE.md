@@ -1849,6 +1849,41 @@ AI provider instructions now require ₹ and Indian grouping (₹5,000, ₹1,00,
 for supplied monetary amounts. They must not invent or change amounts. Existing
 saved client selections are not silently rewritten.
 
+### Instructed addition — Notice editor from intake (3 Nov 2026)
+
+> **Approved — project owner.** A new advocate draft starts with this case's
+> intake. Keep the existing PDF contract. Exactly two of the seven sections
+> are editable: Background & Facts and Offences.
+
+Sender, Recipient, Subject and Legal Demand show the case's filing values and
+are read-only, matching the PDF's source. Sender includes supplied father's name
+and age. Only when no draft exists does Background & Facts start from
+`subject_matter`; subsequent opens preserve the latest saved facts and offences,
+including deliberately blank fields. Offences starts empty. Closing's stored
+draft value starts empty; the screen instead displays the fixed letterhead
+paragraphs (with this case's cost and the advocate's offences), read-only.
+Opening does not create a draft row. The existing first Save Draft / Generate
+Draft / Preview action persists version 1; later saves remain versioned.
+
+The four filing sections show **From client’s filing**. Untouched, nonempty
+Background & Facts shows **From client intake — review before use**; editing or
+clearing it removes that indication. Closing shows **Fixed template text — not
+editable**. These labels are registered in `apps/mobile/copy/instructed.ts`.
+No fixture text, legal deadline or offence is invented. Background polling must
+not replace unsaved edits. Existing saved versions are not rewritten.
+
+**Next chunk — editable closing and response period (priority):** add a dedicated
+response-period field, retained in the case/API contract so the PDF, client
+tracking and future reminders read the same value. Decide its required/default
+value, start date and exact placement in the letterhead before implementation;
+do not infer statutory deadlines from matter type. The current renderer has no
+fixed fifteen-day deadline; fifteen days occurs in the old fixture demand.
+
+**Separate subsequent chunk — advocate overrides:** use structured sender
+name, father's name, age and address, mirroring the intake and letterhead.
+Define versioned overrides for filing fields and update editor, preview and PDF
+sources together. Do not collapse the sender into a free-text template block.
+
 ### Instructed addition — in-app notifications (3 Nov 2026)
 
 > **Approved — project owner.** Surface real in-app rows for all three roles,

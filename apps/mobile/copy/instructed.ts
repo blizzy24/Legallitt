@@ -4,7 +4,13 @@
 export const instructedCopy = {
   // Approved — project-owner notice letterhead instruction, 2 November 2026.
   // Advocate input fills "for the offences of"; the six editor sections stay.
-  legalNoticeDraft: { offences: 'Offences' },
+  legalNoticeDraft: {
+    offences: 'Offences',
+    // Approved — owner-instructed intake seeding and review indication, 3 Nov 2026.
+    fromIntake: 'From client intake — review before use',
+    fromFiling: 'From client’s filing',
+    fixedTemplate: 'Fixed template text — not editable',
+  },
   // Approved — project-owner intake restructure, 2 November 2026. Additions to
   // designs 24–28; the new demand step reuses their measured theme.
   legalNoticeIntake: {

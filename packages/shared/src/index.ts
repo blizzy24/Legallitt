@@ -4,6 +4,7 @@ export * from './entities';
 export * from './legal-notice';
 export * from './documents';
 export * from './notice-api';
+export * from './notice-draft';
 export * from './api-client';
 
 export * from './shipments';

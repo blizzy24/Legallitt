@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Linking } from 'react-native';
 import { router, type Href } from 'expo-router';
-import { NOTICE_ADVOCATE_GREETING, type NoticeDraftContent } from '@legalitt/shared';
+import { NOTICE_ADVOCATE_GREETING, NOTICE_EDITABLE_DRAFT_FIELDS, unchangedNoticeIntakeFields, type NoticeDraftContent } from '@legalitt/shared';
 import { DATA_SOURCE } from '../../lib/data-source';
 import { useSession } from '../../context/session';
 import { useNoticeController, type NoticeStage } from './useNoticeController';
@@ -14,6 +14,8 @@ export function useAdvocateNoticeModel(stage: string) {
   const c=useNoticeController(stage as NoticeStage,undefined,api);
   const {user} = useSession();
   const r=c.record, documents=r?.documents??[];
+  const intakeFields=api && r ? unchangedNoticeIntakeFields(r,c.content) : [];
+  const intakeSections=draftKeys.flatMap((key,index)=>intakeFields.some(field=>field===key)?[index]:[]);
   // The final notice (rendered on approval) and the latest draft's PDF (rendered on send).
   const notice=documents.find(d=>d.id===r?.notice_document_id), draftDoc=documents.find(d=>d.id===c.latest?.document_id);
   const approvedAt=r?.reviews?.find(v=>v.decision==='approved')?.created_at;
@@ -28,6 +30,15 @@ export function useAdvocateNoticeModel(stage: string) {
   const total=price ? Number((BigInt(price.base_amount_paise)+(BigInt(price.base_amount_paise)*BigInt(price.gst_bps)+5000n)/10000n+50n)/100n) : null;
   const client=r?.details.client?.fullName??'',recipient=r?.details.noticee?.fullName??'',address=r?.details.noticee?.address??'';
   const matter=noticeMatter(r?.matter_type??null);
+  // These are the existing letterhead's fixed paragraphs, not draft.closing,
+  // which the PDF does not use. Only case price and advocate offences vary.
+  const closingCopy=fixture.ADV_NOTICE_RESPONSE.failing;
+  const closingCost=r?.pricing?`₹${(Number(r.pricing.base_amount_paise)/100).toLocaleString('en-IN',{maximumFractionDigits:0})}`:'________';
+  const fixedClosing=r?[
+    closingCopy.lead+closingCopy.boldA+closingCopy.mid+closingCopy.boldB+closingCopy.tail+' '+(c.content.offences?.trim()||'________'),
+    closingCopy.further.trimStart()+closingCost+closingCopy.cost,
+    fixture.ADV_NOTICE_RESPONSE.copyLine,
+  ].join('\n\n'):'';
   const path=(suffix:string)=>c.href(`/advocate/notice/${c.id ?? (api ? '' : 'ln-2026-1048')}/${suffix}`);
   const courierHref=()=>c.href('/courier/self/details?noticeOutbound=1');
   // Navigation follows the tap, never the clock (§2.12): a completed case updates this screen in place.
@@ -102,7 +113,7 @@ export function useAdvocateNoticeModel(stage: string) {
       files:documents.map(d=>({id:d.id,name:d.filename,meta:d.page_count===null?'':`${d.page_count} pages`})),
     }:fixture.ADV_NOTICE_DOCS,
     ADV_NOTICE_DRAFTING: api?{...fixture.ADV_NOTICE_DRAFTING,docket:r?.reference??''}:fixture.ADV_NOTICE_DRAFTING,
-    ADV_NOTICE_DRAFT:api?{...fixture.ADV_NOTICE_DRAFT,parties:{client,opponent:recipient},sections:fixture.ADV_NOTICE_DRAFT.sections.map((s,i)=>({...s,body:c.content[draftKeys[i]]}))}:fixture.ADV_NOTICE_DRAFT,
+    ADV_NOTICE_DRAFT:api?{...fixture.ADV_NOTICE_DRAFT,parties:{client,opponent:recipient},sections:fixture.ADV_NOTICE_DRAFT.sections.map((s,i)=>({...s,body:draftKeys[i]==='closing'?fixedClosing:c.content[draftKeys[i]]}))}:fixture.ADV_NOTICE_DRAFT,
     ADV_NOTICE_RECIPIENT:api?{name:recipient,address}:fixture.ADV_NOTICE_RECIPIENT,
     ADV_NOTICE_REVIEW:api?{...fixture.ADV_NOTICE_REVIEW,ref:r?.reference??'',
       cells:fixture.ADV_NOTICE_REVIEW.cells.map(cell=>({...cell,verified:false,value:cell.label==='CLIENT'?client:cell.label==='AGAINST'?recipient:cell.label==='FILING TYPE'?matter.label:cell.label==='STATUS'&&r?.status==='client_review'?'In Client Queue':''})),
@@ -135,9 +146,13 @@ export function useAdvocateNoticeModel(stage: string) {
     offences:c.content.offences??'',place:r?.advocate?.profile?.city??'',
     cost:r?.pricing?`₹${(Number(r.pricing.base_amount_paise)/100).toLocaleString('en-IN',{maximumFractionDigits:0})}`:'',
   }:undefined;
-  return {error:c.error,data,documentFields,navigate,controller:c,api,total:api?total:fixture.ADV_NOTICE_PAYMENT.totalAmount,path,courierHref,
+  return {error:c.error,data,documentFields,navigate,controller:c,api,intakeSections,total:api?total:fixture.ADV_NOTICE_PAYMENT.totalAmount,path,courierHref,
     onViewDocument:api?(id?:string)=>open(id??notice?.id??draftDoc?.id):undefined,
-    onEditSection:api?(index:number,value:string)=>{c.dirty.current=true;c.setContent(prev=>({...prev,[draftKeys[index]]:value}));}:undefined,
+    onEditSection:api?(index:number,value:string)=>{
+      const key=draftKeys[index];
+      if(!key || !NOTICE_EDITABLE_DRAFT_FIELDS.some(field=>field===key))return;
+      c.dirty.current=true;c.setContent(prev=>({...prev,[key]:value}));
+    }:undefined,
     offences:c.content.offences??'',
     onEditOffences:(value:string)=>{c.dirty.current=true;c.setContent(prev=>({...prev,offences:value}));},
     onSaveDraft:api?()=>{void c.run(stage==='response'?renderDraft:saveDraft);}:undefined,
