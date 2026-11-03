@@ -6,7 +6,7 @@ const content = { sender: 'Adv. Test Sender\nChamber 1, Test Road', recipient: '
   facts: 'First fact.\nSecond fact.', demand: 'Unused working demand.', closing: 'Unused working closing.', offences: 'Specified offences' };
 const input = {reference: 'LN-2026-0001', date: new Date('2026-11-02T10:00:00Z'), place: 'Indore',
   advocate: {name: 'Adv. Test Advocate', qualifications: 'LL.B., LL.M.', enrolment: 'MP/1234/2020'},
-  sender: {name: 'Sender Name', father: 'Father Name', age: 41, address: 'Sender Road, Indore'},
+  sender: {name: 'Sender Name', salutation: 'Mr.', relation: 'S/o', relative: 'Father Name', age: 41, address: 'Sender Road, Indore'},
   recipient: {name: 'Noticee Name', address: 'Noticee Road, Mumbai'}, subject: 'Intake subject',
   demands: ['Pay ₹1,00,000.', 'Confirm payment in writing.', 'Preserve the account records.'], serviceFeePaise: 69900n, content};
 test('the supplied letterhead contains selectable case fields, all demands, exact boilerplate and no working-section headings', async () => {
@@ -15,12 +15,14 @@ test('the supplied letterhead contains selectable case fields, all demands, exac
   const {pages, text} = await readPdfText(draft);
   assert.equal(pages.length, 1);
   for (const value of ['LEGAL NOTICE', 'Reference Id LN-2026-0001', 'Noticee Name', 'Intake subject',
-    'S/o Shri Father Name, Age 41', '1.First fact.', '2.Second fact.', 'A.Pay ₹1,00,000.',
+    'my client Mr. Sender Name S/o Shri Father Name, Age 41', '1.First fact.', '2.Second fact.', 'A.Pay ₹1,00,000.',
     'C.Preserve the account records.', 'offences of Specified offences', 'pay ₹699 as the cost',
     'has been preserved in my office', 'Place : Indore', 'INT LegalConsultants Pvt. Ltd.',
     'INT LegalConsultant Pvt. Ltd.', 'automated document preparation platform']) assert.ok(text.includes(value), value);
   for (const value of ['Unused working demand', 'Unused working closing', 'Test subject', 'BACKGROUND & FACTS'])
     assert.ok(!text.includes(value), value);
+  // The reference carries its year; the paper form's "/20__" slot is not printed.
+  assert.match(text, /Reference Id LN-2026-0001\s*Date:/); assert.ok(!text.includes('/20 '));
   assert.ok(pages[0].runs.some(r => r.font.includes('Bold') && r.glyphText.includes('civil')));
 });
 test('numbered facts grow past five and paginate without losing content or colliding with the footer', async () => {
@@ -91,11 +93,18 @@ test('missing required fields reject together before any PDF is produced', async
   });
 });
 
-test('optional father and age omit their phrases independently; no generated fill-in blanks', async () => {
-  for (const [father,age] of [[null,null],['  ',null],['Father Name',null],[null,41]]) {
-    const bytes=await renderNoticePdf({...input,sender:{...input.sender,father,age},serviceFeePaise:0n,content:{...content,offences:''}});
+test('optional salutation, relation, relative and age omit their phrases independently; no guesses, no blanks', async () => {
+  const cases=[[null,null,null,null],[null,'S/o','  ',null],[null,'S/o','Father Name',null],[null,null,'Father Name',41],
+    ['Mrs.','W/o','Husband Name',41],['Ms.','D/o','Father Name',null],['Ms.',null,null,null]];
+  for (const [salutation,relation,relative,age] of cases) {
+    const bytes=await renderNoticePdf({...input,sender:{...input.sender,salutation,relation,relative,age},serviceFeePaise:0n,content:{...content,offences:''}});
     const {text}=await readPdfText(bytes), normalized=text.replace(/\s/g,'');
-    assert.equal(text.includes('S/o Shri'), Boolean(father?.trim()));
+    // A relation prints only with the relative's name; neither is ever inferred.
+    const parentage=relation&&relative?.trim()?`${relation} Shri ${relative.trim()}`:null;
+    assert.equal(text.includes('Shri'), Boolean(parentage));
+    if (parentage) assert.ok(normalized.includes(parentage.replace(/\s/g,'')));
+    assert.ok(normalized.includes('myclient'+(salutation??'')+'SenderName'), salutation??'no salutation');
+    for (const other of ['Mr.','Mrs.','Ms.'].filter(s=>s!==salutation)) assert.ok(!normalized.includes('myclient'+other));
     assert.equal(text.includes('Age '), age!=null);
     assert.ok(normalized.includes('R/oSenderRoad,Indore'));
     assert.ok(text.includes('pay ₹0 as the cost'));

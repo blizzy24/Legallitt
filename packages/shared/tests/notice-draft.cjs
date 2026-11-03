@@ -7,7 +7,7 @@ const intake = {
     client: { fullName: 'Test Sender', address: 'Test sender address', mobile: '2025550101', email: 'sender@example.invalid' },
     noticee: { fullName: 'Test Recipient', address: 'Test recipient address', email: 'recipient@example.invalid' },
   },
-  parties: [{ kind: 'sender', age: 41, father_name: 'Test Father' }],
+  parties: [{ kind: 'sender', age: 41, salutation: 'Ms.', relation: 'D/o', relative_name: 'Test Father' }],
   subject_line: 'Test invoice payment',
   subject_matter: 'The test invoice remains unpaid.\nThe client requested payment.',
   legal_demand: { selected: ['Pay ₹5,000.', 'Confirm payment in writing.'], custom: 'Return the test documents.' },
@@ -17,7 +17,7 @@ const intake = {
 test('a new editor uses only its case intake and leaves advocate-authored sections blank', () => {
   const content = noticeDraftOnOpen(intake);
   assert.deepEqual(content, {
-    sender: 'Test Sender\nS/o Shri Test Father\nAge 41\nTest sender address\n2025550101\nsender@example.invalid',
+    sender: 'Ms. Test Sender D/o Shri Test Father\nAge 41\nTest sender address\n2025550101\nsender@example.invalid',
     recipient: 'Test Recipient\nTest recipient address\nrecipient@example.invalid',
     subject: intake.subject_line,
     facts: intake.subject_matter,

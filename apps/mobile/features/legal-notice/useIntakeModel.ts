@@ -45,7 +45,8 @@ export function useIntakeModel(stage: string) {
   const form: LegalNoticeForm = {
     client: {...EMPTY_FORM.client, ...c.details.client,
       age: c.intakeFields.sender?.age == null ? '' : String(c.intakeFields.sender.age),
-      fatherName: c.intakeFields.sender?.father_name ?? ''},
+      salutation: c.intakeFields.sender?.salutation ?? null, relation: c.intakeFields.sender?.relation ?? null,
+      relativeName: c.intakeFields.sender?.relative_name ?? ''},
     noticee: {...EMPTY_FORM.noticee, ...c.details.noticee},
     issueType: c.details.issueType ?? null, tier: c.tier,
     subjectMatter: c.intakeFields.subject_matter ?? '', subjectLine: c.record?.subject_line ?? '',
@@ -56,12 +57,13 @@ export function useIntakeModel(stage: string) {
     c.clearError();
     c.dirty.current = true;
     if (patch.tier) c.setTier(patch.tier);
-    const client = patch.client ? (({age, fatherName, ...party}) => party)(patch.client) : undefined;
+    const client = patch.client ? (({age, salutation, relation, relativeName, ...party}) => party)(patch.client) : undefined;
     c.setIntakeFields(previous => ({...previous,
       ...(patch.subjectMatter !== undefined ? {subject_matter: patch.subjectMatter} : {}),
       ...(patch.legalDemand ? {legal_demand: patch.legalDemand} : {}),
       ...(patch.client ? {sender: {age: patch.client.age.trim() ? Number(patch.client.age) : null,
-        father_name: patch.client.fatherName || null}} : {}),
+        salutation: patch.client.salutation, relation: patch.client.relation,
+        relative_name: patch.client.relativeName || null}} : {}),
     }));
     c.setDetails(previous => ({...previous,
       ...(client ? {client} : {}),

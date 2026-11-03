@@ -25,7 +25,9 @@ import {
   NoticeDeclineSchema,
   IN_FLIGHT_SHIPMENT_STATUSES,
   DeliveryConfirmationSchema,
+  NoticeSenderFieldsSchema,
   type LegalNoticeIntake,
+  type NoticeSenderFields,
 } from "@legalitt/shared";
 import { z } from "zod";
 import { parse } from "../auth/auth.service";
@@ -224,12 +226,14 @@ export class CaseStateMachine {
       const subjectMatter = input.subject_matter === undefined ? record.subject_matter : input.subject_matter;
       const changedSource = matterType !== record.matter_type || subjectMatter !== record.subject_matter;
       // The new sender values have real columns. Synchronise the existing name
-      // and contact snapshot under the case lock; never store age/father in JSON.
+      // and contact snapshot under the case lock; never store these in JSON.
       if (input.sender || input.details?.client) {
         const sender = await tx.caseParty.findFirst({where: {case_id: id, kind: 'sender'}});
         const values = {name: details.client?.fullName ?? '', details: details.client ?? {},
           ...(input.sender?.age !== undefined ? {age: input.sender.age} : {}),
-          ...(input.sender?.father_name !== undefined ? {father_name: input.sender.father_name || null} : {})};
+          ...(input.sender?.salutation !== undefined ? {salutation: input.sender.salutation} : {}),
+          ...(input.sender?.relation !== undefined ? {relation: input.sender.relation} : {}),
+          ...(input.sender?.relative_name !== undefined ? {relative_name: input.sender.relative_name || null} : {})};
         if (sender) await tx.caseParty.update({where: {id: sender.id}, data: values});
         else await tx.caseParty.create({data: {case_id: id, kind: 'sender', ...values}});
       }
@@ -671,7 +675,7 @@ export type DevelopmentSeedIntake = {
   subject_matter: string;
   subject_line: string;
   legal_demand: {selected: string[]; custom: string};
-  sender: {age?: number | null; father_name?: string | null};
+  sender: NoticeSenderFields;
 };
 
 /** One-time completion of seeded cases written past submit before the seed used
@@ -708,7 +712,7 @@ export async function repairDevelopmentSeed(db: PrismaClient, input: {seedKey: s
       legal_demand: input.intake.legal_demand, updated_at: new Date(),
     }});
     const party = {name: details.client.fullName, details: details.client,
-      age: input.intake.sender.age ?? null, father_name: input.intake.sender.father_name ?? null};
+      ...developmentSeedSender(input.intake.sender)};
     const sender = await tx.caseParty.findFirst({where: {case_id: caseId, kind: 'sender'}});
     if (sender) await tx.caseParty.update({where: {id: sender.id}, data: party});
     else await tx.caseParty.create({data: {case_id: caseId, kind: 'sender', ...party}});
@@ -716,5 +720,30 @@ export async function repairDevelopmentSeed(db: PrismaClient, input: {seedKey: s
       from_status: record.status, to_status: record.status,
       payload: {actor: 'system', seed_key: input.seedKey, filled, replaced_placeholders: true}});
     return 'repaired' as const;
+  });
+}
+
+const developmentSeedSender = (sender: NoticeSenderFields) => ({age: sender.age ?? null,
+  salutation: sender.salutation ?? null, relation: sender.relation ?? null, relative_name: sender.relative_name ?? null});
+
+/** Brings a seeded case's sender introduction (age, salutation, relation, relative)
+ * in line with the seed source after the intake gained fields its cases predate.
+ * Any status; only the sender party changes; recorded as development_seed_sender_updated. */
+export async function syncDevelopmentSeedSender(db: PrismaClient, seedKey: string, input: NoticeSenderFields) {
+  requireDemoMode();
+  const wanted = developmentSeedSender(parse(NoticeSenderFieldsSchema, input));
+  return db.$transaction(async tx => {
+    await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${'admin-seed:' + seedKey}))::text`;
+    const tag = await tx.caseEvent.findFirst({where: {type: 'development_seed', payload: {path: ['seed_key'], equals: seedKey}}});
+    if (!tag) return [];
+    const sender = await tx.caseParty.findFirst({where: {case_id: tag.case_id, kind: 'sender'}});
+    if (!sender) throw new ConflictException('Seeded case has no sender party');
+    const changed = (Object.keys(wanted) as (keyof typeof wanted)[]).filter(key => sender[key] !== wanted[key]);
+    if (!changed.length) return [];
+    await tx.caseParty.update({where: {id: sender.id}, data: wanted});
+    const record = await tx.case.findUniqueOrThrow({where: {id: tag.case_id}, select: {status: true}});
+    await appendCaseEvent(tx, {case_id: tag.case_id, type: 'development_seed_sender_updated', source: 'simulated',
+      from_status: record.status, to_status: record.status, payload: {actor: 'system', seed_key: seedKey, changed}});
+    return changed;
   });
 }

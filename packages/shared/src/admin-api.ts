@@ -24,7 +24,9 @@ export type AdminAdvocate = {
   id: string; name: string; practice_areas: string[]; city: string | null; open_cases: number;
 };
 
-export type AdminContact = {name: string | null; email: string | null; phone: string | null; address: string | null; relationship?: string | null; role: string};
+export type AdminContact = {name: string | null; email: string | null; phone: string | null; address: string | null; relationship?: string | null; role: string;
+  /** Sender only: the intake's introduction fields, as the notice prints them. */
+  salutation?: string | null; age?: number | null; relation?: string | null; relative_name?: string | null};
 export type AdminCaseDetail = {
   id: string; reference: string; status: CaseStatus; sub_status: string | null;
   matter_type: string | null; tier: string | null; simulated: boolean; created_at: string;

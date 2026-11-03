@@ -147,9 +147,8 @@ export function useAdvocateNoticeModel(stage: string) {
   const senderParty=r?.parties?.find(p=>p.kind==='sender');
   const draftDate=c.latest?new Date(c.latest.created_at):null;
   const documentFields=api?{reference:r?.reference??'',date:draftDate?.toLocaleDateString('en-GB',{timeZone:'Asia/Kolkata'})??'',
-    referenceYear:draftDate?.toLocaleDateString('en-GB',{year:'numeric',timeZone:'Asia/Kolkata'}).slice(-2)??'',
     recipient:[recipient,...address.split('\n')].filter(Boolean),subject:r?.subject_line??'',
-    client, father:senderParty?.father_name??'',age:senderParty?.age?.toString()??'',address:r?.details.client?.address??'',
+    client, salutation:senderParty?.salutation??'',relation:senderParty?.relation??'',relative:senderParty?.relative_name??'',age:senderParty?.age?.toString()??'',address:r?.details.client?.address??'',
     facts:c.content.facts.split(/\r?\n/).map(line=>line.trim().replace(/^\d+[.)]\s+/, '')).filter(Boolean),
     demands:[...(r?.legal_demand?.selected??[]),...(r?.legal_demand?.custom?.trim()?[r.legal_demand.custom.trim()]:[])],
     closing:noticeClosing(c.latest?.closing_policy??DEFAULT_NOTICE_POLICY,c.latest?.compliance_period_days??null,c.latest?.content.offences??''),

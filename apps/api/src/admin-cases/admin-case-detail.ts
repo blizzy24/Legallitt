@@ -27,8 +27,10 @@ export class AdminCaseDetailRepository {
     const contacts: AdminContact[] = [{role: 'client', name: row.client_id_relation.full_name,
       email: row.client_id_relation.email, phone: row.client_id_relation.phone, address: null}];
     // Intake contacts are separately labelled: do not silently replace account data.
+    const senderParty = row.case_parties_case_id_relations.find(p => p.kind === 'sender');
     for (const [role, values] of [['sender', client], ['noticee', noticee]] as const) {
-      if (Object.values(values).some(str)) contacts.push({role, name: str(values.fullName), email: str(values.email), phone: str(values.mobile), address: str(values.address), relationship: str(values.relationship)});
+      if (Object.values(values).some(str)) contacts.push({role, name: str(values.fullName), email: str(values.email), phone: str(values.mobile), address: str(values.address), relationship: str(values.relationship),
+        ...(role === 'sender' && senderParty ? {salutation: senderParty.salutation, age: senderParty.age, relation: senderParty.relation, relative_name: senderParty.relative_name} : {})});
     }
     if (row.advocate_id_relation) contacts.splice(1, 0, {role: 'advocate', name: row.advocate_id_relation.full_name, email: row.advocate_id_relation.email, phone: row.advocate_id_relation.phone, address: null});
     for (const party of row.case_parties_case_id_relations) {

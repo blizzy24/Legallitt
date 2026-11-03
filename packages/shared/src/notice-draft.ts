@@ -1,4 +1,5 @@
 import type { ApiCase, NoticeDraftContent } from './notice-api';
+import { noticeSenderDescription } from './notice-pdf-fields';
 
 type NoticeIntakeSource = Pick<ApiCase, 'details' | 'parties' | 'subject_matter' | 'subject_line' | 'legal_demand'>;
 export const NOTICE_INTAKE_DRAFT_FIELDS = ['sender', 'recipient', 'subject', 'facts', 'demand'] as const;
@@ -18,8 +19,9 @@ export function seedNoticeDraft(record: NoticeIntakeSource): NoticeDraftContent 
   const recipient = record.details.noticee;
   return {
     sender: lines([
-      sender?.fullName,
-      senderParty?.father_name?.trim() ? `S/o Shri ${senderParty.father_name.trim()}` : '',
+      // Same rule as the letterhead: a part prints only when it was supplied.
+      sender?.fullName?.trim() ? noticeSenderDescription({name: sender.fullName, salutation: senderParty?.salutation,
+        relation: senderParty?.relation, relative: senderParty?.relative_name}) : '',
       senderParty?.age != null ? `Age ${senderParty.age}` : '',
       sender?.address, sender?.mobile, sender?.email,
     ]),

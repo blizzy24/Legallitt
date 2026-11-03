@@ -4,13 +4,13 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import fontkit, * as kit from '@pdf-lib/fontkit';
 import { PDFDocument, rgb, type PDFFont, type PDFPage, type PDFImage, type RGB, PDFOperator, PDFOperatorNames, PDFName, PDFHexString } from 'pdf-lib';
-import { DEFAULT_NOTICE_POLICY, noticeClosing, noticePdfProblem, noticeSenderIntroduction, type NoticePolicy, type NoticeDraftContent } from '@legalitt/shared';
+import { DEFAULT_NOTICE_POLICY, noticeClosing, noticePdfProblem, noticeSenderIntroduction, type NoticeSenderPhrase, type NoticePolicy, type NoticeDraftContent } from '@legalitt/shared';
 import { noticeLetterhead as t } from './notice-letterhead';
 
 export type NoticePdfInput = {
   reference: string; date: Date; place?: string | null;
   advocate?: {name?: string | null; qualifications?: string | null; enrolment?: string | null};
-  sender?: {name?: string | null; father?: string | null; age?: number | null; address?: string | null};
+  sender?: NoticeSenderPhrase;
   recipient?: {name?: string | null; address?: string | null};
   subject?: string | null; demands?: string[]; serviceFeePaise?: bigint | string | null;
   compliancePeriodDays?: number | null; closingPolicy?: NoticePolicy;
@@ -163,7 +163,9 @@ class Letter {
     const title=this.runs('LEGAL NOTICE','bold');this.draw(title,(t.width-this.width(title,X(t.titleSize)))/2,this.top,X(t.titleSize));
     this.line(X(179),this.top+Y(30),X(495),GOLD,X(1));
     this.top+=Y(49);
-    const reference=`${t.referenceLabel} ${i.reference} /20 ${i.date.toLocaleDateString('en-GB',{year:'2-digit',timeZone:'Asia/Kolkata'})}`;
+    // The drawn "/20__" is where an advocate writes the year by hand; the reference
+    // already carries it (owner decision, 4 November 2026), so no suffix prints.
+    const reference=`${t.referenceLabel} ${i.reference}`;
     const date=`Date: ${dateText(i.date)}`;
     this.paragraph(reference,0,X(14),Y(21));
     // Ordinary references fit alongside Date; unusually long references reflow.

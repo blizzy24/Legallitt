@@ -1,5 +1,7 @@
 import { createContext, useContext, useMemo, useState, useCallback, useEffect, type ReactNode } from 'react';
 
+import type { NoticeRelation, NoticeSalutation } from '@legalitt/shared';
+
 import type { ServiceTier } from '../data/legalNotice';
 
 // Fixture state for the Legal Notice wizard. The controller persists API data;
@@ -11,7 +13,8 @@ type PartyDetails = {
   email: string;
   address: string;
 };
-export type ClientDetails = PartyDetails & { age: string; fatherName: string };
+export type ClientDetails = PartyDetails & { age: string; salutation: NoticeSalutation | null;
+  relation: NoticeRelation | null; relativeName: string };
 
 export type NoticeeDetails = PartyDetails & {
   relationship: string;
@@ -42,7 +45,7 @@ export type LegalNoticeForm = {
 const EMPTY_CLIENT: PartyDetails = { fullName: '', mobile: '', email: '', address: '' };
 
 export const EMPTY_FORM: LegalNoticeForm = {
-  client: {...EMPTY_CLIENT, age: '', fatherName: ''},
+  client: {...EMPTY_CLIENT, age: '', salutation: null, relation: null, relativeName: ''},
   noticee: { ...EMPTY_CLIENT, relationship: '' },
   issueType: null,
   subjectMatter: '', subjectLine: '', legalDemand: {selected: [], custom: ''},

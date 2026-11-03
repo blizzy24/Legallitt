@@ -128,16 +128,20 @@ test('seven-step intake persists columns/parties, authorises AI, rejects stale a
     const demands = await api[0].generateNoticeDemands(c.id);
     assert.equal(demands.simulated, true); assert.ok(demands.options.length > 1);
     const legal_demand = {selected: demands.options, custom: 'Synthetic custom demand.'};
-    await api[0].saveIntake(c.id, {legal_demand, sender: {age: 41, father_name: 'Father Test'}, details: {
+    await api[0].saveIntake(c.id, {legal_demand, sender: {age: 41, salutation: 'Ms.', relation: 'D/o', relative_name: 'Father Test'}, details: {
       client: {fullName: 'Sender Test', mobile: '2025550101', email: 'sender@example.invalid', address: 'Synthetic sender address'},
       noticee: {fullName: 'Noticee Test', mobile: '2025550102', email: 'noticee@example.invalid', address: 'Synthetic noticee address'},
     }});
     const row = await api[0].case(c.id);
     assert.equal(row.subject_line, subject.text); assert.deepEqual(row.legal_demand, legal_demand);
-    assert.equal(row.parties[0].age, 41); assert.equal(row.parties[0].father_name, 'Father Test');
+    assert.equal(row.parties[0].age, 41); assert.equal(row.parties[0].relative_name, 'Father Test');
+    assert.equal(row.parties[0].salutation, 'Ms.'); assert.equal(row.parties[0].relation, 'D/o');
+    // Only the listed choices are accepted; a guess cannot be stored.
+    for (const sender of [{salutation: 'Smt.'}, {relation: 'C/o'}])
+      await assert.rejects(api[0].saveIntake(c.id, {sender}), {status: 400});
     assert.equal(row.details.client.age, undefined); assert.equal(row.details.subject_matter, undefined);
     assert.equal(row.events.filter(e => e.source === 'simulated').length, 2);
-    await api[0].saveIntake(c.id, {sender: {age: null, father_name: null}});
+    await api[0].saveIntake(c.id, {sender: {age: null, salutation: null, relation: null, relative_name: null}});
     assert.equal((await api[0].case(c.id)).parties.length, 1);
     await api[0].saveIntake(c.id, {subject_matter: 'A changed synthetic invoice.'});
     assert.equal((await api[0].case(c.id)).subject_line, null);

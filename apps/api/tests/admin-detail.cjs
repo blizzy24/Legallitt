@@ -32,18 +32,19 @@ test('admin detail: boundaries, sparse data, origins, payer, timeline and shipme
 });
 
 test('development seed: tagged through the real path, legacy seeds completed once and validated', {skip:!process.env.LEGALITT_TEST_DATABASE_URL}, async()=>{
- const {tagDevelopmentSeed,repairDevelopmentSeed}=require('../dist/src/cases/case-state-machine');
+ const {tagDevelopmentSeed,repairDevelopmentSeed,syncDevelopmentSeedSender}=require('../dist/src/cases/case-state-machine');
  const oldEnv=process.env.ENVIRONMENT,oldNode=process.env.NODE_ENV;
  const db=new PrismaClient({adapter:new PrismaPg({connectionString:process.env.LEGALITT_TEST_DATABASE_URL})});
  const clientId=randomUUID(),seedKey='test-'+randomUUID(),freshKey='test-'+randomUUID();
  const pricing=await db.servicePricing.findFirstOrThrow({where:{service_code:'legal_notice',tier:'ordinary',variant:null,effective_to:null}});
  const intake={tier:'ordinary',details:{client:{fullName:'Sunita Mehra',mobile:'9000000101',address:'B-14, Malviya Nagar, Jaipur'},noticee:{fullName:'Rajeev Mehra',mobile:'9000000102',email:'rajeev@example.com',address:'22, Vaishali Nagar, Jaipur'},issueType:'family-dispute'},
-  subject_matter:'Maintenance unpaid since June 2025.',subject_line:'Legal notice for non-payment of agreed maintenance',legal_demand:{selected:['Pay the outstanding maintenance.'],custom:''},sender:{age:41,father_name:'Ramesh Chandra Sharma'}};
+  subject_matter:'Maintenance unpaid since June 2025.',subject_line:'Legal notice for non-payment of agreed maintenance',legal_demand:{selected:['Pay the outstanding maintenance.'],custom:''},sender:{age:41,salutation:'Mrs.',relation:'W/o',relative_name:'Rajeev Mehra'}};
  const pricingIdForTier=async()=>pricing.id;
  try {
   process.env.ENVIRONMENT='prod';process.env.NODE_ENV='production';
   await assert.rejects(tagDevelopmentSeed({},randomUUID(),seedKey),{status:503});
   await assert.rejects(repairDevelopmentSeed({},{seedKey,intake,pricingIdForTier}),{status:503});
+  await assert.rejects(syncDevelopmentSeedSender({},seedKey,intake.sender),{status:503});
   process.env.ENVIRONMENT='dev';process.env.NODE_ENV='test';
   await db.user.create({data:{id:clientId,cognito_sub:randomUUID(),full_name:'Seed test',role:'client'}});
   // A legacy seed: written straight to assigning with placeholder intake and no pricing.
@@ -59,7 +60,15 @@ test('development seed: tagged through the real path, legacy seeds completed onc
   assert.equal(after.status,'assigning');assert.equal(after.pricing_id,pricing.id);assert.equal(after.subject_line,intake.subject_line);
   assert.equal(after.matter_type,'family_dispute');assert.equal(after.details.noticee.address,intake.details.noticee.address);
   const sender=await db.caseParty.findFirstOrThrow({where:{case_id:legacy.id,kind:'sender'}});
-  assert.equal(sender.age,41);assert.equal(sender.father_name,'Ramesh Chandra Sharma');
+  assert.equal(sender.age,41);assert.equal(sender.salutation,'Mrs.');assert.equal(sender.relation,'W/o');assert.equal(sender.relative_name,'Rajeev Mehra');
+  // Cases seeded before the intake gained a field get it from the seed source, once, audited.
+  await db.caseParty.update({where:{id:sender.id},data:{salutation:null,relation:null,relative_name:'Ramesh Chandra Sharma'}});
+  assert.deepEqual(await syncDevelopmentSeedSender(db,seedKey,intake.sender),['salutation','relation','relative_name']);
+  assert.deepEqual(await syncDevelopmentSeedSender(db,seedKey,intake.sender),[]);
+  assert.deepEqual(await syncDevelopmentSeedSender(db,'absent-'+randomUUID(),intake.sender),[]);
+  const synced=await db.caseEvent.findMany({where:{case_id:legacy.id,type:'development_seed_sender_updated'}});
+  assert.equal(synced.length,1);assert.equal(synced[0].source,'simulated');assert.deepEqual(synced[0].payload.changed,['salutation','relation','relative_name']);
+  assert.equal((await db.caseParty.findUniqueOrThrow({where:{id:sender.id}})).relative_name,'Rajeev Mehra');
   const repairs=await db.caseEvent.findMany({where:{case_id:legacy.id,type:'development_seed_repaired'}});
   assert.equal(repairs.length,1);assert.equal(repairs[0].source,'simulated');assert.equal(repairs[0].to_status,'assigning');
   assert.deepEqual(repairs[0].payload.filled.sort(),['recipient_address','recipient_name','sender_address','sender_name','service_fee','subject']);

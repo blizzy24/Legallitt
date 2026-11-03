@@ -6,7 +6,7 @@ export function validateNoticeStep(stage: string, form: LegalNoticeForm) {
     throw new Error('Choose a notice type and enter the subject matter in dispute.');
   if (stage === 'step2') LegalNoticeSubmissionSchema.shape.noticee.parse(form.noticee);
   if (stage === 'step1') {
-    const {age, fatherName: _father, ...client} = form.client;
+    const {age, salutation: _s, relation: _r, relativeName: _n, ...client} = form.client;
     LegalNoticeSubmissionSchema.shape.client.parse(client);
     if (age && (!Number.isSafeInteger(Number(age)) || Number(age) <= 0))
       throw new Error('Enter age as a positive whole number.');

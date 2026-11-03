@@ -59,10 +59,22 @@ export const LegalDemandSchema = z.strictObject({
   custom: text.max(10000),
 });
 export type LegalDemand = z.infer<typeof LegalDemandSchema>;
+// Owner instruction (4 Nov 2026): how the notice introduces the sender. Both are
+// optional; an absent salutation or relation is left out of the phrase, never guessed.
+export const NOTICE_SALUTATIONS = ['Mr.', 'Mrs.', 'Ms.'] as const;
+export const NOTICE_RELATIONS = ['S/o', 'D/o', 'W/o'] as const;
+export const NoticeSalutationSchema = z.enum(NOTICE_SALUTATIONS);
+export const NoticeRelationSchema = z.enum(NOTICE_RELATIONS);
+export type NoticeSalutation = z.infer<typeof NoticeSalutationSchema>;
+export type NoticeRelation = z.infer<typeof NoticeRelationSchema>;
 export const NoticeSenderFieldsSchema = z.strictObject({
   age: z.number().int().positive().nullable().optional(),
-  father_name: text.max(300).nullable().optional(),
+  salutation: NoticeSalutationSchema.nullable().optional(),
+  relation: NoticeRelationSchema.nullable().optional(),
+  /** The father's or husband's name, printed after the relation as "Shri …". */
+  relative_name: text.max(300).nullable().optional(),
 });
+export type NoticeSenderFields = z.infer<typeof NoticeSenderFieldsSchema>;
 export const NoticeIntakeFieldsSchema = z.strictObject({
   subject_matter: text.max(10000).nullable().optional(),
   legal_demand: LegalDemandSchema.nullable().optional(),

@@ -35,8 +35,8 @@ function Blank({ flex, width, value }: { flex?: number; width?: number; value?:s
 }
 
 export type NoticeDocumentFields = {
-  reference:string; referenceYear?:string; date:string; recipient:string[]; subject:string;
-  client:string; father:string; age:string; address:string; facts:string[]; demands:string[];
+  reference:string; date:string; recipient:string[]; subject:string;
+  client:string; salutation:string; relation:string; relative:string; age:string; address:string; facts:string[]; demands:string[];
   closing?: {compliance:string; consequence:string};
   offences?:string; cost?:string; place?:string;
 };
@@ -105,8 +105,8 @@ export default function LegalDocumentPage({ title, advocateName, data = ADV_NOTI
 
           {fields ? <View style={styles.metadataRow}>
             <Text selectable style={[styles.label, styles.metadataReference]}>
-              {r.refLabel}{' '}<Text style={styles.inlineBlank}>{fields.reference}</Text>{' '}
-              {r.refSuffix}{' '}<Text style={styles.inlineBlank}>{fields.referenceYear??''}</Text>
+              {/* The reference already carries the year; the drawn "/20__" is the paper form's slot for it. */}
+              {r.refLabel}{' '}<Text style={styles.inlineBlank}>{fields.reference}</Text>
             </Text>
             <Text selectable style={styles.label}>{r.dateLabel}{' '}<Text style={styles.inlineBlank}>{fields.date}</Text></Text>
           </View> : <View style={styles.row}>
@@ -137,8 +137,8 @@ export default function LegalDocumentPage({ title, advocateName, data = ADV_NOTI
             <Blank flex={1} />
           </View>}
 
-          {fields ? <Text selectable style={styles.body}>{noticeSenderIntroduction({name:fields.client,
-            father:fields.father,age:fields.age ? Number(fields.age) : null,address:fields.address})}</Text> : <Text style={styles.body}>
+          {fields ? <Text selectable style={styles.body}>{noticeSenderIntroduction({name:fields.client,salutation:fields.salutation,
+            relation:fields.relation,relative:fields.relative,age:fields.age ? Number(fields.age) : null,address:fields.address})}</Text> : <Text style={styles.body}>
             {r.intro[0]}
             <Text style={styles.inlineBlank}>{'__________'}</Text>
             {r.intro[1]}

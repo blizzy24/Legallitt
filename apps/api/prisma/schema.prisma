@@ -244,7 +244,9 @@ model CaseParty {
   kind             String
   name             String
   age              Int?
-  father_name      String?
+  salutation       String?
+  relation         String?
+  relative_name    String?
   details          Json   @default("{}") @db.JsonB
   case_id_relation Case   @relation("case_parties_case_id_cases", fields: [case_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 

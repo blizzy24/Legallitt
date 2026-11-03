@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { CaseStatus } from "./lifecycle";
-import { LegalNoticeIntake, LegalNoticeTierSchema } from "./legal-notice";
+import { LegalNoticeIntake, LegalNoticeTierSchema, type NoticeRelation, type NoticeSalutation } from "./legal-notice";
 import { DocumentPresignSchema } from "./documents";
 import { CompliancePeriodSchema, type NoticePolicy } from './notice-policy';
 
@@ -120,7 +120,8 @@ export type ApiCase = {
   subject_matter: string | null;
   subject_line: string | null;
   legal_demand: import('./legal-notice').LegalDemand | null;
-  parties?: {id: string; kind: string; name: string; age: number | null; father_name: string | null}[];
+  parties?: {id: string; kind: string; name: string; age: number | null;
+    salutation: NoticeSalutation | null; relation: NoticeRelation | null; relative_name: string | null}[];
   /** Legal_Notice_Final.pdf, rendered on the client's approval. */
   notice_document_id: string | null;
   details: LegalNoticeIntake;

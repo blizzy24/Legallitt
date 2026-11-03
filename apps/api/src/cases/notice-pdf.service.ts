@@ -87,7 +87,7 @@ export class NoticePdfService {
     const demand = record.legal_demand as LegalDemand | null;
     const template = {reference: record.reference, date, content, compliancePeriodDays, closingPolicy, place: profile?.city,
       advocate: {name: advocate?.full_name, qualifications: profile?.education, enrolment: profile?.bar_council_number},
-      sender: {name: details.client?.fullName, father: sender?.father_name, age: sender?.age, address: details.client?.address},
+      sender: {name: details.client?.fullName, salutation: sender?.salutation, relation: sender?.relation, relative: sender?.relative_name, age: sender?.age, address: details.client?.address},
       recipient: {name: details.noticee?.fullName, address: details.noticee?.address},
       subject: record.subject_line,
       demands: [...(demand?.selected ?? []), ...(demand?.custom?.trim() ? [demand.custom.trim()] : [])],

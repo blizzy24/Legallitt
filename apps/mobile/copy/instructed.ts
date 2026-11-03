@@ -26,7 +26,8 @@ export const instructedCopy = {
   legalNoticeIntake: {
     subjectMatter: 'Subject matter in dispute',
     subjectLine: 'Subject line',
-    age: 'Age', fatherName: 'Father’s name (S/o Shri)',
+    age: 'Age', salutation: 'Title', relation: 'Relation',
+    relativeName: 'Father’s or husband’s name',
     demandTitle: 'Choose your legal demand',
     demandPrompt: 'Select all that apply, or write your own.',
     ownDemand: 'Write your own demand',

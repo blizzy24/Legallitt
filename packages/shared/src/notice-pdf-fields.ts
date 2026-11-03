@@ -44,7 +44,14 @@ export function noticePdfProblem(input: NoticePdfRequiredValues) {
   } : null;
 }
 
-export function noticeSenderIntroduction(sender: {name?: string | null; father?: string | null; age?: number | null; address?: string | null}) {
-  const father = sender.father?.trim();
-  return `Under instructions and authority from my client Mr. ${sender.name?.trim() ?? ''}${father ? ` S/o Shri ${father}` : ''}${sender.age != null ? `, Age ${sender.age}` : ''} R/o ${sender.address?.trim() ?? ''}, I hereby serve upon you this Legal Notice as under:`;
+export type NoticeSenderPhrase = {name?: string | null; salutation?: string | null; relation?: string | null;
+  relative?: string | null; age?: number | null; address?: string | null};
+/** "Mrs. Sunita Mehra W/o Shri Rajeev Mehra, Age 41": each part only when known.
+ * A relation prints only with the relative's name, and the name only with a relation. */
+export function noticeSenderDescription(sender: NoticeSenderPhrase) {
+  const salutation = sender.salutation?.trim(), relation = sender.relation?.trim(), relative = sender.relative?.trim();
+  return `${salutation ? salutation + ' ' : ''}${sender.name?.trim() ?? ''}${relation && relative ? ` ${relation} Shri ${relative}` : ''}${sender.age != null ? `, Age ${sender.age}` : ''}`;
+}
+export function noticeSenderIntroduction(sender: NoticeSenderPhrase) {
+  return `Under instructions and authority from my client ${noticeSenderDescription(sender)} R/o ${sender.address?.trim() ?? ''}, I hereby serve upon you this Legal Notice as under:`;
 }

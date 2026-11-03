@@ -32,9 +32,11 @@ export function Step5ScreenView({ model }: { model: NoticeIntakeModel }) {
     <WizardShell busy={model.busy} onBack={model.back} step={6} totalSteps={7} buttonLabel="Submit & Proceed to Pay" onContinue={model.continue}>
       <ChatBubble title="Preview Your Case Summary" time="10:32 AM" />
       <View style={styles.card}>
+        <Row label={instructedCopy.legalNoticeIntake.salutation} value={form.client.salutation ?? ''} />
         <Row label="Client Name" value={form.client.fullName || model.summary.client} />
         <Row label={instructedCopy.legalNoticeIntake.age} value={form.client.age} />
-        <Row label={instructedCopy.legalNoticeIntake.fatherName} value={form.client.fatherName} />
+        <Row label={instructedCopy.legalNoticeIntake.relation} value={form.client.relation ?? ''} />
+        <Row label={instructedCopy.legalNoticeIntake.relativeName} value={form.client.relativeName} />
         <Row label="Notice Type" value={form.issueType ? NOTICE_TYPE[form.issueType] : model.summary.noticeType} />
         <Row label="Notice Details" value={(noticee.length ? noticee : model.summary.noticee).join('\n')} />
         <Row label="Issue Summary" value={model.summary.summary} paragraph />

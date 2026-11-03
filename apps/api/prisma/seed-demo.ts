@@ -14,7 +14,7 @@ import { demoAccounts, demoPassword, requireDemoMode } from "../src/auth/demo";
 import { createDatabaseClient } from "../src/database";
 import { CaseStatus } from "@legalitt/shared";
 import type { PrismaClient } from "../src/generated/prisma/client";
-import { CaseStateMachine, repairDevelopmentSeed, tagDevelopmentSeed } from "../src/cases/case-state-machine";
+import { CaseStateMachine, repairDevelopmentSeed, syncDevelopmentSeedSender, tagDevelopmentSeed } from "../src/cases/case-state-machine";
 import type { CaseActor } from "../src/cases/case-access";
 import { PaymentsService } from "../src/payments/payments.service";
 import { SimulatedPayments } from "../src/payments/simulated-payments";
@@ -174,7 +174,9 @@ async function seedNotices(db: PrismaClient) {
     let id = tag?.case_id;
     if (id) {
       const repaired = await repairDevelopmentSeed(db, { seedKey: seed.key, intake: seed.intake, pricingIdForTier });
-      if (repaired === "repaired" || repaired === "already") { summary.push(`${seed.key}: ${repaired}`); continue; }
+      if (repaired === "repaired" || repaired === "already") {
+        const changed = await syncDevelopmentSeedSender(db, seed.key, seed.intake.sender);
+        summary.push(`${seed.key}: ${repaired}${changed.length ? ` (sender ${changed.join(", ")})` : ""}`); continue; }
     } else {
       id = (await state.create(client, { service_code: "legal_notice", tier: seed.intake.tier })).id;
       await tagDevelopmentSeed(db, id, seed.key);
@@ -195,7 +197,8 @@ async function seedNotices(db: PrismaClient) {
       if ((await status()) === CaseStatus.assigned) await state.transition(advocate, id, CaseStatus.advocate_accepted);
       if ((await status()) === CaseStatus.advocate_accepted) await state.startDrafting(advocate, id);
     }
-    summary.push(`${seed.key}: ${await status()}`);
+    const changed = await syncDevelopmentSeedSender(db, seed.key, intake.sender);
+    summary.push(`${seed.key}: ${await status()}${changed.length ? ` (sender ${changed.join(", ")})` : ""}`);
   }
   console.log("Seed notices: " + summary.join("; "));
 }

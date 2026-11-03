@@ -12,7 +12,7 @@ function harness() {
     pricing_id: 'historic-price', pricing_id_relation: {base_amount_paise: 137700n},
     details: {client: {fullName: 'Client name', address: 'Client address'}, noticee: {fullName: 'Noticee name', address: 'Noticee address'}},
     subject_line: 'Persisted AI subject', legal_demand: {selected: ['First client demand', 'Second client demand'], custom: 'Custom client demand'},
-    case_parties_case_id_relations: [{kind: 'sender', age: 41, father_name: 'Client father'}],
+    case_parties_case_id_relations: [{kind: 'sender', age: 41, salutation: 'Mrs.', relation: 'W/o', relative_name: 'Client husband'}],
     advocate_id_relation: {full_name: 'Assigned advocate', advocate_profiles_user_id_relations: {
       education: 'B.A., LL.B.', bar_council_number: 'MH/1234/2020', city: 'Mumbai'}}};
   const draft = {compliance_period_days:7,closing_policy:DEFAULT_NOTICE_POLICY,id: 'latest-draft', version: 3, content, created_at: new Date('2026-11-02T10:00Z')};
@@ -41,7 +41,7 @@ test('letterhead preview binds intake, assigned profile and the case historical 
     assert.equal(supplied.reference, h.record.reference);
     assert.equal(supplied.date, h.draft.created_at);
     assert.equal(supplied.subject, 'Persisted AI subject');
-    assert.deepEqual(supplied.sender, {name: 'Client name', father: 'Client father', age: 41, address: 'Client address'});
+    assert.deepEqual(supplied.sender, {name: 'Client name', salutation: 'Mrs.', relation: 'W/o', relative: 'Client husband', age: 41, address: 'Client address'});
     assert.deepEqual(supplied.recipient, {name: 'Noticee name', address: 'Noticee address'});
     assert.deepEqual(supplied.demands, ['First client demand', 'Second client demand', 'Custom client demand']);
     assert.equal(supplied.serviceFeePaise, 137700n);
