@@ -1,6 +1,7 @@
 // Explicit dev verification after reseeding. Creates ONE labelled synthetic case;
-// only client submission/payment/approval are driven here. The deployed timers
-// must perform assignment, drafting, dispatch and delivery through their real APIs.
+// only client submission/payment/approval are driven here. This legacy fully
+// unattended check needs ALL six progression switches explicitly enabled on the
+// target; it is NOT a check of the normal milestones-only defaults (§2.12).
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -11,6 +12,7 @@ const out = path.resolve('reports/guest-auth-return-2026-11-03');
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 async function main() {
   assert.equal(process.env.VERIFY_DEPLOYED_DEMO, '1'); requireDemoMode();
+  assert.equal(process.env.VERIFY_ALL_DEMO_STEPS, '1', 'Use only against a target explicitly configured with all six demo steps on');
   const password = await demoPassword(), auth = [], sessions = {};
   const accounts = [
     ['demo-client@legalitt.invalid', 'client'], ['demo-advocate@legalitt.invalid', 'advocate'], ['demo-admin@legalitt.invalid', 'admin'],

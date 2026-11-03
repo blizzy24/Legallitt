@@ -1,0 +1,8 @@
+{
+  "assignDelayMs": null,
+  "draftStartDelayMs": null,
+  "draftDoneDelayMs": null,
+  "dispatchDelayMs": null,
+  "shipmentStepMs": 5000,
+  "deliveryConfirmDelayMs": null
+}

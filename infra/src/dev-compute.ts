@@ -329,8 +329,15 @@ export class DevComputeStack extends Stack {
             // Owner-approved testing deployment only; module defaults stay simulated.
             { Name: "AI_MODE", Value: "gemini" },
             { Name: "GEMINI_MODEL", Value: "gemini-3.5-flash-lite" },
-            // §2.12: the demo progression, with the same intervals as local development.
+            // §2.12: only courier milestones run automatically. Human actions
+            // remain available through the real client, advocate and admin UI.
             { Name: "DEMO_PROGRESSION", Value: "on" },
+            { Name: "DEMO_ASSIGNMENT", Value: "off" },
+            { Name: "DEMO_DRAFT_START", Value: "off" },
+            { Name: "DEMO_DRAFT_SUBMIT", Value: "off" },
+            { Name: "DEMO_DISPATCH", Value: "off" },
+            { Name: "DEMO_SHIPMENT_MILESTONES", Value: "on" },
+            { Name: "DEMO_DELIVERY_CONFIRMATION", Value: "off" },
             { Name: "DEMO_ASSIGN_DELAY_MS", Value: "30000" },
             { Name: "DEMO_DRAFT_START_DELAY_MS", Value: "30000" },
             { Name: "DEMO_DRAFT_DONE_DELAY_MS", Value: "30000" },

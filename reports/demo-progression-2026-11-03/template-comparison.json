@@ -1,0 +1,44 @@
+{
+  "LegalittDev/Core": {
+    "otherChanges": false,
+    "baselineSha256": "6dd0de53755434046820ddf38065218485796a403bb4c282b95e28950e310bad"
+  },
+  "LegalittDev/Compute": {
+    "addedEnvironment": [
+      {
+        "Name": "DEMO_ASSIGNMENT",
+        "Value": "off"
+      },
+      {
+        "Name": "DEMO_DRAFT_START",
+        "Value": "off"
+      },
+      {
+        "Name": "DEMO_DRAFT_SUBMIT",
+        "Value": "off"
+      },
+      {
+        "Name": "DEMO_DISPATCH",
+        "Value": "off"
+      },
+      {
+        "Name": "DEMO_SHIPMENT_MILESTONES",
+        "Value": "on"
+      },
+      {
+        "Name": "DEMO_DELIVERY_CONFIRMATION",
+        "Value": "off"
+      }
+    ],
+    "otherChanges": false,
+    "baselineSha256": "f67945988e44bd57b41a9bc7e0c86f178ad34a3c54cc1162b5a3c87282634116"
+  },
+  "LegalittProd/Core": {
+    "otherChanges": false,
+    "baselineSha256": "0a93911d4a969ebfd9106cc8038624e2bf6647d45163871e0103459319cbb549"
+  },
+  "LegalittProd/Compute": {
+    "otherChanges": false,
+    "baselineSha256": "056cafda211c5d20058db492984528e51a0fc2dbac22745f47b4663d9e17a75c"
+  }
+}

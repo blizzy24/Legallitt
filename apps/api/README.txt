@@ -335,17 +335,28 @@ Demo progression — architecture §2.12
 -------------------------------------
 DEMO_PROGRESSION=on|off. Unset means on only when ENVIRONMENT=dev and
 NODE_ENV=development; anything else is off. On outside dev, or in production,
-fails startup. When on, all four intervals are required in .env.local (whole
-milliseconds; there are no built-in defaults):
-  DEMO_ASSIGN_DELAY_MS=30000        paid -> seeded admin assigns the seeded advocate
-  DEMO_DRAFT_START_DELAY_MS=30000   assigned -> seeded advocate accepts and starts
-                                    (also: accepted, or changes requested, -> starts)
-  DEMO_DRAFT_DONE_DELAY_MS=30000    in progress -> seeded advocate submits the draft
-  DEMO_DISPATCH_DELAY_MS=30000      approved -> seeded advocate books a labelled
-                                    SIMULATED COURIER shipment and confirms dispatch
-  DEMO_SHIPMENT_STEP_MS=5000        dispatched -> seeded admin advances one courier
-                                    milestone; after Out for Delivery, confirms
-                                    delivery with a labelled SIMULATED proof
+fails startup. The master being on no longer enables all actions. Per-step flags:
+  DEMO_ASSIGNMENT=off              paid -> seeded admin assigns the seeded advocate
+  DEMO_DRAFT_START=off             assigned -> accepts and starts; accepted or
+                                    changes requested -> starts again
+  DEMO_DRAFT_SUBMIT=off            in progress -> seeded advocate submits draft
+  DEMO_DISPATCH=off                approved -> books labelled simulated courier
+                                    and confirms dispatch
+  DEMO_SHIPMENT_MILESTONES=on      dispatched -> one courier milestone at a time,
+                                    stopping at Out for Delivery
+  DEMO_DELIVERY_CONFIRMATION=off   after Out for Delivery -> upload labelled
+                                    simulated POD, confirm delivery and complete
+Those are the defaults. All six accept only on|off. Turning the master off
+disables everything. If all six are off, no timer runs. The normal testing flow
+uses humans for assignment, drafting, dispatch and final delivery confirmation.
+Only enabled steps require the corresponding interval (whole milliseconds):
+  DEMO_ASSIGN_DELAY_MS=30000
+  DEMO_DRAFT_START_DELAY_MS=30000
+  DEMO_DRAFT_DONE_DELAY_MS=30000
+  DEMO_DISPATCH_DELAY_MS=30000
+  DEMO_SHIPMENT_STEP_MS=5000        milestones and optional delivery confirmation
+ADMIN_UI_MODE=live works with milestones enabled. Enabling delivery confirmation
+requires ADMIN_UI_MODE=simulated; the master alone does not require that adapter.
 Client approval is never timed.
 Each step signs in as demo-admin@ or demo-advocate@legalitt.invalid and calls
 the real endpoint with a provenance ticket limited to that case and route; its

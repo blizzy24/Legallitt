@@ -1,0 +1,82 @@
+TAP version 13
+# Subtest: picker eligibility/load, real assignment event, and stale timer cannot overwrite a human
+ok 1 - picker eligibility/load, real assignment event, and stale timer cannot overwrite a human
+  ---
+  duration_ms: 327.04475
+  type: 'test'
+  ...
+# Subtest: demo timer does not assign already-assigned cases
+ok 2 - demo timer does not assign already-assigned cases
+  ---
+  duration_ms: 0.585958
+  type: 'test'
+  ...
+# Subtest: human delivery persists receiver/time, real source and POD; duplicates and stale timer cannot overwrite
+ok 3 - human delivery persists receiver/time, real source and POD; duplicates and stale timer cannot overwrite
+  ---
+  duration_ms: 274.449209
+  type: 'test'
+  ...
+# Subtest: completed case is excluded by timer and simulator returns without authentication/upload
+ok 4 - completed case is excluded by timer and simulator returns without authentication/upload
+  ---
+  duration_ms: 0.526875
+  type: 'test'
+  ...
+# Subtest: header retains the case pricing id and captured historical payment, independent of new prices
+ok 5 - header retains the case pricing id and captured historical payment, independent of new prices
+  ---
+  duration_ms: 59.0245
+  type: 'test'
+  ...
+# Subtest: system provenance cannot grant a role or cross case/document boundaries
+ok 6 - system provenance cannot grant a role or cross case/document boundaries
+  ---
+  duration_ms: 1.387625
+  type: 'test'
+  ...
+# Subtest: a demo-progression ticket is one identity, one case and only its routes
+ok 7 - a demo-progression ticket is one identity, one case and only its routes
+  ---
+  duration_ms: 0.450833
+  type: 'test'
+  ...
+# Subtest: demo progression defaults to courier milestones only, with explicit opt-in for each human action
+ok 8 - demo progression defaults to courier milestones only, with explicit opt-in for each human action
+  ---
+  duration_ms: 0.740292
+  type: 'test'
+  ...
+# Subtest: defaults leave all human actions alone and stop courier progression before delivery
+ok 9 - defaults leave all human actions alone and stop courier progression before delivery
+  ---
+  duration_ms: 1.141166
+  type: 'test'
+  ...
+# Subtest: each human action can be enabled independently without enabling another step
+ok 10 - each human action can be enabled independently without enabling another step
+  ---
+  duration_ms: 0.328
+  type: 'test'
+  ...
+# Subtest: milestone call uses the real endpoint; a shipment that reaches delivery while polling is never auto-confirmed by default
+ok 11 - milestone call uses the real endpoint; a shipment that reaches delivery while polling is never auto-confirmed by default
+  ---
+  duration_ms: 0.4975
+  type: 'test'
+  ...
+# Subtest: master off does not poll or sign in, even when step flags are on
+ok 12 - master off does not poll or sign in, even when step flags are on
+  ---
+  duration_ms: 0.128125
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1510.599

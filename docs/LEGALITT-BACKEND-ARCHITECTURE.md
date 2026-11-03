@@ -448,13 +448,19 @@ told, in writing, which items are on it.
 
 ### 2.12 The demo progression
 
-A case cannot advance on its own. Two steps need a human who does not yet have
-a screen — an **admin assigning an advocate**, and an **admin confirming
-delivery** — and one needs an advocate who happens to be offline. Without help,
-every case stops at `paid` and the flow after it can never be seen.
+A case cannot advance on its own. The admin and advocate screens now exist, so
+their actions must not happen automatically while people are testing them.
 
-So under `DEMO_PROGRESSION=on` (default on locally, **off** everywhere else), a
-timer advances a case through the steps nobody is present to perform.
+**Approved — project-owner instruction, 3 November 2026:** give every demo
+progression step its own switch. Only courier milestones are enabled by default.
+Assignment, starting/restarting drafting, submitting a draft, dispatch and delivery
+confirmation are opt-in. Client approval remains exclusively a client action.
+
+`DEMO_PROGRESSION=on` is the master switch (default on when `ENVIRONMENT=dev`
+and `NODE_ENV=development`, off otherwise). Each step below accepts `on` or `off`.
+The master switch being off disables every step, regardless of its individual
+setting. Explicitly enabling the master outside dev or in production fails startup.
+The Dev Compute template sets the master on and the six step switches explicitly.
 
 **The rule that makes this legitimate:**
 
@@ -466,17 +472,25 @@ So: the timer does not set a status, does not write to the database, and does
 not tell the app to move on. It performs the real action and the app finds out
 the way it always will — by reading the case.
 
-| After | What happens | Which real endpoint runs | As whom |
+| Switch | Default | Eligible state / action | Real endpoint / actor |
 |---|---|---|---|
-| 30s from `paid` | advocate assigned | the admin assign endpoint | seeded admin |
-| 30s later | drafting starts | the advocate accept + start endpoints | seeded advocate |
-| 30s later | draft sent for review | the advocate submit-draft endpoint | seeded advocate |
-| on client approval | dispatch begins | the real approval path | the client |
-| on a change request | drafting restarts | the advocate start endpoint | seeded advocate |
-| every 5s after dispatch | shipment advances one step | the shipment status endpoint | seeded admin |
+| `DEMO_ASSIGNMENT` | off | `paid` → assign advocate | admin assign / seeded admin |
+| `DEMO_DRAFT_START` | off | `assigned` → accept and start; `advocate_accepted` or `changes_requested` → start | accept + start / seeded advocate |
+| `DEMO_DRAFT_SUBMIT` | off | `in_progress` → send draft for client review | create/send draft / seeded advocate |
+| `DEMO_DISPATCH` | off | `approved` → book labelled courier and dispatch | shipment book + dispatch / seeded advocate |
+| `DEMO_SHIPMENT_MILESTONES` | **on** | after dispatch, progress to Pickup Booked, Picked Up, In Transit, Out for Delivery | shipment status / seeded admin |
+| `DEMO_DELIVERY_CONFIRMATION` | off | after Out for Delivery, upload labelled simulated POD and complete | real upload + delivered pipeline / seeded admin; system event actor |
 
-Intervals are configurable (`DEMO_ASSIGN_DELAY_MS` and relatives), not
-hard-coded, so a demo can be slowed down or sped up without a code change.
+Courier milestones stop at **Out for Delivery**. They do not produce a POD or
+complete the case. A real admin can confirm delivery through the existing panel;
+`ADMIN_UI_MODE=live` is compatible with milestone-only progression. Only enabling
+`DEMO_DELIVERY_CONFIRMATION` requires `ADMIN_UI_MODE=simulated`.
+
+Intervals remain configurable (`DEMO_ASSIGN_DELAY_MS`, `DEMO_DRAFT_START_DELAY_MS`,
+`DEMO_DRAFT_DONE_DELAY_MS`, `DEMO_DISPATCH_DELAY_MS`, `DEMO_SHIPMENT_STEP_MS`). Only
+enabled steps require their interval. Delivery confirmation shares the existing
+shipment interval. Dev Compute retains 30-second human-action intervals and
+5-second shipment intervals; enabling a step never changes its real handler.
 
 **The app never contains a timer that changes what it displays.** Screens poll
 the case and render whatever state they find. A screen that animates its own
@@ -1639,10 +1653,10 @@ empty, or explicitly accepted in writing by the client, before production.
 | Push, SMS and email | `NOTIFY_MODE=simulated` | No SNS/FCM/SMS/email integration yet; only outside delivery is simulated | Providers configured |
 | AI subject lines and demand options | Module default `AI_MODE=simulated`; deployed dev `AI_MODE=gemini` | Real Gemini 3.5 Flash-Lite generation enabled for synthetic testing on 3 Nov 2026; fixed labelled responses remain the default elsewhere. Gemini is development-only. Bedrock is configured to the verified India-only Haiku 4.5 profile | Production-provider activation remains pending |
 | AI notice drafting | `AI_MODE=simulated` | Existing labelled draft reused; Gemini is development-only. Bedrock is Haiku 4.5 only until Sonnet 5 access is granted. Sonnet 5 requires an AWS Sales request on the client’s account; no automatic fallback | Step 11; client requests Sonnet 5 access through AWS Sales before an optional per-task config swap |
-| Advocate assignment | `DEMO_PROGRESSION=on` | Admin assigns (§9), but no admin panel exists. **Without this every case stops at `paid` and nothing after it can be reached** | Admin panel built |
-| Demo progression | `DEMO_PROGRESSION=on` | Stands in for people with no screen yet — see §2.12. Calls real endpoints only | Admin panel built |
-| Delivery confirmation | `ADMIN_UI_MODE=simulated` | Admin marks delivered (§9), but no admin panel exists yet. The **endpoint is real**; only the screen is missing. The shipment advances one drawn milestone at a time (§2.12), and delivery with a simulated proof follows Out for Delivery | Admin panel built |
-| Courier tracking | `COURIER_MODE=simulated` | Manual courier in v1 by decision, not by gap | Only if the client later buys a carrier API |
+| Advocate assignment | `DEMO_PROGRESSION=on` + `DEMO_ASSIGNMENT=on` (**off by default**) | Optional unattended demo only; the real admin picker exists | Explicitly disable for human testing / production |
+| Advocate draft and dispatch actions | `DEMO_DRAFT_START`, `DEMO_DRAFT_SUBMIT`, `DEMO_DISPATCH` (**all off by default**, master required) | Optional unattended demo only; real advocate screens exist. Calls real endpoints | Explicitly disable for human testing / production |
+| Delivery confirmation | `DEMO_DELIVERY_CONFIRMATION=on` (**off by default**) + master + `ADMIN_UI_MODE=simulated` | Optional unattended demo only; real admin POD upload and confirmation exist. Uses the same validation and labelled simulated POD | Explicitly disable for human testing / production |
+| Courier tracking | `DEMO_SHIPMENT_MILESTONES=on` (default, master required) | No carrier integration; advances only through Out for Delivery, never confirms delivery | Only if the client later buys a carrier API |
 | KYC | `KYC_MODE=simulated` | No provider chosen | Provider chosen |
 
 **In-app notifications are real (3 Nov 2026).** Each notification is a real row,

@@ -1,0 +1,48 @@
+AI agent detected
+dist/stack.js:452:13
+WARNING Parameters/GeminiSecretArn: Parameter 'GeminiSecretArn' appears to be a password but does not have NoEcho set to true (CloudFormation Validate)
+   LegalittDev/Compute aws-cdk-lib.Stack
+   Acknowledge with 'CloudFormation-Validate::W2509'
+
+WARNING No cross-stack-reference strength configured, defaulting to "strong". We recommend you set feature flag "@aws-cdk/core:defaultCrossStackReferences" to "both", then deploy everywhere, then set it to "weak". Alternatively, set it to "strong" explicitly to lock in the current producer-protecting behavior. (See: https://github.com/aws/aws-cdk/blob/main/packages/aws-cdk-lib/README.md#reference-strength) (Construct Annotations)
+   LegalittDev/Compute
+   Acknowledge with 'Annotation::@aws-cdk/core:crossStackReferencesDefaultStrong'
+Stack LegalittDev/Compute (LegalittDev-Compute-DevelopmentOnly) (aws://026379630400/ap-south-1)
+Resources
+[~] AWS::ECS::TaskDefinition Compute/Task Task replace
+ └─ [~] ContainerDefinitions (requires replacement)
+     └─ @@ -104,6 +104,30 @@
+        [ ]   "Value": "on"
+        [ ] },
+        [ ] {
+        [+]   "Name": "DEMO_ASSIGNMENT",
+        [+]   "Value": "off"
+        [+] },
+        [+] {
+        [+]   "Name": "DEMO_DRAFT_START",
+        [+]   "Value": "off"
+        [+] },
+        [+] {
+        [+]   "Name": "DEMO_DRAFT_SUBMIT",
+        [+]   "Value": "off"
+        [+] },
+        [+] {
+        [+]   "Name": "DEMO_DISPATCH",
+        [+]   "Value": "off"
+        [+] },
+        [+] {
+        [+]   "Name": "DEMO_SHIPMENT_MILESTONES",
+        [+]   "Value": "on"
+        [+] },
+        [+] {
+        [+]   "Name": "DEMO_DELIVERY_CONFIRMATION",
+        [+]   "Value": "off"
+        [+] },
+        [+] {
+        [ ]   "Name": "DEMO_ASSIGN_DELAY_MS",
+        [ ]   "Value": "30000"
+        [ ] },
+
+
+
+✨  Number of stacks with differences: 1

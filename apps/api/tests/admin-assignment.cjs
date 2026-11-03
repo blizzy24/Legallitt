@@ -58,8 +58,8 @@ test('picker eligibility/load, real assignment event, and stale timer cannot ove
  }
 });
 test('demo timer does not assign already-assigned cases',async()=>{
- const config={assignDelayMs:1,draftStartDelayMs:1,draftDoneDelayMs:1,dispatchDelayMs:1,shipmentStepMs:1};
- const timer=new DemoProgression({getClient:async()=>({case:{findMany:async()=>[{id:'case',status:'assigned',advocate_id:'human-choice',case_events_case_id_relations:[{created_at:new Date(0)}]}]}})}, {}, {}, config);
+ const config={assignDelayMs:1,draftStartDelayMs:1,draftDoneDelayMs:1,dispatchDelayMs:1,shipmentStepMs:1,deliveryConfirmDelayMs:1};
+ const timer=new DemoProgression({getClient:async()=>({case:{findMany:async()=>[{id:'case',status:'assigned',advocate_id:'human-choice',shipments_case_id_relations:[],case_events_case_id_relations:[{created_at:new Date(0)}]}]}})}, {}, {}, config);
  timer.session=async role=>({id:'seeded-'+role,role});
  let called=false;timer.act=async()=>{called=true;};
  await timer.tick();assert.equal(called,false);

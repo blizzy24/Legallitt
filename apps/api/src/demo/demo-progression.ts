@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger, Optional, type OnApplicationBootstrap, type OnModuleDestroy } from '@nestjs/common';
 import { z } from 'zod';
-import { NOTICE_ADVOCATE_GREETING, nextShipmentStatus, type ApiCase, type ShipmentStatus } from '@legalitt/shared';
+import { IN_FLIGHT_SHIPMENT_STATUSES, NOTICE_ADVOCATE_GREETING, nextShipmentStatus, type ApiCase, type ShipmentStatus } from '@legalitt/shared';
 import { PrismaService } from '../prisma.service';
 import { demoPassword } from '../phone-auth/demo-accounts';
 import { ADMIN_UI, type AdminUiPort } from '../admin-ui/admin-ui.port';
@@ -42,7 +42,7 @@ export class DemoProgression implements OnApplicationBootstrap, OnModuleDestroy 
   ) {}
   onApplicationBootstrap() {
     if (!this.config) return;
-    this.logger.log('DEMO_PROGRESSION=on: seeded people advance Legal Notice cases (architecture §2.12)');
+    this.logger.log(`DEMO_PROGRESSION=on: enabled steps ${Object.entries(this.config).filter(([, delay]) => delay !== null).map(([name]) => name.replace(/DelayMs$|StepMs$/, '')).join(', ')} (architecture §2.12)`);
     this.timer = setInterval(() => void this.tick(), 1000);
     this.timer.unref();
   }
@@ -51,37 +51,45 @@ export class DemoProgression implements OnApplicationBootstrap, OnModuleDestroy 
   }
 
   /** Which person acts on a case in this state, and after how long. */
-  private due(status: string): {actor: Actor; after: number} | null {
-    const c = this.config!;
+  private due(status: string, shipmentStatus?: string): {actor: Actor; after: number} | null {
+    const c = this.config;
+    if (!c) return null;
+    const enabled = (actor: Actor, after: number | null) => after === null ? null : {actor, after};
     switch (status) {
-      case 'paid': return {actor: 'admin', after: c.assignDelayMs};
+      case 'paid': return enabled('admin', c.assignDelayMs);
       case 'assigned':
       case 'advocate_accepted':
       // A client's change request leaves the same advocate to resume drafting.
-      case 'changes_requested': return {actor: 'advocate', after: c.draftStartDelayMs};
-      case 'in_progress': return {actor: 'advocate', after: c.draftDoneDelayMs};
+      case 'changes_requested': return enabled('advocate', c.draftStartDelayMs);
+      case 'in_progress': return enabled('advocate', c.draftDoneDelayMs);
       // The advocate books the courier and confirms dispatch; with no human
       // advocate the approved case would otherwise strand.
-      case 'approved': return {actor: 'advocate', after: c.dispatchDelayMs};
-      case 'dispatched': return {actor: 'admin', after: c.shipmentStepMs};
+      case 'approved': return enabled('advocate', c.dispatchDelayMs);
+      case 'dispatched': {
+        if (!shipmentStatus || !IN_FLIGHT_SHIPMENT_STATUSES.includes(shipmentStatus as ShipmentStatus)) return null;
+        const next = nextShipmentStatus(shipmentStatus as ShipmentStatus);
+        return next ? enabled('admin', next === 'delivered' ? c.deliveryConfirmDelayMs : c.shipmentStepMs) : null;
+      }
       default: return null;
     }
   }
 
   async tick() {
-    if (this.ticking) return;
+    if (!this.config || this.ticking) return;
     this.ticking = true;
     try {
       const db = await this.prisma.getClient();
       const rows = await db.case.findMany({
         where: {service_code: 'legal_notice', status: {in: ['paid', 'assigned', 'advocate_accepted', 'changes_requested', 'in_progress', 'approved', 'dispatched']}},
-        select: {id: true, status: true, advocate_id: true, case_events_case_id_relations: {
+        select: {id: true, status: true, advocate_id: true,
+          shipments_case_id_relations: {where: {direction: 'to_recipient'}, orderBy: {booked_at: {sort: 'desc', nulls: 'last'}}, take: 1, select: {status: true}},
+          case_events_case_id_relations: {
           where: {type: {in: clockEvents}}, orderBy: {id: 'desc'}, take: 1, select: {created_at: true},
         }},
       });
       const now = Date.now();
       for (const row of rows) {
-        const step = this.due(row.status);
+        const step = this.due(row.status, row.shipments_case_id_relations[0]?.status);
         const since = row.case_events_case_id_relations[0]?.created_at.getTime();
         if (!step || since === undefined || now < since + step.after || (this.retryAt.get(row.id) ?? 0) > now) continue;
         try {
@@ -143,7 +151,9 @@ export class DemoProgression implements OnApplicationBootstrap, OnModuleDestroy 
         const record = await this.read(session, caseId);
         const shipment = record.shipments?.filter(s => s.direction === 'to_recipient').sort((a, b) => (b.booked_at ?? '').localeCompare(a.booked_at ?? ''))[0];
         const next = shipment && nextShipmentStatus(shipment.status as ShipmentStatus);
-        if (!next) return;
+        // Recheck the current shipment, not just the earlier poll. Courier
+        // milestones must never slip through into admin confirmation.
+        if (!next || !this.due('dispatched', shipment.status)) return;
         if (next === 'delivered') return this.adminUi.confirmDelivery(caseId);
         return this.call(session, caseId, [new RegExp(`^/api/v1/admin/cases/${caseId}/shipment/status$`)], post =>
           post(`/api/v1/admin/cases/${caseId}/shipment/status`, {status: next}));
