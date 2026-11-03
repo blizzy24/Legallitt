@@ -370,6 +370,9 @@ export class ComputeStack extends Stack {
                   Action: "*",
                   Resource: [
                     Fn.sub("arn:${AWS::Partition}:s3:::legalitt-prod-*"),
+                    // IAM ARNs are global and may not carry a region.
+                    Fn.sub("arn:${AWS::Partition}:iam::*:role/*legalitt-prod*"),
+                    Fn.sub("arn:${AWS::Partition}:iam::*:policy/*legalitt-prod*"),
                     ...[
                       "ec2",
                       "rds",
@@ -379,7 +382,6 @@ export class ComputeStack extends Stack {
                       "kms",
                       "secretsmanager",
                       "sqs",
-                      "iam",
                       "ecr",
                     ].map((service) =>
                       Fn.sub(

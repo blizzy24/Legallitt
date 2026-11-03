@@ -255,7 +255,10 @@ export class DevComputeStack extends Stack {
             Action: "*",
             Resource: [
               Fn.sub("arn:${AWS::Partition}:s3:::legalitt-prod-*"),
-              ...["ec2", "rds", "ecs", "logs", "kms", "secretsmanager", "iam", "ecr", "cognito-idp"].map((service) =>
+              // IAM ARNs are global and may not carry a region.
+              Fn.sub("arn:${AWS::Partition}:iam::*:role/*legalitt-prod*"),
+              Fn.sub("arn:${AWS::Partition}:iam::*:policy/*legalitt-prod*"),
+              ...["ec2", "rds", "ecs", "logs", "kms", "secretsmanager", "ecr", "cognito-idp"].map((service) =>
                 Fn.sub(`arn:\${AWS::Partition}:${service}:*:*:*legalitt-prod*`),
               ),
             ],

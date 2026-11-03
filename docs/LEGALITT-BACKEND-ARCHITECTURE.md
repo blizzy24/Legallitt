@@ -266,6 +266,46 @@ So the CDK is split into **two stacks per stage**:
 Until then the API and Postgres run locally. All schema, queries and business
 logic are built and tested on a laptop.
 
+**Development-scale Compute (3 November 2026).** The production shape (NAT
+gateway, ALB, Elastic IPs: about ₹11,000/month incl. GST) was rejected for the
+development stage. Dev now runs `LegalittDev-Compute-DevelopmentOnly`, tagged
+`purpose=development-only`, at about **₹3,100/month incl. 18% GST**, fixed
+charges only:
+
+| Item | USD/month |
+|---|---|
+| RDS PostgreSQL db.t4g.micro, single-AZ | 15.33 |
+| RDS gp3, 20 GB | 2.62 |
+| Fargate ARM64, 0.25 vCPU / 0.5 GB, one task | 5.30 |
+| Public IPv4 on the task | 3.65 |
+| Cloud Map instance + Route 53 private zone | 0.60 |
+| ECR (≤10 images), logs (14-day retention) | ~0.23 |
+| **Total** | **≈27.73 → ₹2,631 + GST = ₹3,105** |
+
+Prices from the AWS Pricing API (Mumbai), at ₹94.8755/USD. Variable on top: HTTP
+API requests at $1.05 per million (throttled to 10 rps, burst 20), data out. Core
+adds about ₹246 (KMS key, three secrets). No start/stop scheduling.
+
+The shape: **API Gateway HTTP API** (HTTPS on its default
+`*.execute-api.ap-south-1.amazonaws.com` domain, so no custom domain or
+certificate) → **VPC link** → **Cloud Map** SRV record → **one Fargate task** in
+a public subnet with a public IP, whose security group admits only the VPC link.
+RDS sits in private subnets with no internet route, reachable only from the
+task's security group. Migrations and seeds run as one-off ops tasks inside the
+VPC (`infra/scripts/dev-ops-task.sh`).
+
+Chosen over Lambda (a rewrite, needs paid VPC endpoints, and the API's
+always-on timers — the demo progression, document cleanup — need a long-running
+process), App Runner (closed to new customers) and EC2 with Caddy (needs a domain
+for its certificate).
+
+What it gives up against the production shape: no load balancer health-based
+routing or multi-task spread (one task, one AZ at a time); the task has a public
+IP, so egress is not through a single controlled NAT address; a 30-second
+request ceiling and 10 MB payload limit from API Gateway; single-AZ RDS. **The
+NAT gateway and load balancer return when there are real clients to protect** —
+`LegalittProd` keeps that shape (`ComputeStack`) unchanged.
+
 ---
 
 ### 2.11 Nothing is left unbuilt — unbuilt parts are simulated behind the API
