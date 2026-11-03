@@ -1,0 +1,27 @@
+[
+  {
+    "title": "Legal Notice",
+    "after": "https://legalitt-5.vercel.app/login",
+    "destination": "/legal-notice"
+  },
+  {
+    "title": "Legal Advice",
+    "after": "https://legalitt-5.vercel.app/login",
+    "destination": "/legal-advice"
+  },
+  {
+    "title": "FIR Draft",
+    "after": "https://legalitt-5.vercel.app/login",
+    "destination": "/fir"
+  },
+  {
+    "title": "Property Search",
+    "after": "https://legalitt-5.vercel.app/login",
+    "destination": "/property-search"
+  },
+  {
+    "deepLinkResult": "https://legalitt-5.vercel.app/login",
+    "preservedDestination": "/legal-notice/tracking?caseId=a1dffec9-35ab-45b8-bee5-c1f15feb3846",
+    "refreshPreservesDestination": true
+  }
+]

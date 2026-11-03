@@ -1,0 +1,102 @@
+[
+  {
+    "base": "http://127.0.0.1:3001",
+    "account": "demo-client@legalitt.invalid",
+    "role": "client",
+    "status": 201
+  },
+  {
+    "base": "http://127.0.0.1:3001",
+    "account": "demo-advocate@legalitt.invalid",
+    "role": "advocate",
+    "status": 201
+  },
+  {
+    "base": "http://127.0.0.1:3001",
+    "account": "demo-admin@legalitt.invalid",
+    "role": "admin",
+    "status": 201
+  },
+  {
+    "base": "http://127.0.0.1:3001",
+    "account": "demo-advocate-2@legalitt.invalid",
+    "role": "advocate",
+    "status": 201
+  },
+  {
+    "base": "http://127.0.0.1:3001",
+    "account": "demo-advocate-3@legalitt.invalid",
+    "role": "advocate",
+    "status": 201
+  },
+  {
+    "base": "http://127.0.0.1:3001",
+    "account": "demo-advocate-4@legalitt.invalid",
+    "role": "advocate",
+    "status": 201
+  },
+  {
+    "base": "http://127.0.0.1:3001",
+    "role": "client",
+    "path": "otp/verify",
+    "status": 201,
+    "simulated": true
+  },
+  {
+    "base": "http://127.0.0.1:3001",
+    "role": "advocate",
+    "path": "otp/verify",
+    "status": 201,
+    "simulated": true
+  },
+  {
+    "base": "https://gvycg0n3u8.execute-api.ap-south-1.amazonaws.com",
+    "account": "demo-client@legalitt.invalid",
+    "role": "client",
+    "status": 201
+  },
+  {
+    "base": "https://gvycg0n3u8.execute-api.ap-south-1.amazonaws.com",
+    "account": "demo-advocate@legalitt.invalid",
+    "role": "advocate",
+    "status": 201
+  },
+  {
+    "base": "https://gvycg0n3u8.execute-api.ap-south-1.amazonaws.com",
+    "account": "demo-admin@legalitt.invalid",
+    "role": "admin",
+    "status": 201
+  },
+  {
+    "base": "https://gvycg0n3u8.execute-api.ap-south-1.amazonaws.com",
+    "account": "demo-advocate-2@legalitt.invalid",
+    "role": "advocate",
+    "status": 201
+  },
+  {
+    "base": "https://gvycg0n3u8.execute-api.ap-south-1.amazonaws.com",
+    "account": "demo-advocate-3@legalitt.invalid",
+    "role": "advocate",
+    "status": 201
+  },
+  {
+    "base": "https://gvycg0n3u8.execute-api.ap-south-1.amazonaws.com",
+    "account": "demo-advocate-4@legalitt.invalid",
+    "role": "advocate",
+    "status": 201
+  },
+  {
+    "base": "https://gvycg0n3u8.execute-api.ap-south-1.amazonaws.com",
+    "role": "client",
+    "path": "otp/verify",
+    "status": 201,
+    "simulated": true
+  },
+  {
+    "base": "https://gvycg0n3u8.execute-api.ap-south-1.amazonaws.com",
+    "role": "advocate",
+    "path": "otp/verify",
+    "status": 201,
+    "simulated": true
+  }
+]

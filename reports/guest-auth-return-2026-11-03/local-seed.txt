@@ -1,0 +1,15 @@
+
+> @legalitt/api@0.0.0 db:seed-demo /Users/riya/Documents/14/apps/api
+> pnpm build && node --env-file-if-exists=.env.local dist/prisma/seed-demo.js
+
+
+> @legalitt/api@0.0.0 build /Users/riya/Documents/14/apps/api
+> prisma generate && tsc
+
+Loaded Prisma config from prisma.config.ts.
+
+Prisma schema loaded from prisma/schema.prisma.
+
+✔ Generated Prisma Client (7.10.1) to ./src/generated/prisma in 151ms
+
+Seeded six dev accounts and idempotent demo workload cases; no mail or SMS sent.

@@ -1,0 +1,290 @@
+{
+  "id": "acea22b0-c3e2-4e6b-aefe-90dca6596e62",
+  "reference": "LN-2026-0008",
+  "observed": [
+    {
+      "status": "paid",
+      "at": "2026-11-03T08:58:14.998Z"
+    },
+    {
+      "status": "assigned",
+      "at": "2026-11-03T08:58:45.961Z"
+    },
+    {
+      "status": "in_progress",
+      "at": "2026-11-03T08:59:16.923Z"
+    },
+    {
+      "status": "client_review",
+      "at": "2026-11-03T08:59:52.526Z"
+    },
+    {
+      "status": "approved",
+      "at": "2026-11-03T08:59:57.683Z"
+    },
+    {
+      "status": "dispatched",
+      "at": "2026-11-03T09:00:26.750Z"
+    },
+    {
+      "status": "completed",
+      "at": "2026-11-03T09:00:57.873Z"
+    }
+  ],
+  "events": [
+    {
+      "type": "case_created",
+      "from_status": null,
+      "to_status": "draft",
+      "source": "real",
+      "actor_role": "client",
+      "created_at": "2026-11-03T08:58:12.512Z"
+    },
+    {
+      "type": "subject_generated",
+      "from_status": null,
+      "to_status": null,
+      "source": "simulated",
+      "actor_role": "client",
+      "created_at": "2026-11-03T08:58:12.887Z"
+    },
+    {
+      "type": "status_changed",
+      "from_status": "draft",
+      "to_status": "submitted",
+      "source": "real",
+      "actor_role": "client",
+      "created_at": "2026-11-03T08:58:12.936Z"
+    },
+    {
+      "type": "status_changed",
+      "from_status": "submitted",
+      "to_status": "payment_pending",
+      "source": "real",
+      "actor_role": "client",
+      "created_at": "2026-11-03T08:58:12.939Z"
+    },
+    {
+      "type": "payment_captured",
+      "from_status": "payment_pending",
+      "to_status": "paid",
+      "source": "simulated",
+      "actor_role": "client",
+      "created_at": "2026-11-03T08:58:14.986Z"
+    },
+    {
+      "type": "notification_created",
+      "from_status": null,
+      "to_status": null,
+      "source": "real",
+      "actor_role": null,
+      "created_at": "2026-11-03T08:58:14.991Z"
+    },
+    {
+      "type": "notification_created",
+      "from_status": null,
+      "to_status": null,
+      "source": "real",
+      "actor_role": null,
+      "created_at": "2026-11-03T08:58:14.993Z"
+    },
+    {
+      "type": "status_changed",
+      "from_status": "paid",
+      "to_status": "assigning",
+      "source": "simulated",
+      "actor_role": null,
+      "actor": "system",
+      "created_at": "2026-11-03T08:58:45.441Z"
+    },
+    {
+      "type": "status_changed",
+      "from_status": "assigning",
+      "to_status": "assigned",
+      "source": "simulated",
+      "actor_role": null,
+      "actor": "system",
+      "created_at": "2026-11-03T08:58:45.454Z"
+    },
+    {
+      "type": "notification_created",
+      "from_status": null,
+      "to_status": null,
+      "source": "real",
+      "actor_role": null,
+      "created_at": "2026-11-03T08:58:45.487Z"
+    },
+    {
+      "type": "notification_created",
+      "from_status": null,
+      "to_status": null,
+      "source": "real",
+      "actor_role": null,
+      "created_at": "2026-11-03T08:58:45.490Z"
+    },
+    {
+      "type": "status_changed",
+      "from_status": "assigned",
+      "to_status": "advocate_accepted",
+      "source": "simulated",
+      "actor_role": null,
+      "actor": "system",
+      "created_at": "2026-11-03T08:59:16.151Z"
+    },
+    {
+      "type": "status_changed",
+      "from_status": "advocate_accepted",
+      "to_status": "in_progress",
+      "source": "simulated",
+      "actor_role": null,
+      "actor": "system",
+      "created_at": "2026-11-03T08:59:16.164Z"
+    },
+    {
+      "type": "draft_saved",
+      "from_status": "in_progress",
+      "to_status": "in_progress",
+      "source": "simulated",
+      "actor_role": "advocate",
+      "created_at": "2026-11-03T08:59:47.182Z"
+    },
+    {
+      "type": "status_changed",
+      "from_status": "in_progress",
+      "to_status": "client_review",
+      "source": "simulated",
+      "actor_role": null,
+      "actor": "system",
+      "created_at": "2026-11-03T08:59:51.470Z"
+    },
+    {
+      "type": "notification_created",
+      "from_status": null,
+      "to_status": null,
+      "source": "real",
+      "actor_role": null,
+      "created_at": "2026-11-03T08:59:51.477Z"
+    },
+    {
+      "type": "status_changed",
+      "from_status": "client_review",
+      "to_status": "approved",
+      "source": "real",
+      "actor_role": "client",
+      "created_at": "2026-11-03T08:59:55.554Z"
+    },
+    {
+      "type": "notification_created",
+      "from_status": null,
+      "to_status": null,
+      "source": "real",
+      "actor_role": null,
+      "created_at": "2026-11-03T08:59:55.557Z"
+    },
+    {
+      "type": "shipment_booked",
+      "from_status": "approved",
+      "to_status": "approved",
+      "source": "simulated",
+      "actor_role": "advocate",
+      "created_at": "2026-11-03T09:00:26.142Z"
+    },
+    {
+      "type": "status_changed",
+      "from_status": "approved",
+      "to_status": "dispatching",
+      "source": "simulated",
+      "actor_role": null,
+      "actor": "system",
+      "created_at": "2026-11-03T09:00:26.192Z"
+    },
+    {
+      "type": "status_changed",
+      "from_status": "dispatching",
+      "to_status": "dispatched",
+      "source": "simulated",
+      "actor_role": null,
+      "actor": "system",
+      "created_at": "2026-11-03T09:00:26.199Z"
+    },
+    {
+      "type": "notification_created",
+      "from_status": null,
+      "to_status": null,
+      "source": "real",
+      "actor_role": null,
+      "created_at": "2026-11-03T09:00:26.208Z"
+    },
+    {
+      "type": "notification_created",
+      "from_status": null,
+      "to_status": null,
+      "source": "real",
+      "actor_role": null,
+      "created_at": "2026-11-03T09:00:26.211Z"
+    },
+    {
+      "type": "shipment_status_changed",
+      "from_status": "dispatched",
+      "to_status": "dispatched",
+      "source": "simulated",
+      "actor_role": null,
+      "actor": "system",
+      "created_at": "2026-11-03T09:00:32.148Z"
+    },
+    {
+      "type": "shipment_status_changed",
+      "from_status": "dispatched",
+      "to_status": "dispatched",
+      "source": "simulated",
+      "actor_role": null,
+      "actor": "system",
+      "created_at": "2026-11-03T09:00:38.145Z"
+    },
+    {
+      "type": "shipment_status_changed",
+      "from_status": "dispatched",
+      "to_status": "dispatched",
+      "source": "simulated",
+      "actor_role": null,
+      "actor": "system",
+      "created_at": "2026-11-03T09:00:44.136Z"
+    },
+    {
+      "type": "shipment_status_changed",
+      "from_status": "dispatched",
+      "to_status": "dispatched",
+      "source": "simulated",
+      "actor_role": null,
+      "actor": "system",
+      "created_at": "2026-11-03T09:00:50.140Z"
+    },
+    {
+      "type": "status_changed",
+      "from_status": "dispatched",
+      "to_status": "completed",
+      "source": "simulated",
+      "actor_role": null,
+      "actor": "system",
+      "created_at": "2026-11-03T09:00:57.797Z"
+    },
+    {
+      "type": "notification_created",
+      "from_status": null,
+      "to_status": null,
+      "source": "real",
+      "actor_role": null,
+      "created_at": "2026-11-03T09:00:57.800Z"
+    }
+  ],
+  "shipment": {
+    "status": "delivered",
+    "simulated": true
+  },
+  "pod": {
+    "id": "d0ac79ab-33cb-443a-8d81-92c2c7e402e7",
+    "owner_id": "09d8b13d-0734-4362-bcf3-07c31d57f628",
+    "simulated": true,
+    "downloaded": true
+  }
+}

@@ -215,6 +215,18 @@ Create them with the Cognito admin API, email pre-verified, so no mail is sent.
 The role picker already in onboarding chooses which one the demo path signs
 into. Both also have passwords, so they double as test accounts for the normal
 email path.
+
+**Development credential maintenance (owner instruction, 3 November 2026).**
+The full development seed now contains six accounts: the two phone-demo users,
+the demo admin and three additional advocates for the assignment picker. Their
+shared fixed development password lives only in Secrets Manager at
+`legalitt-dev/demo-auth`; never put its value in source, reports or frontend
+configuration. Updating this secret does not update Cognito passwords. After
+any update, run `infra/scripts/dev-ops-task.sh seed-demo` for deployed dev RDS
+and `pnpm --filter @legalitt/api db:seed-demo` for the local database. The seed
+resets existing Cognito passwords as well as provisioning database rows; keep
+its dev-only guards. The API and both simulators read this same secret.
+
 - A single flag, `PHONE_AUTH_MODE`, controls this: `demo` or `live`. Only
   `demo` is implemented now. `live` is built when DLT registration clears, and
   that is when sign-up by phone — including how the role is chosen — gets
