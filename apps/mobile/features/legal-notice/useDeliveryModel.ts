@@ -47,6 +47,9 @@ export function useDeliveryModel(screen: 'delivery' | 'delivered' = 'delivery') 
   const delivered=screen==='delivered';
   const shipmentDelivered=api && (status==='delivered' || completed);
   const approved=record?.events?.some(e=>e.to_status==='approved');
+  // Design 440 highlights the current milestone, not the next unfinished one.
+  // Out for Delivery remains active until the admin confirms delivery with POD.
+  const progressStep=approved && !shipmentDelivered ? done.lastIndexOf(true) : -1;
   const facts:NoticeDeliveryFacts = {
     confirmation:'',deliveredOn:shipment?.delivered_at ? formatDate(calendarDate(shipment.delivered_at)) : '',
     deliveredAt:shipment?.delivered_at ? clockTime(shipment.delivered_at) : '',
@@ -54,9 +57,8 @@ export function useDeliveryModel(screen: 'delivery' | 'delivered' = 'delivery') 
     // The page count is read from the generated file, never assumed.
     fileMeta:notice?.page_count ? `${completed?'Signed Copy':'Signed copy'} · ${notice.page_count} Pages` : '',
     estimate:'',latestUpdate:'',latestPlace:'',latestTime:'',
-    // The first unfinished row is the active one; none once every row is done.
-    progressStep:approved?done.indexOf(false):-1,
-    completedSteps:done.flatMap((value,i)=>value?[i]:[]),
+    progressStep,
+    completedSteps:done.flatMap((value,i)=>value && i!==progressStep?[i]:[]),
     inTransit:status!==undefined&&IN_FLIGHT_SHIPMENT_STATUSES.includes(status),
   };
   const open = (id?:string)=>{void c.run(async()=>{if(id) await Linking.openURL((await c.repository.documentUrl(id)).url);});};
