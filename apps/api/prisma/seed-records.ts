@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import {
   SERVICE_CODES,
+  DEFAULT_NOTICE_POLICY,
   SERVICE_NAMES,
   type ServiceCode,
 } from "@legalitt/shared";
@@ -30,7 +31,7 @@ export async function seed(client: PrismaClient) {
     for (const code of SERVICE_CODES) {
       await tx.service.upsert({
         where: { code },
-        create: { code, name: SERVICE_NAMES[code] },
+        create: { code, name: SERVICE_NAMES[code], ...(code === 'legal_notice' ? {config: {notice_policy: DEFAULT_NOTICE_POLICY}} : {}) },
         update: {},
       });
     }

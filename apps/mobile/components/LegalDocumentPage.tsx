@@ -36,6 +36,7 @@ function Blank({ flex, width, value }: { flex?: number; width?: number; value?:s
 export type NoticeDocumentFields = {
   reference:string; referenceYear?:string; date:string; recipient:string[]; subject:string;
   client:string; father:string; age:string; address:string; facts:string[]; demands:string[];
+  closing?: {compliance:string; consequence:string};
   offences?:string; cost?:string; place?:string;
 };
 function letterFor(index: number): string {
@@ -161,14 +162,17 @@ export default function LegalDocumentPage({ title, advocateName, data = ADV_NOTI
             </Text>
           ))}
 
-          <Text style={styles.bodyNext}>
+          {fields?.closing?.compliance ? <Text selectable style={styles.bodyNext}>{fields.closing.compliance}</Text> : null}
+          {fields?.closing ? <Text selectable style={styles.bodyNext}>
+            {fields.closing.consequence.split(/(civil proceedings(?: and)?|criminal complaint \/ FIR)/g).map((text,index)=><Text key={index} style={index%2?styles.bold:undefined}>{text}</Text>)}
+          </Text> : <Text style={styles.bodyNext}>
             {r.failing.lead}
             <Text style={styles.bold}>{r.failing.boldA}</Text>
             {r.failing.mid}
             <Text style={styles.bold}>{r.failing.boldB}</Text>
             {r.failing.tail}
             {fields ? <Text style={styles.inlineBlank}>{' '}{fields.offences??''}</Text> : null}
-          </Text>
+          </Text>}
           {fields ? <Text selectable style={styles.body}>
             {r.failing.further.trimStart()}<Text style={styles.inlineBlank}>{fields.cost??''}</Text>{r.failing.cost}
           </Text> : <><View style={styles.row}>

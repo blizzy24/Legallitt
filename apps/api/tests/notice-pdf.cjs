@@ -67,3 +67,21 @@ test('what the advocate typed is printable: rupee sign, typographic quotes and d
   assert.ok(result.pages[0].runs.some(r => r.font.includes('Devanagari')));
   assert.ok(!result.text.includes('\uFFFD'));
 });
+
+test('the compliance sentence precedes consequences; criminal clause is conditional with no offence blank',async()=>{
+  for(const offences of ['', ' \n ', 'TEST allegation supplied by advocate']){
+    const {text}=await readPdfText(await renderNoticePdf({...input,compliancePeriodDays:7,content:{...content,offences}}));
+    // The extractor concatenates PDF lines without inserting layout whitespace.
+    const normalized=text.replace(/\s+/g,'');
+    const contains=value=>normalized.includes(value.replace(/\s+/g,''));
+    assert.ok(contains('within 7 days of receipt of this notice.'));
+    assert.ok(normalized.indexOf('within7days')<normalized.indexOf('Failingwhich'));
+    if(offences.trim())assert.ok(contains('criminal complaint / FIR against you before the police authorities for the offences of TEST allegation supplied by advocate'));
+    else {
+      assert.ok(contains('civil proceedings against you.'));
+      assert.ok(!contains('criminal complaint'));
+      assert.ok(!contains('for the offences of'));
+    }
+    assert.ok(!text.includes('____'),'complete intake leaves no underscore holes in either PDF');
+  }
+});

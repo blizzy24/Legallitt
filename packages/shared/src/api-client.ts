@@ -244,11 +244,12 @@ export class ApiClient {
   decline(id: string, reason?: string | null) {
     return this.request<ApiCase>(`/cases/${id}/decline`, { reason });
   }
-  saveDraft(id: string, content: NoticeDraftContent) {
+  saveDraft(id: string, content: NoticeDraftContent, compliance_period_days?: number) {
     return this.request<ApiDraft>(`/cases/${id}/drafts`, {
       kind: "legal_notice",
       content,
       generated_by: "manual",
+      ...(compliance_period_days !== undefined ? {compliance_period_days} : {}),
     });
   }
   drafts(id: string) {

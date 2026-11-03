@@ -754,6 +754,7 @@ CREATE TABLE cases (
                                            -- body copy — see §9.2.
   subject_matter TEXT,                     -- client description, required for new intake
   subject_line   TEXT,                     -- generated through the AI port
+  compliance_period_days INTEGER CHECK (compliance_period_days > 0), -- advocate-set, §9.2
   legal_demand   JSONB,                    -- {selected: string[], custom: string}
   tier           TEXT,
   title          TEXT,
@@ -825,6 +826,8 @@ CREATE TABLE drafts (
   kind        TEXT NOT NULL,         -- 'fir_proforma' | 'legal_notice' | ...
   version     INT NOT NULL,
   content     JSONB NOT NULL,        -- structured, not a blob of HTML
+  compliance_period_days INTEGER CHECK (compliance_period_days > 0), -- version snapshot
+  closing_policy JSONB,              -- versioned services.config.notice_policy
   generated_by TEXT,                 -- 'ai' | 'manual'
   created_by  UUID NOT NULL REFERENCES users(id),
   created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
@@ -1872,12 +1875,48 @@ editable**. These labels are registered in `apps/mobile/copy/instructed.ts`.
 No fixture text, legal deadline or offence is invented. Background polling must
 not replace unsaved edits. Existing saved versions are not rewritten.
 
-**Next chunk — editable closing and response period (priority):** add a dedicated
-response-period field, retained in the case/API contract so the PDF, client
-tracking and future reminders read the same value. Decide its required/default
-value, start date and exact placement in the letterhead before implementation;
-do not infer statutory deadlines from matter type. The current renderer has no
-fixed fifteen-day deadline; fifteen days occurs in the old fixture demand.
+### Decisions in the client's absence — Notice closing (4 Nov 2026)
+
+> **Approved — project owner.** Implement these two decisions now; both are
+> provisional pending the client's later input. They supersede the earlier
+> deferral of the response-period field. They do not assert a statutory period
+> or infer a criminal allegation from a matter type.
+
+| Decision | Reasoning / scope | Revisit by settings |
+|---|---|---|
+| A structured compliance period, default **15 whole days**, editable per case by the assigned advocate | A notice needs an explicit period; free-text demands cannot reliably supply tracking/reminders. Fifteen is the owner's provisional default, not a legal rule. Existing demand design uses receipt as the anchor; the new sentence uses receipt too. No calendar due date is invented before receipt is known. | `services.config.notice_policy.default_compliance_period_days`; per-case `cases.compliance_period_days` |
+| Criminal consequences only with nonblank advocate-entered Offences | Designs 189/267 draw the combined civil/criminal sentence unconditionally. Printing an unspecified offence or criminal threat on every civil matter is misleading. Empty or whitespace-only Offences produces the civil sentence alone, never a fill-in blank. | `services.config.notice_policy.criminal_clause`: `when_offences` (default), `omit` (always civil-only), `required` (refuse generation without offences) |
+
+`services.config.notice_policy` also holds `compliance_sentence`,
+`civil_consequence` and `criminal_consequence`. These are settings, not component
+strings. Their defaults are in `packages/shared/src/notice-policy.ts`:
+
+- Compliance, before consequences: **You are hereby called upon to comply with the demands set out in this notice within {days} days of receipt of this notice.**
+- Without offences: **Failing which, my client shall be constrained to initiate appropriate civil proceedings against you.**
+- With offences: **Failing which, my client shall be constrained to initiate appropriate civil proceedings and also lodge a criminal complaint / FIR against you before the police authorities for the offences of {offences}** (the drawn sentence, with the advocate's text substituted).
+
+First save defaults an unset case period; every save atomically stores the case
+period and a snapshot of both period and policy on the new draft version, and
+records them in `draft_saved`. Later setting changes affect future saves, never
+regenerate an already-approved draft using a different rule. The migration is
+additive: old drafts keep NULL snapshots/period, and no historical notice is
+silently given a deadline. Opening a legacy draft shows the default, and Generate
+saves a new version before rendering it. Positive integers only; no fraction,
+zero or negative duration. Only the assigned advocate can save while drafting.
+
+The Closing card now includes **Compliance period (days)**, using the existing
+editor field styling. Closing prose stays read-only. Background & Facts and
+Offences remain editable text. Sender, Recipient, Subject and Legal Demand stay
+read-only. Tracking's Notice Details shows **Compliance period** and **{days}
+days from receipt of notice** from the latest *sent* draft, not an unsent revision.
+No value means no row. These UI labels live in `copy/instructed.ts`.
+
+**Blank audit, reported before other changes:** `nonempty()` could print underscores
+for subject, sender name, father's name, sender address, offences, and place.
+Separate fallbacks printed underscores for age and service fee, and ruled blanks
+for an entirely missing recipient. This affects final PDFs as well as previews.
+This chunk removes the offences blank. The other missing-data rules await an
+owner decision; the intentional hand-signature line remains.
 
 **Separate subsequent chunk — advocate overrides:** use structured sender
 name, father's name, age and address, mirroring the intake and letterhead.

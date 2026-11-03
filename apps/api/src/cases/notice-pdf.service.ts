@@ -1,5 +1,5 @@
 import { BadRequestException, ConflictException, ForbiddenException, Injectable, Logger } from '@nestjs/common';
-import { NoticeDraftInputSchema, type LegalNoticeIntake, type LegalDemand } from '@legalitt/shared';
+import { NoticeDraftInputSchema, NoticePolicySchema, noticeClosing, type LegalNoticeIntake, type LegalDemand } from '@legalitt/shared';
 import { parse } from '../auth/auth.service';
 import { PrismaService } from '../prisma.service';
 import { DocumentService } from '../documents/document.service';
@@ -21,7 +21,7 @@ export class NoticePdfService {
     const { record, draft, content } = await this.load(actor, caseId, draftId);
     if (record.status !== 'in_progress') throw new ConflictException('Draft cannot be sent in this state');
     if (!Object.values(content).some(v => v?.trim())) throw new BadRequestException('Enter the draft before sending it');
-    const bytes = await renderNoticePdf(this.template(record, content, draft.created_at));
+    const bytes = await renderNoticePdf(this.template(record, content, draft.created_at, draft));
     const document = await this.file(actor, caseId, `Legal_Notice_Draft_v${draft.version}.pdf`, bytes);
     const db = await this.prisma.getClient();
     await db.draft.update({ where: { id: draftId }, data: { document_id: document.id } });
@@ -33,9 +33,9 @@ export class NoticePdfService {
    * descriptor of this file), never printed in a letter that goes to the other party. */
   async final(actor: CaseActor, caseId: string, draftId: string, approvedAt: Date) {
     if (actor.role !== 'client') throw new ForbiddenException('Case client required');
-    const { record, content } = await this.load(actor, caseId, draftId);
+    const { record, draft, content } = await this.load(actor, caseId, draftId);
     if (record.status !== 'client_review') throw new ConflictException('Invalid case transition');
-    const bytes = await renderNoticePdf(this.template(record, content, approvedAt));
+    const bytes = await renderNoticePdf(this.template(record, content, approvedAt, draft));
     return this.file(actor, caseId, 'Legal_Notice_Final.pdf', bytes);
   }
 
@@ -70,18 +70,22 @@ export class NoticePdfService {
     if (actor.role !== 'advocate') throw new ForbiddenException('Assigned advocate required');
     const {record, draft, content} = await this.load(actor, caseId, draftId);
     if (record.status !== 'in_progress') throw new ConflictException('Draft cannot be generated in this state');
-    const bytes = await renderNoticePdf(this.template(record, content, draft.created_at));
+    const bytes = await renderNoticePdf(this.template(record, content, draft.created_at, draft));
     return {filename: `Legal_Notice_Draft_v${draft.version}.pdf`, pdf_base64: Buffer.from(bytes).toString('base64')};
   }
 
   private template(record: Awaited<ReturnType<NoticePdfService['load']>>['record'],
-    content: Awaited<ReturnType<NoticePdfService['load']>>['content'], date: Date) {
+    content: Awaited<ReturnType<NoticePdfService['load']>>['content'], date: Date, draft: Awaited<ReturnType<NoticePdfService['load']>>['draft']) {
+    const closingPolicy = parse(NoticePolicySchema, draft.closing_policy ?? {});
+    const compliancePeriodDays = draft.compliance_period_days ?? null;
+    try { noticeClosing(closingPolicy, compliancePeriodDays, content.offences); }
+    catch (e) { throw new BadRequestException(e instanceof Error ? e.message : 'Invalid notice closing'); }
     const details = record.details as LegalNoticeIntake;
     const sender = record.case_parties_case_id_relations.find(p => p.kind === 'sender');
     const advocate = record.advocate_id_relation;
     const profile = advocate?.advocate_profiles_user_id_relations;
     const demand = record.legal_demand as LegalDemand | null;
-    return {reference: record.reference, date, content, place: profile?.city,
+    return {reference: record.reference, date, content, compliancePeriodDays, closingPolicy, place: profile?.city,
       advocate: {name: advocate?.full_name, qualifications: profile?.education, enrolment: profile?.bar_council_number},
       sender: {name: details.client?.fullName, father: sender?.father_name, age: sender?.age, address: details.client?.address},
       recipient: {name: details.noticee?.fullName, address: details.noticee?.address},

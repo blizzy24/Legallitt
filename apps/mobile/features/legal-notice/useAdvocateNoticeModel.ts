@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Linking } from 'react-native';
 import { router, type Href } from 'expo-router';
-import { NOTICE_ADVOCATE_GREETING, NOTICE_EDITABLE_DRAFT_FIELDS, unchangedNoticeIntakeFields, type NoticeDraftContent } from '@legalitt/shared';
+import { CompliancePeriodSchema, DEFAULT_NOTICE_POLICY, noticeClosing, NOTICE_ADVOCATE_GREETING, NOTICE_EDITABLE_DRAFT_FIELDS, unchangedNoticeIntakeFields, type NoticeDraftContent } from '@legalitt/shared';
 import { DATA_SOURCE } from '../../lib/data-source';
 import { useSession } from '../../context/session';
 import { useNoticeController, type NoticeStage } from './useNoticeController';
@@ -31,22 +31,28 @@ export function useAdvocateNoticeModel(stage: string) {
   const client=r?.details.client?.fullName??'',recipient=r?.details.noticee?.fullName??'',address=r?.details.noticee?.address??'';
   const matter=noticeMatter(r?.matter_type??null);
   // These are the existing letterhead's fixed paragraphs, not draft.closing,
-  // which the PDF does not use. Only case price and advocate offences vary.
+  // which the PDF does not use. Period and consequences follow the service policy.
   const closingCopy=fixture.ADV_NOTICE_RESPONSE.failing;
   const closingCost=r?.pricing?`₹${(Number(r.pricing.base_amount_paise)/100).toLocaleString('en-IN',{maximumFractionDigits:0})}`:'________';
+  const validDays=CompliancePeriodSchema.safeParse(/^\d+$/.test(c.complianceDays)?Number(c.complianceDays):NaN);
+  const policy=r?.notice_policy??DEFAULT_NOTICE_POLICY;
+  // A required-offence policy is validated on save; incomplete edits must still render.
+  const closing=noticeClosing(policy.criminal_clause==='required'&&!c.content.offences?.trim()?{...policy,criminal_clause:'when_offences'}:policy,
+    validDays.success?validDays.data:null,c.content.offences);
   const fixedClosing=r?[
-    closingCopy.lead+closingCopy.boldA+closingCopy.mid+closingCopy.boldB+closingCopy.tail+' '+(c.content.offences?.trim()||'________'),
+    closing.compliance, closing.consequence,
     closingCopy.further.trimStart()+closingCost+closingCopy.cost,
     fixture.ADV_NOTICE_RESPONSE.copyLine,
-  ].join('\n\n'):'';
+  ].filter(Boolean).join('\n\n'):'';
   const path=(suffix:string)=>c.href(`/advocate/notice/${c.id ?? (api ? '' : 'ln-2026-1048')}/${suffix}`);
   const courierHref=()=>c.href('/courier/self/details?noticeOutbound=1');
   // Navigation follows the tap, never the clock (§2.12): a completed case updates this screen in place.
   const open=(id?:string)=>{if(id)void c.run(async()=>{await Linking.openURL((await c.repository.documentUrl(id)).url);});};
   const saveDraft=async()=>{
     if(!c.id)throw new Error('Select a request from My Cases.');
-    if(!c.dirty.current && c.latest)return c.latest;
-    const draft=await c.repository.saveDraft(c.id,c.content);
+    if(!validDays.success)throw new Error('Enter a whole number of days, at least 1.');
+    if(!c.dirty.current && c.latest?.compliance_period_days)return c.latest;
+    const draft=await c.repository.saveDraft(c.id,c.content,validDays.data);
     c.dirty.current=false;await c.load();return draft;
   };
   const renderDraft=async()=>{
@@ -143,6 +149,7 @@ export function useAdvocateNoticeModel(stage: string) {
     client, father:senderParty?.father_name??'',age:senderParty?.age?.toString()??'',address:r?.details.client?.address??'',
     facts:c.content.facts.split(/\r?\n/).map(line=>line.trim().replace(/^\d+[.)]\s+/, '')).filter(Boolean),
     demands:[...(r?.legal_demand?.selected??[]),...(r?.legal_demand?.custom?.trim()?[r.legal_demand.custom.trim()]:[])],
+    closing:noticeClosing(c.latest?.closing_policy??DEFAULT_NOTICE_POLICY,c.latest?.compliance_period_days??null,c.latest?.content.offences??''),
     offences:c.content.offences??'',place:r?.advocate?.profile?.city??'',
     cost:r?.pricing?`₹${(Number(r.pricing.base_amount_paise)/100).toLocaleString('en-IN',{maximumFractionDigits:0})}`:'',
   }:undefined;
@@ -154,6 +161,8 @@ export function useAdvocateNoticeModel(stage: string) {
       c.dirty.current=true;c.setContent(prev=>({...prev,[key]:value}));
     }:undefined,
     offences:c.content.offences??'',
+    complianceDays:api?c.complianceDays:undefined,
+    onEditComplianceDays:(value:string)=>{c.dirty.current=true;c.setComplianceDays(value);},
     onEditOffences:(value:string)=>{c.dirty.current=true;c.setContent(prev=>({...prev,offences:value}));},
     onSaveDraft:api?()=>{void c.run(stage==='response'?renderDraft:saveDraft);}:undefined,
     onGenerateDraft:api?()=>{void c.run(renderDraft);}:undefined,

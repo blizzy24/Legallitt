@@ -20,6 +20,7 @@ import {
   noticeMatterType,
   noticeIssueType,
   NoticeDraftInputSchema,
+  NoticePolicySchema,
   NoticeCommentSchema,
   NoticeDeclineSchema,
   IN_FLIGHT_SHIPMENT_STATUSES,
@@ -453,6 +454,12 @@ export class CaseStateMachine {
         where: { case_id: id, kind: "legal_notice" },
         orderBy: { version: "desc" },
       });
+      const service = await tx.service.findUniqueOrThrow({where: {code: 'legal_notice'}});
+      const policy = parse(NoticePolicySchema, (service.config as {notice_policy?: unknown}).notice_policy ?? {});
+      const days = input.compliance_period_days ?? record.compliance_period_days ?? policy.default_compliance_period_days;
+      if (policy.criminal_clause === 'required' && !input.content.offences?.trim())
+        throw new BadRequestException('Enter offences before generating this notice.');
+      await tx.case.update({where: {id}, data: {compliance_period_days: days, updated_at: new Date()}});
       const draft = await tx.draft.create({
         data: {
           case_id: id,
@@ -461,6 +468,8 @@ export class CaseStateMachine {
           generated_by: input.generated_by,
           created_by: actor.id,
           version: (previous?.version ?? 0) + 1,
+          compliance_period_days: days,
+          closing_policy: policy,
         },
       });
       await tx.caseEvent.create({
@@ -472,7 +481,8 @@ export class CaseStateMachine {
           actor_role: actor.role,
           from_status: record.status,
           to_status: record.status,
-          payload: { draft_id: draft.id, version: draft.version },
+          payload: { draft_id: draft.id, version: draft.version, compliance_period_days: days,
+            previous_compliance_period_days: record.compliance_period_days, closing_policy: policy },
         },
       });
       return draft;

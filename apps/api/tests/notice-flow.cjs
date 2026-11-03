@@ -142,11 +142,20 @@ test(
       await assert.rejects(state.startDrafting(otherAdvocate, c.id), {status: 404});
       assert.equal((await state.startDrafting(advocate, c.id)).status, 'in_progress');
       assert.equal((await state.startDrafting(advocate, c.id)).status, 'in_progress');
+      for (const days of [0,-1,1.5,'15']) await assert.rejects(state.saveNoticeDraft(advocate,c.id,{
+        kind:'legal_notice',content,generated_by:'manual',compliance_period_days:days}), {status:400});
+      assert.equal((await repo.read(advocate,c.id)).compliance_period_days,null);
       const draft1 = await state.saveNoticeDraft(advocate, c.id, {
         kind: "legal_notice",
         content,
         generated_by: "manual",
       });
+      assert.equal(draft1.compliance_period_days,15);
+      assert.equal(draft1.closing_policy.criminal_clause,'when_offences');
+      assert.equal((await repo.read(advocate,c.id)).compliance_period_days,15);
+      const periodEvent=await db.caseEvent.findFirst({where:{case_id:c.id,type:'draft_saved'}});
+      assert.equal(periodEvent.payload.compliance_period_days,15);
+      assert.equal(periodEvent.payload.previous_compliance_period_days,null);
       assert.equal((await repo.read(client, c.id)).drafts.length, 0);
       await assert.rejects(state.sendNoticeDraft(admin, c.id, draft1.id), {
         status: 403,
@@ -167,9 +176,14 @@ test(
       const draft2 = await state.saveNoticeDraft(advocate, c.id, {
         kind: "legal_notice",
         content: { ...content, facts: "Revised test facts" },
+        compliance_period_days: 7,
         generated_by: "manual",
       });
       assert.equal(draft2.version, 2);
+      assert.equal(draft2.compliance_period_days,7);
+      assert.equal((await repo.read(advocate,c.id)).compliance_period_days,7);
+      assert.equal((await db.draft.findUnique({where:{id:draft1.id}})).compliance_period_days,15);
+      assert.equal((await repo.read(client,c.id)).drafts.at(-1).compliance_period_days,15);
       assert.deepEqual(
         (await repo.read(client, c.id)).drafts.map((d) => d.id),
         [draft1.id],

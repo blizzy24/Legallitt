@@ -67,6 +67,9 @@ export function useNoticeTrackingModel(fixtureStage: 'drafting' | 'review' = 'dr
   }
   return {
     error: c.error,
+    // Client-visible drafts are filtered to sent versions by the repository.
+    // Never expose a changed period from an advocate's unsent revision.
+    complianceDays: c.latest?.compliance_period_days ?? null,
     stage: stageFor(status), requestId: record?.reference ?? '', ref: record?.reference ?? '',
     noticeType: noticeMatter(record?.matter_type ?? null).noticeType, tier: tierFor(c.tier),
     // The event is a timestamp; the screen's date formatter takes a calendar date.

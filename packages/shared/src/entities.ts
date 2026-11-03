@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { CaseStatus } from './lifecycle';
+import { CompliancePeriodSchema } from './notice-policy';
 import { SERVICE_CODES } from './services';
 
 // Domain entity schemas, not create-input DTOs. Database-generated fields are
@@ -68,6 +69,7 @@ export const CaseSchema = z.strictObject({
   matter_type: z.string().nullable(),
   subject_matter: z.string().nullable(),
   subject_line: z.string().nullable(),
+  compliance_period_days: CompliancePeriodSchema.nullable(),
   legal_demand: z.json().nullable(),
   tier: z.string().nullable(),
   title: z.string().nullable(),
@@ -115,6 +117,8 @@ export const DraftSchema = z.strictObject({
   kind: z.string(),
   version: int32,
   content: z.json(),
+  compliance_period_days: CompliancePeriodSchema.nullable(),
+  closing_policy: z.json().nullable(),
   generated_by: z.string().nullable(),
   created_by: z.uuid(),
   created_at: z.date(),

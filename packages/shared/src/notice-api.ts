@@ -2,6 +2,7 @@ import { z } from "zod";
 import { CaseStatus } from "./lifecycle";
 import { LegalNoticeIntake, LegalNoticeTierSchema } from "./legal-notice";
 import { DocumentPresignSchema } from "./documents";
+import { CompliancePeriodSchema, type NoticePolicy } from './notice-policy';
 
 const evidenceText = z
   .string()
@@ -27,6 +28,7 @@ export const NoticeDraftInputSchema = z.strictObject({
   kind: z.literal("legal_notice"),
   content: NoticeDraftContentSchema,
   generated_by: z.literal("manual"),
+  compliance_period_days: CompliancePeriodSchema.optional(),
 });
 export const NoticeCommentSchema = z.strictObject({
   comment: evidenceText.trim().min(1),
@@ -73,6 +75,8 @@ export type ApiDocument = {
   identity_notice?: string;
 };
 export type ApiDraft = {
+  compliance_period_days?: number | null;
+  closing_policy?: NoticePolicy | null;
   id: string;
   case_id: string;
   version: number;
@@ -100,6 +104,8 @@ export type ApiAdvocateProfile = {
   photo_key: string | null;
 };
 export type ApiCase = {
+  compliance_period_days?: number | null;
+  notice_policy?: NoticePolicy;
   advocate?: {id:string;full_name:string;profile:ApiAdvocateProfile|null}|null;
   id: string;
   reference: string;

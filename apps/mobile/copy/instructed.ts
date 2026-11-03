@@ -6,6 +6,10 @@ export const instructedCopy = {
   // Advocate input fills "for the offences of"; the six editor sections stay.
   legalNoticeDraft: {
     offences: 'Offences',
+    // Approved — owner decision in client's absence, 4 Nov 2026 (§9.2).
+    complianceDays: 'Compliance period (days)',
+    compliancePeriod: 'Compliance period',
+    receiptAnchor: 'days from receipt of notice',
     // Approved — owner-instructed intake seeding and review indication, 3 Nov 2026.
     fromIntake: 'From client intake — review before use',
     fromFiling: 'From client’s filing',

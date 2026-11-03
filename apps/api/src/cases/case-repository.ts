@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { z } from "zod";
-import { CaseStatusSchema } from "@legalitt/shared";
+import { CaseStatusSchema, NoticePolicySchema } from "@legalitt/shared";
 import { parse } from "../auth/auth.service";
 import { PrismaService } from "../prisma.service";
 import { caseScope, type CaseActor } from "./case-access";
@@ -45,6 +45,7 @@ export class CaseRepository {
       include: {
         case_parties_case_id_relations: true,
         pricing_id_relation: {select: {base_amount_paise: true}},
+        service_code_relation: {select: {config: true}},
         // The advocate's drawn facts (design 437) travel with the case; the id
         // alone would leave the card empty.
         advocate_id_relation:{select:{id:true,full_name:true,advocate_profiles_user_id_relations:{select:{
@@ -71,6 +72,7 @@ export class CaseRepository {
     const {
       case_parties_case_id_relations: parties,
       pricing_id_relation: pricing,
+      service_code_relation: service,
       advocate_id_relation: advocate,
       case_events_case_id_relations: events,
       documents_case_id_relations: documents,
@@ -93,7 +95,8 @@ export class CaseRepository {
     );
     const reviews = drafts.flatMap((d) => d.draft_reviews_draft_id_relations);
     const {advocate_profiles_user_id_relations: profile = null, ...advocateUser} = advocate ?? {};
-    return { ...caseRecord, parties, pricing, advocate: advocate ? {...advocateUser, profile} : advocate, events, documents, drafts, reviews, shipments };
+    const notice_policy = parse(NoticePolicySchema, (service.config as {notice_policy?: unknown}).notice_policy ?? {});
+    return { ...caseRecord, notice_policy, parties, pricing, advocate: advocate ? {...advocateUser, profile} : advocate, events, documents, drafts, reviews, shipments };
   }
 
   async list(actor: CaseActor, query: unknown) {

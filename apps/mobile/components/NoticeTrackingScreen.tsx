@@ -33,7 +33,7 @@ export type NoticeTrackingModel = {
   ticked: number; stepActive: boolean;
   /** Absent until the case has one — then the whole ASSIGNED ADVOCATE section is absent. */
   advocate: NoticeTrackingAdvocate | null;
-  paidAmount: number | null; draftFile: string;
+  paidAmount: number | null; draftFile: string; complianceDays?: number | null;
   allowDemoAdvance: boolean;
   onViewDraft: () => void; onApprove: () => void; onRequestChanges: (comment: string) => void;
   onViewProfile: () => void; onChat: () => void; onDelivery: () => void;
@@ -127,6 +127,9 @@ export default function NoticeTrackingScreen({ model: m }: { model: NoticeTracki
             </View>
             <Text style={styles.rowValue}>{m.tier.trackingSpeed}</Text>
           </TableRow>
+          {m.complianceDays != null && <TableRow label={instructedCopy.legalNoticeDraft.compliancePeriod}>
+            <Text style={styles.rowValue}>{m.complianceDays} {instructedCopy.legalNoticeDraft.receiptAnchor}</Text>
+          </TableRow>}
           {Boolean(m.submittedOn) && (
             <TableRow label="Submitted On">
               <Text style={styles.rowValue}>{formatDate(m.submittedOn)}</Text>

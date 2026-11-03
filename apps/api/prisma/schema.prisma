@@ -185,6 +185,7 @@ model Case {
   matter_type                       String?
   subject_matter                    String?
   subject_line                      String?
+  compliance_period_days            Int?
   legal_demand                      Json?           @db.JsonB
   tier                              String?
   title                             String?
@@ -276,6 +277,8 @@ model Document {
 }
 
 model Draft {
+  compliance_period_days Int?
+  closing_policy Json? @db.JsonB
   id                               String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   case_id                          String        @db.Uuid
   kind                             String

@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import fontkit, * as kit from '@pdf-lib/fontkit';
 import { PDFDocument, rgb, type PDFFont, type PDFPage, type PDFImage, type RGB, PDFOperator, PDFOperatorNames, PDFName, PDFHexString } from 'pdf-lib';
-import type { NoticeDraftContent } from '@legalitt/shared';
+import { DEFAULT_NOTICE_POLICY, noticeClosing, type NoticePolicy, type NoticeDraftContent } from '@legalitt/shared';
 import { noticeLetterhead as t } from './notice-letterhead';
 
 export type NoticePdfInput = {
@@ -13,6 +13,7 @@ export type NoticePdfInput = {
   sender?: {name?: string | null; father?: string | null; age?: number | null; address?: string | null};
   recipient?: {name?: string | null; address?: string | null};
   subject?: string | null; demands?: string[]; serviceFeePaise?: bigint | string | null;
+  compliancePeriodDays?: number | null; closingPolicy?: NoticePolicy;
   content: NoticeDraftContent;
 };
 const ASSETS = resolve(__dirname, '../../../assets');
@@ -186,9 +187,10 @@ class Letter {
       this.numbered(`${label}.`,d);
     });
     this.gap(16);
-    this.paragraph([{text:'Failing which, my client shall be constrained to initiate appropriate '},
-      {text:'civil proceedings and',weight:'bold'},{text:' also lodge a '},{text:'criminal complaint / FIR',weight:'bold'},
-      {text:` against you before the police authorities for the offences of ${nonempty(i.content.offences)}`}]);
+    const closing=noticeClosing(i.closingPolicy??DEFAULT_NOTICE_POLICY,i.compliancePeriodDays??null,i.content.offences);
+    if(closing.compliance){this.paragraph(closing.compliance);this.gap(7);}
+    this.paragraph(closing.consequence.split(/(civil proceedings(?: and)?|criminal complaint \/ FIR)/g)
+      .map((text,index)=>({text,weight:index%2?'bold' as const:'regular' as const})));
     this.gap(7);
     const fee=i.serviceFeePaise==null?'________':`₹${(Number(i.serviceFeePaise)/100).toLocaleString('en-IN',{maximumFractionDigits:0})}`;
     this.paragraph(`Further you are hereby called to pay ${fee} as the cost of this legal notice.`);

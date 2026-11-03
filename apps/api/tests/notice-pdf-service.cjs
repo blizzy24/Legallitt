@@ -1,6 +1,7 @@
 const test = require('node:test'), assert = require('node:assert/strict');
 const pdfModule = require('../dist/src/documents/notice-pdf');
 const {NoticePdfService} = require('../dist/src/cases/notice-pdf.service');
+const {DEFAULT_NOTICE_POLICY}=require('@legalitt/shared');
 const actor = {id: 'advocate-id', role: 'advocate'};
 const content = {sender: 'Editor sender must not replace intake', recipient: 'Editor recipient must not replace intake',
   subject: 'Editor subject must not replace AI subject', facts: 'Advocate facts', demand: 'Editor demand must not replace client demand',
@@ -14,7 +15,7 @@ function harness() {
     case_parties_case_id_relations: [{kind: 'sender', age: 41, father_name: 'Client father'}],
     advocate_id_relation: {full_name: 'Assigned advocate', advocate_profiles_user_id_relations: {
       education: 'B.A., LL.B.', bar_council_number: 'MH/1234/2020', city: 'Mumbai'}}};
-  const draft = {id: 'latest-draft', version: 3, content, created_at: new Date('2026-11-02T10:00Z')};
+  const draft = {compliance_period_days:7,closing_policy:DEFAULT_NOTICE_POLICY,id: 'latest-draft', version: 3, content, created_at: new Date('2026-11-02T10:00Z')};
   let caseQuery, draftQuery;
   const db = {case: {findFirst: async query => {
     caseQuery = query;
@@ -33,6 +34,10 @@ test('letterhead preview binds intake, assigned profile and the case historical 
     const result = await h.service.preview(actor, 'case-id', 'latest-draft');
     assert.equal(result.filename, 'Legal_Notice_Draft_v3.pdf');
     assert.equal(Buffer.from(result.pdf_base64, 'base64').toString(), '%PDF');
+    assert.equal(supplied.compliancePeriodDays,7);
+    assert.deepEqual(supplied.closingPolicy,DEFAULT_NOTICE_POLICY);
+    h.record.compliance_period_days=30;
+    assert.equal(supplied.compliancePeriodDays,7,'PDF takes selected draft snapshot, not later case edits');
     assert.equal(supplied.reference, h.record.reference);
     assert.equal(supplied.date, h.draft.created_at);
     assert.equal(supplied.subject, 'Persisted AI subject');
