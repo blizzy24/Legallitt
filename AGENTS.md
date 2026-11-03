@@ -61,3 +61,24 @@ for changes already approved in substance. Report what went out.
 
 Always ask first for: Core, production, credentials, data deletion, or anything
 that changes cost.
+
+**Migrate before you ship code.** Push the new image, run
+`infra/scripts/dev-ops-task.sh migrate <IMAGE_TAG>` (runs that image's
+migrations while the old API keeps serving), then deploy the stack on the tag.
+Never the other way round: the running API must never serve against columns it
+does not expect. A migration therefore has to be
+safe for the old image too (add or widen first; rename or drop only once no
+deployed code reads the old shape). If a change cannot be made safe that way,
+stop and ask.
+
+## Testing
+
+- The API suite runs on the Node version in `engines` (22.x, pinned in
+  `.nvmrc`; `fnm use` in the repository, or `fnm exec --using=.nvmrc pnpm test`).
+  Other versions are refused: Node 24 runs `await t.test()` out of order and
+  silently breaks subtests.
+- The test database must be fully migrated and carry the base seed
+  (`prisma/seed.ts`): `pnpm db:local:migrate`, then
+  `DATABASE_URL=$LEGALITT_TEST_DATABASE_URL node dist/prisma/seed.js`.
+  `scripts/test-preflight.cjs` checks all three before the suite starts and says
+  which one is missing.

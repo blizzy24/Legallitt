@@ -6,14 +6,14 @@
     "build": "prisma generate && tsc",
     "typecheck": "prisma generate && tsc --noEmit",
     "start": "node --env-file-if-exists=.env.local dist/src/main.js",
-    "test": "pnpm build && node --test --test-concurrency=1 tests/*.cjs",
+    "test": "pnpm build && node scripts/test-preflight.cjs && node --test --test-concurrency=1 tests/*.cjs",
     "db:validate": "prisma validate",
     "db:migrate": "prisma migrate deploy",
     "db:seed": "pnpm build && prisma db seed",
     "db:seed-demo": "pnpm build && node --env-file-if-exists=.env.local dist/prisma/seed-demo.js",
     "db:local:migrate": "node --env-file=.env.local scripts/migrate-local.cjs",
     "db:local:seed": "pnpm build && node --env-file=.env.local dist/prisma/seed.js",
-    "test:local": "pnpm build && node --env-file=.env.local --test --test-concurrency=1 tests/*.cjs"
+    "test:local": "pnpm build && node --env-file=.env.local scripts/test-preflight.cjs && node --env-file=.env.local --test --test-concurrency=1 tests/*.cjs"
   },
   "devDependencies": {
     "@types/node": "^22.20.3",
