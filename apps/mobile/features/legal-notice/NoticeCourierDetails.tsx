@@ -54,6 +54,8 @@ export default function NoticeCourierDetails() {
   const [error,setError] = useState('');
   // Date messages show once a date looks finished, or after Submit or Back.
   const [tried,setTried]=useState(false);
+  // The shipment status the server last reported (null until a save has read it).
+  const [shipmentStatus,setShipmentStatus]=useState<string|null>(null);
   const reportError = (error: unknown) => setError(error instanceof Error ? error.message : String(error));
   // Earlier builds kept a local copy of the form and restored it over the server's values,
   // which could replace a waybill saved elsewhere. The server is now the only source.
@@ -70,6 +72,7 @@ export default function NoticeCourierDetails() {
       // Read the server's current details before writing.
       const record = await c.repository.case(c.id);
       const fresh = record.shipments?.find(s=>s.direction==='to_recipient');
+      setShipmentStatus(fresh?.status ?? 'none');
       const theirs = flat(serverForm(fresh)), was = flat(base.current), mine = flat(current.current);
       // The server's value replaces a field only when the advocate has not edited it here
       // and the server now holds something different; otherwise the typed text stays as is.
@@ -87,7 +90,7 @@ export default function NoticeCourierDetails() {
       // A draft is written even with nothing changed: complete details then book on the
       // server (a shipment an older build left complete but in draft); incomplete ones are a no-op.
       const editable = ['approved','dispatching'].includes(record.status);
-      if(Object.keys(changes).length || (editable && fresh?.status==='draft')) await c.repository.saveShipment(c.id,changes);
+      if(Object.keys(changes).length || (editable && fresh?.status==='draft')) setShipmentStatus((await c.repository.saveShipment(c.id,changes)).status);
       base.current = settled(i=>merged[i]);
       setError('');
     });
@@ -143,7 +146,12 @@ export default function NoticeCourierDetails() {
     }
   });};
   const recipient=api ? {name:c.record?.details.noticee?.fullName??'',address:c.record?.details.noticee?.address??'',phone:c.record?.details.noticee?.mobile??''} : {...ADV_NOTICE_RECIPIENT,phone:''};
-  const data:typeof CO_SELF_DETAILS={...CO_SELF_DETAILS,
+  // §9.2 substitution (4 Nov 2026): the drawn "Documents Sent" header is only true once
+  // the notice is dispatched; before that the header says what has actually happened.
+  const status=shipmentStatus ?? shipment?.status ?? 'none';
+  const header=!api||['dispatched','completed'].includes(c.record?.status??'') ? null
+    : status==='booked' ? designSubstitutions[286].headerSaved.after : designSubstitutions[286].headerUnsaved.after;
+  const data:typeof CO_SELF_DETAILS={...CO_SELF_DETAILS,...(header ?? {}),
     idValue:shipment?.id??'',fields:CO_SELF_DETAILS.fields.map((f,i)=>({...f,placeholder:['[Courier Name]','[Tracking Number]','DD/MM/YYYY','[Courier Office]','[Mobile Number]','[Paste tracking link]'][i]})),
     receiptFile:receipt?.filename??fixtureReceipt?.name??'',receiptStatus:receipt||fixtureReceipt?'Uploaded':'',
     docs:documents.filter(d=>d.kind==='legal_notice').map(d=>d.filename),docsCount:String(documents.filter(d=>d.kind==='legal_notice').length),
@@ -154,7 +162,7 @@ export default function NoticeCourierDetails() {
   const copy=(value:string)=>{if(Platform.OS==='web')void navigator.clipboard?.writeText(value);};
   return <NoticeScreenFeedback error={error || c.error}><CourierSelfDetailsView data={data} actions={{values:form.values,expected:form.expected,
     onField:(i,value)=>change({...current.current,values:current.current.values.map((v,j)=>j===i?value:v)}),
-    onExpected:value=>change({...current.current,expected:value}),onBack:back,onSubmit:submit,fieldErrors:shownErrors,
+    onExpected:value=>change({...current.current,expected:value}),onBack:back,onSubmit:submit,fieldErrors:shownErrors,headerPending:Boolean(header)&&status!=='booked',
     onReceipt:upload,onViewReceipt:()=>{if(fixtureReceipt)void Linking.openURL(fixtureReceipt.uri);else open(receipt?.id);},onViewDocuments:()=>open(documents.find(d=>d.kind==='legal_notice')?.id),
     onCopyId:()=>copy(data.idValue),onCopyTracking:()=>copy(form.values[1]),
   }} /></NoticeScreenFeedback>;

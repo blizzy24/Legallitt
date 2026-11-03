@@ -1698,7 +1698,7 @@ not treated as settled.
 
 | Design | Drawn for | Reused for | What changed | Status |
 |---|---|---|---|---|
-| 286 | Client → advocate document hand-off | Advocate → noticee dispatch | Carrier and waybill inputs bound to the dispatch case; recipient is the case's noticee. **One string changed** — see below | Provisional |
+| 286 | Client → advocate document hand-off | Advocate → noticee dispatch | Carrier and waybill inputs bound to the dispatch case; recipient is the case's noticee. **One string changed**, and the **header follows the dispatch state** (approved — project owner, 4 Nov 2026) — see below | Provisional |
 | 194 | Client → advocate delivery | Advocate → noticee dispatch | Recipient wording — two strings. See below | Provisional |
 | 195 | Client → advocate delivery | Advocate → noticee dispatch | Pickup and recipient cells bound to advocate and noticee. Wording follows 194 | Provisional |
 | 31, 32, 437 | — | — | **No wording changed.** View Profile and Chat with Advocate had no drawn disabled state, so they borrow the disabled look drawn for View Draft. A reused visual state, not new copy | Provisional |
@@ -1732,9 +1732,21 @@ designs already use for the notice recipient — not a term invented here.
 | 194 | `to your advocate` | `to the <Party>` |
 | 194 | `Your advocate needs the physical documents for the case` | `The signed notice must reach the <Party> by post.` |
 | 286 | `Your advocate can use the tracking number to check the shipment.` | `You can use the tracking number to check the shipment.` |
+| 286 header, nothing saved yet (Approved — project owner, 4 Nov 2026) | Title `Documents Sent`, pill `Sent`, card `Documents Sent` / `Your documents have been marked as sent.` with a check | Title `Courier Details`, no pill, card `Add Courier Details` / `Post the printed notice, then enter the details from your courier receipt below.` with a truck |
+| 286 header, details booked, not dispatched (Approved — project owner, 4 Nov 2026) | as above | Title `Courier Details`, no pill, card `Courier Details Saved` / `Confirm Dispatch on Prepare For Dispatch to mark the notice as sent.` with the drawn check |
+| 286 header, dispatched or completed | — | **As drawn** (the drawn copy is true by then) |
 
 The 286 change exists because the reader of that screen on the advocate side
 **is** the advocate — the original sentence addresses the wrong person.
+
+The 286 header change reads the design for intent, not pixels (§1a.1), as with the
+letterhead's underscores. The drawn flow is client → advocate: the reader arrives
+after posting, so "marked as sent" is true. On the notice flow the advocate arrives
+before anything is recorded: the notice only counts as sent when Confirm Dispatch
+succeeds on 193. Printing "marked as sent" earlier states something false. The
+replacement wording reuses drawn strings where it can: 286's own `Courier Details`
+and `Enter the details from your courier receipt`, 193's `Prepare For Dispatch` and
+`Confirm Dispatch`, and 192's `print the notice`.
 
 Layout, spacing, type and all measured tokens are unchanged in every row above.
 Only the bound data and the listed strings differ.

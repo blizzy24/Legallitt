@@ -16,6 +16,18 @@ export const designSubstitutions = {
       before: 'Your advocate can use the tracking number to check the shipment.',
       after: 'You can use the tracking number to check the shipment.',
     },
+    // Approved — project owner, 4 Nov 2026. The drawn header ("Documents Sent / Your
+    // documents have been marked as sent.") assumes the reader arrives after posting.
+    // On the notice flow the advocate arrives before anything is saved, so the header
+    // says what is true; the drawn copy returns once the notice is dispatched.
+    headerUnsaved: {
+      before: {title: 'Documents Sent', titlePill: 'Sent', sentTitle: 'Documents Sent', sentBody: 'Your documents have been marked as sent.'},
+      after: {title: 'Courier Details', titlePill: '', sentTitle: 'Add Courier Details', sentBody: 'Post the printed notice, then enter the details from your courier receipt below.'},
+    },
+    headerSaved: {
+      before: {title: 'Documents Sent', titlePill: 'Sent', sentTitle: 'Documents Sent', sentBody: 'Your documents have been marked as sent.'},
+      after: {title: 'Courier Details', titlePill: '', sentTitle: 'Courier Details Saved', sentBody: 'Confirm Dispatch on Prepare For Dispatch to mark the notice as sent.'},
+    },
   },
   194: {
     selfDelivery: {

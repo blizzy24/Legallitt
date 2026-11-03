@@ -45,6 +45,8 @@ export type CourierDetailsActions = {
   onCopyId: () => void; onCopyTracking: () => void;
   /** A message shown under a field, keyed by field index (6 is Expected Delivery). */
   fieldErrors?: Record<number, string>;
+  /** Nothing is saved yet: the header card shows a truck, not a completed check. */
+  headerPending?: boolean;
 };
 export function CourierSelfDetailsView({data = CO_SELF_DETAILS, actions}: {data?: typeof CO_SELF_DETAILS; actions?: CourierDetailsActions}) {
   const insets = useSafeAreaInsets();
@@ -56,11 +58,11 @@ export function CourierSelfDetailsView({data = CO_SELF_DETAILS, actions}: {data?
       <CourierHeader
         onBack={actions?.onBack}
         title={d.title}
-        right={
+        right={d.titlePill ?
           <View style={styles.titlePill}>
             <View style={styles.titleDot} />
             <Text style={styles.titlePillText}>{d.titlePill}</Text>
-          </View>
+          </View> : undefined
         }
       />
 
@@ -69,8 +71,10 @@ export function CourierSelfDetailsView({data = CO_SELF_DETAILS, actions}: {data?
         showsVerticalScrollIndicator={false}
       >
         <View style={[styles.card, styles.cardFirst, styles.rowCard]}>
-          <View style={styles.sentCircle}>
-            <CircleCheck size={t.sentGlyph} color={g.ink} strokeWidth={2} />
+          <View style={[styles.sentCircle, actions?.headerPending && styles.sentCirclePending]}>
+            {actions?.headerPending
+              ? <Truck size={t.sentGlyph} color={t.inkMuted} strokeWidth={2} />
+              : <CircleCheck size={t.sentGlyph} color={g.ink} strokeWidth={2} />}
           </View>
           <View style={styles.flex}>
             <Text style={styles.sentTitle} {...shrinkToFit(0.8)}>
@@ -321,6 +325,7 @@ export function CourierSelfDetailsView({data = CO_SELF_DETAILS, actions}: {data?
 }
 
 const styles = StyleSheet.create({
+  sentCirclePending: { backgroundColor: colors.iconChipBg },
   fieldError: { marginTop: 6, fontFamily: font.appBody, fontSize: 12.5, color: colors.danger },
   screen: { flex: 1, backgroundColor: t.bg },
   content: {},
