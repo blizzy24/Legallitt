@@ -10,7 +10,7 @@ import { authSuccess as t, colors, font, ink } from '../../constants/theme';
 // status dot — then the glowing check badge and the copy.
 export default function SignupSuccessScreen() {
   const insets = useSafeAreaInsets();
-  const {role,isLoggedIn}=useSession();
+  const {isLoggedIn,finishSignIn}=useSession();
 
   return (
     <View style={[styles.screen, { paddingTop: insets.top + t.markTop }]}>
@@ -40,7 +40,7 @@ export default function SignupSuccessScreen() {
       <View style={[styles.footer, { paddingBottom: insets.bottom + 24 }]}>
         <Pressable
           accessibilityRole="button"
-          onPress={() => router.replace(!isLoggedIn?'/(auth)/login':role==='lawyer'?'/(advocate)/dashboard':'/(tabs)/home')}
+          onPress={() => isLoggedIn ? finishSignIn() : router.replace('/(auth)/login')}
           style={({ pressed }) => [styles.button, pressed && styles.pressed]}
         >
           <Text style={styles.buttonLabel}>Get Started</Text>

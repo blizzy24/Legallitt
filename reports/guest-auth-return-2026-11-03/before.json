@@ -1,0 +1,37 @@
+[
+  {
+    "title": "Legal Notice",
+    "found": true,
+    "tag": "DIV",
+    "role": null,
+    "disabled": null,
+    "after": "https://legalitt-5.vercel.app/home"
+  },
+  {
+    "title": "Legal Advice",
+    "found": true,
+    "tag": "DIV",
+    "role": null,
+    "disabled": null,
+    "after": "https://legalitt-5.vercel.app/home"
+  },
+  {
+    "title": "FIR Draft",
+    "found": true,
+    "tag": "DIV",
+    "role": null,
+    "disabled": null,
+    "after": "https://legalitt-5.vercel.app/home"
+  },
+  {
+    "title": "Property Search",
+    "found": true,
+    "tag": "DIV",
+    "role": null,
+    "disabled": null,
+    "after": "https://legalitt-5.vercel.app/home"
+  },
+  {
+    "deepLinkResult": "https://legalitt-5.vercel.app/onboarding"
+  }
+]

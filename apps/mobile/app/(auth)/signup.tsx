@@ -30,7 +30,7 @@ export default function SignupScreen() {
   const [email,setEmail]=useState('');const [password,setPassword]=useState('');
   const [error,setError]=useState('');const [busy,setBusy]=useState(false);
   const submit=async()=>{
-    if(!registrationRole){router.push('/(auth)/role');return;}
+    if(!registrationRole){router.push({pathname:'/(auth)/role',params:{next:'signup'}});return;}
     if(!agreed)return;
     setError('');setBusy(true);
     try{

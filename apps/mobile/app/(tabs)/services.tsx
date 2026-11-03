@@ -13,6 +13,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import ServiceTile from '../../components/ServiceTile';
+import { useSession } from '../../context/session';
 import { serviceIcon } from '../../components/serviceIcons';
 import { colors, font, homeControlShadow, services, tabs } from '../../constants/theme';
 import { SERVICE_ROUTES } from '../../data/serviceRoutes';
@@ -28,6 +29,7 @@ const ROWS = Array.from({ length: Math.ceil(SERVICES.length / 2) }, (_, r) =>
 );
 
 export default function ServicesScreen() {
+  const { openAuthenticatedRoute } = useSession();
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   const tileWidth = (width - services.padX * 2 - services.gridGap) / 2;
@@ -83,7 +85,7 @@ export default function ServicesScreen() {
                 icon={serviceIcon(s.icon)}
                 title={s.shortTitle}
                 description={s.description}
-                onPress={SERVICE_ROUTES[s.id] ? () => router.push(SERVICE_ROUTES[s.id]!) : undefined}
+                onPress={SERVICE_ROUTES[s.id] ? () => openAuthenticatedRoute(SERVICE_ROUTES[s.id]!) : undefined}
                 style={{ width: tileWidth }}
               />
             ))}

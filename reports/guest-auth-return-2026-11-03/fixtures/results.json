@@ -1,0 +1,19 @@
+{
+  "mode": "fixtures",
+  "base": "http://127.0.0.1:61946",
+  "results": [
+    "Onboarding once; reload/root visit retain guest home; role detour returns to login",
+    "Legal Notice: guest → login → refresh → email sign-in → /legal-notice; signed-in tap direct",
+    "Legal Advice: guest → login → refresh → email sign-in → /legal-advice; signed-in tap direct",
+    "FIR Draft: guest → login → refresh → email sign-in → /fir; signed-in tap direct",
+    "Property Search: guest → login → refresh → email sign-in → /property-search; signed-in tap direct",
+    "Cold case URL → login → valid OTP → exact case URL; empty/wrong OTP rejected; authenticated refresh works",
+    "All Services uses same sign-in gate; cancelling clears destination",
+    "Document Forensic: All Services → login → /document-forensic",
+    "High Court Rep.: All Services → login → /services/high-court",
+    "District Court Rep.: All Services → login → /services/district-court",
+    "Sign-up → verification → success → refresh → Get Started resumes FIR"
+  ],
+  "pageErrors": [],
+  "apiCalled": false
+}

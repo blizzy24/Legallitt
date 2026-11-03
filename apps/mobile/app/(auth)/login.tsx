@@ -62,7 +62,7 @@ export default function LoginScreen() {
   const [password,setPassword]=useState('');
   const [error,setError]=useState('');
   const [busy,setBusy]=useState(false);
-  const {accept,acceptFixture,setPending,registrationRole}=useSession();
+  const {accept,acceptFixture,setPending,registrationRole,finishSignIn,cancelSignIn}=useSession();
   const email=value.includes('@');
   const submit=async()=>{
     setError('');
@@ -76,12 +76,12 @@ export default function LoginScreen() {
         if (DATA_SOURCE === 'fixtures') {
           validateFixtureCredentials(value, password);
           await acceptFixture(registrationRole === 'lawyer' ? 'advocate' : 'client');
-          router.replace(registrationRole === 'lawyer' ? '/(advocate)/dashboard' : '/(tabs)/home');
+          finishSignIn();
           return;
         }
         const result=await api<AuthResult|{confirmationRequired:true}>('/auth/login',{email:value.trim(),password});
         if('confirmationRequired' in result){setPending({kind:'email',email:value.trim(),password});router.push('/(auth)/signup-verify');}
-        else{await accept(result);router.replace(result.user.role==='advocate'?'/(advocate)/dashboard':'/(tabs)/home');}
+        else{await accept(result);finishSignIn();}
       }else{
         const digits=value.replace(/[^0-9+]/g,'');const phone=digits.startsWith('+')?digits:`+91${digits}`;
         if(!registrationRole){router.push({pathname:'/(auth)/role',params:{next:'login'}});return;}
@@ -93,7 +93,7 @@ export default function LoginScreen() {
 
   return (
     <View style={styles.screen}>
-      <AuthHeader title="Login" />
+      <AuthHeader title="Login" onBack={cancelSignIn} />
 
       <ScrollView
         contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 24 }]}

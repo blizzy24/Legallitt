@@ -34,7 +34,7 @@ type Props = {
 
 export default function OtpScreen({ title, next, changeTo }: Props) {
   const insets = useSafeAreaInsets();
-  const {pending,accept,acceptFixture,registrationRole}=useSession();
+  const {pending,accept,acceptFixture,registrationRole,finishSignIn}=useSession();
   const [error,setError]=useState('');const [busy,setBusy]=useState(false);
   const submit=async()=>{
     setError('');
@@ -48,7 +48,7 @@ export default function OtpScreen({ title, next, changeTo }: Props) {
         const role = pending.kind === 'phone' ? pending.role : registrationRole === 'lawyer' ? 'advocate' : 'client';
         await acceptFixture(role);
         if (title === 'Sign Up') router.replace(next);
-        else router.replace(role === 'advocate' ? '/(advocate)/dashboard' : '/(tabs)/home');
+        else finishSignIn();
         return;
       }
       let result:AuthResult;
@@ -58,8 +58,7 @@ export default function OtpScreen({ title, next, changeTo }: Props) {
       }else result=await api<AuthResult>('/auth/otp/verify',{phone:pending.phone,code,role:pending.role});
       await accept(result);
       if (title === 'Sign Up') router.replace(next);
-      else if (result.user.role === 'advocate') router.replace('/(advocate)/dashboard');
-      else router.replace('/(tabs)/home');
+      else finishSignIn();
     }catch(e){setError(e instanceof Error?e.message:'Verification failed');}finally{setBusy(false);}
   };
   const resend=async()=>{

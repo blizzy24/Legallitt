@@ -22,13 +22,12 @@ const GRID = homeServices();
 const LEFT = GRID.filter((_, i) => i % 2 === 0);
 const RIGHT = GRID.filter((_, i) => i % 2 === 1);
 
-/** Services without a built route are inert until that section is built. */
-const pressFor = (s: ResolvedService) =>
-  SERVICE_ROUTES[s.id] ? () => router.push(SERVICE_ROUTES[s.id]!) : undefined;
-
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
-  const { isLoggedIn } = useSession();
+  const { isLoggedIn, openAuthenticatedRoute } = useSession();
+  /** Services without a built route are inert until that section is built. */
+  const pressFor = (s: ResolvedService) =>
+    SERVICE_ROUTES[s.id] ? () => openAuthenticatedRoute(SERVICE_ROUTES[s.id]!) : undefined;
 
   return (
     <View style={styles.screen}>

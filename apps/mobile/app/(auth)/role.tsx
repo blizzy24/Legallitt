@@ -30,7 +30,7 @@ export default function RoleScreen() {
     if (!selected) return;
     setRegistrationRole(selected);
     // Client-only guest home (11/144); advocates have no guest design.
-    router.replace(selected === 'user' ? '/(tabs)/home' : next === 'signup' ? '/(auth)/signup' : '/(auth)/login');
+    router.replace(next === 'signup' ? '/(auth)/signup' : next === 'login' ? '/(auth)/login' : selected === 'user' ? '/(tabs)/home' : '/(auth)/login');
   };
 
   return (

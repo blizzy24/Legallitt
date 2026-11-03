@@ -1,6 +1,8 @@
 import { ApiError } from "@legalitt/shared";
 import { DATA_SOURCE } from "../lib/data-source";
-import { router } from "expo-router";
+import { router, type Href } from "expo-router";
+import * as Linking from "expo-linking";
+import { Platform } from "react-native";
 import {
   createContext,
   useContext,
@@ -18,6 +20,8 @@ import {
   type Tokens,
 } from "../lib/auth";
 import { fixtureUser, readFixtureRole, storeFixtureRole, type FixtureRole } from "../lib/fixture-session";
+import { afterSignIn, authDestination, destinationRole } from "../lib/auth-destination";
+import { readEntry, writeEntry } from "../lib/entry-storage";
 export type Role = "user" | "lawyer";
 type Pending =
   | { kind: "email"; email: string; password: string }
@@ -35,6 +39,10 @@ type Session = {
   setPending: (pending: Pending | null) => void;
   hasSeenOnboarding: boolean;
   setHasSeenOnboarding: (value: boolean) => void;
+  returnTo: string | null;
+  openAuthenticatedRoute: (destination: string) => void;
+  finishSignIn: () => void;
+  cancelSignIn: () => void;
   acceptFixture: (role: FixtureRole) => Promise<void>;
   accept: (result: AuthResult) => Promise<void>;
   signOut: () => void;
@@ -45,20 +53,36 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false);
   const [sessionError, setSessionError] = useState<string | null>(null);
   const [attempt, setAttempt] = useState(0);
-  const [registrationRole, setRegistrationRole] = useState<Role | null>(null);
+  const [registrationRole, updateRegistrationRole] = useState<Role | null>(null);
   const [pending, setPending] = useState<Pending | null>(null);
-  const [hasSeenOnboarding, setHasSeenOnboarding] = useState(false);
+  const [hasSeenOnboarding, updateHasSeenOnboarding] = useState(false);
+  const [returnTo, setReturnTo] = useState<string | null>(null);
+  const [resumeRequested, setResumeRequested] = useState(false);
+  const setRegistrationRole = (role: Role) => {
+    updateRegistrationRole(role);
+    void writeEntry('role', role);
+  };
+  const setHasSeenOnboarding = (value: boolean) => {
+    updateHasSeenOnboarding(value);
+    void writeEntry('onboarding', value ? 'true' : null);
+  };
+  const rememberDestination = (destination: string | null) => {
+    setReturnTo(destination);
+    void writeEntry('destination', destination);
+  };
   const accept = async (result: AuthResult) => {
     if (result.user.role === "admin")
       throw new Error("Admin screens are not available");
     await storeTokens(result.tokens);
     setUser(result.user);
+    setRegistrationRole(result.user.role === 'advocate' ? 'lawyer' : 'user');
     setHasSeenOnboarding(true);
     setPending(null);
   };
   const acceptFixture = async (role: FixtureRole) => {
     await storeFixtureRole(role);
     setUser(fixtureUser(role));
+    setRegistrationRole(role === 'advocate' ? 'lawyer' : 'user');
     setHasSeenOnboarding(true);
     setPending(null);
   };
@@ -68,6 +92,25 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     setReady(false);
     (async () => {
       try {
+        const [seen, chosenRole, savedDestination] = await Promise.all([
+          readEntry('onboarding'), readEntry('role'), readEntry('destination'),
+        ]);
+        // Capture the incoming URL before Stack.Protected redirects a guest to
+        // index. This also handles a fresh tab with no onboarding history.
+        const initialUrl = Platform.OS === 'web'
+          ? globalThis.location.pathname + globalThis.location.search + globalThis.location.hash
+          : await Linking.getInitialURL();
+        const initialPath = Platform.OS === 'web' ? initialUrl : initialUrl
+          ? `/${(Linking.parse(initialUrl).path ?? '').replace(/^--\//, '')}${initialUrl.includes('?') ? initialUrl.slice(initialUrl.indexOf('?')) : ''}`
+          : null;
+        if (!alive) return;
+        updateHasSeenOnboarding(seen === 'true');
+        const destination = authDestination(initialPath) ?? authDestination(savedDestination);
+        rememberDestination(destination);
+        const entryRole = destination ? destinationRole(destination)
+          : initialPath?.split(/[?#]/)[0] === '/home' || initialPath?.split(/[?#]/)[0] === '/services' ? 'user'
+          : chosenRole === 'user' || chosenRole === 'lawyer' ? chosenRole : null;
+        if (entryRole) setRegistrationRole(entryRole);
         if (DATA_SOURCE === "fixtures") {
           const role = await readFixtureRole();
           if (role && alive) await acceptFixture(role);
@@ -99,6 +142,15 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       alive = false;
     };
   }, [attempt]);
+  // Navigate after the authenticated render has enabled Stack.Protected. Calling
+  // push before that render can be swallowed just like a signed-out card tap.
+  useEffect(() => {
+    if (!resumeRequested || !user) return;
+    const destination = afterSignIn(returnTo, user.role === 'advocate' ? 'lawyer' : 'user');
+    rememberDestination(null);
+    setResumeRequested(false);
+    router.replace(destination as Href);
+  }, [resumeRequested, user, returnTo]);
   const value = useMemo<Session>(
     () => ({
       isLoggedIn: !!user,
@@ -118,16 +170,33 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       setPending,
       hasSeenOnboarding,
       setHasSeenOnboarding,
+      returnTo,
+      openAuthenticatedRoute: (destination) => {
+        const target = authDestination(destination);
+        if (!target) return;
+        if (user) { router.push(target as Href); return; }
+        rememberDestination(target);
+        setRegistrationRole(destinationRole(target));
+        router.push('/(auth)/login');
+      },
+      finishSignIn: () => setResumeRequested(true),
+      cancelSignIn: () => {
+        rememberDestination(null);
+        setPending(null);
+        router.replace(registrationRole === 'user' ? '/(tabs)/home' : '/(auth)/role');
+      },
       accept,
       acceptFixture,
       signOut: () => {
         setUser(null);
         setPending(null);
+        rememberDestination(null);
+        setResumeRequested(false);
         void (DATA_SOURCE === "fixtures" ? storeFixtureRole(null) : storeTokens(null));
         router.replace("/(auth)/login");
       },
     }),
-    [user, ready, registrationRole, pending, hasSeenOnboarding, sessionError],
+    [user, ready, registrationRole, pending, hasSeenOnboarding, sessionError, returnTo],
   );
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }

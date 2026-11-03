@@ -2,14 +2,12 @@ import { Redirect } from 'expo-router';
 
 import { useSession } from '../context/session';
 
-// First launch lands on the onboarding carousel; afterwards, straight to home.
-//
-// hasSeenOnboarding is in memory only, so a reload shows onboarding again. That is
-// deliberate for a prototype — it keeps the flow reachable for review without a
-// developer flag.
+// First visit gets onboarding. A protected deep link takes priority and resumes
+// after authentication; onboarding completion persists across visits.
 export default function Index() {
-  const { hasSeenOnboarding, role, isLoggedIn, ready, registrationRole } = useSession();
+  const { hasSeenOnboarding, role, isLoggedIn, ready, registrationRole, returnTo } = useSession();
   if (!ready) return null;
+  if (!isLoggedIn && returnTo) return <Redirect href="/(auth)/login" />;
   if (!hasSeenOnboarding) return <Redirect href="/onboarding" />;
   if (!isLoggedIn) return <Redirect href={registrationRole === "user" ? "/(tabs)/home" : registrationRole === "lawyer" ? "/(auth)/login" : "/(auth)/role"} />;
   // 'lawyer' lands in the advocate app; everything else in the client app.

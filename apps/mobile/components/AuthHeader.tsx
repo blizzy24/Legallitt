@@ -15,7 +15,7 @@ export default function AuthHeader({ title, onBack }: { title: string; onBack?: 
         accessibilityRole="button"
         accessibilityLabel="Back"
         hitSlop={12}
-        onPress={onBack ?? (() => (router.canGoBack() ? router.back() : router.replace('/onboarding')))}
+        onPress={onBack ?? (() => (router.canGoBack() ? router.back() : router.replace('/')))}
         style={styles.back}
       >
         <ChevronLeft size={t.backIcon} color={colors.textPrimary} />

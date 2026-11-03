@@ -229,14 +229,20 @@ client has already reviewed.
 **Sign-in order.** Nobody is forced to sign in before seeing the app:
 
 ```
-onboarding → role selection → guest home → banner → sign in or sign up
+onboarding → role selection → client guest home → banner or service card → sign in or sign up
 ```
 
-- Role is chosen **before** the guest home, and decides which guest home is
-  shown and which app the user lands in afterwards.
-- The guest home is browsable without an account. The banner at the top is
-  the only prompt to sign in.
-- Sign-in and sign-up are reached from that banner, never forced earlier.
+- The guest home is client-only (designs 11/144). Selecting Advocate goes
+  directly to sign-in or sign-up; there is no advocate guest dashboard.
+- The client guest home is browsable without an account. A signed-out service
+  card opens sign-in, then continues to that service after successful email,
+  OTP or sign-up verification. Signed-in clients open the service directly.
+- A signed-out protected deep link opens sign-in and resumes its complete
+  destination, including the case ID. It does not go through onboarding.
+- Onboarding completion and the chosen entry role persist across visits.
+  The return destination survives authentication-screen reloads in the same
+  browser tab, is limited to app routes, and is cleared on completion or cancel.
+  These navigation rules are the project owner's instruction of 3 November 2026.
 
 The single "email or phone" field decides the path: an `@` means email and
 password, anything else means phone and OTP. Keep that behaviour — it is how
