@@ -4,6 +4,7 @@ import { CaseStatusSchema, NoticePolicySchema } from "@legalitt/shared";
 import { parse } from "../auth/auth.service";
 import { PrismaService } from "../prisma.service";
 import { caseScope, type CaseActor } from "./case-access";
+import { caseClientFees } from './client-fees';
 
 const cursorSchema = z.strictObject({
   id: z.uuid(),
@@ -44,7 +45,10 @@ export class CaseRepository {
       where: { AND: [caseScope(actor), { id }] },
       include: {
         case_parties_case_id_relations: true,
-        pricing_id_relation: {select: {base_amount_paise: true}},
+        pricing_id_relation: {select: {base_amount_paise: true, gst_bps: true}},
+        payments_case_id_relations: {where: {purpose:'service_fee',status:'captured'},
+          orderBy: {captured_at:'desc'},take:1,
+          select: {base_amount_paise:true,gst_paise:true,total_paise:true,simulated:true,captured_at:true}},
         service_code_relation: {select: {config: true}},
         // The advocate's drawn facts (design 437) travel with the case; the id
         // alone would leave the card empty.
@@ -72,6 +76,7 @@ export class CaseRepository {
     const {
       case_parties_case_id_relations: parties,
       pricing_id_relation: pricing,
+      payments_case_id_relations: payments,
       service_code_relation: service,
       advocate_id_relation: advocate,
       case_events_case_id_relations: events,
@@ -96,7 +101,12 @@ export class CaseRepository {
     const reviews = drafts.flatMap((d) => d.draft_reviews_draft_id_relations);
     const {advocate_profiles_user_id_relations: profile = null, ...advocateUser} = advocate ?? {};
     const notice_policy = parse(NoticePolicySchema, (service.config as {notice_policy?: unknown}).notice_policy ?? {});
-    return { ...caseRecord, notice_policy, parties, pricing, advocate: advocate ? {...advocateUser, profile} : advocate, events, documents, drafts, reviews, shipments };
+    const capturedAt = payments[0]?.captured_at;
+    const feeVersions = capturedAt ? await db.servicePricing.findMany({where:{service_code:'legal_notice',
+      variant:{in:['platform_fee','delivery_fee']},effective_from:{lte:capturedAt},
+      OR:[{effective_to:null},{effective_to:{gt:capturedAt}}]},orderBy:[{effective_from:'desc'},{id:'asc'}]}) : [];
+    const client_fees = caseClientFees(pricing, payments[0], feeVersions);
+    return { ...caseRecord, notice_policy, parties, pricing, client_fees, advocate: advocate ? {...advocateUser, profile} : advocate, events, documents, drafts, reviews, shipments };
   }
 
   async list(actor: CaseActor, query: unknown) {

@@ -103,7 +103,13 @@ export type ApiAdvocateProfile = {
   /** A bundled portrait name (advocate-05) for now; an S3 key once advocates upload their own. */
   photo_key: string | null;
 };
+export type CaseClientFees = {
+  service_fee_paise: string | null; platform_fee_paise: string | null;
+  delivery_fee_paise: string | null; gst_paise: string | null; total_paise: string | null;
+  breakdown_complete: boolean; simulated: boolean;
+};
 export type ApiCase = {
+  client_fees?: CaseClientFees;
   compliance_period_days?: number | null;
   notice_policy?: NoticePolicy;
   advocate?: {id:string;full_name:string;profile:ApiAdvocateProfile|null}|null;
