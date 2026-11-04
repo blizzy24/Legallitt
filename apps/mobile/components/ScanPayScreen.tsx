@@ -32,8 +32,9 @@ function mmss(total: number) {
  * instruction — a live countdown and a self-arriving "payment" would both be
  * lies on a screen with no payment behind it. On a held screen the drawn "Pay
  * using UPI App" button opens the success screen instead, so the flow can be
- * walked. Without `hold` the screen behaves exactly as the Legal Notice flow
- * always did.
+ * walked. With `onPayment` (a real payment) the screen waits for that tap and
+ * nothing advances on its own. Without either, the screen still moves on after
+ * `autoAdvanceMs` — a timer-driven screen listed in architecture §2.12 for removal.
  */
 export default function ScanPayScreen({
   service,
@@ -83,11 +84,11 @@ export default function ScanPayScreen({
     return () => clearTimeout(done);
   }, [hold, successTarget, controlled]));
 
-  useFocusEffect(useCallback(() => {
-    if (!controlled || !paymentReady) return;
-    const timer = setTimeout(() => paymentAction.current?.(), s.autoAdvanceMs);
-    return () => clearTimeout(timer);
-  }, [controlled, paymentReady]));
+  // A screen with a real payment (onPayment) pays only on the drawn "Pay using UPI
+  // App" tap — never on a timer (§2.12; owner instruction, 4 Nov 2026). That tap is
+  // the simulated payment, standing in for the payer completing it in their UPI app;
+  // with Razorpay it opens the real flow and capture moves to the webhook. Until the
+  // tap the QR screen just waits, and the case stays resumable at payment_pending.
 
   return (
     <View style={styles.screen}>
@@ -142,9 +143,9 @@ export default function ScanPayScreen({
 
         <View style={[styles.card, styles.altCard]}>
           <Text style={styles.altTitle}>Prefer another method?</Text>
-          {/* On a held screen (design/278) this drawn button is the way on: it
-              opens the success screen. No UPI app is launched and nothing is
-              charged. Callers that auto-advance leave it inert, as before. */}
+          {/* With a real payment this drawn button is the payment: it captures (simulated)
+              and moves on. On a held screen (design/278) it opens the success screen and
+              charges nothing. Callers that auto-advance leave it inert, as before. */}
           <Pressable
             accessibilityRole="button"
             onPress={onPayment ? () => paymentReady && paymentAction.current?.() : hold ? () => router.replace(successTarget as Href) : undefined}

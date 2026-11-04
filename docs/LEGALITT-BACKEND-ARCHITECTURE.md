@@ -502,6 +502,22 @@ else acted, or because time passed, is the app deciding for them — and no
 design asks for it. A screen may change what it shows when state changes; it
 may not change which screen you are on.
 
+**Known breaches, not yet fixed (recorded 4 Nov 2026).** None takes money, which
+is why they wait for their own chunk; all of them move the user on a timer:
+
+| Screen | Where | Timer |
+|---|---|---|
+| High Court fee Scan & Pay | `components/CourtPaymentFlow.tsx` (scan step) | `ScanPayScreen` without `hold` → success after `autoAdvanceMs` (5 s) |
+| District Court fee Scan & Pay | same component | same |
+| FIR Draft Scan & Pay | `app/fir/payment.tsx` (`hold`) | demo wait (`DEMO_WAIT_MS`, 5 s) while `DEMO_AUTO_ADVANCE` is on |
+| Legal Advice Scan & Pay | `app/legal-advice/payment.tsx` (`hold`) | same |
+| Court courier fees (High Court / District Court) | `app/courier/scan-pay.tsx` (`hold`) | same |
+
+Fixed 4 Nov 2026: the Legal Notice service-fee and courier Scan & Pay screens
+captured the payment 5 s after opening with no tap. They now pay only on the
+drawn **Pay using UPI App** tap (the simulated payment; with Razorpay that button
+opens the real flow and capture moves to the webhook).
+
 **Nothing about the designed screens changes between demo and real.** If a
 button appears at a given status with the timer running, it appears at that
 same status without it.
