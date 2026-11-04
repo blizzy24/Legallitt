@@ -26,6 +26,22 @@ Two rules on top of that:
 
 Where a design and the old admin panel disagree, the design wins.
 
+## Every screen has five states
+
+Required. Designs draw the ideal state only. Before any screen is considered
+done, all five must be handled:
+
+- **Ideal** — all data present, as drawn.
+- **Empty** — no data yet. The screen must be designed for this, not just blank.
+  A missing value takes its label, separators and icons with it (§1a).
+- **Partial** — some fields missing. Never render a label with nothing after it.
+- **Loading** — say so; don't show an empty shell that looks like real emptiness.
+- **Error** — say what failed and what the person can do, next to the thing that
+  failed.
+
+A screen that cannot show a value must not show the label either, and must never
+leave the person unable to tell whether the data is missing or the app is broken.
+
 ## Keep it fake till we make it (§2.11)
 
 Unbuilt capabilities are simulated behind the real API, never skipped and never
