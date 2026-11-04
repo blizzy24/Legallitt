@@ -1,3 +1,5 @@
+import { DATA_SOURCE } from '../../lib/data-source';
+import { useProfile } from '../../context/profile';
 import NotificationBell from '../../components/NotificationBell';
 import { router, type Href } from 'expo-router';
 import { Bell, ChevronLeft, Search } from 'lucide-react-native';
@@ -54,7 +56,7 @@ export default function HomeScreen() {
         </View>
 
         {/* design/144's guest home draws NO video banner, so it is member-only. */}
-        {isLoggedIn && <VideoCarousel />}
+        {isLoggedIn && DATA_SOURCE === 'fixtures' && <VideoCarousel />}
 
         <SectionRow title="Popular Services" badge />
         <View style={styles.popularRow}>
@@ -154,15 +156,16 @@ function GuestHeader() {
 }
 
 function MemberHeader() {
+  const {profile}=useProfile();
   return (
     <View style={styles.greetingRow}>
       <View style={styles.greetingText}>
-        <Text style={styles.greeting}>Hello, Rahul</Text>
+        <Text style={styles.greeting}>{profile.fullName ? `Hello, ${profile.fullName.split(' ')[0]}` : 'Welcome to Legalitt'}</Text>
         <Text style={styles.subtitle}>How can we help you today?</Text>
       </View>
       <NotificationBell size={home.bellIcon} color={ink.accent} style={styles.bell}/>
       <View style={styles.avatar}>
-        <Text style={styles.initials}>RS</Text>
+        <Text style={styles.initials}>{profile.initials}</Text>
       </View>
     </View>
   );

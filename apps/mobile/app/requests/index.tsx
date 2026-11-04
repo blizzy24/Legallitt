@@ -150,7 +150,7 @@ function RequestCard({ item, onOpen }: { item: RequestItem; onOpen?:(id:string)=
         </View>
 
         <View style={styles.rows}>
-          {item.rows.map((row, i) => {
+          {item.rows.filter(row=>Boolean(row.value)).map((row, i) => {
             const Icon = ROW_ICONS[row.label] ?? UserRound;
             return (
               <View key={row.label} style={[styles.row, i > 0 && styles.rowSpaced]}>

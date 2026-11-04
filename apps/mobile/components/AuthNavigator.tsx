@@ -1,3 +1,4 @@
+import AccountDataBoundary from "./AccountDataBoundary";
 import { Stack } from "expo-router";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { useSession } from "../context/session";
@@ -20,6 +21,7 @@ export default function AuthNavigator() {
   return (
     <Stack
       initialRouteName="index"
+      screenLayout={({route, children}) => <AccountDataBoundary name={route.name} params={route.params}>{children}</AccountDataBoundary>}
       screenOptions={{
         headerShown: false,
         contentStyle: { backgroundColor: colors.screenBg },

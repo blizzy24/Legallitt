@@ -1,3 +1,4 @@
+import AccountDataBoundary from '../../components/AccountDataBoundary';
 import { Tabs } from 'expo-router';
 
 import AdvocateTabBar from '../../components/AdvocateTabBar';
@@ -8,6 +9,7 @@ import { colors } from '../../constants/theme';
 export default function AdvocateLayout() {
   return (
     <Tabs
+      screenLayout={({route, children}) => <AccountDataBoundary name={route.name} params={route.params}>{children}</AccountDataBoundary>}
       tabBar={() => <AdvocateTabBar />}
       screenOptions={{
         headerShown: false,

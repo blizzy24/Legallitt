@@ -1769,6 +1769,33 @@ Only the bound data and the listed strings differ.
 
 ---
 
+### Instructed additions — navigation data coverage (4 November 2026)
+
+> **Approved — project owner.** Unsupported advocate and client navigation must
+> omit fixture records or gate the section until its data exists. This is an
+> explicit exception for unbuilt account/service screens, not a bypass of the
+> existing API simulators in §2.11. Real Legal Notice endpoints stay in use.
+
+- Advocate Dashboard and Matters remain real. Clients and Wallet/Earnings show
+  an unavailable state with My Cases as an exit, not fake clients or a zero balance.
+- Analytics, client-directory detail pages, reviews, calendars, bank/payout flows,
+  account-setting edits and verification-profile fixtures are gated, including
+  direct URLs. Settings shows only the signed-in name/email, navigable settings
+  rows and sign-out; no invented verification badge or inert preference toggles.
+- Client Home and Profile use the signed-in identity. The sample active-count,
+  presence dot, version claim and nonfunctional video carousel are omitted.
+  Cases, My Requests and notifications stay real. The unsupported hearing count
+  is omitted; missing request fields remove their entire row.
+- Saved Advocates, account-wide Messages/Documents/Payments, profile edits and
+  support/settings routes are gated. Case-specific advocate profiles, chat,
+  uploads and document previews remain available through real Legal Notice cases.
+- Other service routes stop at an unavailable state in API mode; no fictional
+  case or payment journey is presented as live. Fixture-mode design previews
+  remain unchanged. No other-service backend or API adapter is built here.
+- Gate text is instructed operational copy in `copy/instructed.ts`, not drawn
+  copy. Header, card, typography and controls reuse existing measured tokens.
+  A gate means the feature is unbuilt, not that an API request found no records.
+
 ### Instructed additions — advocate five-state sweep (4 November 2026)
 
 > **Approved — project owner.** Every screen handles ideal, empty, partial,

@@ -1,3 +1,4 @@
+import AccountDataBoundary from '../../components/AccountDataBoundary';
 import { Tabs } from 'expo-router';
 
 import { useSession } from '../../context/session';
@@ -9,6 +10,7 @@ export default function TabsLayout() {
   const { isLoggedIn } = useSession();
   return (
     <Tabs
+      screenLayout={({route, children}) => <AccountDataBoundary name={route.name} params={route.params}>{children}</AccountDataBoundary>}
       tabBar={() => <TabBar />}
       screenOptions={{
         headerShown: false,

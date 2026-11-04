@@ -2,6 +2,21 @@
  * "Instructed copy"). Kept apart from drawn copy and from the substitutions so it
  * stays distinguishable; do not reword. */
 export const instructedCopy = {
+  // Approved — owner navigation-data sweep, 4 November 2026. Unbuilt data is
+  // unavailable, not an assertion that this account has no records.
+  navigationAvailability: {
+    heading: 'Not available yet',
+    general: 'This section is not available yet. You can view your Legal Notice cases in My Cases.',
+    wallet: 'The payout split isn’t configured yet. Earnings, balances and withdrawals are not available. You can view recorded client charges in each case.',
+    clients: 'The client directory is not available yet. Open My Cases to see the clients on your assigned Legal Notices.',
+    settings: 'These account settings are not available yet. No changes can be saved here.',
+    advocates: 'The saved-advocate directory is not available yet. You can view your assigned advocate from your Legal Notice case.',
+    messages: 'The conversation list is not available yet. Open your Legal Notice case to chat with its assigned advocate.',
+    documents: 'The document library is not available yet. Open your Legal Notice case to view its documents.',
+    payments: 'The payment-history list is not available yet. Open your Legal Notice case to view its recorded payment.',
+    support: 'In-app support is not available yet. No support conversation has been started.',
+    service: 'This service is not available yet. Legal Notice is available from Home.',
+  },
   // Approved — owner five-state sweep / dashboard 148 instruction, 4 November 2026.
   advocateWork: {
     heading: 'NEEDS YOUR ATTENTION',

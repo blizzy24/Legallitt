@@ -1,3 +1,6 @@
+import { DATA_SOURCE } from '../../../lib/data-source';
+import { useSession } from '../../../context/session';
+import NotificationBell from '../../../components/NotificationBell';
 import { router, type Href } from 'expo-router';
 import { Bell, ChevronLeft, ChevronRight, MessageSquare, UserRound } from 'lucide-react-native';
 import { Fragment } from 'react';
@@ -24,12 +27,15 @@ import { advSettings as t, colors, font, ink, status } from '../../../constants/
 // ⚠ Note 2: this advocate is Priya Sharma, Bar Council of Delhi. The
 // verification flow one batch earlier is Rahul Sharma, MP Bar Council.
 //
-// STATIC, NOT WIRED. The nine toggles do not toggle, nothing is persisted, and
-// no preference is read from or written to anything.
+// Fixture controls remain as drawn. API mode shows real identity, omits
+// unbacked preference values/toggles, and gates unsupported setting destinations.
 
 export default function AdvocateSettingsScreen() {
   const insets = useSafeAreaInsets();
-  const d = AS_ROOT;
+  const { user, signOut } = useSession();
+  const api = DATA_SOURCE === 'api';
+  const d = api ? {...AS_ROOT, profile:{...AS_ROOT.profile,name:user?.name??'',email:user?.email??'',badge:''},
+    sections:AS_ROOT.sections.map(section=>({...section,rows:section.rows.filter(row=>!row.toggle && row.href && row.key !== 'language').map(row=>row.key === 'bank' ? {...row,sub:undefined} : row)})).filter(section=>section.rows.length)} : AS_ROOT;
 
   return (
     <View style={styles.screen}>
@@ -45,8 +51,8 @@ export default function AdvocateSettingsScreen() {
         <Text style={styles.title} {...shrinkToFit(0.8)}>
           {d.title}
         </Text>
-        <MessageSquare size={t.headerIcon} color="#4D463D" strokeWidth={1.8} />
-        <Bell size={t.headerIcon} color="#4D463D" strokeWidth={1.8} style={styles.bell} />
+        {!api && <MessageSquare size={t.headerIcon} color="#4D463D" strokeWidth={1.8} />}
+        <NotificationBell size={t.headerIcon} color="#4D463D" style={styles.bell}/>
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
@@ -58,15 +64,15 @@ export default function AdvocateSettingsScreen() {
             <Text style={styles.name} {...shrinkToFit(0.8)}>
               {d.profile.name}
             </Text>
-            <View style={styles.badgeRow}>
+            {d.profile.badge && <View style={styles.badgeRow}>
               <SettingsIcon name="badge" size={t.badgeGlyph} color={status.active} />
               <Text style={styles.badge} {...shrinkToFit(0.8)}>
                 {d.profile.badge}
               </Text>
-            </View>
-            <Text style={styles.email} {...shrinkToFit(0.8)}>
+            </View>}
+            {d.profile.email && <Text style={styles.email} {...shrinkToFit(0.8)}>
               {d.profile.email}
-            </Text>
+            </Text>}
             <Pressable
               accessibilityRole="button"
               style={styles.edit}
@@ -114,6 +120,7 @@ export default function AdvocateSettingsScreen() {
             </View>
           </Fragment>
         ))}
+        {api && <View style={styles.card}><Pressable accessibilityRole="button" onPress={signOut} style={styles.row}><Text style={styles.rowTitle}>Log Out</Text></Pressable></View>}
       </ScrollView>
     </View>
   );

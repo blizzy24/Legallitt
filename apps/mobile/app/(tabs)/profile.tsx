@@ -1,3 +1,4 @@
+import { DATA_SOURCE } from '../../lib/data-source';
 import { previewNotice } from '../../components/PreviewNotice';
 import { router, type Href } from 'expo-router';
 import {
@@ -60,7 +61,7 @@ export default function ProfileScreen() {
       title: 'My Cases',
       subtitle: 'View and manage your active legal matters',
       href: '/(tabs)/cases',
-      chip: PROFILE_COUNTS.activeCases,
+      chip: DATA_SOURCE === 'fixtures' ? PROFILE_COUNTS.activeCases : undefined,
     },
     {
       icon: CalendarCheck,
@@ -93,6 +94,8 @@ export default function ProfileScreen() {
     },
   ];
 
+  const shownPreferences = DATA_SOURCE === 'api' ? preferences.filter(row => row.title !== 'Language') : preferences;
+
   const help: Row[] = [
     // INFERRED — blank on design/50; design/71 draws a round glyph here.
     { icon: LifeBuoy, title: 'Help Center', subtitle: 'Get answers to common questions', href: '/help' },
@@ -114,7 +117,7 @@ export default function ProfileScreen() {
       >
         <View style={styles.titleRow}>
           <Text style={styles.title}>Profile</Text>
-          <Pressable onPress={() => previewNotice("Settings")} accessibilityRole="button" accessibilityLabel="Settings" hitSlop={8} style={styles.gear}>
+          <Pressable onPress={() => DATA_SOURCE === 'api' ? router.push('/privacy') : previewNotice('Settings')} accessibilityRole="button" accessibilityLabel="Settings" hitSlop={8} style={styles.gear}>
             <Settings size={t.gearIcon} color={colors.textPrimary} />
           </Pressable>
         </View>
@@ -125,7 +128,7 @@ export default function ProfileScreen() {
               <View style={styles.avatar}>
                 <Text style={styles.avatarText}>{profile.initials}</Text>
               </View>
-              <View style={styles.online} />
+              {DATA_SOURCE === 'fixtures' && <View style={styles.online} />}
             </View>
             <View style={styles.identityText}>
               <View style={styles.nameRow}>
@@ -138,12 +141,12 @@ export default function ProfileScreen() {
                   </Text>
                 </View>
               </View>
-              <Text style={styles.email} {...shrinkToFit(0.75)}>
+              {profile.email && <Text style={styles.email} {...shrinkToFit(0.75)}>
                 {profile.email}
-              </Text>
-              <Text style={styles.mobile} {...shrinkToFit(0.8)}>
+              </Text>}
+              {profile.mobile && <Text style={styles.mobile} {...shrinkToFit(0.8)}>
                 {profile.mobile}
-              </Text>
+              </Text>}
             </View>
           </View>
 
@@ -160,7 +163,7 @@ export default function ProfileScreen() {
         </View>
 
         <Section label="ACCOUNT" rows={account} />
-        <Section label="PREFERENCES" rows={preferences} />
+        <Section label="PREFERENCES" rows={shownPreferences} />
         <Section label="HELP & SUPPORT" rows={help} />
 
         <View style={styles.logoutCard}>
@@ -185,7 +188,7 @@ export default function ProfileScreen() {
         </View>
 
         <Text style={styles.footer} {...shrinkToFit(0.8)}>
-          {APP_NAME} • {APP_VERSION}
+          {DATA_SOURCE === 'api' ? APP_NAME : `${APP_NAME} • ${APP_VERSION}`}
         </Text>
       </ScrollView>
 

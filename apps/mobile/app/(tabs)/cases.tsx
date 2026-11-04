@@ -29,9 +29,10 @@ const SEGMENTS: Segment<Tab>[] = [
   { key: 'closed', label: 'Closed' },
 ];
 
-export function CasesScreenView({ stats, active, hearings, pending, closed = [], onOpen }: {
+export function CasesScreenView({ stats, active, hearings, pending, closed = [], onOpen, showHearings = true }: {
   closed?: ReturnType<typeof activeCases>;
   onOpen?:(id:string)=>void;
+  showHearings?: boolean;
   stats: ReturnType<typeof caseStats>; active: ReturnType<typeof activeCases>;
   hearings: ReturnType<typeof upcomingHearings>; pending: PendingRequest[];
 }) {
@@ -66,7 +67,7 @@ export function CasesScreenView({ stats, active, hearings, pending, closed = [],
           <>
             <View style={styles.stats}>
               <StatCard label="ACTIVE CASES" value={stats.active} tone="active" />
-              <StatCard label="HEARINGS" value={stats.hearings} tone="neutral" />
+              {showHearings && <StatCard label="HEARINGS" value={stats.hearings} tone="neutral" />}
               <StatCard label="PENDING" value={stats.pending} tone="pending" />
             </View>
 
@@ -478,5 +479,5 @@ const styles = StyleSheet.create({
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function CasesScreen() {
   const model=useNoticeLists();
-  return <NoticeScreenFeedback error={model.error}><CasesScreenView stats={model.stats} closed={model.closed} active={model.active} hearings={model.hearings} pending={model.pending} onOpen={model.api?id=>model.open(id):undefined} /></NoticeScreenFeedback>;
+  return <NoticeScreenFeedback error={model.error}><CasesScreenView showHearings={!model.api} stats={model.stats} closed={model.closed} active={model.active} hearings={model.hearings} pending={model.pending} onOpen={model.api?id=>model.open(id):undefined} /></NoticeScreenFeedback>;
 }
