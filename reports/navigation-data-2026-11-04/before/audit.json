@@ -1,0 +1,197 @@
+{
+  "source": "Deployed site",
+  "rows": [
+    {
+      "role": "advocate",
+      "route": "/dashboard",
+      "text": "DA\nGood Morning, Demo\n04 Nov 2026\nNEEDS REVIEW\n0\nIN PROGRESS\n0\nRESOLVED\n0\nNEEDS YOUR ATTENTION\nView All\nNo cases assigned yet\nYour assigned Legal Notice cases will appear here.\nEARNINGS\nThe payout split isn’t configured yet. Your net earnings cannot be calculated until it is confirmed.",
+      "errors": []
+    },
+    {
+      "role": "client",
+      "route": "/home",
+      "text": "Hello, Rahul\nHow can we help you today?\n35\nRS\nPopular Services\nTOP\nView All\nLegal Advice\nGet guidance from a qualified advocate\nLegal Notice\nPrepare and send a professional notice\nOur Services\nView All\nLegal Advice\nGet guidance from a qualified advocate\nFIR Draft\nAssistance with precise FIR drafting\nDocument Forensic\nExamine documents by expert\nDistrict Court Representation\nTrusted legal representation before District Courts\nLegal Notice\nPrepare and send a professional notice\nProperty Search\nCheck records and legal verification\nHigh Court Representation\nExpert legal representation before the High Court",
+      "errors": []
+    },
+    {
+      "role": "advocate",
+      "route": "/matters",
+      "text": "Cases\nCases\nManage your active legal matters and case work.\nREVIEW\n0\nPROGRESS\n0\nRESOLVED\n0\nAll\nNeeds Review\nIn Progress\nWaiting for Client\nResolved\nAll Services\nLegal Notice\nYour Matters\n0\nRecent First\nNo cases assigned yet\nYour assigned Legal Notice cases will appear here.",
+      "errors": []
+    },
+    {
+      "role": "client",
+      "route": "/cases",
+      "text": "My Cases\nTrack and manage your legal matters in one place.\n35\nActive\nPending\nClosed\nACTIVE CASES\n8\nHEARINGS\n0\nPENDING\n5\nActive Cases (8)\nView All\nActive\n#LN-2026-0001\nLegal Notice for Family Dispute\nFamily Dispute\nASSIGNED ADVOCATE\nDemo Advocate Kabir\nView Case\nActive\n#LN-2026-0002\nLegal Notice for Tenant Issue\nTenant Issue\nASSIGNED ADVOCATE\nDemo Advocate Meera\nView Case\nActive\n#LN-2026-0003\nLegal Notice for Property Dispute\nProperty Dispute\nASSIGNED ADVOCATE\nDemo Advocate Meera\nView Case\nActive\n#LN-2026-0004\nLegal Notice for Recovery\nMoney Recovery\nASSIGNED ADVOCATE\nDemo Advocate Meera\nView Case\nActive\n#LN-2026-0013\nLegal Notice for Recovery\nMoney Recovery\nASSIGNED ADVOCATE\nAdv. Arjun Sharma\nView Case\nActive\n#LN-2026-0014\nLegal Notice for Recovery\nMoney Recovery\nASSIGNED ADVOCATE\nAdv. Arjun Sharma\nView Case\nActive\n#LN-2026-0017\nLegal Notice for Recovery\nMoney Recovery\nASSIGNED ADVOCATE\nAdv. Arjun Sharma\nView Case\nActive\n#LN-2026-0018\nLegal Notice for Recovery\nMoney Recovery\nView Case\nPending Requests (5)\nView All\nAwaiting Review\nLegal Notice for Cheque Bounce\nCheque Bounce\nRequested: 03 Nov 2026\nVerification in progress\nView Request\nAwaiting Review\nLegal Notice for Consumer Complaint\nConsumer Complaint\nRequested: 03 Nov 2026\nVerification in progress\nView Request\nAwaiting Review\nLegal Notice for Recovery\nMoney Recovery\nRequested: 03 Nov 2026\nVerification in progress\nView Request\nAwaiting Review\nLegal Notice for Recovery\nMoney Recovery\nRequested: 03 Nov 2026\nVerification in progress\nView Request\nAwaiting Review\nLegal Notice for Recovery\nMoney Recovery\nRequested: 03 Nov 2026\nVerification in progress\nView Request",
+      "errors": []
+    },
+    {
+      "role": "advocate",
+      "route": "/clients",
+      "text": "Clients\nManage your clients and their legal matters.\nTotal Clients\n28\nAll-time\nActive\n16\nEngaged\nThis Month\n4\n+14% MoM\nAll (28)\nActive (16)\nRecent Activity\nCorporate\nActive Clients (16)\nRecent Activity\nRS\nRahul Sharma\nActive Client\n2 Active Cases • Civil & Writ\nHigh Court\nDistrict Court\nAdv. Brief\nHC-2026-1048 • +91 98260 •••••\nToday, 11:42 AM\nNext: Evidence Review\nView Client\nAS\nAnanya Singh\nActive Client\n1 Active Matter • Commercial\nDistrict Court\nInjunction\nDC-2026-0814 • Civil Suit\nYesterday\nHearing in 4 days\nView Client\nAV\nAmit Verma\nActive Client\n3 Active Matters • Corporate & Land\nLegal Notice\nProperty\nConsultation\nLN-2026-0391 • Commercial\n18 Sep 2026\nDrafting Reply Pending\nView Client\nPK\nPooja Kulkarni\nActive Client\n1 Active Matter • Forensic Audit\nDocument Forensic\nAuthentication\nDF-2026-0199 • Signature Verification\n15 Sep 2026\nExpert Report Received\nView Client",
+      "errors": []
+    },
+    {
+      "role": "client",
+      "route": "/advocates",
+      "text": "Saved Advocates\nYour saved advocates\nSAVED COUNSEL\n3 Active\nAuto-synced\nAdv. Priya Sharma\nVerified\nProperty & Civil Matters\nIndore, Madhya Pradesh\n4.8\nConsultation: \n₹1,500\n / session\nAvailable Today\nView Profile\nBook Consultation\nAdv. Neha Verma\nVerified\nFamily & Matrimonial Matters\nBhopal, Madhya Pradesh\n4.9\nConsultation: \n₹1,800\n / session\nAvailable Tomorrow\nView Profile\nBook Consultation\nAdv. Rohan Mehta\nVerified\nCommercial & Contract Disputes\nIndore, Madhya Pradesh\n4.7\nConsultation: \n₹1,200\n / session\nAvailable today\nView Profile\nBook Consultation",
+      "errors": []
+    },
+    {
+      "role": "advocate",
+      "route": "/earnings",
+      "text": "Wallet And Earnings\nTrack your earnings and payouts\nREADY TO WITHDRAW\nSettled\n₹24,850\n.00\nReady to send to your verified bank account\nWithdraw Money\nPayout Time & Limits\nSent next today at 6:00 PM\nTotal Earned\n₹78,​500\nAll services\nPending\n₹9,​200\n2 clearances\nPaid Out\n₹44,​450\nThis Month\nLast Month\nThis Year\nEarnings Breakdown\nTotal Before Fees\nConsultations\n14 sessions\n₹28,500\nLegal Drafting\n8 completed\n₹32,000\nCourt Hearings\n3 attended\n₹18,000\nAdvisory\n0 active\n₹0\nFees & Deductions\nTotal Billed\n₹85,000\nPlatform Fee\nPlatform Fee\n-₹6,500\nTaxes & Extra Charges\nTaxes & Extra Charges\nNet Earnings (Your Take-Home)\n₹78,500\nRecent Payments\nView Statement\nRS\nRahul Sharma\nPaid\nLegal Notice\n· 18 Sep 2026\nGross: ₹3,500  ·  Fee: -₹350\nNet: ₹3,150\nAS\nAnanya Singh\nPending\nLegal Advice\n· 17 Sep 2026\nGross: ₹2,000  ·  Fee: -₹200\nNet: ₹1,800\nRM\nRohan Mehta\nProcessing\nProperty Search\n· 16 Sep 2026\nGross: ₹4,500  ·  Fee: -₹450\nNet: ₹4,050\nBank Account\nSBI •••• 4821\nPrimary Savings · IFSC: SBIN0001048\nManage\nRecent Transfer\nOn the Way\n₹18,200\nUTR Details\nRef: PAY-2026-1048-SBI",
+      "errors": []
+    },
+    {
+      "role": "client",
+      "route": "/profile",
+      "text": "Profile\nRS\nRahul Sharma\nClient Account\nrahul.sharma@example.com\n+91 98XXXXXX21\nEdit Profile\nACCOUNT\nMy Cases\n3 Active\nView and manage your active legal matters\nMy Requests\nTrack consultation and representation requests\nSaved Advocates\nView your saved advocates\nDocuments\nAccess your uploaded legal documents\nPayments\nView payment history and transactions\nPREFERENCES\nNotifications\nManage notification preferences\nLanguage\nEnglish\nEnglish\nPrivacy & Security\nManage privacy and account security\nHELP & SUPPORT\nHelp Center\nGet answers to common questions\nContact Support\nTalk to Legalitt Support\nLog Out\nSign out of your Legalitt account\nLegalitt Client App • Version 2.4.1",
+      "errors": []
+    },
+    {
+      "role": "advocate",
+      "route": "/advocate/analytics",
+      "text": "Analytics\nAugust 2026\nThis Month\nTotal Earnings\n₹85,500\n18.5%\nConsultations\n42\n12.3%\nCompleted Cases\n36\n8.4%\nAcceptance Rate\n86%\n5.2%\nEarnings Overview\n₹85,500\nThis Month\n8.4%\nHigher Than last Month\nEarnings\n₹30k\n₹20k\n₹10k\n₹0\nWeek 1\nWeek 2\nWeek 3\nWeek 4\nConsultation Overview\n42\nTotal\nCompleted\n36 (86%)\nPending\n4 (10%)\nCancelled\n2 (4%)\nPerformance",
+      "errors": []
+    },
+    {
+      "role": "client",
+      "route": "/messages",
+      "text": "Messages\nChat with your advocates\nAll Chats\nUnread (3)\nAdvocates\nSupport\nAdv. Priya Sharma\nVerified\n10:42 AM\nMatter: Rahul Sharma vs. Amit Verma\nPlease review the property documents…\n2\nAdv. Neha Verma\nVerified\nYesterday\nMatter: Ananya Singh vs. Rajesh Singh\nI have reviewed the documents you…\n✦\nLegalitt Support\nOfficial\n08 Sep\nHelp Desk • Client Services\nYour representation request has been…\nAdv. Rohan Mehta\nVerified\n07 Sep\nMatter: Vivek Jain vs. Mehta Traders\nAdditional information is required for…\n1\nEnd-to-end encrypted lawyer-client privileged chat",
+      "errors": []
+    },
+    {
+      "role": "advocate",
+      "route": "/advocate/settings",
+      "text": "Settings\nPriya Sharma\nVerified Advocate\nPriya.sharma@gmail.com\nEdit Profile\nAccount\nEdit Profile\nUpdate your personal and professional details\nAdvocate Verification\nVerify your professional identity and credentials\nChange Password\nUpdate your account password securely\nLogin & Security\nManage security, sessions and devices\nManage Documents\nManage your verification and documents\nNotification\nBooking Request\nReceived alerts for new consultation request\nAppointment Reminders\nGet Reminder before scheduled consultations.\nClient Messages\nReceive notifications for new client messages\nPayment Notifications\nGet Notified when payments are received\nConsultation Availability\nAvailable for Consultations\nClient can book consultations during your available hours.\nConsultation Preference\nVideo Consultation\nVoice Consultation\nPrivacy & Security\nPrivacy Settings\nControl your privacy preferences\nApp Permissions\nManage app permissions\nActive Sessions\nView and manage active sessions\nData & Documents\nManage your data and documents\nPreferences\nLanguage\nEnglish\nPayment & Payout settings\nPayment & Payout Settings\nManage payouts and preferences\nBank Account\nSystem Default",
+      "errors": []
+    },
+    {
+      "role": "client",
+      "route": "/documents",
+      "text": "My Documents\nVerified Vault & Case Records\nAll\n4\nCases\nLegal Advice\nOther\nRecent Documents\n4 Files\nProperty Sale Agreement.pdf\nProperty Dispute\n• 2.4 MB\nUploaded 08 Sep 2026\nVerified Copy\nView\nPrevious Court Order.pdf\nDistrict Court Case\n• 1.1 MB\nUploaded 30 Aug 2026\nIndore Dist. Bench\nView\nLegal Notice.pdf\nLegal Notice Service\n• 540 KB\nUploaded 20 Aug 2026\nServed to Respondent\nView\nFIR Draft.pdf\nFIR Draft Service\n• 880 KB\nUploaded 18 Aug 2026\nAdvocate Final Draft\nView\nDocuments uploaded are encrypted and restricted to assigned counsel under Indian Evidence Act confidentiality norms.\nUpload Document",
+      "errors": []
+    },
+    {
+      "role": "advocate",
+      "route": "/advocate/settings/bank",
+      "text": "FINANCIAL SETTINGS\nBank Account\n•••• 4821\nSBI • SAVINGS\nSETTLEMENT ACCOUNT\nBank Account\nManage your verified bank account for Legalitt consultation fee payouts and professional settlements.\nBank Account Verified • Active for Payouts\nState Bank of India\nPrimary Settlement Account\nPrimary\nAccount Holder\nPriya Sharma\nAccount Number\n•••• •••• 4821\nIFSC Code\nSBIN0001234\nAccount Type\nSavings Account\nBranch\nHigh Court Branch, New Delhi\nPAYOUT ACCOUNT\nThis account is used for your Legalitt payouts. Payouts are transferred automatically on scheduled settlement dates.\nUpdate Bank Account\nVERIFICATION STATUS\nAccount Holder\nVerified\nBank Details\nVerified\nPenny Drop Test\nMatched\nRegulatory Trust & Encryption\nFor your security, sensitive banking information is partially hidden. Legalitt encrypts all banking details in compliance with Bar Council and RBI settlement guidelines.",
+      "errors": []
+    },
+    {
+      "role": "advocate",
+      "route": "/advocate/settings/devices",
+      "text": "DEVICE & PRIVACY\nApp Permissions\nDEVICE AUTHORIZATION & PRIVACY\nAuthorized Devices\nView and manage devices currently signed in to your account. Revoke access immediately if you recognize suspicious activity.\nCURRENT ACTIVE SESSION\n1 DEVICE\nThis Device\nWindows 11 • Google Chrome\nNew Delhi, India • Active now\nCurrent\nSession secured via Bar Council two-factor token. Client consultation escrow access enabled.\nOTHER AUTHORIZED SESSIONS (2)\nSync\nAndroid Phone\nAndroid 14 • Legalitt Mobile\nMumbai, India • 12 mins ago\nSign Out\nHigh Court Chambers Wi-Fi\nIP: 103.21.***.***\niPhone 15 Pro\niOS 18 • Safari Mobile\nBengaluru, India • Yesterday, 6:45 PM\nSign Out\nCellular Network\nIP: 49.36.***.***\nSign Out All Other Devices\nYou will remain signed in only on this Windows workstation.\nLegalitt enforces Bar Council identity protection. Signing out terminates all active client case docket viewers and pending biometric authorizations on remote devices.",
+      "errors": []
+    },
+    {
+      "role": "client",
+      "route": "/documents/sample",
+      "text": "Property Sale Agreement.pdf\nVerified Case Document • 2.4 MB\nPage 1 of 6\n100%\nFit\nFORM NO. 16-B • STAMP DUTY PAID\nReg. #MP-IND-2026/884\nAGREEMENT TO SALE OF IMMOVABLE PROPERTY\nExecuted under Section 54 of the Transfer of Property Act, 1882\n08th day of September, 2026  at Indore, Madhya Pradesh by and between:\nPARTY OF THE FIRST PART (VENDOR): Shri Ramesh Chandra Sharma, s/o Late B. L. Sharma, resident of 42, Saket Nagar, Indore (M.P.).\nPARTY OF THE SECOND PART (PURCHASER): Shri Rahul Sharma, s/o Shri Satish Sharma, resident of Vijay Nagar, Indore (M.P.).\nWHEREAS the Vendor is the absolute and lawful owner of the residential plot bearing No. 108-B, measuring 2,400 sq. ft., situated in Scheme No. 54, Indore…\nDigital Signatures Verified (Aadhaar e-Sign)\nPage 1 of 6\nPAGES\n1\n2\n3\n4\n5\n6\nDocument Information\nVerified Vault\nFile Format\nPDF Document (v1.7)\nFile Size\n2.4 MB (6 Pages)\nUploaded Date\n08 Sep 2026, 11:20 AM\nSecurity & Vault ID\n#DOC-VAULT-9182\nRelated Case / Service\nActive Matter\nPROPERTY DISPUTE & TITLE VERIFICATION\nDistrict Representation • Docket #DR-4402\nAssigned Counsel: Adv. Neha Verma (Indore Bench)\nShare\nDownload\nClose",
+      "errors": []
+    },
+    {
+      "role": "advocate",
+      "route": "/advocate/settings/security",
+      "text": "ACCOUNT SECURITY\nLogin & Security\nBAR COUNCIL IDENTITY SHIELD\nLogin & Security Overview\nManage how you sign in and keep your advocate credentials safe and verified.\nLOGIN INFORMATION\nEmail Address\npriyasharma@gmail.com\nVerified\nMobile Number\n+91 98102 •••••\nVerified\nSECURITY CONTROLS\nTwo-Step Verification\nAuthenticate high-value actions & client escrow files.\nLogin Alerts\nInstant SMS and secure email notice on new sessions.\nPASSWORD\nChange Password\nLast modified 3 months ago (Court Records)\nACTIVE SESSIONS\nActive Devices\n2 devices authorized and active\nSign Out of All Devices\nTerminates web portals and companion devices\nYour advocate profile is safeguarded with State Bar Council verified dual keys and end-to-end encrypted docket sessions.",
+      "errors": []
+    },
+    {
+      "role": "client",
+      "route": "/payments",
+      "text": "Payments\nPayments\nThis step isn’t available in the preview.\nGo Back",
+      "errors": []
+    },
+    {
+      "role": "advocate",
+      "route": "/advocate/reviews",
+      "text": "Review and Rating\nYour Rating\n1 hour ago\n4.8\nBased on 128 review\n105\n105\n15\n15\n5\n5\n2\n2\n1\n1\n128\nTotal Reviews\n94%\nPositive Reviews\n128\nAverage Rating\nClient Reviews\nAll\nNewest\nHighest Rated\nLowest Rated\nRahul Sharma\nVery professional and explained the legal process clearly. The consultation was helpful and easy to understand\nDivorce Consultation\n2 hours ago\nRahul Sharma\nVery professional and explained the legal process clearly. The consultation was helpful and easy to understand\nDivorce Consultation\n2 hours ago",
+      "errors": []
+    },
+    {
+      "role": "client",
+      "route": "/profile/edit",
+      "text": "Edit Profile\nSave\nRS\nChange Profile Photo\nPERSONAL INFORMATION\nFull Name\nEmail Address\nMobile Number\nVerified\nDate of Birth\nGender\nPrefer not to say\nLOCATION\nCity\nState\nCountry\nPREFERRED LANGUAGE\nEnglish\nPreferred for communication & notices\nCONSULTATION PREFERENCES\nChoose how you prefer to communicate with advocates.\nChat\nAvailable\nVoice\nAvailable\nVideo\nAvailable\nSave Changes\nCancel",
+      "errors": []
+    },
+    {
+      "role": "advocate",
+      "route": "/advocate/calendar",
+      "text": "Appointment Calendar\nYour Availability\nAvailable for Consultations\nClients can book consultations during your available hours\nAugust 2026\nSUN\nMON\nTUE\nWED\nTHU\nFRI\nSAT\n26\n27\n28\n29\n30\n31\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\n1\n2\n3\n4\n5\nToday, 13 August\nToday’s Schedule\nAdd Availability\n10:00\nAM\nRahul Sharma\nDivorce Consultation\nVideo Consultation   •   30 min\nConfirmed\n12:00\nAM\nAkash Sinha\nProperty Dispute\nVideo Consultation   •   30 min\nConfirmed\n12:00\nAM\nPriya Mehta\nLegal Advice\nVideo Consultation   •   30 min\nConfirmed\n9:00\nAM\nCourt Hearing\nHigh Court of Madhya Pradesh\nCourtroom No. 12   •   Sharma vs. State\nCase No. WP/1234/2026\nUpcoming\nAdd Hearing\nManage Availability\nMon\nTue\nWed\nThu\nFri\nSat\nSan\nAvailable Hours\n09:00 AM - 6:00 PM\nEdit Hours",
+      "errors": []
+    },
+    {
+      "role": "client",
+      "route": "/requests",
+      "text": "My Requests\nTrack your consultation and representation requests.\nAll\n19\nPending\n5\nAccepted\n8\nConfirmed\n6\nSERVICE TYPE\nLegal Notice\nAccepted\nAssigned Advocate\nRequested Date\n03/11/2026\nLN-2026-0001\nView Request\nSERVICE TYPE\nLegal Notice\nAccepted\nAssigned Advocate\nRequested Date\n03/11/2026\nLN-2026-0002\nView Request\nSERVICE TYPE\nLegal Notice\nAccepted\nAssigned Advocate\nRequested Date\n03/11/2026\nLN-2026-0003\nView Request\nSERVICE TYPE\nLegal Notice\nAccepted\nAssigned Advocate\nRequested Date\n03/11/2026\nLN-2026-0004\nView Request\nSERVICE TYPE\nLegal Notice\nAwaiting Review\nAssigned Advocate\nRequested Date\n03/11/2026\nLN-2026-0005\nView Request\nSERVICE TYPE\nLegal Notice\nAwaiting Review\nAssigned Advocate\nRequested Date\n03/11/2026\nLN-2026-0006\nView Request\nSERVICE TYPE\nLegal Notice\nConfirmed\nAssigned Advocate\nRequested Date\n03/11/2026\nLN-2026-0007\nView Request\nSERVICE TYPE\nLegal Notice\nConfirmed\nAssigned Advocate\nRequested Date\n03/11/2026\nLN-2026-0008\nView Request\nSERVICE TYPE\nLegal Notice\nAwaiting Review\nAssigned Advocate\nRequested Date\n03/11/2026\nLN-2026-0009\nView Request\nSERVICE TYPE\nLegal Notice\nAwaiting Review\nAssigned Advocate\nRequested Date\n03/11/2026\nLN-2026-0010\nView Request\nSERVICE TYPE\nLegal Notice\nAwaiting Review\nAssigned Advocate\nRequested Date\n03/11/2026\nLN-2026-0011\nView Request\nSERVICE TYPE\nLegal Notice\nConfirmed\nAssigned Advocate\nRequested Date\n03/11/2026\nLN-2026-0012\nView Request\nSERVICE TYPE\nLegal Notice\nAccepted\nAssigned Advocate\nRequested Date\n03/11/2026\nLN-2026-0013\nView Request\nSERVICE TYPE\nLegal Notice\nAccepted\nAssigned Advocate\nRequested Date\n03/11/2026\nLN-2026-0014\nView Request\nSERVICE TYPE\nLegal Notice\nConfirmed\nAssigned Advocate\nRequested Date\n03/11/2026\nLN-2026-0015\nView Request\nSERVICE TYPE\nLegal Notice\nConfirmed\nAssigned Advocate\nRequested Date\n04/11/2026\nLN-2026-0016\nView Request\nSERVICE TYPE\nLegal Notice\nAccepted\nAssigned Advocate\nRequested Date\n04/11/2026\nLN-2026-0017\nView Request\nSERVICE TYPE\nLegal Notice\nAccepted\nAssigned Advocate\nRequested Date\n04/11/2026\nLN-2026-0018\nView Request\nSERVICE TYPE\nLegal Notice\nConfirmed\nAssigned Advocate\nRequested Date\n04/11/2026\nLN-2026-0019\nView Request\nAdvocates respond to representation requests within 24–48 working hours. Direct urgent queries via client support.",
+      "errors": []
+    },
+    {
+      "role": "advocate",
+      "route": "/advocate/clients/rahul",
+      "text": "Client Profile\nRS\nRahul Sharma\nActive Client\nIndividual Petitioner • Commercial & Civil\nClient Since June 2026\n+91 98260 41209\nCopy\nrahul.sharma@example.com\nCopy\nMessage\nCall\nCases\nDocuments\nMessages\nPayments\nActive Matters (2)\nLive Retainers\nHigh Court Representation\nActive\nRahul Sharma vs. ABC Enterprises\nSpecial Writ Appeal • HC-2026-1048 • Next Hearing: 24 Sep\nDistrict Court Representation\nActive\nProperty Matter (Injunction Suit)\nCivil Suit No. 814 • DC-2026-0814 • Next Stage: Reply Due\nView All Cases\n12 Documents\nVerified\nPleadings, certified orders, leases\nView\nRecent Activity\nAudit Trail\nMessage received\nToday, 11:42 AM\nClient confirmed receipt of court cause list position.\nDocument uploaded\n18 Sep 2026\nRegistered Commercial Lease Agreement (PDF) added to docket.\nPayment received\n16 Sep 2026\nRetainer escrow of ₹45,000 received for High Court matter.\nClient ID: CLI-2026-0148 • All consultations & docket files privileged under BCI rules.",
+      "errors": []
+    },
+    {
+      "role": "client",
+      "route": "/notifications",
+      "text": "Notifications\nMark all as read\nAll\n40\nCases\nConsultations\nPayments\nTODAY\n17 Unread\nNotice delivered •\n6:03 am\nLN-2026-0019\nView Details\nNotice dispatched •\n6:01 am\nLN-2026-0019\nView Details\nDraft ready to review •\n5:56 am\nLN-2026-0019\nView Details\nAdvocate assigned •\n5:54 am\nLN-2026-0019\nView Details\nPayment Successful •\n5:54 am\nLN-2026-0019\nView Details\nPayment Successful •\n5:46 am\nLN-2026-0018\nView Details\nDraft ready to review •\n5:14 am\nLN-2026-0017\nView Details\nAdvocate assigned •\n5:14 am\nLN-2026-0017\nView Details\nPayment Successful •\n5:13 am\nLN-2026-0017\nView Details\nNotice delivered •\n4:57 am\nLN-2026-0015\nView Details\nNotice dispatched •\n4:56 am\nLN-2026-0015\nView Details\nNotice delivered •\n3:55 am\nLN-2026-0016\nView Details\nNotice dispatched •\n3:52 am\nLN-2026-0016\nView Details\nDraft ready to review •\n3:12 am\nLN-2026-0016\nView Details\nAdvocate assigned •\n3:07 am\nLN-2026-0016\nView Details\nPayment Successful •\n3:06 am\nLN-2026-0016\nView Details\nDraft ready to review •\n12:34 am\nLN-2026-0015\nView Details\nYESTERDAY\n18 Unread\nAdvocate assigned •\n3 Nov\nLN-2026-0015\nView Details\nPayment Successful •\n3 Nov\nLN-2026-0015\nView Details\nAdvocate assigned •\n3 Nov\nLN-2026-0014\nView Details\nPayment Successful •\n3 Nov\nLN-2026-0014\nView Details\nNotice dispatched •\n3 Nov\nLN-2026-0013\nView Details\nDraft ready to review\n3 Nov\nLN-2026-0013\nView Details\nAdvocate assigned •\n3 Nov\nLN-2026-0013\nView Details\nPayment Successful •\n3 Nov\nLN-2026-0013\nView Details\nNotice delivered\n3 Nov\nLN-2026-0012\nView Details\nNotice dispatched •\n3 Nov\nLN-2026-0012\nView Details\nDraft ready to review\n3 Nov\nLN-2026-0012\nView Details\nAdvocate assigned •\n3 Nov\nLN-2026-0012\nView Details\nPayment Successful •\n3 Nov\nLN-2026-0012\nView Details\nNotice delivered •\n3 Nov\nLN-2026-0008\nView Details\nNotice dispatched •\n3 Nov\nLN-2026-0008\nView Details\nDraft ready to review •\n3 Nov\nLN-2026-0008\nView Details\nAdvocate assigned •\n3 Nov\nLN-2026-0008\nView Details\nPayment Successful •\n3 Nov\nLN-2026-0008\nView Details\nNotice delivered\n3 Nov\nLN-2026-0007\nView Details\nNotice dispatched •\n3 Nov\nLN-2026-0007\nView Details\nDraft ready to review\n3 Nov\nLN-2026-0007\nView Details\nAdvocate assigned •\n3 Nov\nLN-2026-0007\nView Details\nPayment Successful •\n3 Nov\nLN-2026-0007\nView Details\nNotification Preferences\nManage SMS & WhatsApp alerts\nConfigure",
+      "errors": []
+    },
+    {
+      "role": "advocate",
+      "route": "/advocate/wallet/withdraw",
+      "text": "Edit Clause\nADVOCATE PAYOUT PORTAL\nTransfer settled fees to registered accounts\nREADY TO WITHDRAW\n₹\n24,850.00\nEnter Amount\nUse Max (₹24,850)\n₹ \n₹5,000\n₹10,000\n₹20,000\n₹24,850\nMinimum withdrawal ₹1,000 · Maximum ₹24,850\nTRANSFER TO\nChange\nState Bank of India •••• 4821\nPrimary Savings · IFSC: SBIN0001048\nVerified\nWithdrawal Amount\n₹20,000.00\nPlatform Processing Fee (0%)\n₹0.00\nEstimated Arrival\nToday by 6:00 PM (NEFT/IMPS)\nYou will receive\nDirect account credit\n₹20,000.00\nFunds are transferred directly via Reserve Bank of India (RBI) compliant clearing network. Legalitt retains zero custody of escrowed client retainers.\nConfirm Withdrawal (₹20,000)\nCancel and Return to Wallet",
+      "errors": []
+    },
+    {
+      "role": "client",
+      "route": "/privacy",
+      "text": "Privacy & Security\nPrivacy & Security\nThis step isn’t available in the preview.\nGo Back",
+      "errors": []
+    },
+    {
+      "role": "advocate",
+      "route": "/advocate/notifications",
+      "text": "Notification\nMark all as read\nNo notifications",
+      "errors": []
+    },
+    {
+      "role": "client",
+      "route": "/language",
+      "text": "Language\nLanguage\nThis step isn’t available in the preview.\nGo Back",
+      "errors": []
+    },
+    {
+      "role": "client",
+      "route": "/support-chat",
+      "text": "←\nLegal Support\nAssisted\nLegalitt Support Team\nAvailable to assist\nRegarding: Legal Notice Service\nNon-Advocate Chat\nToday\nL\nLegalitt Support\nHello! Welcome to Legalitt Support. How can we help you with your legal notice requirement?\nJust now\nSuggested quick questions:\nWhat documents do I need?\nHow does the process work?\nI need help choosing a service\nI have a question\nPlease tell us briefly what you need help with.\nJust now\nI need help sending a legal notice regarding a property matter.\nJust now\nL\nLegalitt Support\nSure. We can help you understand the next steps and required information. You can share relevant details or attach contract excerpts here for initial guidance.\nJust now\nPlease avoid sharing unnecessary sensitive information.",
+      "errors": []
+    },
+    {
+      "role": "client",
+      "route": "/legal-advice",
+      "text": "Legal Advice Consultation\nPROFESSIONAL LEGAL GUIDANCE\nGet Expert Legal Advice\nConnect with experienced legal professionals and receive personalised guidance for your specific legal situation.\nWhy seek legal advice?\nBefore taking an important legal step, understand your rights, options and the possible course of action.\nGet professional guidance tailored to your situation, so you can make informed decisions with greater clarity and confidence.\nUnderstand your legal rights and options\nGet clarity on the next steps\nDiscuss your matter with an experienced advocate\nAvoid unnecessary legal complications\nLearn more\nVerified Advocates • Secure & Confidential\nWhy choose Legalitt?\nVerified Advocates\nConnect with experienced and verified legal professionals.\nPersonalised Guidance\nGet legal advice tailored to your specific situation.\nSecure & Confidential\nDiscuss your matter through a secure and confidential platform.\nCHOOSE HOW YOU WOULD LIKE TO PROCEED\nDO IT YOURSELF\nQuick Submission\nUpload your document, provide the required details and submit your forensic review request.\nContinue with Quick Submission\nGET EXPERT HELP\nAssistance Service\nTell us what you need help with and our team will guide you through the document review process.\nRequest Chat\nRequest Callback\nCHOOSE YOUR CONSULTATION\nSelect format\nChat\n₹499\nPOPULAR\nVideo\n₹999\nAudio\n₹699\nVideo Consultation\nDiscuss your matter directly with an advocate\n30 Mins Session\nFee: \n₹999\nCourt Admissible Summary Included\nBook Video Consultation • ₹999",
+      "errors": []
+    },
+    {
+      "role": "client",
+      "route": "/fir",
+      "text": "FIR Draft Service\nGet Help With Your FIR Draft\nPrepare a clear FIR draft by sharing your incident details and supporting information.\nWhy Use This Service?\nClear Incident Details\nOrganize the facts of your incident clearly.\nLegal Drafting Support\nGet help preparing your FIR draft.\nSupporting Documents\nAdd relevant documents or evidence.\nReview & Track\nTrack your request through Legalitt.\nLearn more\nChoose How You Would Like To Proceed\nQuick Submission\nFastest\nFill in your incident details step by step and submit your request.\nStart Quick Submission\nAssistance Service\nAdvocate-Assisted\nExplain your problem in your own words and our team will contact you.\nGet Assistance\nRequirements and procedures may vary depending on the case and location. Legalitt provides legal drafting and advisory assistance; this does not constitute police FIR registration or guaranteed outcome.\n256-bit Encrypted • Confidential Legal Assistance",
+      "errors": []
+    },
+    {
+      "role": "client",
+      "route": "/property-search",
+      "text": "Property Search Report\nKnow Your Property Before You Invest\nGet a professionally prepared property search report before buying, selling or investing in a property.\nWhy is a Property Search Important?\nBefore buying a property, make sure you understand its recorded ownership and legal history.\nA property search helps you review important records and identify potential issues before making a major property decision.\nHelps verify recorded ownership details\nHelps identify registered encumbrances or liabilities\nProvides insight into relevant property records\nHelps you make a more informed property decision\nWhat does a Property Search Report contain?\nLearn more\nCHOOSE HOW YOU WOULD LIKE TO PROCEED\nDO IT YOURSELF\nQuick Submission\nProvide your property details step by step and submit your request.\nContinue with Quick Submission\nGET EXPERT HELP\nAssistance Service\nTell us what you need and our team will help you with the request.\nRequest Chat\nRequest Callback\nCHOOSE YOUR SERVICE SPEED\nSelect the processing option that suits your requirement.\nSTANDARD\nOrdinary\n₹499/-\nStandard processing\nPRIORITY\nUrgent\n₹999/-\nPriority processing\nFinal fee and processing details will be shown before submission.\nContinue",
+      "errors": []
+    },
+    {
+      "role": "client",
+      "route": "/legal-notice",
+      "text": "Legal Notice Detail\nFORMAL LEGAL ACTION\nSend a Legal Notice\nLegally drafted. Professionally reviewed. Hassle-free.\nWhy send a Legal Notice?\nBefore you go to court, make your position clear.\nA legal notice formally communicates your grievance, your demand, and gives the other party an opportunity to respond.\nActs as evidence in court\nClearly states your demand\nOpens an opportunity to resolve the dispute\nMay help avoid unnecessary litigation\nIs a legal notice always required?\nWhat should it contain?\nLearn more\nDrafted & reviewed by Verified Advocates\nSECURE\nWhy choose Legalitt?\nPreview\nBefore You Send\nTrack Postal\nAcknowledgment\nGet Reply\nUpdate\nChoose Your Service\nSelect the priority that suits your requirement.\nURGENT\n₹999\nWithin 5 days\nPriority advocate assign\nORDINARY\n₹699\nWithin 10 days\nStandard advocate assign\nSelected: Urgent Assignment (5 Days)\n₹999\nGet Started\nYour information stays secure and confidential.\nIN COMPLIANCE WITH BAR COUNCIL OF INDIA STANDARDS",
+      "errors": []
+    }
+  ]
+}

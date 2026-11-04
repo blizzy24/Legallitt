@@ -1,0 +1,215 @@
+{
+  "source": "Deployed site",
+  "rows": [
+    {
+      "role": "client",
+      "route": "/home",
+      "text": "Hello, Demo\nHow can we help you today?\n35\nDC\nPopular Services\nTOP\nView All\nLegal Advice\nGet guidance from a qualified advocate\nLegal Notice\nPrepare and send a professional notice\nOur Services\nView All\nLegal Advice\nGet guidance from a qualified advocate\nFIR Draft\nAssistance with precise FIR drafting\nDocument Forensic\nExamine documents by expert\nDistrict Court Representation\nTrusted legal representation before District Courts\nLegal Notice\nPrepare and send a professional notice\nProperty Search\nCheck records and legal verification\nHigh Court Representation\nExpert legal representation before the High Court",
+      "errors": []
+    },
+    {
+      "role": "advocate",
+      "route": "/dashboard",
+      "text": "DA\nGood Morning, Demo\n04 Nov 2026\nNEEDS REVIEW\n0\nIN PROGRESS\n0\nRESOLVED\n0\nNEEDS YOUR ATTENTION\nView All\nNo cases assigned yet\nYour assigned Legal Notice cases will appear here.\nEARNINGS\nThe payout split isn’t configured yet. Your net earnings cannot be calculated until it is confirmed.",
+      "errors": []
+    },
+    {
+      "role": "client",
+      "route": "/cases",
+      "text": "My Cases\nTrack and manage your legal matters in one place.\n35\nActive\nPending\nClosed\nACTIVE CASES\n8\nPENDING\n5\nActive Cases (8)\nView All\nActive\n#LN-2026-0001\nLegal Notice for Family Dispute\nFamily Dispute\nASSIGNED ADVOCATE\nDemo Advocate Kabir\nView Case\nActive\n#LN-2026-0002\nLegal Notice for Tenant Issue\nTenant Issue\nASSIGNED ADVOCATE\nDemo Advocate Meera\nView Case\nActive\n#LN-2026-0003\nLegal Notice for Property Dispute\nProperty Dispute\nASSIGNED ADVOCATE\nDemo Advocate Meera\nView Case\nActive\n#LN-2026-0004\nLegal Notice for Recovery\nMoney Recovery\nASSIGNED ADVOCATE\nDemo Advocate Meera\nView Case\nActive\n#LN-2026-0013\nLegal Notice for Recovery\nMoney Recovery\nASSIGNED ADVOCATE\nAdv. Arjun Sharma\nView Case\nActive\n#LN-2026-0014\nLegal Notice for Recovery\nMoney Recovery\nASSIGNED ADVOCATE\nAdv. Arjun Sharma\nView Case\nActive\n#LN-2026-0017\nLegal Notice for Recovery\nMoney Recovery\nASSIGNED ADVOCATE\nAdv. Arjun Sharma\nView Case\nActive\n#LN-2026-0018\nLegal Notice for Recovery\nMoney Recovery\nView Case\nPending Requests (5)\nView All\nAwaiting Review\nLegal Notice for Cheque Bounce\nCheque Bounce\nRequested: 03 Nov 2026\nVerification in progress\nView Request\nAwaiting Review\nLegal Notice for Consumer Complaint\nConsumer Complaint\nRequested: 03 Nov 2026\nVerification in progress\nView Request\nAwaiting Review\nLegal Notice for Recovery\nMoney Recovery\nRequested: 03 Nov 2026\nVerification in progress\nView Request\nAwaiting Review\nLegal Notice for Recovery\nMoney Recovery\nRequested: 03 Nov 2026\nVerification in progress\nView Request\nAwaiting Review\nLegal Notice for Recovery\nMoney Recovery\nRequested: 03 Nov 2026\nVerification in progress\nView Request",
+      "errors": []
+    },
+    {
+      "role": "advocate",
+      "route": "/matters",
+      "text": "Cases\nCases\nManage your active legal matters and case work.\nREVIEW\n0\nPROGRESS\n0\nRESOLVED\n0\nAll\nNeeds Review\nIn Progress\nWaiting for Client\nResolved\nAll Services\nLegal Notice\nYour Matters\n0\nRecent First\nNo cases assigned yet\nYour assigned Legal Notice cases will appear here.",
+      "errors": []
+    },
+    {
+      "role": "client",
+      "route": "/advocates",
+      "text": "Advocates\nNot available yet\nThe saved-advocate directory is not available yet. You can view your assigned advocate from your Legal Notice case.\nMy Cases",
+      "errors": []
+    },
+    {
+      "role": "advocate",
+      "route": "/clients",
+      "text": "Clients\nNot available yet\nThe client directory is not available yet. Open My Cases to see the clients on your assigned Legal Notices.\nMy Cases",
+      "errors": []
+    },
+    {
+      "role": "client",
+      "route": "/profile",
+      "text": "Profile\nDC\nDemo client\nClient Account\ndemo-client@legalitt.invalid\nEdit Profile\nACCOUNT\nMy Cases\nView and manage your active legal matters\nMy Requests\nTrack consultation and representation requests\nSaved Advocates\nView your saved advocates\nDocuments\nAccess your uploaded legal documents\nPayments\nView payment history and transactions\nPREFERENCES\nNotifications\nManage notification preferences\nPrivacy & Security\nManage privacy and account security\nHELP & SUPPORT\nHelp Center\nGet answers to common questions\nContact Support\nTalk to Legalitt Support\nLog Out\nSign out of your Legalitt account\nLegalitt Client App",
+      "errors": []
+    },
+    {
+      "role": "advocate",
+      "route": "/earnings",
+      "text": "Wallet & Earnings\nNot available yet\nThe payout split isn’t configured yet. Earnings, balances and withdrawals are not available. You can view recorded client charges in each case.\nMy Cases",
+      "errors": []
+    },
+    {
+      "role": "client",
+      "route": "/messages",
+      "text": "Messages\nNot available yet\nThe conversation list is not available yet. Open your Legal Notice case to chat with its assigned advocate.\nMy Cases",
+      "errors": []
+    },
+    {
+      "role": "advocate",
+      "route": "/advocate/analytics",
+      "text": "Analytics\nNot available yet\nThis section is not available yet. You can view your Legal Notice cases in My Cases.\nMy Cases",
+      "errors": []
+    },
+    {
+      "role": "client",
+      "route": "/documents",
+      "text": "My Documents\nNot available yet\nThe document library is not available yet. Open your Legal Notice case to view its documents.\nMy Cases",
+      "errors": []
+    },
+    {
+      "role": "advocate",
+      "route": "/advocate/settings",
+      "text": "Settings\nDemo Advocate Asha\ndemo-advocate-2@legalitt.invalid\nEdit Profile\nAccount\nEdit Profile\nUpdate your personal and professional details\nAdvocate Verification\nVerify your professional identity and credentials\nChange Password\nUpdate your account password securely\nLogin & Security\nManage security, sessions and devices\nManage Documents\nManage your verification and documents\nPrivacy & Security\nPrivacy Settings\nControl your privacy preferences\nApp Permissions\nManage app permissions\nActive Sessions\nView and manage active sessions\nData & Documents\nManage your data and documents\nPayment & Payout settings\nPayment & Payout Settings\nManage payouts and preferences\nBank Account\nLog Out",
+      "errors": []
+    },
+    {
+      "role": "client",
+      "route": "/documents/sample",
+      "text": "My Documents\nNot available yet\nThe document library is not available yet. Open your Legal Notice case to view its documents.\nMy Cases",
+      "errors": []
+    },
+    {
+      "role": "advocate",
+      "route": "/advocate/settings/bank",
+      "text": "Wallet & Earnings\nNot available yet\nThe payout split isn’t configured yet. Earnings, balances and withdrawals are not available. You can view recorded client charges in each case.\nMy Cases",
+      "errors": []
+    },
+    {
+      "role": "advocate",
+      "route": "/advocate/settings/devices",
+      "text": "Account Settings\nNot available yet\nThese account settings are not available yet. No changes can be saved here.\nMy Cases",
+      "errors": []
+    },
+    {
+      "role": "client",
+      "route": "/payments",
+      "text": "Payments\nNot available yet\nThe payment-history list is not available yet. Open your Legal Notice case to view its recorded payment.\nMy Cases",
+      "errors": []
+    },
+    {
+      "role": "advocate",
+      "route": "/advocate/settings/security",
+      "text": "Account Settings\nNot available yet\nThese account settings are not available yet. No changes can be saved here.\nMy Cases",
+      "errors": []
+    },
+    {
+      "role": "client",
+      "route": "/profile/edit",
+      "text": "Account Settings\nNot available yet\nThese account settings are not available yet. No changes can be saved here.\nMy Cases",
+      "errors": []
+    },
+    {
+      "role": "advocate",
+      "route": "/advocate/reviews",
+      "text": "Reviews\nNot available yet\nThis section is not available yet. You can view your Legal Notice cases in My Cases.\nMy Cases",
+      "errors": []
+    },
+    {
+      "role": "client",
+      "route": "/requests",
+      "text": "My Requests\nTrack your consultation and representation requests.\nAll\n19\nPending\n5\nAccepted\n8\nConfirmed\n6\nSERVICE TYPE\nLegal Notice\nAccepted\nAssigned Advocate\nDemo Advocate Kabir\nRequested Date\n03/11/2026\nLN-2026-0001\nView Request\nSERVICE TYPE\nLegal Notice\nAccepted\nAssigned Advocate\nDemo Advocate Meera\nRequested Date\n03/11/2026\nLN-2026-0002\nView Request\nSERVICE TYPE\nLegal Notice\nAccepted\nAssigned Advocate\nDemo Advocate Meera\nRequested Date\n03/11/2026\nLN-2026-0003\nView Request\nSERVICE TYPE\nLegal Notice\nAccepted\nAssigned Advocate\nDemo Advocate Meera\nRequested Date\n03/11/2026\nLN-2026-0004\nView Request\nSERVICE TYPE\nLegal Notice\nAwaiting Review\nRequested Date\n03/11/2026\nLN-2026-0005\nView Request\nSERVICE TYPE\nLegal Notice\nAwaiting Review\nRequested Date\n03/11/2026\nLN-2026-0006\nView Request\nSERVICE TYPE\nLegal Notice\nConfirmed\nAssigned Advocate\nAdv. Arjun Sharma\nRequested Date\n03/11/2026\nLN-2026-0007\nView Request\nSERVICE TYPE\nLegal Notice\nConfirmed\nAssigned Advocate\nAdv. Arjun Sharma\nRequested Date\n03/11/2026\nLN-2026-0008\nView Request\nSERVICE TYPE\nLegal Notice\nAwaiting Review\nRequested Date\n03/11/2026\nLN-2026-0009\nView Request\nSERVICE TYPE\nLegal Notice\nAwaiting Review\nRequested Date\n03/11/2026\nLN-2026-0010\nView Request\nSERVICE TYPE\nLegal Notice\nAwaiting Review\nRequested Date\n03/11/2026\nLN-2026-0011\nView Request\nSERVICE TYPE\nLegal Notice\nConfirmed\nAssigned Advocate\nAdv. Arjun Sharma\nRequested Date\n03/11/2026\nLN-2026-0012\nView Request\nSERVICE TYPE\nLegal Notice\nAccepted\nAssigned Advocate\nAdv. Arjun Sharma\nRequested Date\n03/11/2026\nLN-2026-0013\nView Request\nSERVICE TYPE\nLegal Notice\nAccepted\nAssigned Advocate\nAdv. Arjun Sharma\nRequested Date\n03/11/2026\nLN-2026-0014\nView Request\nSERVICE TYPE\nLegal Notice\nConfirmed\nAssigned Advocate\nAdv. Arjun Sharma\nRequested Date\n03/11/2026\nLN-2026-0015\nView Request\nSERVICE TYPE\nLegal Notice\nConfirmed\nAssigned Advocate\nAdv. Arjun Sharma\nRequested Date\n04/11/2026\nLN-2026-0016\nView Request\nSERVICE TYPE\nLegal Notice\nAccepted\nAssigned Advocate\nAdv. Arjun Sharma\nRequested Date\n04/11/2026\nLN-2026-0017\nView Request\nSERVICE TYPE\nLegal Notice\nAccepted\nRequested Date\n04/11/2026\nLN-2026-0018\nView Request\nSERVICE TYPE\nLegal Notice\nConfirmed\nAssigned Advocate\nAdv. Arjun Sharma\nRequested Date\n04/11/2026\nLN-2026-0019\nView Request\nAdvocates respond to representation requests within 24–48 working hours. Direct urgent queries via client support.",
+      "errors": []
+    },
+    {
+      "role": "advocate",
+      "route": "/advocate/calendar",
+      "text": "Calendar & Availability\nNot available yet\nThis section is not available yet. You can view your Legal Notice cases in My Cases.\nMy Cases",
+      "errors": []
+    },
+    {
+      "role": "client",
+      "route": "/notifications",
+      "text": "Notifications\nMark all as read\nAll\n40\nCases\nConsultations\nPayments\nTODAY\n17 Unread\nNotice delivered •\n6:03 am\nLN-2026-0019\nView Details\nNotice dispatched •\n6:01 am\nLN-2026-0019\nView Details\nDraft ready to review •\n5:56 am\nLN-2026-0019\nView Details\nAdvocate assigned •\n5:54 am\nLN-2026-0019\nView Details\nPayment Successful •\n5:54 am\nLN-2026-0019\nView Details\nPayment Successful •\n5:46 am\nLN-2026-0018\nView Details\nDraft ready to review •\n5:14 am\nLN-2026-0017\nView Details\nAdvocate assigned •\n5:14 am\nLN-2026-0017\nView Details\nPayment Successful •\n5:13 am\nLN-2026-0017\nView Details\nNotice delivered •\n4:57 am\nLN-2026-0015\nView Details\nNotice dispatched •\n4:56 am\nLN-2026-0015\nView Details\nNotice delivered •\n3:55 am\nLN-2026-0016\nView Details\nNotice dispatched •\n3:52 am\nLN-2026-0016\nView Details\nDraft ready to review •\n3:12 am\nLN-2026-0016\nView Details\nAdvocate assigned •\n3:07 am\nLN-2026-0016\nView Details\nPayment Successful •\n3:06 am\nLN-2026-0016\nView Details\nDraft ready to review •\n12:34 am\nLN-2026-0015\nView Details\nYESTERDAY\n18 Unread\nAdvocate assigned •\n3 Nov\nLN-2026-0015\nView Details\nPayment Successful •\n3 Nov\nLN-2026-0015\nView Details\nAdvocate assigned •\n3 Nov\nLN-2026-0014\nView Details\nPayment Successful •\n3 Nov\nLN-2026-0014\nView Details\nNotice dispatched •\n3 Nov\nLN-2026-0013\nView Details\nDraft ready to review\n3 Nov\nLN-2026-0013\nView Details\nAdvocate assigned •\n3 Nov\nLN-2026-0013\nView Details\nPayment Successful •\n3 Nov\nLN-2026-0013\nView Details\nNotice delivered\n3 Nov\nLN-2026-0012\nView Details\nNotice dispatched •\n3 Nov\nLN-2026-0012\nView Details\nDraft ready to review\n3 Nov\nLN-2026-0012\nView Details\nAdvocate assigned •\n3 Nov\nLN-2026-0012\nView Details\nPayment Successful •\n3 Nov\nLN-2026-0012\nView Details\nNotice delivered •\n3 Nov\nLN-2026-0008\nView Details\nNotice dispatched •\n3 Nov\nLN-2026-0008\nView Details\nDraft ready to review •\n3 Nov\nLN-2026-0008\nView Details\nAdvocate assigned •\n3 Nov\nLN-2026-0008\nView Details\nPayment Successful •\n3 Nov\nLN-2026-0008\nView Details\nNotice delivered\n3 Nov\nLN-2026-0007\nView Details\nNotice dispatched •\n3 Nov\nLN-2026-0007\nView Details\nDraft ready to review\n3 Nov\nLN-2026-0007\nView Details\nAdvocate assigned •\n3 Nov\nLN-2026-0007\nView Details\nPayment Successful •\n3 Nov\nLN-2026-0007\nView Details\nNotification Preferences\nManage SMS & WhatsApp alerts\nConfigure",
+      "errors": []
+    },
+    {
+      "role": "advocate",
+      "route": "/advocate/clients/rahul",
+      "text": "Clients\nNot available yet\nThe client directory is not available yet. Open My Cases to see the clients on your assigned Legal Notices.\nMy Cases",
+      "errors": []
+    },
+    {
+      "role": "client",
+      "route": "/privacy",
+      "text": "Account Settings\nNot available yet\nThese account settings are not available yet. No changes can be saved here.\nMy Cases",
+      "errors": []
+    },
+    {
+      "role": "advocate",
+      "route": "/advocate/wallet/withdraw",
+      "text": "Wallet & Earnings\nNot available yet\nThe payout split isn’t configured yet. Earnings, balances and withdrawals are not available. You can view recorded client charges in each case.\nMy Cases",
+      "errors": []
+    },
+    {
+      "role": "client",
+      "route": "/language",
+      "text": "Account Settings\nNot available yet\nThese account settings are not available yet. No changes can be saved here.\nMy Cases",
+      "errors": []
+    },
+    {
+      "role": "advocate",
+      "route": "/advocate/notifications",
+      "text": "Notification\nMark all as read\nNo notifications",
+      "errors": []
+    },
+    {
+      "role": "client",
+      "route": "/support-chat",
+      "text": "Support\nNot available yet\nIn-app support is not available yet. No support conversation has been started.\nMy Cases",
+      "errors": []
+    },
+    {
+      "role": "client",
+      "route": "/legal-advice",
+      "text": "Legal Advice\nNot available yet\nThis service is not available yet. Legal Notice is available from Home.\nMy Cases",
+      "errors": []
+    },
+    {
+      "role": "client",
+      "route": "/fir",
+      "text": "FIR Draft\nNot available yet\nThis service is not available yet. Legal Notice is available from Home.\nMy Cases",
+      "errors": []
+    },
+    {
+      "role": "client",
+      "route": "/property-search",
+      "text": "Property Search\nNot available yet\nThis service is not available yet. Legal Notice is available from Home.\nMy Cases",
+      "errors": []
+    },
+    {
+      "role": "client",
+      "route": "/legal-notice",
+      "text": "Legal Notice Detail\nFORMAL LEGAL ACTION\nSend a Legal Notice\nLegally drafted. Professionally reviewed. Hassle-free.\nWhy send a Legal Notice?\nBefore you go to court, make your position clear.\nA legal notice formally communicates your grievance, your demand, and gives the other party an opportunity to respond.\nActs as evidence in court\nClearly states your demand\nOpens an opportunity to resolve the dispute\nMay help avoid unnecessary litigation\nIs a legal notice always required?\nWhat should it contain?\nLearn more\nDrafted & reviewed by Verified Advocates\nSECURE\nWhy choose Legalitt?\nPreview\nBefore You Send\nTrack Postal\nAcknowledgment\nGet Reply\nUpdate\nChoose Your Service\nSelect the priority that suits your requirement.\nURGENT\n₹999\nWithin 5 days\nPriority advocate assign\nORDINARY\n₹699\nWithin 10 days\nStandard advocate assign\nSelected: Urgent Assignment (5 Days)\n₹999\nGet Started\nYour information stays secure and confidential.\nIN COMPLIANCE WITH BAR COUNCIL OF INDIA STANDARDS",
+      "errors": []
+    },
+    {
+      "role": "client",
+      "route": "/legal-notice/tracking?caseId=83092696-fe8d-4c48-9a79-6a4f97c6f835",
+      "text": "Legal Notice Tracking\nDrafting in Progress\nOrdinary Tier\nLegal Notice Request Submitted\nYour request and payment have been received. A verified advocate is preparing your legal notice.\nREQUEST ID\n#LN-2026-0001\nCopy\nNOTICE DETAILS\nRef: LN-2026-0001\nNotice Type\nFamily Dispute\nService\nORDINARY\nWithin 10 Days\nCurrent Status\nDrafting in Progress\nASSIGNED ADVOCATE\nVerified Advocate\nDA\nDemo Advocate Kabir\nFamily Law, Civil Law\nView Profile\nChat with Advocate\nREQUEST STATUS\nLive Updates\nRequest Submitted\nYour legal notice request has been received.\nPayment Confirmed\n₹1,271 via UPI\nPayment successfully received.\nAdvocate Assigned\nDemo Advocate Kabir\nA verified advocate has been assigned.\nDrafting in Progress\nYour legal notice is currently being prepared.\n5\nAwaiting Your Approval\nPending\nReview and approve the draft before dispatch.\n6\nNotice Dispatched\nPending\nYour approved notice will be sent to the recipient.\n7\nDelivery Confirmed\nPending\nDelivery status will appear here.\nLEGAL NOTICE DRAFT\nPDF Document Updates\nBeing prepared by your advocate\nAvailable after drafting is complete\nView Draft",
+      "errors": []
+    },
+    {
+      "role": "client",
+      "route": "/advocates/e63e5a64-d6db-4cdf-b301-46a989b9adfa?caseId=83092696-fe8d-4c48-9a79-6a4f97c6f835",
+      "text": "Advocate Profile\nDA\nDemo Advocate Kabir\nVerified Advocate\nJaipur\nPRACTICE AREAS\nSpecialized Counsel\nFamily Law\nCivil Law",
+      "errors": []
+    },
+    {
+      "role": "client",
+      "route": "/chat/advocate?notice=1&caseId=83092696-fe8d-4c48-9a79-6a4f97c6f835",
+      "text": "Demo Advocate Kabir\nNo messages yet. Send a message to start the conversation.",
+      "errors": []
+    }
+  ]
+}

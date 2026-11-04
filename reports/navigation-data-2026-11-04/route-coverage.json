@@ -1,0 +1,1262 @@
+[
+  {
+    "route": "(advocate)",
+    "gate": null
+  },
+  {
+    "route": "advocate/ai/index",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/analytics/index",
+    "gate": "Analytics"
+  },
+  {
+    "route": "advocate/analytics/performance",
+    "gate": "Analytics"
+  },
+  {
+    "route": "advocate/availability",
+    "gate": "Calendar & Availability"
+  },
+  {
+    "route": "advocate/calendar/[id]",
+    "gate": "Calendar & Availability"
+  },
+  {
+    "route": "advocate/calendar/add-hearing",
+    "gate": "Calendar & Availability"
+  },
+  {
+    "route": "advocate/calendar/availability",
+    "gate": "Calendar & Availability"
+  },
+  {
+    "route": "advocate/calendar/index",
+    "gate": "Calendar & Availability"
+  },
+  {
+    "route": "advocate/clients/[id]/cases",
+    "gate": "Clients"
+  },
+  {
+    "route": "advocate/clients/[id]/documents",
+    "gate": "Clients"
+  },
+  {
+    "route": "advocate/clients/[id]/messages",
+    "gate": "Clients"
+  },
+  {
+    "route": "advocate/clients/[id]/payments/[paymentId]",
+    "gate": "Clients"
+  },
+  {
+    "route": "advocate/clients/[id]/payments",
+    "gate": "Clients"
+  },
+  {
+    "route": "advocate/clients/[id]",
+    "gate": "Clients"
+  },
+  {
+    "route": "advocate/clients/empty",
+    "gate": "Clients"
+  },
+  {
+    "route": "advocate/clients/search",
+    "gate": "Clients"
+  },
+  {
+    "route": "advocate/consultation/[id]/chat",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/consultation/[id]/completed",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/consultation/[id]/docket",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/consultation/[id]/end",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/consultation/[id]/paused",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/consultation/[id]/report",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/consultation/[id]/reschedule",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/consultation/[id]/room",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/consultation/[id]/video",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/courier/confirm",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/courier/received",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/court/ai-summary",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/court/ai",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/court/call",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/court/case-filed",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/court/case-preparation",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/court/change-advocate-noc",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/court/change-advocate",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/court/chat",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/court/client-accepted-2",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/court/client-accepted",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/court/client-approved",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/court/client-declined",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/court/completed",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/court/confirm-documents",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/court/confirm-filing",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/court/copilot",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/court/court-fee/create",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/court/court-fee/sent",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/court/court-filing",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/court/dashboard",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/court/dc/client-documents",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/court/dc/request",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/court/documents-received",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/court/hearing/add",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/court/hearing/live",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/court/hearing/next",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/court/hearing/review-update",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/court/hearing/scheduled",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/court/hearing/update",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/court/pre-filing-review",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/court/process-fee/create",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/court/process-fee/done",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/court/recommend-documents",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/court/request",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/court/waiting-client",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/documents/viewer",
+    "gate": "Documents"
+  },
+  {
+    "route": "advocate/fir/[id]",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/fir/completed",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/fir/documents",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/fir/draft",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/fir/generator",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/fir/review-compact",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/fir/review",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/forensic/[id]",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/forensic/admin-approved",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/forensic/admin-changes",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/forensic/admin-review",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/forensic/affidavit",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/forensic/documents",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/forensic/paid",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/forensic/report",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/forensic/requests",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/forensic/submit",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/forensic/waiting",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/notice/[id]/chat",
+    "gate": null
+  },
+  {
+    "route": "advocate/notice/[id]/confirm",
+    "gate": null
+  },
+  {
+    "route": "advocate/notice/[id]/delivery",
+    "gate": null
+  },
+  {
+    "route": "advocate/notice/[id]/dispatch",
+    "gate": null
+  },
+  {
+    "route": "advocate/notice/[id]/documents",
+    "gate": null
+  },
+  {
+    "route": "advocate/notice/[id]/draft",
+    "gate": null
+  },
+  {
+    "route": "advocate/notice/[id]/drafting",
+    "gate": null
+  },
+  {
+    "route": "advocate/notice/[id]/fee",
+    "gate": null
+  },
+  {
+    "route": "advocate/notice/[id]/final",
+    "gate": null
+  },
+  {
+    "route": "advocate/notice/[id]/paid",
+    "gate": null
+  },
+  {
+    "route": "advocate/notice/[id]/payment",
+    "gate": null
+  },
+  {
+    "route": "advocate/notice/[id]/received",
+    "gate": null
+  },
+  {
+    "route": "advocate/notice/[id]/report",
+    "gate": null
+  },
+  {
+    "route": "advocate/notice/[id]/response",
+    "gate": null
+  },
+  {
+    "route": "advocate/notice/[id]/review",
+    "gate": null
+  },
+  {
+    "route": "advocate/notice/[id]/scan-pay",
+    "gate": null
+  },
+  {
+    "route": "advocate/notice/[id]/send",
+    "gate": null
+  },
+  {
+    "route": "advocate/notice/[id]/shipment",
+    "gate": null
+  },
+  {
+    "route": "advocate/notice/[id]/tracking",
+    "gate": null
+  },
+  {
+    "route": "advocate/notice/draft-editor",
+    "gate": null
+  },
+  {
+    "route": "advocate/notice/response-editor",
+    "gate": null
+  },
+  {
+    "route": "advocate/notifications",
+    "gate": null
+  },
+  {
+    "route": "advocate/property-search/[id]/editor",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/property-search/[id]/request",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/property-search/[id]/response",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/property-search/[id]/send",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/property-search/[id]/sent",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/property-search/[id]/upload",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/requests/[id]/confirmed",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/requests/[id]/propose",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/requests/[id]/schedule",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/requests/[id]",
+    "gate": "Advocate Workspace"
+  },
+  {
+    "route": "advocate/reviews",
+    "gate": "Reviews"
+  },
+  {
+    "route": "advocate/settings/bank/index",
+    "gate": "Wallet & Earnings"
+  },
+  {
+    "route": "advocate/settings/bank/update",
+    "gate": "Wallet & Earnings"
+  },
+  {
+    "route": "advocate/settings/bank/updated",
+    "gate": "Wallet & Earnings"
+  },
+  {
+    "route": "advocate/settings/bank/verify",
+    "gate": "Wallet & Earnings"
+  },
+  {
+    "route": "advocate/settings/data",
+    "gate": "Account Settings"
+  },
+  {
+    "route": "advocate/settings/devices",
+    "gate": "Account Settings"
+  },
+  {
+    "route": "advocate/settings/documents",
+    "gate": "Account Settings"
+  },
+  {
+    "route": "advocate/settings/edit-profile",
+    "gate": "Account Settings"
+  },
+  {
+    "route": "advocate/settings/index",
+    "gate": null
+  },
+  {
+    "route": "advocate/settings/language",
+    "gate": "Account Settings"
+  },
+  {
+    "route": "advocate/settings/password",
+    "gate": "Account Settings"
+  },
+  {
+    "route": "advocate/settings/payout",
+    "gate": "Wallet & Earnings"
+  },
+  {
+    "route": "advocate/settings/permissions",
+    "gate": "Account Settings"
+  },
+  {
+    "route": "advocate/settings/privacy",
+    "gate": "Account Settings"
+  },
+  {
+    "route": "advocate/settings/security",
+    "gate": "Account Settings"
+  },
+  {
+    "route": "advocate/verify/bar-council",
+    "gate": "Advocate Verification"
+  },
+  {
+    "route": "advocate/verify/complete",
+    "gate": "Advocate Verification"
+  },
+  {
+    "route": "advocate/verify/documents",
+    "gate": "Advocate Verification"
+  },
+  {
+    "route": "advocate/verify/incomplete",
+    "gate": "Advocate Verification"
+  },
+  {
+    "route": "advocate/verify/intro",
+    "gate": "Advocate Verification"
+  },
+  {
+    "route": "advocate/verify/needs-update",
+    "gate": "Advocate Verification"
+  },
+  {
+    "route": "advocate/verify/personal",
+    "gate": "Advocate Verification"
+  },
+  {
+    "route": "advocate/verify/practice",
+    "gate": "Advocate Verification"
+  },
+  {
+    "route": "advocate/verify/professional",
+    "gate": "Advocate Verification"
+  },
+  {
+    "route": "advocate/verify/review",
+    "gate": "Advocate Verification"
+  },
+  {
+    "route": "advocate/verify/submitted",
+    "gate": "Advocate Verification"
+  },
+  {
+    "route": "advocate/wallet/bank",
+    "gate": "Wallet & Earnings"
+  },
+  {
+    "route": "advocate/wallet/utr",
+    "gate": "Wallet & Earnings"
+  },
+  {
+    "route": "advocate/wallet/withdraw",
+    "gate": "Wallet & Earnings"
+  },
+  {
+    "route": "advocates/[id]",
+    "gate": "Advocates"
+  },
+  {
+    "route": "advocates/index",
+    "gate": "Advocates"
+  },
+  {
+    "route": "advocates/rahul-sharma",
+    "gate": "Advocates"
+  },
+  {
+    "route": "callback",
+    "gate": "Support"
+  },
+  {
+    "route": "cases/[id]",
+    "gate": "Case Details"
+  },
+  {
+    "route": "cases/all",
+    "gate": null
+  },
+  {
+    "route": "chat/advocate",
+    "gate": null
+  },
+  {
+    "route": "courier/choose",
+    "gate": "Courier"
+  },
+  {
+    "route": "courier/delivery-details",
+    "gate": "Courier"
+  },
+  {
+    "route": "courier/payment",
+    "gate": "Courier"
+  },
+  {
+    "route": "courier/scan-pay",
+    "gate": "Courier"
+  },
+  {
+    "route": "courier/self/details",
+    "gate": "Courier"
+  },
+  {
+    "route": "courier/self/instructions",
+    "gate": "Courier"
+  },
+  {
+    "route": "courier/self/sent",
+    "gate": "Courier"
+  },
+  {
+    "route": "courier/shipment",
+    "gate": "Courier"
+  },
+  {
+    "route": "courier/success",
+    "gate": "Courier"
+  },
+  {
+    "route": "courier/tracking",
+    "gate": "Courier"
+  },
+  {
+    "route": "dev/index",
+    "gate": null
+  },
+  {
+    "route": "dev/loader",
+    "gate": null
+  },
+  {
+    "route": "dev/splash",
+    "gate": null
+  },
+  {
+    "route": "document-forensic/index",
+    "gate": "Document Forensic"
+  },
+  {
+    "route": "document-forensic/info",
+    "gate": "Document Forensic"
+  },
+  {
+    "route": "document-forensic/payment",
+    "gate": "Document Forensic"
+  },
+  {
+    "route": "document-forensic/report",
+    "gate": "Document Forensic"
+  },
+  {
+    "route": "document-forensic/review",
+    "gate": "Document Forensic"
+  },
+  {
+    "route": "document-forensic/submitted",
+    "gate": "Document Forensic"
+  },
+  {
+    "route": "document-forensic/track",
+    "gate": "Document Forensic"
+  },
+  {
+    "route": "document-forensic/upload",
+    "gate": "Document Forensic"
+  },
+  {
+    "route": "documents/[id]",
+    "gate": "My Documents"
+  },
+  {
+    "route": "documents/case",
+    "gate": "My Documents"
+  },
+  {
+    "route": "documents/index",
+    "gate": "My Documents"
+  },
+  {
+    "route": "fir/index",
+    "gate": "FIR Draft"
+  },
+  {
+    "route": "fir/info",
+    "gate": "FIR Draft"
+  },
+  {
+    "route": "fir/payment",
+    "gate": "FIR Draft"
+  },
+  {
+    "route": "fir/ready",
+    "gate": "FIR Draft"
+  },
+  {
+    "route": "fir/status",
+    "gate": "FIR Draft"
+  },
+  {
+    "route": "fir/step1",
+    "gate": "FIR Draft"
+  },
+  {
+    "route": "fir/step2",
+    "gate": "FIR Draft"
+  },
+  {
+    "route": "fir/step3",
+    "gate": "FIR Draft"
+  },
+  {
+    "route": "fir/step4",
+    "gate": "FIR Draft"
+  },
+  {
+    "route": "fir/step5",
+    "gate": "FIR Draft"
+  },
+  {
+    "route": "fir/submitted",
+    "gate": "FIR Draft"
+  },
+  {
+    "route": "hearings/[id]",
+    "gate": "Case Details"
+  },
+  {
+    "route": "hearings/index",
+    "gate": "Case Details"
+  },
+  {
+    "route": "help",
+    "gate": "Support"
+  },
+  {
+    "route": "kyc/choose",
+    "gate": null
+  },
+  {
+    "route": "kyc/digilocker/checking",
+    "gate": null
+  },
+  {
+    "route": "kyc/digilocker/connect",
+    "gate": null
+  },
+  {
+    "route": "kyc/digilocker/verified",
+    "gate": null
+  },
+  {
+    "route": "kyc/video/capture",
+    "gate": null
+  },
+  {
+    "route": "kyc/video/device-check",
+    "gate": null
+  },
+  {
+    "route": "kyc/video/error",
+    "gate": null
+  },
+  {
+    "route": "kyc/video/intro",
+    "gate": null
+  },
+  {
+    "route": "kyc/video/verified",
+    "gate": null
+  },
+  {
+    "route": "language",
+    "gate": "Account Settings"
+  },
+  {
+    "route": "legal-advice/choose",
+    "gate": "Legal Advice"
+  },
+  {
+    "route": "legal-advice/completed",
+    "gate": "Legal Advice"
+  },
+  {
+    "route": "legal-advice/confirmed",
+    "gate": "Legal Advice"
+  },
+  {
+    "route": "legal-advice/datetime",
+    "gate": "Legal Advice"
+  },
+  {
+    "route": "legal-advice/details",
+    "gate": "Legal Advice"
+  },
+  {
+    "route": "legal-advice/experience",
+    "gate": "Legal Advice"
+  },
+  {
+    "route": "legal-advice/followup",
+    "gate": "Legal Advice"
+  },
+  {
+    "route": "legal-advice/index",
+    "gate": "Legal Advice"
+  },
+  {
+    "route": "legal-advice/info",
+    "gate": "Legal Advice"
+  },
+  {
+    "route": "legal-advice/matter",
+    "gate": "Legal Advice"
+  },
+  {
+    "route": "legal-advice/payment",
+    "gate": "Legal Advice"
+  },
+  {
+    "route": "legal-advice/rate",
+    "gate": "Legal Advice"
+  },
+  {
+    "route": "legal-advice/review",
+    "gate": "Legal Advice"
+  },
+  {
+    "route": "legal-advice/session/audio",
+    "gate": "Legal Advice"
+  },
+  {
+    "route": "legal-advice/session/chat",
+    "gate": "Legal Advice"
+  },
+  {
+    "route": "legal-advice/session/video",
+    "gate": "Legal Advice"
+  },
+  {
+    "route": "legal-advice/track",
+    "gate": "Legal Advice"
+  },
+  {
+    "route": "legal-notice/delivered",
+    "gate": null
+  },
+  {
+    "route": "legal-notice/delivery-proof",
+    "gate": null
+  },
+  {
+    "route": "legal-notice/delivery",
+    "gate": null
+  },
+  {
+    "route": "legal-notice/demand",
+    "gate": null
+  },
+  {
+    "route": "legal-notice/detail",
+    "gate": null
+  },
+  {
+    "route": "legal-notice/index",
+    "gate": null
+  },
+  {
+    "route": "legal-notice/request-submitted",
+    "gate": null
+  },
+  {
+    "route": "legal-notice/scan-pay",
+    "gate": null
+  },
+  {
+    "route": "legal-notice/step1",
+    "gate": null
+  },
+  {
+    "route": "legal-notice/step2",
+    "gate": null
+  },
+  {
+    "route": "legal-notice/step3",
+    "gate": null
+  },
+  {
+    "route": "legal-notice/step4-review",
+    "gate": null
+  },
+  {
+    "route": "legal-notice/step4",
+    "gate": null
+  },
+  {
+    "route": "legal-notice/step5",
+    "gate": null
+  },
+  {
+    "route": "legal-notice/step6",
+    "gate": null
+  },
+  {
+    "route": "legal-notice/success",
+    "gate": null
+  },
+  {
+    "route": "legal-notice/tracking",
+    "gate": null
+  },
+  {
+    "route": "messages/[id]",
+    "gate": "Messages"
+  },
+  {
+    "route": "notifications",
+    "gate": null
+  },
+  {
+    "route": "payments",
+    "gate": "Payments"
+  },
+  {
+    "route": "privacy",
+    "gate": "Account Settings"
+  },
+  {
+    "route": "profile/edit",
+    "gate": "Account Settings"
+  },
+  {
+    "route": "property-search/checking",
+    "gate": "Property Search"
+  },
+  {
+    "route": "property-search/completed",
+    "gate": "Property Search"
+  },
+  {
+    "route": "property-search/index",
+    "gate": "Property Search"
+  },
+  {
+    "route": "property-search/info",
+    "gate": "Property Search"
+  },
+  {
+    "route": "property-search/payment",
+    "gate": "Property Search"
+  },
+  {
+    "route": "property-search/request",
+    "gate": "Property Search"
+  },
+  {
+    "route": "property-search/review",
+    "gate": "Property Search"
+  },
+  {
+    "route": "property-search/track",
+    "gate": "Property Search"
+  },
+  {
+    "route": "requests/[id]",
+    "gate": "Case Details"
+  },
+  {
+    "route": "requests/index",
+    "gate": null
+  },
+  {
+    "route": "services/district-court/advocate/accepted",
+    "gate": "District Court Representation"
+  },
+  {
+    "route": "services/district-court/advocate/cancel",
+    "gate": "District Court Representation"
+  },
+  {
+    "route": "services/district-court/advocate/change-sent",
+    "gate": "District Court Representation"
+  },
+  {
+    "route": "services/district-court/advocate/change",
+    "gate": "District Court Representation"
+  },
+  {
+    "route": "services/district-court/advocate/decide",
+    "gate": "District Court Representation"
+  },
+  {
+    "route": "services/district-court/advocate-assigned",
+    "gate": "District Court Representation"
+  },
+  {
+    "route": "services/district-court/case-completed",
+    "gate": "District Court Representation"
+  },
+  {
+    "route": "services/district-court/case-details",
+    "gate": "District Court Representation"
+  },
+  {
+    "route": "services/district-court/case-overview",
+    "gate": "District Court Representation"
+  },
+  {
+    "route": "services/district-court/case-preparation",
+    "gate": "District Court Representation"
+  },
+  {
+    "route": "services/district-court/case-type",
+    "gate": "District Court Representation"
+  },
+  {
+    "route": "services/district-court/change-advocate-payment",
+    "gate": "District Court Representation"
+  },
+  {
+    "route": "services/district-court/change-advocate",
+    "gate": "District Court Representation"
+  },
+  {
+    "route": "services/district-court/courier/book",
+    "gate": "District Court Representation"
+  },
+  {
+    "route": "services/district-court/courier/details",
+    "gate": "District Court Representation"
+  },
+  {
+    "route": "services/district-court/courier/received",
+    "gate": "District Court Representation"
+  },
+  {
+    "route": "services/district-court/courier/shipment",
+    "gate": "District Court Representation"
+  },
+  {
+    "route": "services/district-court/courier/tracking",
+    "gate": "District Court Representation"
+  },
+  {
+    "route": "services/district-court/court-fee-payment",
+    "gate": "District Court Representation"
+  },
+  {
+    "route": "services/district-court/court-fee",
+    "gate": "District Court Representation"
+  },
+  {
+    "route": "services/district-court/court-filing",
+    "gate": "District Court Representation"
+  },
+  {
+    "route": "services/district-court/documents-needed",
+    "gate": "District Court Representation"
+  },
+  {
+    "route": "services/district-court/documents",
+    "gate": "District Court Representation"
+  },
+  {
+    "route": "services/district-court/first-hearing",
+    "gate": "District Court Representation"
+  },
+  {
+    "route": "services/district-court/index",
+    "gate": "District Court Representation"
+  },
+  {
+    "route": "services/district-court/learn-more",
+    "gate": "District Court Representation"
+  },
+  {
+    "route": "services/district-court/next-hearing",
+    "gate": "District Court Representation"
+  },
+  {
+    "route": "services/district-court/payment",
+    "gate": "District Court Representation"
+  },
+  {
+    "route": "services/district-court/pricing",
+    "gate": "District Court Representation"
+  },
+  {
+    "route": "services/district-court/process-fee-payment",
+    "gate": "District Court Representation"
+  },
+  {
+    "route": "services/district-court/process-fee-receipt",
+    "gate": "District Court Representation"
+  },
+  {
+    "route": "services/district-court/process-fee",
+    "gate": "District Court Representation"
+  },
+  {
+    "route": "services/district-court/request-submitted",
+    "gate": "District Court Representation"
+  },
+  {
+    "route": "services/district-court/review",
+    "gate": "District Court Representation"
+  },
+  {
+    "route": "services/high-court/case-details",
+    "gate": "High Court Representation"
+  },
+  {
+    "route": "services/high-court/case-type",
+    "gate": "High Court Representation"
+  },
+  {
+    "route": "services/high-court/change-request",
+    "gate": "High Court Representation"
+  },
+  {
+    "route": "services/high-court/chat",
+    "gate": "High Court Representation"
+  },
+  {
+    "route": "services/high-court/confirm-advocate",
+    "gate": "High Court Representation"
+  },
+  {
+    "route": "services/high-court/courier/booking",
+    "gate": "High Court Representation"
+  },
+  {
+    "route": "services/high-court/courier/confirm",
+    "gate": "High Court Representation"
+  },
+  {
+    "route": "services/high-court/courier/delivered",
+    "gate": "High Court Representation"
+  },
+  {
+    "route": "services/high-court/courier/shipment",
+    "gate": "High Court Representation"
+  },
+  {
+    "route": "services/high-court/courier/tracking",
+    "gate": "High Court Representation"
+  },
+  {
+    "route": "services/high-court/documents-needed",
+    "gate": "High Court Representation"
+  },
+  {
+    "route": "services/high-court/documents",
+    "gate": "High Court Representation"
+  },
+  {
+    "route": "services/high-court/index",
+    "gate": "High Court Representation"
+  },
+  {
+    "route": "services/high-court/learn-more",
+    "gate": "High Court Representation"
+  },
+  {
+    "route": "services/high-court/matter-type",
+    "gate": "High Court Representation"
+  },
+  {
+    "route": "services/high-court/payment",
+    "gate": "High Court Representation"
+  },
+  {
+    "route": "services/high-court/pending/details",
+    "gate": "High Court Representation"
+  },
+  {
+    "route": "services/high-court/pending/payment",
+    "gate": "High Court Representation"
+  },
+  {
+    "route": "services/high-court/pending/verification",
+    "gate": "High Court Representation"
+  },
+  {
+    "route": "services/high-court/pricing",
+    "gate": "High Court Representation"
+  },
+  {
+    "route": "services/high-court/review-filing",
+    "gate": "High Court Representation"
+  },
+  {
+    "route": "services/high-court/send-documents",
+    "gate": "High Court Representation"
+  },
+  {
+    "route": "support-chat",
+    "gate": "Support"
+  },
+  {
+    "route": "support",
+    "gate": "Support"
+  },
+  {
+    "route": "(advocate)/dashboard",
+    "gate": null
+  },
+  {
+    "route": "(advocate)/matters",
+    "gate": null
+  },
+  {
+    "route": "(advocate)/clients",
+    "gate": "Clients"
+  },
+  {
+    "route": "(advocate)/earnings",
+    "gate": "Wallet & Earnings"
+  },
+  {
+    "route": "(tabs)/home",
+    "gate": null
+  },
+  {
+    "route": "(tabs)/cases",
+    "gate": null
+  },
+  {
+    "route": "(tabs)/messages",
+    "gate": "Messages"
+  },
+  {
+    "route": "(tabs)/profile",
+    "gate": null
+  },
+  {
+    "route": "(tabs)/services",
+    "gate": null
+  }
+]
