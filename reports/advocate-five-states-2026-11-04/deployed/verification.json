@@ -1,0 +1,103 @@
+{
+  "build": "Deployed site",
+  "evidence": [
+    {
+      "name": "dashboard-empty",
+      "route": "/dashboard",
+      "text": "DA\nGood Morning, Demo\n04 Nov 2026\nNEEDS REVIEW\n0\nIN PROGRESS\n0\nRESOLVED\n0\nNEEDS YOUR ATTENTION\nView All\nNo cases assigned yet\nYour assigned Legal Notice cases will appear here.\nEARNINGS\nThe payout split isn’t configured yet. Your net earnings cannot be calculated until it is confirmed."
+    },
+    {
+      "name": "matters-empty",
+      "route": "/matters",
+      "text": "Cases\nCases\nManage your active legal matters and case work.\nREVIEW\n0\nPROGRESS\n0\nRESOLVED\n0\nAll\nNeeds Review\nIn Progress\nWaiting for Client\nResolved\nAll Services\nLegal Notice\nYour Matters\n0\nRecent First\nNo cases assigned yet\nYour assigned Legal Notice cases will appear here."
+    },
+    {
+      "name": "notifications-empty",
+      "route": "/advocate/notifications",
+      "text": "Notification\nMark all as read\nNo notifications"
+    },
+    {
+      "name": "fee-unavailable",
+      "route": "/advocate/notice/00000000-0000-4000-8000-000000000001/fee",
+      "text": "‹ My Cases\nThis case could not be loaded. Try again, or open a case assigned to you from My Cases.\nTry again"
+    },
+    {
+      "name": "dashboard-work",
+      "route": "/dashboard",
+      "text": "12\nAS\nGood Morning, Arjun\n04 Nov 2026\nNEEDS REVIEW\n0\nIN PROGRESS\n3\nRESOLVED\n6\nNEEDS YOUR ATTENTION\nView All\nLN-2026-0017\nClient Approved\nTEST ONLY Payment Sender\nRecovery\nOpen Case\nLN-2026-0014\nDraft Preparation\nRohit Mehra\nRecovery\nContinue Draft\nEARNINGS\nThe payout split isn’t configured yet. Your net earnings cannot be calculated until it is confirmed."
+    },
+    {
+      "group": "Needs Review",
+      "count": 0
+    },
+    {
+      "group": "In Progress",
+      "count": 3
+    },
+    {
+      "group": "Resolved",
+      "count": 6
+    },
+    {
+      "name": "fee-demo-advocate",
+      "route": "/advocate/notice/a07dd081-2610-4c67-9647-077553cc93de/fee",
+      "text": "Fee & Earnings\nLEGAL NOTICE\nLN-2026-0014\nRohit Mehra\nRecovery\nTOTAL CLIENT FEE\n₹1,625\nClient Fee Breakdown\nService Fee\n₹999\nPlatform Fee\n₹199\nDelivery Fee\n₹179\nGST\n₹248\nPayout Information\nThe payout split isn’t configured yet. Your net earnings cannot be calculated until it is confirmed."
+    },
+    {
+      "name": "client-review-demo-advocate",
+      "route": "/advocate/notice/a07dd081-2610-4c67-9647-077553cc93de/review",
+      "text": "‹ My Cases\nThe current draft has not been sent for client review. Open the case from My Cases to continue drafting.\nTry again"
+    },
+    {
+      "account": "demo-advocate",
+      "case": "LN-2026-0014",
+      "clientFees": {
+        "service_fee_paise": "99900",
+        "platform_fee_paise": "19900",
+        "delivery_fee_paise": "17900",
+        "gst_paise": "24786",
+        "total_paise": "162486",
+        "breakdown_complete": true,
+        "simulated": true
+      }
+    },
+    {
+      "name": "fee-partial",
+      "route": "/advocate/notice/a07dd081-2610-4c67-9647-077553cc93de/fee",
+      "text": "Fee & Earnings\nLEGAL NOTICE\nLN-2026-0014\nRohit Mehra\nTOTAL CLIENT FEE\n₹1,625\nClient Fee Breakdown\nService Fee\n₹999\nGST\n₹248\nSome historical charges could not be verified against this payment. Ask the administrator to check the breakdown.\nPayout Information\nThe payout split isn’t configured yet. Your net earnings cannot be calculated until it is confirmed."
+    },
+    {
+      "name": "fee-demo-advocate-3",
+      "route": "/advocate/notice/83092696-fe8d-4c48-9a79-6a4f97c6f835/fee",
+      "text": "Fee & Earnings\nLEGAL NOTICE\nLN-2026-0001\nSunita Mehra\nFamily Dispute\nClient Fee Breakdown\nService Fee\n₹699\nThe payment breakdown isn’t available for this case. Ask the administrator to check its payment record.\nPayout Information\nThe payout split isn’t configured yet. Your net earnings cannot be calculated until it is confirmed."
+    },
+    {
+      "name": "client-review-demo-advocate-3",
+      "route": "/advocate/notice/83092696-fe8d-4c48-9a79-6a4f97c6f835/review",
+      "text": "‹ My Cases\nThe current draft has not been sent for client review. Open the case from My Cases to continue drafting.\nTry again"
+    },
+    {
+      "account": "demo-advocate-3",
+      "case": "LN-2026-0001",
+      "clientFees": {
+        "service_fee_paise": "69900",
+        "platform_fee_paise": null,
+        "delivery_fee_paise": null,
+        "gst_paise": null,
+        "total_paise": null,
+        "breakdown_complete": false,
+        "simulated": false
+      }
+    },
+    {
+      "name": "dashboard-error",
+      "route": "/dashboard",
+      "text": "DA\nGood Morning, Demo\n04 Nov 2026\nNEEDS YOUR ATTENTION\nView All\nCouldn’t load your cases. Try again.\nTry again\nEARNINGS\nThe payout split isn’t configured yet. Your net earnings cannot be calculated until it is confirmed."
+    },
+    {
+      "name": "dashboard-loading",
+      "route": "/dashboard",
+      "text": "DA\nGood Morning, Demo\n04 Nov 2026\nNEEDS YOUR ATTENTION\nView All\nLoading your cases…\nEARNINGS\nThe payout split isn’t configured yet. Your net earnings cannot be calculated until it is confirmed."
+    }
+  ]
+}

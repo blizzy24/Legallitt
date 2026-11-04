@@ -1,0 +1,8 @@
+image tag advocate-fees-20261104 (one-off legalitt-dev-ops:11)
+task arn:aws:ecs:ap-south-1:026379630400:task/legalitt-dev-cluster/00bc666ff34e46ffaa5e48ba8927b22a
+exit 0 (Essential container in task exited)
+2026-11-04T09:49:01 Loaded Prisma config from prisma.config.ts.
+2026-11-04T09:49:01 Prisma schema loaded from prisma/schema.prisma.
+2026-11-04T09:49:01 Datasource "db": PostgreSQL database "legalitt", schema "public" at "legalitt-dev-database.c1mu80ok42w3.ap-south-1.rds.amazonaws.com:5432"
+2026-11-04T09:49:02 13 migrations found in prisma/migrations
+2026-11-04T09:49:02 No pending migrations to apply.

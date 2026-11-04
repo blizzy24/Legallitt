@@ -1,0 +1,19 @@
+{
+  "workspaceTypechecks": "passed, all five workspaces",
+  "api": {
+    "tests": 87,
+    "passed": 87,
+    "failed": 0
+  },
+  "fixtureSmoke": {
+    "routes": 322,
+    "failures": []
+  },
+  "deployedZeroCaseAudit": {
+    "routes": 147,
+    "browserErrors": 0,
+    "legalNoticeRoutes": 21
+  },
+  "demoAccounts": "all six sign in with current secret, unchanged",
+  "rotationCommand": "--check and --resume both passed; new secret rotation was not performed"
+}

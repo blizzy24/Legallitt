@@ -1,0 +1,41 @@
+Vercel CLI 65.11.0
+  Inspect         https://vercel.com/blizzard7/legalitt/Ajq8nAynmGZYzqsuqZ2hUcAC7w22
+  Production      https://legalitt-k3u1n7nnd-blizzard7.vercel.app
+▲ Aliased         https://legalitt-5.vercel.app
+{
+  "status": "ok",
+  "deployment": {
+    "id": "dpl_Ajq8nAynmGZYzqsuqZ2hUcAC7w22",
+    "url": "https://legalitt-k3u1n7nnd-blizzard7.vercel.app",
+    "productionUrl": "https://legalitt-5.vercel.app",
+    "inspectorUrl": "https://vercel.com/blizzard7/legalitt/Ajq8nAynmGZYzqsuqZ2hUcAC7w22",
+    "readyState": "READY",
+    "target": "production",
+    "deploymentApiUrl": "https://api.vercel.com/v13/deployments/dpl_Ajq8nAynmGZYzqsuqZ2hUcAC7w22",
+    "buildMachine": {
+      "cores": 2,
+      "memory": 8192,
+      "machine": "basic",
+      "selectionType": "fixed",
+      "selectionSource": "plan-default"
+    },
+    "deploymentProtection": [
+      "vercel_authentication"
+    ]
+  },
+  "message": "Deployment legalitt-k3u1n7nnd-blizzard7.vercel.app ready. Production URL: https://legalitt-5.vercel.app",
+  "next": [
+    {
+      "command": "vercel curl https://legalitt-5.vercel.app",
+      "when": "Verify deployment, including when Deployment Protection is enabled"
+    },
+    {
+      "command": "vercel inspect legalitt-k3u1n7nnd-blizzard7.vercel.app --scope blizzard7",
+      "when": "Inspect deployment"
+    },
+    {
+      "command": "vercel deploy --prod --scope blizzard7",
+      "when": "Promote to production"
+    }
+  ]
+}

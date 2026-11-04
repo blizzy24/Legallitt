@@ -1,0 +1,53 @@
+[
+  {
+    "account": "demo-advocate",
+    "counts": {
+      "completed": 6,
+      "dispatched": 1,
+      "in_progress": 1,
+      "approved": 1
+    },
+    "example": "LN-2026-0007",
+    "fees": {
+      "service_fee_paise": "99900",
+      "platform_fee_paise": "19900",
+      "delivery_fee_paise": "17900",
+      "gst_paise": "24786",
+      "total_paise": "162486",
+      "breakdown_complete": true,
+      "simulated": true
+    }
+  },
+  {
+    "account": "demo-advocate-3",
+    "counts": {
+      "in_progress": 1
+    },
+    "example": "LN-2026-0001",
+    "fees": {
+      "service_fee_paise": "69900",
+      "platform_fee_paise": null,
+      "delivery_fee_paise": null,
+      "gst_paise": null,
+      "total_paise": null,
+      "breakdown_complete": false,
+      "simulated": false
+    }
+  },
+  {
+    "account": "demo-advocate-4",
+    "counts": {
+      "in_progress": 3
+    },
+    "example": "LN-2026-0002",
+    "fees": {
+      "service_fee_paise": "69900",
+      "platform_fee_paise": null,
+      "delivery_fee_paise": null,
+      "gst_paise": null,
+      "total_paise": null,
+      "breakdown_complete": false,
+      "simulated": false
+    }
+  }
+]

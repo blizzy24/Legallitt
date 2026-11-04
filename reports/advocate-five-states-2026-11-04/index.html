@@ -1,0 +1,26 @@
+<!doctype html><meta charset="utf-8"><title>Advocate five-state audit</title>
+<style>body{font:16px system-ui;margin:32px;color:#29251f;background:#f7f5f2}h1{font-size:26px}h2{margin-top:40px}a{color:#735a37}.pair,.gallery{display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start}figure{margin:0 0 24px;width:430px;max-width:100%}img{width:100%;border:1px solid #ddd;border-radius:10px}figcaption{padding:12px 0;font-weight:600}.note{max-width:900px;line-height:1.6}</style>
+<h1>Advocate five-state audit · 4 November 2026</h1>
+<p class="note">Real deployed demo accounts. The empty account has no cases. The populated account is Adv. Arjun Sharma. Partial, loading and error shots use browser-only response injection; the API and database are unchanged.</p>
+<p><a href="README.txt">Findings and limitations</a> · <a href="route-audit-after.csv">Every audited route (147)</a> · <a href="route-audit-before.csv">Before audit</a> · <a href="deployed/verification.json">Checks and counts</a></p>
+<h2>Empty account: before and after</h2><div class="pair">
+<figure><figcaption>Dashboard before</figcaption><a href="before/_dashboard.png"><img loading="lazy" src="before/_dashboard.png"></a></figure>
+<figure><figcaption>Dashboard after</figcaption><a href="after/_dashboard.png"><img loading="lazy" src="after/_dashboard.png"></a></figure>
+<figure><figcaption>My Cases before</figcaption><a href="before/_matters.png"><img loading="lazy" src="before/_matters.png"></a></figure>
+<figure><figcaption>My Cases after</figcaption><a href="after/_matters.png"><img loading="lazy" src="after/_matters.png"></a></figure>
+<figure><figcaption>Missing case before</figcaption><a href="before/_advocate_notice_case_fee.png"><img loading="lazy" src="before/_advocate_notice_case_fee.png"></a></figure>
+<figure><figcaption>Missing case after</figcaption><a href="after/_advocate_notice_case_fee.png"><img loading="lazy" src="after/_advocate_notice_case_fee.png"></a></figure>
+</div><h2>Deployed work and fee states</h2><div class="gallery">
+<figure><figcaption>Arjun: 0 review / 3 progress / 6 resolved</figcaption><a href="deployed/dashboard-work.png"><img loading="lazy" src="deployed/dashboard-work.png"></a></figure>
+<figure><figcaption>Recorded client fees; payout split unknown</figcaption><a href="deployed/fee-demo-advocate.png"><img loading="lazy" src="deployed/fee-demo-advocate.png"></a></figure>
+<figure><figcaption>Historical seed: base known, payment missing</figcaption><a href="deployed/fee-demo-advocate-3.png"><img loading="lazy" src="deployed/fee-demo-advocate-3.png"></a></figure>
+<figure><figcaption>Partial response: unknown charges omit labels</figcaption><a href="deployed/fee-partial.png"><img loading="lazy" src="deployed/fee-partial.png"></a></figure>
+<figure><figcaption>Client Review: no invented message</figcaption><a href="deployed/client-review-demo-advocate.png"><img loading="lazy" src="deployed/client-review-demo-advocate.png"></a></figure>
+<figure><figcaption>Unsent draft: no false review claim</figcaption><a href="deployed/client-review-demo-advocate-3.png"><img loading="lazy" src="deployed/client-review-demo-advocate-3.png"></a></figure>
+<figure><figcaption>Loading (browser-only delayed request)</figcaption><a href="deployed/dashboard-loading.png"><img loading="lazy" src="deployed/dashboard-loading.png"></a></figure>
+<figure><figcaption>Error with working retry (browser-only 503)</figcaption><a href="deployed/dashboard-error.png"><img loading="lazy" src="deployed/dashboard-error.png"></a></figure>
+<figure><figcaption>Needs Review filter</figcaption><a href="deployed/matters-needs-review.png"><img loading="lazy" src="deployed/matters-needs-review.png"></a></figure>
+<figure><figcaption>In Progress filter</figcaption><a href="deployed/matters-in-progress.png"><img loading="lazy" src="deployed/matters-in-progress.png"></a></figure>
+<figure><figcaption>Resolved filter</figcaption><a href="deployed/matters-resolved.png"><img loading="lazy" src="deployed/matters-resolved.png"></a></figure>
+<figure><figcaption>No notifications</figcaption><a href="deployed/notifications-empty.png"><img loading="lazy" src="deployed/notifications-empty.png"></a></figure>
+</div><h2>Still outstanding</h2><p class="note">No supplied advocate Legal Notice completion / POD design exists. Other-service and account-wide fixture screens remain listed in the audit; they have not been represented as real account data or certified as complete.</p>
