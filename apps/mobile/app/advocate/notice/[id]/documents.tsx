@@ -1,3 +1,4 @@
+import {instructedCopy} from '../../../../copy/instructed';
 import NoticeScreenFeedback from '../../../../components/NoticeScreenFeedback';
 import { useAdvocateNoticeModel } from "../../../../features/legal-notice/useAdvocateNoticeModel";
 import { previewNotice } from '../../../../components/PreviewNotice';
@@ -75,15 +76,15 @@ export function AdvocateNoticeDocumentsScreenView({ data, navigate, onViewDocume
               {d.summarySub}
             </Text>
           </View>
-          <View style={styles.done}>
+          {!!d.statusChip && <View style={styles.done}>
             <View style={styles.doneDot} />
             <Text style={styles.doneText} {...shrinkToFit(0.75)}>
               {d.statusChip}
             </Text>
-          </View>
+          </View>}
         </View>
 
-        <View style={styles.card}>
+        {d.aiFindings.length>0 && <View style={styles.card}>
           <View style={styles.aiHead}>
             <Sparkles size={t.aiIcon} color={colors.brandDark} />
             <Text style={styles.aiTitle} {...shrinkToFit(0.7)}>
@@ -123,7 +124,7 @@ export function AdvocateNoticeDocumentsScreenView({ data, navigate, onViewDocume
               </Text>
             </Pressable>
           </View>
-        </View>
+        </View>}
 
         <View style={styles.sectionRow}>
           <Text style={styles.section} {...shrinkToFit(0.8)}>
@@ -135,6 +136,7 @@ export function AdvocateNoticeDocumentsScreenView({ data, navigate, onViewDocume
           </Text>
         </View>
 
+        {d.files.length===0 && <View style={styles.card}><Text style={styles.sub}>{instructedCopy.advocateWork.noDocuments}</Text></View>}
         {d.files.map((f) => (
           <View key={f.id} style={styles.fileCard}>
             <FileText size={t.fileIconGlyph} color={colors.brandDark} />
@@ -376,5 +378,5 @@ const styles = StyleSheet.create({
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function AdvocateNoticeDocumentsScreen() {
   const model = useAdvocateNoticeModel("documents");
-  return <NoticeScreenFeedback error={model.error}><AdvocateNoticeDocumentsScreenView data={model.data} navigate={model.navigate} onViewDocument={model.onViewDocument} /></NoticeScreenFeedback>;
+  return <NoticeScreenFeedback error={model.error} state={model.screenState}><AdvocateNoticeDocumentsScreenView data={model.data} navigate={model.navigate} onViewDocument={model.onViewDocument} /></NoticeScreenFeedback>;
 }

@@ -83,7 +83,7 @@ export function AdvocateNoticeShipmentScreenView({ data, navigate }: { data: { A
               {s.detailsLabel}
             </Text>
           </View>
-          {s.details.map((d) => (
+          {s.details.filter(d=>d.value.trim()).map((d) => (
             <View key={d.label} style={styles.row}>
               <Text style={styles.rowLabel} {...shrinkToFit(0.75)}>
                 {d.label}
@@ -416,5 +416,5 @@ const styles = StyleSheet.create({
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function AdvocateNoticeShipmentScreen() {
   const model=useAdvocateNoticeModel('shipment');
-  return <NoticeScreenFeedback error={model.error}><AdvocateNoticeShipmentScreenView data={model.data} navigate={model.navigate} /></NoticeScreenFeedback>;
+  return <NoticeScreenFeedback error={model.error} state={model.screenState}><AdvocateNoticeShipmentScreenView data={model.data} navigate={model.navigate} /></NoticeScreenFeedback>;
 }

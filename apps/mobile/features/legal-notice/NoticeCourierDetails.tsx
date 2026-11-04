@@ -160,7 +160,7 @@ export default function NoticeCourierDetails() {
     trackRows:CO_SELF_DETAILS.trackRows.map((r,i)=>({...r,value:form.values[i]})),
   };
   const copy=(value:string)=>{if(Platform.OS==='web')void navigator.clipboard?.writeText(value);};
-  return <NoticeScreenFeedback error={error || c.error}><CourierSelfDetailsView data={data} actions={{values:form.values,expected:form.expected,
+  return <NoticeScreenFeedback error={error || c.error} state={api?{loading:c.loading,ready:!!c.record,hasId:!!c.id,onRetry:()=>{void c.run(c.load);},onCases:()=>router.replace('/matters')}:undefined}><CourierSelfDetailsView data={data} actions={{values:form.values,expected:form.expected,
     onField:(i,value)=>change({...current.current,values:current.current.values.map((v,j)=>j===i?value:v)}),
     onExpected:value=>change({...current.current,expected:value}),onBack:back,onSubmit:submit,fieldErrors:shownErrors,headerPending:Boolean(header)&&status!=='booked',
     onReceipt:upload,onViewReceipt:()=>{if(fixtureReceipt)void Linking.openURL(fixtureReceipt.uri);else open(receipt?.id);},onViewDocuments:()=>open(documents.find(d=>d.kind==='legal_notice')?.id),

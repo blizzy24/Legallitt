@@ -395,5 +395,5 @@ const styles = StyleSheet.create({
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function AdvocateNoticeDraftingScreen() {
   const model = useAdvocateNoticeModel("drafting");
-  return <NoticeScreenFeedback error={model.error}><AdvocateNoticeDraftingScreenView data={model.data} navigate={model.navigate} /></NoticeScreenFeedback>;
+  return <NoticeScreenFeedback error={model.error} state={model.screenState}><AdvocateNoticeDraftingScreenView data={model.data} navigate={model.navigate} /></NoticeScreenFeedback>;
 }

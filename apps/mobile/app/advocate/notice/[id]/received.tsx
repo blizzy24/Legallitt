@@ -75,7 +75,7 @@ export function AdvocateNoticeReceivedScreenView({ data, navigate }: { data: { A
             </Text>
           </View>
           <View style={styles.infoRule} />
-          {r.caseInfo.rows.map((row) => (
+          {r.caseInfo.rows.filter(row=>row.value.trim()).map((row) => (
             <View key={row.label} style={styles.infoRow}>
               <Text style={styles.rowLabel} {...shrinkToFit(0.75)}>
                 {row.label}
@@ -121,7 +121,7 @@ export function AdvocateNoticeReceivedScreenView({ data, navigate }: { data: { A
             {r.delivery.title}
           </Text>
           <View style={styles.infoRule} />
-          {r.delivery.rows.map((row) => (
+          {r.delivery.rows.filter(row=>row.value.trim()).map((row) => (
             <View key={row.label} style={styles.infoRow}>
               <Text style={styles.rowLabel} {...shrinkToFit(0.75)}>
                 {row.label}
@@ -357,5 +357,5 @@ const styles = StyleSheet.create({
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function AdvocateNoticeReceivedScreen() {
   const model=useAdvocateNoticeModel('received');
-  return <NoticeScreenFeedback error={model.error}><AdvocateNoticeReceivedScreenView data={model.data} navigate={model.navigate} /></NoticeScreenFeedback>;
+  return <NoticeScreenFeedback error={model.error} state={model.screenState}><AdvocateNoticeReceivedScreenView data={model.data} navigate={model.navigate} /></NoticeScreenFeedback>;
 }

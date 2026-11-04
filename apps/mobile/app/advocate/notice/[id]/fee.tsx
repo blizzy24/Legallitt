@@ -1,3 +1,5 @@
+import type {CaseClientFees} from '@legalitt/shared';
+import {instructedCopy} from '../../../../copy/instructed';
 import NoticeScreenFeedback from '../../../../components/NoticeScreenFeedback';
 import { useAdvocateNoticeModel } from "../../../../features/legal-notice/useAdvocateNoticeModel";
 import { router, useLocalSearchParams, type Href } from 'expo-router';
@@ -18,7 +20,7 @@ import { advNoticeFeeScreen as t, colors, font, ink } from '../../../../constant
 
 // Fee & earnings (design/185).
 //
-// The breakdown is DERIVED, not hardcoded: platform fee from ADV_COMMISSION_10 (10%)
+// Fixture breakdown only (unconfirmed, not used for API earnings): platform fee from ADV_COMMISSION_10 (10%)
 // and charges as 18% of that fee. 3,500 − 350 − 63 = 3,087, matching design/185.
 //
 // ⚠ design/203 later states "Advocate Payout ₹3,500" — the gross — on this same
@@ -27,11 +29,17 @@ import { advNoticeFeeScreen as t, colors, font, ink } from '../../../../constant
 // ⚠ design/185 clips its own subtitle behind the stage chip ("Review your earnings
 // before ac…"); it wraps here.
 
-export function AdvocateNoticeFeeView({notice, navigate, onAccept, onDecline}: {notice: Omit<typeof ADV_NOTICE, 'clientFee'> & {clientFee: number | null}; navigate: typeof router; onAccept: () => void; onDecline: () => void}) {
+export function AdvocateNoticeFeeView({notice, navigate, onAccept, onDecline, clientFees, canDecide=true}: {notice: Omit<typeof ADV_NOTICE, 'clientFee'> & {clientFee: number | null}; navigate: typeof router; onAccept: () => void; onDecline: () => void; clientFees?:CaseClientFees|null; canDecide?:boolean}) {
   const router = navigate;
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
   const n = notice;
+  const money=(paise:string|null|undefined)=>paise==null?'':`₹${Number((BigInt(paise)+50n)/100n).toLocaleString('en-IN')}`;
+  const realFees=clientFees!==undefined;
+  const feeRows=clientFees?[
+    ['Service Fee',clientFees.service_fee_paise],['Platform Fee',clientFees.platform_fee_paise],
+    ['Delivery Fee',clientFees.delivery_fee_paise],['GST',clientFees.gst_paise],
+  ].filter((row):row is [string,string]=>row[1]!==null):[];
   const f = n.clientFee === null ? null : advNoticeFee(n.clientFee);
 
   return (
@@ -71,12 +79,12 @@ export function AdvocateNoticeFeeView({notice, navigate, onAccept, onDecline}: {
                 {n.typeChip}
               </Text>
             </View>
-            <View style={styles.verified}>
+            {!!n.verifiedChip && <View style={styles.verified}>
               <Check style={!n.verifiedChip?{opacity:0}:undefined} size={t.verifiedIcon} color={t.verifiedColour} />
               <Text style={styles.verifiedText} {...shrinkToFit(0.8)}>
                 {n.verifiedChip}
               </Text>
-            </View>
+            </View>}
           </View>
 
           <Text style={styles.ref} {...shrinkToFit(0.75)}>
@@ -106,6 +114,19 @@ export function AdvocateNoticeFeeView({notice, navigate, onAccept, onDecline}: {
           </View>
         </View>
 
+        {realFees ? <>
+          <View style={styles.card}>
+            {clientFees?.total_paise!=null && <>
+              <Text style={styles.tcf}>TOTAL CLIENT FEE</Text>
+              <View style={styles.feeRow}><Text style={styles.fee}>{money(clientFees.total_paise)}</Text><View style={styles.feeIcon}><Receipt size={t.feeIconGlyph} color={colors.brandDark}/></View></View>
+            </>}
+            {feeRows.length>0 && <><View style={styles.rule}/><Text style={styles.fb}>{instructedCopy.advocateWork.clientBreakdown}</Text>
+              {feeRows.map(([label,value])=><View key={label} style={styles.line}><Text style={styles.lineLabel}>{label}</Text><Text style={styles.lineAmount}>{money(value)}</Text></View>)}
+            </>}
+            {(!clientFees?.total_paise || !clientFees.breakdown_complete) && <Text style={styles.noteText}>{!clientFees?.total_paise?instructedCopy.advocateWork.feesUnavailable:instructedCopy.advocateWork.feesPartial}</Text>}
+          </View>
+          <View style={styles.card}><Text style={styles.fb}>Payout Information</Text><View style={styles.note}><Info size={t.noteIcon} color={colors.brandDark}/><Text style={styles.noteText}>{instructedCopy.advocateWork.payout}</Text></View></View>
+        </> : <>
         <View style={styles.card}>
           <Text style={styles.tcf} {...shrinkToFit(0.8)}>
             TOTAL CLIENT FEE
@@ -230,10 +251,11 @@ export function AdvocateNoticeFeeView({notice, navigate, onAccept, onDecline}: {
             </View>
           ))}
         </View>
+        </>}
       </ScrollView>
 
       <View style={[styles.bar, { paddingBottom: insets.bottom + t.barPadBottom }]}>
-        <View style={styles.barRow}>
+        {!realFees && <><View style={styles.barRow}>
           <View style={styles.barText}>
             <Text style={styles.barLabel} {...shrinkToFit(0.8)}>
               YOU RECEIVE
@@ -247,13 +269,15 @@ export function AdvocateNoticeFeeView({notice, navigate, onAccept, onDecline}: {
           </Text>
         </View>
 
-        <View style={styles.barRule} />
+        <View style={styles.barRule} /></>}
+
 
         <View style={styles.barBtns}>
           <Pressable
             accessibilityRole="button"
+            disabled={!canDecide} accessibilityState={{disabled:!canDecide}}
             onPress={onDecline}
-            style={({ pressed }) => [styles.barBtn, styles.decline, pressed && styles.pressed]}
+            style={({ pressed }) => [styles.barBtn, styles.decline, !canDecide && {opacity:0.45}, pressed && styles.pressed]}
           >
             <Text style={styles.declineText} {...shrinkToFit(0.75)}>
               Decline Request
@@ -261,8 +285,9 @@ export function AdvocateNoticeFeeView({notice, navigate, onAccept, onDecline}: {
           </Pressable>
           <Pressable
             accessibilityRole="button"
+            disabled={!canDecide} accessibilityState={{disabled:!canDecide}}
             onPress={onAccept}
-            style={({ pressed }) => [styles.barBtn, styles.accept, pressed && styles.pressed]}
+            style={({ pressed }) => [styles.barBtn, styles.accept, !canDecide && {opacity:0.45}, pressed && styles.pressed]}
           >
             <Text style={styles.acceptText} {...shrinkToFit(0.7)}>
               Accept &amp; Schedule
@@ -553,5 +578,5 @@ const styles = StyleSheet.create({
 
 export default function AdvocateNoticeFeeScreen() {
   const model = useAdvocateNoticeModel('fee');
-  return <NoticeScreenFeedback error={model.error}><AdvocateNoticeFeeView notice={model.data.ADV_NOTICE} navigate={model.navigate} onAccept={model.onAccept} onDecline={model.onDecline} /></NoticeScreenFeedback>;
+  return <NoticeScreenFeedback error={model.error} state={model.screenState}><AdvocateNoticeFeeView clientFees={model.clientFees} canDecide={model.canDecide} notice={model.data.ADV_NOTICE} navigate={model.navigate} onAccept={model.onAccept} onDecline={model.onDecline} /></NoticeScreenFeedback>;
 }

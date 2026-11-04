@@ -1,3 +1,4 @@
+import {instructedCopy} from '../copy/instructed';
 import { AdvocateAvatar } from './AdvocateAvatar';
 import { useState } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -31,9 +32,10 @@ export default function NoticeChatScreen({
   messages,
   placeholder,
   valid,
-  validTime, onSend, onAttach, onBack, onOpenDocument, verified=true, online=true, typing=true,
+  validTime, onSend, onAttach, onBack, onOpenDocument, verified=true, online=true, typing=true, state,
 }: {
   onBack?:()=>void; onSend?:(text:string)=>Promise<boolean>; onAttach?:()=>void; onOpenDocument?:(id:string)=>void; verified?:boolean;online?:boolean;typing?:boolean;
+  state?:{loading:boolean;error:string;ready:boolean;onRetry:()=>void};
   variant: 'client' | 'advocate';
   name: string;
   messages: ChatMessage[];
@@ -74,6 +76,8 @@ export default function NoticeChatScreen({
             <Text style={styles.pillText}>{validTime}</Text>
           </View>
         ) : null}
+        {state?.loading && <Text accessibilityLiveRegion="polite" style={styles.text}>{instructedCopy.advocateWork.loadingMessages}</Text>}
+        {state && !state.loading && !state.error && shown.length===0 && <Text style={styles.text}>{instructedCopy.advocateWork.noMessages}</Text>}
         {shown.map((m, i) =>
           m.from === 'them' ? (
             <View key={i} style={[styles.inRow, i > 0 ? styles.rowGap : null]}>
@@ -103,13 +107,14 @@ export default function NoticeChatScreen({
         </View>
       </ScrollView>
 
+      {!!state?.error && <View style={styles.bubble}><Text accessibilityRole="alert" style={styles.text}>{state.error}</Text><Pressable accessibilityRole="button" onPress={state.onRetry}><Text style={styles.text}>{instructedCopy.advocateWork.retry}</Text></Pressable></View>}
       <View style={[styles.input, { marginBottom: insets.bottom + t.inputBottom }]}>
-        <Pressable accessibilityRole="button" accessibilityLabel="Attach" onPress={onAttach??(()=>previewNotice('Attach'))} style={styles.plus}>
+        <Pressable accessibilityRole="button" accessibilityLabel="Attach" disabled={state&&!state.ready} onPress={onAttach??(()=>previewNotice('Attach'))} style={styles.plus}>
           <Plus size={t.plusIcon} color={t.white} strokeWidth={2.2} />
         </Pressable>
         <View style={styles.divider} />
         <TextInput accessibilityLabel={placeholder} value={draft} onChangeText={setDraft} placeholder={placeholder} style={styles.placeholder}/>
-        <Pressable accessibilityRole="button" accessibilityLabel="Send" onPress={async () => { if (draft.trim()) { if(onSend){if(await onSend(draft.trim()))setDraft('');}else{setThread([...thread, {from: 'me', text: draft.trim()}]);setDraft('');} } }}>
+        <Pressable accessibilityRole="button" accessibilityLabel="Send" disabled={state&&!state.ready} onPress={async () => { if (draft.trim()) { if(onSend){if(await onSend(draft.trim()))setDraft('');}else{setThread([...thread, {from: 'me', text: draft.trim()}]);setDraft('');} } }}>
           <Send size={t.send} color={t.brand} fill={t.brand} strokeWidth={1.6} />
         </Pressable>
       </View>

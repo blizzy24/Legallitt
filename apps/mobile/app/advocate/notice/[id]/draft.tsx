@@ -1,3 +1,4 @@
+import NoticeScreenFeedback from '../../../../components/NoticeScreenFeedback';
 import { useRef } from 'react';
 import NoticeDraftFeedback, {type NoticeDraftFeedbackProps} from '../../../../components/NoticeDraftFeedback';
 import { useAdvocateNoticeModel } from "../../../../features/legal-notice/useAdvocateNoticeModel";
@@ -77,7 +78,7 @@ export function AdvocateNoticeDraftScreenView({ data, navigate, onChangeSection,
 
       <View style={styles.party}>
         <Text style={styles.partyText} {...shrinkToFit(0.7)}>
-          {d.parties.client} <Text style={styles.partyVs}>vs</Text> {d.parties.opponent}
+          {d.parties.client} {Boolean(d.parties.client && d.parties.opponent) && <Text style={styles.partyVs}>vs</Text>} {d.parties.opponent}
         </Text>
         {/* Inert — the assist chip has no designed destination. */}
         <Pressable onPress={() => previewNotice(d.assistChip)} accessibilityRole="button" style={styles.assist}>
@@ -296,6 +297,6 @@ const styles = StyleSheet.create({
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function AdvocateNoticeDraftScreen() {
   const model = useAdvocateNoticeModel("draft");
-  return <AdvocateNoticeDraftScreenView feedback={model.feedback} data={model.data} navigate={model.navigate}
-    onChangeSection={model.onEditSection} offences={model.offences} onChangeOffences={model.onEditOffences} intakeSections={model.intakeSections} complianceDays={model.complianceDays} onChangeComplianceDays={model.onEditComplianceDays} />;
+  return <NoticeScreenFeedback state={model.screenState}><AdvocateNoticeDraftScreenView feedback={model.feedback} data={model.data} navigate={model.navigate}
+    onChangeSection={model.onEditSection} offences={model.offences} onChangeOffences={model.onEditOffences} intakeSections={model.intakeSections} complianceDays={model.complianceDays} onChangeComplianceDays={model.onEditComplianceDays} /></NoticeScreenFeedback>;
 }

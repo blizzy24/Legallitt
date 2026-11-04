@@ -17,5 +17,5 @@ import { ADV_NOTICE_REPORT } from '../../../../data/advocateSide';
 export default function AdvocateNoticeReportScreen() {
   useLocalSearchParams<{ id: string }>();
   const model=useAdvocateNoticeModel('report');
-  return <NoticeScreenFeedback error={model.error}><ReportSentScreen r={model.data.ADV_NOTICE_REPORT} /></NoticeScreenFeedback>;
+  return <NoticeScreenFeedback error={model.error} state={model.screenState}><ReportSentScreen r={model.data.ADV_NOTICE_REPORT} /></NoticeScreenFeedback>;
 }

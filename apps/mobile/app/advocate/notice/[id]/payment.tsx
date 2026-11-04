@@ -74,7 +74,7 @@ export function AdvocateNoticePaymentView({payment, navigate, payHref}: {payment
           <View style={styles.rule} />
 
           {/* Drawn figures; see the GST note at the top of this file. */}
-          {p.lines.map((l) => (
+          {p.lines.filter(l=>l.amount.trim()).map((l) => (
             <View key={l.label} style={styles.line}>
               <Text style={styles.lineLabel} {...shrinkToFit(0.7)}>
                 {l.label}
@@ -280,5 +280,5 @@ const styles = StyleSheet.create({
 
 export default function AdvocateNoticePaymentScreen() {
   const model = useAdvocateNoticeModel('payment');
-  return <NoticeScreenFeedback error={model.error}><AdvocateNoticePaymentView payment={model.data.ADV_NOTICE_PAYMENT} navigate={model.navigate} payHref={model.path('scan-pay')} /></NoticeScreenFeedback>;
+  return <NoticeScreenFeedback error={model.error} state={model.screenState}><AdvocateNoticePaymentView payment={model.data.ADV_NOTICE_PAYMENT} navigate={model.navigate} payHref={model.path('scan-pay')} /></NoticeScreenFeedback>;
 }

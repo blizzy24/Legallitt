@@ -490,5 +490,5 @@ const styles = StyleSheet.create({
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function AdvocateNoticeSendScreen() {
   const model = useAdvocateNoticeModel("send");
-  return <NoticeScreenFeedback error={model.error}><AdvocateNoticeSendScreenView data={model.data} navigate={model.navigate} onChoice={model.onSendChoice} /></NoticeScreenFeedback>;
+  return <NoticeScreenFeedback error={model.error} state={model.screenState}><AdvocateNoticeSendScreenView data={model.data} navigate={model.navigate} onChoice={model.onSendChoice} /></NoticeScreenFeedback>;
 }

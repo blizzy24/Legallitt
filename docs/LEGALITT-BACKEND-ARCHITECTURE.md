@@ -1769,6 +1769,26 @@ Only the bound data and the listed strings differ.
 
 ---
 
+### Instructed additions — advocate five-state sweep (4 November 2026)
+
+> **Approved — project owner.** Every screen handles ideal, empty, partial,
+> loading and error states. The required rule is in `AGENTS.md`.
+
+| Screen | Instruction and design reuse |
+|---|---|
+| Dashboard 148 | Keep its greeting, date, statistic tiles, section headings, work-card geometry and navigation. Tiles show **Needs Review / In Progress / Resolved**, linking to the same filters in My Cases. Reuse the schedule cards for assigned Legal Notices needing action, with reference, client, matter type and the lifecycle-permitted action. No invented appointments. |
+| Dashboard 148 omissions | Hearings, consultations, availability/preferences and today's schedule are omitted because those services are not built. They return when their services provide real data. No fake earnings. |
+| Dashboard empty/error | Explicit no-assigned-cases and no-action-needed states; loading and retry feedback by the work section. Operational copy lives in `copy/instructed.ts`. |
+| Fee & Earnings 185 | Show historical client service fee, verified platform/delivery fees, recorded GST and captured total. These are **client charges**, not advocate deductions. Commission, gateway charges, net payout, bank method and settlement window are not configured. Say **“The payout split isn’t configured yet. Your net earnings cannot be calculated until it is confirmed.”** No invented payout. |
+| Client Review 190–191 | No sent message exists in the case data. Omit the entire message card, heading and icon when absent, as required by §1a. No fabricated message. |
+| Legal Notice routes | While loading, say so; on missing/inaccessible cases, show retry and My Cases instead of an empty case shell. Missing cell values remove labels and separators. Chat distinguishes loading from an empty conversation and retains errors beside its composer. |
+
+**Completion design gap:** 203 is a report/payout confirmation, 199–202 are
+inbound client-to-advocate document receipt, and 441 is client-side delivery.
+No supplied advocate Legal Notice design shows confirmed delivery, POD and case
+closure. This is still a client design question; this sweep does not repurpose
+another service's completion screen.
+
 ### Instructed additions — Legal Notice intake (2 November 2026)
 
 > **Approved — project owner, with the client's advocate.** This instruction

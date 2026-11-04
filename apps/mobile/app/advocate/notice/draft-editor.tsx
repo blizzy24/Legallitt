@@ -1,3 +1,4 @@
+import NoticeScreenFeedback from '../../../components/NoticeScreenFeedback';
 import NoticeDraftFeedback, {type NoticeDraftFeedbackProps} from '../../../components/NoticeDraftFeedback';
 import { useAdvocateNoticeModel } from '../../../features/legal-notice/useAdvocateNoticeModel';
 import DemoPressable from '../../../components/DemoPressable';
@@ -84,7 +85,7 @@ export function AdvocateNoticeDraftEditorView({draft, navigate, onChange, onSave
 
       <View style={styles.party}>
         <Text style={styles.partyText} {...shrinkToFit(0.7)}>
-          {d.parties.client} <Text style={styles.partyVs}>vs</Text> {d.parties.opponent}
+          {d.parties.client} {Boolean(d.parties.client && d.parties.opponent) && <Text style={styles.partyVs}>vs</Text>} {d.parties.opponent}
         </Text>
         {/* Inert — tenth AI surface, nothing behind it. */}
         <View style={styles.pill}>
@@ -220,9 +221,9 @@ const styles = StyleSheet.create({
 
 export default function AdvocateNoticeDraftEditorScreen() {
   const model=useAdvocateNoticeModel('draft-editor');
-  return <AdvocateNoticeDraftEditorView feedback={model.feedback} draft={model.data.ADV_NOTICE_DRAFT} navigate={model.navigate}
+  return <NoticeScreenFeedback state={model.screenState}><AdvocateNoticeDraftEditorView feedback={model.feedback} draft={model.data.ADV_NOTICE_DRAFT} navigate={model.navigate}
     onChange={model.onEditSection} onSave={model.onSaveDraft}
     offences={model.offences} onChangeOffences={model.onEditOffences}
     intakeSections={model.intakeSections} complianceDays={model.complianceDays} onChangeComplianceDays={model.onEditComplianceDays}
-    previewHref={model.path('response')} reviewHref={model.path('review')} />;
+    previewHref={model.path('response')} reviewHref={model.path('review')} /></NoticeScreenFeedback>;
 }

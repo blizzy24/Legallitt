@@ -457,5 +457,5 @@ const styles = StyleSheet.create({
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function AdvocateNoticeTrackingScreen() {
   const model=useAdvocateNoticeModel('tracking');
-  return <NoticeScreenFeedback error={model.error}><AdvocateNoticeTrackingScreenView data={model.data} navigate={model.navigate} /></NoticeScreenFeedback>;
+  return <NoticeScreenFeedback error={model.error} state={model.screenState}><AdvocateNoticeTrackingScreenView data={model.data} navigate={model.navigate} /></NoticeScreenFeedback>;
 }

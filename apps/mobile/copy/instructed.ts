@@ -2,6 +2,31 @@
  * "Instructed copy"). Kept apart from drawn copy and from the substitutions so it
  * stays distinguishable; do not reword. */
 export const instructedCopy = {
+  // Approved — owner five-state sweep / dashboard 148 instruction, 4 November 2026.
+  advocateWork: {
+    heading: 'NEEDS YOUR ATTENTION',
+    earnings: 'EARNINGS',
+    clientBreakdown: 'Client Fee Breakdown',
+    noIncoming: 'No incoming shipment is recorded for this case.',
+    noDocuments: 'No documents have been uploaded for this case.',
+    loadingMessages: 'Loading messages…',
+    noMessages: 'No messages yet. Send a message to start the conversation.',
+    emptyTitle: 'No cases assigned yet',
+    emptyBody: 'Your assigned Legal Notice cases will appear here.',
+    caughtUp: 'No cases need your action right now',
+    caughtUpBody: 'You can follow your ongoing and resolved cases in My Cases.',
+    loading: 'Loading your cases…',
+    failed: 'Couldn’t load your cases. Try again.',
+    noMatches: 'No cases match these filters.',
+    payout: 'The payout split isn’t configured yet. Your net earnings cannot be calculated until it is confirmed.',
+    feesUnavailable: 'The payment breakdown isn’t available for this case. Ask the administrator to check its payment record.',
+    feesPartial: 'Some historical charges could not be verified against this payment. Ask the administrator to check the breakdown.',
+    loadingCase: 'Loading case…',
+    unavailableCase: 'This case could not be loaded. Try again, or open a case assigned to you from My Cases.',
+    selectCase: 'Open an assigned case from My Cases to continue.',
+    retry: 'Try again',
+    myCases: 'My Cases',
+  },
   // Approved — project-owner notice letterhead instruction, 2 November 2026.
   // Advocate input fills "for the offences of"; the six editor sections stay.
   legalNoticeDraft: {

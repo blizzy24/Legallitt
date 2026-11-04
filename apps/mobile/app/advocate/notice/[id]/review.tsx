@@ -114,7 +114,7 @@ export function AdvocateNoticeReviewScreenView({ data, navigate, reviewState }: 
           <View style={styles.grid}>
             {[0, 2].map((start) => (
               <View key={start} style={[styles.gridRow, start > 0 && styles.gridRowNext]}>
-                {r.cells.slice(start, start + 2).map((c) => (
+                {r.cells.filter(c=>c.value.trim()).slice(start, start + 2).map((c) => (
                   <View key={c.label} style={styles.cell}>
                     <Text style={styles.cellLabel} {...shrinkToFit(0.8)}>
                       {c.label}
@@ -214,7 +214,7 @@ export function AdvocateNoticeReviewScreenView({ data, navigate, reviewState }: 
           </Pressable>
         </View>
 
-        <View style={styles.card}>
+        {!!r.message.trim() && <View style={styles.card}>
           <View style={styles.msgHead}>
             <MessageSquare size={t.msgIcon} color={colors.textPrimary} />
             <Text style={[styles.section, styles.msgLabel]} {...shrinkToFit(0.75)}>
@@ -227,7 +227,7 @@ export function AdvocateNoticeReviewScreenView({ data, navigate, reviewState }: 
           <View style={styles.msgBox}>
             <Text style={styles.msgText}>{r.message}</Text>
           </View>
-        </View>
+        </View>}
 
         <View style={styles.await}>
           <View style={styles.awaitHead}>
@@ -652,5 +652,5 @@ const styles = StyleSheet.create({
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function AdvocateNoticeReviewScreen() {
   const model = useAdvocateNoticeModel("review");
-  return <NoticeScreenFeedback error={model.error}><AdvocateNoticeReviewScreenView data={model.data} navigate={model.navigate} reviewState={model.api ? model.controller.record?.status ?? '' : undefined} /></NoticeScreenFeedback>;
+  return <NoticeScreenFeedback error={model.error} state={model.screenState}><AdvocateNoticeReviewScreenView data={model.data} navigate={model.navigate} reviewState={model.api ? model.controller.record?.status ?? '' : undefined} /></NoticeScreenFeedback>;
 }

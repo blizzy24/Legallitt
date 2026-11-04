@@ -1,3 +1,4 @@
+import {instructedCopy} from '../copy/instructed';
 import NotificationBell from './NotificationBell';
 import { router, type Href } from 'expo-router';
 import {
@@ -58,9 +59,12 @@ const TONE: Record<string, string> = {
   red: '#D64545',
 };
 
-export default function AdvocateDashboardScreen({self, stats, events, dateLine, availability, unread, previews}: {
+export default function AdvocateDashboardScreen({self, stats, events, dateLine, availability, unread, previews, work, onStatPress}: {
   self: {firstName:string; initials:string; standing:string}; stats:AdvStat[]; events:AdvEvent[];
   dateLine:string; availability:boolean; unread:boolean; previews:boolean;
+  onStatPress?:(id:string)=>void;
+  work?:{loading:boolean;error:string;empty:boolean;onRetry:()=>void;
+    cases:{id:string;reference:string;client:string;matter:string;status:string;action:string;onOpen:()=>void}[]};
 }) {
   const insets = useSafeAreaInsets();
   const [online, setOnline] = useState(ADV_AVAILABILITY_DEFAULT.online);
@@ -181,7 +185,7 @@ export default function AdvocateDashboardScreen({self, stats, events, dateLine, 
           {stats.map((s) => {
             const Icon = STAT_ICONS[s.id] ?? FileText;
             return (
-              <View key={s.id} testID={`dashboard-stat-${s.id}`} style={styles.stat}>
+              <Pressable key={s.id} testID={`dashboard-stat-${s.id}`} style={styles.stat} accessibilityRole={onStatPress ? "button" : undefined} onPress={()=>onStatPress?.(s.id)}>
                 <View style={styles.statHead}>
                   <Text style={styles.statLabel} {...shrinkToFit(0.7)}>
                     {s.label}
@@ -201,10 +205,27 @@ export default function AdvocateDashboardScreen({self, stats, events, dateLine, 
                     {s.status}
                   </Text>
                 </View>}
-              </View>
+              </Pressable>
             );
           })}
         </View>}
+
+        {work && <>
+          <View style={styles.sectionRow}>
+            <Text style={styles.section}>{instructedCopy.advocateWork.heading}</Text>
+            <Pressable style={styles.viewAll} accessibilityRole="button" onPress={()=>router.push('/matters')}><Text style={styles.viewAllText}>View All</Text></Pressable>
+          </View>
+          {work.loading ? <View style={styles.event}><Text accessibilityLiveRegion="polite" style={styles.body}>{instructedCopy.advocateWork.loading}</Text></View>
+            : work.error ? <View style={styles.event}><Text accessibilityRole="alert" style={styles.body}>{instructedCopy.advocateWork.failed}</Text><Pressable onPress={work.onRetry} accessibilityRole="button"><Text style={styles.viewAllText}>{instructedCopy.advocateWork.retry}</Text></Pressable></View>
+            : work.cases.length===0 ? <View style={styles.event}><Text style={styles.eventTitle}>{work.empty?instructedCopy.advocateWork.emptyTitle:instructedCopy.advocateWork.caughtUp}</Text><Text style={styles.body}>{work.empty?instructedCopy.advocateWork.emptyBody:instructedCopy.advocateWork.caughtUpBody}</Text></View>
+            : work.cases.map(c=><View key={c.id} style={styles.event}>
+              <View style={styles.eventHead}><Text style={styles.typeText}>{c.reference}</Text><View style={styles.state}><Text style={styles.stateText}>{c.status}</Text></View></View>
+              {!!c.client && <Text style={styles.eventTitle}>{c.client}</Text>}
+              {!!c.matter && <View style={styles.eventMeta}><FileText size={t.eventMetaIcon} color={colors.textBody}/><Text style={styles.eventMetaText}>{c.matter}</Text></View>}
+              <Pressable accessibilityRole="button" onPress={c.onOpen} style={styles.manage}><Text style={styles.viewAllText}>{c.action}</Text><ChevronRight size={t.manageChevron} color={colors.brandDark}/></Pressable>
+            </View>)}
+          <View style={styles.card}><Text style={styles.availLabel}>{instructedCopy.advocateWork.earnings}</Text><Text style={styles.body}>{instructedCopy.advocateWork.payout}</Text></View>
+        </>}
 
         {events.length > 0 && <View style={styles.sectionRow}>
           <Text style={styles.section} {...shrinkToFit(0.8)}>

@@ -1,3 +1,4 @@
+import {instructedCopy} from '../../copy/instructed';
 import { useEffect, useState } from 'react';
 import { Linking } from 'react-native';
 import { router, type Href } from 'expo-router';
@@ -13,7 +14,7 @@ export function useAdvocateNoticeModel(stage: string) {
   const api = DATA_SOURCE === 'api';
   const c=useNoticeController(stage as NoticeStage,undefined,api);
   const {user} = useSession();
-  const r=c.record, documents=r?.documents??[];
+  const r=c.record?.id===c.id?c.record:null, documents=r?.documents??[];
   const intakeFields=api && r ? unchangedNoticeIntakeFields(r,c.content) : [];
   const intakeSections=draftKeys.flatMap((key,index)=>intakeFields.some(field=>field===key)?[index]:[]);
   // The final notice (rendered on approval) and the latest draft's PDF (rendered on send).
@@ -25,7 +26,8 @@ export function useAdvocateNoticeModel(stage: string) {
     return `Client Sign-off complete • Approved ${day}, ${d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})}`;})():'';
   const finalMeta=notice?.page_count ? `${notice.page_count} Pages • Signed by Client` : '';
   const [pricing,setPricing]=useState<Awaited<ReturnType<typeof c.repository.service>>['pricing']>([]);
-  useEffect(()=>{if(api)void c.run(async()=>setPricing((await c.repository.service('courier')).pricing));},[api]);
+  const needsCourierPrice=['delivery','payment','scan-pay','paid'].includes(stage);
+  useEffect(()=>{if(api&&needsCourierPrice)void c.run(async()=>setPricing((await c.repository.service('courier')).pricing));},[api,needsCourierPrice]);
   const price=pricing.find(p=>!p.variant&&!p.tier);
   const total=price ? Number((BigInt(price.base_amount_paise)+(BigInt(price.base_amount_paise)*BigInt(price.gst_bps)+5000n)/10000n+50n)/100n) : null;
   const client=r?.details.client?.fullName??'',recipient=r?.details.noticee?.fullName??'',address=r?.details.noticee?.address??'';
@@ -121,7 +123,7 @@ export function useAdvocateNoticeModel(stage: string) {
       documents:{...fixture.ADV_NOTICE_RECEIVED.documents,chip:'',statusChip:received?fixture.ADV_NOTICE_RECEIVED.documents.statusChip:'',rows:[]},
       delivery:{...fixture.ADV_NOTICE_RECEIVED.delivery,rows:fixture.ADV_NOTICE_RECEIVED.delivery.rows.map((cell,i)=>({...cell,value:[inbound?.carrier??'',inbound?.waybill??'',when(inbound?.delivered_at),received?user?.name??'':''][i]}))},
     }:fixture.ADV_NOTICE_RECEIVED,
-    ADV_NOTICE_REPORT:api?{...fixture.ADV_NOTICE_REPORT,docChip:notice?.id??'',escrowChip:'',payout:''}:fixture.ADV_NOTICE_REPORT,
+    ADV_NOTICE_REPORT:api?{...fixture.ADV_NOTICE_REPORT,docChip:notice?.filename??'',escrowChip:'',payout:'',note:instructedCopy.advocateWork.payout}:fixture.ADV_NOTICE_REPORT,
     ADV_NOTICE_RESPONSE:api?{...fixture.ADV_NOTICE_RESPONSE,statusChip:'',letterhead:{...fixture.ADV_NOTICE_RESPONSE.letterhead,
       advocate:r?.advocate?.full_name??'',quals:r?.advocate?.profile?.education??'',enrolmentNo:r?.advocate?.profile?.bar_council_number??''}}:fixture.ADV_NOTICE_RESPONSE,
     ADV_NOTICE:api?{...fixture.ADV_NOTICE,clientFee:null,ref:r?.reference??'',refLabel:r?.reference??'',docket:r?.reference??'',verifiedChip:'',
@@ -144,7 +146,7 @@ export function useAdvocateNoticeModel(stage: string) {
     }:fixture.ADV_NOTICE_REVIEW,
     ADV_NOTICE_FINAL:api?{...fixture.ADV_NOTICE_FINAL,clientName:client,verifiedChip:'',signOff,doc:{name:notice?.filename??'',meta:finalMeta}}:fixture.ADV_NOTICE_FINAL,
     ADV_NOTICE_DISPATCH:api?{...fixture.ADV_NOTICE_DISPATCH,doc:{name:notice?.filename??'',meta:finalMeta,chip:''}}:fixture.ADV_NOTICE_DISPATCH,
-    ADV_NOTICE_SEND:api?{...fixture.ADV_NOTICE_SEND,serviceChip:'Legal Notice',matterRef:r?.reference??'',parties:r?`${client} vs ${recipient}`:'',advocate:user?.name??'',docsChip:r?`${documents.length} Documents`:'',docChips:documents.map(d=>d.filename),docChipOverflow:'',sendTo:{name:recipient,lines:[address]}}:fixture.ADV_NOTICE_SEND,
+    ADV_NOTICE_SEND:api?{...fixture.ADV_NOTICE_SEND,serviceChip:'Legal Notice',matterRef:r?.reference??'',parties:[client,recipient].filter(Boolean).join(' vs '),advocate:user?.name??'',docsChip:r?`${documents.length} Documents`:'',docChips:documents.map(d=>d.filename),docChipOverflow:'',sendTo:{name:recipient,lines:[address]}}:fixture.ADV_NOTICE_SEND,
     ADV_NOTICE_DELIVERY:api?{...fixture.ADV_NOTICE_DELIVERY,
       pickup:{...fixture.ADV_NOTICE_DELIVERY.pickup,name:user?.name??'',address:'',cityLine:'',mobile:user?.phone??''},
       sendTo:{...fixture.ADV_NOTICE_DELIVERY.sendTo,name:recipient,address,cityLine:'',mobile:r?.details.noticee?.mobile??''},
@@ -171,7 +173,8 @@ export function useAdvocateNoticeModel(stage: string) {
   const problem=NoticePdfProblemSchema.safeParse(c.errorDetails);
   const feedback={error:c.error,missingFields:problem.success?problem.data.missing_fields:[],
     onContactClient:api&&c.id?()=>{void c.run(async()=>{await saveDraft();router.push(path('chat'));});}:undefined};
-  return {error:c.error,feedback,data,documentFields,navigate,controller:c,api,intakeSections,total:api?total:fixture.ADV_NOTICE_PAYMENT.totalAmount,path,courierHref,dispatchState,
+  const inboundMissing=!!r&&!inbound&&['shipment','tracking','confirm','received'].includes(stage);
+  return {screenState:api?{loading:c.loading,ready:!!r&&!inboundMissing,hasId:!!c.id,emptyMessage:inboundMissing?instructedCopy.advocateWork.noIncoming:undefined,onRetry:()=>{void c.run(c.load);},onCases:()=>router.replace('/matters')}:undefined,clientFees:api?r?.client_fees??null:undefined,canDecide:!api||r?.status==='assigned'&&!c.busy,error:c.error,feedback,data,documentFields,navigate,controller:c,api,intakeSections,total:api?total:fixture.ADV_NOTICE_PAYMENT.totalAmount,path,courierHref,dispatchState,
     onViewDocument:api?(id?:string)=>open(id??notice?.id??draftDoc?.id):undefined,
     onEditSection:api?(index:number,value:string)=>{
       const key=draftKeys[index];
@@ -189,12 +192,12 @@ export function useAdvocateNoticeModel(stage: string) {
     onSendChoice:()=>{router.push(courierHref());},
     onPay:()=>{void c.run(async()=>{if(api&&c.id)await c.repository.pay(c.id,'courier');router.replace(path('paid'));});},
     onReceive:()=>{void c.run(async()=>{if(api&&c.id)await c.repository.receiveShipment(c.id);router.replace(path('received'));});},
-    onAccept:()=>{void c.run(async()=>{if(api&&c.id&&r?.status==='assigned'){await c.repository.accept(c.id);
+    onAccept:()=>{if(api&&r?.status!=='assigned')return;void c.run(async()=>{if(api&&c.id&&r?.status==='assigned'){await c.repository.accept(c.id);
       // The advocate's drawn opening message (33, 439), sent as them through the real endpoint.
       const thread=await c.repository.caseThread(c.id);const page=await c.repository.messages(thread.id);
       if(!page.items.some(m=>m.sender_id===user?.id))await c.repository.sendMessage(thread.id,{body:NOTICE_ADVOCATE_GREETING});}
       router.push(path('documents'));});},
-    onDecline:()=>{void c.run(async()=>{if(api&&c.id)await c.repository.decline(c.id);router.replace('/matters');});},
+    onDecline:()=>{if(api&&r?.status!=='assigned')return;void c.run(async()=>{if(api&&c.id)await c.repository.decline(c.id);router.replace('/matters');});},
     saveDraft,
   };
 }

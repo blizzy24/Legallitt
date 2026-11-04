@@ -56,12 +56,12 @@ export default function ReportSentScreen({
         <Text style={styles.title} {...shrinkToFit(0.75)}>
           {r.title}
         </Text>
-        <View style={styles.docChip}>
+        {Boolean(r.docChip) && <View style={styles.docChip}>
           <Lock size={t.docChipIcon} color={colors.textPrimary} />
           <Text style={styles.docChipText} {...shrinkToFit(0.8)}>
             {r.docChip}
           </Text>
-        </View>
+        </View>}
         <View style={styles.avatar}>
           <UserRound size={t.avatarGlyph} color={ink.onBrand} />
         </View>
@@ -73,27 +73,27 @@ export default function ReportSentScreen({
         </View>
 
         <View style={styles.card}>
-          <View style={styles.labelRow}>
+          {Boolean(r.payout || r.escrowChip) && <View style={styles.labelRow}>
             <Text style={styles.label} {...shrinkToFit(0.8)}>
               {r.summaryLabel}
             </Text>
-            <View style={styles.escrow}>
+            {Boolean(r.escrowChip) && <View style={styles.escrow}>
               <ShieldCheck size={t.escrowIcon} color={t.escrowColour} />
               <Text style={styles.escrowText} {...shrinkToFit(0.75)}>
                 {r.escrowChip}
               </Text>
-            </View>
-          </View>
+            </View>}
+          </View>}
 
           {/* ⚠ Gross client fee shown as the advocate's payout; see the note above. */}
-          <View style={styles.payoutRow}>
+          {Boolean(r.payout) && <View style={styles.payoutRow}>
             <Text style={styles.payoutLabel} {...shrinkToFit(0.75)}>
               {r.payoutLabel}
             </Text>
             <Text style={styles.payout} {...shrinkToFit(0.7)}>
               {r.payout}
             </Text>
-          </View>
+          </View>}
 
           <View style={styles.note}>
             <Info size={t.noteIcon} color={colors.textBody} />

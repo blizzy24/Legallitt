@@ -1,3 +1,4 @@
+import {instructedCopy} from '../copy/instructed';
 import { router, type Href } from 'expo-router';
 import {
   ArrowRight,
@@ -11,7 +12,7 @@ import {
   UserRound,
   Video,
 } from 'lucide-react-native';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -68,6 +69,8 @@ export default function AdvocateCasesList({
   statisticsFor,
   chrome = 'tab',
   initialService = 'All Services',
+  initialFilter = 'All',
+  state,
   title,
   eyebrow,
   subtitle,
@@ -84,6 +87,8 @@ export default function AdvocateCasesList({
   statisticsFor?: (records: AdvCaseMatter[]) => typeof ADV_CASES_STATS;
   chrome?: CasesChrome;
   initialService?: string;
+  initialFilter?: string;
+  state?: {loading:boolean;error:string;onRetry:()=>void};
   /** Portal variant — the header title. The tab variant uses the design's. */
   title?: string;
   /** Portal variant — the second header line under the title (design/222). */
@@ -102,7 +107,8 @@ export default function AdvocateCasesList({
 }) {
   const insets = useSafeAreaInsets();
   const c = ADV_CASES_COPY;
-  const [filter, setFilter] = useState('All');
+  const [filter, setFilter] = useState(initialFilter);
+  useEffect(()=>setFilter(initialFilter),[initialFilter]);
   const [service, setService] = useState(initialService);
 
   const [search, setSearch] = useState('');
@@ -305,7 +311,12 @@ export default function AdvocateCasesList({
         </View>
         )}
 
-        {matters.map((m) => {
+        {state && (state.loading || state.error || matters.length===0) && <View style={styles.card}>
+          <Text accessibilityRole={state.error?'alert':undefined} accessibilityLiveRegion="polite" style={styles.sub}>{state.loading?instructedCopy.advocateWork.loading:state.error?instructedCopy.advocateWork.failed:records.length===0?instructedCopy.advocateWork.emptyTitle:instructedCopy.advocateWork.noMatches}</Text>
+          {!state.loading && !state.error && records.length===0 && <Text style={styles.sub}>{instructedCopy.advocateWork.emptyBody}</Text>}
+          {!!state.error && !state.loading && <Pressable accessibilityRole="button" onPress={state.onRetry}><Text style={styles.sub}>{instructedCopy.advocateWork.retry}</Text></Pressable>}
+        </View>}
+        {(!state?.loading && !state?.error ? matters : []).map((m) => {
           const tone = STATUS_TONE[m.status] ?? STATUS_TONE.Active;
           const Icon = m.bodyIcon ? BODY_ICONS[m.bodyIcon] : null;
           const urgent = m.urgency === 'URGENT';

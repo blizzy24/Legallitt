@@ -92,7 +92,7 @@ export function AdvocateNoticeConfirmScreenView({ data, navigate, onReceive }: {
               </Text>
             </View>
           </View>
-          {c.caseRef.rows.map((r) => (
+          {c.caseRef.rows.filter(r=>r.value.trim()).map((r) => (
             <View key={r.label} style={styles.row}>
               <Text style={styles.rowLabel} {...shrinkToFit(0.75)}>
                 {r.label}
@@ -150,7 +150,7 @@ export function AdvocateNoticeConfirmScreenView({ data, navigate, onReceive }: {
               </Text>
             </View>
           </View>
-          {c.delivery.rows.map((r) => (
+          {c.delivery.rows.filter(r=>r.value.trim()).map((r) => (
             <View key={r.label} style={styles.row}>
               <Text style={styles.rowLabel} {...shrinkToFit(0.75)}>
                 {r.label}
@@ -455,5 +455,5 @@ const styles = StyleSheet.create({
 // The deployed fixture path remains unchanged; API mode is explicit.
 export default function AdvocateNoticeConfirmScreen() {
   const model=useAdvocateNoticeModel('confirm');
-  return <NoticeScreenFeedback error={model.error}><AdvocateNoticeConfirmScreenView data={model.data} navigate={model.navigate} onReceive={model.onReceive} /></NoticeScreenFeedback>;
+  return <NoticeScreenFeedback error={model.error} state={model.screenState}><AdvocateNoticeConfirmScreenView data={model.data} navigate={model.navigate} onReceive={model.onReceive} /></NoticeScreenFeedback>;
 }

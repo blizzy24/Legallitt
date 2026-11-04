@@ -20,5 +20,5 @@ export default function AdvocateNoticePaidScreen() {
     successBody: CO_SUCCESS.successBody.replace(/₹[\d,]+/, payment.total.replace(/\/-$/, '')),
     successBody2: CO_SUCCESS.successBody2.replace('forensic analysis', 'document delivery'),
   };
-  return <NoticeScreenFeedback error={model.error}><PaymentSuccessScreen d={d} ctaHref={model.courierHref()} /></NoticeScreenFeedback>;
+  return <NoticeScreenFeedback error={model.error} state={model.screenState}><PaymentSuccessScreen d={d} ctaHref={model.courierHref()} /></NoticeScreenFeedback>;
 }
