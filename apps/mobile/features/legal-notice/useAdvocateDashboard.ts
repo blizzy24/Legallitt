@@ -23,7 +23,7 @@ export function useAdvocateDashboard() {
     stats:model.controller.loading||model.error?[]:stats,events:[],
     dateLine:new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}),
     availability:false,unread:false,previews:false,
-    work:{loading:model.controller.loading,error:model.error,empty:records.length===0,cases:work,
+    work:{loading:model.controller.loading||model.controller.busy,error:model.error,empty:records.length===0,cases:work,
       onRetry:()=>{void model.controller.run(model.controller.load);}},
     onStatPress:(group:string)=>router.push({pathname:'/matters',params:{filter:group}}),
   };

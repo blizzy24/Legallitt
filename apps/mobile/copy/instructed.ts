@@ -7,6 +7,7 @@ export const instructedCopy = {
     heading: 'NEEDS YOUR ATTENTION',
     earnings: 'EARNINGS',
     clientBreakdown: 'Client Fee Breakdown',
+    noReview: 'The current draft has not been sent for client review. Open the case from My Cases to continue drafting.',
     noIncoming: 'No incoming shipment is recorded for this case.',
     noDocuments: 'No documents have been uploaded for this case.',
     loadingMessages: 'Loading messages…',

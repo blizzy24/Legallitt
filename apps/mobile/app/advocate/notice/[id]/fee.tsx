@@ -29,7 +29,7 @@ import { advNoticeFeeScreen as t, colors, font, ink } from '../../../../constant
 // ⚠ design/185 clips its own subtitle behind the stage chip ("Review your earnings
 // before ac…"); it wraps here.
 
-export function AdvocateNoticeFeeView({notice, navigate, onAccept, onDecline, clientFees, canDecide=true}: {notice: Omit<typeof ADV_NOTICE, 'clientFee'> & {clientFee: number | null}; navigate: typeof router; onAccept: () => void; onDecline: () => void; clientFees?:CaseClientFees|null; canDecide?:boolean}) {
+export function AdvocateNoticeFeeView({notice, navigate, onAccept, onDecline, clientFees, canDecide=true, preAcceptance=true}: {notice: Omit<typeof ADV_NOTICE, 'clientFee'> & {clientFee: number | null}; navigate: typeof router; onAccept: () => void; onDecline: () => void; clientFees?:CaseClientFees|null; canDecide?:boolean; preAcceptance?:boolean}) {
   const router = navigate;
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -59,16 +59,16 @@ export function AdvocateNoticeFeeView({notice, navigate, onAccept, onDecline, cl
             Fee &amp; Earnings
           </Text>
           {/* design/185 clips this line; wrapped here. */}
-          <Text style={styles.sub} {...shrinkToFit(0.75)}>
+          {preAcceptance && <Text style={styles.sub} {...shrinkToFit(0.75)}>
             Review your earnings before accepting.
-          </Text>
+          </Text>}
         </View>
-        <View style={styles.stage}>
+        {preAcceptance && <View style={styles.stage}>
           <View style={styles.stageDot} />
           <Text style={styles.stageText} {...shrinkToFit(0.75)}>
             Pre-Acceptance
           </Text>
-        </View>
+        </View>}
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
@@ -254,7 +254,7 @@ export function AdvocateNoticeFeeView({notice, navigate, onAccept, onDecline, cl
         </>}
       </ScrollView>
 
-      <View style={[styles.bar, { paddingBottom: insets.bottom + t.barPadBottom }]}>
+      {preAcceptance && <View style={[styles.bar, { paddingBottom: insets.bottom + t.barPadBottom }]}>
         {!realFees && <><View style={styles.barRow}>
           <View style={styles.barText}>
             <Text style={styles.barLabel} {...shrinkToFit(0.8)}>
@@ -295,7 +295,7 @@ export function AdvocateNoticeFeeView({notice, navigate, onAccept, onDecline, cl
             <ArrowRight size={t.acceptIcon} color={ink.onBrand} style={styles.acceptIcon} />
           </Pressable>
         </View>
-      </View>
+      </View>}
     </View>
   );
 }
@@ -578,5 +578,5 @@ const styles = StyleSheet.create({
 
 export default function AdvocateNoticeFeeScreen() {
   const model = useAdvocateNoticeModel('fee');
-  return <NoticeScreenFeedback error={model.error} state={model.screenState}><AdvocateNoticeFeeView clientFees={model.clientFees} canDecide={model.canDecide} notice={model.data.ADV_NOTICE} navigate={model.navigate} onAccept={model.onAccept} onDecline={model.onDecline} /></NoticeScreenFeedback>;
+  return <NoticeScreenFeedback error={model.error} state={model.screenState}><AdvocateNoticeFeeView clientFees={model.clientFees} canDecide={model.canDecide} preAcceptance={model.preAcceptance} notice={model.data.ADV_NOTICE} navigate={model.navigate} onAccept={model.onAccept} onDecline={model.onDecline} /></NoticeScreenFeedback>;
 }

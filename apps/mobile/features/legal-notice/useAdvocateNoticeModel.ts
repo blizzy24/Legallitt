@@ -19,6 +19,7 @@ export function useAdvocateNoticeModel(stage: string) {
   const intakeSections=draftKeys.flatMap((key,index)=>intakeFields.some(field=>field===key)?[index]:[]);
   // The final notice (rendered on approval) and the latest draft's PDF (rendered on send).
   const notice=documents.find(d=>d.id===r?.notice_document_id), draftDoc=documents.find(d=>d.id===c.latest?.document_id);
+  const sentDraft=!!c.latest&&r?.events?.some(e=>e.to_status==='client_review'&&e.from_status!==e.to_status&&e.payload.draft_id===c.latest?.id);
   const approvedAt=r?.reviews?.find(v=>v.decision==='approved')?.created_at;
   const when=(value?:string|null)=>value?new Date(value).toLocaleDateString('en-GB'):'';
   // Design 192's sign-off line: "Approved today, 11:20 AM", or the date when it was not today.
@@ -141,7 +142,7 @@ export function useAdvocateNoticeModel(stage: string) {
     ADV_NOTICE_RECIPIENT:api?{name:recipient,address}:fixture.ADV_NOTICE_RECIPIENT,
     ADV_NOTICE_REVIEW:api?{...fixture.ADV_NOTICE_REVIEW,ref:r?.reference??'',
       cells:fixture.ADV_NOTICE_REVIEW.cells.map(cell=>({...cell,verified:false,value:cell.label==='CLIENT'?client:cell.label==='AGAINST'?recipient:cell.label==='FILING TYPE'?matter.label:cell.label==='STATUS'&&r?.status==='client_review'?'In Client Queue':''})),
-      draftFile:{...fixture.ADV_NOTICE_REVIEW.draftFile,name:draftDoc?.filename??'',size:'',status:c.latest?'Sent to Client':''},
+      draftFile:{...fixture.ADV_NOTICE_REVIEW.draftFile,name:draftDoc?.filename??'',size:'',status:sentDraft?'Sent to Client':''},
       message:'',messageMeta:'',awaiting:{...fixture.ADV_NOTICE_REVIEW.awaiting,note:r?.reviews?.at(-1)?.comment??''},
     }:fixture.ADV_NOTICE_REVIEW,
     ADV_NOTICE_FINAL:api?{...fixture.ADV_NOTICE_FINAL,clientName:client,verifiedChip:'',signOff,doc:{name:notice?.filename??'',meta:finalMeta}}:fixture.ADV_NOTICE_FINAL,
@@ -174,7 +175,8 @@ export function useAdvocateNoticeModel(stage: string) {
   const feedback={error:c.error,missingFields:problem.success?problem.data.missing_fields:[],
     onContactClient:api&&c.id?()=>{void c.run(async()=>{await saveDraft();router.push(path('chat'));});}:undefined};
   const inboundMissing=!!r&&!inbound&&['shipment','tracking','confirm','received'].includes(stage);
-  return {screenState:api?{loading:c.loading,ready:!!r&&!inboundMissing,hasId:!!c.id,emptyMessage:inboundMissing?instructedCopy.advocateWork.noIncoming:undefined,onRetry:()=>{void c.run(c.load);},onCases:()=>router.replace('/matters')}:undefined,clientFees:api?r?.client_fees??null:undefined,canDecide:!api||r?.status==='assigned'&&!c.busy,error:c.error,feedback,data,documentFields,navigate,controller:c,api,intakeSections,total:api?total:fixture.ADV_NOTICE_PAYMENT.totalAmount,path,courierHref,dispatchState,
+  const reviewMissing=!!r&&stage==='review'&&!sentDraft;
+  return {screenState:api?{loading:c.loading||c.busy,ready:!!r&&!inboundMissing&&!reviewMissing,hasId:!!c.id,emptyMessage:inboundMissing?instructedCopy.advocateWork.noIncoming:reviewMissing?instructedCopy.advocateWork.noReview:undefined,onRetry:()=>{void c.run(c.load);},onCases:()=>router.replace('/matters')}:undefined,clientFees:api?r?.client_fees??null:undefined,preAcceptance:!api||r?.status==='assigned',canDecide:!api||r?.status==='assigned'&&!c.busy,error:c.error,feedback,data,documentFields,navigate,controller:c,api,intakeSections,total:api?total:fixture.ADV_NOTICE_PAYMENT.totalAmount,path,courierHref,dispatchState,
     onViewDocument:api?(id?:string)=>open(id??notice?.id??draftDoc?.id):undefined,
     onEditSection:api?(index:number,value:string)=>{
       const key=draftKeys[index];
