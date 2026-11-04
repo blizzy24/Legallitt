@@ -11,7 +11,8 @@
     "typecheck": "turbo run typecheck",
     "mobile": "pnpm --filter @legalitt/mobile start",
     "test:mobile": "node scripts/mobile-smoke.mjs",
-    "test:fixtures": "node scripts/check-batch-flows.cjs && node scripts/check-payment-rounding.cjs"
+    "test:fixtures": "node scripts/check-batch-flows.cjs && node scripts/check-payment-rounding.cjs",
+    "demo:password": "node infra/scripts/rotate-demo-password.cjs"
   },
   "devDependencies": {
     "turbo": "2.11.9",

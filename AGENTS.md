@@ -87,6 +87,16 @@ safe for the old image too (add or widen first; rename or drop only once no
 deployed code reads the old shape). If a change cannot be made safe that way,
 stop and ask.
 
+## Demo credentials
+
+Never change `legalitt-dev/demo-auth` on its own. With explicit approval for a
+credential change, run `pnpm demo:password` on Node 22. It prompts without echo,
+updates the dev secret, immediately runs the deployed and local demo seeds, and
+verifies all six deployed sign-ins. Start local Postgres first. If interrupted,
+run `pnpm demo:password --resume` to finish both seeds using the current secret;
+do not rotate again. `--check` validates prerequisites without changing anything.
+No passwords in arguments, source files, logs, or commit messages.
+
 ## Testing
 
 - The API suite runs on the Node version in `engines` (22.x, pinned in
