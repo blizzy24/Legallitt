@@ -52,14 +52,16 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
     actor: CaseActor,
     id: string,
   ) {
-    await tx.$queryRaw`SELECT d.id FROM documents d JOIN cases c ON c.id = d.case_id
-      WHERE d.id = ${id}::uuid AND c.service_code = 'legal_notice'
+    const scope = caseScope(actor);
+    const locked = await tx.$queryRaw<{id: string}[]>`SELECT d.id FROM documents d JOIN cases c ON c.id = d.case_id
+      WHERE d.id = ${id}::uuid
       AND (${actor.role} = 'admin'
         OR (${actor.role} = 'client' AND c.client_id = ${actor.id}::uuid)
         OR (${actor.role} = 'advocate' AND c.advocate_id = ${actor.id}::uuid))
       FOR UPDATE OF d, c`;
+    if (!locked.length) throw new NotFoundException("Document not found");
     const doc = await tx.document.findFirst({
-      where: { id, case_id_relation: { is: caseScope(actor) } },
+      where: { id, case_id_relation: { is: scope } },
     });
     if (!doc) throw new NotFoundException("Document not found");
     return doc;

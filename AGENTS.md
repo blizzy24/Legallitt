@@ -57,6 +57,25 @@ migrated and base-seeded before database tests. `.env.local` files are ignored;
 never put credentials in the examples. Older README setup passages describe
 earlier deployment stages; use these templates and the current architecture.
 
+For **local database tests only**, start Docker Desktop's Linux engine and set
+the matching local password/URLs in `infra/local/.env.local` and
+`apps/api/.env.local`. No AWS credentials or demo seed are needed. In Git Bash,
+from the repository root:
+
+```bash
+docker compose --env-file infra/local/.env.local -f infra/local/compose.yaml up -d --wait
+pnpm --filter @legalitt/shared build
+pnpm --filter @legalitt/api db:local:migrate
+pnpm --filter @legalitt/api db:local:seed
+# The seed command above seeds the application DB; seed the separate test DB too:
+(cd apps/api && set -a && source .env.local && DATABASE_URL="$LEGALITT_TEST_DATABASE_URL" node dist/prisma/seed.js)
+pnpm --filter @legalitt/api test:local
+```
+
+PostgreSQL 16 listens only on `127.0.0.1:55432`; its Docker volume persists both
+databases. The API suite uses test adapters for external services. Running the
+actual local API with deployed authentication/storage is a separate AWS setup.
+
 ## The designs are the specification
 
 The client's designs in `design/` define every screen. Do not invent copy,

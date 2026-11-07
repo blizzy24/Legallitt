@@ -1,7 +1,7 @@
 import {instructedCopy} from '../../copy/instructed';
 import { useEffect, useState } from 'react';
 import { Linking } from 'react-native';
-import { router, type Href } from 'expo-router';
+import { router } from 'expo-router';
 import { CompliancePeriodSchema, DEFAULT_NOTICE_POLICY, noticeClosing, NoticePdfProblemSchema, NOTICE_ADVOCATE_GREETING, NOTICE_EDITABLE_DRAFT_FIELDS, unchangedNoticeIntakeFields, type NoticeDraftContent } from '@legalitt/shared';
 import { DATA_SOURCE } from '../../lib/data-source';
 import { useSession } from '../../context/session';
@@ -65,8 +65,9 @@ export function useAdvocateNoticeModel(stage: string) {
     const draft=await saveDraft();
     if(c.id)await c.repository.renderDraft(c.id,draft.id);
   };
-  const navigateTo=(href:Href,replace=false)=>{
-    let value=typeof href==='string'?href:href.pathname;
+  // Accept the router's common shape without expanding every generated route union.
+  const navigateTo=(href:string | {pathname:string;params?:Record<string,unknown>},replace=false)=>{
+    let value: string=typeof href==='string'?href:href.pathname;
     if(typeof href!=='string'&&href.params){const q=new URLSearchParams();for(const [key,value] of Object.entries(href.params))if(value!==undefined)q.set(key,String(value));value+='?'+q.toString();}
     const destination=c.href(value);
     void c.run(async()=>{

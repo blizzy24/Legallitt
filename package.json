@@ -14,6 +14,7 @@
     "test:local-proxy": "node --test scripts/tests/local-api-proxy.cjs",
     "test:mobile": "node scripts/mobile-smoke.mjs",
     "test:fixtures": "node scripts/check-batch-flows.cjs && node scripts/check-payment-rounding.cjs",
+    "test:case-spine": "node --test scripts/check-case-spine.cjs",
     "demo:password": "node infra/scripts/rotate-demo-password.cjs"
   },
   "devDependencies": {

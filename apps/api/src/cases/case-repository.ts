@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { z } from "zod";
-import { CaseStatusSchema, NoticePolicySchema } from "@legalitt/shared";
+import { CaseStatusSchema, NoticePolicySchema, ServiceCodeSchema, type ServiceCode } from "@legalitt/shared";
 import { parse } from "../auth/auth.service";
 import { PrismaService } from "../prisma.service";
 import { caseScope, type CaseActor } from "./case-access";
@@ -11,6 +11,7 @@ const cursorSchema = z.strictObject({
   created_at: z.iso.datetime(),
 });
 export const caseListSchema = z.strictObject({
+  service_code: ServiceCodeSchema.optional(),
   status: CaseStatusSchema.optional(),
   role: z.enum(["client", "advocate", "admin"]).optional(),
   cursor: z.string().max(1024).optional(),
@@ -39,10 +40,10 @@ function decodeCursor(value: string) {
 export class CaseRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async read(actor: CaseActor, id: string) {
+  async read(actor: CaseActor, id: string, serviceCode?: ServiceCode) {
     const db = await this.prisma.getClient();
     const record = await db.case.findFirst({
-      where: { AND: [caseScope(actor), { id }] },
+      where: { AND: [caseScope(actor, serviceCode), { id }] },
       include: {
         case_parties_case_id_relations: true,
         pricing_id_relation: {select: {base_amount_paise: true, gst_bps: true}},
@@ -100,6 +101,8 @@ export class CaseRepository {
     );
     const reviews = drafts.flatMap((d) => d.draft_reviews_draft_id_relations);
     const {advocate_profiles_user_id_relations: profile = null, ...advocateUser} = advocate ?? {};
+    if (record.service_code !== 'legal_notice')
+      return { ...caseRecord, parties, pricing, advocate: advocate ? {...advocateUser, profile} : advocate, events, documents, drafts, reviews, shipments };
     const notice_policy = parse(NoticePolicySchema, (service.config as {notice_policy?: unknown}).notice_policy ?? {});
     const capturedAt = payments[0]?.captured_at;
     const feeVersions = capturedAt ? await db.servicePricing.findMany({where:{service_code:'legal_notice',
@@ -117,7 +120,7 @@ export class CaseRepository {
     const rows = await db.case.findMany({
       where: {
         AND: [
-          caseScope(actor),
+          caseScope(actor, input.service_code),
           ...(input.role && input.role !== actor.role
             ? [{ id: { in: [] } }]
             : []),

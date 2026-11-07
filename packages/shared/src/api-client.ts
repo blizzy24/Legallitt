@@ -171,8 +171,8 @@ export class ApiClient {
   }
   adminDocumentPreview(id: string) { return this.request<{url: string; expires_in: number}>(`/admin/cases/documents/${encodeURIComponent(id)}/preview`); }
   adminCase(id: string) { return this.request<import('./admin-api').AdminCaseDetail>(`/admin/cases/${encodeURIComponent(id)}`); }
-  adminAdvocates() {
-    return this.request<{items: import('./admin-api').AdminAdvocate[]}>('/admin/advocates');
+  adminAdvocates(service?: import('./services').ServiceCode) {
+    return this.request<{items: import('./admin-api').AdminAdvocate[]}>('/admin/advocates' + (service ? `?service=${service}` : ''));
   }
   adminCases(input: import('./admin-api').AdminCaseQuery = {}) {
     const query = new URLSearchParams();
@@ -193,21 +193,17 @@ export class ApiClient {
       }[];
     }>(`/services/${encodeURIComponent(code)}`);
   }
-  createCase(input: {
-    service_code: "legal_notice";
-    tier?: "ordinary" | "urgent";
-    details?: LegalNoticeIntake;
-    matter_type?: import("./legal-notice").LegalNoticeMatterType | null;
-  }) {
+  createCase(input: import('./case-input').CreateCaseInput) {
     return this.request<ApiCase>("/cases", input);
   }
   case(id: string) {
     return this.request<ApiCase>(`/cases/${encodeURIComponent(id)}`);
   }
-  cases(cursor?: string) {
+  cases(cursor?: string, serviceCode?: import('./services').ServiceCode) {
     return this.request<ApiPage<ApiCase>>(
       "/cases?limit=100" +
-        (cursor ? "&cursor=" + encodeURIComponent(cursor) : ""),
+        (cursor ? "&cursor=" + encodeURIComponent(cursor) : "") +
+        (serviceCode ? "&service_code=" + encodeURIComponent(serviceCode) : ""),
     );
   }
   requests() {

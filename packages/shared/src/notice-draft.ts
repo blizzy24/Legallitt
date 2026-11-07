@@ -1,4 +1,4 @@
-import type { ApiCase, NoticeDraftContent } from './notice-api';
+import type { ApiNoticeCase as ApiCase, NoticeDraftContent } from './notice-api';
 import { noticeSenderDescription } from './notice-pdf-fields';
 
 type NoticeIntakeSource = Pick<ApiCase, 'details' | 'parties' | 'subject_matter' | 'subject_line' | 'legal_demand'>;

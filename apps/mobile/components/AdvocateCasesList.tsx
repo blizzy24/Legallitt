@@ -113,7 +113,7 @@ export default function AdvocateCasesList({
 
   const [search, setSearch] = useState('');
   const scoped = useMemo(() => records.filter(m =>
-    (service === 'All Services' || ADV_CASES_SERVICE_KEYS[service] === m.serviceKey) &&
+    (service === 'All Services' || service === m.service || ADV_CASES_SERVICE_KEYS[service] === m.serviceKey) &&
     [m.title,m.ref,m.service,m.searchText ?? ''].join(' ').toLocaleLowerCase().includes(search.trim().toLocaleLowerCase())
   ), [records,service,search]);
   const matters = scoped.filter(m => filter === 'All' || m.bucket === filter || m.filterTags?.includes(filter));

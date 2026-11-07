@@ -301,7 +301,7 @@ test(
             { status: 409 },
           );
           for (const body of [
-            { service_code: "fir_draft" },
+            { service_code: "unknown_service" },
             { service_code: "legal_notice", reference: "LN-2026-1048" },
             { service_code: "legal_notice", client_id: other.id },
             {

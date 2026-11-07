@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 import { router, useFocusEffect, useLocalSearchParams, type Href } from "expo-router";
 import * as DocumentPicker from "expo-document-picker";
-import { DEFAULT_NOTICE_POLICY, noticeMatterType, noticeIssueType, noticeDraftOnOpen, ApiError, DOCUMENT_MAX_BYTES, DocumentMimeSchema, type ApiCase, type LegalNoticeIntake, type NoticeDraftContent, type NoticeIntakeFields } from "@legalitt/shared";
+import { DEFAULT_NOTICE_POLICY, noticeMatterType, noticeIssueType, noticeDraftOnOpen, ApiError, DOCUMENT_MAX_BYTES, DocumentMimeSchema, isNoticeCase, type ApiNoticeCase, type ApiCase, type LegalNoticeIntake, type NoticeDraftContent, type NoticeIntakeFields } from "@legalitt/shared";
 import { apiNoticeRepository, type NoticeRepository } from "./repository";
 import { useSession } from "../../context/session";
 
@@ -41,7 +41,7 @@ export function useNoticeController(stage: NoticeStage, backend: NoticeRepositor
   const id = params.caseId ?? params.id;
   const { user, signOut } = useSession();
   const advocate = user?.role === "advocate";
-  const [record, setRecord] = useState<ApiCase | null>(null),
+  const [record, setRecord] = useState<ApiNoticeCase | null>(null),
     [items, setItems] = useState<ApiCase[]>([]);
   const [details, setDetails] = useState<LegalNoticeIntake>({}),
     [tier, setTier] = useState<"ordinary" | "urgent">("urgent");
@@ -91,6 +91,7 @@ export function useNoticeController(stage: NoticeStage, backend: NoticeRepositor
     }
     if (!id) throw new Error("Select a request from My Cases.");
     const value = await backend.case(id);
+    if (!isNoticeCase(value)) throw new ApiError('Legal Notice not found', 404);
     setRecord(value);
     if (!dirty.current) {
       setDetails({...value.details, issueType: noticeIssueType(value.matter_type)});

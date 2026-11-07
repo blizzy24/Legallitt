@@ -57,7 +57,7 @@ export class AdminCasesRepository {
         ]}] : [])]},
         orderBy: [{created_at: 'desc'}, {id: 'desc'}], take: input.limit + 1,
         select: {
-          id: true, reference: true, status: true, matter_type: true, created_at: true,
+          id: true, reference: true, service_code: true, status: true, matter_type: true, created_at: true,
           details: true, notice_document_id: true,
           case_events_case_id_relations: {where: {source: 'simulated'}, take: 1, select: {id: true}},
           client_id_relation: {select: {id: true, full_name: true}},
@@ -71,7 +71,7 @@ export class AdminCasesRepository {
       const items: AdminCaseRow[] = rows.slice(0, input.limit).map(row => {
         const details = obj(row.details);
         const parties = [...row.case_parties_case_id_relations];
-        for (const [key, kind] of [['client', 'sender'], ['noticee', 'noticee']] as const) {
+        for (const [key, kind] of row.service_code === 'legal_notice' ? [['client', 'sender'], ['noticee', 'noticee']] as const : []) {
           const value = name(obj(details[key]).fullName);
           if (value && !parties.some(p => p.kind === kind && p.name === value)) parties.push({kind, name: value});
         }
@@ -84,6 +84,7 @@ export class AdminCasesRepository {
           if (doc.simulated) simulated_documents[origin]++;
         }
         return {
+          service_code: input.service,
           id: row.id, reference: row.reference, client: {id: row.client_id_relation.id, name: row.client_id_relation.full_name},
           matter_type: row.matter_type, parties: parties.filter(p => p.name.trim()),
           advocate: row.advocate_id_relation ? {id: row.advocate_id_relation.id, name: row.advocate_id_relation.full_name} : null,

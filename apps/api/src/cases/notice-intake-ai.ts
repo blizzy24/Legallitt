@@ -26,7 +26,7 @@ export class NoticeIntakeAiController {
     parse(z.strictObject({}), body ?? {});
     parse(z.uuid(), id);
     if (req.user!.role !== 'client') throw new ForbiddenException('Only the client edits intake');
-    const record = await this.cases.read(req.user!, id);
+    const record = await this.cases.read(req.user!, id, 'legal_notice');
     if (record.status !== 'draft') throw new ConflictException('Only draft intake can be edited');
     if (!record.matter_type || !record.subject_matter?.trim())
       throw new BadRequestException('Choose a notice type and enter the subject matter in dispute');

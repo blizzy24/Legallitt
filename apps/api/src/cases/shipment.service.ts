@@ -5,7 +5,7 @@ import { PrismaService } from '../prisma.service';
 import { parse } from '../auth/auth.service';
 import { COURIER, type CourierPort } from '../courier/courier.port';
 import type { CaseActor } from './case-access';
-import { lockedCase, appendCaseEvent } from './case-state-machine';
+import { lockedNoticeCase as lockedCase, appendCaseEvent } from './case-state-machine';
 
 const DETAIL_KEYS = ['carrier', 'waybill', 'dispatch_date', 'courier_office', 'courier_phone', 'tracking_url', 'expected_delivery', 'receipt_document_id'] as const;
 type Details = Record<(typeof DETAIL_KEYS)[number], string | null>;

@@ -2,7 +2,8 @@ import {NotificationsProvider, Notifications, NotificationBell} from './notifica
 import { CaseDetail } from './case-detail';
 import { StrictMode, useState, type FormEvent } from 'react';
 import { createRoot } from 'react-dom/client';
-import { BrowserRouter, Navigate, Route, Routes, NavLink, Outlet } from 'react-router';
+import { BrowserRouter, Navigate, Route, Routes, NavLink, Outlet, useParams } from 'react-router';
+import {ServiceCodeSchema, SERVICE_NAMES} from '@legalitt/shared';
 import { SessionProvider, useSession } from './session';
 import { Notices } from './notices';
 import './style.css';
@@ -30,6 +31,8 @@ function SignIn() {
   </form></main>;
 }
 function Shell() {
+  const service = ServiceCodeSchema.safeParse(useParams().service);
+  const heading = service.success && service.data !== 'legal_notice' ? SERVICE_NAMES[service.data] : 'Legal Notices';
   const {user, loading, logout} = useSession();
   const [drawer, setDrawer] = useState(false);
   if (loading) return <main className="auth"><p role="status">Checking session…</p></main>;
@@ -41,11 +44,15 @@ function Shell() {
       <div className="identity"><span>{user.name}</span><small>ADMIN</small><button onClick={logout}>Sign out</button></div>
     </aside>
     {drawer && <button className="scrim" aria-label="Close navigation" onClick={() => setDrawer(false)}/>}
-    <div className="workspace"><header><button className="menu" aria-label="Toggle navigation" aria-expanded={drawer} onClick={() => setDrawer(!drawer)}>☰</button><span>Legal Notices</span><NotificationBell/><span className="role">ADMIN</span></header><Outlet/></div>
+    <div className="workspace"><header><button className="menu" aria-label="Toggle navigation" aria-expanded={drawer} onClick={() => setDrawer(!drawer)}>☰</button><span>{heading}</span><NotificationBell/><span className="role">ADMIN</span></header><Outlet/></div>
   </div>;
+}
+function ServiceCases() {
+  const service = ServiceCodeSchema.safeParse(useParams().service);
+  return service.success ? <Notices key={service.data} service={service.data}/> : <main role="alert">Unknown service</main>;
 }
 createRoot(document.getElementById('root')!).render(<StrictMode><BrowserRouter><SessionProvider><NotificationsProvider><Routes>
   <Route path="/sign-in" element={<SignIn/>}/>
-  <Route element={<Shell/>}><Route path="/notifications" element={<Notifications/>}/><Route path="/legal-notices" element={<Notices/>}/><Route path="/legal-notices/:id" element={<CaseDetail/>}/></Route>
+  <Route element={<Shell/>}><Route path="/notifications" element={<Notifications/>}/><Route path="/legal-notices" element={<Notices/>}/><Route path="/legal-notices/:id" element={<CaseDetail/>}/><Route path="/services/:service/cases" element={<ServiceCases/>}/><Route path="/services/:service/cases/:id" element={<CaseDetail/>}/></Route>
   <Route path="*" element={<Navigate to="/legal-notices" replace/>}/>
 </Routes></NotificationsProvider></SessionProvider></BrowserRouter></StrictMode>);

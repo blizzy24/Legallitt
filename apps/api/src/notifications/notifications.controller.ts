@@ -31,7 +31,7 @@ export class NotificationRepository {
       db.notification.findMany({where: scope, ...(after ? {cursor: {id: after[1]}, skip: 1} : {}),
         orderBy: [{created_at: 'desc'}, {id: 'desc'}], take: limit + 1,
         select: {id: true, case_id: true, kind: true, title: true, body: true, created_at: true, read_at: true,
-          case_id_relation: {select: {reference: true, status: true}}}}),
+          case_id_relation: {select: {reference: true, status: true, service_code: true}}}}),
       db.notification.count({where: {...scope, read_at: null}}),
     ], {isolationLevel: 'RepeatableRead'});
     const more = rows.length > limit, items = rows.slice(0, limit), last = items.at(-1);

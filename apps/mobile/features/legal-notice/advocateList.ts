@@ -1,4 +1,4 @@
-import { CaseStatus, type ApiCase } from '@legalitt/shared';
+import { CaseStatus, isNoticeCase, type ApiCase } from '@legalitt/shared';
 import type { AdvCaseMatter, AdvMatterStatus } from '../../data/advocateSide';
 import { noticeMatter } from '../../data/legalNoticeMatter';
 
@@ -37,7 +37,7 @@ export function advocateNoticeState(status: CaseStatus): Entry {
 }
 export const ADV_NOTICE_FILTERS = ['All','Needs Review','In Progress','Waiting for Client','Resolved'];
 export function advocateNoticeMatters(records: ApiCase[]): AdvCaseMatter[] {
-  return records.filter(r=>r.service_code==='legal_notice').slice()
+  return records.filter(isNoticeCase).slice()
     .sort((a,b)=>Date.parse(b.updated_at)-Date.parse(a.updated_at)||b.id.localeCompare(a.id))
     .map(r=>{
       const entry=advocateNoticeState(r.status);

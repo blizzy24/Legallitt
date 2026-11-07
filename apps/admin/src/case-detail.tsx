@@ -1,7 +1,7 @@
 import { ConfirmDelivery } from './confirm-delivery';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, useParams } from 'react-router';
-import { ApiError, adminBucketFor, type AdminCaseDetail } from '@legalitt/shared';
+import { ApiError, adminBucketFor, adminCaseListPath, SERVICE_NAMES, ServiceCodeSchema, type AdminCaseDetail } from '@legalitt/shared';
 import { api, useSession } from './session';
 import { AssignAdvocate } from './assign-advocate';
 const label = (s: string) => s.replaceAll('_', ' ').replace(/^./, c => c.toUpperCase());
@@ -29,20 +29,24 @@ export function CaseDetail() {
  useEffect(()=>{let alive=true;setData(null);setError('');api.adminCase(id!).then(r=>{if(alive)setData(r);}).catch(e=>{
   if(!alive)return;if(e instanceof ApiError && [401,403].includes(e.status))refuse('Admin access required. Sign in again.');else setError(e.message);
  });return()=>{alive=false;};},[id,reload]);
- if(!data)return <main className="case-detail"><Link className="back-link" to="/legal-notices">← Legal Notices</Link>{error?<div className="error" role="alert">{error} <button onClick={()=>setReload(n=>n+1)}>Retry</button></div>:<p role="status">Loading case…</p>}</main>;
+ const routeService = ServiceCodeSchema.safeParse(useParams().service);
+ const service = data?.service_code ?? (routeService.success ? routeService.data : 'legal_notice');
+ const heading = service === 'legal_notice' ? 'Legal Notices' : SERVICE_NAMES[service];
+ const backPath = adminCaseListPath(service);
+ if(!data)return <main className="case-detail"><Link className="back-link" to={backPath}>← {heading}</Link>{error?<div className="error" role="alert">{error} <button onClick={()=>setReload(n=>n+1)}>Retry</button></div>:<p role="status">Loading case…</p>}</main>;
  const charged=data.payments.find(p=>p.purpose==='service_fee'&&p.status==='captured');
  const additional=charged&&data.pricing?BigInt(charged.base_amount_paise)-BigInt(data.pricing.base_amount_paise):null;
  const d=data, bucket=adminBucketFor(d.status), canAssign=!d.advocate_id && ['paid','assigning','advocate_declined'].includes(d.status);
- const task=canAssign?'Assign an advocate':d.status==='advocate_declined'?'Advocate declined · assignment needs review':d.status==='dispatched'?'Delivery confirmation awaits admin':null;
+ const task=canAssign?'Assign an advocate':d.status==='advocate_declined'?'Advocate declined · assignment needs review':service==='legal_notice'&&d.status==='dispatched'?'Delivery confirmation awaits admin':null;
  const document=(doc: AdminCaseDetail['documents'][number])=><div className="document-row" key={doc.id}>
   <span className="file-symbol">{doc.mime_type==='application/pdf'?'PDF':'FILE'}</span><div className="file-description">
   {doc.status==='uploaded'?<button className="text-button" onClick={()=>setPreview(doc)}>{doc.filename} ↗</button>:<strong>{doc.filename}</strong>}
-  <p>{doc.final?'Final notice':doc.draft_version!==null?`Draft · v${doc.draft_version}`:label(doc.kind)}<Demo show={doc.simulated}/></p>
+  <p>{doc.final?(service==='legal_notice'?'Final notice':'Final document'):doc.draft_version!==null?`Draft · v${doc.draft_version}`:label(doc.kind)}<Demo show={doc.simulated}/></p>
   <p>{doc.owner}{doc.page_count!==null?` · ${doc.page_count} ${doc.page_count===1?'page':'pages'}`:''}{doc.status!=='uploaded'?` · ${label(doc.status)}`:''}</p></div></div>;
  const relatedDoc=(docId:string|null)=>{const doc=d.documents.find(v=>v.id===docId);return doc?<button className="text-button" onClick={()=>setPreview(doc)}>{doc.filename} ↗<Demo show={doc.simulated}/></button>:null;};
  return <main className="case-detail">
-  <Link className="back-link" to="/legal-notices">← Legal Notices</Link>
-  <section className="case-overview"><div className="case-heading"><div><p className="eyebrow">LEGAL NOTICE</p><h1>{d.reference}<Demo show={d.simulated}/></h1><p>{d.contacts.find(c=>c.role==='client')?.name}</p></div><span className={'status '+(bucket??'')}>{label(d.status)}</span></div>
+  <Link className="back-link" to={backPath}>← {heading}</Link>
+  <section className="case-overview"><div className="case-heading"><div><p className="eyebrow">{SERVICE_NAMES[service].toUpperCase()}</p><h1>{d.reference}<Demo show={d.simulated}/></h1><p>{d.contacts.find(c=>c.role==='client')?.name}</p></div><span className={'status '+(bucket??'')}>{label(d.status)}</span></div>
    <dl className="summary-fields"><Field name="Matter" value={d.matter_type?label(d.matter_type):null}/><Field name="Intake issue" value={!d.matter_type&&typeof d.intake.issueType==='string'?label(d.intake.issueType.replaceAll('-','_')):null}/><Field name="Tier" value={d.tier?label(d.tier):null}/>
     <Field name="Service fee" value={d.pricing?<>{money(d.pricing.base_amount_paise)}{!d.pricing.confirmed&&<small className="unconfirmed">Unconfirmed price</small>}</>:null}/>
     <Field name="Additional fees" value={additional!==null&&additional>0n?money(additional.toString()):null}/>
@@ -73,7 +77,7 @@ export function CaseDetail() {
    </dl>{d.events.some(e=>e.payload.shipment_id===s.id)&&<ol className="shipment-milestones">{d.events.filter(e=>e.payload.shipment_id===s.id).slice().reverse().map(e=><li key={e.id}><strong>{e.type === 'status_changed' && e.to_status === 'completed' ? 'Delivered' : eventTitle(e)}<Demo show={e.source==='simulated'}/></strong><time>{date(e.created_at)}</time></li>)}</ol>}</section>)}
   </div></div>
 
-  {assign&&<AssignAdvocate caseId={d.id} reference={d.reference} close={()=>setAssign(false)} assigned={()=>{setAssign(false);setReload(n=>n+1);}}/>}
+  {assign&&<AssignAdvocate caseId={d.id} reference={d.reference} service={service} close={()=>setAssign(false)} assigned={()=>{setAssign(false);setReload(n=>n+1);}}/>}
   {delivering&&<ConfirmDelivery record={d} close={()=>setDelivering(false)} confirmed={()=>{setDelivering(false);setReload(n=>n+1);}}/>}
   {preview&&<Preview doc={preview} close={()=>setPreview(null)}/>}
  </main>;

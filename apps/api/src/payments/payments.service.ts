@@ -1,9 +1,9 @@
-import { appendCaseEvent } from '../cases/case-state-machine';
-import { ConflictException, ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { appendCaseEvent, lockedNoticeCase } from '../cases/case-state-machine';
+import { ConflictException, ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import { z } from 'zod';
 import { PrismaService } from '../prisma.service';
 import { CaseStateMachine } from '../cases/case-state-machine';
-import { caseScope, type CaseActor } from '../cases/case-access';
+import { type CaseActor } from '../cases/case-access';
 import { parse } from '../auth/auth.service';
 import { PAYMENTS, type PaymentsPort } from './payments.port';
 import { NOTIFICATIONS, type NotificationsPort } from '../notifications/notifications.port';
@@ -19,9 +19,7 @@ export class PaymentsService {
     const db = await this.prisma.getClient();
     return db.$transaction(async tx => {
       // Serialise both retries and distinct keys for the same case before capture.
-      await tx.$queryRaw`SELECT id FROM cases WHERE id = ${input.case_id}::uuid FOR UPDATE`;
-      const record = await tx.case.findFirst({where: {AND: [caseScope(actor), {id: input.case_id}]}});
-      if (!record) throw new NotFoundException('Case not found');
+      const record = await lockedNoticeCase(tx, actor, input.case_id);
       if ((input.purpose === 'service_fee' && (actor.role !== 'client' || actor.id !== record.client_id)) ||
           (input.purpose === 'courier' && (actor.role !== 'advocate' || actor.id !== record.advocate_id)))
         throw new ForbiddenException('Only the payer may make this payment');

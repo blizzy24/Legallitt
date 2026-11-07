@@ -52,7 +52,7 @@ export class NoticePdfService {
 
   private async load(actor: CaseActor, caseId: string, draftId: string) {
     const db = await this.prisma.getClient();
-    const record = await db.case.findFirst({ where: { AND: [caseScope(actor), { id: caseId }] }, include: {
+    const record = await db.case.findFirst({ where: { AND: [caseScope(actor, 'legal_notice'), { id: caseId }] }, include: {
       case_parties_case_id_relations: true,
       pricing_id_relation: {select: {base_amount_paise: true}},
       advocate_id_relation: {select: {full_name: true, advocate_profiles_user_id_relations: {

@@ -2,6 +2,7 @@ import type { AdminCaseBucket, CaseStatus } from './lifecycle';
 import type { ServiceCode } from './services';
 export type AdminCaseQuery = {service?: ServiceCode; bucket?: AdminCaseBucket; search?: string; cursor?: string; limit?: number};
 export type AdminCaseRow = {
+  service_code: ServiceCode;
   id: string; reference: string;
   client: {id: string; name: string};
   matter_type: string | null;
@@ -28,6 +29,7 @@ export type AdminContact = {name: string | null; email: string | null; phone: st
   /** Sender only: the intake's introduction fields, as the notice prints them. */
   salutation?: string | null; age?: number | null; relation?: string | null; relative_name?: string | null};
 export type AdminCaseDetail = {
+  service_code: ServiceCode;
   id: string; reference: string; status: CaseStatus; sub_status: string | null;
   matter_type: string | null; tier: string | null; simulated: boolean; created_at: string;
   advocate_id: string | null; contacts: AdminContact[];

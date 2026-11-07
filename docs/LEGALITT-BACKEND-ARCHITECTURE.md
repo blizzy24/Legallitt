@@ -1357,6 +1357,24 @@ Build against **Legal Notice only**. The other eight services reuse the same
 shape and are added in step 9 — building them now would multiply any mistake
 by nine.
 
+**Multi-service spine update (8 November 2026, local implementation).** Case
+creation, membership-scoped reads/events/documents, assignment and the common
+case lists now accept the supported service codes. A service filter only
+narrows membership: clients still match `client_id`, advocates `advocate_id`,
+and admins retain their existing role checks. Case/document write locks use
+those same predicates and recheck access after waiting for the lock.
+
+Legal Notice retains its intake contract, reference sequence and routes.
+Other services can create only an empty case (`service_code` alone), with an
+independent sequence and a canonical-code reference prefix; no intake, draft,
+payment, PDF or dispatch workflow is enabled for them by this change. The
+17 lifecycle values and bucket functions are unchanged. Mobile lists include
+other services but send taps to the existing unavailable-workflow boundary;
+the admin list/detail accept `/services/:service/cases`, while `/legal-notices`
+remains unchanged. Notification destinations carry the case's service code.
+This work is not deployed; AWS/Vercel and a deployed walkthrough of the new
+code remain outside this chunk.
+
 **5a — The state machine.**
 
 One service class owns every status change. Nothing else writes

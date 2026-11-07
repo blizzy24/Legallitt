@@ -10,7 +10,10 @@ test('admin detail: boundaries, sparse data, origins, payer, timeline and shipme
  try {
   await db.user.createMany({data:users});
   for(const [caseId,service] of [[id,'legal_notice'],[sparse,'legal_notice'],[other,'fir_draft']])await db.case.create({data:{id:caseId,reference:'DETAIL-'+caseId,service_code:service,client_id:client.id,status:'assigning'}});
-  await assert.rejects(repo.get(client,id),{status:403});await assert.rejects(repo.get(adv,id),{status:403});await assert.rejects(repo.get(admin,other),{status:404});await assert.rejects(repo.get(admin,randomUUID()),{status:404});await assert.rejects(repo.get(admin,'bad'),{status:400});
+  await assert.rejects(repo.get(client,id),{status:403});await assert.rejects(repo.get(adv,id),{status:403});
+  assert.equal((await repo.get(admin,other)).service_code,'fir_draft');
+  await assert.rejects(repo.get(client,other),{status:403});await assert.rejects(repo.get(adv,other),{status:403});
+  await assert.rejects(repo.get(admin,randomUUID()),{status:404});await assert.rejects(repo.get(admin,'bad'),{status:400});
   const blank=await repo.get(admin,sparse);assert.equal(blank.pricing,null);assert.equal(blank.advocate_id,null);assert.deepEqual(blank.documents,[]);assert.deepEqual(blank.events,[]);assert.equal(blank.contacts.length,1);assert.equal(blank.contacts[0].phone,null);
   await db.case.update({where:{id},data:{advocate_id:adv.id,details:{noticee:{fullName:'Noticee',email:'noticee@example.invalid',address:'Test address'}}}});
   await db.document.createMany({data:[{id:doc,case_id:id,owner_id:admin.id,kind:'proof_of_delivery',filename:'simulated-pod.pdf',s3_key:'private-pod-key',mime_type:'application/pdf',size_bytes:100n,simulated:true},{id:final,case_id:id,owner_id:adv.id,kind:'legal_notice',filename:'notice.pdf',s3_key:'private-final-key',mime_type:'application/pdf',size_bytes:200n}]});

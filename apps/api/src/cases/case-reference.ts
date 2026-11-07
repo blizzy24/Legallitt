@@ -1,0 +1,11 @@
+import type { ServiceCode } from '@legalitt/shared';
+import type { Prisma } from '../generated/prisma/client';
+
+export async function caseReference(tx: Prisma.TransactionClient, service: ServiceCode) {
+  // The sequence name is a bound value, never interpolated SQL. Preserve LN IDs
+  // exactly; unbuilt services use their canonical code, without a guessed brand.
+  const [sequence] = await tx.$queryRaw<{value: bigint}[]>`
+    SELECT nextval(${service + '_reference_seq'}::regclass) AS value`;
+  const prefix = service === 'legal_notice' ? 'LN' : service.toUpperCase();
+  return `${prefix}-${new Date().getUTCFullYear()}-${sequence.value.toString().padStart(4, '0')}`;
+}

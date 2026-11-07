@@ -11,6 +11,8 @@ import {
 } from "@nestjs/common";
 import {
   CaseStatus,
+  CreateCaseSchema,
+  type ServiceCode,
   LegalNoticeIntakeSchema,
   LegalNoticeSubmissionSchema,
   NoticeIntakeFieldsSchema,
@@ -34,13 +36,9 @@ import { parse } from "../auth/auth.service";
 import { PrismaService } from "../prisma.service";
 import { Prisma, type PrismaClient } from "../generated/prisma/client";
 import { caseScope, type CaseActor } from "./case-access";
+import { caseReference } from './case-reference';
 
-export const createCaseSchema = z.strictObject({
-  service_code: z.literal("legal_notice"),
-  tier: LegalNoticeTierSchema.optional(),
-  details: LegalNoticeIntakeSchema.default({}),
-  matter_type: LegalNoticeMatterTypeSchema.nullable().optional(),
-});
+export const createCaseSchema = CreateCaseSchema;
 export const updateCaseSchema = z
   .strictObject({
     ...NoticeIntakeFieldsSchema.shape,
@@ -102,19 +100,27 @@ export async function lockedCase(
   tx: Prisma.TransactionClient,
   actor: CaseActor,
   id: string,
+  service?: ServiceCode,
 ) {
-  await tx.$queryRaw`SELECT id FROM cases
-    WHERE id = ${id}::uuid AND service_code = 'legal_notice'
+  const scope = caseScope(actor, service);
+  const locked = await tx.$queryRaw<{id: string}[]>`SELECT id FROM cases
+    WHERE id = ${id}::uuid
+    AND (${service ?? null}::text IS NULL OR service_code = ${service ?? null})
     AND (${actor.role} = 'admin'
       OR (${actor.role} = 'client' AND client_id = ${actor.id}::uuid)
       OR (${actor.role} = 'advocate' AND advocate_id = ${actor.id}::uuid))
     FOR UPDATE`;
+  if (!locked.length) throw new NotFoundException("Case not found");
   const record = await tx.case.findFirst({
-    where: { AND: [caseScope(actor), { id }] },
+    where: { AND: [scope, { id }] },
   });
   if (!record) throw new NotFoundException("Case not found");
   return record;
 }
+
+// Service-specific operations retain their old boundary while the spine opens.
+export const lockedNoticeCase = (tx: Prisma.TransactionClient, actor: CaseActor, id: string) =>
+  lockedCase(tx, actor, id, 'legal_notice');
 
 function permit(actor: CaseActor, from: CaseStatus, to: CaseStatus) {
   if (!transitions[from].includes(to))
@@ -159,24 +165,25 @@ export class CaseStateMachine {
     if (actor.role !== "client")
       throw new ForbiddenException("Only clients create cases");
     const input = parse(createCaseSchema, body);
-    if (input.matter_type !== undefined && input.details.issueType !== undefined && input.matter_type !== noticeMatterType(input.details.issueType))
+    const notice = input.service_code === 'legal_notice' ? input : null;
+    if (notice && notice.matter_type !== undefined && notice.details.issueType !== undefined && notice.matter_type !== noticeMatterType(notice.details.issueType))
       throw new BadRequestException('Matter type must match the selected issue');
-    const matterType = input.matter_type ?? noticeMatterType(input.details.issueType);
+    const matterType = notice ? notice.matter_type ?? noticeMatterType(notice.details.issueType) : null;
     const issueType = noticeIssueType(matterType);
     const db = await this.prisma.getClient();
     return db.$transaction(async (tx) => {
-      const [sequence] = await tx.$queryRaw<{ value: bigint }[]>`
-        SELECT nextval('legal_notice_reference_seq') AS value`;
-      const reference = `LN-${new Date().getUTCFullYear()}-${sequence.value.toString().padStart(4, "0")}`;
+      if (!await tx.service.findFirst({where: {code: input.service_code, active: true}}))
+        throw new BadRequestException('Service is not available');
+      const reference = await caseReference(tx, input.service_code);
       const record = await tx.case.create({
         data: {
-          service_code: "legal_notice",
+          service_code: input.service_code,
           client_id: actor.id,
           reference,
           status: CaseStatus.draft,
-          tier: input.tier,
+          tier: notice?.tier,
           matter_type: matterType,
-          details: {...input.details, ...(issueType ? {issueType} : {})},
+          details: {...notice?.details, ...(issueType ? {issueType} : {})},
         },
       });
       await tx.caseEvent.create({
@@ -197,7 +204,7 @@ export class CaseStateMachine {
     const input = parse(updateCaseSchema, body);
     const db = await this.prisma.getClient();
     return db.$transaction(async (tx) => {
-      const record = await lockedCase(tx, actor, id);
+      const record = await lockedNoticeCase(tx, actor, id);
       if (actor.role !== "client")
         throw new ForbiddenException("Only the client edits intake");
       if (record.status !== CaseStatus.draft)
@@ -259,7 +266,7 @@ export class CaseStateMachine {
     result: {task: 'subject'; text: string; simulated: boolean} | {task: 'demands'; options: string[]; simulated: boolean}) {
     const db = await this.prisma.getClient();
     return db.$transaction(async tx => {
-      const record = await lockedCase(tx, actor, id);
+      const record = await lockedNoticeCase(tx, actor, id);
       if (actor.role !== 'client') throw new ForbiddenException('Only the client edits intake');
       if (record.status !== 'draft') throw new ConflictException('Only draft intake can be edited');
       if (record.matter_type !== inputs.matter_type || record.subject_matter !== inputs.subject_matter)
@@ -279,7 +286,7 @@ export class CaseStateMachine {
     failure: {task: 'subject' | 'demands'; code: string; provider?: string; model?: string; request_id?: string}) {
     const db = await this.prisma.getClient();
     return db.$transaction(async tx => {
-      await lockedCase(tx, actor, id);
+      await lockedNoticeCase(tx, actor, id);
       if (actor.role !== 'client') throw new ForbiddenException('Only the client edits intake');
       // Audit the attempt even if intake changed while the provider was running.
       // No prompt, credential, party details, generated value or state change.
@@ -297,6 +304,7 @@ export class CaseStateMachine {
     record: {
       id: string;
       status: string;
+      service_code: string;
       details: unknown;
       tier: string | null;
     },
@@ -314,6 +322,10 @@ export class CaseStateMachine {
       )
         throw new ConflictException("Invalid captured payment transition");
     } else permit(actor, from, to);
+    if (record.service_code !== 'legal_notice' && ![
+      CaseStatus.assigning, CaseStatus.assigned, CaseStatus.advocate_accepted,
+      CaseStatus.advocate_declined, CaseStatus.cancelled, CaseStatus.refunded,
+    ].includes(to)) throw new ConflictException('This service workflow is not available yet');
     if (to === CaseStatus.submitted) {
       parse(LegalNoticeSubmissionSchema, record.details);
       parse(LegalNoticeTierSchema, record.tier);
@@ -354,7 +366,7 @@ export class CaseStateMachine {
   async submitForPayment(actor: CaseActor, id: string) {
     const db = await this.prisma.getClient();
     return db.$transaction(async (tx) => {
-      let record = await lockedCase(tx, actor, id);
+      let record = await lockedNoticeCase(tx, actor, id);
       if (actor.role !== "client")
         throw new ForbiddenException("Only clients submit");
       if (record.status === "payment_pending") return record;
@@ -369,7 +381,7 @@ export class CaseStateMachine {
     });
   }
   async paymentCaptured(tx: Prisma.TransactionClient, actor: CaseActor,
-    record: {id: string; status: string; details: unknown; tier: string | null},
+    record: {id: string; service_code: string; status: string; details: unknown; tier: string | null},
     paymentId: string, source: 'real' | 'simulated') {
     const payment = await tx.payment.findFirst({where: {id: paymentId, case_id: record.id, payer_id: actor.id, purpose: 'service_fee', status: 'captured'}});
     if (!payment) throw new ConflictException('A captured service payment is required');
@@ -395,7 +407,7 @@ export class CaseStateMachine {
       if (!advocate) throw new BadRequestException("Choose an active, approved advocate");
       // The notice prints the advocate's city as its Place. Without one the
       // advocate could never generate the draft, so the work is refused here.
-      if (!advocate.advocate_profiles_user_id_relations?.city?.trim())
+      if (record.service_code === 'legal_notice' && !advocate.advocate_profiles_user_id_relations?.city?.trim())
         throw new BadRequestException("This advocate has no city on their profile. Add one before assigning work.");
       if (record.status === "paid" || record.status === "advocate_declined")
         record = await this.advance(tx, actor, record, CaseStatus.assigning);
@@ -428,7 +440,7 @@ export class CaseStateMachine {
       throw new ForbiddenException("Assigned advocate required");
     const db = await this.prisma.getClient();
     return db.$transaction(async (tx) => {
-      const record = await lockedCase(tx, actor, id);
+      const record = await lockedNoticeCase(tx, actor, id);
       if (record.status === CaseStatus.in_progress) return record;
       return this.advance(tx, actor, record, CaseStatus.in_progress);
     });
@@ -452,7 +464,7 @@ export class CaseStateMachine {
       throw new ForbiddenException("Assigned advocate required");
     const db = await this.prisma.getClient();
     return db.$transaction(async (tx) => {
-      let record = await lockedCase(tx, actor, id);
+      let record = await lockedNoticeCase(tx, actor, id);
       if (
         record.status === "advocate_accepted" ||
         record.status === "changes_requested"
@@ -516,7 +528,7 @@ export class CaseStateMachine {
       throw new ForbiddenException("Assigned advocate required");
     const db = await this.prisma.getClient();
     return db.$transaction(async (tx) => {
-      const record = await lockedCase(tx, actor, id);
+      const record = await lockedNoticeCase(tx, actor, id);
       const draft = await this.latestDraft(tx, id, draftId);
       const content = parse(
         NoticeDraftInputSchema.shape.content,
@@ -548,7 +560,7 @@ export class CaseStateMachine {
         : (parse(z.strictObject({}), body), null);
     const db = await this.prisma.getClient();
     return db.$transaction(async (tx) => {
-      const record = await lockedCase(tx, actor, id);
+      const record = await lockedNoticeCase(tx, actor, id);
       await this.latestDraft(tx, id, draftId);
       let updated = await this.advance(
         tx,
@@ -573,7 +585,7 @@ export class CaseStateMachine {
     parse(z.strictObject({}), body);
     const db = await this.prisma.getClient();
     return db.$transaction(async (tx) => {
-      let record = await lockedCase(tx, actor, id);
+      let record = await lockedNoticeCase(tx, actor, id);
       if (record.status === "approved")
         record = await this.advance(tx, actor, record, CaseStatus.dispatching);
       if (record.status !== "dispatching")
@@ -599,7 +611,7 @@ export class CaseStateMachine {
     const delivered_at = input.delivered_at ? new Date(input.delivered_at) : new Date();
     const db = await this.prisma.getClient();
     return db.$transaction(async (tx) => {
-      const record = await lockedCase(tx, actor, id);
+      const record = await lockedNoticeCase(tx, actor, id);
       if (record.status !== 'dispatched') throw new ConflictException('Only a dispatched case can be confirmed delivered');
       const proof = await tx.document.findFirst({
         where: { id: pod_document_id, case_id: id, status: "uploaded" },

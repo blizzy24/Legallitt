@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import { ApiError, type AdminAdvocate } from '@legalitt/shared';
+import { ApiError, type AdminAdvocate, type ServiceCode } from '@legalitt/shared';
 import { api, useSession } from './session';
 
-export function AssignAdvocate({caseId, reference, close, assigned}: {
-  caseId: string; reference: string; close(): void; assigned(): void;
+export function AssignAdvocate({caseId, reference, service = 'legal_notice', close, assigned}: {
+  caseId: string; reference: string; service?: ServiceCode; close(): void; assigned(): void;
 }) {
   const {refuse} = useSession();
   const dialog = useRef<HTMLDialogElement>(null);
@@ -17,11 +17,11 @@ export function AssignAdvocate({caseId, reference, close, assigned}: {
   useEffect(() => {
     let alive = true;
     setLoading(true); setError('');
-    api.adminAdvocates().then(result => {if (alive) setItems(result.items);})
+    api.adminAdvocates(service).then(result => {if (alive) setItems(result.items);})
       .catch(e => {if (alive) setError(e instanceof Error ? e.message : 'Unable to load advocates');})
       .finally(() => {if (alive) setLoading(false);});
     return () => {alive = false;};
-  }, [retry]);
+  }, [retry, service]);
   const choose = async (advocate: AdminAdvocate) => {
     if (busy) return;
     setBusy(advocate.id); setError('');

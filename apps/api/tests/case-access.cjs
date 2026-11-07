@@ -79,11 +79,14 @@ test(
         status: 404,
       });
       assert.equal((await repository.read(admin, caseIds[1])).client_id, b.id);
-      // Step 5 never exposes the other eight services, even for admin.
-      await assert.rejects(repository.read(admin, caseIds[2]), { status: 404 });
+      // Services no longer restrict access; ownership and assignment still do.
+      assert.equal((await repository.read(admin, caseIds[2])).service_code, 'fir_draft');
+      assert.equal((await repository.read(a, caseIds[2])).client_id, a.id);
+      await assert.rejects(repository.read(b, caseIds[2]), {status:404});
+      await assert.rejects(repository.read(advocate, caseIds[2]), {status:404});
       assert.deepEqual(
         (await repository.list(a, {})).items.map((c) => c.id),
-        [caseIds[0]],
+        [caseIds[0], caseIds[2]],
       );
       assert.deepEqual(
         (await repository.list(advocate, {})).items.map((c) => c.id),

@@ -1,6 +1,6 @@
 import { Injectable, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { z } from 'zod';
-import type { AdminCaseDetail, AdminContact } from '@legalitt/shared';
+import {ServiceCodeSchema, type AdminCaseDetail, type AdminContact} from '@legalitt/shared';
 import { PrismaService } from '../prisma.service';
 import { parse } from '../auth/auth.service';
 import { caseScope, type CaseActor } from '../cases/case-access';
@@ -22,13 +22,13 @@ export class AdminCaseDetailRepository {
       payments_case_id_relations: {orderBy: {created_at: 'desc'}, include: {payer: {select: {full_name: true, role: true}}}},
       shipments_case_id_relations: {orderBy: {id: 'asc'}},
     }});
-    if (!row) throw new NotFoundException('Legal Notice not found');
+    if (!row) throw new NotFoundException('Case not found');
     const intake = obj(row.details), client = obj(intake.client), noticee = obj(intake.noticee);
     const contacts: AdminContact[] = [{role: 'client', name: row.client_id_relation.full_name,
       email: row.client_id_relation.email, phone: row.client_id_relation.phone, address: null}];
     // Intake contacts are separately labelled: do not silently replace account data.
     const senderParty = row.case_parties_case_id_relations.find(p => p.kind === 'sender');
-    for (const [role, values] of [['sender', client], ['noticee', noticee]] as const) {
+    for (const [role, values] of row.service_code === 'legal_notice' ? [['sender', client], ['noticee', noticee]] as const : []) {
       if (Object.values(values).some(str)) contacts.push({role, name: str(values.fullName), email: str(values.email), phone: str(values.mobile), address: str(values.address), relationship: str(values.relationship),
         ...(role === 'sender' && senderParty ? {salutation: senderParty.salutation, age: senderParty.age, relation: senderParty.relation, relative_name: senderParty.relative_name} : {})});
     }
@@ -54,7 +54,7 @@ export class AdminCaseDetailRepository {
       courier_office: s.courier_office, courier_phone: s.courier_phone, tracking_url: s.tracking_url, expected_delivery: s.expected_delivery?.toISOString().slice(0,10) ?? null,
       receipt_document_id: s.receipt_document_id, pod_document_id: s.pod_document_id, received_by: s.received_by, simulated: s.simulated,
       booked_at: s.booked_at?.toISOString() ?? null, dispatched_at: s.dispatched_at?.toISOString() ?? null, delivered_at: s.delivered_at?.toISOString() ?? null}));
-    return {id: row.id, reference: row.reference, status: row.status as AdminCaseDetail['status'], sub_status: row.sub_status, matter_type: row.matter_type, tier: row.tier,
+    return {service_code: ServiceCodeSchema.parse(row.service_code), id: row.id, reference: row.reference, status: row.status as AdminCaseDetail['status'], sub_status: row.sub_status, matter_type: row.matter_type, tier: row.tier,
       simulated: events.some(e => e.source === 'simulated') || documents.some(d => d.simulated) || payments.some(p => p.simulated) || shipments.some(s => s.simulated),
       created_at: row.created_at.toISOString(), advocate_id: row.advocate_id, contacts, intake,
       pricing: row.pricing_id_relation ? {base_amount_paise: row.pricing_id_relation.base_amount_paise.toString(), gst_bps: row.pricing_id_relation.gst_bps, confirmed: row.pricing_id_relation.confirmed} : null,

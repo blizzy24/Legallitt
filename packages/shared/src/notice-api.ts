@@ -3,6 +3,7 @@ import { CaseStatus } from "./lifecycle";
 import { LegalNoticeIntake, LegalNoticeTierSchema, type NoticeRelation, type NoticeSalutation } from "./legal-notice";
 import { DocumentPresignSchema } from "./documents";
 import { CompliancePeriodSchema, type NoticePolicy } from './notice-policy';
+import type { ServiceCode } from './services';
 
 const evidenceText = z
   .string()
@@ -115,14 +116,16 @@ export type ApiCase = {
   advocate?: {id:string;full_name:string;profile:ApiAdvocateProfile|null}|null;
   id: string;
   reference: string;
-  service_code: "legal_notice";
+  service_code: ServiceCode;
   client_id: string;
   advocate_id: string | null;
   status: CaseStatus;
-  tier: z.infer<typeof LegalNoticeTierSchema> | null;
+  tier: string | null;
+  title?: string | null;
+  sub_status?: string | null;
   /** The case's historical pricing_id relation, never today's service price. */
   pricing?: {base_amount_paise: string} | null;
-  matter_type: import("./legal-notice").LegalNoticeMatterType | null;
+  matter_type: string | null;
   subject_matter: string | null;
   subject_line: string | null;
   legal_demand: import('./legal-notice').LegalDemand | null;
@@ -130,7 +133,7 @@ export type ApiCase = {
     salutation: NoticeSalutation | null; relation: NoticeRelation | null; relative_name: string | null}[];
   /** Legal_Notice_Final.pdf, rendered on the client's approval. */
   notice_document_id: string | null;
-  details: LegalNoticeIntake;
+  details: Record<string, unknown>;
   created_at: string;
   updated_at: string;
   events?: ApiEvent[];
@@ -138,6 +141,14 @@ export type ApiCase = {
   drafts?: ApiDraft[];
   reviews?: ApiReview[];
   shipments?: import('./shipments').ApiShipment[];};
+export type ApiNoticeCase = Omit<ApiCase, 'service_code' | 'details' | 'matter_type' | 'tier'> & {
+  service_code: 'legal_notice'; details: LegalNoticeIntake;
+  matter_type: import('./legal-notice').LegalNoticeMatterType | null;
+  tier: z.infer<typeof LegalNoticeTierSchema> | null;
+};
+export function isNoticeCase(record: ApiCase): record is ApiNoticeCase {
+  return record.service_code === 'legal_notice';
+}
 export type ApiPage<T> = { items: T[]; next_cursor: string | null };
 export type UploadTicket = {
   document: ApiDocument;
