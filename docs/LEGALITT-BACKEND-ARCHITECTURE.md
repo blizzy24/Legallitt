@@ -326,6 +326,31 @@ NAT gateway and load balancer return when there are real clients to protect** �
 
 ---
 
+**Known development setup item — local CORS (8 November 2026).** The deployed
+dev API does not currently allow the local mobile web origin. Verified against
+`https://gvycg0n3u8.execute-api.ap-south-1.amazonaws.com/api/v1/auth/login`:
+OPTIONS returns 204 without `Access-Control-Allow-Origin` for
+`http://localhost:8081`, but includes it for `https://legalitt-5.vercel.app`.
+A healthy `/health` response therefore does not establish browser connectivity.
+
+Owner-approved temporary workaround: `pnpm mobile:deployed` starts Expo web on
+8081 and a loopback-only proxy on `127.0.0.1:3002`. It forwards the real API
+requests, auth and responses unchanged; it does not simulate data, bypass auth,
+retry mutations or log credentials. `apps/mobile/.env.example` documents the
+upstream and opt-in missing-proxy feedback. Connection failure to the local proxy
+names that process and the start command; a proxy-to-upstream failure returns a
+distinct 502 identifying the deployed API connection. The wording is registered
+in `copy/instructed.ts` as owner-instructed development feedback. The admin can
+use Vite's existing `/api` proxy, documented in its own environment template.
+
+**Proper fix, pending AWS access:** add the exact local origin to deployed dev's
+`CorsOrigins` configuration; include the admin origin if direct admin access is
+needed. Verify browser preflights and sign-in, point the frontend directly at the
+deployed HTTPS API, unset the local proxy settings and remove the mobile proxy
+command/adapter. Direct S3 uploads use the bucket's separate CORS policy and are
+not routed through this API proxy. No AWS/Core configuration was changed for this
+workaround, and it is never part of a hosted frontend deployment.
+
 ### 2.11 Nothing is left unbuilt — unbuilt parts are simulated behind the API
 
 **"Keep it fake till we make it."**

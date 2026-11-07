@@ -10,6 +10,53 @@
 Expo has changed: read https://docs.expo.dev/versions/v57.0.0/ before writing
 Expo or React Native code.
 
+## Setting up a new machine
+
+Use **Git Bash on Windows** for this project; leave PowerShell execution policy
+unchanged. Install fnm, put `eval "$(fnm env --use-on-cd --shell bash)"` in
+`~/.bashrc`, and have `~/.bash_profile` source it. Install/select **Node 22.22.0
+or newer within 22.x** with `fnm install 22` and `fnm use`; both version files
+select 22. Run `corepack enable pnpm` for that Node installation; `package.json`
+pins pnpm automatically. In Git Bash, `pnpm` uses the Corepack shell shim and
+does not run PowerShell's blocked `pnpm.ps1`.
+
+From the repository root in Git Bash:
+
+```bash
+pnpm install --frozen-lockfile
+pnpm --filter @legalitt/api exec prisma generate
+pnpm --filter @legalitt/shared build
+# On a fresh clone only; preserve any existing local settings:
+cp -n apps/mobile/.env.example apps/mobile/.env.local
+pnpm mobile:deployed
+```
+
+Open **http://localhost:8081**. `mobile:deployed` starts BOTH Expo web and the
+temporary local API proxy on `127.0.0.1:3002`; Ctrl+C stops both. Keep
+`EXPO_PUBLIC_DATA_SOURCE=api` or the app silently selects fixtures. Restart after
+editing environment values. This browser setup uses the deployed API/data and
+needs no local API, Docker, PostgreSQL or AWS credentials. Sign in with existing
+demo credentials; never rotate them for setup. Phone demo code `123456` selects
+the seeded account for the chosen role and sends no SMS.
+
+**Why the proxy:** deployed dev currently omits local origins from its CORS list
+(architecture §2.10). [`apps/mobile/.env.example`](apps/mobile/.env.example)
+documents its settings and removal:
+when an AWS operator adds `http://localhost:8081`, switch back to the deployed
+HTTPS API URL, unset both proxy settings and use
+`pnpm --filter @legalitt/mobile web`. Do not disable browser security or switch
+to fixtures to avoid CORS.
+
+Other workflows have separate templates; copy only the ones you need:
+[`apps/api/.env.example`](apps/api/.env.example) for the local API and test DB,
+[`apps/admin/.env.example`](apps/admin/.env.example) for the admin frontend, and
+[`infra/local/.env.example`](infra/local/.env.example) for Docker PostgreSQL.
+Every setting states its requirement/default. Local API integration still needs
+AWS access to the existing dev resources, and both local databases must be
+migrated and base-seeded before database tests. `.env.local` files are ignored;
+never put credentials in the examples. Older README setup passages describe
+earlier deployment stages; use these templates and the current architecture.
+
 ## The designs are the specification
 
 The client's designs in `design/` define every screen. Do not invent copy,
