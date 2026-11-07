@@ -1,5 +1,6 @@
 import { Platform } from "react-native";
 import * as SecureStore from "expo-secure-store";
+import { withLocalProxyErrors } from "./local-proxy-fetch";
 import {
   ApiClient,
   type ApiUser,
@@ -14,6 +15,9 @@ let memory: Tokens | null = null;
 let tokensLoaded = false;
 export const backend = new ApiClient({
   baseUrl: process.env.EXPO_PUBLIC_API_URL ?? "",
+  ...(process.env.EXPO_PUBLIC_LOCAL_API_PROXY === '1' &&
+    process.env.EXPO_PUBLIC_API_URL === 'http://127.0.0.1:3002'
+    ? {fetch: withLocalProxyErrors(process.env.EXPO_PUBLIC_API_URL)} : {}),
   getTokens: async () => (tokensLoaded ? memory : storedTokens()),
   setTokens: storeTokens,
 });

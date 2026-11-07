@@ -10,6 +10,8 @@
     "build": "turbo run build",
     "typecheck": "turbo run typecheck",
     "mobile": "pnpm --filter @legalitt/mobile start",
+    "mobile:deployed": "node scripts/mobile-deployed.cjs",
+    "test:local-proxy": "node --test scripts/tests/local-api-proxy.cjs",
     "test:mobile": "node scripts/mobile-smoke.mjs",
     "test:fixtures": "node scripts/check-batch-flows.cjs && node scripts/check-payment-rounding.cjs",
     "demo:password": "node infra/scripts/rotate-demo-password.cjs"

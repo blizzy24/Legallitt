@@ -2,6 +2,8 @@
  * "Instructed copy"). Kept apart from drawn copy and from the substitutions so it
  * stays distinguishable; do not reword. */
 export const instructedCopy = {
+  // Approved: owner local Windows setup, 8 November 2026. Temporary CORS proxy.
+  localProxyUnavailable: 'The local API proxy is not running or cannot be reached. Run pnpm mobile:deployed from the repository root, then retry. This does not mean the deployed API is down.',
   // Approved — owner navigation-data sweep, 4 November 2026. Unbuilt data is
   // unavailable, not an assertion that this account has no records.
   navigationAvailability: {
