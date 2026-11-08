@@ -1,0 +1,638 @@
+[
+  {
+    "role": "client",
+    "method": "POST",
+    "path": "/api/v1/auth/login",
+    "status": 201
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 200
+  },
+  {
+    "role": "advocate",
+    "method": "POST",
+    "path": "/api/v1/auth/login",
+    "status": 201
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases",
+    "status": 200
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 200
+  },
+  {
+    "role": "admin",
+    "method": "POST",
+    "path": "/api/v1/auth/login",
+    "status": 201
+  },
+  {
+    "role": "admin",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 200
+  },
+  {
+    "role": "admin",
+    "method": "GET",
+    "path": "/api/v1/admin/cases",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/me",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/services/legal_notice",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/a57919a4-2ee1-4431-b79b-6b9161947306",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "PATCH",
+    "path": "/api/v1/cases/a57919a4-2ee1-4431-b79b-6b9161947306",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/a57919a4-2ee1-4431-b79b-6b9161947306",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/services/legal_notice",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "PATCH",
+    "path": "/api/v1/cases/a57919a4-2ee1-4431-b79b-6b9161947306",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/a57919a4-2ee1-4431-b79b-6b9161947306",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/services/legal_notice",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "POST",
+    "path": "/api/v1/cases/a57919a4-2ee1-4431-b79b-6b9161947306/demand-options",
+    "status": 400
+  },
+  {
+    "role": "client",
+    "method": "PATCH",
+    "path": "/api/v1/cases/a57919a4-2ee1-4431-b79b-6b9161947306",
+    "status": 200
+  },
+  {
+    "role": "admin",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/services/legal_notice",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/a57919a4-2ee1-4431-b79b-6b9161947306",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "POST",
+    "path": "/api/v1/documents/presign",
+    "status": 201
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "POST",
+    "path": "/api/v1/documents/81f1a1bf-2cdc-4f7a-a101-e3b7968f2122/complete",
+    "status": 201
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/a57919a4-2ee1-4431-b79b-6b9161947306",
+    "status": 200
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/services/legal_notice",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/a57919a4-2ee1-4431-b79b-6b9161947306",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "PATCH",
+    "path": "/api/v1/cases/a57919a4-2ee1-4431-b79b-6b9161947306",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/services/legal_notice",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/a57919a4-2ee1-4431-b79b-6b9161947306",
+    "status": 200
+  },
+  {
+    "role": "admin",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "PATCH",
+    "path": "/api/v1/cases/a57919a4-2ee1-4431-b79b-6b9161947306",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/a57919a4-2ee1-4431-b79b-6b9161947306",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/services/legal_notice",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/a57919a4-2ee1-4431-b79b-6b9161947306",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "admin",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/a57919a4-2ee1-4431-b79b-6b9161947306",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/a57919a4-2ee1-4431-b79b-6b9161947306",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "admin",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/a57919a4-2ee1-4431-b79b-6b9161947306",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/a57919a4-2ee1-4431-b79b-6b9161947306",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases",
+    "status": 304
+  },
+  {
+    "role": "admin",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/a57919a4-2ee1-4431-b79b-6b9161947306",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/a57919a4-2ee1-4431-b79b-6b9161947306",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "admin",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/a57919a4-2ee1-4431-b79b-6b9161947306",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/a57919a4-2ee1-4431-b79b-6b9161947306",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "admin",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/a57919a4-2ee1-4431-b79b-6b9161947306",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/a57919a4-2ee1-4431-b79b-6b9161947306",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases",
+    "status": 304
+  },
+  {
+    "role": "admin",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/a57919a4-2ee1-4431-b79b-6b9161947306",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/a57919a4-2ee1-4431-b79b-6b9161947306",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "admin",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/a57919a4-2ee1-4431-b79b-6b9161947306",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/a57919a4-2ee1-4431-b79b-6b9161947306",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "admin",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/a57919a4-2ee1-4431-b79b-6b9161947306",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/a57919a4-2ee1-4431-b79b-6b9161947306",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "admin",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/a57919a4-2ee1-4431-b79b-6b9161947306",
+    "status": 304
+  }
+]

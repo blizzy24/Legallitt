@@ -1,0 +1,10 @@
+Source commit: 950592a (local; not pushed to avoid triggering frontend deployment)
+Image: legalitt-dev-api:950592a-seed-only
+Digest: sha256:fb044e88ff097944ece3f656487220881a9a43073e9f3e271940a09c2ef87cea
+Task: arn:aws:ecs:ap-south-1:026379630400:task/legalitt-dev-cluster/aa51881a2f3c4d7eab2e268c96afda78
+Command: bash scripts/.ops-git-bash.sh seed-client-isolation 950592a-seed-only
+Exit: 0
+Client: demo-client-isolation@legalitt.invalid
+Case: LN-2026-0020 (28e9dbf2-0e04-4a6d-8c54-03fe9e58da61)
+Scoped seed preserved all existing confirmed credentials. No mail or SMS sent.
+The API service remains on the exact 92fd314 image, not this seed-only overlay.

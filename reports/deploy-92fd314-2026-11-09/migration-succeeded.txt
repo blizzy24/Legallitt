@@ -1,0 +1,7 @@
+Image: 026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api:92fd314
+Task: arn:aws:ecs:ap-south-1:026379630400:task/legalitt-dev-cluster/71bd45ba63984493b7e5603918714663
+Ops task definition: legalitt-dev-ops:13 (temporary revision deregistered by helper)
+Command: bash scripts/.ops-git-bash.sh migrate 92fd314
+Exit: 0 (Essential container in task exited)
+Migration: 202611080001_service_references applied before executing the API change set.
+The first direct Git Bash invocation failed before launching a task because python3 resolved to the Windows Store placeholder. The retry used session-local python3 -> python and AWS text line-ending normalization; the migration implementation was unchanged.

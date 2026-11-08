@@ -1,0 +1,30 @@
+{
+  "stack": "UPDATE_COMPLETE",
+  "tag": "92fd314",
+  "desired": 1,
+  "running": 1,
+  "pending": 0,
+  "deployments": [
+    {
+      "status": "PRIMARY",
+      "rolloutState": "COMPLETED",
+      "taskDefinition": "arn:aws:ecs:ap-south-1:026379630400:task-definition/legalitt-dev-api:11"
+    }
+  ],
+  "image": "026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api:92fd314",
+  "tasks": [
+    {
+      "arn": "arn:aws:ecs:ap-south-1:026379630400:task/legalitt-dev-cluster/846d0849a2a3487494877ed33a095d98",
+      "status": "RUNNING",
+      "health": "HEALTHY",
+      "containers": [
+        {
+          "image": "026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api:92fd314",
+          "digest": "sha256:9a9f786f09542f4a84828e208c7ef8597009417df62002e74f7382742df66c38",
+          "status": "RUNNING",
+          "health": "HEALTHY"
+        }
+      ]
+    }
+  ]
+}

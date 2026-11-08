@@ -1,0 +1,59 @@
+{
+  "commit": "92fd314",
+  "bidirectional": true,
+  "bothClientsOwnCases": true,
+  "results": [
+    {
+      "client": "demo-client-isolation",
+      "ownCase": {
+        "id": "28e9dbf2-0e04-4a6d-8c54-03fe9e58da61",
+        "reference": "LN-2026-0020"
+      },
+      "ownCaseStatus": 200,
+      "foreignCase": {
+        "id": "a57919a4-2ee1-4431-b79b-6b9161947306",
+        "reference": "LN-2026-0021"
+      },
+      "directApiStatus": 404,
+      "directApiMessage": "Case not found",
+      "browserUrl": "https://legalitt-5.vercel.app/legal-notice/tracking?caseId=a57919a4-2ee1-4431-b79b-6b9161947306",
+      "browserResponses": [
+        {
+          "path": "/api/v1/cases/a57919a4-2ee1-4431-b79b-6b9161947306",
+          "status": 204
+        },
+        {
+          "path": "/api/v1/cases/a57919a4-2ee1-4431-b79b-6b9161947306",
+          "status": 404
+        }
+      ],
+      "foreignReferenceHidden": true
+    },
+    {
+      "client": "demo-client",
+      "ownCase": {
+        "id": "a57919a4-2ee1-4431-b79b-6b9161947306",
+        "reference": "LN-2026-0021"
+      },
+      "ownCaseStatus": 200,
+      "foreignCase": {
+        "id": "28e9dbf2-0e04-4a6d-8c54-03fe9e58da61",
+        "reference": "LN-2026-0020"
+      },
+      "directApiStatus": 404,
+      "directApiMessage": "Case not found",
+      "browserUrl": "https://legalitt-5.vercel.app/legal-notice/tracking?caseId=28e9dbf2-0e04-4a6d-8c54-03fe9e58da61",
+      "browserResponses": [
+        {
+          "path": "/api/v1/cases/28e9dbf2-0e04-4a6d-8c54-03fe9e58da61",
+          "status": 204
+        },
+        {
+          "path": "/api/v1/cases/28e9dbf2-0e04-4a6d-8c54-03fe9e58da61",
+          "status": 404
+        }
+      ],
+      "foreignReferenceHidden": true
+    }
+  ]
+}

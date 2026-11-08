@@ -1,0 +1,12 @@
+{
+  "localCase": {
+    "id": "cc586479-1b1d-4288-9a6e-36b6acf1a210",
+    "reference": "LN-2026-0001",
+    "client_id": "845fcf4a-c425-4421-bb36-09a69e14ce68",
+    "email": "demo-client-isolation@legalitt.invalid",
+    "status": "draft"
+  },
+  "rerunPreservedCase": true,
+  "existingSixCognitoAccountsUnchanged": true,
+  "allSevenCognitoModificationTimesUnchangedOnRerun": true
+}

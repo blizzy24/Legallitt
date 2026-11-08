@@ -1,0 +1,7 @@
+{
+  "commit": "950592aa6c450cd7fbfdaa267f34318810390a15",
+  "base": "026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api@sha256:9a9f786f09542f4a84828e208c7ef8597009417df62002e74f7382742df66c38",
+  "sourceSha256": "c74b869b5bdc6bd6674c2ff4822f39c2dcc352c922457ea29d929a17ad60d5a0",
+  "compiledSha256": "fe142ed31cfe1e9d0480a89d59a1eddd0c0c1da3d5c7cf7672acfa6240059690",
+  "purpose": "One-off scoped seed; never deploy this overlay to the API service"
+}
