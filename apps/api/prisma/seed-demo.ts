@@ -51,9 +51,15 @@ const extraAdvocates = [
   {role: 'advocate', email: 'demo-advocate-3@legalitt.invalid', name: 'Demo Advocate Kabir', practice_areas: ['Family Law', 'Civil Law'], city: 'Jaipur', load: 1},
   {role: 'advocate', email: 'demo-advocate-4@legalitt.invalid', name: 'Demo Advocate Meera', practice_areas: ['Property Law', 'Tenancy'], city: 'Pune', load: 3},
 ];
+// Owner-approved permanent second client for bidirectional access-control checks.
+const isolationClient = {role: 'client', email: 'demo-client-isolation@legalitt.invalid', name: 'TEST ONLY Client Isolation'};
 // Explicit operator command, never run by a request handler or in production.
 async function main() {
   requireDemoMode();
+  const args = process.argv.slice(2);
+  if (args.some(arg => arg !== '--client-isolation-only') || args.length > 1)
+    throw new Error('Usage: seed-demo.js [--client-isolation-only]');
+  const isolationOnly = args.includes('--client-isolation-only');
   if (!process.env.AUTH_CONFIG_SECRET_ARN)
     throw new Error("Auth configuration required");
   const secrets = new SecretsManagerClient({ region: "ap-south-1" });
@@ -74,7 +80,7 @@ async function main() {
     if (pool.UserPool?.UserPoolTags?.environment !== "dev")
       throw new Error("Demo accounts require a dev-tagged pool");
     const password = await demoPassword();
-    const accounts = [...Object.entries({...demoAccounts, admin: {email: "demo-admin@legalitt.invalid", name: "Demo admin"}}).map(([role, account]) => ({role, ...account})), ...extraAdvocates];
+    const accounts = isolationOnly ? [isolationClient] : [...Object.entries({...demoAccounts, admin: {email: "demo-admin@legalitt.invalid", name: "Demo admin"}}).map(([role, account]) => ({role, ...account})), ...extraAdvocates, isolationClient];
     for (const account of accounts) {
       const {role} = account;
       const target = { UserPoolId: userPoolId, Username: account.email };
@@ -110,7 +116,10 @@ async function main() {
           "Existing demo account does not match the specification",
         );
       }
-      await cognito.send(
+      // The scoped setup never resets an existing confirmed credential. A user
+      // left unconfirmed by an interrupted first run can finish provisioning.
+      // Full seeding retains the explicit password-maintenance workflow.
+      if (!isolationOnly || user.UserStatus === 'FORCE_CHANGE_PASSWORD') await cognito.send(
         new AdminSetUserPasswordCommand({
           ...target,
           Password: password,
@@ -143,13 +152,35 @@ async function main() {
         await db.advocateProfile.upsert({where: {user_id: row.id}, create: {user_id: row.id, ...profile}, update: profile});
       }
     }
-    await seedNotices(db);
-    console.log("Seeded six dev accounts and idempotent demo workload cases; no mail or SMS sent.");
+    if (!isolationOnly) await seedNotices(db);
+    await seedIsolationCase(db);
+    console.log(isolationOnly
+      ? "Seeded the isolation client and its own case; existing confirmed credentials unchanged; no mail or SMS sent."
+      : "Seeded seven dev accounts and idempotent demo workload cases; no mail or SMS sent.");
   } finally {
     secrets.destroy();
     cognito.destroy();
     await db.$disconnect();
   }
+}
+async function seedIsolationCase(db: PrismaClient) {
+  const seedKey = 'client-isolation-legal-notice';
+  const client = await db.user.findUniqueOrThrow({where: {email: isolationClient.email}});
+  if (client.role !== 'client' || client.status !== 'active') throw new Error('Isolation client must be active');
+  const tag = await db.caseEvent.findFirst({where: {type: 'development_seed', payload: {path: ['seed_key'], equals: seedKey}}});
+  if (tag) {
+    const existing = await db.case.findUniqueOrThrow({where: {id: tag.case_id}});
+    if (existing.client_id !== client.id || existing.service_code !== 'legal_notice') throw new Error('Isolation seed owner mismatch');
+    console.log(`Isolation case: ${existing.reference} (${existing.id}), preserved`);
+    return;
+  }
+  const prisma = {getClient: async () => db} as never;
+  const state = new CaseStateMachine(prisma, new InAppNotifications(new SimulatedNotifications()));
+  const record = await state.create({id: client.id, role: 'client', source: 'simulated'}, {
+    service_code: 'legal_notice', tier: 'ordinary', details: {client: {fullName: isolationClient.name}},
+  });
+  await tagDevelopmentSeed(db, record.id, seedKey);
+  console.log(`Isolation case: ${record.reference} (${record.id}), created`);
 }
 // Every seeded case goes through the real path a client's case takes: create,
 // intake, subject, submit (with its validation and pricing), simulated payment,

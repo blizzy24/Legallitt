@@ -11,6 +11,7 @@
     "db:migrate": "prisma migrate deploy",
     "db:seed": "pnpm build && prisma db seed",
     "db:seed-demo": "pnpm build && node --env-file-if-exists=.env.local dist/prisma/seed-demo.js",
+    "db:seed-client-isolation": "pnpm build && node --env-file-if-exists=.env.local dist/prisma/seed-demo.js --client-isolation-only",
     "db:local:migrate": "node --env-file=.env.local scripts/migrate-local.cjs",
     "db:local:seed": "pnpm build && node --env-file=.env.local dist/prisma/seed.js",
     "test:local": "pnpm build && node --env-file=.env.local scripts/test-preflight.cjs && node --env-file=.env.local --test --test-concurrency=1 tests/*.cjs"

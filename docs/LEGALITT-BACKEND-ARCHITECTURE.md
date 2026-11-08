@@ -217,8 +217,9 @@ into. Both also have passwords, so they double as test accounts for the normal
 email path.
 
 **Development credential maintenance (owner instruction, 3 November 2026).**
-The full development seed now contains six accounts: the two phone-demo users,
-the demo admin and three additional advocates for the assignment picker. Their
+The full development seed now contains seven accounts: the two phone-demo users,
+the demo admin, three additional advocates for the assignment picker, and the
+second client approved on 9 November 2026 for bidirectional isolation checks. Their
 shared fixed development password lives only in Secrets Manager at
 `legalitt-dev/demo-auth`; never put its value in source, reports or frontend
 configuration. Updating this secret does not update Cognito passwords. After
@@ -1722,6 +1723,7 @@ empty, or explicitly accepted in writing by the client, before production.
 | Courier tracking | `DEMO_SHIPMENT_MILESTONES=on` (default, master required) | No carrier integration; advances only through Out for Delivery, never confirms delivery | Only if the client later buys a carrier API |
 | Legalitt delivery partner | **Not built** — no flag; the choice is removed | No carrier booking or pickup exists (decision: courier integration is manual in v1). Since 4 Nov 2026 the advocate's Send screen (194) offers only Send by Yourself and goes to the 286 courier-details form; designs 195–198 (partner delivery details, courier payment) are kept in code but unreachable from the notice flow, so no courier fee is taken. Who bears the courier cost stays open (**Q16**) | A carrier or pickup partner is integrated and Q16 is answered |
 | KYC | `KYC_MODE=simulated` | No provider chosen | Provider chosen |
+| Client-isolation seed | Explicit dev seed only; no runtime flag | Owner-approved 9 Nov 2026: `demo-client-isolation@legalitt.invalid` uses the existing demo secret and owns a tagged Legal Notice draft. Creation and the seed event record `source=simulated`; no real dispute, payment or notice is represented. `seed-client-isolation` provisions only this account/case, preserves existing confirmed passwords, and reuses the case on reruns. Full seeding/password maintenance includes the seventh account | Never seed in production; retain in development for bidirectional access-control checks |
 
 **In-app notifications are real (3 Nov 2026).** Each notification is a real row,
 created in the same transaction as its case action. `NOTIFY_MODE` affects only

@@ -158,10 +158,18 @@ stop and ask.
 Never change `legalitt-dev/demo-auth` on its own. With explicit approval for a
 credential change, run `pnpm demo:password` on Node 22. It prompts without echo,
 updates the dev secret, immediately runs the deployed and local demo seeds, and
-verifies all six deployed sign-ins. Start local Postgres first. If interrupted,
+verifies all seven deployed sign-ins. Start local Postgres first. If interrupted,
 run `pnpm demo:password --resume` to finish both seeds using the current secret;
 do not rotate again. `--check` validates prerequisites without changing anything.
 No passwords in arguments, source files, logs, or commit messages.
+
+The repeatable demo seed includes `demo-client-isolation@legalitt.invalid` and
+its own tagged Legal Notice draft for bidirectional client-isolation checks.
+To provision only this account/case without resetting any existing confirmed
+password, run `pnpm --filter @legalitt/api db:seed-client-isolation` locally or
+`infra/scripts/dev-ops-task.sh seed-client-isolation <IMAGE_TAG>` in deployed dev.
+Reruns preserve the existing case and its owner. The full demo seed and password
+maintenance command include all seven accounts.
 
 ## Testing
 

@@ -39,12 +39,12 @@ async function main(){
     run('pnpm',['--filter','@legalitt/api','db:seed-demo']);
     // Re-read after both seeds; prove Cognito and the API use this exact value.
     const value=await sm.send(new GetSecretValueCommand({SecretId:secret.ARN}));const {password}=JSON.parse(value.SecretString);
-    for(const prefix of ['demo-client','demo-advocate','demo-admin','demo-advocate-2','demo-advocate-3','demo-advocate-4']){
+    for(const prefix of ['demo-client','demo-advocate','demo-admin','demo-advocate-2','demo-advocate-3','demo-advocate-4','demo-client-isolation']){
       const response=await fetch('https://gvycg0n3u8.execute-api.ap-south-1.amazonaws.com/api/v1/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:prefix+'@legalitt.invalid',password})});
       if(response.status!==201)throw new Error(`${prefix} sign-in failed (${response.status}). Rotation is incomplete; use --resume.`);
       console.log(`${prefix}: sign-in verified`);
     }
-    console.log('Both databases seeded and all six deployed sign-ins verified.');
+    console.log('Both databases seeded and all seven deployed sign-ins verified.');
   }finally{sm.destroy();cognito.destroy();}
 }
 main().catch(error=>{console.error(error.message);process.exitCode=1;});

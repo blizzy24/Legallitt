@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Runs one ops command (migrate, seed, seed-demo) inside the development VPC as a
 # one-off Fargate task, waits for it, and prints its exit code and log tail.
-#   infra/scripts/dev-ops-task.sh migrate|seed|seed-demo [IMAGE_TAG]
+#   infra/scripts/dev-ops-task.sh migrate|seed|seed-demo|seed-client-isolation [IMAGE_TAG]
 # With IMAGE_TAG the command runs in that image instead of the deployed one, so a
 # new image's migrations can run before the API is deployed on it (AGENTS.md).
 # The one-off task definition revision is deregistered afterwards.
@@ -12,7 +12,8 @@ case "${1:-}" in
   migrate)   CMD='["node","scripts/migrate-deploy.cjs"]' ;;
   seed)      CMD='["node","dist/prisma/seed.js"]' ;;
   seed-demo) CMD='["node","dist/prisma/seed-demo.js"]' ;;
-  *) echo "usage: $0 migrate|seed|seed-demo [IMAGE_TAG]" >&2; exit 2 ;;
+  seed-client-isolation) CMD='["node","dist/prisma/seed-demo.js","--client-isolation-only"]' ;;
+  *) echo "usage: $0 migrate|seed|seed-demo|seed-client-isolation [IMAGE_TAG]" >&2; exit 2 ;;
 esac
 out() { aws cloudformation describe-stacks --region "$REGION" --stack-name "$STACK" --query "Stacks[0].Outputs[?OutputKey=='$1'].OutputValue" --output text; }
 CLUSTER=$(out ClusterName); TASKDEF=$(out OpsTaskDefinitionArn); SUBNETS=$(out TaskSubnetIds); SG=$(out TaskSecurityGroupId)
