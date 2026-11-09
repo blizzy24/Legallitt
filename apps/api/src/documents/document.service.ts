@@ -77,7 +77,11 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
     const input = parse(DocumentPresignSchema, body);
     const db = await this.prisma.getClient();
     return db.$transaction(async (tx) => {
-      await lockedCase(tx, actor, input.case_id);
+      const record = await lockedCase(tx, actor, input.case_id);
+      if (record.service_code === 'fir_draft' && !(
+        actor.role === 'client' && ['draft','payment_pending'].includes(record.status) && input.kind !== 'fir_draft' ||
+        actor.role === 'advocate' && ['advocate_accepted','in_progress'].includes(record.status) && !record.sub_status
+      )) throw new ConflictException('FIR documents are frozen at this stage');
       const id = randomUUID();
       const key = `cases/${input.case_id}/${id}/${input.filename}`;
       const doc = await tx.document.create({
@@ -112,6 +116,9 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
     return db.$transaction(async (tx) => {
       const doc = await this.locked(tx, actor, id);
       if (doc.status === "uploaded") return this.publicRecord(doc);
+      const record = await tx.case.findUniqueOrThrow({where:{id:doc.case_id!}});
+      if (record.service_code === 'fir_draft' && (record.sub_status === 'awaiting_admin_approval' || record.status === 'completed'))
+        throw new ConflictException('FIR documents are frozen at this stage');
       if (doc.status !== "pending")
         throw new NotFoundException("Document not found");
       const key = stagingKey(doc.s3_key);
@@ -159,6 +166,12 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
       const doc = await this.locked(tx, actor, id);
       if (doc.status !== "uploaded")
         throw new NotFoundException("Document not found");
+      const record = await tx.case.findUniqueOrThrow({where:{id:doc.case_id!}});
+      if (record.service_code === 'fir_draft' && actor.role === 'client' && doc.owner_id !== record.client_id) {
+        const approved = await tx.draft.findFirst({where:{case_id:record.id,document_id:doc.id,
+          draft_reviews_draft_id_relations:{some:{decision:'approved',reviewer_id_relation:{role:'admin'}}}}});
+        if (record.status !== 'completed' || !approved) throw new NotFoundException('Document not found');
+      }
       return {
         url: await this.storage.download(doc.s3_key, doc.filename,
           preview && actor.role === 'admin' && ['application/pdf', 'image/png', 'image/jpeg'].includes(doc.mime_type)),
@@ -171,6 +184,12 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
     const db = await this.prisma.getClient();
     const doc = await db.$transaction(async (tx) => {
       const record = await this.locked(tx, actor, id);
+      const parent = await tx.case.findUniqueOrThrow({where:{id:record.case_id!}});
+      if (parent.service_code === 'fir_draft') {
+        const linked = await tx.draft.findFirst({where:{case_id:parent.id,document_id:id}});
+        if (linked || ((parent.sub_status === 'awaiting_admin_approval' || parent.status === 'completed') && record.kind !== 'fir_draft'))
+          throw new ConflictException('Submitted FIR documents cannot be deleted');
+      }
       if (actor.role !== "admin" && record.owner_id !== actor.id)
         throw new ForbiddenException(
           "Only the uploader or admin may delete evidence",

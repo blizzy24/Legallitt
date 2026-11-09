@@ -24,7 +24,7 @@ import { advDocHref } from '../../../data/docLinks';
 //
 // ⚠ The incident date is in the future. Note 5. The mobile is unmasked. Note 6.
 
-export default function AdvocateFirDocumentsScreen() {
+function FixtureAdvocateFirDocumentsScreen() {
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id?: string }>();
   const d = FIR_DOCUMENTS;
@@ -352,3 +352,6 @@ const styles = StyleSheet.create({
   cap: { marginTop: t.capGap, textAlign: 'center', fontFamily: font.appSemi, fontSize: t.capSize, color: t.capColour },
   pressed: { opacity: 0.85 },
 });
+import FirAdvocate from '../../../features/fir/FirAdvocate';
+import {DATA_SOURCE} from '../../../lib/data-source';
+export default function LiveFirScreen() { return DATA_SOURCE === 'api' ? <FirAdvocate/> : <FixtureAdvocateFirDocumentsScreen/>; }

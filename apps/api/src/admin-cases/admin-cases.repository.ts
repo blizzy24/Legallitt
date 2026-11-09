@@ -5,6 +5,7 @@ import { PrismaService } from '../prisma.service';
 import { parse } from '../auth/auth.service';
 import { caseScope, type CaseActor } from '../cases/case-access';
 import type { Prisma } from '../generated/prisma/client';
+import {firApproval} from '../cases/fir-approval';
 
 export const adminCaseQuerySchema = z.strictObject({
   service: z.enum(SERVICE_CODES).default('legal_notice'),
@@ -12,6 +13,7 @@ export const adminCaseQuerySchema = z.strictObject({
   search: z.string().trim().max(200).default(''),
   limit: z.coerce.number().int().min(1).max(100).default(20),
   cursor: z.string().max(2048).optional(),
+  queue: z.literal('approval').optional(),
 });
 const cursorSchema = z.strictObject({id: z.uuid(), created_at: z.iso.datetime(), scope: z.string()});
 const eligible = Object.values(CaseStatus).filter(status => adminBucketFor(status) !== null);
@@ -25,7 +27,7 @@ export class AdminCasesRepository {
     // Authorisation remains in the data layer as well as the HTTP guard.
     if (actor.role !== 'admin') throw new ForbiddenException('Admin access required');
     const input = parse(adminCaseQuerySchema, query);
-    const scope = JSON.stringify([input.service, input.bucket ?? null, input.search]);
+    const scope = JSON.stringify([input.service, input.bucket ?? null, input.search, input.queue ?? null]);
     let cursor: z.infer<typeof cursorSchema> | undefined;
     if (input.cursor) {
       let decoded: unknown;
@@ -40,26 +42,31 @@ export class AdminCasesRepository {
         {matter_type: {contains: input.search.replace(/\s+/g, '_'), mode: 'insensitive' as const}},
       ]}] : []),
     ]};
-    const filtered: Prisma.CaseWhereInput = {AND: [base, ...(input.bucket ? [{status: {in: eligible.filter(s => adminBucketFor(s) === input.bucket)}}] : [])]};
+    const waiting: Prisma.CaseWhereInput = {service_code:'fir_draft',status:'in_progress',sub_status:'awaiting_admin_approval'};
+    const bucketWhere: Prisma.CaseWhereInput = {status:{in:eligible.filter(s=>adminBucketFor(s)===input.bucket)}};
+    const filtered: Prisma.CaseWhereInput = {AND:[base,
+      ...(input.bucket ? [input.bucket==='open'?{OR:[bucketWhere,waiting]}:input.bucket==='in_progress'?{AND:[bucketWhere,{NOT:waiting}]}:bucketWhere] : []),
+      ...(input.queue ? [waiting] : [])]};
     const db = await this.prisma.getClient();
     return db.$transaction(async tx => {
-      const grouped = await tx.case.groupBy({by: ['status'], where: base, _count: {_all: true}});
+      const grouped = await tx.case.groupBy({by: ['status','sub_status'], where: base, _count: {_all: true}});
+      const approval_waiting = await tx.case.count({where:{AND:[base,waiting]}});
       const counts = {open: 0, pending: 0, in_progress: 0, completed: 0, closed: 0};
       for (const group of grouped) {
-        const bucket = adminBucketFor(group.status as CaseStatus);
+        const bucket = adminBucketFor(group.status as CaseStatus,input.service,group.sub_status);
         if (bucket) counts[bucket] += group._count._all;
       }
       const total = Object.values(counts).reduce((sum, n) => sum + n, 0);
       const rows = await tx.case.findMany({
         where: {AND: [filtered, ...(cursor ? [{OR: [
-          {created_at: {lt: new Date(cursor.created_at)}},
-          {created_at: new Date(cursor.created_at), id: {lt: cursor.id}},
+          ...(input.queue ? [{updated_at:{gt:new Date(cursor.created_at)}},{updated_at:new Date(cursor.created_at),id:{gt:cursor.id}}] :
+            [{created_at:{lt:new Date(cursor.created_at)}},{created_at:new Date(cursor.created_at),id:{lt:cursor.id}}]),
         ]}] : [])]},
-        orderBy: [{created_at: 'desc'}, {id: 'desc'}], take: input.limit + 1,
+        orderBy: input.queue ? [{updated_at:'asc'},{id:'asc'}] : [{created_at:'desc'},{id:'desc'}], take: input.limit + 1,
         select: {
           id: true, reference: true, service_code: true, status: true, matter_type: true, created_at: true,
-          details: true, notice_document_id: true,
-          case_events_case_id_relations: {where: {source: 'simulated'}, take: 1, select: {id: true}},
+          details: true, notice_document_id: true, sub_status:true, updated_at:true,
+          case_events_case_id_relations: {where: {OR:[{source:'simulated'},{type:{in:['fir_draft_submitted','fir_draft_approved']}}]}, select: {id:true,type:true,payload:true,created_at:true,source:true}},
           client_id_relation: {select: {id: true, full_name: true}},
           advocate_id_relation: {select: {id: true, full_name: true}},
           pricing_id_relation: {select: {base_amount_paise: true}},
@@ -88,14 +95,15 @@ export class AdminCasesRepository {
           id: row.id, reference: row.reference, client: {id: row.client_id_relation.id, name: row.client_id_relation.full_name},
           matter_type: row.matter_type, parties: parties.filter(p => p.name.trim()),
           advocate: row.advocate_id_relation ? {id: row.advocate_id_relation.id, name: row.advocate_id_relation.full_name} : null,
-          documents, simulated_documents, simulated: row.case_events_case_id_relations.length > 0, status: row.status as CaseStatus, bucket: adminBucketFor(row.status as CaseStatus)!,
+          documents, simulated_documents, simulated: row.case_events_case_id_relations.some(e=>e.source==='simulated'), status: row.status as CaseStatus, bucket: adminBucketFor(row.status as CaseStatus,row.service_code,row.sub_status)!,
+          ...(row.service_code==='fir_draft'?{sub_status:row.sub_status,approval:firApproval(row.case_events_case_id_relations)}:{}),
           amount_paise: row.pricing_id_relation?.base_amount_paise.toString() ?? null,
           created_at: row.created_at.toISOString(),
         };
       });
       const last = items.at(-1);
-      return {items, counts, total, filtered_total: input.bucket ? counts[input.bucket] : total,
-        next_cursor: rows.length > input.limit && last ? Buffer.from(JSON.stringify({id: last.id, created_at: last.created_at, scope})).toString('base64url') : null};
+      return {items, counts, total, approval_waiting, filtered_total: await tx.case.count({where:filtered}),
+        next_cursor: rows.length > input.limit && last ? Buffer.from(JSON.stringify({id:last.id,created_at:input.queue?rows[input.limit-1].updated_at.toISOString():last.created_at,scope})).toString('base64url') : null};
     }, {isolationLevel: 'RepeatableRead'});
   }
 }

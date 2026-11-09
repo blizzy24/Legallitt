@@ -754,6 +754,34 @@ given a bucket.
 
 ### Cancellation and refunds
 
+**FIR exception, confirmed 10 November 2026.** The client-approved path is:
+`draft → submitted → payment_pending → paid → assigning → assigned →
+advocate_accepted → in_progress → in_progress/awaiting_admin_approval →
+approved → completed`. The existing assignment-decline path remains separate.
+The advocate drafts; an admin approves; only then does the client receive the
+PDF and the drafting case close. No client approval, requested changes or police
+dispatch/registration is part of this service. `approved` and `completed` are
+audited in the same transaction that releases the exact reviewed PDF. Receipt
+means availability in the client's case with an in-app notification, not an
+acknowledgement or evidence of police registration.
+
+`cases.sub_status='awaiting_admin_approval'` reuses the shared lifecycle. The
+submission event pins draft ID, version, PDF ID and submission timestamp. While
+waiting, draft edits and second submissions are blocked, including concurrent
+requests. The submitted version and evidence cannot be deleted or replaced.
+Admin approval checks the submitted ID and document, records `draft_reviews`
+and `admin_actions`, and atomically releases/closes; duplicate approval is
+idempotent. The owner cannot fetch an unapproved advocate PDF even by direct ID.
+
+**Rejection remains an open client decision.** No reject, return-for-changes,
+cancel, refund or other transition is exposed from this waiting state. Generic
+cancellation cannot bypass it. The admin queue explicitly says approval is the
+only available action, shows submission time and live waiting age, includes
+these paid cases in Open, and provides an oldest-first paginated approval queue.
+It never automatically approves or hides an old case. No arbitrary SLA is implied.
+
+The rules below continue to apply outside the FIR approval wait.
+
 The dividing line is whether an advocate has started work.
 
 **Client may cancel, on their own:**
@@ -1773,7 +1801,7 @@ before the backend needs it.
 | ~~23~~ | ~~Legal Notice letterhead~~ — **closed 2 Nov.** The project owner identified the supplied Legal Notice Response template (189/267). Generated draft/final PDFs now use this measured letterhead; see the instructed addition below | — |
 | 26 | **Registered company name** — the supplied letterhead says `INT LegalConsultants Pvt. Ltd.` in the header and `INT LegalConsultant Pvt. Ltd.` in the sign-off. Both remain exactly as drawn until the client confirms | Letterhead |
 | 25 | **Client reviews** — design 433 draws reviews with names, stars and quotes; designs 264–265 draw the advocate's own reviews list. No data model exists | Advocate profile, ratings |
-| 10 | FIR Approved and Changes states — still not supplied | FIR review |
+| 10 | FIR admin rejection/return outcome — client is being asked. Approval-only flow confirmed 10 Nov; no client review/change-request path. Waiting stalls are explicit in the admin queue until this decision arrives. | FIR admin approval |
 | 11 | Design 348 — the supplied file is a 1× copy of 381 | Token values |
 | 12 | Heading font | Typography |
 | 13 | DPDP consent text and retention periods | Compliance |
@@ -1859,6 +1887,31 @@ client without an advocate in between. If one does, it needs either an advocate
 gate or explicit framing that it is not legal advice.
 
 ### 9.2 Register of design substitutions
+
+**FIR admin approval — built without a supplied design, authorised by the project
+owner on 10 November 2026.** Reason: the client confirmed advocate drafting →
+admin approval → client receives the PDF → case closes, but supplied no admin
+approval screen. Reuse the admin panel's dark surfaces, orange accents, dense
+tables, case detail panels and document preview. The new screen shows the frozen
+submitted PDF/version/author, original intake, supporting evidence, payment and
+event history, and `Approve and send to client`. The queue displays waiting age,
+submitted timestamp and `Only action: approve. No rejection path.` Empty,
+partial, loading and error states explain missing information and recovery;
+missing/unavailable PDF blocks approval. This is an approved design gap, not a
+provisional new rejection workflow. Implementation: apps/admin/src/fir-approval.tsx.
+
+**FIR mobile substitutions, same owner instruction.** Designs 42–46 retain the
+five intake steps with real saved fields/files and no drawn sample identities.
+Payment uses the versioned quote. Design 218's `Send to Client for Review`
+becomes `Send for Admin Approval`; the frozen review state reuses the cards in
+219/448/449 with admin wording. Remove the client review/changes preview switcher,
+resend/remind-client controls and invented police filing or wallet-transfer
+claims. Design 49's ready dossier appears only after approval, with the actual
+PDF. Completion is drafting-service completion, not police registration. Dynamic
+proforma output prints only entered values; it does not claim a particular
+state's police command, assign a police FIR number, infer offences or verify ID.
+These screens use the existing FIR surfaces and fields. The advocate writes the
+draft manually; no AI capability is claimed by this release.
 
 §1a forbids inventing screens, labels or copy. Where a supplied design has been
 **reused for a flow it was not drawn for**, it is listed here — every single

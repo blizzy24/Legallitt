@@ -16,7 +16,7 @@ import CountryCodePicker from '../../components/CountryCodePicker';
 // design/42 draws 16pt side margins, but designs 43 and 44 both draw 20 and 20 is
 // the app-wide margin, so FirShell uses 20 for all five steps. This screen is the
 // one that pays for it: its cards are 8pt narrower than its own file draws them.
-export default function FirStep1Screen() {
+function FixtureFirStep1Screen() {
   const { form, updateContact, updateJurisdiction, updateIncident } = useFir();
   const { contact, jurisdiction, incident } = form;
 
@@ -272,3 +272,6 @@ const styles = StyleSheet.create({
     color: ink.accent,
   },
 });
+import FirClient from '../../features/fir/FirClient';
+import {DATA_SOURCE} from '../../lib/data-source';
+export default function LiveFirScreen() { return DATA_SOURCE === 'api' ? <FirClient/> : <FixtureFirStep1Screen/>; }

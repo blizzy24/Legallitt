@@ -1,10 +1,11 @@
 import { ConfirmDelivery } from './confirm-delivery';
+import {FirApprovalPanel} from './fir-approval';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, useParams } from 'react-router';
 import { ApiError, adminBucketFor, adminCaseListPath, SERVICE_NAMES, ServiceCodeSchema, type AdminCaseDetail } from '@legalitt/shared';
 import { api, useSession } from './session';
 import { AssignAdvocate } from './assign-advocate';
-const label = (s: string) => s.replaceAll('_', ' ').replace(/^./, c => c.toUpperCase());
+const label = (s: string) => s.replace(/([a-z])([A-Z])/g,'$1 $2').replaceAll('_', ' ').replace(/^./, c => c.toUpperCase());
 const money = (v: string) => '₹' + (BigInt(v) / 100n).toLocaleString('en-IN') + '.' + (BigInt(v) % 100n).toString().padStart(2, '0');
 const date = (v: string) => new Date(v).toLocaleString('en-IN', {day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit'});
 const eventTitle = (e: AdminCaseDetail['events'][number]) => e.type === 'shipment_status_changed' && typeof e.payload.to === 'string' ? label(e.payload.to) : e.type === 'status_changed' && e.to_status ? label(e.to_status) : label(e.type);
@@ -36,7 +37,7 @@ export function CaseDetail() {
  if(!data)return <main className="case-detail"><Link className="back-link" to={backPath}>← {heading}</Link>{error?<div className="error" role="alert">{error} <button onClick={()=>setReload(n=>n+1)}>Retry</button></div>:<p role="status">Loading case…</p>}</main>;
  const charged=data.payments.find(p=>p.purpose==='service_fee'&&p.status==='captured');
  const additional=charged&&data.pricing?BigInt(charged.base_amount_paise)-BigInt(data.pricing.base_amount_paise):null;
- const d=data, bucket=adminBucketFor(d.status), canAssign=!d.advocate_id && ['paid','assigning','advocate_declined'].includes(d.status);
+ const d=data, bucket=adminBucketFor(d.status,d.service_code,d.sub_status), canAssign=!d.advocate_id && ['paid','assigning','advocate_declined'].includes(d.status);
  const task=canAssign?'Assign an advocate':d.status==='advocate_declined'?'Advocate declined · assignment needs review':service==='legal_notice'&&d.status==='dispatched'?'Delivery confirmation awaits admin':null;
  const document=(doc: AdminCaseDetail['documents'][number])=><div className="document-row" key={doc.id}>
   <span className="file-symbol">{doc.mime_type==='application/pdf'?'PDF':'FILE'}</span><div className="file-description">
@@ -56,6 +57,8 @@ export function CaseDetail() {
     <Field name="GST rate" value={d.pricing?`${d.pricing.gst_bps/100}% exclusive`:null}/><Field name="Created" value={date(d.created_at)}/><Field name="Sub-status" value={d.sub_status?label(d.sub_status):null}/></dl>
    {task&&<div className="admin-attention"><span className="attention-dot"/><div><small>NEEDS ADMIN</small><strong>{task}</strong></div>{canAssign&&<button className="assign" onClick={()=>setAssign(true)}>+ Assign</button>}{d.status==='dispatched'&&<button className="assign" onClick={()=>setDelivering(true)}>Confirm delivery</button>}</div>}
   </section>
+  {service==='fir_draft'&&<FirApprovalPanel record={d} reload={()=>setReload(n=>n+1)}/>}
+  {service==='fir_draft'&&<section className="detail-panel fir-intake"><div className="section-title"><h2>Original intake</h2></div>{Object.values(d.intake).some(present)?<Values value={d.intake}/>:<p>No intake was recorded for this case.</p>}</section>}
   <section className="people-section"><h2>People</h2><div className="people-grid">{d.contacts.map((c,i)=><article className="person" key={i}><p className="eyebrow">{c.role==='sender'?'SENDER · INTAKE':label(c.role)}</p>{c.name&&<h3>{c.name}</h3>}<dl><Field name="Title" value={c.salutation}/><Field name="Age" value={c.age}/><Field name="Relation" value={c.relation}/><Field name="Father’s or husband’s name" value={c.relative_name}/><Field name="Email" value={c.email}/><Field name="Phone" value={c.phone}/><Field name="Address" value={c.address}/><Field name="Relationship" value={c.relationship}/></dl></article>)}</div></section>
   <nav className="case-sections" aria-label="Case sections">
    {d.events.length>0&&<a href="#timeline">Timeline <span>{d.events.length}</span></a>}
@@ -69,7 +72,7 @@ export function CaseDetail() {
     {(e.actor||e.from_status)&&<p>{e.actor?.name}{e.actor?.role?` · ${label(e.actor.role)}`:''}{e.from_status && e.from_status!==e.to_status?<span className="event-transition">{label(e.from_status)} → {e.to_status?label(e.to_status):label(e.type)}</span>:null}</p>}
     {Object.values(e.payload).some(present)&&<details><summary>Event details</summary><Values value={e.payload}/></details>}
    </li>)}</ol>
-  </section>}  {d.drafts.length>0&&<section id="drafts" className="detail-panel drafts-panel"><div className="section-title"><h2>Drafts</h2><span>Latest first</span></div>{d.drafts.map((draft,i)=><details key={draft.id} open={i===0}><summary>{i===0?'Current draft':'Draft'} · v{draft.version}<span>{draft.author} · {date(draft.created_at)}</span></summary>{draft.document_id&&relatedDoc(draft.document_id)}<dl className="draft-content">{Object.entries(draft.content).filter(([,v])=>present(v)).map(([key,v])=><Field key={key} name={label(key)} value={typeof v==='string'?v:JSON.stringify(v)}/>)}</dl></details>)}</section>}</div><div className="case-evidence">
+  </section>}  {d.drafts.length>0&&<section id="drafts" className="detail-panel drafts-panel"><div className="section-title"><h2>Drafts</h2><span>Latest first</span></div>{d.drafts.map((draft,i)=><details key={draft.id} open={i===0}><summary>{i===0?'Current draft':'Draft'} · v{draft.version}<span>{draft.author} · {date(draft.created_at)}</span></summary>{draft.document_id&&relatedDoc(draft.document_id)}<dl className="draft-content">{Object.entries(draft.content).filter(([key,v])=>present(v)&&(service!=='fir_draft'||key!=='document_ids')).map(([key,v])=><Field key={key} name={label(key)} value={typeof v==='string'?v:service==='fir_draft'&&typeof v==='object'?<Values value={v as Record<string,unknown>}/>:JSON.stringify(v)}/>)}</dl></details>)}</section>}</div><div className="case-evidence">
    {d.documents.length>0&&<section id="documents" className="detail-panel"><div className="section-title"><h2>Documents</h2><span>{d.documents.length} {d.documents.length===1?'file':'files'}</span></div>{(['client','advocate','admin','generated'] as const).map(origin=>{const docs=d.documents.filter(x=>x.origin===origin);return docs.length?<div className="document-group" key={origin}><h3>{label(origin)} <span>{docs.length}</span></h3>{docs.map(document)}</div>:null;})}</section>}
    {d.payments.length>0&&<section id="payments" className="detail-panel"><div className="section-title"><h2>Payments</h2><span>{d.payments.length} {d.payments.length===1?'record':'records'}</span></div>{d.payments.map(p=><article className="payment-row" key={p.id}><div><strong>{label(p.purpose)}<Demo show={p.simulated}/></strong><b>{money(p.total_paise)}</b></div><p>{p.payer.name} · {label(p.payer.role)}</p><p className="payment-state">{label(p.status)} · {date(p.captured_at??p.created_at)}</p><details><summary>Amount breakdown</summary><dl><Field name="Base" value={money(p.base_amount_paise)}/><Field name="GST" value={money(p.gst_paise)}/></dl></details></article>)}</section>}
    {d.shipments.map((s,i)=><section id={i===0?"shipments":undefined} className="detail-panel" key={s.id}><div className="section-title"><h2>Shipment<Demo show={s.simulated}/></h2><span>{label(s.status)}</span></div><dl className="shipment-fields">

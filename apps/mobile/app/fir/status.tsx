@@ -18,7 +18,7 @@ import { FIR_REQUEST, STATUS_STAGE_CHIP, STATUS_TIMELINE } from '../../data/fir'
 // items. Both are drawn as the file has them; STATUS_STAGE_CHIP in data/fir.ts is a
 // one-line change once the client says which count is right.
 
-export default function FirStatusScreen() {
+function FixtureFirStatusScreen() {
   // DEMO: Under Review moves on to the ready draft (design/49).
   useDemoWait();
   const insets = useSafeAreaInsets();
@@ -443,3 +443,6 @@ const styles = StyleSheet.create({
     color: colors.textBody,
   },
 });
+import FirClient from '../../features/fir/FirClient';
+import {DATA_SOURCE} from '../../lib/data-source';
+export default function LiveFirScreen() { return DATA_SOURCE === 'api' ? <FirClient/> : <FixtureFirStatusScreen/>; }

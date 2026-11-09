@@ -38,7 +38,7 @@ import { clientDocHref } from '../../data/docLinks';
 
 const SECTION_ICONS: LucideIcon[] = [FileText, Camera, MessageSquare, FolderOpen];
 
-export default function FirStep4Screen() {
+function FixtureFirStep4Screen() {
   return (
     <FirShell step={4} title="Fir Draft">
       <Text style={styles.heading}>Documents &amp; Evidence</Text>
@@ -540,3 +540,6 @@ const styles = StyleSheet.create({
     color: colors.textBody,
   },
 });
+import FirClient from '../../features/fir/FirClient';
+import {DATA_SOURCE} from '../../lib/data-source';
+export default function LiveFirScreen() { return DATA_SOURCE === 'api' ? <FirClient/> : <FixtureFirStep4Screen/>; }

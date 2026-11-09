@@ -59,7 +59,7 @@ import { advFirReview as t, colors, font, ink, previewStep } from '../../../cons
 
 const TL_ICONS = { check: Check, hourglass: Hourglass, checkcheck: CheckCheck, send: Send };
 
-export default function AdvocateFirReviewScreen({ compact = false }: { compact?: boolean }) {
+function FixtureAdvocateFirReviewScreen({ compact = false }: { compact?: boolean }) {
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id?: string }>();
   const r = FIR_REVIEW;
@@ -606,3 +606,6 @@ const styles = StyleSheet.create({
   auditTime: { fontFamily: font.appBody, fontSize: t.auditTimeSize, color: t.auditTimeColour, flexShrink: 1 },
   pressed: { opacity: 0.85 },
 });
+import FirAdvocate from '../../../features/fir/FirAdvocate';
+import {DATA_SOURCE} from '../../../lib/data-source';
+export default function LiveFirScreen(props: {compact?: boolean} = {}) { return DATA_SOURCE === 'api' ? <FirAdvocate/> : <FixtureAdvocateFirReviewScreen {...props}/>; }

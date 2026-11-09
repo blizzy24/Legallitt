@@ -19,6 +19,12 @@ test('mixed service lists retain every record, count once and route unbuilt work
     assert.equal(caseCategory(row),SERVICE_NAMES[row.service_code]);
     for(const advocate of [false,true]){
       const path=caseDestination(row,advocate),url=new URL(path,'http://localhost');
+      if(row.service_code==='fir_draft'){
+        assert.equal(url.searchParams.get('caseId'),row.id);
+        assert.equal(url.pathname,advocate?'/advocate/fir/draft':'/fir/status');
+        assert.equal(unavailableSection(advocate?'advocate/fir/draft':'fir/status'),undefined);
+        continue;
+      }
       assert.equal(url.searchParams.get('service'),row.service_code);
       assert.equal(url.searchParams.get('caseId'),row.id);
       const route=advocate?'advocate/requests/[id]':'cases/[id]';

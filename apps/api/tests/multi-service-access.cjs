@@ -76,6 +76,9 @@ test('multi-service spine: real DB ownership, references, locks, documents, inbo
       const documents=new DocumentService(prisma,{upload:async()=>({url:'https://storage.invalid',fields:{}}),download:async()=>{downloads++;return 'https://storage.invalid/file';}},{});
       for(const service of SERVICE_CODES){
         const row=await create(service);
+        const ticket=await documents.presign(owner,{case_id:row.id,kind:'supporting_document',filename:'test.pdf',mime:'application/pdf'});
+        docs.push(ticket.document.id);
+        await db.document.update({where:{id:ticket.document.id},data:{status:'uploaded'}});
         await db.case.update({where:{id:row.id},data:{status:'paid'}}); // fixture only: no new payment workflow
         await assert.rejects(machine.assign(owner,row.id,{advocate_id:advocate.id}),{status:403});
         await machine.assign(admin,row.id,{advocate_id:advocate.id});
@@ -84,9 +87,6 @@ test('multi-service spine: real DB ownership, references, locks, documents, inbo
         await assert.rejects(machine.transition(owner,row.id,'advocate_accepted'),{status:403});
         await assert.rejects(machine.transition(otherAdvocate,row.id,'advocate_accepted'),{status:404});
         assert.equal((await machine.transition(advocate,row.id,'advocate_accepted')).status,'advocate_accepted');
-        const ticket=await documents.presign(owner,{case_id:row.id,kind:'supporting_document',filename:'test.pdf',mime:'application/pdf'});
-        docs.push(ticket.document.id);
-        await db.document.update({where:{id:ticket.document.id},data:{status:'uploaded'}});
         for(const actor of [owner,advocate,admin]) assert.ok((await documents.url(actor,ticket.document.id)).url);
         const before=downloads;
         for(const actor of [stranger,otherAdvocate]) {

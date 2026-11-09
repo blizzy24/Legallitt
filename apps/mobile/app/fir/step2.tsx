@@ -14,7 +14,7 @@ import { useFir } from '../../context/fir';
 // Step 2 — Incident Details (design/43). Date, time and the police station are
 // pre-filled sample values as drawn; the two textareas are live and the character
 // counter tracks the narrative.
-export default function FirStep2Screen() {
+function FixtureFirStep2Screen() {
   const { form, updateIncident, updateJurisdiction } = useFir();
   const { incident } = form;
   const narrative = incident.description;
@@ -397,3 +397,6 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
   },
 });
+import FirClient from '../../features/fir/FirClient';
+import {DATA_SOURCE} from '../../lib/data-source';
+export default function LiveFirScreen() { return DATA_SOURCE === 'api' ? <FirClient/> : <FixtureFirStep2Screen/>; }

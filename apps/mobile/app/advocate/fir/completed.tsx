@@ -26,7 +26,7 @@ import { advFirCompleted as t, advFirGreen, colors, font, ink } from '../../../c
 // ⚠ THE PAYMENT DATE IS 19 Oct 2026 — ten days ahead of the app's current date,
 // and a day after the incident the same flow describes in the past tense.
 
-export default function AdvocateFirCompletedScreen() {
+function FixtureAdvocateFirCompletedScreen() {
   const insets = useSafeAreaInsets();
   const c = FIR_COMPLETED;
   const { id } = useLocalSearchParams<{id?: string}>();
@@ -268,3 +268,6 @@ const styles = StyleSheet.create({
   secondaryText: { fontFamily: font.appSemi, fontSize: t.secondarySize, color: t.secondaryColour },
   pressed: { opacity: 0.85 },
 });
+import FirAdvocate from '../../../features/fir/FirAdvocate';
+import {DATA_SOURCE} from '../../../lib/data-source';
+export default function LiveFirScreen() { return DATA_SOURCE === 'api' ? <FirAdvocate/> : <FixtureAdvocateFirCompletedScreen/>; }

@@ -2,7 +2,7 @@ import ScanPayScreen from '../../components/ScanPayScreen';
 import { FIR_PAYMENT_SERVICE, FIR_PAYMENT_TOTAL, FIR_REQUEST } from '../../data/fir';
 
 // Reuse Legal Notice designs 29–30. Placeholder pricing is documented in data/fir.
-export default function FirPaymentScreen() {
+function FixtureFirPaymentScreen() {
   const query = new URLSearchParams({
     service: FIR_PAYMENT_SERVICE,
     amount: String(FIR_PAYMENT_TOTAL),
@@ -21,3 +21,6 @@ export default function FirPaymentScreen() {
     />
   );
 }
+import FirClient from '../../features/fir/FirClient';
+import {DATA_SOURCE} from '../../lib/data-source';
+export default function LiveFirScreen() { return DATA_SOURCE === 'api' ? <FirClient/> : <FixtureFirPaymentScreen/>; }

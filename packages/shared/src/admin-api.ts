@@ -1,6 +1,6 @@
 import type { AdminCaseBucket, CaseStatus } from './lifecycle';
 import type { ServiceCode } from './services';
-export type AdminCaseQuery = {service?: ServiceCode; bucket?: AdminCaseBucket; search?: string; cursor?: string; limit?: number};
+export type AdminCaseQuery = {service?: ServiceCode; bucket?: AdminCaseBucket; search?: string; cursor?: string; limit?: number; queue?: 'approval'};
 export type AdminCaseRow = {
   service_code: ServiceCode;
   id: string; reference: string;
@@ -12,6 +12,7 @@ export type AdminCaseRow = {
   simulated_documents: {client: number; admin: number; generated: number; advocate: number};
   simulated: boolean;
   status: CaseStatus; bucket: AdminCaseBucket;
+  sub_status?: string | null; approval?: import('./fir').FirApproval | null;
   // The versioned base fee quoted to this case, not a hard-coded current rate.
   amount_paise: string | null;
   created_at: string;
@@ -19,6 +20,7 @@ export type AdminCaseRow = {
 export type AdminCasePage = {
   items: AdminCaseRow[]; next_cursor: string | null;
   counts: Record<AdminCaseBucket, number>; total: number; filtered_total: number;
+  approval_waiting?: number;
 };
 
 export type AdminAdvocate = {
@@ -29,6 +31,7 @@ export type AdminContact = {name: string | null; email: string | null; phone: st
   /** Sender only: the intake's introduction fields, as the notice prints them. */
   salutation?: string | null; age?: number | null; relation?: string | null; relative_name?: string | null};
 export type AdminCaseDetail = {
+  approval?: import('./fir').FirApproval | null;
   service_code: ServiceCode;
   id: string; reference: string; status: CaseStatus; sub_status: string | null;
   matter_type: string | null; tier: string | null; simulated: boolean; created_at: string;

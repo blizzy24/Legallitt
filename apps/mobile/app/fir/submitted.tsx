@@ -10,7 +10,7 @@ import { colors, firResult as t, font, ink } from '../../constants/theme';
 import { FIR_REQUEST } from '../../data/fir';
 
 // FIR request submitted (design/47).
-export default function FirSubmittedScreen() {
+function FixtureFirSubmittedScreen() {
   const insets = useSafeAreaInsets();
 
   return (
@@ -241,3 +241,6 @@ const styles = StyleSheet.create({
     color: colors.textBody,
   },
 });
+import FirClient from '../../features/fir/FirClient';
+import {DATA_SOURCE} from '../../lib/data-source';
+export default function LiveFirScreen() { return DATA_SOURCE === 'api' ? <FirClient/> : <FixtureFirSubmittedScreen/>; }

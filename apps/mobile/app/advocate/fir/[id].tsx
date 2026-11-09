@@ -59,7 +59,7 @@ const CELL_ICONS = { phone: Phone, mail: Mail };
 const ROW_ICONS = { alert: TriangleAlert, calendar: CalendarDays, pin: MapPin };
 const DOC_ICONS = { doc: FileText, image: ImageIcon, id: IdCard, quote: MessageSquareQuote, home: Home };
 
-export default function AdvocateFirRequestScreen() {
+function FixtureAdvocateFirRequestScreen() {
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
   const r = FIR_REQUEST;
@@ -540,3 +540,6 @@ const styles = StyleSheet.create({
   capAccept: { marginTop: t.capGap, marginLeft: 'auto', fontFamily: font.appSemi, fontSize: t.capSize, color: t.capAcceptColour, flexShrink: 1 },
   pressed: { opacity: 0.85 },
 });
+import FirAdvocate from '../../../features/fir/FirAdvocate';
+import {DATA_SOURCE} from '../../../lib/data-source';
+export default function LiveFirScreen() { return DATA_SOURCE === 'api' ? <FirAdvocate/> : <FixtureAdvocateFirRequestScreen/>; }

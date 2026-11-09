@@ -21,7 +21,7 @@ const FEATURES: Feature[][] = [
 
 // FIR Draft service landing (design/40). Reached from the FIR Draft tiles on Home
 // and All Services.
-export default function FirLandingScreen() {
+function FixtureFirLandingScreen() {
   const insets = useSafeAreaInsets();
 
   return (
@@ -358,3 +358,6 @@ const styles = StyleSheet.create({
     color: ink.accent,
   },
 });
+import FirClient from '../../features/fir/FirClient';
+import {DATA_SOURCE} from '../../lib/data-source';
+export default function LiveFirScreen() { return DATA_SOURCE === 'api' ? <FirClient/> : <FixtureFirLandingScreen/>; }

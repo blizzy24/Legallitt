@@ -110,7 +110,7 @@ function Field({ label, value, onChange, tint, icon }: { label: string; value: s
   </View>;
 }
 
-export default function AdvocateFirDraftScreen() {
+function FixtureAdvocateFirDraftScreen() {
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id?: string }>();
   const d = FIR_DRAFT;
@@ -524,3 +524,6 @@ const styles = StyleSheet.create({
   cap: { marginTop: t.capGap, textAlign: 'center', fontFamily: font.appSemi, fontSize: t.capSize, color: t.capColour },
   pressed: { opacity: 0.85 },
 });
+import FirAdvocate from '../../../features/fir/FirAdvocate';
+import {DATA_SOURCE} from '../../../lib/data-source';
+export default function LiveFirScreen() { return DATA_SOURCE === 'api' ? <FirAdvocate/> : <FixtureAdvocateFirDraftScreen/>; }

@@ -35,7 +35,7 @@ const TAG_STYLE = {
   DOC: { bg: t.docBg, text: t.docText },
 };
 
-export default function FirStep5Screen() {
+function FixtureFirStep5Screen() {
   const { form } = useFir();
   const [expanded, setExpanded] = useState(false);
 
@@ -529,3 +529,6 @@ const styles = StyleSheet.create({
     marginLeft: t.buttonIconGap,
   },
 });
+import FirClient from '../../features/fir/FirClient';
+import {DATA_SOURCE} from '../../lib/data-source';
+export default function LiveFirScreen() { return DATA_SOURCE === 'api' ? <FirClient/> : <FixtureFirStep5Screen/>; }

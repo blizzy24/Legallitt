@@ -28,7 +28,8 @@ export const ADMIN_CASE_BUCKET_LABELS: Record<AdminCaseBucket, string> = {
 };
 
 // null deliberately excludes unpaid intake from admin counters and lists.
-export function adminBucketFor(status: CaseStatus): AdminCaseBucket | null {
+export function adminBucketFor(status: CaseStatus, service?: string, subStatus?: string | null): AdminCaseBucket | null {
+  if (service === 'fir_draft' && status === CaseStatus.in_progress && subStatus === 'awaiting_admin_approval') return 'open';
   switch (status) {
     case CaseStatus.draft:
     case CaseStatus.submitted:

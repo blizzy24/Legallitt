@@ -29,7 +29,7 @@ const COMPLAINANT = {
 
 // Step 3 — People Involved (design/44). Add and Remove work against local state;
 // the Edit links are inert, as specified.
-export default function FirStep3Screen() {
+function FixtureFirStep3Screen() {
   const [accused, setAccused] = useState<Accused[]>(INITIAL_ACCUSED);
   const [witnesses, setWitnesses] = useState<Witness[]>(INITIAL_WITNESSES);
   const [nextId, setNextId] = useState(2);
@@ -488,3 +488,6 @@ const styles = StyleSheet.create({
     color: ink.onBrand,
   },
 });
+import FirClient from '../../features/fir/FirClient';
+import {DATA_SOURCE} from '../../lib/data-source';
+export default function LiveFirScreen() { return DATA_SOURCE === 'api' ? <FirClient/> : <FixtureFirStep3Screen/>; }

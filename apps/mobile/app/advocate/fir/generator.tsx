@@ -43,7 +43,7 @@ import { advFirGenerator as t, colors, font, ink, status } from '../../../consta
 //
 // Both text fields are live; everything else is static.
 
-export default function AdvocateFirGeneratorScreen() {
+function FixtureAdvocateFirGeneratorScreen() {
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id?: string }>();
   const f = FIR_GENERATOR;
@@ -489,3 +489,6 @@ const styles = StyleSheet.create({
   },
   pressed: { opacity: 0.85 },
 });
+import FirAdvocate from '../../../features/fir/FirAdvocate';
+import {DATA_SOURCE} from '../../../lib/data-source';
+export default function LiveFirScreen() { return DATA_SOURCE === 'api' ? <FirAdvocate/> : <FixtureAdvocateFirGeneratorScreen/>; }

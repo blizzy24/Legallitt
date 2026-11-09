@@ -1,6 +1,7 @@
 import { NOTIFICATIONS, type NotificationsPort } from '../notifications/notifications.port';
 import { notifyCaseTransition } from '../notifications/case-notifications';
 import { requireDemoMode } from '../auth/demo';
+import {FIR_AWAITING_APPROVAL, FirSubmissionSchema, FirIntakeSchema, type FirIntake} from '@legalitt/shared';
 import {
   BadRequestException,
   ConflictException,
@@ -307,6 +308,7 @@ export class CaseStateMachine {
       service_code: string;
       details: unknown;
       tier: string | null;
+      sub_status?: string | null;
     },
     to: CaseStatus,
     payload: Prisma.InputJsonObject = {},
@@ -314,6 +316,8 @@ export class CaseStateMachine {
     source: 'real' | 'simulated' = 'real',
   ) {
     const from = record.status as CaseStatus;
+    if (record.service_code === 'fir_draft' && record.sub_status === FIR_AWAITING_APPROVAL)
+      throw new ConflictException('This FIR is awaiting admin approval. Approval is currently the only available action.');
     if (capturedPayment) {
       if (
         from !== CaseStatus.payment_pending ||
@@ -325,8 +329,14 @@ export class CaseStateMachine {
     if (record.service_code !== 'legal_notice' && ![
       CaseStatus.assigning, CaseStatus.assigned, CaseStatus.advocate_accepted,
       CaseStatus.advocate_declined, CaseStatus.cancelled, CaseStatus.refunded,
+      ...(record.service_code === 'fir_draft' ? [CaseStatus.submitted,CaseStatus.payment_pending,CaseStatus.paid] : []),
     ].includes(to)) throw new ConflictException('This service workflow is not available yet');
-    if (to === CaseStatus.submitted) {
+    if (to === CaseStatus.submitted && record.service_code === 'fir_draft') {
+      parse(FirSubmissionSchema,record.details);
+      if (!await tx.document.findFirst({where:{case_id:record.id,owner_id:actor.id,kind:'id_proof',status:'uploaded'}}))
+        throw new BadRequestException('Upload identity evidence in Documents before submitting. PAN, passport, driving licence or voter ID are accepted; Aadhaar is optional and must be masked.');
+    }
+    if (to === CaseStatus.submitted && record.service_code === 'legal_notice') {
       parse(LegalNoticeSubmissionSchema, record.details);
       parse(LegalNoticeTierSchema, record.tier);
       const intake = await tx.case.findUniqueOrThrow({where: {id: record.id},
@@ -366,13 +376,14 @@ export class CaseStateMachine {
   async submitForPayment(actor: CaseActor, id: string) {
     const db = await this.prisma.getClient();
     return db.$transaction(async (tx) => {
-      let record = await lockedNoticeCase(tx, actor, id);
+      let record = await lockedCase(tx, actor, id);
+      if (!['legal_notice','fir_draft'].includes(record.service_code)) throw new NotFoundException('Case not found');
       if (actor.role !== "client")
         throw new ForbiddenException("Only clients submit");
       if (record.status === "payment_pending") return record;
       if (record.status === "draft") {
         const now = new Date();
-        const pricing = await tx.servicePricing.findFirst({where: {service_code: 'legal_notice', tier: record.tier, variant: null, effective_from: {lte: now}, OR: [{effective_to: null}, {effective_to: {gt: now}}]}, orderBy: [{confirmed: 'desc'}, {effective_from: 'desc'}, {id: 'asc'}]});
+        const pricing = await tx.servicePricing.findFirst({where: {service_code: record.service_code, tier: record.tier, variant: null, ...(record.service_code === 'fir_draft' ? {confirmed:true} : {}), effective_from: {lte: now}, OR: [{effective_to: null}, {effective_to: {gt: now}}]}, orderBy: [{confirmed: 'desc'}, {effective_from: 'desc'}, {id: 'asc'}]});
         if (!pricing) throw new ConflictException('Case pricing is unavailable');
         await tx.case.update({where: {id}, data: {pricing_id: pricing.id}});
         record = await this.advance(tx, actor, record, CaseStatus.submitted);
@@ -663,6 +674,46 @@ export class CaseStateMachine {
 /** Append-only non-lifecycle events share the case event writer. */
 export function appendCaseEvent(tx: Prisma.TransactionClient, data: Prisma.CaseEventUncheckedCreateInput) {
   return tx.caseEvent.create({data});
+}
+
+// FIR uses the same sole case/event writer. Service orchestration handles the
+// PDF, draft/review records and notifications inside these locked transactions.
+export async function writeFirIntake(tx: Prisma.TransactionClient,actor: CaseActor,id:string,input:FirIntake) {
+  const record=await lockedCase(tx,actor,id,'fir_draft');
+  if(actor.role!=='client')throw new ForbiddenException('Case client required');
+  if(record.status!=='draft')throw new ConflictException('Submitted intake cannot be edited');
+  const details=parse(FirIntakeSchema,input);
+  return tx.case.update({where:{id},data:{details,matter_type:details.incident.type,updated_at:new Date()}});
+}
+export async function writeFirDraftSaved(tx: Prisma.TransactionClient,actor: CaseActor,id:string,draft:{id:string;version:number}) {
+  const record=await lockedCase(tx,actor,id,'fir_draft');
+  if(actor.role!=='advocate')throw new ForbiddenException('Assigned advocate required');
+  if(!['advocate_accepted','in_progress'].includes(record.status)||record.sub_status===FIR_AWAITING_APPROVAL)
+    throw new ConflictException('Draft cannot be edited while awaiting admin approval');
+  await tx.case.update({where:{id},data:{status:'in_progress',updated_at:new Date()}});
+  return appendCaseEvent(tx,{case_id:id,type:'fir_draft_saved',actor_id:actor.id,actor_role:actor.role,from_status:record.status,to_status:'in_progress',payload:{draft_id:draft.id,version:draft.version}});
+}
+export async function writeFirSubmitted(tx: Prisma.TransactionClient,actor: CaseActor,id:string,payload:{draft_id:string;version:number;document_id:string}) {
+  const record=await lockedCase(tx,actor,id,'fir_draft');
+  if(actor.role!=='advocate')throw new ForbiddenException('Assigned advocate required');
+  if(record.status!=='in_progress'||record.sub_status===FIR_AWAITING_APPROVAL)throw new ConflictException('Only one draft may await admin approval');
+  const latest=await tx.draft.findFirst({where:{case_id:id,kind:'fir_proforma'},orderBy:{version:'desc'}});
+  if(latest?.id!==payload.draft_id||latest.document_id!==payload.document_id)throw new ConflictException('Refresh to use the submitted version');
+  const updated=await tx.case.update({where:{id},data:{sub_status:FIR_AWAITING_APPROVAL,updated_at:new Date()}});
+  await appendCaseEvent(tx,{case_id:id,type:'fir_draft_submitted',actor_id:actor.id,actor_role:actor.role,from_status:'in_progress',to_status:'in_progress',payload});
+  return updated;
+}
+export async function writeFirApproved(tx: Prisma.TransactionClient,actor: CaseActor,id:string,payload:{draft_id:string;version:number;document_id:string},now:Date) {
+  const record=await lockedCase(tx,actor,id,'fir_draft');
+  if(actor.role!=='admin')throw new ForbiddenException('Admin approval required');
+  if(record.status!=='in_progress'||record.sub_status!==FIR_AWAITING_APPROVAL)throw new ConflictException('Case is not awaiting admin approval');
+  const sent=await tx.caseEvent.findFirst({where:{case_id:id,type:'fir_draft_submitted'}});
+  const submitted=sent?.payload as {draft_id?:string;document_id?:string}|undefined;
+  if(submitted?.draft_id!==payload.draft_id||submitted.document_id!==payload.document_id)throw new ConflictException('Review the submitted draft before approving');
+  await appendCaseEvent(tx,{case_id:id,type:'fir_draft_approved',actor_id:actor.id,actor_role:'admin',from_status:'in_progress',to_status:'approved',payload});
+  const updated=await tx.case.update({where:{id},data:{status:'completed',sub_status:null,completed_at:now,updated_at:now}});
+  await appendCaseEvent(tx,{case_id:id,type:'fir_released_to_client',actor_id:actor.id,actor_role:'admin',from_status:'approved',to_status:'completed',payload:{draft_id:payload.draft_id,document_id:payload.document_id}});
+  return updated;
 }
 
 // Development seed (seed-demo.ts) only; never called by a request handler. New

@@ -1,3 +1,5 @@
+import {FirController} from './cases/fir.controller';
+import {FirService} from './cases/fir.service';
 import { NotificationsController, NotificationRepository } from './notifications/notifications.controller';
 import { AiModule } from './ai/ai.module';
 import { NoticeIntakeAiController } from './cases/notice-intake-ai';
@@ -46,7 +48,7 @@ export class HealthController {
 
 @Module({
   imports: [AiModule, CourierModule, AdminUiModule, DemoModule, DatabaseModule, PhoneAuthModule, PaymentsModule, NotificationsModule],
-  controllers: [NotificationsController, NoticeIntakeAiController, AdminAdvocatesController, AdminCasesController, NoticeMessagesController,
+  controllers: [FirController, NotificationsController, NoticeIntakeAiController, AdminAdvocatesController, AdminCasesController, NoticeMessagesController,
     PaymentsController,
     HealthController,
     AuthController,
@@ -56,7 +58,7 @@ export class HealthController {
     ServicesController,
     DocumentController,
   ],
-  providers: [NotificationRepository, AdminCaseDetailRepository, AdminAdvocatesRepository, AdminCasesRepository, NoticeMessages,
+  providers: [FirService, NotificationRepository, AdminCaseDetailRepository, AdminAdvocatesRepository, AdminCasesRepository, NoticeMessages,
     ShipmentService,
     NoticePdfService,
     PaymentsService,

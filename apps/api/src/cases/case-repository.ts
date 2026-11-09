@@ -5,6 +5,7 @@ import { parse } from "../auth/auth.service";
 import { PrismaService } from "../prisma.service";
 import { caseScope, type CaseActor } from "./case-access";
 import { caseClientFees } from './client-fees';
+import {firApproval} from './fir-approval';
 
 const cursorSchema = z.strictObject({
   id: z.uuid(),
@@ -96,11 +97,20 @@ export class CaseRepository {
         )
         .map((e) => (e.payload as { draft_id?: string }).draft_id),
     );
+    const approval = record.service_code === 'fir_draft' ? firApproval(events) : null;
     const drafts = allDrafts.filter(
-      (d) => actor.role !== "client" || sent.has(d.id),
+      (d) => actor.role !== "client" || (record.service_code === 'fir_draft' ? !!approval?.approved_at && approval.draft_id === d.id && record.status === 'completed' : sent.has(d.id)),
     );
     const reviews = drafts.flatMap((d) => d.draft_reviews_draft_id_relations);
     const {advocate_profiles_user_id_relations: profile = null, ...advocateUser} = advocate ?? {};
+    if (record.service_code === 'fir_draft') {
+      const captured = payments[0];
+      const snapshot = captured?.quote?.snapshot as unknown as {breakdown: import('@legalitt/shared').QuoteBreakdown} | undefined;
+      return {...caseRecord,parties,pricing,advocate:advocate?{...advocateUser,profile}:null,
+        events, drafts, reviews, shipments, approval:actor.role==='client'&&!approval?.approved_at?null:approval,
+        documents: actor.role==='client'?documents.filter(d=>d.owner_id===record.client_id || !!approval?.approved_at&&d.id===approval.document_id):documents,
+        client_fees:snapshot?{...snapshot.breakdown,breakdown_complete:true,simulated:captured.simulated}:null};
+    }
     if (record.service_code !== 'legal_notice')
       return { ...caseRecord, parties, pricing, advocate: advocate ? {...advocateUser, profile} : advocate, events, documents, drafts, reviews, shipments };
     const notice_policy = parse(NoticePolicySchema, (service.config as {notice_policy?: unknown}).notice_policy ?? {});

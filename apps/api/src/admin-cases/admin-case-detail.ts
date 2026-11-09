@@ -4,6 +4,7 @@ import {ServiceCodeSchema, type AdminCaseDetail, type AdminContact} from '@legal
 import { PrismaService } from '../prisma.service';
 import { parse } from '../auth/auth.service';
 import { caseScope, type CaseActor } from '../cases/case-access';
+import {firApproval} from '../cases/fir-approval';
 const obj = (v: unknown): Record<string, unknown> => v && typeof v === 'object' && !Array.isArray(v) ? v as Record<string, unknown> : {};
 const str = (v: unknown) => typeof v === 'string' && v.trim() ? v.trim() : null;
 @Injectable()
@@ -54,7 +55,7 @@ export class AdminCaseDetailRepository {
       courier_office: s.courier_office, courier_phone: s.courier_phone, tracking_url: s.tracking_url, expected_delivery: s.expected_delivery?.toISOString().slice(0,10) ?? null,
       receipt_document_id: s.receipt_document_id, pod_document_id: s.pod_document_id, received_by: s.received_by, simulated: s.simulated,
       booked_at: s.booked_at?.toISOString() ?? null, dispatched_at: s.dispatched_at?.toISOString() ?? null, delivered_at: s.delivered_at?.toISOString() ?? null}));
-    return {service_code: ServiceCodeSchema.parse(row.service_code), id: row.id, reference: row.reference, status: row.status as AdminCaseDetail['status'], sub_status: row.sub_status, matter_type: row.matter_type, tier: row.tier,
+    return {approval:firApproval(row.case_events_case_id_relations),service_code: ServiceCodeSchema.parse(row.service_code), id: row.id, reference: row.reference, status: row.status as AdminCaseDetail['status'], sub_status: row.sub_status, matter_type: row.matter_type, tier: row.tier,
       simulated: events.some(e => e.source === 'simulated') || documents.some(d => d.simulated) || payments.some(p => p.simulated) || shipments.some(s => s.simulated),
       created_at: row.created_at.toISOString(), advocate_id: row.advocate_id, contacts, intake,
       pricing: row.pricing_id_relation ? {base_amount_paise: row.pricing_id_relation.base_amount_paise.toString(), gst_bps: row.pricing_id_relation.gst_bps, confirmed: row.pricing_id_relation.confirmed} : null,

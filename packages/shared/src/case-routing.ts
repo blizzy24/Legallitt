@@ -9,5 +9,6 @@ export function adminCasePath(service: ServiceCode, id: string) {
   return `${adminCaseListPath(service)}/${encodeURIComponent(id)}`;
 }
 export function unbuiltCasePath(service: ServiceCode, id: string, role: 'client' | 'advocate') {
+  if (service === 'fir_draft') return `${role === 'advocate' ? '/advocate/fir/draft' : '/fir/status'}?caseId=${encodeURIComponent(id)}`;
   return `${role === 'advocate' ? '/advocate/requests' : '/cases'}/${encodeURIComponent(id)}?service=${service}&caseId=${encodeURIComponent(id)}`;
 }

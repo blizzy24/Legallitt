@@ -45,7 +45,7 @@ const STEPS = [
 // FIR explainer (design/41). NOTE: that export is 226px wide (0.58px per point), so
 // its type sizes and insets could not be measured; the structure and copy are as
 // drawn, sizes are carried over from design/40 and the rest of the app.
-export default function FirInfoScreen() {
+function FixtureFirInfoScreen() {
   const insets = useSafeAreaInsets();
 
   return (
@@ -419,3 +419,6 @@ const styles = StyleSheet.create({
     color: ink.onBrand,
   },
 });
+import FirClient from '../../features/fir/FirClient';
+import {DATA_SOURCE} from '../../lib/data-source';
+export default function LiveFirScreen() { return DATA_SOURCE === 'api' ? <FirClient/> : <FixtureFirInfoScreen/>; }

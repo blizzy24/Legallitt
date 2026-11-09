@@ -6,6 +6,20 @@
 visual reference. It is **not** a feature list. Features come from our
 lifecycle and our designs. See `ADMIN-PANEL-SURVEY.md` for what is there.
 
+**Approved extension, 10 November 2026: FIR draft approval.** The client confirmed
+an admin reviews the advocate's submitted draft before it reaches the client.
+The owner authorised building this screen in the panel's existing visual
+language without a supplied design; architecture §9.2 records the reason.
+FIR Drafts navigation opens an oldest-first approval queue. The waiting sub-status
+maps to Open, with submitted timestamp, elapsed waiting time and an explicit
+statement that approve is the only action; rejection/return policy is unresolved.
+Review shows the exact frozen PDF/version/author alongside intake, evidence,
+payment and history. `Approve and send to client` records the admin decision,
+releases that PDF and completes the case atomically. No admin editing, rejection
+or client approval. A second advocate submission is blocked while waiting.
+This extension supersedes the Legal-Notice-only scope and two-action restriction
+below for this specific FIR action; it does not authorise other service screens.
+
 ---
 
 ## 1. Where it lives

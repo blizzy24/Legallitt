@@ -16,3 +16,4 @@ export * from './notification-feed';
 export * from './case-input';
 export * from './case-routing';
 export * from './pricing';
+export * from './fir';

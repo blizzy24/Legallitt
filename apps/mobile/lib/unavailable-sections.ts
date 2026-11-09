@@ -8,6 +8,7 @@ const unavailable = (title: string, body: string = copy.general): UnavailableSec
 const wallet = unavailable('Wallet & Earnings', copy.wallet);
 export function unavailableSection(name: string, params?: Readonly<Record<string, unknown>>): UnavailableSection | undefined {
   const route = name.replace(/^\((?:tabs|advocate)\)\//, '').replace(/\/index$/, '');
+  if (route==='fir'||route.startsWith('fir/')||route.startsWith('advocate/fir/')) return undefined;
   if (route === 'clients' || route.startsWith('advocate/clients')) return unavailable('Clients', copy.clients);
   if (route === 'earnings' || route.startsWith('advocate/wallet') || /^advocate\/settings\/(bank|payout)/.test(route)) return wallet;
   if (route.startsWith('advocate/analytics')) return unavailable('Analytics');

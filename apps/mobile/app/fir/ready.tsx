@@ -16,7 +16,7 @@ import { clientDocHref } from '../../data/docLinks';
 
 // FIR draft ready (design/49) — the end state of the journey app/fir/status.tsx
 // starts. Both are reachable through the dev toggle at the foot of each screen.
-export default function FirReadyScreen() {
+function FixtureFirReadyScreen() {
   const insets = useSafeAreaInsets();
   const file = FIR_REQUEST.draftFile;
 
@@ -446,3 +446,6 @@ const styles = StyleSheet.create({
     color: colors.textBody,
   },
 });
+import FirClient from '../../features/fir/FirClient';
+import {DATA_SOURCE} from '../../lib/data-source';
+export default function LiveFirScreen() { return DATA_SOURCE === 'api' ? <FirClient/> : <FixtureFirReadyScreen/>; }
