@@ -3,6 +3,13 @@ import type { InvoiceLine, ServiceTier } from '../../data/legalNotice';
 
 /** Presentation contract: no backend client or data-source flag. */
 export type NoticeIntakeModel = {
+  quote?: import('@legalitt/shared').PaymentQuote;
+  quoteLoading?: boolean;
+  quoteError?: string;
+  quoteRequired?: boolean;
+  retryQuote?: () => void;
+  openDocuments?: () => void;
+  removeBlockedUpload?: (id: string) => void;
   error?: string;
   busy?: boolean;
   demandOptions: string[];

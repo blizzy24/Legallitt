@@ -49,7 +49,7 @@ export class CaseRepository {
         pricing_id_relation: {select: {base_amount_paise: true, gst_bps: true}},
         payments_case_id_relations: {where: {purpose:'service_fee',status:'captured'},
           orderBy: {captured_at:'desc'},take:1,
-          select: {base_amount_paise:true,gst_paise:true,total_paise:true,simulated:true,captured_at:true}},
+          select: {base_amount_paise:true,gst_paise:true,total_paise:true,simulated:true,captured_at:true,quote:{select:{snapshot:true}}}},
         service_code_relation: {select: {config: true}},
         // The advocate's drawn facts (design 437) travel with the case; the id
         // alone would leave the card empty.
@@ -105,11 +105,16 @@ export class CaseRepository {
       return { ...caseRecord, parties, pricing, advocate: advocate ? {...advocateUser, profile} : advocate, events, documents, drafts, reviews, shipments };
     const notice_policy = parse(NoticePolicySchema, (service.config as {notice_policy?: unknown}).notice_policy ?? {});
     const capturedAt = payments[0]?.captured_at;
-    const feeVersions = capturedAt ? await db.servicePricing.findMany({where:{service_code:'legal_notice',
+    const feeVersions = capturedAt && !payments[0]?.quote ? await db.servicePricing.findMany({where:{service_code:'legal_notice',confirmed:false,
       variant:{in:['platform_fee','delivery_fee']},effective_from:{lte:capturedAt},
       OR:[{effective_to:null},{effective_to:{gt:capturedAt}}]},orderBy:[{effective_from:'desc'},{id:'asc'}]}) : [];
     const client_fees = caseClientFees(pricing, payments[0], feeVersions);
-    return { ...caseRecord, notice_policy, parties, pricing, client_fees, advocate: advocate ? {...advocateUser, profile} : advocate, events, documents, drafts, reviews, shipments };
+    const breakdown = (payments[0]?.quote?.snapshot as unknown as {breakdown?: import('@legalitt/shared').QuoteBreakdown} | undefined)?.breakdown;
+    const advocate_payout = breakdown?.advocate_entitlement_paise == null ? null : {
+      service_share_paise: breakdown.service_fee_paise, delivery_reimbursement_paise: breakdown.delivery_fee_paise,
+      net_paise: breakdown.advocate_entitlement_paise,
+    };
+    return { ...caseRecord, notice_policy, parties, pricing, client_fees, advocate_payout, advocate: advocate ? {...advocateUser, profile} : advocate, events, documents, drafts, reviews, shipments };
   }
 
   async list(actor: CaseActor, query: unknown) {

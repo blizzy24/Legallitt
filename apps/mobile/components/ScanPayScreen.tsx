@@ -39,6 +39,7 @@ function mmss(total: number) {
 export default function ScanPayScreen({
   service,
   amount,
+  amountText, paymentMessage, onReviewPayment,
   successHref,
   query,
   hold = false,
@@ -49,6 +50,7 @@ export default function ScanPayScreen({
 }: {
   service: string;
   amount: number | null;
+  amountText?: string; paymentMessage?: string; onReviewPayment?: () => void;
   successHref: Href;
   query?: string;
   hold?: boolean;
@@ -120,7 +122,11 @@ export default function ScanPayScreen({
             <QrGlyph />
           </View>
 
-          <Text style={styles.amount}>{amount === null ? '' : rupees(amount)}</Text>
+          <Text style={styles.amount}>{amountText ?? (amount === null ? '' : rupees(amount))}</Text>
+          {paymentMessage && <View accessibilityLiveRegion="polite">
+            <Text>{paymentMessage}</Text>
+            {onReviewPayment && <Pressable accessibilityRole="button" onPress={onReviewPayment}><Text>Review payment breakdown</Text></Pressable>}
+          </View>}
           <Text style={styles.service}>{service}</Text>
           {requestId && <Text style={styles.service}>Request ID: {requestId}</Text>}
           <Text style={styles.instr}>Open your UPI app and scan the QR code to complete the payment.</Text>

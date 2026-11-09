@@ -1,4 +1,5 @@
 import type {CaseClientFees} from '@legalitt/shared';
+import {paiseText} from '../../../../features/legal-notice/quote-display';
 import {instructedCopy} from '../../../../copy/instructed';
 import NoticeScreenFeedback from '../../../../components/NoticeScreenFeedback';
 import { useAdvocateNoticeModel } from "../../../../features/legal-notice/useAdvocateNoticeModel";
@@ -29,17 +30,18 @@ import { advNoticeFeeScreen as t, colors, font, ink } from '../../../../constant
 // ⚠ design/185 clips its own subtitle behind the stage chip ("Review your earnings
 // before ac…"); it wraps here.
 
-export function AdvocateNoticeFeeView({notice, navigate, onAccept, onDecline, clientFees, canDecide=true, preAcceptance=true}: {notice: Omit<typeof ADV_NOTICE, 'clientFee'> & {clientFee: number | null}; navigate: typeof router; onAccept: () => void; onDecline: () => void; clientFees?:CaseClientFees|null; canDecide?:boolean; preAcceptance?:boolean}) {
+export function AdvocateNoticeFeeView({notice, navigate, onAccept, onDecline, clientFees, payout, canDecide=true, preAcceptance=true}: {notice: Omit<typeof ADV_NOTICE, 'clientFee'> & {clientFee: number | null}; navigate: typeof router; onAccept: () => void; onDecline: () => void; clientFees?:CaseClientFees|null; payout?:import('@legalitt/shared').ApiCase['advocate_payout']; canDecide?:boolean; preAcceptance?:boolean}) {
   const router = navigate;
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
   const n = notice;
-  const money=(paise:string|null|undefined)=>paise==null?'':`₹${Number((BigInt(paise)+50n)/100n).toLocaleString('en-IN')}`;
+  const money=(paise:string|null|undefined)=>paise==null?'':paiseText(paise);
   const realFees=clientFees!==undefined;
   const feeRows=clientFees?[
     ['Service Fee',clientFees.service_fee_paise],['Platform Fee',clientFees.platform_fee_paise],
     ['Delivery Fee',clientFees.delivery_fee_paise],['GST',clientFees.gst_paise],
-  ].filter((row):row is [string,string]=>row[1]!==null):[];
+    ['Additional PDF pages',clientFees.page_overage_paise],
+  ].filter((row):row is [string,string]=>row[1]!=null):[];
   const f = n.clientFee === null ? null : advNoticeFee(n.clientFee);
 
   return (
@@ -125,7 +127,14 @@ export function AdvocateNoticeFeeView({notice, navigate, onAccept, onDecline, cl
             </>}
             {(!clientFees?.total_paise || !clientFees.breakdown_complete) && <Text style={styles.noteText}>{!clientFees?.total_paise?instructedCopy.advocateWork.feesUnavailable:instructedCopy.advocateWork.feesPartial}</Text>}
           </View>
-          <View style={styles.card}><Text style={styles.fb}>Payout Information</Text><View style={styles.note}><Info size={t.noteIcon} color={colors.brandDark}/><Text style={styles.noteText}>{instructedCopy.advocateWork.payout}</Text></View></View>
+          <View style={styles.card}><Text style={styles.fb}>Payout Information</Text>
+            {payout ? <>
+              <View style={styles.line}><Text style={styles.lineLabel}>Service share</Text><Text style={styles.lineAmount}>{money(payout.service_share_paise)}</Text></View>
+              <View style={styles.line}><Text style={styles.lineLabel}>Delivery reimbursement</Text><Text style={styles.lineAmount}>{money(payout.delivery_reimbursement_paise)}</Text></View>
+              <View style={styles.line}><Text style={styles.lineLabel}>Your payout</Text><Text style={styles.lineAmount}>{money(payout.net_paise)}</Text></View>
+              <Text style={styles.noteText}>This is the agreed payout amount. Transfer and withdrawal are not available yet.</Text>
+            </> : <View style={styles.note}><Info size={t.noteIcon} color={colors.brandDark}/><Text style={styles.noteText}>{instructedCopy.advocateWork.payout}</Text></View>}
+          </View>
         </> : <>
         <View style={styles.card}>
           <Text style={styles.tcf} {...shrinkToFit(0.8)}>
@@ -578,5 +587,5 @@ const styles = StyleSheet.create({
 
 export default function AdvocateNoticeFeeScreen() {
   const model = useAdvocateNoticeModel('fee');
-  return <NoticeScreenFeedback error={model.error} state={model.screenState}><AdvocateNoticeFeeView clientFees={model.clientFees} canDecide={model.canDecide} preAcceptance={model.preAcceptance} notice={model.data.ADV_NOTICE} navigate={model.navigate} onAccept={model.onAccept} onDecline={model.onDecline} /></NoticeScreenFeedback>;
+  return <NoticeScreenFeedback error={model.error} state={model.screenState}><AdvocateNoticeFeeView payout={model.api?model.controller.record?.advocate_payout:undefined} clientFees={model.clientFees} canDecide={model.canDecide} preAcceptance={model.preAcceptance} notice={model.data.ADV_NOTICE} navigate={model.navigate} onAccept={model.onAccept} onDecline={model.onDecline} /></NoticeScreenFeedback>;
 }

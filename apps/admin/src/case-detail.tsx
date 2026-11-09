@@ -5,7 +5,7 @@ import { ApiError, adminBucketFor, adminCaseListPath, SERVICE_NAMES, ServiceCode
 import { api, useSession } from './session';
 import { AssignAdvocate } from './assign-advocate';
 const label = (s: string) => s.replaceAll('_', ' ').replace(/^./, c => c.toUpperCase());
-const money = (v: string) => '₹' + ((BigInt(v) + 50n) / 100n).toLocaleString('en-IN');
+const money = (v: string) => '₹' + (BigInt(v) / 100n).toLocaleString('en-IN') + '.' + (BigInt(v) % 100n).toString().padStart(2, '0');
 const date = (v: string) => new Date(v).toLocaleString('en-IN', {day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit'});
 const eventTitle = (e: AdminCaseDetail['events'][number]) => e.type === 'shipment_status_changed' && typeof e.payload.to === 'string' ? label(e.payload.to) : e.type === 'status_changed' && e.to_status ? label(e.to_status) : label(e.type);
 const present = (v: unknown): boolean => v !== null && v !== undefined && v !== '' && (typeof v !== 'object' || Object.values(v).some(present));

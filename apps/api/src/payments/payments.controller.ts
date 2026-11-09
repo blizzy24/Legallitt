@@ -6,6 +6,9 @@ const json = (value: unknown) => JSON.parse(JSON.stringify(value, (_, v) => type
 @UseGuards(AuthGuard)
 export class PaymentsController {
   constructor(private readonly payments: PaymentsService) {}
+  @Post('quotes') quote(@Req() req: AuthRequest, @Body() body: unknown) {
+    return this.payments.quote(req.user!, body).then(json);
+  }
   @Post('intents') intent(@Req() req: AuthRequest, @Body() body: unknown, @Headers('idempotency-key') key?: string) {
     return this.payments.intent(req.user!, body, key).then(json);
   }

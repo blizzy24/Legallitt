@@ -16,8 +16,8 @@ import { INVOICE, invoiceLines, invoiceTotal, rupees } from '../../data/legalNot
 // SHARED BY TWO SERVICES — see the note in scan-pay.tsx. Service name, amount,
 // reference and the onward route all come from search params; with none it behaves
 // exactly as the Legal Notice flow always did.
-export function PaymentSuccessScreenView({ service, total, requestId, nextHref, onBack }: {
-  onBack?: () => void; service: string; total: number | null; requestId: string; nextHref: Href;
+export function PaymentSuccessScreenView({ service, total, amountText, requestId, nextHref, onBack }: {
+  amountText?: string; onBack?: () => void; service: string; total: number | null; requestId: string; nextHref: Href;
 }) {
   return (
     <View style={styles.screen}>
@@ -47,7 +47,7 @@ export function PaymentSuccessScreenView({ service, total, requestId, nextHref, 
             </View>
             <View style={styles.headText}>
               <Text style={styles.title}>Payment Successful</Text>
-              <Text style={styles.sub}>Your payment of {total === null ? '' : rupees(total, false)} has been received.</Text>
+              <Text style={styles.sub}>Your payment of {amountText ?? (total === null ? '' : rupees(total, false))} has been received.</Text>
             </View>
           </View>
           <Text style={styles.note}>Your {service} request has been submitted.</Text>

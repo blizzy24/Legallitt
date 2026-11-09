@@ -372,7 +372,7 @@ export class CaseStateMachine {
       if (record.status === "payment_pending") return record;
       if (record.status === "draft") {
         const now = new Date();
-        const pricing = await tx.servicePricing.findFirst({where: {service_code: 'legal_notice', tier: record.tier, variant: null, effective_from: {lte: now}, OR: [{effective_to: null}, {effective_to: {gt: now}}]}, orderBy: [{effective_from: 'desc'}, {id: 'asc'}]});
+        const pricing = await tx.servicePricing.findFirst({where: {service_code: 'legal_notice', tier: record.tier, variant: null, effective_from: {lte: now}, OR: [{effective_to: null}, {effective_to: {gt: now}}]}, orderBy: [{confirmed: 'desc'}, {effective_from: 'desc'}, {id: 'asc'}]});
         if (!pricing) throw new ConflictException('Case pricing is unavailable');
         await tx.case.update({where: {id}, data: {pricing_id: pricing.id}});
         record = await this.advance(tx, actor, record, CaseStatus.submitted);

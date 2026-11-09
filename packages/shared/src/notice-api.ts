@@ -105,11 +105,13 @@ export type ApiAdvocateProfile = {
   photo_key: string | null;
 };
 export type CaseClientFees = {
+  page_overage_paise?: string;
   service_fee_paise: string | null; platform_fee_paise: string | null;
   delivery_fee_paise: string | null; gst_paise: string | null; total_paise: string | null;
   breakdown_complete: boolean; simulated: boolean;
 };
 export type ApiCase = {
+  advocate_payout?: {service_share_paise: string; delivery_reimbursement_paise: string; net_paise: string} | null;
   client_fees?: CaseClientFees;
   compliance_period_days?: number | null;
   notice_policy?: NoticePolicy;

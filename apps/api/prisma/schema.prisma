@@ -134,6 +134,7 @@ model AdvocateProfile {
 }
 
 model Service {
+  fee_policies                            FeePolicy[]
   code                                    String           @id
   name                                    String
   active                                  Boolean          @default(true)
@@ -146,6 +147,12 @@ model Service {
 }
 
 model ServicePricing {
+  duration_minutes           Int?
+  fee_policy_id              String? @db.Uuid
+  fee_policy                 FeePolicy? @relation("tariff_policy", fields: [fee_policy_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  delivery_policies          FeePolicy[] @relation("policy_delivery")
+  price_quotes               CasePriceQuote[] @relation("quote_price")
+  delivery_quotes            CasePriceQuote[] @relation("quote_delivery")
   id                         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   service_code               String
   tier                       String?
@@ -163,6 +170,7 @@ model ServicePricing {
 }
 
 model CommissionRate {
+  quotes                CasePriceQuote[]
   id                    String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   service_code          String
   rate_bps              Int
@@ -175,6 +183,7 @@ model CommissionRate {
 }
 
 model Case {
+  price_quotes                      CasePriceQuote[]
   id                                String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   reference                         String          @unique
   service_code                      String
@@ -340,6 +349,8 @@ model Message {
 }
 
 model Payment {
+  quote_id                            String? @unique @db.Uuid
+  quote                               CasePriceQuote? @relation(fields: [quote_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   payer_id String @db.Uuid
   payer User @relation("payment_payer", fields: [payer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   simulated Boolean @default(false)
@@ -360,6 +371,71 @@ model Payment {
   ledger_entries_payment_id_relations LedgerEntry[] @relation("ledger_entries_payment_id_payments")
 
   @@map("payments")
+}
+
+// Immutable policies and checkout snapshots. Version references inside a quote
+// are also stored in its JSON snapshot, including the complete applied rules.
+model PageOveragePolicy {
+  quotes                CasePriceQuote[]
+  id                    String @id @db.Uuid
+  included_pages        Int
+  unit_amount_paise     BigInt
+  gst_bps               Int
+  aggregation           String
+  page_basis            String
+  revenue_recipient     String
+  confirmed             Boolean
+  source_note           String
+  effective_from        DateTime @db.Timestamptz(6)
+  effective_to          DateTime? @db.Timestamptz(6)
+  fee_policies          FeePolicy[]
+  @@map("page_overage_policies")
+}
+
+model FeePolicy {
+  quotes                CasePriceQuote[]
+  id                    String @id @db.Uuid
+  service_code          String
+  service               Service @relation(fields: [service_code], references: [code], onDelete: NoAction, onUpdate: NoAction)
+  pricing_mode          String
+  base_represents       String
+  platform_calculation  String
+  gst_basis             String
+  delivery_recipient    String
+  rounding              String
+  delivery_pricing_id   String? @db.Uuid
+  delivery_pricing      ServicePricing? @relation("policy_delivery", fields: [delivery_pricing_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  page_overage_policy_id String @db.Uuid
+  page_overage_policy   PageOveragePolicy @relation(fields: [page_overage_policy_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  confirmed             Boolean
+  source_note           String
+  effective_from        DateTime @db.Timestamptz(6)
+  effective_to          DateTime? @db.Timestamptz(6)
+  prices                ServicePricing[] @relation("tariff_policy")
+  @@index([service_code, effective_from])
+  @@map("fee_policies")
+}
+
+model CasePriceQuote {
+  id                    String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  case_id               String @db.Uuid
+  case                  Case @relation(fields: [case_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  pricing_id            String @db.Uuid
+  pricing               ServicePricing @relation("quote_price", fields: [pricing_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  commission_rate_id    String? @db.Uuid
+  commission_rate       CommissionRate? @relation(fields: [commission_rate_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  fee_policy_id         String? @db.Uuid
+  fee_policy            FeePolicy? @relation(fields: [fee_policy_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  delivery_pricing_id   String? @db.Uuid
+  delivery_pricing      ServicePricing? @relation("quote_delivery", fields: [delivery_pricing_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  page_overage_policy_id String? @db.Uuid
+  page_overage_policy    PageOveragePolicy? @relation(fields: [page_overage_policy_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  document_fingerprint  String
+  snapshot              Json @db.JsonB
+  created_at            DateTime @default(now()) @db.Timestamptz(6)
+  payment               Payment?
+  @@index([case_id, created_at])
+  @@map("case_price_quotes")
 }
 
 model Payout {

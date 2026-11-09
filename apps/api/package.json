@@ -10,6 +10,7 @@
     "db:validate": "prisma validate",
     "db:migrate": "prisma migrate deploy",
     "db:seed": "pnpm build && prisma db seed",
+    "db:seed-pricing": "pnpm build && node --env-file-if-exists=.env.local dist/prisma/seed-pricing.js",
     "db:seed-demo": "pnpm build && node --env-file-if-exists=.env.local dist/prisma/seed-demo.js",
     "db:seed-client-isolation": "pnpm build && node --env-file-if-exists=.env.local dist/prisma/seed-demo.js --client-isolation-only",
     "db:local:migrate": "node --env-file=.env.local scripts/migrate-local.cjs",

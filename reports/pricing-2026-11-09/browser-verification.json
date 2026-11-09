@@ -1,0 +1,41 @@
+{
+  "case_id": "98e9e414-2882-4795-9b25-2eead3b921b5",
+  "reference": "LN-2026-0005",
+  "blocked_document": "8058b424-d239-4d1a-9fa8-e47f264c2be8",
+  "quote": {
+    "status": "ready",
+    "id": "ab74f95e-264b-4863-8d46-7a3660bd06dc",
+    "breakdown": {
+      "gst_paise": "22478",
+      "total_pages": 30,
+      "total_paise": "177753",
+      "charged_pages": 5,
+      "included_pages": 25,
+      "page_unit_paise": "2500",
+      "service_fee_paise": "99900",
+      "delivery_fee_paise": "17900",
+      "page_overage_paise": "12500",
+      "platform_fee_paise": "24975",
+      "page_overage_gst_paise": "0",
+      "platform_revenue_paise": "37475",
+      "taxable_subtotal_paise": "124875",
+      "advocate_entitlement_paise": "117800"
+    }
+  },
+  "receipt": {
+    "service_fee_paise": "99900",
+    "platform_fee_paise": "24975",
+    "delivery_fee_paise": "17900",
+    "page_overage_paise": "12500",
+    "gst_paise": "22478",
+    "total_paise": "177753",
+    "breakdown_complete": true,
+    "simulated": true
+  },
+  "advocate_payout": {
+    "service_share_paise": "99900",
+    "delivery_reimbursement_paise": "17900",
+    "net_paise": "117800"
+  },
+  "browser_errors": []
+}

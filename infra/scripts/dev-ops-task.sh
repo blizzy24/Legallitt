@@ -11,9 +11,10 @@ REGION=ap-south-1
 case "${1:-}" in
   migrate)   CMD='["node","scripts/migrate-deploy.cjs"]' ;;
   seed)      CMD='["node","dist/prisma/seed.js"]' ;;
+  seed-pricing) CMD='["node","dist/prisma/seed-pricing.js"]' ;;
   seed-demo) CMD='["node","dist/prisma/seed-demo.js"]' ;;
   seed-client-isolation) CMD='["node","dist/prisma/seed-demo.js","--client-isolation-only"]' ;;
-  *) echo "usage: $0 migrate|seed|seed-demo|seed-client-isolation [IMAGE_TAG]" >&2; exit 2 ;;
+  *) echo "usage: $0 migrate|seed|seed-pricing|seed-demo|seed-client-isolation [IMAGE_TAG]" >&2; exit 2 ;;
 esac
 out() { aws cloudformation describe-stacks --region "$REGION" --stack-name "$STACK" --query "Stacks[0].Outputs[?OutputKey=='$1'].OutputValue" --output text; }
 CLUSTER=$(out ClusterName); TASKDEF=$(out OpsTaskDefinitionArn); SUBNETS=$(out TaskSubnetIds); SG=$(out TaskSecurityGroupId)

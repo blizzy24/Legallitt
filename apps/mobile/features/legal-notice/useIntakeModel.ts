@@ -10,6 +10,7 @@ import { SERVICE_TIERS } from '../../data/legalNotice';
 import { useFixtureIntakeModel } from './useFixtureIntakeModel';
 import { useNoticeController, type NoticeStage } from './useNoticeController';
 import type { NoticeIntakeModel } from './screen-model';
+import { useCheckoutQuote } from './useCheckoutQuote';
 
 /** Select the data adapter here, never inside a designed view. */
 export function useIntakeModel(stage: string) {
@@ -18,6 +19,7 @@ export function useIntakeModel(stage: string) {
   const api = DATA_SOURCE === 'api';
   const mapped = ({step4:'upload', 'step4-review':'upload', step5:'summary', step6:'payment', 'scan-pay':'payment', success:'tracking'} as Record<string, NoticeStage>)[stage] ?? stage as NoticeStage;
   const c = useNoticeController(mapped, undefined, api);
+  const checkout = useCheckoutQuote(c.repository, c.id, api && mapped === 'payment');
   const {paid} = useLegalNotice();
   const finished = api ? noticePaid(c.record) : paid;
   useFocusEffect(useCallback(() => {
@@ -71,14 +73,11 @@ export function useIntakeModel(stage: string) {
       ...(patch.issueType ? {issueType:patch.issueType} : {}),
     }));
   };
-  const base = prices.find(p => p.tier === c.tier && p.variant === null);
-  const delivery = prices.find(p => p.variant === 'delivery_fee');
-  const platform = prices.find(p => p.variant === 'platform_fee');
-  const rows = [base, delivery, platform];
-  const ready = rows.every(Boolean);
   const rupees = (paise: bigint) => Number((paise + 50n) / 100n);
-  const gst = ready ? rows.reduce((sum,p) => sum + (BigInt(p!.base_amount_paise) * BigInt(p!.gst_bps) + 5000n) / 10000n, 0n) : 0n;
   const model: NoticeIntakeModel = {
+    ...checkout, quoteRequired: true,
+    openDocuments: () => c.go('/legal-notice/step4-review'),
+    removeBlockedUpload: id => { void c.run(async () => { await c.repository.deleteDocument(id); checkout.retryQuote(); }); },
     error: c.error,
     busy: c.busy || c.loading,
     demandOptions: [...new Set([...demandOptions, ...form.legalDemand.selected])], generateDemands,
@@ -95,16 +94,15 @@ export function useIntakeModel(stage: string) {
     updateNoticee: patch => update({noticee:{...form.noticee,...patch}}),
     tiers: SERVICE_TIERS.map(t => ({...t, price: (() => {const p=prices.find(p=>p.tier===t.id&&p.variant===null); return p ? rupees(BigInt(p.base_amount_paise)) : null;})()})),
     invoice: {service:'Legal Notice', refId:c.record?.reference ?? '', requestId:c.record?.reference ?? ''},
-    invoiceLines: ready ? [
-      {label:'Service Fee',amount:rupees(BigInt(base!.base_amount_paise))},
-      {label:'Legal Notice Delivery Fee',amount:rupees(BigInt(delivery!.base_amount_paise))},
-      {label:'Goods & Services Tax (GST 18%)',amount:rupees(gst)},
-      {label:'Platform fees',amount:rupees(BigInt(platform!.base_amount_paise))},
-    ] : [],
+    invoiceLines: [],
     summary: {client:'',noticeType:'',noticee:[],summary:form.subjectMatter,documents:form.documents.length},
     navigate: path => { if(stage === "detail") c.go(path); else void c.run(() => c.save(path)); },
     continue: () => { void c.run(async () => {
       if (c.loading) return;
+      if (c.record?.status === 'payment_pending' && ['step4','step4-review'].includes(stage)) {
+        c.go(stage === 'step4' ? '/legal-notice/step4-review' : '/legal-notice/step6');
+        return;
+      }
       validateNoticeStep(stage, form);
       const destination = '/legal-notice/' + noticeNext[stage];
       if (stage === 'detail') {
@@ -130,7 +128,10 @@ export function useIntakeModel(stage: string) {
         await c.repository.generateNoticeSubject(c.id);
         c.dirty.current = false;
         c.go(destination);
-      } else if (stage === 'step6') c.go(destination);
+      } else if (stage === 'step6') {
+        if (checkout.quote?.status !== 'ready' || checkout.quoteLoading) return;
+        c.go(destination + '?quoteId=' + checkout.quote.id);
+      }
       else await c.save(destination);
     }); },
   };

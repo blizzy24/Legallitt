@@ -9,7 +9,7 @@ const matterLabels: Record<string, string> = {
   family_dispute: 'Family Dispute', cheque_bounce: 'Cheque Bounce', consumer_complaint: 'Consumer Complaint',
 };
 const partyLabels: Record<string, string> = {sender: 'Sender', noticee: 'Noticee', opposing: 'Opposing party', accused: 'Accused', witness: 'Witness'};
-const rupees = (value: string) => '₹' + ((BigInt(value) + 50n) / 100n).toLocaleString('en-IN');
+const rupees = (value: string) => '₹' + (BigInt(value) / 100n).toLocaleString('en-IN') + '.' + (BigInt(value) % 100n).toString().padStart(2, '0');
 export function Notices({service = 'legal_notice'}: {service?: ServiceCode}) {
   const noun = service === 'legal_notice' ? 'notices' : 'cases';
   const heading = service === 'legal_notice' ? 'Legal Notices' : SERVICE_NAMES[service];

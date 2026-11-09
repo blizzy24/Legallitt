@@ -11,6 +11,7 @@ import WizardShell from '../../components/WizardShell';
 import { buttonShadow, colors, font, ink, payment as p, wizard as w } from '../../constants/theme';
 import { useLegalNotice } from '../../context/legalNotice';
 import { INVOICE, invoiceLines, invoiceTotal, rupees } from '../../data/legalNotice';
+import { paiseText, quoteLines } from '../../features/legal-notice/quote-display';
 
 const BAR_HEIGHT = p.barPadTop + 20 + p.barButtonGap + 52 + p.captionGap + 16 + p.barPadBottom;
 
@@ -23,6 +24,10 @@ export function Step6ScreenView({ model }: { model: NoticeIntakeModel }) {
   const { form } = model;
   const lines = model.invoiceLines;
   const total = invoiceTotal(lines);
+  const quote = model.quote?.status === 'ready' ? model.quote : null;
+  const displayLines = model.quoteRequired ? (quote ? quoteLines(quote.breakdown) : []) : lines.map(l => ({label: l.label, value: rupees(l.amount)}));
+  const totalText = model.quoteRequired ? (quote ? paiseText(quote.breakdown.total_paise) : '') : rupees(total);
+  const ready = !model.busy && (!model.quoteRequired || Boolean(quote) && !model.quoteLoading);
 
   return (
     <View style={styles.screen}>
@@ -51,19 +56,36 @@ export function Step6ScreenView({ model }: { model: NoticeIntakeModel }) {
           </Text>
           <View style={styles.divider} />
           <View style={styles.rows}>
-            {lines.map((l) => (
+            {displayLines.map((l) => (
               <View key={l.label} style={styles.row}>
                 <Text style={styles.rowLabel}>{l.label}</Text>
-                <Text style={styles.rowValue}>{rupees(l.amount)}</Text>
+                <Text style={styles.rowValue}>{l.value}</Text>
               </View>
             ))}
           </View>
+          {quote && BigInt(quote.breakdown.page_unit_paise) > 0n && <Text style={styles.note}>
+            {quote.breakdown.total_pages} PDF pages across all files; {quote.breakdown.included_pages} included.
+          </Text>}
+          {model.quoteLoading && <Text accessibilityLiveRegion="polite" style={styles.note}>Calculating your payment…</Text>}
+          {(model.quoteError || model.quote?.status === 'blocked') && <View accessibilityLiveRegion="polite">
+            <Text style={styles.quoteError}>{model.quoteError || (model.quote?.status === 'blocked' ? model.quote.message : '')}</Text>
+            {model.quote?.status === 'blocked' && model.quote.documents.map(doc => <View key={doc.id}>
+              <Text style={styles.quoteError}>{doc.filename}: {doc.reason}</Text>
+              <Pressable accessibilityRole="button" disabled={model.busy} onPress={() => model.removeBlockedUpload?.(doc.id)}>
+                <Text style={styles.sectionLink}>Remove upload: {doc.filename}</Text>
+              </Pressable>
+            </View>)}
+            <Pressable accessibilityRole="button" onPress={model.openDocuments}><Text style={styles.sectionLink}>Open Documents</Text></Pressable>
+            <Pressable accessibilityRole="button" onPress={model.retryQuote}><Text style={styles.sectionLink}>Retry price calculation</Text></Pressable>
+          </View>}
+          {(!model.quoteRequired || quote) && <>
           <View style={styles.divider} />
           <View style={styles.totalRow}>
             <Text style={styles.totalLabel}>Total Payable</Text>
-            <Text style={styles.totalValue}>{lines.length ? rupees(total) : ''}</Text>
+            <Text style={styles.totalValue}>{totalText}</Text>
           </View>
           <Text style={styles.note}>Inclusive of all legal taxes</Text>
+          </>}
         </View>
 
         <View style={styles.sectionRow}>
@@ -76,14 +98,15 @@ export function Step6ScreenView({ model }: { model: NoticeIntakeModel }) {
       </WizardShell>
 
       <View style={[styles.bar, { paddingBottom: insets.bottom + p.barPadBottom }]}>
-        <View style={styles.amountRow}>
+        {totalText ? <View style={styles.amountRow}>
           <Text style={styles.amountLabel}>Amount to pay</Text>
-          <Text style={styles.amountValue}>{lines.length ? rupees(total) : ''}</Text>
-        </View>
+          <Text style={styles.amountValue}>{totalText}</Text>
+        </View> : <Text style={styles.quoteError}>{model.quoteLoading ? 'Calculating payment…' : 'Payment is blocked. See the explanation and actions in the fee breakdown above.'}</Text>}
         <Pressable
           accessibilityRole="button"
+          disabled={!ready}
           onPress={() => model.continue()}
-          style={({ pressed }) => [styles.pay, pressed && styles.pressed]}
+          style={({ pressed }) => [styles.pay, (pressed || !ready) && styles.pressed]}
         >
           <Text style={styles.payLabel}>Pay</Text>
           <ArrowRight size={p.buttonIcon} color={ink.onBrand} />
@@ -95,6 +118,7 @@ export function Step6ScreenView({ model }: { model: NoticeIntakeModel }) {
 }
 
 const styles = StyleSheet.create({
+  quoteError: {color: colors.textPrimary, fontFamily: font.appBody, marginVertical: 8},
   screen: {
     flex: 1,
     backgroundColor: colors.appBg,
@@ -150,12 +174,13 @@ const styles = StyleSheet.create({
     marginTop: p.rowsGap,
   },
   row: {
-    height: p.rowHeight,
+    minHeight: p.rowHeight,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
   rowLabel: {
+    flex: 1, marginRight: 12,
     fontFamily: font.appBody,
     fontSize: p.rowLabelSize,
     color: p.rowLabel,

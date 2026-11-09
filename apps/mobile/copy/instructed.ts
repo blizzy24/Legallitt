@@ -9,7 +9,7 @@ export const instructedCopy = {
   navigationAvailability: {
     heading: 'Not available yet',
     general: 'This section is not available yet. You can view your Legal Notice cases in My Cases.',
-    wallet: 'The payout split isn’t configured yet. Earnings, balances and withdrawals are not available. You can view recorded client charges in each case.',
+    wallet: 'Balances and withdrawals are not available yet. You can view recorded charges and any confirmed payout breakdown in each case.',
     clients: 'The client directory is not available yet. Open My Cases to see the clients on your assigned Legal Notices.',
     settings: 'These account settings are not available yet. No changes can be saved here.',
     advocates: 'The saved-advocate directory is not available yet. You can view your assigned advocate from your Legal Notice case.',
@@ -36,7 +36,7 @@ export const instructedCopy = {
     loading: 'Loading your cases…',
     failed: 'Couldn’t load your cases. Try again.',
     noMatches: 'No cases match these filters.',
-    payout: 'The payout split isn’t configured yet. Your net earnings cannot be calculated until it is confirmed.',
+    payout: 'A confirmed payout breakdown is not available for this historical case. Ask the administrator to check its payment record.',
     feesUnavailable: 'The payment breakdown isn’t available for this case. Ask the administrator to check its payment record.',
     feesPartial: 'Some historical charges could not be verified against this payment. Ask the administrator to check the breakdown.',
     loadingCase: 'Loading case…',

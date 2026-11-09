@@ -153,6 +153,13 @@ safe for the old image too (add or widen first; rename or drop only once no
 deployed code reads the old shape). If a change cannot be made safe that way,
 stop and ask.
 
+For the confirmed pricing rollout (architecture §2.5a), the migration adds schema
+only. After the new API and payment frontend are serving, activate the versioned
+tariffs with `infra/scripts/dev-ops-task.sh seed-pricing <IMAGE_TAG>`. Do not run
+that seed while the old API still serves: it uses the old tax calculation. Fresh
+local API installations run `pnpm --filter @legalitt/api db:seed-pricing` after the
+base seed. This command changes pricing rows only, never credentials or old cases.
+
 ## Demo credentials
 
 Never change `legalitt-dev/demo-auth` on its own. With explicit approval for a

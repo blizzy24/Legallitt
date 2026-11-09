@@ -117,8 +117,123 @@ WebSockets only if polling proves inadequate in practice.
 
 ### 2.5 Money is integer paise
 
-Every amount is `BIGINT` paise. No floats anywhere. Display rounding to whole
-rupees happens in the app, never in the database.
+Every amount is `BIGINT` paise. No floats in financial calculations. Confirmed
+checkout displays exact paise (two decimal places), including the receipt and
+the amount presented before payment. Historical fixture displays remain archival.
+
+### 2.5a Confirmed pricing and commission — 9 November 2026
+
+Client confirmation supersedes the earlier pricing questions for commission,
+Legal Advice, FIR and court representation. Base is the advocate's share. The
+platform receives 20% of base plus platform fee: grossing up the base therefore
+adds 25%. GST is 18% on base plus platform fee, rounded once half-up to paise.
+Delivery is outside both GST and commission and is reimbursed to the advocate.
+No experience tiers. Legal Notice retains its ordinary/urgent urgency choices.
+
+| Service | Base | Duration / pricing mode |
+|---|---:|---|
+| Legal Notice urgent | ₹999 | Fixed |
+| Legal Notice ordinary | ₹699 | Fixed |
+| Legal Advice | ₹600 | 30-minute consultation |
+| FIR Draft | ₹999 | Fixed |
+| District Court | ₹600 | Own 30-minute consultation tariff, then advocate quote |
+| High Court | ₹600 | Own 30-minute consultation tariff, then advocate quote |
+
+**Court decision:** no fixed District/High Court representation price. Each
+service owns its consultation tariff and keeps its own service code for enquiry
+attribution; neither redirects billing to legal_advice. An advocate quotes for
+representation after the consultation. Historical unconfirmed court figures are
+not selectable tariffs. This pricing decision does not implement the remaining
+court lifecycle or turn its archival fixture screens into a live checkout.
+
+**Delivery provenance:** directly inspected design/434-ln-complete-payment.png
+labels Legal Notice Delivery Fee ₹179 and Platform fees ₹199. Its printed GST
+and total do not reconcile; they are not used to infer fees. Superseded design/28
+has platform ₹199 and no delivery line. The new delivery row retains ₹179 with
+gst_bps=0, based on the current design. ₹199 delivery was an unverified assumption
+and is withdrawn. Urgent total before overage is ₹1,652.53; ordinary ₹1,210.03.
+
+**Courier decision:** no standalone purchase exists. Courier payment screens are
+static subflows of other services; the API courier payment belongs to a Legal
+Notice and is paid by its assigned advocate. No standalone courier commission
+row is seeded. Eight other service codes get confirmed 2000-bps commission rows,
+including services whose base price is still unconfirmed. This does not confirm
+any additional base price or enable wallet withdrawals.
+
+**Page overage:** the versioned policy includes 25 PDF pages per case, aggregated
+across all attached, uploaded PDFs at checkout. Each additional page is ₹25,
+gst_bps=0, allocated wholly to platform revenue. JPEG/PNG files are not PDF pages.
+Deleted files are excluded. Pending uploads or PDFs with no verified page count
+block a payable quote. The payment screen names each affected file, explains
+finishing/removing an unfinished upload or replacing an unreadable/locked PDF,
+and offers Open Documents, Remove upload and Retry price calculation beside the
+breakdown. Loading, unavailable pricing and network errors have explicit copy;
+the disabled Pay action repeats that the breakdown needs attention. These are
+owner-authorized additions to design 434's existing payment surface.
+
+The API counts pages using its existing upload inspector, not a browser-supplied
+count. `max(0, sum(pdf_pages) - included_pages) * unit_amount_paise` is evaluated
+once per case. Two files of 18 and 12 pages produce ₹125 overage, not zero.
+The quote pins tariff, fee policy, commission, delivery and page-policy IDs, the
+document fingerprint/list, all line items, GST, total, advocate entitlement
+(base + delivery), and platform revenue (platform fee + overage).
+
+`POST /payments/quotes` returns ready or blocked; payment uses the displayed
+quote ID. Document writes and payment share the case lock. Changed or unresolved
+documents reject capture and require reviewing a new breakdown. A changed document
+set creates a new immutable quote using the case's pinned tariff and commission;
+rate changes never rewrite an existing quote. Payment references that exact row.
+Invoices read captured snapshots. Old captured receipts are untouched; unknown
+historical commission/earnings remain unknown. Already-submitted legacy cases
+retain their original tariff and tax calculation without retroactive page fees.
+
+Policies and tariffs are insert-only versions, with effective dates and source
+notes; retirement may close effective_to without changing financial terms. The
+idempotent manifest is prisma/confirmed-pricing.json; no production price/rate
+constant lives in a handler or screen. Supported calculation methods are named
+in policy rows; unknown methods block checkout rather than silently falling back.
+
+**Rollout:** migrate the additive schema before deploy. Activate confirmed rows
+only AFTER the new API and payment UI are serving, using
+`infra/scripts/dev-ops-task.sh seed-pricing <IMAGE_TAG>`. Seeding before rollout
+would expose new delivery/tariff rows to the old tax calculation. This seed does
+not alter credentials or existing cases. Fresh installations run the base seed
+then this pricing seed. Future price/rate changes require new rows, not a migration.
+
+The additional schema below supplements §4 (Prisma holds the complete column
+types; migration 202611090001_versioned_checkout includes checks and foreign keys).
+
+```sql
+CREATE TABLE page_overage_policies (
+  id UUID PRIMARY KEY, included_pages INT NOT NULL, unit_amount_paise BIGINT NOT NULL,
+  gst_bps INT NOT NULL, aggregation TEXT NOT NULL, page_basis TEXT NOT NULL,
+  revenue_recipient TEXT NOT NULL, confirmed BOOLEAN NOT NULL, source_note TEXT NOT NULL,
+  effective_from TIMESTAMPTZ NOT NULL, effective_to TIMESTAMPTZ
+);
+CREATE TABLE fee_policies (
+  id UUID PRIMARY KEY, service_code TEXT NOT NULL REFERENCES services(code),
+  pricing_mode TEXT NOT NULL, base_represents TEXT NOT NULL,
+  platform_calculation TEXT NOT NULL, gst_basis TEXT NOT NULL,
+  delivery_recipient TEXT NOT NULL, rounding TEXT NOT NULL,
+  delivery_pricing_id UUID REFERENCES service_pricing(id),
+  page_overage_policy_id UUID NOT NULL REFERENCES page_overage_policies(id),
+  confirmed BOOLEAN NOT NULL, source_note TEXT NOT NULL,
+  effective_from TIMESTAMPTZ NOT NULL, effective_to TIMESTAMPTZ
+);
+CREATE TABLE case_price_quotes (
+  id UUID PRIMARY KEY, case_id UUID NOT NULL REFERENCES cases(id),
+  pricing_id UUID NOT NULL REFERENCES service_pricing(id),
+  commission_rate_id UUID REFERENCES commission_rates(id),
+  fee_policy_id UUID REFERENCES fee_policies(id),
+  delivery_pricing_id UUID REFERENCES service_pricing(id),
+  page_overage_policy_id UUID REFERENCES page_overage_policies(id),
+  document_fingerprint TEXT NOT NULL, snapshot JSONB NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL
+);
+ALTER TABLE service_pricing ADD COLUMN duration_minutes INT;
+ALTER TABLE service_pricing ADD COLUMN fee_policy_id UUID REFERENCES fee_policies(id);
+ALTER TABLE payments ADD COLUMN quote_id UUID UNIQUE REFERENCES case_price_quotes(id);
+```
 
 ### 2.6 One AWS account, two stages
 
@@ -1645,10 +1760,10 @@ before the backend needs it.
 
 | # | Question | Blocks |
 |---|---|---|
-| 1 | Commission rate per service | Payouts, wallet, advocate screens |
-| 2 | District Court prices (338 draws ₹XX,XXX; 343 draws ₹25,000/₹35,000) | Pricing seed |
-| 3 | Legal Advice price table — two contradictory tables, plus an experience axis | Pricing seed |
-| 4 | FIR base fee — nothing drawn; app shows a chosen ₹1,000 placeholder | Pricing seed |
+| ~~1~~ | Closed 9 Nov: 80% advocate / 20% platform for all purchasable services; see §2.5a | — |
+| ~~2~~ | Closed 9 Nov: District and High Court each own a ₹600 / 30-minute consultation tariff, then advocate quotes; no fixed representation price | — |
+| ~~3~~ | Closed 9 Nov: Legal Advice ₹600 / 30 minutes; no experience tiers | — |
+| ~~4~~ | Closed 9 Nov: FIR base ₹999 | — |
 | 5 | Design 279's ₹1,377 — template or real | Pricing seed |
 | 6 | The ₹34,999 / ₹379 / ₹40,680 screen — template or real | Pricing seed |
 | 7 | Advocate Route onboarding — designs needed | Payouts |
@@ -1672,8 +1787,9 @@ before the backend needs it.
 | 22 | The client supplied six advocate portraits, but **design 437 draws initials** on the tracking card, not a photo. The photos are drawn on the chat screen (439). Should the portraits also appear on the tracking card, or are initials intended there? Built as drawn — initials — until he says otherwise | Advocate card |
 | 21 | **No design draws 440 after delivery completes.** Its headline reads "Physical Notice on the Way", which stops being true. The drawn route to 440 is withdrawn on completion, so this only affects a client already sitting on the page. Supply a delivered state, or confirm 440 is simply not the screen for a finished case | Tracking screen 440 |
 
-Items 1 to 6 all touch `service_pricing` and `commission_rates`. The schema is
-built so they can land as rows whenever they arrive, without migration.
+Items 1–4 are resolved by §2.5a. Items 5–6 remain historical design discrepancies,
+not selectable checkout prices. Future prices and rates are versioned rows;
+the additive quote/policy schema preserves what each case was charged.
 
 ---
 

@@ -183,6 +183,7 @@ export class ApiClient {
     return this.request<{
       code: string;
       name: string;
+      pricing_mode?: 'fixed' | 'consultation_then_quote' | 'unconfirmed';
       pricing: {
         id: string;
         tier: string | null;
@@ -190,6 +191,7 @@ export class ApiClient {
         base_amount_paise: string;
         gst_bps: number;
         confirmed: boolean;
+        duration_minutes?: number | null;
       }[];
     }>(`/services/${encodeURIComponent(code)}`);
   }
@@ -226,9 +228,12 @@ export class ApiClient {
   submit(id: string) {
     return this.request<ApiCase>(`/cases/${id}/submit`, {});
   }
-  pay(id: string, purpose: 'service_fee' | 'courier' = 'service_fee', key = `${purpose}:${id}`) {
+  paymentQuote(id: string) {
+    return this.request<import('./pricing').PaymentQuote>('/payments/quotes', {case_id: id}, 'POST');
+  }
+  pay(id: string, purpose: 'service_fee' | 'courier' = 'service_fee', key = `${purpose}:${id}`, quoteId?: string) {
     return this.request<{id: string; case_id: string; payer_id: string; purpose: string; total_paise: string; simulated: boolean; status: string}>(
-      '/payments/intents', {case_id: id, purpose}, 'POST', undefined, {'Idempotency-Key': key});
+      '/payments/intents', {case_id: id, purpose, ...(quoteId ? {quote_id: quoteId} : {})}, 'POST', undefined, {'Idempotency-Key': key});
   }
   assign(id: string, advocate_id: string) {
     return this.request<ApiCase>(`/admin/cases/${id}/assign`, { advocate_id });

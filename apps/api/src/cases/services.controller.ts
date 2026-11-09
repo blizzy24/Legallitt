@@ -7,6 +7,7 @@ import {
 } from "@nestjs/common";
 import { AuthGuard } from "../auth/auth.controller";
 import { PrismaService } from "../prisma.service";
+import {activeAt, newest} from '../payments/price-quotes';
 @Controller("api/v1/services")
 @UseGuards(AuthGuard)
 export class ServicesController {
@@ -24,9 +25,11 @@ export class ServicesController {
     });
     if (!service) throw new NotFoundException("Service not found");
     const now = new Date();
+    const policy = await db.feePolicy.findFirst({where: {service_code: code, confirmed: true, ...activeAt(now)}, orderBy: newest});
     const pricing = await db.servicePricing.findMany({
       where: {
         service_code: code,
+        ...(policy ? {confirmed: true, fee_policy_id: policy.id} : {}),
         effective_from: { lte: now },
         OR: [{ effective_to: null }, { effective_to: { gt: now } }],
       },
@@ -34,6 +37,7 @@ export class ServicesController {
     });
     return {
       ...service,
+      pricing_mode: policy?.pricing_mode ?? 'unconfirmed',
       pricing: pricing.map((p) => ({
         ...p,
         base_amount_paise: p.base_amount_paise.toString(),

@@ -13,7 +13,8 @@ import { useLegalNotice } from '../../context/legalNotice';
 // so the body lives in components/ScanPayScreen and each caller passes its own
 // service name, amount, reference and onward route. With no params this route
 // behaves exactly as the Legal Notice flow always did.
-export function LegalNoticeScanPayScreenView({ service, total, successHref, query, onPayment, paymentReady, backHref, onBack }: {
+export function LegalNoticeScanPayScreenView({ service, total, amountText, paymentMessage, onReviewPayment, successHref, query, onPayment, paymentReady, backHref, onBack }: {
+  amountText?: string; paymentMessage?: string; onReviewPayment?: () => void;
   onBack?: () => void; service: string; total: number | null; backHref?: Href; successHref: Href; query: URLSearchParams; onPayment?: () => void; paymentReady?: boolean;
 }) {
   return (
@@ -22,6 +23,7 @@ export function LegalNoticeScanPayScreenView({ service, total, successHref, quer
       onBack={onBack}
       service={service}
       amount={total}
+      amountText={amountText} paymentMessage={paymentMessage} onReviewPayment={onReviewPayment}
       successHref={successHref}
       query={query.toString()}
       onPayment={onPayment}

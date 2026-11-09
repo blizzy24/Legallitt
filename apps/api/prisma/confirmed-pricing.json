@@ -1,0 +1,31 @@
+{
+  "version": "client-confirmed-2026-11-09",
+  "source_note": "Client confirmed 9 November 2026; delivery verified in design/434-ln-complete-payment.png (179), superseding design/28.",
+  "page_overage": {
+    "included_pages": 25, "unit_amount_paise": "2500", "gst_bps": 0,
+    "aggregation": "case", "page_basis": "verified_pdf_pages", "revenue_recipient": "platform"
+  },
+  "fee_policy": {
+    "base_represents": "advocate_share", "platform_calculation": "commission_gross_up",
+    "gst_basis": "base_plus_platform", "delivery_recipient": "advocate", "rounding": "half_up_paise"
+  },
+  "services": [
+    {"service_code": "legal_notice", "pricing_mode": "fixed", "rate_bps": 2000},
+    {"service_code": "legal_advice", "pricing_mode": "fixed", "rate_bps": 2000},
+    {"service_code": "fir_draft", "pricing_mode": "fixed", "rate_bps": 2000},
+    {"service_code": "district_court", "pricing_mode": "consultation_then_quote", "rate_bps": 2000},
+    {"service_code": "high_court", "pricing_mode": "consultation_then_quote", "rate_bps": 2000},
+    {"service_code": "property_search", "pricing_mode": "unconfirmed", "rate_bps": 2000},
+    {"service_code": "document_forensic", "pricing_mode": "unconfirmed", "rate_bps": 2000},
+    {"service_code": "court_marriage", "pricing_mode": "unconfirmed", "rate_bps": 2000}
+  ],
+  "delivery": {"service_code": "legal_notice", "tier": null, "variant": "delivery_fee", "base_amount_paise": "17900", "gst_bps": 0},
+  "prices": [
+    {"service_code": "legal_notice", "tier": "urgent", "variant": null, "base_amount_paise": "99900", "gst_bps": 1800, "duration_minutes": null},
+    {"service_code": "legal_notice", "tier": "ordinary", "variant": null, "base_amount_paise": "69900", "gst_bps": 1800, "duration_minutes": null},
+    {"service_code": "legal_advice", "tier": null, "variant": "consultation_30_minutes", "base_amount_paise": "60000", "gst_bps": 1800, "duration_minutes": 30},
+    {"service_code": "fir_draft", "tier": null, "variant": null, "base_amount_paise": "99900", "gst_bps": 1800, "duration_minutes": null},
+    {"service_code": "district_court", "tier": null, "variant": "consultation_30_minutes", "base_amount_paise": "60000", "gst_bps": 1800, "duration_minutes": 30},
+    {"service_code": "high_court", "tier": null, "variant": "consultation_30_minutes", "base_amount_paise": "60000", "gst_bps": 1800, "duration_minutes": 30}
+  ]
+}
