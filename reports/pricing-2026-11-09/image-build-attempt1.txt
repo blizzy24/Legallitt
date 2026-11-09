@@ -1,0 +1,200 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 2.72kB 0.0s done
+#1 DONE 0.1s
+
+#2 [internal] load metadata for docker.io/library/node:22-bookworm-slim
+#2 ...
+
+#3 [auth] library/node:pull token for registry-1.docker.io
+#3 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/node:22-bookworm-slim
+#2 DONE 3.8s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 253B 0.0s done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 DONE 0.0s
+
+#6 [build  1/13] FROM docker.io/library/node:22-bookworm-slim@sha256:5ec23b7c622b00547753bc6ffd78085dd868a68aeb41c8e0a1418f033e13d96d
+#6 resolve docker.io/library/node:22-bookworm-slim@sha256:5ec23b7c622b00547753bc6ffd78085dd868a68aeb41c8e0a1418f033e13d96d 0.0s done
+#6 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 3.14MB 0.3s done
+#5 DONE 0.3s
+
+#7 [build  2/13] RUN apt-get update && apt-get install -y --no-install-recommends openssl ca-certificates && rm -rf /var/lib/apt/lists/*
+#7 CACHED
+
+#8 [build  4/13] WORKDIR /repo
+#8 CACHED
+
+#9 [build  3/13] RUN corepack enable && corepack prepare pnpm@10.34.7 --activate
+#9 CACHED
+
+#10 [build  5/13] COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+#10 CACHED
+
+#11 [build  6/13] COPY packages/shared/package.json packages/shared/
+#11 CACHED
+
+#12 [build  7/13] COPY apps/api/package.json apps/api/
+#12 DONE 0.1s
+
+#13 [stage-1 3/8] ADD https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem /etc/ssl/rds/global-bundle.pem
+#13 DONE 0.6s
+
+#14 [build  8/13] RUN pnpm install --frozen-lockfile --filter @legalitt/api... --config.only-built-dependencies=prisma --config.only-built-dependencies=@prisma/engines
+#14 14.18 Scope: 2 of 3 workspace projects
+#14 16.46 Lockfile is up to date, resolution step is skipped
+#14 17.79 Progress: resolved 1, reused 0, downloaded 0, added 0
+#14 23.87 .                                        | +377 ++++++++++++++++++++++++++++++++
+#14 25.11 Progress: resolved 377, reused 0, downloaded 0, added 0
+#14 29.86  WARN  Request took 15532ms: https://registry.npmjs.org/pnpm
+#14 30.24
+#14 30.24    ╭──────────────────────────────────────────────────────────────────────╮
+#14 30.24    │                                                                      │
+#14 30.24    │                 Update available! 10.34.7 → 12.18.0.                 │
+#14 30.24    │                 Changelog: https://pnpm.io/v/12.18.0                 │
+#14 30.24    │   To update, run: curl -fsSL https://get.pnpm.io/install.sh | sh -   │
+#14 30.24    │                                                                      │
+#14 30.24    ╰──────────────────────────────────────────────────────────────────────╯
+#14 30.24
+#14 30.35 Progress: resolved 377, reused 0, downloaded 1, added 0
+#14 31.70 Progress: resolved 377, reused 0, downloaded 17, added 0
+#14 32.97 Progress: resolved 377, reused 0, downloaded 30, added 4
+#14 39.54 Progress: resolved 377, reused 0, downloaded 40, added 4
+#14 40.75 Progress: resolved 377, reused 0, downloaded 57, added 8
+#14 41.87 Progress: resolved 377, reused 0, downloaded 71, added 13
+#14 43.03 Progress: resolved 377, reused 0, downloaded 99, added 23
+#14 44.16 Progress: resolved 377, reused 0, downloaded 125, added 40
+#14 46.00 Progress: resolved 377, reused 0, downloaded 146, added 60
+#14 47.51 Progress: resolved 377, reused 0, downloaded 160, added 70
+#14 49.14 Progress: resolved 377, reused 0, downloaded 171, added 80
+#14 49.96  WARN  Tarball download average speed 3 KiB/s (size 5 KiB) is below 50 KiB/s: https://registry.npmjs.org/json-schema-traverse/-/json-schema-traverse-1.0.0.tgz (GET)
+#14 50.59 Progress: resolved 377, reused 0, downloaded 191, added 92
+#14 51.60 Progress: resolved 377, reused 0, downloaded 208, added 116
+#14 52.61 Progress: resolved 377, reused 0, downloaded 220, added 159
+#14 52.74  WARN  Tarball download average speed 8 KiB/s (size 13 KiB) is below 50 KiB/s: https://registry.npmjs.org/router/-/router-2.2.0.tgz (GET)
+#14 53.10  WARN  Tarball download average speed 6 KiB/s (size 10 KiB) is below 50 KiB/s: https://registry.npmjs.org/send/-/send-1.2.1.tgz (GET)
+#14 53.24  WARN  Tarball download average speed 11 KiB/s (size 16 KiB) is below 50 KiB/s: https://registry.npmjs.org/multer/-/multer-2.4.0.tgz (GET)
+#14 53.33  WARN  Tarball download average speed 2 KiB/s (size 2 KiB) is below 50 KiB/s: https://registry.npmjs.org/append-field/-/append-field-1.0.0.tgz (GET)
+#14 53.79 Progress: resolved 377, reused 0, downloaded 240, added 179
+#14 55.06 Progress: resolved 377, reused 0, downloaded 248, added 189
+#14 56.24 Progress: resolved 377, reused 0, downloaded 265, added 194
+#14 62.55  WARN  Tarball download average speed 27 KiB/s (size 157 KiB) is below 50 KiB/s: https://registry.npmjs.org/pngjs/-/pngjs-7.0.0.tgz (GET)
+#14 62.59 Progress: resolved 377, reused 0, downloaded 282, added 215
+#14 64.15 Progress: resolved 377, reused 0, downloaded 287, added 219
+#14 65.55 Progress: resolved 377, reused 0, downloaded 302, added 228
+#14 67.10 Progress: resolved 377, reused 0, downloaded 317, added 239
+#14 67.46  WARN  Tarball download average speed 36 KiB/s (size 69 KiB) is below 50 KiB/s: https://registry.npmjs.org/ast-types/-/ast-types-0.13.4.tgz (GET)
+#14 68.19 Progress: resolved 377, reused 0, downloaded 335, added 256
+#14 69.21 Progress: resolved 377, reused 0, downloaded 345, added 290
+#14 70.35 Progress: resolved 377, reused 0, downloaded 356, added 354
+#14 71.38 Progress: resolved 377, reused 0, downloaded 360, added 359
+#14 72.44 Progress: resolved 377, reused 0, downloaded 361, added 361
+#14 73.45 Progress: resolved 377, reused 0, downloaded 363, added 362
+#14 73.81  WARN  Tarball download average speed 31 KiB/s (size 194 KiB) is below 50 KiB/s: https://registry.npmjs.org/source-map/-/source-map-0.6.1.tgz (GET)
+#14 74.58 Progress: resolved 377, reused 0, downloaded 366, added 366
+#14 75.58 Progress: resolved 377, reused 0, downloaded 368, added 368
+#14 76.60 Progress: resolved 377, reused 0, downloaded 370, added 370
+#14 79.16 Progress: resolved 377, reused 0, downloaded 371, added 370
+#14 80.16 Progress: resolved 377, reused 0, downloaded 372, added 372
+#14 81.16 Progress: resolved 377, reused 0, downloaded 373, added 372
+#14 82.17 Progress: resolved 377, reused 0, downloaded 374, added 374
+#14 91.22 Progress: resolved 377, reused 0, downloaded 375, added 374
+#14 92.22 Progress: resolved 377, reused 0, downloaded 376, added 376
+#14 96.03 Progress: resolved 377, reused 0, downloaded 377, added 376
+#14 96.06 Progress: resolved 377, reused 0, downloaded 377, added 377, done
+#14 105.4 .../node_modules/@prisma/engines postinstall$ node scripts/postinstall.js
+#14 118.2 .../node_modules/@prisma/engines postinstall: Done
+#14 119.2 .../node_modules/prisma preinstall$ node scripts/preinstall-entry.js
+#14 123.2 .../node_modules/prisma preinstall: Done
+#14 129.4 ╭ Warning ─────────────────────────────────────────────────────────────────────╮
+#14 129.4 │                                                                              │
+#14 129.4 │   Ignored build scripts: esbuild@0.28.2.                                     │
+#14 129.4 │   Run "pnpm approve-builds" to pick which dependencies should be allowed     │
+#14 129.4 │   to run scripts.                                                            │
+#14 129.4 │                                                                              │
+#14 129.4 ╰──────────────────────────────────────────────────────────────────────────────╯
+#14 130.0 Done in 2m 5.6s using pnpm v10.34.7
+#14 DONE 133.4s
+
+#15 [build  9/13] COPY tsconfig.json ./
+#15 DONE 0.6s
+
+#16 [build 10/13] COPY packages/shared packages/shared
+#16 DONE 0.1s
+
+#17 [build 11/13] COPY apps/api apps/api
+#17 DONE 0.2s
+
+#18 [build 12/13] RUN pnpm --filter @legalitt/shared build && pnpm --filter @legalitt/api build
+#18 9.759
+#18 9.759 > @legalitt/shared@0.0.0 build /repo/packages/shared
+#18 9.759 > tsc
+#18 9.759
+#18 45.75
+#18 45.75 > @legalitt/api@0.0.0 build /repo/apps/api
+#18 45.75 > prisma generate && tsc
+#18 45.75
+#18 60.18 Loaded Prisma config from prisma.config.ts.
+#18 60.18
+#18 62.17 Prisma schema loaded from prisma/schema.prisma.
+#18 71.99
+#18 71.99 ✔ Generated Prisma Client (7.10.1) to ./src/generated/prisma in 5.59s
+#18 71.99
+#18 DONE 169.0s
+
+#19 [build 13/13] RUN cd apps/api && pnpm exec prisma version >/dev/null
+ERROR: failed to build: failed to solve: Unavailable: error reading from server: EOF
+27968 v0.26.1-desktop.1 C:\Program Files\Docker\cli-plugins\docker-buildx.exe buildx build --platform linux/arm64 -f apps/api/Dockerfile -t 026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api:3223645 .
+github.com/docker/buildx/commands.runBuildWithOptions
+	github.com/docker/buildx/commands/build.go:452
+github.com/docker/buildx/commands.runBuild
+	github.com/docker/buildx/commands/build.go:374
+github.com/docker/buildx/commands.buildCmd.func1
+	github.com/docker/buildx/commands/build.go:488
+github.com/docker/cli/cli-plugins/plugin.RunPlugin.func1.1.2
+	github.com/docker/cli@v28.3.2+incompatible/cli-plugins/plugin/plugin.go:65
+github.com/spf13/cobra.(*Command).execute
+	github.com/spf13/cobra@v1.9.1/command.go:1015
+github.com/spf13/cobra.(*Command).ExecuteC
+	github.com/spf13/cobra@v1.9.1/command.go:1148
+github.com/spf13/cobra.(*Command).Execute
+	github.com/spf13/cobra@v1.9.1/command.go:1071
+github.com/docker/cli/cli-plugins/plugin.RunPlugin
+	github.com/docker/cli@v28.3.2+incompatible/cli-plugins/plugin/plugin.go:80
+main.runPlugin
+	github.com/docker/buildx/cmd/buildx/main.go:65
+main.run
+	github.com/docker/buildx/cmd/buildx/main.go:79
+main.main
+	github.com/docker/buildx/cmd/buildx/main.go:89
+runtime.main
+	runtime/proc.go:283
+runtime.goexit
+	runtime/asm_amd64.s:1700
+
+27968 v0.26.1-desktop.1 C:\Program Files\Docker\cli-plugins\docker-buildx.exe buildx build --platform linux/arm64 -f apps/api/Dockerfile -t 026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api:3223645 .
+google.golang.org/grpc.(*ClientConn).Invoke
+	google.golang.org/grpc@v1.72.2/call.go:35
+github.com/moby/buildkit/api/services/control.(*controlClient).Solve
+	github.com/moby/buildkit@v0.23.0-rc1.0.20250618182037-9b91d20367db/api/services/control/control_grpc.pb.go:88
+github.com/moby/buildkit/client.(*Client).solve.func2
+	github.com/moby/buildkit@v0.23.0-rc1.0.20250618182037-9b91d20367db/client/solve.go:268
+golang.org/x/sync/errgroup.(*Group).add.func1
+	golang.org/x/sync@v0.14.0/errgroup/errgroup.go:130
+runtime.goexit
+	runtime/asm_amd64.s:1700
+
+27968 v0.26.1-desktop.1 C:\Program Files\Docker\cli-plugins\docker-buildx.exe buildx build --platform linux/arm64 -f apps/api/Dockerfile -t 026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api:3223645 .
+github.com/moby/buildkit/client.(*Client).solve.func2
+	github.com/moby/buildkit@v0.23.0-rc1.0.20250618182037-9b91d20367db/client/solve.go:285
+golang.org/x/sync/errgroup.(*Group).add.func1
+	golang.org/x/sync@v0.14.0/errgroup/errgroup.go:130

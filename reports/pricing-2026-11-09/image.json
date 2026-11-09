@@ -1,0 +1,16 @@
+{
+    "imageDetails": [
+        {
+            "registryId": "026379630400",
+            "repositoryName": "legalitt-dev-api",
+            "imageDigest": "sha256:2f59fbab89ed4a25b58fb418582d0a2d8d60d3eb841ec99807a4f316e366b1a5",
+            "imageTags": [
+                "3223645"
+            ],
+            "imageSizeInBytes": 221271037,
+            "imagePushedAt": "2026-11-09T23:58:15.289000+05:30",
+            "imageManifestMediaType": "application/vnd.oci.image.index.v1+json",
+            "imageStatus": "ACTIVE"
+        }
+    ]
+}

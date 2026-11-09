@@ -1,0 +1,136 @@
+{
+  "legal_notice": {
+    "code": "legal_notice",
+    "name": "Legal Notice",
+    "active": true,
+    "config": {
+      "notice_policy": {
+        "criminal_clause": "when_offences",
+        "default_compliance_period_days": 15
+      }
+    },
+    "pricing_mode": "fixed",
+    "pricing": [
+      {
+        "duration_minutes": null,
+        "fee_policy_id": "6fcde960-0009-5732-99b3-78121f0e2ae4",
+        "id": "16f64a18-94b3-5457-93c7-bc8200220986",
+        "service_code": "legal_notice",
+        "tier": "urgent",
+        "variant": null,
+        "base_amount_paise": "99900",
+        "gst_bps": 1800,
+        "confirmed": true,
+        "source_note": "Client confirmed 9 November 2026; delivery verified in design/434-ln-complete-payment.png (179), superseding design/28.",
+        "effective_from": "2026-11-09T18:39:52.678Z",
+        "effective_to": null
+      },
+      {
+        "duration_minutes": null,
+        "fee_policy_id": "6fcde960-0009-5732-99b3-78121f0e2ae4",
+        "id": "2f9ad36e-4b33-5afe-a782-fb80c2e7c38e",
+        "service_code": "legal_notice",
+        "tier": "ordinary",
+        "variant": null,
+        "base_amount_paise": "69900",
+        "gst_bps": 1800,
+        "confirmed": true,
+        "source_note": "Client confirmed 9 November 2026; delivery verified in design/434-ln-complete-payment.png (179), superseding design/28.",
+        "effective_from": "2026-11-09T18:39:52.678Z",
+        "effective_to": null
+      }
+    ]
+  },
+  "legal_advice": {
+    "code": "legal_advice",
+    "name": "Legal Advice",
+    "active": true,
+    "config": {},
+    "pricing_mode": "fixed",
+    "pricing": [
+      {
+        "duration_minutes": 30,
+        "fee_policy_id": "1a190cf1-b7af-5a8c-b7a8-3d229e045302",
+        "id": "ac629aae-7ed7-5ae2-8b5e-d02c73048cfa",
+        "service_code": "legal_advice",
+        "tier": null,
+        "variant": "consultation_30_minutes",
+        "base_amount_paise": "60000",
+        "gst_bps": 1800,
+        "confirmed": true,
+        "source_note": "Client confirmed 9 November 2026; delivery verified in design/434-ln-complete-payment.png (179), superseding design/28.",
+        "effective_from": "2026-11-09T18:39:52.678Z",
+        "effective_to": null
+      }
+    ]
+  },
+  "fir_draft": {
+    "code": "fir_draft",
+    "name": "FIR Draft",
+    "active": true,
+    "config": {},
+    "pricing_mode": "fixed",
+    "pricing": [
+      {
+        "duration_minutes": null,
+        "fee_policy_id": "1efa6b09-1a3d-5660-9164-b2acf2916d4e",
+        "id": "f4a26410-ff3b-5e07-913f-6ebe5d09b419",
+        "service_code": "fir_draft",
+        "tier": null,
+        "variant": null,
+        "base_amount_paise": "99900",
+        "gst_bps": 1800,
+        "confirmed": true,
+        "source_note": "Client confirmed 9 November 2026; delivery verified in design/434-ln-complete-payment.png (179), superseding design/28.",
+        "effective_from": "2026-11-09T18:39:52.678Z",
+        "effective_to": null
+      }
+    ]
+  },
+  "district_court": {
+    "code": "district_court",
+    "name": "District Court Representation",
+    "active": true,
+    "config": {},
+    "pricing_mode": "consultation_then_quote",
+    "pricing": [
+      {
+        "duration_minutes": 30,
+        "fee_policy_id": "149575c6-d84c-5b4a-b68e-a8e84d82c0cc",
+        "id": "a4d416e0-7ac5-58e3-8f8f-fa504904d20b",
+        "service_code": "district_court",
+        "tier": null,
+        "variant": "consultation_30_minutes",
+        "base_amount_paise": "60000",
+        "gst_bps": 1800,
+        "confirmed": true,
+        "source_note": "Client confirmed 9 November 2026; delivery verified in design/434-ln-complete-payment.png (179), superseding design/28.",
+        "effective_from": "2026-11-09T18:39:52.678Z",
+        "effective_to": null
+      }
+    ]
+  },
+  "high_court": {
+    "code": "high_court",
+    "name": "High Court Representation",
+    "active": true,
+    "config": {},
+    "pricing_mode": "consultation_then_quote",
+    "pricing": [
+      {
+        "duration_minutes": 30,
+        "fee_policy_id": "18dff201-3d10-519f-818c-71ca567e0d9f",
+        "id": "9ae1b08b-0488-5caa-ae02-5140588aaadb",
+        "service_code": "high_court",
+        "tier": null,
+        "variant": "consultation_30_minutes",
+        "base_amount_paise": "60000",
+        "gst_bps": 1800,
+        "confirmed": true,
+        "source_note": "Client confirmed 9 November 2026; delivery verified in design/434-ln-complete-payment.png (179), superseding design/28.",
+        "effective_from": "2026-11-09T18:39:52.678Z",
+        "effective_to": null
+      }
+    ]
+  }
+}

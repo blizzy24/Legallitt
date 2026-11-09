@@ -1,4 +1,4 @@
-// Local real-API browser verification. Synthetic documents only; no credentials in reports.
+// Real-API browser verification, local or PRICING_DEPLOYED=1. Synthetic documents only; no credentials in reports.
 const fs = require('node:fs'), path = require('node:path'), assert = require('node:assert/strict');
 const {spawn} = require('node:child_process');
 const {createServer} = require('node:http');
@@ -6,8 +6,10 @@ const puppeteer = require('puppeteer-core');
 const {ApiClient} = require('../packages/shared/dist');
 const {PDFDocument, StandardFonts} = require('../apps/api/node_modules/pdf-lib');
 process.loadEnvFile('apps/api/.env.local');
-const base = 'http://127.0.0.1:3003', web = 'http://localhost:8083';
-const out = path.resolve('reports/pricing-2026-11-09');
+const deployed = process.env.PRICING_DEPLOYED === '1';
+const base = deployed ? 'https://gvycg0n3u8.execute-api.ap-south-1.amazonaws.com' : 'http://127.0.0.1:3003';
+const web = deployed ? 'https://legalitt-5.vercel.app' : 'http://localhost:8083';
+const out = path.resolve('reports/pricing-2026-11-09',deployed?'deployed':'.');
 fs.mkdirSync(out,{recursive:true});
 const delay = ms => new Promise(r=>setTimeout(r,ms));
 const json = (file,data) => fs.writeFileSync(path.join(out,file),JSON.stringify(data,null,2)+'\n');
@@ -17,14 +19,16 @@ async function click(p, text) {
   await handle.asElement().evaluate(e=>e.scrollIntoView({block:'center'})); await handle.asElement().click(); await handle.dispose();
 }
 async function main() {
+  let apiProcess;
+  if(!deployed) {
   const dburl = new URL(process.env.DATABASE_URL);
   assert.ok(['localhost','127.0.0.1'].includes(dburl.hostname),'Local database required');
   assert.ok(!process.env.DATABASE_SECRET_ARN,'Local walkthrough must not connect to RDS');
   const db = await require('../apps/api/dist/src/database').createDatabaseClient();
   try { await require('../apps/api/dist/prisma/seed-pricing').seedConfirmedPricing(db); }
   finally { await db.$disconnect(); }
-  const apiProcess=spawn(process.execPath,['dist/src/main.js'],{cwd:path.resolve('apps/api'),env:{...process.env,PORT:'3003',CORS_ORIGINS:web,AI_MODE:'simulated'},stdio:['ignore','ignore','pipe'],windowsHide:true});
-  let startupError='';apiProcess.stderr.on('data',d=>{startupError+=d.toString();});
+  apiProcess=spawn(process.execPath,['dist/src/main.js'],{cwd:path.resolve('apps/api'),env:{...process.env,PORT:'3003',CORS_ORIGINS:web,AI_MODE:'simulated'},stdio:'ignore',windowsHide:true});
+  }
   const root=path.resolve(process.env.PRICING_WEB_ROOT??'apps/mobile/dist');
   const mime={'.js':'text/javascript','.html':'text/html','.css':'text/css','.png':'image/png','.ttf':'font/ttf','.json':'application/json'};
   const server=createServer((req,res)=>{
@@ -37,17 +41,26 @@ async function main() {
   let page;
   const sessionFiles=[];
   try {
-    await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(8083,'127.0.0.1',resolve);});
-    for(let n=0;n<90;n++){if(apiProcess.exitCode!==null)throw new Error('Local API exited before startup');try{if((await fetch(base+'/health')).ok)break;}catch{}await delay(1000);}
+    if(!deployed) {
+      await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(8083,'127.0.0.1',resolve);});
+      for(let n=0;n<90;n++){if(apiProcess.exitCode!==null)throw new Error('Local API exited before startup');try{if((await fetch(base+'/health')).ok)break;}catch{}await delay(1000);}
+    }
     assert.equal((await fetch(base+'/health')).status,200);
     const password=await require('../apps/api/dist/src/auth/demo').demoPassword();
     const sessions={};
-    for(const role of ['client','advocate']) {
+    for(const role of ['client','advocate',...(deployed?['admin']:[])]) {
       const r=await fetch(base+'/api/v1/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:`demo-${role}@legalitt.invalid`,password})});
       assert.equal(r.status,201); sessions[role]=await r.json();
     }
     if(process.env.PRICING_SMOKE_ONLY!=='1') {
     const api=new ApiClient({baseUrl:base,getTokens:async()=>sessions.client.tokens});
+    const catalog={};
+    for(const code of ['legal_notice','legal_advice','fir_draft','district_court','high_court'])catalog[code]=await api.service(code);
+    for(const code of ['district_court','high_court']) {
+      assert.equal(catalog[code].pricing_mode,'consultation_then_quote');assert.equal(catalog[code].pricing.length,1);
+      assert.equal(catalog[code].pricing[0].base_amount_paise,'60000');assert.equal(catalog[code].pricing[0].duration_minutes,30);
+    }
+    json('service-tariffs.json',catalog);
     const c=await api.createCase({service_code:'legal_notice',tier:'urgent'});
     const details={client:{fullName:'TEST ONLY Pricing Sender',mobile:'2025550101',address:'Synthetic address Mumbai'},
       noticee:{fullName:'TEST ONLY Pricing Recipient',mobile:'2025550102',email:'recipient@example.invalid',address:'Synthetic address Mumbai'},issueType:'money-recovery'};
@@ -92,6 +105,17 @@ async function main() {
     await page.waitForFunction(()=>document.body.innerText.includes('₹1,777.53'));
     await page.screenshot({path:path.join(out,'payment-success.png'),fullPage:true});
     const paid=await api.case(c.id);assert.equal(paid.client_fees.total_paise,'177753');assert.equal(paid.advocate_payout.net_paise,'117800');
+    if(deployed) {
+      const admin=await (await browser.createBrowserContext()).newPage();
+      await admin.setViewport({width:1440,height:1000});
+      await admin.goto('https://legalitt-admin-panel.vercel.app/sign-in',{waitUntil:'networkidle0'});
+      await admin.waitForSelector('input[name="email"]');await admin.type('input[name="email"]','demo-admin@legalitt.invalid');
+      await admin.type('input[name="password"]',password);await click(admin,'Sign in');
+      await admin.waitForFunction(()=>location.pathname==='/legal-notices');
+      await admin.goto('https://legalitt-admin-panel.vercel.app/legal-notices/'+c.id,{waitUntil:'networkidle0'});
+      await admin.waitForFunction(()=>document.body.innerText.includes('₹1,777.53'));
+      await admin.screenshot({path:path.join(out,'admin-exact-payment.png'),fullPage:true});
+    }
     assert.deepEqual(errors,[]);
     json('browser-verification.json',{case_id:c.id,reference:c.reference,blocked_document:pending.document.id,
       quote,receipt:paid.client_fees,advocate_payout:paid.advocate_payout,browser_errors:errors});
@@ -114,7 +138,7 @@ async function main() {
     }
     throw error;
   } finally {
-    await browser?.close();server.close();apiProcess.kill();
+    await browser?.close();if(!deployed)server.close();apiProcess?.kill();
     for(const file of sessionFiles)fs.unlinkSync(file);
   }
 }

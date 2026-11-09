@@ -1,0 +1,463 @@
+{
+    "services": [
+        {
+            "serviceArn": "arn:aws:ecs:ap-south-1:026379630400:service/legalitt-dev-cluster/legalitt-dev-api",
+            "serviceName": "legalitt-dev-api",
+            "clusterArn": "arn:aws:ecs:ap-south-1:026379630400:cluster/legalitt-dev-cluster",
+            "loadBalancers": [],
+            "serviceRegistries": [
+                {
+                    "registryArn": "arn:aws:servicediscovery:ap-south-1:026379630400:service/srv-62r7yea5s4fot7e2",
+                    "containerName": "api",
+                    "containerPort": 3001
+                }
+            ],
+            "status": "ACTIVE",
+            "desiredCount": 1,
+            "runningCount": 1,
+            "pendingCount": 0,
+            "launchType": "FARGATE",
+            "platformVersion": "LATEST",
+            "platformFamily": "Linux",
+            "taskDefinition": "arn:aws:ecs:ap-south-1:026379630400:task-definition/legalitt-dev-api:12",
+            "deploymentConfiguration": {
+                "deploymentCircuitBreaker": {
+                    "enable": true,
+                    "rollback": true,
+                    "resetOnHealthyTask": true,
+                    "thresholdConfiguration": {
+                        "type": "BOUNDED_PERCENT",
+                        "value": 50
+                    }
+                },
+                "maximumPercent": 200,
+                "minimumHealthyPercent": 0,
+                "strategy": "ROLLING",
+                "bakeTimeInMinutes": 0
+            },
+            "deployments": [
+                {
+                    "id": "ecs-svc/9442402874740828928",
+                    "status": "PRIMARY",
+                    "taskDefinition": "arn:aws:ecs:ap-south-1:026379630400:task-definition/legalitt-dev-api:12",
+                    "desiredCount": 1,
+                    "pendingCount": 0,
+                    "runningCount": 1,
+                    "failedTasks": 0,
+                    "createdAt": "2026-11-10T00:00:37.210000+05:30",
+                    "updatedAt": "2026-11-10T00:03:41.206000+05:30",
+                    "launchType": "FARGATE",
+                    "platformVersion": "1.4.0",
+                    "platformFamily": "Linux",
+                    "networkConfiguration": {
+                        "awsvpcConfiguration": {
+                            "subnets": [
+                                "subnet-0ad9da8fd0e033afd",
+                                "subnet-060f72908da2419ee"
+                            ],
+                            "securityGroups": [
+                                "sg-09a3b6978c7950214"
+                            ],
+                            "assignPublicIp": "ENABLED"
+                        }
+                    },
+                    "rolloutState": "COMPLETED",
+                    "rolloutStateReason": "ECS deployment ecs-svc/9442402874740828928 completed."
+                }
+            ],
+            "roleArn": "arn:aws:iam::026379630400:role/aws-service-role/ecs.amazonaws.com/AWSServiceRoleForECS",
+            "events": [
+                {
+                    "id": "305ec475-95e0-437e-8ad9-348f90532167",
+                    "createdAt": "2026-11-10T00:03:41.266000+05:30",
+                    "message": "(service legalitt-dev-api) has reached a steady state."
+                },
+                {
+                    "id": "429dac69-7792-4726-b077-589fe208c532",
+                    "createdAt": "2026-11-10T00:03:41.265000+05:30",
+                    "message": "(service legalitt-dev-api) (deployment ecs-svc/9442402874740828928) deployment completed."
+                },
+                {
+                    "id": "de68bf90-df4e-420d-9ae9-6d13f6b0624b",
+                    "createdAt": "2026-11-10T00:00:45.489000+05:30",
+                    "message": "(service legalitt-dev-api) has started 1 tasks: (task 38914013b7db4885ba654a4115b55bdd)."
+                },
+                {
+                    "id": "ec5000aa-5492-404a-af59-2fd1add67075",
+                    "createdAt": "2026-11-10T00:00:44.930000+05:30",
+                    "message": "(service legalitt-dev-api) has stopped 1 running tasks: (task 846d0849a2a3487494877ed33a095d98)."
+                },
+                {
+                    "id": "efebe5a4-c830-4e36-90d1-e28eb2275ce2",
+                    "createdAt": "2026-11-09T19:58:21.426000+05:30",
+                    "message": "(service legalitt-dev-api) has reached a steady state."
+                },
+                {
+                    "id": "1ba56768-3b08-417f-8510-beb1434bd103",
+                    "createdAt": "2026-11-09T13:58:04.695000+05:30",
+                    "message": "(service legalitt-dev-api) has reached a steady state."
+                },
+                {
+                    "id": "4fc5a5f1-7225-455f-98f2-09cd74808a56",
+                    "createdAt": "2026-11-09T07:57:46.158000+05:30",
+                    "message": "(service legalitt-dev-api) has reached a steady state."
+                },
+                {
+                    "id": "23d682db-76f5-4ba3-9b43-68349ab48503",
+                    "createdAt": "2026-11-09T01:57:26.590000+05:30",
+                    "message": "(service legalitt-dev-api) has reached a steady state."
+                },
+                {
+                    "id": "4f52705e-f849-44a1-85c7-22d84bf8724f",
+                    "createdAt": "2026-11-09T01:57:26.589000+05:30",
+                    "message": "(service legalitt-dev-api) (deployment ecs-svc/6755441682702259521) deployment completed."
+                },
+                {
+                    "id": "c57d1740-ab9f-42a7-b495-f9b6df756129",
+                    "createdAt": "2026-11-09T01:54:41.269000+05:30",
+                    "message": "(service legalitt-dev-api) has started 1 tasks: (task 846d0849a2a3487494877ed33a095d98)."
+                },
+                {
+                    "id": "789b4c42-3a93-46bf-b4d0-bd6d2c45fcb9",
+                    "createdAt": "2026-11-09T01:54:40.768000+05:30",
+                    "message": "(service legalitt-dev-api) has stopped 1 running tasks: (task f7a77c9a55ea4fe787da172970482f1b)."
+                },
+                {
+                    "id": "2fed42ba-28cb-4a43-83f1-c49d90b5aa79",
+                    "createdAt": "2026-11-08T21:27:56.840000+05:30",
+                    "message": "(service legalitt-dev-api) has reached a steady state."
+                },
+                {
+                    "id": "f3079904-803e-4a1b-86f0-d9ad3498aa16",
+                    "createdAt": "2026-11-08T15:27:28.263000+05:30",
+                    "message": "(service legalitt-dev-api) has reached a steady state."
+                },
+                {
+                    "id": "30e769ab-c8c5-461e-a785-e4fac39dec9c",
+                    "createdAt": "2026-11-08T09:26:59.988000+05:30",
+                    "message": "(service legalitt-dev-api) has reached a steady state."
+                },
+                {
+                    "id": "d8c9f11e-4047-460a-ba1e-1fb6fd2ea7a3",
+                    "createdAt": "2026-11-08T03:26:59.104000+05:30",
+                    "message": "(service legalitt-dev-api) has reached a steady state."
+                },
+                {
+                    "id": "6c9c1225-510d-4374-b2bf-dad2ff17882c",
+                    "createdAt": "2026-11-07T21:26:29.188000+05:30",
+                    "message": "(service legalitt-dev-api) has reached a steady state."
+                },
+                {
+                    "id": "69bd6bf8-41c6-4e91-9ca5-394451ac2a40",
+                    "createdAt": "2026-11-07T15:26:26.417000+05:30",
+                    "message": "(service legalitt-dev-api) has reached a steady state."
+                },
+                {
+                    "id": "fcc51fce-5784-4826-bf31-8ba3e8709bee",
+                    "createdAt": "2026-11-07T09:26:19.754000+05:30",
+                    "message": "(service legalitt-dev-api) has reached a steady state."
+                },
+                {
+                    "id": "3d4b73dd-96d3-4983-ab8a-ae6783c7d2be",
+                    "createdAt": "2026-11-07T03:26:09.553000+05:30",
+                    "message": "(service legalitt-dev-api) has reached a steady state."
+                },
+                {
+                    "id": "301e348a-13d8-4d4f-af71-8997f20d74ce",
+                    "createdAt": "2026-11-06T21:26:08.568000+05:30",
+                    "message": "(service legalitt-dev-api) has reached a steady state."
+                },
+                {
+                    "id": "700a4a60-96de-439a-b25e-ca426f50733c",
+                    "createdAt": "2026-11-06T15:26:02.512000+05:30",
+                    "message": "(service legalitt-dev-api) has reached a steady state."
+                },
+                {
+                    "id": "5c20c72a-cade-48ba-a7e7-fe269f961b03",
+                    "createdAt": "2026-11-06T09:25:42.367000+05:30",
+                    "message": "(service legalitt-dev-api) has reached a steady state."
+                },
+                {
+                    "id": "8cd4b945-3ea0-4bd6-b496-7a4dc2e5ef44",
+                    "createdAt": "2026-11-06T03:25:12.038000+05:30",
+                    "message": "(service legalitt-dev-api) has reached a steady state."
+                },
+                {
+                    "id": "09e2f3cc-e579-4007-b671-61df8406877d",
+                    "createdAt": "2026-11-05T21:24:42.759000+05:30",
+                    "message": "(service legalitt-dev-api) has reached a steady state."
+                },
+                {
+                    "id": "7e7d0bc1-9bac-4ffc-a99b-bfcce3e10663",
+                    "createdAt": "2026-11-05T15:24:37.206000+05:30",
+                    "message": "(service legalitt-dev-api) has reached a steady state."
+                },
+                {
+                    "id": "a64b1e7e-d79e-4017-b58a-8a46ac45c6a8",
+                    "createdAt": "2026-11-05T09:24:29.717000+05:30",
+                    "message": "(service legalitt-dev-api) has reached a steady state."
+                },
+                {
+                    "id": "77f5da53-2651-40b8-bfc0-9b7597ac2d2c",
+                    "createdAt": "2026-11-05T03:24:08.146000+05:30",
+                    "message": "(service legalitt-dev-api) has reached a steady state."
+                },
+                {
+                    "id": "1ed0b302-2621-4719-8830-a502b7df25ee",
+                    "createdAt": "2026-11-04T21:23:50.800000+05:30",
+                    "message": "(service legalitt-dev-api) has reached a steady state."
+                },
+                {
+                    "id": "4dd05d09-40dd-4a02-a9c8-fa6fe4ee1464",
+                    "createdAt": "2026-11-04T15:23:35.906000+05:30",
+                    "message": "(service legalitt-dev-api) has reached a steady state."
+                },
+                {
+                    "id": "fbbf3c65-4797-4673-b91c-1c03732ac711",
+                    "createdAt": "2026-11-04T15:23:35.905000+05:30",
+                    "message": "(service legalitt-dev-api) (deployment ecs-svc/3215557434914338937) deployment completed."
+                },
+                {
+                    "id": "f06d9b23-8ca2-4726-9793-5e7c9cfc73ff",
+                    "createdAt": "2026-11-04T15:20:50.708000+05:30",
+                    "message": "(service legalitt-dev-api) has started 1 tasks: (task f7a77c9a55ea4fe787da172970482f1b)."
+                },
+                {
+                    "id": "baba9216-2e49-4b03-8873-38ee7c5d389a",
+                    "createdAt": "2026-11-04T15:20:50.186000+05:30",
+                    "message": "(service legalitt-dev-api) has stopped 1 running tasks: (task 1080fb766716421b860faf57447ff1f3)."
+                },
+                {
+                    "id": "ba615979-6f99-4e90-921b-68c3fa979ac0",
+                    "createdAt": "2026-11-04T10:51:21.157000+05:30",
+                    "message": "(service legalitt-dev-api) has reached a steady state."
+                },
+                {
+                    "id": "c579640c-519c-4a31-bd01-825f564a835e",
+                    "createdAt": "2026-11-04T04:50:54.058000+05:30",
+                    "message": "(service legalitt-dev-api) has reached a steady state."
+                },
+                {
+                    "id": "beafc096-435a-403d-accd-c33f182a034a",
+                    "createdAt": "2026-11-04T04:50:54.057000+05:30",
+                    "message": "(service legalitt-dev-api) (deployment ecs-svc/7673598238090768443) deployment completed."
+                },
+                {
+                    "id": "3c75af57-04aa-42f9-b48a-bd8a80a78b33",
+                    "createdAt": "2026-11-04T04:47:47.574000+05:30",
+                    "message": "(service legalitt-dev-api) has started 1 tasks: (task 1080fb766716421b860faf57447ff1f3)."
+                },
+                {
+                    "id": "8bd66277-3ab7-4bbf-8e39-9ccfe9f73f0f",
+                    "createdAt": "2026-11-04T04:47:47.131000+05:30",
+                    "message": "(service legalitt-dev-api) has stopped 1 running tasks: (task 381b416939214f28af937dc110a0535e)."
+                },
+                {
+                    "id": "1d2419b8-6176-4b66-8855-c1f36dd691b4",
+                    "createdAt": "2026-11-04T02:12:18.800000+05:30",
+                    "message": "(service legalitt-dev-api) has reached a steady state."
+                },
+                {
+                    "id": "c3880e74-b52a-4f02-ba49-42da54a24a7d",
+                    "createdAt": "2026-11-04T02:12:18.799000+05:30",
+                    "message": "(service legalitt-dev-api) (deployment ecs-svc/0574946833320145030) deployment completed."
+                },
+                {
+                    "id": "299faf93-28b3-4963-a437-81befaaae952",
+                    "createdAt": "2026-11-04T02:09:24.159000+05:30",
+                    "message": "(service legalitt-dev-api) has started 1 tasks: (task 381b416939214f28af937dc110a0535e)."
+                },
+                {
+                    "id": "9d8bd9a6-2030-4c8f-811f-b9c956e0f972",
+                    "createdAt": "2026-11-04T02:09:23.630000+05:30",
+                    "message": "(service legalitt-dev-api) has stopped 1 running tasks: (task 2831443e8a45490a8e9ce215a2792e2a)."
+                },
+                {
+                    "id": "8158b534-6b79-4404-95d1-d5452f4d4bec",
+                    "createdAt": "2026-11-04T01:27:30.815000+05:30",
+                    "message": "(service legalitt-dev-api) has reached a steady state."
+                },
+                {
+                    "id": "5472bcaa-1f99-4d5c-9c6b-27adfee2cccd",
+                    "createdAt": "2026-11-04T01:27:30.814000+05:30",
+                    "message": "(service legalitt-dev-api) (deployment ecs-svc/6700277434533976573) deployment completed."
+                },
+                {
+                    "id": "17dc7568-fbf2-41a6-bae8-dec967df779a",
+                    "createdAt": "2026-11-04T01:25:17.324000+05:30",
+                    "message": "(service legalitt-dev-api) has started 1 tasks: (task 2831443e8a45490a8e9ce215a2792e2a)."
+                },
+                {
+                    "id": "3723d493-ec83-439e-a12e-d5cc4ca96818",
+                    "createdAt": "2026-11-04T01:25:16.836000+05:30",
+                    "message": "(service legalitt-dev-api) has stopped 1 running tasks: (task 37114e31fa934137bf112570188de5ed)."
+                },
+                {
+                    "id": "c50f057c-3bd3-46a2-a571-91c8aafa2540",
+                    "createdAt": "2026-11-04T00:32:07.615000+05:30",
+                    "message": "(service legalitt-dev-api) has reached a steady state."
+                },
+                {
+                    "id": "69ac363f-3172-4e30-9c14-3f0afdf836f4",
+                    "createdAt": "2026-11-04T00:32:07.613000+05:30",
+                    "message": "(service legalitt-dev-api) (deployment ecs-svc/7323421921251297400) deployment completed."
+                },
+                {
+                    "id": "4976af7f-4b54-4ef7-a6c9-589e72837ddb",
+                    "createdAt": "2026-11-04T00:29:14.959000+05:30",
+                    "message": "(service legalitt-dev-api) has started 1 tasks: (task 37114e31fa934137bf112570188de5ed)."
+                },
+                {
+                    "id": "289dc74a-c6b5-4ccc-8853-52a60b7eca1b",
+                    "createdAt": "2026-11-04T00:29:14.475000+05:30",
+                    "message": "(service legalitt-dev-api) has stopped 1 running tasks: (task 6f22c813a02b430cbd5fc9b906f58140)."
+                },
+                {
+                    "id": "17518982-e24d-43fb-8522-b97f35578066",
+                    "createdAt": "2026-11-03T23:52:04.294000+05:30",
+                    "message": "(service legalitt-dev-api) has reached a steady state."
+                },
+                {
+                    "id": "78756e71-e4d0-4be1-849c-bc5b53bd6357",
+                    "createdAt": "2026-11-03T17:52:03.240000+05:30",
+                    "message": "(service legalitt-dev-api) has reached a steady state."
+                },
+                {
+                    "id": "f608e0a6-a683-4678-8870-0e138dd65e6d",
+                    "createdAt": "2026-11-03T17:52:03.239000+05:30",
+                    "message": "(service legalitt-dev-api) (deployment ecs-svc/9895074739895022346) deployment completed."
+                },
+                {
+                    "id": "77157f1c-5dcd-4c85-910a-6c69f7e589b9",
+                    "createdAt": "2026-11-03T17:49:09.335000+05:30",
+                    "message": "(service legalitt-dev-api) has started 1 tasks: (task 6f22c813a02b430cbd5fc9b906f58140)."
+                },
+                {
+                    "id": "9bfd035f-05ee-4fe4-9829-3aa8703a8a46",
+                    "createdAt": "2026-11-03T17:49:08.835000+05:30",
+                    "message": "(service legalitt-dev-api) has stopped 1 running tasks: (task d243d915412d451692f3f51e4cf2da92)."
+                },
+                {
+                    "id": "82bd2dc9-1ecc-453b-a039-b6ec23113482",
+                    "createdAt": "2026-11-03T17:22:18.938000+05:30",
+                    "message": "(service legalitt-dev-api) has reached a steady state."
+                },
+                {
+                    "id": "e56ffb54-b520-4785-8a60-eb78ed5b07a6",
+                    "createdAt": "2026-11-03T17:22:18.937000+05:30",
+                    "message": "(service legalitt-dev-api) (deployment ecs-svc/5811614375021355069) deployment completed."
+                },
+                {
+                    "id": "a55499ce-efa0-4ae7-8245-0f397cfcc221",
+                    "createdAt": "2026-11-03T17:19:24.111000+05:30",
+                    "message": "(service legalitt-dev-api) has started 1 tasks: (task d243d915412d451692f3f51e4cf2da92)."
+                },
+                {
+                    "id": "b134cde6-c249-492f-8b9b-8d182969909b",
+                    "createdAt": "2026-11-03T17:19:23.653000+05:30",
+                    "message": "(service legalitt-dev-api) has stopped 1 running tasks: (task d07545d62657432d8c3367d96e946d3e)."
+                },
+                {
+                    "id": "a0ce2e6c-eec9-4092-b504-d7ff527fe646",
+                    "createdAt": "2026-11-03T16:50:09.777000+05:30",
+                    "message": "(service legalitt-dev-api) has reached a steady state."
+                },
+                {
+                    "id": "533b70af-de18-47c4-a401-746ff72999d1",
+                    "createdAt": "2026-11-03T16:50:09.776000+05:30",
+                    "message": "(service legalitt-dev-api) (deployment ecs-svc/2898453578857728963) deployment completed."
+                },
+                {
+                    "id": "13ccc5c1-9e8f-43c5-8a81-cd22aaa5c643",
+                    "createdAt": "2026-11-03T16:47:33.149000+05:30",
+                    "message": "(service legalitt-dev-api) has started 1 tasks: (task d07545d62657432d8c3367d96e946d3e)."
+                },
+                {
+                    "id": "20e24a04-ff88-4898-b889-d7f350ad031c",
+                    "createdAt": "2026-11-03T16:47:32.607000+05:30",
+                    "message": "(service legalitt-dev-api) has stopped 1 running tasks: (task eebb114ad3bc42c28e8b1aa90d685d08)."
+                },
+                {
+                    "id": "ab3fb0f9-3179-4b47-941e-85754d58c224",
+                    "createdAt": "2026-11-03T13:30:44.545000+05:30",
+                    "message": "(service legalitt-dev-api) has reached a steady state."
+                },
+                {
+                    "id": "313140d8-916e-4d48-8eb7-b9570e8ba2a2",
+                    "createdAt": "2026-11-03T13:30:44.544000+05:30",
+                    "message": "(service legalitt-dev-api) (deployment ecs-svc/1565637797495279501) deployment completed."
+                },
+                {
+                    "id": "f98ff46d-e181-4c01-9881-f5c74d7629df",
+                    "createdAt": "2026-11-03T13:27:50.409000+05:30",
+                    "message": "(service legalitt-dev-api) has started 1 tasks: (task eebb114ad3bc42c28e8b1aa90d685d08)."
+                },
+                {
+                    "id": "dd825d19-4600-43fb-ac5c-0545e1f1aca6",
+                    "createdAt": "2026-11-03T13:27:49.740000+05:30",
+                    "message": "(service legalitt-dev-api) has stopped 1 running tasks: (task eb4aa2f633ef4868ad516797d960534b)."
+                },
+                {
+                    "id": "12012035-a27a-4fdc-b79d-99d2e5a6003e",
+                    "createdAt": "2026-11-03T11:30:26.694000+05:30",
+                    "message": "(service legalitt-dev-api) has reached a steady state."
+                },
+                {
+                    "id": "0cdd30b2-6505-4fb8-bd71-c78cdfe0a599",
+                    "createdAt": "2026-11-03T05:30:16.204000+05:30",
+                    "message": "(service legalitt-dev-api) has reached a steady state."
+                },
+                {
+                    "id": "ff764f85-8f35-4d96-8a88-9523b442cfd9",
+                    "createdAt": "2026-11-03T05:28:37.311000+05:30",
+                    "message": "(service legalitt-dev-api) has started 1 tasks: (task eb4aa2f633ef4868ad516797d960534b)."
+                },
+                {
+                    "id": "d15422be-aa3f-4ee2-9dcf-c240bd1698b7",
+                    "createdAt": "2026-11-03T05:23:13.488000+05:30",
+                    "message": "(service legalitt-dev-api) has reached a steady state."
+                },
+                {
+                    "id": "f64a027b-76a4-4339-b6eb-a4f72d1e4537",
+                    "createdAt": "2026-11-03T05:23:13.487000+05:30",
+                    "message": "(service legalitt-dev-api) (deployment ecs-svc/6418537008429742649) deployment completed."
+                }
+            ],
+            "createdAt": "2026-11-03T05:22:56.087000+05:30",
+            "currentServiceRevisions": [
+                {
+                    "arn": "arn:aws:ecs:ap-south-1:026379630400:service-revision/legalitt-dev-cluster/legalitt-dev-api/9442402874740828928",
+                    "requestedTaskCount": 1,
+                    "runningTaskCount": 1,
+                    "pendingTaskCount": 0
+                }
+            ],
+            "placementConstraints": [],
+            "placementStrategy": [],
+            "networkConfiguration": {
+                "awsvpcConfiguration": {
+                    "subnets": [
+                        "subnet-0ad9da8fd0e033afd",
+                        "subnet-060f72908da2419ee"
+                    ],
+                    "securityGroups": [
+                        "sg-09a3b6978c7950214"
+                    ],
+                    "assignPublicIp": "ENABLED"
+                }
+            },
+            "healthCheckGracePeriodSeconds": 0,
+            "schedulingStrategy": "REPLICA",
+            "deploymentController": {
+                "type": "ECS"
+            },
+            "createdBy": "arn:aws:iam::026379630400:role/cdk-hnb659fds-cfn-exec-role-026379630400-ap-south-1",
+            "enableECSManagedTags": true,
+            "propagateTags": "SERVICE",
+            "enableExecuteCommand": false,
+            "availabilityZoneRebalancing": "ENABLED",
+            "resourceManagementType": "CUSTOMER"
+        }
+    ],
+    "failures": []
+}

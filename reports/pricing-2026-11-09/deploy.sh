@@ -42,6 +42,20 @@ PY
     # The agent must inspect change-set-reviewed.json before invoking this phase.
     aws cloudformation execute-change-set --region "$region" --stack-name "$stack" --change-set-name "pricing-$tag"
     ;;
+  verify)
+    task=$(aws ecs list-tasks --region "$region" --cluster legalitt-dev-cluster --service-name legalitt-dev-api --desired-status RUNNING --query 'taskArns[0]' --output text)
+    aws ecs describe-tasks --region "$region" --cluster legalitt-dev-cluster --tasks "$task" > "$out/running-task.json"
+    python - "$out" "$tag" <<'PY'
+import json,sys,pathlib
+p=pathlib.Path(sys.argv[1]); t=json.loads((p/'running-task.json').read_text())['tasks'][0]
+c=t['containers'][0]; manifest=json.loads((p/'image-manifest.json').read_text())
+allowed={x['digest'] for x in manifest.get('manifests',[]) if x.get('platform',{}).get('architecture')=='arm64'}
+allowed.add(json.loads((p/'image.json').read_text())['imageDetails'][0]['imageDigest'])
+assert c['image'].endswith(':'+sys.argv[2]); assert c['imageDigest'] in allowed
+assert t['lastStatus']=='RUNNING' and t['healthStatus']=='HEALTHY'
+print('PASS running healthy ARM64 image '+c['imageDigest'])
+PY
+    ;;
   seed)
     # Only after the API and frontend have been verified on this release.
     bash infra/scripts/dev-ops-task.sh seed-pricing "$tag"

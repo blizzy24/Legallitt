@@ -1,0 +1,4 @@
+image tag 3223645 (one-off legalitt-dev-ops:18)
+task arn:aws:ecs:ap-south-1:026379630400:task/legalitt-dev-cluster/8836bc3de46a4298b5a33b9fc583fffb
+exit 0 (Essential container in task exited)
+2026-11-09T18:39:53 Activated versioned confirmed pricing; historical rows unchanged; no standalone courier commission.

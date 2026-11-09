@@ -1,0 +1,105 @@
+[
+    {
+        "attachments": [
+            {
+                "id": "074f53e5-0e1f-496f-9837-c5d73bd31ee8",
+                "type": "ElasticNetworkInterface",
+                "status": "DELETED",
+                "details": [
+                    {
+                        "name": "subnetId",
+                        "value": "subnet-060f72908da2419ee"
+                    },
+                    {
+                        "name": "networkInterfaceId",
+                        "value": "eni-06dcd86f3efa1235c"
+                    },
+                    {
+                        "name": "macAddress",
+                        "value": "02:ff:fe:70:4d:3f"
+                    },
+                    {
+                        "name": "privateDnsName",
+                        "value": "ip-10-20-0-164.ap-south-1.compute.internal"
+                    },
+                    {
+                        "name": "privateIPv4Address",
+                        "value": "10.20.0.164"
+                    }
+                ]
+            }
+        ],
+        "attributes": [
+            {
+                "name": "ecs.cpu-architecture",
+                "value": "arm64"
+            }
+        ],
+        "availabilityZone": "ap-south-1a",
+        "clusterArn": "arn:aws:ecs:ap-south-1:026379630400:cluster/legalitt-dev-cluster",
+        "connectivity": "CONNECTED",
+        "connectivityAt": "2026-11-10T00:09:35.314000+05:30",
+        "containers": [
+            {
+                "containerArn": "arn:aws:ecs:ap-south-1:026379630400:container/legalitt-dev-cluster/8836bc3de46a4298b5a33b9fc583fffb/b2587372-8b5e-4a79-9c67-725cf1f9338e",
+                "taskArn": "arn:aws:ecs:ap-south-1:026379630400:task/legalitt-dev-cluster/8836bc3de46a4298b5a33b9fc583fffb",
+                "name": "ops",
+                "image": "026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api:3223645",
+                "imageDigest": "sha256:2f59fbab89ed4a25b58fb418582d0a2d8d60d3eb841ec99807a4f316e366b1a5",
+                "runtimeId": "8836bc3de46a4298b5a33b9fc583fffb-3089275291",
+                "lastStatus": "STOPPED",
+                "exitCode": 0,
+                "networkBindings": [],
+                "networkInterfaces": [
+                    {
+                        "attachmentId": "074f53e5-0e1f-496f-9837-c5d73bd31ee8",
+                        "privateIpv4Address": "10.20.0.164"
+                    }
+                ],
+                "healthStatus": "UNKNOWN",
+                "cpu": "0"
+            }
+        ],
+        "cpu": "256",
+        "createdAt": "2026-11-10T00:09:31.858000+05:30",
+        "desiredStatus": "STOPPED",
+        "enableExecuteCommand": false,
+        "executionStoppedAt": "2026-11-10T00:09:54.577000+05:30",
+        "group": "family:legalitt-dev-ops",
+        "healthStatus": "UNKNOWN",
+        "lastStatus": "STOPPED",
+        "launchType": "FARGATE",
+        "memory": "1024",
+        "overrides": {
+            "containerOverrides": [
+                {
+                    "name": "ops",
+                    "command": [
+                        "node",
+                        "dist/prisma/seed-pricing.js"
+                    ]
+                }
+            ],
+            "inferenceAcceleratorOverrides": []
+        },
+        "platformVersion": "1.4.0",
+        "platformFamily": "Linux",
+        "pullStartedAt": "2026-11-10T00:09:42.746000+05:30",
+        "pullStoppedAt": "2026-11-10T00:09:51.151000+05:30",
+        "startedAt": "2026-11-10T00:09:50.898000+05:30",
+        "stopCode": "EssentialContainerExited",
+        "stoppedAt": "2026-11-10T00:10:28.139000+05:30",
+        "stoppedReason": "Essential container in task exited",
+        "stoppingAt": "2026-11-10T00:10:04.625000+05:30",
+        "tags": [],
+        "taskArn": "arn:aws:ecs:ap-south-1:026379630400:task/legalitt-dev-cluster/8836bc3de46a4298b5a33b9fc583fffb",
+        "taskDefinitionArn": "arn:aws:ecs:ap-south-1:026379630400:task-definition/legalitt-dev-ops:18",
+        "version": 5,
+        "ephemeralStorage": {
+            "sizeInGiB": 20
+        },
+        "fargateEphemeralStorage": {
+            "sizeInGiB": 20
+        }
+    }
+]

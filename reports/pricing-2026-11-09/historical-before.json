@@ -1,0 +1,19 @@
+{
+  "id": "a57919a4-2ee1-4431-b79b-6b9161947306",
+  "reference": "LN-2026-0021",
+  "status": "completed",
+  "pricing_id": "10cb9a59-669a-5ddc-ab52-f909a165b88f",
+  "pricing": {
+    "base_amount_paise": "99900",
+    "gst_bps": 1800
+  },
+  "client_fees": {
+    "service_fee_paise": "99900",
+    "platform_fee_paise": "19900",
+    "delivery_fee_paise": "17900",
+    "gst_paise": "24786",
+    "total_paise": "162486",
+    "breakdown_complete": true,
+    "simulated": true
+  }
+}
