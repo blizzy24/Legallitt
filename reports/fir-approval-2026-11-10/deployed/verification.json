@@ -1,0 +1,23 @@
+{
+  "case_id": "ef4db04e-bfe8-4bfc-86c3-47d7f75b1866",
+  "reference": "FIR_DRAFT-2026-0001",
+  "approval": {
+    "version": 2,
+    "draft_id": "89f61b2e-2d45-4954-aa02-7121e8c9bd6b",
+    "document_id": "46c10f63-6150-4f9f-9241-302df823ebd1",
+    "submitted_at": "2026-11-10T05:21:55.206Z",
+    "approved_at": null
+  },
+  "total_paise": "149853",
+  "completed_status": "completed",
+  "pdf_sha256": "c7c0a0d085bb5b2e667faddd0d338c2a2b7e88ac7e9fd4f8d7b3272eeedd56c7",
+  "second_submission": 409,
+  "client_approval": 403,
+  "unapproved_client_pdf": 404,
+  "isolation": {
+    "other_client_to_case": 404,
+    "client_to_other_case": 404,
+    "other_case_id": "11ec1256-5dca-4870-8e3b-9415e2f8aad7"
+  },
+  "browser_errors": []
+}

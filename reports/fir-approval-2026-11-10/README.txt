@@ -36,6 +36,7 @@ Validation
   PDF refusal before approval, bidirectional client isolation, oldest-first
   pagination and three-day waiting age, exact PDF release and duplicate approval.
 - Workspace typecheck, fixture flow/rounding and case-spine navigation passed.
+- Browser route smoke: all 322 routes passed with no failures (mobile-smoke.txt).
 - Local browser: client enters intake, uploads 25 supporting pages plus one
   synthetic ID-proof page across two PDFs, sees/pays 1498.53
   (999 base + 249.75 platform + 224.78 GST + 25 overage, zero delivery), admin
@@ -50,5 +51,35 @@ Validation
   never changes credentials or deployed profiles. Early failed synthetic local
   attempts remain local; no real cases were altered or deleted.
 
-Deployment and deployed verification will be recorded after rollout.
+Development deployment
+- Source/image tag: 131e1f6 (pushed to origin/main).
+- Image index: sha256:dcf7b204b200a936d16fea9e6035131b4c32efa620070b71347bc0a569ccba53.
+- Sequence: image pushed, dev-ops-task.sh migrate 131e1f6 exited 0 with no
+  pending migrations, reviewed image-only change set, then Compute rollout.
+- LegalittDev-Compute-DevelopmentOnly: UPDATE_COMPLETE. API health is ok and
+  the running task is HEALTHY on the verified image. No seed, credential, Core,
+  database, network or capacity change was needed.
+- Docker Hub DNS and the first GitHub backup push timed out; retries succeeded.
+- Both Vercel production builds succeeded. Public bundle checks confirmed the
+  FIR controls at legalitt-5.vercel.app and legalitt-admin-panel.vercel.app.
+
+Deployed walkthrough
+- FIR_DRAFT-2026-0001 / ef4db04e-bfe8-4bfc-86c3-47d7f75b1866 completed.
+- Client entered intake, attached two synthetic PDFs (25 + 1 pages), saw the
+  1498.53 quote and paid through the existing development simulator.
+- Admin assigned; advocate accepted, saved and submitted v2. Admin saw the
+  frozen PDF, intake, documents and explicit wait/approve-only restriction,
+  confirmed review and approved. Client and advocate then saw completion.
+- Client received the exact admin-reviewed PDF. SHA-256:
+  c7c0a0d085bb5b2e667faddd0d338c2a2b7e88ac7e9fd4f8d7b3272eeedd56c7.
+- Second advocate submission: 409. Client attempting admin approval: 403.
+  Client accessing the unapproved PDF by document ID: 404.
+- Other client -> this case: 404. Original client -> other client's case
+  11ec1256-5dca-4870-8e3b-9415e2f8aad7: 404. Both are direct API case reads.
+- No browser errors. Screenshots, PDF and assertions are in deployed/.
+  verification.json contains the approval snapshot taken while pending;
+  final-audit.json records the persisted approved timestamp and release events.
+- Rejection/return remains an explicit open client decision. No such action,
+  automatic approval or hidden exit was added. The queued case stays visible.
+
 No credentials, tokens, signed URLs or real client documents belong in this report.

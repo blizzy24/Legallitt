@@ -1,0 +1,24 @@
+[
+  {
+    "site": "https://legalitt-5.vercel.app",
+    "status": 200,
+    "approved_fir_ui": true,
+    "scripts": [
+      {
+        "url": "https://legalitt-5.vercel.app/_expo/static/js/web/entry-b5e80b54bd34d08fa8007b4151a13f6f.js",
+        "sha256": "7efdeba043ef967ce91d27df57c318bb0cf15badc6fc27f662775ec3c22dc9fc"
+      }
+    ]
+  },
+  {
+    "site": "https://legalitt-admin-panel.vercel.app",
+    "status": 200,
+    "approved_fir_ui": true,
+    "scripts": [
+      {
+        "url": "https://legalitt-admin-panel.vercel.app/assets/index-BEJgHpWU.js",
+        "sha256": "22af9824636ce7c0d88f47b475e40b5610577616943a3b864ad78760c118bc00"
+      }
+    ]
+  }
+]

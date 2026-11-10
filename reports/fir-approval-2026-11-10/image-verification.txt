@@ -1,0 +1,1 @@
+PASS running healthy ARM64 image sha256:dcf7b204b200a936d16fea9e6035131b4c32efa620070b71347bc0a569ccba53
