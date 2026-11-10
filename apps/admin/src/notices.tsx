@@ -4,9 +4,10 @@ import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import { ADMIN_CASE_BUCKETS, ADMIN_CASE_BUCKET_LABELS, ApiError, SERVICE_NAMES, adminCasePath, type ServiceCode, type AdminCaseBucket, type AdminCasePage } from '@legalitt/shared';
 import { api, useSession } from './session';
-import {isConsultationService,isReportService} from '@legalitt/shared';
+import {isConsultationService,isReportService,PROPERTY_TYPES,FORENSIC_DOCUMENT_TYPES} from '@legalitt/shared';
 
 const matterLabels: Record<string, string> = {
+  ...Object.fromEntries([...PROPERTY_TYPES,...FORENSIC_DOCUMENT_TYPES].map(v=>[v.code,v.label])),
   property_dispute: 'Property Dispute', money_recovery: 'Money Recovery', tenant_issue: 'Tenant Issue',
   family_dispute: 'Family Dispute', cheque_bounce: 'Cheque Bounce', consumer_complaint: 'Consumer Complaint',
 };

@@ -1,0 +1,8 @@
+{
+  "case_id": "4944dc4a-85b9-4df1-9a09-e2c33cef2d1d",
+  "reason": "TEST ONLY: clarify that the invoice remains unpaid and no actual dispute exists.",
+  "original_version": 1,
+  "corrected_version": 2,
+  "returned_status": "changes_requested",
+  "returned_to_client_review": "client_review"
+}

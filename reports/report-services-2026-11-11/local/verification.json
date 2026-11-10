@@ -1,0 +1,116 @@
+{
+  "deployed": false,
+  "results": [
+    {
+      "service": "property_search",
+      "case_id": "5b024a1b-e0ca-45b6-bacd-f70da6b1bce9",
+      "reference": "PROPERTY_SEARCH-2026-0004",
+      "status": "completed",
+      "quote": {
+        "gst_paise": "56228",
+        "total_pages": 27,
+        "total_paise": "373603",
+        "charged_pages": 2,
+        "included_pages": 25,
+        "page_unit_paise": "2500",
+        "service_fee_paise": "249900",
+        "delivery_fee_paise": "0",
+        "page_overage_paise": "5000",
+        "platform_fee_paise": "62475",
+        "page_overage_gst_paise": "0",
+        "platform_revenue_paise": "67475",
+        "taxable_subtotal_paise": "312375",
+        "advocate_entitlement_paise": "249900"
+      },
+      "files": [
+        {
+          "id": "d72eb0ea-42dd-482b-b2c8-e7f885d80a63",
+          "name": "Property_Search_Report.pdf",
+          "sha256": "34a083f58443d8d1378346a4bc926111ac67ff2538218e521d366a1922435ea9"
+        }
+      ],
+      "admin_return": false,
+      "isolation": {
+        "foreign_client_to_case": 404,
+        "owner_to_foreign_case": 404,
+        "foreign_case_id": "08afaa83-e1fe-4c52-900d-b484f37c9b53"
+      }
+    },
+    {
+      "service": "document_forensic",
+      "case_id": "2fe8db59-1b5f-4172-bd60-3e18f817a6fa",
+      "reference": "DOCUMENT_FORENSIC-2026-0001",
+      "status": "completed",
+      "quote": {
+        "gst_paise": "89978",
+        "total_pages": 1,
+        "total_paise": "589853",
+        "charged_pages": 0,
+        "included_pages": 25,
+        "page_unit_paise": "2500",
+        "service_fee_paise": "399900",
+        "delivery_fee_paise": "0",
+        "page_overage_paise": "0",
+        "platform_fee_paise": "99975",
+        "page_overage_gst_paise": "0",
+        "platform_revenue_paise": "99975",
+        "taxable_subtotal_paise": "499875",
+        "advocate_entitlement_paise": "399900"
+      },
+      "files": [
+        {
+          "id": "cb93ca62-99c7-4a9c-b2d3-11d0de3ab02e",
+          "name": "Forensic_Report.pdf",
+          "sha256": "03550b30747cd93050f98af6965cb5fd8ed1901705fab4b57a492fa151362dc2"
+        },
+        {
+          "id": "92322dd5-f168-42ba-854f-41208c976bd8",
+          "name": "Affidavit.pdf",
+          "sha256": "a2d192773d225b87bbd30e9a1f78326a6e139aea1eb44d15267f987c87b70ab7"
+        }
+      ],
+      "admin_return": true,
+      "isolation": {
+        "foreign_client_to_case": 404,
+        "owner_to_foreign_case": 404,
+        "foreign_case_id": "0653efc1-dc95-40d2-99b7-1c95f97478aa"
+      }
+    },
+    {
+      "service": "court_marriage",
+      "case_id": "80648994-6bb1-435d-b37e-e80c841e9e95",
+      "reference": "COURT_MARRIAGE-2026-0002",
+      "status": "completed",
+      "quote": {
+        "gst_paise": "134978",
+        "total_pages": 2,
+        "total_paise": "884853",
+        "charged_pages": 0,
+        "included_pages": 25,
+        "page_unit_paise": "2500",
+        "service_fee_paise": "599900",
+        "delivery_fee_paise": "0",
+        "page_overage_paise": "0",
+        "platform_fee_paise": "149975",
+        "page_overage_gst_paise": "0",
+        "platform_revenue_paise": "149975",
+        "taxable_subtotal_paise": "749875",
+        "advocate_entitlement_paise": "599900"
+      },
+      "files": [
+        {
+          "id": "0bdf3479-32fd-495f-b180-ffdd2a9faf30",
+          "name": "Court_Marriage_Application_v2.pdf",
+          "sha256": "c19d1fa6db1e6b65688f3801823670bcf412170bc2e6c10dd8d05b440f7569ac"
+        }
+      ],
+      "admin_return": true,
+      "isolation": {
+        "foreign_client_to_case": 404,
+        "owner_to_foreign_case": 404,
+        "foreign_case_id": "489ed37c-b2d7-4368-b6c6-833e4eeb765c"
+      }
+    }
+  ],
+  "browser_errors": []
+}

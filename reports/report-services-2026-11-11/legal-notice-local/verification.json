@@ -1,0 +1,94 @@
+{
+  "commit": "FIR-admin-rejection-regression",
+  "case": {
+    "id": "4944dc4a-85b9-4df1-9a09-e2c33cef2d1d",
+    "reference": "LN-2026-0007",
+    "status": "completed"
+  },
+  "urls": {
+    "mobile": "http://localhost:8083",
+    "panel": "http://localhost:5174",
+    "base": "http://127.0.0.1:3003"
+  },
+  "uiSignInRoles": [
+    "client",
+    "advocate",
+    "admin"
+  ],
+  "allLifecycleMutationsThroughUi": true,
+  "proofDownloadedInClientBrowser": true,
+  "proofSha256": "bfae9f3752b535b3e023509505a07f41e17a3bc9383ebd069cdfcc2b83d65cac",
+  "statusEvents": [
+    {
+      "from": "draft",
+      "to": "submitted",
+      "source": "real"
+    },
+    {
+      "from": "submitted",
+      "to": "payment_pending",
+      "source": "real"
+    },
+    {
+      "from": "paid",
+      "to": "assigning",
+      "source": "real"
+    },
+    {
+      "from": "assigning",
+      "to": "assigned",
+      "source": "real"
+    },
+    {
+      "from": "assigned",
+      "to": "advocate_accepted",
+      "source": "real"
+    },
+    {
+      "from": "advocate_accepted",
+      "to": "in_progress",
+      "source": "real"
+    },
+    {
+      "from": "in_progress",
+      "to": "client_review",
+      "source": "real"
+    },
+    {
+      "from": "client_review",
+      "to": "changes_requested",
+      "source": "real"
+    },
+    {
+      "from": "changes_requested",
+      "to": "in_progress",
+      "source": "real"
+    },
+    {
+      "from": "in_progress",
+      "to": "client_review",
+      "source": "real"
+    },
+    {
+      "from": "client_review",
+      "to": "approved",
+      "source": "real"
+    },
+    {
+      "from": "approved",
+      "to": "dispatching",
+      "source": "real"
+    },
+    {
+      "from": "dispatching",
+      "to": "dispatched",
+      "source": "real"
+    },
+    {
+      "from": "dispatched",
+      "to": "completed",
+      "source": "real"
+    }
+  ],
+  "errors": []
+}

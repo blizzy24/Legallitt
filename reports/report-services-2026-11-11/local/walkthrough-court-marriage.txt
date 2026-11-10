@@ -1,0 +1,37 @@
+UI: Continue
+UI: Continue
+UI: Sign in
+UI: Continue
+UI: Continue
+UI: Party 1 marital status
+UI: Never married
+UI: Party 2 marital status
+UI: Never married
+UI: State
+UI: Maharashtra
+UI: District
+UI: Pune
+UI: Upload identity / age proof
+UI: Upload identity / age proof
+UI: Review request
+UI: Review request
+UI: Continue to payment
+UI: Pay now (demo)
+UI: + Assign
+UI: Assign to Demo advocate
+UI: Accept request
+UI: Chat with client
+UI: Send
+UI: Send
+UI: Upload application
+UI: Upload final PDF
+UI: Save report version
+UI: I have checked the files and am ready to submit this version to admin.
+UI: Submit to Admin
+UI: Return version 1 for correction
+UI: Replace final PDF
+UI: Save report version
+UI: I have checked the files and am ready to submit this version to admin.
+UI: Submit to Admin
+UI: Approve & release version 2
+PASS all three report-service browser journeys with bidirectional client isolation

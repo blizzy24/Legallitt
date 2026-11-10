@@ -1,0 +1,89 @@
+Opened: /login
+UI click: Continue
+UI route: /home
+Opened: /login
+UI click: Continue
+UI route: /dashboard
+Opened: /sign-in
+UI click: Sign in
+UI route: /legal-notices
+Opened: /legal-notice
+UI click: Get Started
+UI route: /step3
+Opened: /legal-notice/step3
+UI click: Money Recovery
+UI click: Continue
+UI route: /step2
+UI click: Continue
+UI route: /step1
+UI click: Continue
+UI route: /demand
+UI click: Continue
+UI route: /step4
+UI click: Upload Agreement
+UI click: Verify identity
+UI route: /kyc/choose
+UI click: Continue
+UI route: /kyc/digilocker/connect
+UI click: Continue to DigiLocker
+UI route: /kyc/digilocker/verified
+UI click: Continue
+UI route: /step4
+UI click: Continue
+UI route: /step4-review
+UI click: Continue
+UI route: /step5
+UI click: Submit & Proceed to Pay
+UI route: /step6
+Opened: /legal-notice/step6
+UI click: Pay
+UI route: /scan-pay
+UI click: Pay using UPI App
+UI route: /success
+Opened: /legal-notices/4944dc4a-85b9-4df1-9a09-e2c33cef2d1d
+Opened: /advocate/notice/4944dc4a-85b9-4df1-9a09-e2c33cef2d1d/fee
+UI click: Accept & Schedule
+UI route: /documents
+UI click: Send
+UI route: /drafting
+Opened: /advocate/notice/4944dc4a-85b9-4df1-9a09-e2c33cef2d1d/drafting
+UI click: Continue with AI Generation
+UI route: /draft
+Opened: /advocate/notice/4944dc4a-85b9-4df1-9a09-e2c33cef2d1d/draft
+UI click: Edit Background & Facts
+UI click: Generate Draft
+UI route: /response
+UI click: Share for Review
+UI route: /review
+Opened: /legal-notice/tracking
+UI click: Request Changes
+UI click: Request Changes
+Opened: /advocate/notice/4944dc4a-85b9-4df1-9a09-e2c33cef2d1d/review
+Opened: /advocate/notice/4944dc4a-85b9-4df1-9a09-e2c33cef2d1d/drafting
+UI click: Continue with AI Generation
+UI route: /draft
+UI click: Edit Background & Facts
+UI click: Generate Draft
+UI route: /response
+UI click: Share for Review
+UI route: /review
+Opened: /legal-notice/tracking
+Opened: /legal-notice/tracking
+UI click: Approve & Proceed
+Opened: /advocate/notice/4944dc4a-85b9-4df1-9a09-e2c33cef2d1d/final
+UI click: Continue to Send
+UI route: /dispatch
+UI click: Continue to Send
+UI route: /send
+UI click: Continue
+UI route: /courier/self/details
+UI click: Submit Delivery Details
+UI route: /dispatch
+UI click: Confirm Dispatch
+Opened: /legal-notices/4944dc4a-85b9-4df1-9a09-e2c33cef2d1d
+Opened: /legal-notices/4944dc4a-85b9-4df1-9a09-e2c33cef2d1d
+Opened: /legal-notice/delivery
+UI click: View Delivery Confirmation
+UI route: /delivered
+UI click: View Proof
+PASS deployed UI lifecycle: LN-2026-0007 completed

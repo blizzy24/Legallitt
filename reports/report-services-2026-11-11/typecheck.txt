@@ -1,0 +1,50 @@
+
+> legalitt@0.0.0 typecheck D:\Legalitt\Legallitt
+> turbo run typecheck
+
+
+   • turbo 2.11.9
+   • Packages in scope: @legalitt/admin, @legalitt/api, @legalitt/infra, @legalitt/mobile, @legalitt/shared
+   • Running typecheck in 5 packages
+   • Remote caching disabled
+
+@legalitt/shared:typecheck: cache miss, executing cfc5521e63890a9c
+@legalitt/shared:build: cache miss, executing 5fd5efa0022e2021
+@legalitt/infra:typecheck: cache hit, replaying logs 1c4faf59b80b10d1
+@legalitt/infra:typecheck:
+@legalitt/infra:typecheck: > @legalitt/infra@0.0.0 typecheck D:\Legalitt\Legallitt\infra
+@legalitt/infra:typecheck: > tsc --noEmit
+@legalitt/infra:typecheck:
+@legalitt/shared:typecheck:
+@legalitt/shared:typecheck: > @legalitt/shared@0.0.0 typecheck D:\Legalitt\Legallitt\packages\shared
+@legalitt/shared:typecheck: > tsc --noEmit
+@legalitt/shared:typecheck:
+@legalitt/shared:build:
+@legalitt/shared:build: > @legalitt/shared@0.0.0 build D:\Legalitt\Legallitt\packages\shared
+@legalitt/shared:build: > tsc
+@legalitt/shared:build:
+@legalitt/admin:typecheck: cache miss, executing 4d1898c6cebc8c68
+@legalitt/api:typecheck: cache miss, executing 9d483b98ed1c0536
+@legalitt/mobile:typecheck: cache miss, executing 9dbd014fc5de21d0
+@legalitt/admin:typecheck:
+@legalitt/admin:typecheck: > @legalitt/admin@0.0.0 typecheck D:\Legalitt\Legallitt\apps\admin
+@legalitt/admin:typecheck: > tsc --noEmit
+@legalitt/admin:typecheck:
+@legalitt/api:typecheck:
+@legalitt/api:typecheck: > @legalitt/api@0.0.0 typecheck D:\Legalitt\Legallitt\apps\api
+@legalitt/api:typecheck: > prisma generate && tsc --noEmit
+@legalitt/api:typecheck:
+@legalitt/mobile:typecheck:
+@legalitt/mobile:typecheck: > @legalitt/mobile@1.0.0 typecheck D:\Legalitt\Legallitt\apps\mobile
+@legalitt/mobile:typecheck: > tsc --noEmit
+@legalitt/mobile:typecheck:
+@legalitt/api:typecheck: Loaded Prisma config from prisma.config.ts.
+@legalitt/api:typecheck:
+@legalitt/api:typecheck: Prisma schema loaded from prisma\schema.prisma.
+@legalitt/api:typecheck:
+@legalitt/api:typecheck: ✔ Generated Prisma Client (7.10.1) to .\src\generated\prisma in 3.32s
+@legalitt/api:typecheck:
+
+ Tasks:    6 successful, 6 total
+Cached:    1 cached, 6 total
+  Time:    1m54.089s

@@ -1,0 +1,123 @@
+UI: Continue
+UI: Continue
+UI: Sign in
+UI: Sunday
+UI: Monday
+UI: Tuesday
+UI: Wednesday
+UI: Thursday
+UI: Friday
+UI: Saturday
+UI: Save availability
+UI: Book consultation
+UI: Continue to documents
+UI: Continue
+UI: Demo advocate
+UI: 12
+UI: 09:00 am
+UI: Reserve time & review
+UI: I confirm my information is correct and agree to submit this request.
+UI: Continue to payment
+UI: Pay now (demo)
+UI: Assign booked advocate: Demo advocate
+UI: Join chat consultation
+UI: Start consultation
+UI: Open case chat
+UI: Send
+UI: Send
+UI: End consultation & prepare brief
+UI: Save internal notes
+UI: Save report version
+UI: Generate PDF & send v1 to admin
+UI: Approve & release report v1
+UI: Download approved PDF v1
+UI: Book consultation
+UI: Civil
+UI: Continue to details
+UI: State
+UI: Maharashtra
+UI: District
+UI: Mumbai
+UI: Continue to documents
+UI: Continue
+UI: Demo advocate
+UI: 12
+UI: 09:00 am
+UI: Reserve time & review
+UI: I confirm my information is correct and agree to submit this request.
+UI: Continue to payment
+UI: Pay now (demo)
+UI: Assign booked advocate: Demo advocate
+UI: Join chat consultation
+UI: Start consultation
+UI: Open case chat
+UI: Send
+UI: Send
+UI: End consultation & prepare brief
+UI: Save internal notes
+UI: Save report version
+UI: Generate PDF & send v1 to admin
+UI: Approve & release report v1
+UI: Send representation quote
+UI: Review full price & accept quote
+UI: Accept quote & pay (demo)
+UI: preparation
+UI: Publish court update
+UI: filed
+UI: Publish court update
+UI: hearing
+UI: Share district_court-supporting.pdf
+UI: Publish court update
+UI: decision
+UI: Publish court update
+UI: Save internal notes
+UI: Save report version
+UI: Generate PDF & send v2 to admin
+UI: Approve & release report v2
+UI: Download approved PDF v2
+UI: Book consultation
+UI: Civil
+UI: Continue to details
+UI: State
+UI: Maharashtra
+UI: District
+UI: Mumbai
+UI: I don’t know the exact bench
+UI: Continue to documents
+UI: Continue
+UI: Demo advocate
+UI: 12
+UI: 09:00 am
+UI: Reserve time & review
+UI: I confirm my information is correct and agree to submit this request.
+UI: Continue to payment
+UI: Pay now (demo)
+UI: Assign booked advocate: Demo advocate
+UI: Join chat consultation
+UI: Start consultation
+UI: Open case chat
+UI: Send
+UI: Send
+UI: End consultation & prepare brief
+UI: Save internal notes
+UI: Save report version
+UI: Generate PDF & send v1 to admin
+UI: Approve & release report v1
+UI: Send representation quote
+UI: Review full price & accept quote
+UI: Accept quote & pay (demo)
+UI: preparation
+UI: Publish court update
+UI: filed
+UI: Publish court update
+UI: hearing
+UI: Share high_court-supporting.pdf
+UI: Publish court update
+UI: decision
+UI: Publish court update
+UI: Save internal notes
+UI: Save report version
+UI: Generate PDF & send v2 to admin
+UI: Approve & release report v2
+UI: Download approved PDF v2
+PASS all three consultation service browser journeys
