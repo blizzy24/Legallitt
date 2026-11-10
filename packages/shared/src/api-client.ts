@@ -30,7 +30,7 @@ type Options = {
   timeoutMs?: number;
 };
 export class ApiClient {
-  saveFirIntake(id: string, intake: import('./fir').FirIntake) {return this.request(`/fir/${id}/intake`,intake,'PATCH');}
+  saveFirIntake(id: string, intake: import('./fir').FirIntake, expected_updated_at?:string) {return this.request<ApiCase>(`/fir/${id}/intake`,{...intake,...(expected_updated_at?{expected_updated_at}:{})},'PATCH');}
   saveFirDraft(id: string, content: import('./fir').FirDraftContent) {return this.request<{id:string;version:number}>(`/fir/${id}/drafts`,content);}
   sendFirDraft(id: string, draft: string) {return this.request(`/fir/${id}/drafts/${draft}/send`,{},'POST',undefined,{},60000);}
   approveFirDraft(id: string, draft: string) {return this.request(`/fir/${id}/drafts/${draft}/approve`,{});}

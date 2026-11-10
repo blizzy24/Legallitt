@@ -1888,6 +1888,56 @@ gate or explicit framing that it is not legal advice.
 
 ### 9.2 Register of design substitutions
 
+**FIR intake layout restoration — authorised 10 November 2026.** Restore the
+approved layouts 42–46 (cards, spacing, typography, step progress and review
+sections) over the API-backed intake. The earlier compact form is removed;
+all existing `/fir/*` URLs remain, including `/fir/status?caseId=…` used by
+case lists, notifications and deep links. Drafts offer `Continue intake` at
+their last saved step. Admin case URLs and advocate routes are unchanged.
+Existing workflow scripts are updated to use the restored inputs.
+
+The state/district picker open state and repeatable person editors were not
+drawn. They use existing sheet, field and card styles to implement the approved
+intake requirements. Police station is free text, never a sourced station list.
+Unknown accused need no invented name. Empty/partial records hide missing
+read-only values; loading, failed reads, failed saves and concurrent edits have
+explicit recovery actions. Autosave is debounced and flushed on Continue;
+navigation follows taps, including FIR payment/status previews (§2.12).
+
+Substituted copy is in `apps/mobile/copy/substitutions.ts`: design 43's next
+button says `Continue to People Involved` to match the five-step order. Design
+45's unearned verification/compliance/hash claims become `ATTACHMENT SUMMARY`
+with actual file count/size. Uploaded ID evidence is explicitly not identity
+verification. Supported files are PDF/PNG/JPEG; audio/video and custom category
+creation remain visibly unavailable, as does dictation. Page overage copy
+describes the existing combined-file quote. Design 46 shows only entered values
+and uploaded files, with no fixture identity, KYC badge or validated-hash claim.
+The declaration confirms accuracy, not an unsupported legal verification.
+No new draft, PDF-generation or AI capability is part of this intake release.
+
+**FIR intake storage and jurisdiction reference.** `cases.details.intake_version=2`
+stores contact, jurisdiction (LGD codes plus saved names and source date),
+incident and last intake step. `case_parties` stores complainant, repeatable
+accused and witnesses, with stable UUIDs and ordered detail fields. API reads
+project those rows into the existing `details.people` response shape, preserving
+advocate/admin compatibility. Legacy JSON-only intakes remain readable until
+edited; existing completed cases are not rewritten. Saves and party replacement
+are atomic under the case lock; the browser supplies `expected_updated_at` to
+reject stale writes without discarding its unsaved text. Submission validates
+complete data and identity evidence; partial drafts remain saveable.
+
+`packages/shared/src/reference/india-jurisdictions.json` is the single shared
+snapshot, retrieved **10 November 2026 at 06:30:15.665 UTC** from the Government
+of India's LGD Download Directory, Ministry of Panchayati Raj, hosted by NIC:
+https://lgdirectory.gov.in/downloadDirectory.do. It contains 36 states/UTs and
+790 districts. Adjacent `PROVENANCE.txt` records method, checksum, retrieval
+evidence and refresh instructions; `scripts/fetch-lgd-districts.cjs` retrieves
+a candidate from the public cascading selectors. `districtCourt.ts` contains
+design fixtures, not a national catalogue. No community list or station data
+was added. Indian districts change: review monthly and on reported changes,
+diff by LGD code, verify against LGD and retain names/codes on existing cases.
+Do not silently rewrite case history when refreshing reference data.
+
 **FIR admin approval — built without a supplied design, authorised by the project
 owner on 10 November 2026.** Reason: the client confirmed advocate drafting →
 admin approval → client receives the PDF → case closes, but supplied no admin

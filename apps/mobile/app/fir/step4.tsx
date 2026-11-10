@@ -1,3 +1,10 @@
+import {designSubstitutions as copy} from '../../copy/substitutions';
+import {useState} from 'react';
+import {ID_PROOF_NOTICE} from '@legalitt/shared';
+import {useFir} from '../../context/fir';
+import {backend} from '../../lib/auth';
+import {uploadEvidence,openDocument} from '../../features/fir/shared';
+import {IntakeBoundary,IntakeStatus} from '../../features/fir/IntakeBoundary';
 import { previewNotice } from '../../components/PreviewNotice';
 import { router, type Href } from 'expo-router';
 import {
@@ -23,8 +30,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import FirShell from '../../components/FirShell';
 import { shrinkToFit } from '../../constants/textFit';
 import { colors, firStep4 as t, font, ink } from '../../constants/theme';
-import { CUSTODY_STATS, EVIDENCE_SECTIONS, PER_PAGE_NOTE, STAGED_FILES } from '../../data/fir';
-import { clientDocHref } from '../../data/docLinks';
+import { EVIDENCE_SECTIONS } from '../../data/fir';
 
 // FIR step 4 — Documents & Evidence (design/45).
 //
@@ -38,95 +44,25 @@ import { clientDocHref } from '../../data/docLinks';
 
 const SECTION_ICONS: LucideIcon[] = [FileText, Camera, MessageSquare, FolderOpen];
 
-function FixtureFirStep4Screen() {
-  return (
-    <FirShell step={4} title="Fir Draft">
-      <Text style={styles.heading}>Documents &amp; Evidence</Text>
-      <Text style={styles.subtitle}>
-        Upload supporting materials, verified receipts, or media records that substantiate the
-        incident draft.
-      </Text>
-
-      {EVIDENCE_SECTIONS.map((s, i) => (
-        <Section key={s.n} icon={SECTION_ICONS[i]} section={s} first={i === 0}>
-          {s.n === 1 && (
-            <FileRow
-              icon={Images}
-              name={STAGED_FILES.primary.name}
-              meta={`${STAGED_FILES.primary.size} • ${STAGED_FILES.primary.validation}`}
-              chip="VERIFIED"
-            />
-          )}
-          {s.n === 2 && <DropArea />}
-          {s.n === 3 && (
-            <FileRow
-              icon={ImagePlus}
-              name={STAGED_FILES.digital.name}
-              meta={`${STAGED_FILES.digital.size} • ${STAGED_FILES.digital.validation}`}
-              tick
-            />
-          )}
-          {s.n === 4 && (
-            <Pressable onPress={() => previewNotice(PER_PAGE_NOTE)} accessibilityRole="button" style={styles.attach}>
-              <FileUp size={t.attachIcon} color={colors.textPrimary} />
-              <Text style={styles.attachLabel} {...shrinkToFit(0.8)}>
-                Attach Additional Documentation
-              </Text>
-            </Pressable>
-          )}
-        </Section>
-      ))}
-
-      {/* REPORTED — no invoice in this batch carries a per-page charge, and FIR
-          pricing is unconfirmed. Drawn here because design/45 draws it. */}
-      <Text style={styles.perPage}>{PER_PAGE_NOTE}</Text>
-
-      <Pressable onPress={() => previewNotice("Add Custom Category Slot")} accessibilityRole="button" style={styles.slot}>
-        <Plus size={t.slotIcon} color={colors.textPrimary} />
-        <Text style={styles.slotLabel} {...shrinkToFit(0.8)}>
-          Add Custom Category Slot
-        </Text>
-      </Pressable>
-
-      <View style={styles.custody}>
-        <View style={styles.custodyRow}>
-          <Scale size={t.custodyIcon} color={t.custodyStateColour} />
-          <Text style={styles.custodyLabel} {...shrinkToFit(0.8)}>
-            EVIDENTIARY CHAIN OF CUSTODY
-          </Text>
-          <Text style={styles.custodyState}>Compliant</Text>
-        </View>
-        <View style={styles.stats}>
-          {CUSTODY_STATS.map((s) => (
-            <View key={s.label} style={styles.stat}>
-              <Text style={styles.statValue} {...shrinkToFit(0.75)}>
-                {s.value}
-              </Text>
-              <Text style={styles.statLabel} {...shrinkToFit(0.75)}>
-                {s.label}
-              </Text>
-            </View>
-          ))}
-        </View>
-      </View>
-
-      <Pressable
-        accessibilityRole="button"
-        onPress={() => router.push('/fir/step5')}
-        style={({ pressed }) => [styles.button, pressed && styles.pressed]}
-      >
-        <Text style={styles.buttonLabel}>Continue Draft</Text>
-        <ArrowRight size={t.buttonIcon} color={ink.onBrand} style={styles.buttonIcon} />
-      </Pressable>
-
-      <View style={styles.footer}>
-        <Lock size={t.footerIcon} color={colors.textBody} />
-        <Text style={styles.footerText} {...shrinkToFit(0.8)}>
-          256-bit Encrypted Legal Draft Session
-        </Text>
-      </View>
-    </FirShell>
-  );
+function FirStep4Screen() {
+ const m=useFir(),[uploading,setUploading]=useState<number|null>(null),docs=m.record?.documents??[];
+ const group=(kind:string)=>kind==='id_proof'||kind==='fir_primary'?1:kind==='fir_scene'?2:kind==='fir_communications'?3:4;
+ const upload=(category:number,kind:string)=>{setUploading(category);void m.action(()=>uploadEvidence(m.record!.id,kind)).finally(()=>setUploading(null));};
+ const bytes=docs.reduce((n,d)=>n+Number(d.size_bytes??0),0);
+ return <FirShell step={4} title="Fir Draft"><IntakeStatus/><Text style={styles.heading}>Documents &amp; Evidence</Text><Text style={styles.subtitle}>Upload supporting materials, receipts or media records for your request.</Text>
+ {EVIDENCE_SECTIONS.map((item,i)=>{const files=docs.filter(d=>group(d.kind)===item.n),kind=['fir_primary','fir_scene','fir_communications','supporting_document'][i];return <Section key={item.n} icon={SECTION_ICONS[i]} section={{...item,state:files.length+ (files.length===1?' File':' Files')}} first={i===0}>
+  {item.n===1&&<><Text style={styles.perPage}>{ID_PROOF_NOTICE}</Text><Text style={styles.perPage}>{copy[45].identity}</Text><Pressable accessibilityRole="button" disabled={m.busy||!m.record} onPress={()=>upload(1,'id_proof')} style={styles.attach}><FileUp size={t.attachIcon} color={colors.textPrimary}/><Text style={styles.attachLabel}>Upload ID Proof</Text></Pressable></>}
+  {files.map(d=><FileRow key={d.id} icon={d.mime_type==='application/pdf'?FileText:Images} name={d.filename} meta={[Math.ceil(Number(d.size_bytes??0)/1024)+' KB',d.page_count!=null?d.page_count+' pages':null,d.kind==='id_proof'?'Identity evidence':null].filter(Boolean).join(' · ')} onView={()=>void m.action(()=>openDocument(d.id))} onRemove={()=>void m.action(()=>backend.deleteDocument(d.id))} disabled={m.busy}/>)}
+  {!files.length&&<Text style={styles.perPage}>No files attached in this category.</Text>}
+  {uploading===item.n&&<Text role="status" style={styles.perPage}>Choosing or uploading a file…</Text>}
+  <Pressable accessibilityRole="button" disabled={m.busy||!m.record} onPress={()=>upload(item.n,kind)} style={item.n===2?styles.drop:styles.attach}><FileUp size={t.attachIcon} color={colors.textPrimary}/><Text style={styles.attachLabel}>{item.n===2?'Tap to Add Photo or Incident Media':item.n===4?'Attach Additional Documentation':'Upload Document'}</Text></Pressable>
+  <Text style={styles.perPage}>{copy[45].media}</Text>
+ </Section>;})}
+ <Text style={styles.perPage}>{copy[45].overage}</Text>
+ <Pressable accessibilityRole="button" onPress={()=>previewNotice('Custom categories are not available yet. Use Ancillary / Other Records.')} style={styles.slot}><Plus size={t.slotIcon} color={colors.textPrimary}/><Text style={styles.slotLabel}>Add Custom Category Slot</Text></Pressable>
+ <View style={styles.custody}><View style={styles.custodyRow}><Scale size={t.custodyIcon} color={t.custodyStateColour}/><Text style={styles.custodyLabel}>{copy[45].summary}</Text></View><View style={styles.stats}><View style={styles.stat}><Text style={styles.statValue}>{docs.length}</Text><Text style={styles.statLabel}>Files attached</Text></View><View style={styles.stat}><Text style={styles.statValue}>{(bytes/1024/1024).toFixed(2)} MB</Text><Text style={styles.statLabel}>Total size</Text></View></View></View>
+ {m.error&&<Text role="alert" style={styles.perPage}>{m.error}</Text>}<Pressable accessibilityRole="button" disabled={m.busy} onPress={()=>void m.next(4)} style={({pressed})=>[styles.button,pressed&&styles.pressed]}><Text style={styles.buttonLabel}>Continue Draft</Text><ArrowRight size={t.buttonIcon} color={ink.onBrand} style={styles.buttonIcon}/></Pressable>
+ </FirShell>;
 }
 
 function Section({
@@ -169,12 +105,13 @@ function FileRow({
   meta,
   chip,
   tick,
+  onView, onRemove, disabled,
 }: {
   icon: LucideIcon;
   name: string;
   meta: string;
   chip?: string;
-  tick?: boolean;
+  tick?: boolean; onView():void; onRemove():void; disabled:boolean;
 }) {
   return (
     <View style={styles.file}>
@@ -201,36 +138,20 @@ function FileRow({
       </View>
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel="Preview file"
-        onPress={() => router.push(clientDocHref(name) as Href)}
+        accessibilityLabel={'View '+name}
+        onPress={onView} disabled={disabled}
         style={styles.fileAction}
       >
         <Eye size={t.fileActionIcon} color={colors.textPrimary} />
       </Pressable>
-      <Pressable onPress={() => previewNotice("Remove file")}
+      <Pressable onPress={onRemove} disabled={disabled}
         accessibilityRole="button"
-        accessibilityLabel="Remove file"
+        accessibilityLabel={'Remove '+name}
         style={[styles.fileAction, styles.fileActionLast]}
       >
         <Trash2 size={t.fileActionIcon} color={colors.danger} />
       </Pressable>
     </View>
-  );
-}
-
-function DropArea() {
-  return (
-    <Pressable onPress={() => previewNotice("Tap to Add Photo or Incident Media")} accessibilityRole="button" style={styles.drop}>
-      <View style={styles.dropCircle}>
-        <ImagePlus size={t.dropCircleIcon} color={colors.textBody} />
-      </View>
-      <Text style={styles.dropTitle} {...shrinkToFit(0.8)}>
-        Tap to Add Photo or Incident Media
-      </Text>
-      <Text style={styles.dropHint} {...shrinkToFit(0.8)}>
-        JPEG, PNG, MP4 up to 50MB
-      </Text>
-    </Pressable>
   );
 }
 
@@ -540,6 +461,4 @@ const styles = StyleSheet.create({
     color: colors.textBody,
   },
 });
-import FirClient from '../../features/fir/FirClient';
-import {DATA_SOURCE} from '../../lib/data-source';
-export default function LiveFirScreen() { return DATA_SOURCE === 'api' ? <FirClient/> : <FixtureFirStep4Screen/>; }
+export default function LiveFirScreen() { return <IntakeBoundary step={4} title="Documents & Evidence"><FirStep4Screen/></IntakeBoundary>; }

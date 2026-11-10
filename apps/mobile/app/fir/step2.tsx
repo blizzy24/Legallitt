@@ -1,4 +1,5 @@
-import PoliceStationPicker from '../../components/PoliceStationPicker';
+import {designSubstitutions as copy} from '../../copy/substitutions';
+import {IntakeBoundary,IntakeStatus,IntakeError} from '../../features/fir/IntakeBoundary';
 import { previewNotice } from '../../components/PreviewNotice';
 import { router } from 'expo-router';
 import { ArrowRight, Calendar, ChevronsUpDown, Clock, List, MapPin, Mic, ShieldCheck, SquarePen } from 'lucide-react-native';
@@ -11,16 +12,15 @@ import { colors, firStep2 as t, font, ink } from '../../constants/theme';
 import { useFir } from '../../context/fir';
 
 
-// Step 2 — Incident Details (design/43). Date, time and the police station are
-// pre-filled sample values as drawn; the two textareas are live and the character
-// counter tracks the narrative.
-function FixtureFirStep2Screen() {
-  const { form, updateIncident, updateJurisdiction } = useFir();
+// Step 2 — Incident Details (design/43), populated from saved intake.
+function FirStep2Screen() {
+  const { form, updateIncident, updateJurisdiction,next,back,busy,flush } = useFir();
   const { incident } = form;
   const narrative = incident.description;
 
   return (
     <FirShell step={2} title="Incident Details" showHelp>
+      <IntakeStatus/>
       <Text style={styles.heading}>Tell Us What Happened</Text>
       <Text style={styles.subtitle}>Provide the incident details as accurately as possible for statutory assessment.</Text>
 
@@ -28,16 +28,17 @@ function FixtureFirStep2Screen() {
         <View style={styles.row}>
           <View style={styles.col}>
             <Label text="Incident Date" required />
-            <Field icon={Calendar} value={incident.date} placeholder="18 / 10 / 2026" onChangeText={(v) => updateIncident({ date: v })} />
+            <Field label="Incident Date" icon={Calendar} value={incident.date} placeholder="DD/MM/YYYY" onChangeText={(v) => updateIncident({ date: v })} />
           </View>
           <View style={styles.col}>
             <Label text="Incident Time" required />
-            <Field icon={Clock} value={incident.time} placeholder="04:30 PM" onChangeText={(v) => updateIncident({ time: v })} />
+            <Field label="Incident Time" icon={Clock} value={incident.time} placeholder="HH:MM" onChangeText={(v) => updateIncident({ time: v })} />
           </View>
         </View>
 
         <Label text="Incident Location" required style={styles.labelSpaced} />
         <Field
+          label="Incident Location"
           icon={MapPin}
           value={incident.location}
           placeholder="e.g., Sector 18 Market, Near Metro Gate 2, Noida"
@@ -45,8 +46,9 @@ function FixtureFirStep2Screen() {
         />
 
         <Label text="Competent Police Station" required style={styles.labelSpaced} />
-        <PoliceStationPicker value={form.jurisdiction.policeStation} onChange={(policeStation) => updateJurisdiction({ policeStation })} />
+        <Field label="Competent Police Station" icon={ShieldCheck} value={form.jurisdiction.policeStation} placeholder="Enter police station name" onChangeText={policeStation=>updateJurisdiction({policeStation})}/>
         <Text style={styles.note}>Pre-filled from basic details jurisdiction. You can edit if different.</Text>
+        <IntakeError field="date"/><IntakeError field="time"/><IntakeError field="location"/><IntakeError field="policeStation"/>
       </Card>
 
       <Card icon={SquarePen} title="What Happened?" required chip="Core Narrative">
@@ -62,6 +64,7 @@ function FixtureFirStep2Screen() {
           placeholder={'Describe what happened in your own words...\n(e.g., I received an unsolicited phone call pretending to be my bank manager on 18 Oct...)'}
           placeholderTextColor={colors.textMuted}
           accessibilityLabel="What happened"
+          onBlur={()=>void flush()}
           style={[styles.area, { height: t.areaHeight }]}
         />
         <View style={styles.counterRow}>
@@ -83,6 +86,9 @@ function FixtureFirStep2Screen() {
           placeholder={'e.g., UPI Transaction Ref: 4291880912, Caller spoke fluent Hindi and claimed to be from Noida branch...'}
           placeholderTextColor={colors.textMuted}
           accessibilityLabel="Additional details"
+          value={incident.additional}
+          onChangeText={additional=>updateIncident({additional})}
+          onBlur={()=>void flush()}
           style={[styles.area, { height: t.areaSmallHeight }]}
         />
       </Card>
@@ -97,14 +103,15 @@ function FixtureFirStep2Screen() {
 
       <Pressable
         accessibilityRole="button"
-        onPress={() => router.push('/fir/step3')}
+        disabled={busy}
+        onPress={() => void next(2)}
         style={({ pressed }) => [styles.button, pressed && styles.pressed]}
       >
-        <Text style={styles.buttonText}>Continue to Evidence &amp; Documents</Text>
+        <Text style={styles.buttonText}>{copy[43].next}</Text>
         <ArrowRight size={t.buttonIcon} color={ink.onBrand} />
       </Pressable>
 
-      <Pressable accessibilityRole="button" onPress={() => router.back()} style={styles.back}>
+      <Pressable accessibilityRole="button" onPress={() => void back()} style={styles.back}>
         <Text style={styles.backText}>Back</Text>
       </Pressable>
     </FirShell>
@@ -159,11 +166,13 @@ function Field({
   icon: Icon,
   value,
   placeholder,
+  label,
   onChangeText,
 }: {
   icon: typeof MapPin;
   value: string;
   placeholder: string;
+  label:string;
   onChangeText: (v: string) => void;
 }) {
   return (
@@ -174,7 +183,7 @@ function Field({
         onChangeText={onChangeText}
         placeholder={placeholder}
         placeholderTextColor={colors.textMuted}
-        accessibilityLabel={placeholder}
+        accessibilityLabel={label}
         style={styles.fieldInput}
       />
     </View>
@@ -397,6 +406,4 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
   },
 });
-import FirClient from '../../features/fir/FirClient';
-import {DATA_SOURCE} from '../../lib/data-source';
-export default function LiveFirScreen() { return DATA_SOURCE === 'api' ? <FirClient/> : <FixtureFirStep2Screen/>; }
+export default function LiveFirScreen() { return <IntakeBoundary step={2} title="Incident Details"><FirStep2Screen/></IntakeBoundary>; }

@@ -1,4 +1,5 @@
 import ScanPayScreen from '../../components/ScanPayScreen';
+import {router,type Href} from 'expo-router';
 import { FIR_PAYMENT_SERVICE, FIR_PAYMENT_TOTAL, FIR_REQUEST } from '../../data/fir';
 
 // Reuse Legal Notice designs 29–30. Placeholder pricing is documented in data/fir.
@@ -18,6 +19,7 @@ function FixtureFirPaymentScreen() {
       successHref="/legal-notice/success"
       query={query}
       hold
+      onPayment={()=>router.replace(`/legal-notice/success?${query}` as Href)}
     />
   );
 }

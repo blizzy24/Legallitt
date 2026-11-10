@@ -2,17 +2,15 @@ import {designSubstitutions as copy} from '../../copy/substitutions';
 import {useEffect,useState} from 'react';
 import {ScrollView,Text,View} from 'react-native';
 import {router,useLocalSearchParams,usePathname,type Href} from 'expo-router';
-import {FirIntakeSchema,formatPaise,ID_PROOF_NOTICE,type FirIntake,type PaymentQuote} from '@legalitt/shared';
+import {formatPaise,ID_PROOF_NOTICE,type PaymentQuote} from '@legalitt/shared';
 import {backend} from '../../lib/auth';
 import FirShell from '../../components/FirShell';
-import {INCIDENT_TYPES} from '../../data/fir';
-import {Card,Button,Field,ErrorBox,emptyIntake,useFirCase,uploadEvidence,openDocument,s} from './shared';
+import {Card,Button,ErrorBox,useFirCase,uploadEvidence,openDocument,s} from './shared';
 
 export default function FirClient() {
   const {caseId}=useLocalSearchParams<{caseId?:string}>(),path=usePathname();
-  const m=useFirCase(caseId),[form,setForm]=useState<FirIntake>(emptyIntake),[quote,setQuote]=useState<PaymentQuote|null>(null),[quoting,setQuoting]=useState(false);
+  const m=useFirCase(caseId),[quote,setQuote]=useState<PaymentQuote|null>(null),[quoting,setQuoting]=useState(false);
   const step=Number(path.match(/step([1-5])$/)?.[1]??0),record=m.record;
-  useEffect(()=>{if(record){const parsed=FirIntakeSchema.safeParse(record.details);setForm(parsed.success?parsed.data:emptyIntake);}},[record?.id,record?.updated_at]);
   const go=(screen:string,id=caseId)=>router.push((`/fir/${screen}?caseId=${id}`) as Href);
   const loadQuote=async()=>{if(!caseId)return;setQuoting(true);setQuote(null);try{setQuote(await backend.paymentQuote(caseId));}finally{setQuoting(false);}};
   useEffect(()=>{if(record?.status==='payment_pending'&&step!==4)void m.run(loadQuote);},[record?.id,record?.status,step]);
@@ -28,13 +26,6 @@ export default function FirClient() {
     {quote?.status!=='ready'&&<Text accessibilityRole="alert">Payment is blocked. Resolve the issue in the fee breakdown above.</Text>}
     <Button title={m.busy?'Processing…':'Pay using UPI App'} disabled={m.busy||quote?.status!=='ready'} onPress={()=>void m.run(async()=>{if(quote?.status!=='ready')return;await backend.pay(record.id,'service_fee',`fir:${record.id}:${quote.id}`,quote.id);go('status');})}/></>}</>);
   if(record.status!=='draft')return wrap(<>{error}<Card title={record.reference}><Text style={s.heading}>{record.status==='completed'?copy[49].ready:record.sub_status==='awaiting_admin_approval'?copy[219].waiting:record.status==='in_progress'?'Advocate is preparing your draft':record.status.replaceAll('_',' ')}</Text><Text style={s.body}>{record.status==='completed'?copy[49].completed:copy[49].waiting}</Text>{record.client_fees?.total_paise&&<Text>Paid {formatPaise(record.client_fees.total_paise)}{record.client_fees.simulated?' · Demo payment':''}</Text>}</Card>{record.status==='completed'&&record.approval?<Card title="Finalized Draft Dossier"><Button title="View FIR Draft" onPress={()=>void m.run(()=>openDocument(record.approval!.document_id))}/><Text style={s.body}>{copy[49].notice}</Text></Card>:null}<Card title="Request Progress">{record.events?.filter(e=>e.from_status!==e.to_status||e.type==='fir_draft_submitted').map(e=><Text key={e.id} style={s.body}>{e.type==='fir_draft_submitted'?'Sent for admin approval':e.type==='fir_draft_approved'?'Admin approved':e.type==='fir_released_to_client'?'Draft available · Case completed':e.to_status?.replaceAll('_',' ')} · {new Date(e.created_at).toLocaleString('en-IN')}</Text>)}</Card><Button title="Refresh status" onPress={m.reload}/><Button title="My Cases" onPress={()=>router.push('/cases')}/></>);
-  const edit=(section:'contact'|'jurisdiction'|'incident',key:string,label:string,multiline=false)=><Field key={key} label={label} value={(form[section] as Record<string,string>)[key]??''} multiline={multiline} onChange={v=>setForm(f=>({...f,[section]:{...f[section],[key]:v}}))}/>;
-  return wrap(<>{error}<Text style={s.muted}>{record.reference}</Text>
-    {(step===1||!step)&&<><Card title="Contact Details">{edit('contact','fullName','Full Name')}{edit('contact','mobile','Mobile Number')}{edit('contact','email','Email Address')}</Card><Card title="Incident Type">{INCIDENT_TYPES.map(t=><Button key={t.id} title={`${form.incident.type===t.id?'✓ ':''}${t.label}`} onPress={()=>setForm(f=>({...f,incident:{...f.incident,type:t.id}}))}/>)}</Card><Card title="Jurisdiction Details">{edit('jurisdiction','state','State')}{edit('jurisdiction','district','District')}{edit('jurisdiction','policeStation','Police Station')}</Card></>}
-    {step===2&&<><Card title="Date, Time & Location">{edit('incident','date','Incident Date')}{edit('incident','time','Incident Time')}{edit('incident','location','Incident Location')}{edit('jurisdiction','policeStation','Competent Police Station')}</Card><Card title="What Happened?">{edit('incident','description','Statement of Facts',true)}{edit('incident','additional','Additional Details',true)}</Card></>}
-    {step===3&&<Card title="People Involved">{form.people.length===0&&<Text>No additional people entered.</Text>}{form.people.map((p,i)=><View key={i}><Text>{p.kind}</Text><Field label={`${p.kind} name ${i+1}`} value={p.name} onChange={name=>setForm(f=>({...f,people:f.people.map((p,n)=>n===i?{...p,name}:p)}))}/><Field label={`${p.kind} details ${i+1}`} value={p.details} multiline onChange={details=>setForm(f=>({...f,people:f.people.map((p,n)=>n===i?{...p,details}:p)}))}/><Button title={`Remove person ${i+1}`} onPress={()=>setForm(f=>({...f,people:f.people.filter((_,n)=>n!==i)}))}/></View>)}{(['accused','witness'] as const).map(kind=><Button key={kind} title={`Add ${kind}`} onPress={()=>setForm(f=>({...f,people:[...f.people,{kind,name:'',details:''}]}))}/>)}</Card>}
-    {step===4&&docs}
-    {step===5&&<><Card title="Review Your Request"><Text style={s.body}>{form.contact.fullName} · {form.contact.mobile}</Text><Text style={s.body}>{[form.jurisdiction.policeStation,form.jurisdiction.district,form.jurisdiction.state].filter(Boolean).join(', ')}</Text><Text style={s.body}>{form.incident.date} {form.incident.time} · {form.incident.location}</Text><Text style={s.body}>{form.incident.description}</Text>{form.incident.additional&&<Text style={s.body}>{form.incident.additional}</Text>}{form.people.map((p,i)=><Text key={i} style={s.body}>{p.kind}: {p.name} {p.details}</Text>)}</Card>{docs}<Button title="Edit request" onPress={()=>go('step1')}/></>}
-    <Button title={m.busy?'Saving…':step===5?'Continue to Payment':'Continue'} disabled={m.busy} onPress={()=>void m.run(async()=>{await backend.saveFirIntake(record.id,form);if(step===5){await backend.submit(record.id);go('payment');}else go(`step${Math.max(step,1)+1}`);})}/>
-  </>);
+  const savedStep=Number(record.details.intake_step??1);
+  return wrap(<>{error}<Card title={record.reference}><Text style={s.body}>Your saved FIR intake is ready to continue.</Text><Button title="Continue intake" onPress={()=>go('step'+Math.max(1,Math.min(5,savedStep)))}/></Card><Button title="My Cases" onPress={()=>router.push('/cases')}/></>);
 }

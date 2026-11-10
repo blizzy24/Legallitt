@@ -1,5 +1,5 @@
 import {BadRequestException, ConflictException, ForbiddenException, Inject, Injectable} from '@nestjs/common';
-import {FIR_AWAITING_APPROVAL, FirDraftSchema, FirIntakeSchema, FirSendSchema} from '@legalitt/shared';
+import {FIR_AWAITING_APPROVAL, FirDraftSchema, FirIntakeSaveSchema, FirSendSchema} from '@legalitt/shared';
 import {PrismaService} from '../prisma.service';
 import {parse} from '../auth/auth.service';
 import {lockedCase,writeFirIntake,writeFirDraftSaved,writeFirSubmitted,writeFirApproved} from './case-state-machine';
@@ -13,12 +13,16 @@ export class FirService {
   constructor(private readonly prisma: PrismaService, private readonly documents: DocumentService,
     @Inject(NOTIFICATIONS) private readonly notifications: NotificationsPort) {}
   async intake(actor: CaseActor, id: string, body: unknown) {
-    const details = parse(FirIntakeSchema, body);
+    const {expected_updated_at,...details} = parse(FirIntakeSaveSchema, body);
     if (actor.role !== 'client') throw new ForbiddenException('Case client required');
     const db = await this.prisma.getClient();
     return db.$transaction(async tx => {
       const record = await lockedCase(tx,actor,id,'fir_draft');
       if (record.status !== 'draft') throw new ConflictException('Submitted intake cannot be edited');
+      if((record.details as {intake_version?:number}).intake_version===2&&details.intake_version!==2)
+        throw new ConflictException('Reload this case to use the current intake form.');
+      if(expected_updated_at&&record.updated_at.toISOString()!==expected_updated_at)
+        throw new ConflictException('This intake changed in another session. Your unsaved entries are still on screen. Reload the saved case before editing again.');
       return writeFirIntake(tx,actor,id,details);
     });
   }

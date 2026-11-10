@@ -17,3 +17,4 @@ export * from './case-input';
 export * from './case-routing';
 export * from './pricing';
 export * from './fir';
+export * from './jurisdictions';

@@ -6,6 +6,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { colors, firShell as f, font, ink } from '../constants/theme';
 import { FIR_STEPS } from '../data/fir';
+import {useFir} from '../context/fir';
+import {DATA_SOURCE} from '../lib/data-source';
 
 type Props = {
   /** 1-based step, of FIR_STEPS. */
@@ -23,9 +25,11 @@ type Props = {
 // circles; this one is a screen-centred title with an avatar and a percentage bar.
 export default function FirShell({ step, title, children, showHelp = false, bottomInset = 0 }: Props) {
   const insets = useSafeAreaInsets();
+  const intake=useFir();
   const percent = Math.round((step / FIR_STEPS) * 100);
 
   const goBack = () => {
+    if(DATA_SOURCE==='api'&&intake.record?.status==='draft'){void intake.back();return;}
     if (router.canGoBack()) router.back();
     else router.replace('/fir');
   };

@@ -1,3 +1,7 @@
+import type {FirPerson} from '@legalitt/shared';
+import {useFir} from '../../context/fir';
+import LabelledField from '../../components/LabelledField';
+import {IntakeBoundary,IntakeStatus,IntakeError} from '../../features/fir/IntakeBoundary';
 import { previewNotice } from '../../components/PreviewNotice';
 import { router, type Href } from 'expo-router';
 import {
@@ -10,177 +14,37 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import FirShell from '../../components/FirShell';
 import { colors, firStep3 as t, font, ink } from '../../constants/theme';
 
-type Accused = { id: string; name: string; phone: string; alias: string; primary: boolean };
-type Witness = { id: string; name: string; role: string; phone: string; presence: string };
-
-// design/44's sample entries.
-const INITIAL_ACCUSED: Accused[] = [
-  { id: 'a1', name: 'Unknown Caller / Impersonator', phone: '+91 91234 56789', alias: 'Alias: "Ramesh Sharma – Branch Ops"', primary: true },
-];
-const INITIAL_WITNESSES: Witness[] = [
-  { id: 'w1', name: 'Rajesh Kumar Verma', role: 'Eyewitness / Colleague', phone: '+91 98111 22334', presence: 'Present during call' },
-];
-
-const COMPLAINANT = {
-  fullName: 'Arvind S. Kashyap',
-  contact: '+91 98765 43210',
-  residence: 'Flat 402, Royal Palms, Sector 18, Noida, UP - 201301',
-};
-
-// Step 3 — People Involved (design/44). Add and Remove work against local state;
-// the Edit links are inert, as specified.
-function FixtureFirStep3Screen() {
-  const [accused, setAccused] = useState<Accused[]>(INITIAL_ACCUSED);
-  const [witnesses, setWitnesses] = useState<Witness[]>(INITIAL_WITNESSES);
-  const [nextId, setNextId] = useState(2);
-
-  const addAccused = () => {
-    setAccused((list) => [...list, { id: `a${nextId}`, name: 'Unnamed Accused', phone: '', alias: '', primary: false }]);
-    setNextId((n) => n + 1);
-  };
-  const addWitness = () => {
-    setWitnesses((list) => [...list, { id: `w${nextId}`, name: 'Unnamed Witness', role: 'Witness', phone: '', presence: '' }]);
-    setNextId((n) => n + 1);
-  };
-
-  return (
-    <FirShell step={3} title="People Involved" showHelp>
-      <View style={[styles.card, styles.firstCard]}>
-        <View style={styles.headRow}>
-          <View style={styles.headIcon}>
-            <UserRoundCheck size={t.headIconGlyph} color={ink.accent} />
-          </View>
-          <Text style={styles.headTitle}>Complainant</Text>
-          <View style={styles.primaryChip}>
-            <View style={styles.primaryDot} />
-            <Text style={styles.primaryChipText}>Primary (You)</Text>
-          </View>
-          <Pressable onPress={() => previewNotice("Edit")} accessibilityRole="button" style={styles.edit}>
-            <SquarePen size={t.editIcon} color={ink.accent} />
-            <Text style={styles.editText}>Edit</Text>
-          </Pressable>
-        </View>
-
-        <View style={styles.panel}>
-          <View style={styles.panelRow}>
-            <Text style={styles.rowLabel}>Full Name</Text>
-            <Text style={styles.rowValue}>{COMPLAINANT.fullName}</Text>
-          </View>
-          <View style={[styles.panelRow, styles.panelRowSpaced]}>
-            <Text style={styles.rowLabel}>Contact</Text>
-            <View style={styles.contactValue}>
-              <Text style={styles.rowValue}>{COMPLAINANT.contact}</Text>
-              <BadgeCheck size={t.lineIcon} color={t.verified} />
-            </View>
-          </View>
-          <Text style={[styles.rowLabel, styles.panelRowSpaced]}>Registered Residence</Text>
-          <Text style={styles.address}>{COMPLAINANT.residence}</Text>
-        </View>
-
-        <View style={styles.footRow}>
-          <Gavel size={t.footIcon} color={colors.textBody} />
-          <Text style={styles.footText}>Statutory Complainant / Informant under BNSS § 173</Text>
-        </View>
-      </View>
-
-      <SectionHeading title="Accused / Opposite Party" count={accused.length} description="Add individuals or unknown suspects involved in the incident." />
-      {accused.map((a) => (
-        <View key={a.id} style={styles.sectionCard}>
-          <View style={styles.headRow}>
-            <View style={styles.headIcon}>
-              <UserRoundX size={t.headIconGlyph} color={ink.accent} />
-            </View>
-            <View style={styles.headText}>
-              <Text style={styles.name}>{a.name}</Text>
-              {a.primary && (
-                <View style={styles.tag}>
-                  <Text style={styles.tagText}>Primary Accused</Text>
-                </View>
-              )}
-            </View>
-            <ChevronDown size={t.nameChevron} color={colors.textBody} />
-          </View>
-          {(a.phone || a.alias) && (
-            <View style={styles.panel}>
-              {a.phone && (
-                <View style={styles.lineRow}>
-                  <Phone size={t.lineIcon} color={colors.textBody} />
-                  <Text style={styles.lineText}>{a.phone}</Text>
-                </View>
-              )}
-              {a.alias && (
-                <View style={[styles.lineRow, styles.lineRowSpaced]}>
-                  <IdCard size={t.lineIcon} color={colors.textBody} />
-                  <Text style={styles.lineText}>{a.alias}</Text>
-                </View>
-              )}
-            </View>
-          )}
-          <View style={styles.actions}>
-            <Pressable accessibilityRole="button" onPress={() => setAccused((l) => l.filter((x) => x.id !== a.id))} style={styles.action}>
-              <Trash2 size={t.actionIcon} color={t.removeColour} />
-              <Text style={[styles.actionText, styles.removeText]}>Remove</Text>
-            </Pressable>
-            <Text style={styles.actionSep}>•</Text>
-            <Pressable onPress={() => router.push('/fir/step1' as Href)} accessibilityRole="button" style={styles.action}>
-              <SquarePen size={t.actionIcon} color={colors.textPrimary} />
-              <Text style={styles.actionText}>Edit Details</Text>
-            </Pressable>
-          </View>
-        </View>
-      ))}
-      <AddButton icon={UserPlus} label="+ Add Accused / Opposite Party" onPress={addAccused} />
-
-      <SectionHeading title="Witnesses" count={witnesses.length} description="Persons present during or immediately after the incident." />
-      {witnesses.map((w) => (
-        <View key={w.id} style={styles.sectionCard}>
-          <View style={styles.headRow}>
-            <View style={styles.headIcon}>
-              <Eye size={t.headIconGlyph} color={colors.textBody} />
-            </View>
-            <View style={styles.headText}>
-              <Text style={styles.name}>{w.name}</Text>
-              <View style={styles.roleRow}>
-            <View style={styles.keyTag}>
-              <Text style={styles.keyTagText}>Key Witness</Text>
-            </View>
-                <Text style={styles.roleText}>• {w.role}</Text>
-              </View>
-            </View>
-            <ChevronRight size={t.nameChevron} color={colors.textBody} />
-          </View>
-          {(w.phone || w.presence) && (
-            <View style={styles.panel}>
-              <View style={styles.lineRow}>
-                <Phone size={t.lineIcon} color={colors.textBody} />
-                <Text style={styles.lineText}>{w.phone}</Text>
-                <View style={styles.spacer} />
-                <Text style={styles.presence}>{w.presence}</Text>
-              </View>
-            </View>
-          )}
-          {/* design/44's witness card carries only Edit Statement Note — there is no
-              Remove control on it, unlike the accused card. Left as drawn. */}
-          <View style={styles.actions}>
-            <Pressable onPress={() => router.push('/fir/step2' as Href)} accessibilityRole="button" style={styles.action}>
-              <SquarePen size={t.actionIcon} color={colors.textPrimary} />
-              <Text style={styles.actionText}>Edit Statement Note</Text>
-            </Pressable>
-          </View>
-        </View>
-      ))}
-      <AddButton icon={UsersRound} label="+ Add Witness" onPress={addWitness} />
-
-      <Pressable
-        accessibilityRole="button"
-        onPress={() => router.push('/fir/step4')}
-        style={({ pressed }) => [styles.button, pressed && styles.pressed]}
-      >
-        <Text style={styles.buttonText}>Continue to Evidence &amp; Documents</Text>
-        <ArrowRight size={t.buttonIcon} color={ink.onBrand} />
-      </Pressable>
-    </FirShell>
-  );
+function FirStep3Screen() {
+ const m=useFir(),[editing,setEditing]=useState<string|null>(null);
+ const complainant=m.form.people.find(p=>p.kind==='complainant');
+ const accused=m.form.people.filter(p=>p.kind==='accused'),witnesses=m.form.people.filter(p=>p.kind==='witness');
+ const add=(kind:'accused'|'witness')=>setEditing(m.addPerson(kind));
+ const editor=(p:FirPerson)=>editing===p.id?<View style={styles.panel}>
+  {p.kind==='accused'&&<Pressable accessibilityRole="checkbox" accessibilityState={{checked:!!p.unknown}} onPress={()=>m.updatePerson(p.id!,{unknown:!p.unknown})}><Text style={styles.lineText}>{p.unknown?'☑':'☐'} Identity unknown</Text></Pressable>}
+  <LabelledField label={p.kind==='complainant'?'Complainant name':p.kind==='witness'?'Witness name':'Accused name'} required={!p.unknown} value={p.name} onChangeText={name=>m.updatePerson(p.id!,{name})}/>
+  <LabelledField label="Contact number" required={p.kind==='complainant'} value={p.phone??''} keyboardType="phone-pad" onChangeText={phone=>m.updatePerson(p.id!,{phone})}/>
+  {p.kind==='complainant'&&<LabelledField label="Registered residence" value={p.residence??''} onChangeText={residence=>m.updatePerson(p.id!,{residence})}/>}
+  {p.kind==='accused'&&<><LabelledField label="Alias / identifying information" value={p.alias??''} onChangeText={alias=>m.updatePerson(p.id!,{alias})}/><Pressable accessibilityRole="checkbox" accessibilityState={{checked:!!p.primary}} onPress={()=>m.update({people:m.form.people.map(person=>person.kind==='accused'?{...person,primary:person.id===p.id?!p.primary:false}:person)})}><Text style={styles.lineText}>{p.primary?'☑':'☐'} Primary accused</Text></Pressable></>}
+  {p.kind==='witness'&&<><LabelledField label="Witness role / relationship" value={p.role??''} onChangeText={role=>m.updatePerson(p.id!,{role})}/><LabelledField label="When present" value={p.presence??''} onChangeText={presence=>m.updatePerson(p.id!,{presence})}/></>}
+  {p.kind!=='complainant'&&<LabelledField label={p.kind==='witness'?'Statement note':'Other known details'} value={p.details} multiline onChangeText={details=>m.updatePerson(p.id!,{details})}/>}
+  <IntakeError field={p.id!}/><Pressable accessibilityRole="button" onPress={()=>void m.flush().then(ok=>{if(ok)setEditing(null);})} style={styles.action}><Text style={styles.actionText}>Done</Text></Pressable>
+  {p.kind==='witness'&&<Pressable accessibilityRole="button" onPress={()=>{m.removePerson(p.id!);setEditing(null);}}><Text style={styles.removeText}>Remove witness</Text></Pressable>}
+ </View>:null;
+ return <FirShell step={3} title="People Involved" showHelp><IntakeStatus/>
+  <View style={[styles.card,styles.firstCard]}><View style={styles.headRow}><View style={styles.headIcon}><UserRoundCheck size={t.headIconGlyph} color={ink.accent}/></View><Text style={styles.headTitle}>Complainant</Text><View style={styles.primaryChip}><View style={styles.primaryDot}/><Text style={styles.primaryChipText}>Primary (You)</Text></View>{complainant&&<Pressable accessibilityRole="button" accessibilityLabel="Edit complainant" onPress={()=>setEditing(complainant.id!)} style={styles.edit}><SquarePen size={t.editIcon} color={ink.accent}/><Text style={styles.editText}>Edit</Text></Pressable>}</View>
+  {complainant?<>{editing!==complainant.id&&<View style={styles.panel}>{complainant.name&&<View style={styles.panelRow}><Text style={styles.rowLabel}>Full Name</Text><Text style={styles.rowValue}>{complainant.name}</Text></View>}{complainant.phone&&<View style={[styles.panelRow,styles.panelRowSpaced]}><Text style={styles.rowLabel}>Contact</Text><Text style={styles.rowValue}>{complainant.phone}</Text></View>}{complainant.residence&&<><Text style={[styles.rowLabel,styles.panelRowSpaced]}>Registered Residence</Text><Text style={styles.address}>{complainant.residence}</Text></>}{!complainant.name&&!complainant.phone&&<Text style={styles.lineText}>Enter your contact details or edit the complainant.</Text>}</View>}{editor(complainant)}</>:<Text style={styles.lineText}>No complainant entered. Add your contact details in Quick Submission.</Text>}
+  <IntakeError field="complainant"/><View style={styles.footRow}><Gavel size={t.footIcon} color={colors.textBody}/><Text style={styles.footText}>Statutory Complainant / Informant under BNSS § 173</Text></View></View>
+  <SectionHeading title="Accused / Opposite Party" count={accused.length} description="Add individuals or unknown suspects involved in the incident."/>
+  {!accused.length&&<Text style={styles.lineText}>No accused or suspects added.</Text>}
+  {accused.map(a=><View key={a.id} style={styles.sectionCard}><View style={styles.headRow}><View style={styles.headIcon}><UserRoundX size={t.headIconGlyph} color={ink.accent}/></View><View style={styles.headText}><Text style={styles.name}>{a.name|| (a.unknown?'Unknown suspect':'Accused — details incomplete')}</Text>{a.primary&&<View style={styles.tag}><Text style={styles.tagText}>Primary Accused</Text></View>}</View><ChevronDown size={t.nameChevron} color={colors.textBody}/></View>
+   {editing!==a.id&&(a.phone||a.alias||a.details)&&<View style={styles.panel}>{a.phone&&<View style={styles.lineRow}><Phone size={t.lineIcon} color={colors.textBody}/><Text style={styles.lineText}>{a.phone}</Text></View>}{a.alias&&<View style={styles.lineRow}><IdCard size={t.lineIcon} color={colors.textBody}/><Text style={styles.lineText}>{a.alias}</Text></View>}{a.details&&<Text style={styles.lineText}>{a.details}</Text>}</View>}{editor(a)}<View style={styles.actions}><Pressable accessibilityRole="button" accessibilityLabel={'Remove accused '+(a.name||'unknown suspect')} onPress={()=>m.removePerson(a.id!)} style={styles.action}><Trash2 size={t.actionIcon} color={colors.danger}/><Text style={styles.removeText}>Remove</Text></Pressable><Pressable accessibilityRole="button" onPress={()=>setEditing(a.id!)} style={styles.action}><SquarePen size={t.actionIcon} color={colors.textPrimary}/><Text style={styles.actionText}>Edit Details</Text></Pressable></View></View>)}
+  <AddButton icon={UserPlus} label="+ Add Accused / Opposite Party" onPress={()=>add('accused')}/>
+  <SectionHeading title="Witnesses" count={witnesses.length} description="Persons present during or immediately after the incident."/>
+  {!witnesses.length&&<Text style={styles.lineText}>No witnesses added.</Text>}
+  {witnesses.map(w=><View key={w.id} style={styles.sectionCard}><View style={styles.headRow}><View style={styles.headIcon}><Eye size={t.headIconGlyph} color={ink.accent}/></View><View style={styles.headText}><Text style={styles.name}>{w.name||'Witness — details incomplete'}</Text>{w.role&&<Text style={styles.lineText}>{w.role}</Text>}</View><ChevronRight size={t.nameChevron} color={colors.textBody}/></View>{editing!==w.id&&(w.phone||w.presence||w.details)&&<View style={styles.panel}>{w.phone&&<Text style={styles.lineText}>{w.phone}</Text>}{w.presence&&<Text style={styles.lineText}>{w.presence}</Text>}{w.details&&<Text style={styles.lineText}>{w.details}</Text>}</View>}{editor(w)}<View style={styles.actions}><Pressable accessibilityRole="button" onPress={()=>setEditing(w.id!)} style={styles.action}><SquarePen size={t.actionIcon} color={colors.textPrimary}/><Text style={styles.actionText}>Edit Statement Note</Text></Pressable></View></View>)}
+  <AddButton icon={UsersRound} label="+ Add Witness" onPress={()=>add('witness')}/>
+  <Pressable accessibilityRole="button" disabled={m.busy} onPress={()=>void m.next(3)} style={({pressed})=>[styles.button,pressed&&styles.pressed]}><Text style={styles.buttonText}>Continue to Evidence &amp; Documents</Text><ArrowRight size={t.buttonIcon} color={ink.onBrand}/></Pressable>
+ </FirShell>;
 }
 
 function SectionHeading({ title, count, description }: { title: string; count: number; description: string }) {
@@ -431,6 +295,7 @@ const styles = StyleSheet.create({
   },
   actions: {
     marginTop: t.actionsGap,
+    gap: t.actionSepGap * 2,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-end',
@@ -488,6 +353,4 @@ const styles = StyleSheet.create({
     color: ink.onBrand,
   },
 });
-import FirClient from '../../features/fir/FirClient';
-import {DATA_SOURCE} from '../../lib/data-source';
-export default function LiveFirScreen() { return DATA_SOURCE === 'api' ? <FirClient/> : <FixtureFirStep3Screen/>; }
+export default function LiveFirScreen() { return <IntakeBoundary step={3} title="People Involved"><FirStep3Screen/></IntakeBoundary>; }

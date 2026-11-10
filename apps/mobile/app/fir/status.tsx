@@ -1,4 +1,3 @@
-import { useDemoWait } from '../../hooks/useDemoAdvance';
 import { router } from 'expo-router';
 import { ArrowRight, Bell, ClipboardList, Headset, Lock, ShieldCheck } from 'lucide-react-native';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -19,8 +18,7 @@ import { FIR_REQUEST, STATUS_STAGE_CHIP, STATUS_TIMELINE } from '../../data/fir'
 // one-line change once the client says which count is right.
 
 function FixtureFirStatusScreen() {
-  // DEMO: Under Review moves on to the ready draft (design/49).
-  useDemoWait();
+  // Navigation follows the client's tap; time alone never advances FIR.
   const insets = useSafeAreaInsets();
 
   return (

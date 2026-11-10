@@ -1,7 +1,7 @@
 import { NOTIFICATIONS, type NotificationsPort } from '../notifications/notifications.port';
 import { notifyCaseTransition } from '../notifications/case-notifications';
 import { requireDemoMode } from '../auth/demo';
-import {FIR_AWAITING_APPROVAL, FirSubmissionSchema, FirIntakeSchema, type FirIntake} from '@legalitt/shared';
+import {FIR_AWAITING_APPROVAL, FirSubmissionSchema, FirIntakeSchema, firIntakeDetails, INDIA_JURISDICTIONS, type FirIntake} from '@legalitt/shared';
 import {
   BadRequestException,
   ConflictException,
@@ -332,7 +332,7 @@ export class CaseStateMachine {
       ...(record.service_code === 'fir_draft' ? [CaseStatus.submitted,CaseStatus.payment_pending,CaseStatus.paid] : []),
     ].includes(to)) throw new ConflictException('This service workflow is not available yet');
     if (to === CaseStatus.submitted && record.service_code === 'fir_draft') {
-      parse(FirSubmissionSchema,record.details);
+      parse(FirSubmissionSchema,firIntakeDetails(record.details,await tx.caseParty.findMany({where:{case_id:record.id}})));
       if (!await tx.document.findFirst({where:{case_id:record.id,owner_id:actor.id,kind:'id_proof',status:'uploaded'}}))
         throw new BadRequestException('Upload identity evidence in Documents before submitting. PAN, passport, driving licence or voter ID are accepted; Aadhaar is optional and must be masked.');
     }
@@ -683,6 +683,35 @@ export async function writeFirIntake(tx: Prisma.TransactionClient,actor: CaseAct
   if(actor.role!=='client')throw new ForbiddenException('Case client required');
   if(record.status!=='draft')throw new ConflictException('Submitted intake cannot be edited');
   const details=parse(FirIntakeSchema,input);
+  if(details.intake_version===2){
+    const old=(record.details??{}) as {jurisdiction?:FirIntake['jurisdiction']};
+    const identity=(j?:FirIntake['jurisdiction'])=>JSON.stringify([j?.state_code,j?.state,j?.district_code,j?.district]);
+    if(identity(details.jurisdiction)!==identity(old.jurisdiction)){
+      const j=details.jurisdiction,state=INDIA_JURISDICTIONS.find(s=>s.code===j.state_code);
+      if(j.state_code&&(!state||state.name!==j.state))throw new BadRequestException('Choose a state from the jurisdiction list');
+      const district=state?.districts.find(d=>d.code===j.district_code);
+      if(j.district_code&&(!district||district.name!==j.district))throw new BadRequestException('Choose a district in the selected state');
+    }
+    if(details.people.filter(p=>p.kind==='complainant').length>1)throw new BadRequestException('Only one primary complainant is supported');
+    const supplied=details.people.flatMap(p=>p.id?[p.id]:[]);
+    if(new Set(supplied).size!==supplied.length)throw new BadRequestException('Duplicate person identifier');
+    const current=await tx.caseParty.findMany({where:{case_id:id,kind:{in:['complainant','accused','witness']}}});
+    const retained:string[]=[];
+    for(const [order,p]of details.people.entries()){
+      const {id:partyId,kind,name,details:description,...values}=p;
+      const data={kind,name,details:{...values,description,order}};
+      if(partyId&&current.some(row=>row.id===partyId)){
+        await tx.caseParty.update({where:{id:partyId},data});retained.push(partyId);
+      }else{
+        if(partyId&&await tx.caseParty.findUnique({where:{id:partyId}}))throw new BadRequestException('Invalid person identifier');
+        const created=await tx.caseParty.create({data:{...data,case_id:id,...(partyId?{id:partyId}:{})}});retained.push(created.id);
+      }
+    }
+    await tx.caseParty.deleteMany({where:{case_id:id,id:{in:current.filter(p=>!retained.includes(p.id)).map(p=>p.id)}}});
+    const {people,...stored}=details;
+    const updated=await tx.case.update({where:{id},data:{details:stored,matter_type:details.incident.type||null,updated_at:new Date(Math.max(Date.now(),record.updated_at.getTime()+1))}});
+    return {...updated,details:firIntakeDetails(stored,await tx.caseParty.findMany({where:{case_id:id}}))};
+  }
   return tx.case.update({where:{id},data:{details,matter_type:details.incident.type,updated_at:new Date()}});
 }
 export async function writeFirDraftSaved(tx: Prisma.TransactionClient,actor: CaseActor,id:string,draft:{id:string;version:number}) {

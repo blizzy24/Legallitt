@@ -22,12 +22,16 @@ function regionName(code: string) {
  */
 export default function CountryCodePicker({
   initial = 'IN',
+  value,
+  onChange,
   style,
   textStyle,
   chevronSize,
   chevronColor,
 }: {
   initial?: CountryCode;
+  value?: CountryCode;
+  onChange?: (country: CountryCode, dial: string) => void;
   style?: StyleProp<ViewStyle>;
   textStyle?: StyleProp<TextStyle>;
   chevronSize: number;
@@ -35,7 +39,8 @@ export default function CountryCodePicker({
 }) {
   const insets = useSafeAreaInsets();
   const { height } = useWindowDimensions();
-  const [code, setCode] = useState<CountryCode>(initial);
+  const [localCode, setCode] = useState<CountryCode>(initial);
+  const code=value??localCode;
   const [open, setOpen] = useState(false);
   const list = useMemo(
     () =>
@@ -64,6 +69,7 @@ export default function CountryCodePicker({
                 aria-selected={item.c === code}
                 onPress={() => {
                   setCode(item.c);
+                  onChange?.(item.c,'+'+item.dial);
                   setOpen(false);
                 }}
                 style={[styles.row, item.c === code && styles.rowOn]}

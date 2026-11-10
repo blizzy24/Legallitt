@@ -1,0 +1,22 @@
+TAP version 13
+# Subtest: mixed service lists retain every record, count once and route unbuilt work to the availability boundary
+ok 1 - mixed service lists retain every record, count once and route unbuilt work to the availability boundary
+  ---
+  duration_ms: 29.9313
+  type: 'test'
+  ...
+# Subtest: all seventeen Legal Notice states retain the existing client and advocate destinations
+ok 2 - all seventeen Legal Notice states retain the existing client and advocate destinations
+  ---
+  duration_ms: 0.4363
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1052.912

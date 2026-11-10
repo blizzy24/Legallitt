@@ -1,0 +1,47 @@
+India state/UT and district reference data
+
+Publisher: Ministry of Panchayati Raj, Government of India. Hosted by NIC.
+Source: https://lgdirectory.gov.in/downloadDirectory.do
+Overview and published coverage: https://lgdirectory.gov.in/
+Retrieved: 10 November 2026, 06:30:15.665 UTC (12:00:15.665 IST).
+Snapshot: india-jurisdictions.json — 36 states/UTs, 790 districts.
+SHA-256 of retrieved JSON (UTF-8, LF):
+578382a9a5f22008c6f94a0db5768599a46cc451a776fa0f2945d19488d4ee42
+
+Method
+Read the public Download Directory cascading selectors in Chrome: Download
+Directory -> All Sub-Districts of a District -> State -> District. Only the
+state/district option codes and labels are retained. No subdistricts or police
+stations were collected. No report was generated and no CAPTCHA was bypassed.
+Every state selector was visited sequentially; all district codes are unique.
+The resulting 36/790 totals matched LGD's homepage summary on retrieval.
+Names and LGD codes are preserved exactly, except surrounding label whitespace.
+The retrieval script is scripts/fetch-lgd-districts.cjs. The retrieval log is
+reports/fir-intake-2026-11-10/lgd-retrieval.txt.
+
+The data.gov.in LGD Districts catalogue was also located at
+https://data.gov.in/resource/local-government-directory-lgd-districts
+but its rendered page did not provide a usable dataset during inspection.
+It is not the source of this snapshot. No community list was used.
+
+Refresh
+Indian districts change: they are created, renamed, merged and reorganised.
+This file is a dated snapshot, not a promise of live administrative boundaries.
+Review monthly and whenever a missing or changed district is reported.
+1. In Git Bash, run Node 22 and:
+   node scripts/fetch-lgd-districts.cjs <candidate-output.json>
+   CHROME_PATH can select a different locally installed Chrome executable.
+2. Verify the official LGD site, retrieval timestamp, state/UT and district
+   totals, unique LGD codes, and parent state for every district. The script
+   fails if state/UT coverage differs from 36; review any official change
+   before updating that guard. Do not bypass a failed download or use fixtures.
+3. Diff by LGD code. Review additions, removals, renames and parent changes
+   against LGD. Do not silently substitute similarly named districts.
+4. Report the source/date to the owner before committing. Replace this single
+   shared snapshot, update its checksum, this provenance and retrieval evidence,
+   then run the shared reference-data and FIR intake tests.
+5. Retain saved jurisdiction codes/names on existing cases. A reference-data
+   refresh must never rewrite case history. Do not fetch LGD during client entry.
+
+Police station is user-entered free text, per client confirmation. The older
+two-station design fixture is not authoritative and is not used by FIR intake.

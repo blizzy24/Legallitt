@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { z } from "zod";
-import { CaseStatusSchema, NoticePolicySchema, ServiceCodeSchema, type ServiceCode } from "@legalitt/shared";
+import { CaseStatusSchema, NoticePolicySchema, ServiceCodeSchema, firIntakeDetails, type ServiceCode } from "@legalitt/shared";
 import { parse } from "../auth/auth.service";
 import { PrismaService } from "../prisma.service";
 import { caseScope, type CaseActor } from "./case-access";
@@ -106,7 +106,7 @@ export class CaseRepository {
     if (record.service_code === 'fir_draft') {
       const captured = payments[0];
       const snapshot = captured?.quote?.snapshot as unknown as {breakdown: import('@legalitt/shared').QuoteBreakdown} | undefined;
-      return {...caseRecord,parties,pricing,advocate:advocate?{...advocateUser,profile}:null,
+      return {...caseRecord,details:firIntakeDetails(record.details,parties),parties,pricing,advocate:advocate?{...advocateUser,profile}:null,
         events, drafts, reviews, shipments, approval:actor.role==='client'&&!approval?.approved_at?null:approval,
         documents: actor.role==='client'?documents.filter(d=>d.owner_id===record.client_id || !!approval?.approved_at&&d.id===approval.document_id):documents,
         client_fees:snapshot?{...snapshot.breakdown,breakdown_complete:true,simulated:captured.simulated}:null};

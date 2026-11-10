@@ -1,0 +1,38 @@
+Official state selector loaded
+35 Andaman And Nicobar Islands: 3
+28 Andhra Pradesh: 28
+12 Arunachal Pradesh: 27
+18 Assam: 35
+10 Bihar: 38
+4 Chandigarh: 1
+22 Chhattisgarh: 33
+7 Delhi: 13
+30 Goa: 3
+24 Gujarat: 34
+6 Haryana: 23
+2 Himachal Pradesh: 12
+1 Jammu And Kashmir: 20
+20 Jharkhand: 24
+29 Karnataka: 31
+32 Kerala: 14
+37 Ladakh: 8
+31 Lakshadweep: 1
+23 Madhya Pradesh: 55
+27 Maharashtra: 36
+14 Manipur: 16
+17 Meghalaya: 12
+15 Mizoram: 11
+13 Nagaland: 17
+21 Odisha: 30
+34 Puducherry: 2
+3 Punjab: 23
+8 Rajasthan: 41
+11 Sikkim: 6
+33 Tamil Nadu: 38
+36 Telangana: 33
+38 The Dadra And Nagar Haveli And Daman And Diu: 3
+16 Tripura: 8
+5 Uttarakhand: 13
+9 Uttar Pradesh: 75
+19 West Bengal: 23
+Candidate saved: 36 states/UTs; 790 districts

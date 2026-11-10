@@ -1,6 +1,6 @@
 import { Injectable, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { z } from 'zod';
-import {ServiceCodeSchema, type AdminCaseDetail, type AdminContact} from '@legalitt/shared';
+import {ServiceCodeSchema, firIntakeDetails, type AdminCaseDetail, type AdminContact} from '@legalitt/shared';
 import { PrismaService } from '../prisma.service';
 import { parse } from '../auth/auth.service';
 import { caseScope, type CaseActor } from '../cases/case-access';
@@ -24,7 +24,7 @@ export class AdminCaseDetailRepository {
       shipments_case_id_relations: {orderBy: {id: 'asc'}},
     }});
     if (!row) throw new NotFoundException('Case not found');
-    const intake = obj(row.details), client = obj(intake.client), noticee = obj(intake.noticee);
+    const intake = row.service_code==='fir_draft'?firIntakeDetails(row.details,row.case_parties_case_id_relations):obj(row.details), client = obj(intake.client), noticee = obj(intake.noticee);
     const contacts: AdminContact[] = [{role: 'client', name: row.client_id_relation.full_name,
       email: row.client_id_relation.email, phone: row.client_id_relation.phone, address: null}];
     // Intake contacts are separately labelled: do not silently replace account data.

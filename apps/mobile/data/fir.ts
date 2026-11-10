@@ -30,7 +30,7 @@ export const INCIDENT_TYPES: IncidentOption[] = [
   { id: 'other', label: 'Other' },
 ];
 
-export const incidentLabel = (id: IncidentType | null) =>
+export const incidentLabel = (id: string | null) =>
   INCIDENT_TYPES.find((t) => t.id === id)?.label ?? '';
 
 /** Placeholder copy for the jurisdiction selects on design/42. Not real data. */

@@ -1,3 +1,7 @@
+import {designSubstitutions as copy} from '../../copy/substitutions';
+import {incidentLabel} from '../../data/fir';
+import {IntakeBoundary,IntakeStatus} from '../../features/fir/IntakeBoundary';
+import {openDocument} from '../../features/fir/shared';
 import { useFir } from '../../context/fir';
 import { previewNotice } from '../../components/PreviewNotice';
 import { router } from 'expo-router';
@@ -21,7 +25,6 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import FirShell from '../../components/FirShell';
 import { shrinkToFit } from '../../constants/textFit';
 import { colors, firStep5 as t, font, ink } from '../../constants/theme';
-import { FIR_REVIEW_SAMPLE as r } from '../../data/fir';
 
 // FIR step 5 — Review & Submit (design/46).
 //
@@ -35,165 +38,20 @@ const TAG_STYLE = {
   DOC: { bg: t.docBg, text: t.docText },
 };
 
-function FixtureFirStep5Screen() {
-  const { form } = useFir();
-  const [expanded, setExpanded] = useState(false);
-
-  return (
-    <FirShell step={5} title="Review & Submit">
-      <Text style={styles.heading}>Review Your Request</Text>
-      <Text style={styles.subtitle}>
-        Review the information you provided before submitting your FIR Draft request.
-      </Text>
-
-      <Card icon={UserRound} title="Basic Details" link="Edit" first>
-        <Field label="POLICE STATION" value={form.jurisdiction.policeStation || 'Not selected'} />
-        <View style={styles.panel}>
-          <View style={styles.labelRow}>
-            <Text style={styles.label} {...shrinkToFit(0.8)}>
-              COMPLAINANT NAME
-            </Text>
-            <View style={styles.kyc}>
-              <ShieldCheck size={t.kycIcon} color={ink.onBrand} />
-              <Text style={styles.kycText} {...shrinkToFit(0.8)}>
-                Verified KYC
-              </Text>
-            </View>
-          </View>
-          <Text style={styles.name} {...shrinkToFit(0.75)}>
-            {r.fullName}
-          </Text>
-
-          <View style={styles.cols}>
-            <Field label="MOBILE NUMBER" value={r.mobile} />
-            <Field label="OFFICIAL EMAIL" value={r.email} wide />
-          </View>
-        </View>
-      </Card>
-
-      <Card icon={Gavel} title="Incident Details" link="Edit">
-        <View style={styles.panel}>
-          <View style={styles.colsFirst}>
-            {/* design/46 wraps this one onto two lines too. Left as drawn. */}
-            <Field label="DATE & TIME" value={r.incidentDateTime} />
-            <Field label="LOCATION / POLICE PS" value={r.location} wide />
-          </View>
-
-          {/* design/46 spells this "OFFENSE"; the rest of the app uses the Indian
-              "offence". Drawn as the file has it. */}
-          <Text style={[styles.label, styles.summaryLabel]} {...shrinkToFit(0.8)}>
-            REPORTED OFFENSE SUMMARY
-          </Text>
-          <Text style={styles.summary}>
-            {expanded ? r.offenceSummaryFull : r.offenceSummaryShort}
-          </Text>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityState={{ expanded }}
-            hitSlop={8}
-            onPress={() => setExpanded((v) => !v)}
-            style={styles.more}
-          >
-            <Text style={styles.moreText}>{expanded ? 'Show less' : 'Show more'}</Text>
-            {expanded ? (
-              <ChevronUp size={t.moreIcon} color={colors.textBody} style={styles.moreIcon} />
-            ) : (
-              <ChevronDown size={t.moreIcon} color={colors.textBody} style={styles.moreIcon} />
-            )}
-          </Pressable>
-        </View>
-      </Card>
-
-      <Card icon={UsersRound} title="People Involved" link="View / Edit">
-        <View style={styles.panel}>
-          <View style={styles.labelRow}>
-            <Text style={styles.label} {...shrinkToFit(0.8)}>
-              REGISTRY ENTRIES
-            </Text>
-            <View style={styles.countChip}>
-              <Text style={styles.countChipText} {...shrinkToFit(0.8)}>
-                {r.people.count}
-              </Text>
-            </View>
-          </View>
-          {r.people.entries.map((e) => (
-            <View key={e.label} style={styles.pill}>
-              <View
-                style={[
-                  styles.pillDot,
-                  { backgroundColor: e.tone === 'primary' ? colors.brandCheck : colors.danger },
-                ]}
-              />
-              <Text style={styles.pillText} {...shrinkToFit(0.8)}>
-                {e.label}
-              </Text>
-            </View>
-          ))}
-          <Text style={styles.note}>{r.people.note}</Text>
-        </View>
-      </Card>
-
-      <Card icon={Folder} title="Documents & Evidence" link="Manage">
-        <View style={styles.panel}>
-          <View style={styles.labelRow}>
-            <Text style={styles.label} {...shrinkToFit(0.8)}>
-              VALIDATED DOSSIER
-            </Text>
-            <View style={styles.dossier}>
-              <CircleCheck size={t.dossierIcon} color={colors.textBody} />
-              <Text style={styles.dossierText} {...shrinkToFit(0.8)}>
-                {r.documents.count}
-              </Text>
-            </View>
-          </View>
-
-          {r.documents.files.map((f) => (
-            <View key={f.name} style={styles.file}>
-              <View style={[styles.tag, { backgroundColor: TAG_STYLE[f.tag].bg }]}>
-                <Text style={[styles.tagText, { color: TAG_STYLE[f.tag].text }]}>{f.tag}</Text>
-              </View>
-              <Text style={styles.fileName} {...shrinkToFit(0.7)}>
-                {f.name}
-              </Text>
-              <Text style={styles.fileSize} {...shrinkToFit(0.8)}>
-                {f.size}
-              </Text>
-            </View>
-          ))}
-
-          <View style={styles.valid}>
-            <Lock size={t.validIcon} color={colors.textBody} />
-            <Text style={styles.validText} {...shrinkToFit(0.75)}>
-              {r.documents.validation}
-            </Text>
-            <ShieldCheck size={t.validIcon} color={colors.textBody} />
-          </View>
-        </View>
-      </Card>
-
-      <View style={styles.privilege}>
-        <View style={styles.privilegeRow}>
-          <AtSign size={t.privilegeIcon} color={t.privilegeLabelColour} />
-          <Text style={styles.privilegeLabel} {...shrinkToFit(0.8)}>
-            LEGAL PRIVILEGE PROTECTED
-          </Text>
-        </View>
-        <Text style={styles.privilegeBody}>
-          By submitting, you confirm that the information provided is accurate and truthful to the
-          best of your knowledge.
-        </Text>
-      </View>
-
-      <Pressable
-        accessibilityRole="button"
-        onPress={() => router.push('/fir/payment')}
-        style={({ pressed }) => [styles.button, pressed && styles.pressed]}
-      >
-        <Text style={styles.buttonLabel}>Proceed To Pay</Text>
-        <ArrowRight size={t.buttonIcon} color={ink.onBrand} style={styles.buttonIcon} />
-      </Pressable>
-    </FirShell>
-  );
+function FirStep5Screen() {
+ const m=useFir(),{form}=m,[expanded,setExpanded]=useState(false),docs=m.record?.documents??[];
+ const phone=form.contact.mobile?form.contact.mobile.startsWith('+')?form.contact.mobile:[form.contact.dial_code??'+91',form.contact.mobile].join(' '):'';
+ return <FirShell step={5} title="Review & Submit"><IntakeStatus/><Text style={styles.heading}>Review Your Request</Text><Text style={styles.subtitle}>{copy[46].review}</Text>
+  <Card icon={UserRound} title="Basic Details" link="Edit" first><View style={styles.panel}>{!form.contact.fullName&&!phone?<Text style={styles.value}>No contact details entered. Use Edit to add them.</Text>:<><Field label="FULL NAME" value={form.contact.fullName}/><View style={styles.cols}><Field label="MOBILE NUMBER" value={phone}/><Field label="EMAIL ADDRESS" value={form.contact.email} wide/></View></>}</View></Card>
+  <Card icon={Gavel} title="Incident Details" link="Edit"><View style={styles.panel}><Field label="INCIDENT TYPE" value={incidentLabel(form.incident.type)}/><View style={styles.cols}><Field label="DATE & TIME" value={[form.incident.date,form.incident.time].filter(Boolean).join(' · ')}/><Field label="LOCATION" value={form.incident.location} wide/></View><View style={styles.cols}><Field label="STATE / UT" value={form.jurisdiction.state}/><Field label="DISTRICT" value={form.jurisdiction.district} wide/></View><Field label="POLICE STATION" value={form.jurisdiction.policeStation}/>
+   {form.incident.description?<><Text style={[styles.label,styles.summaryLabel]}>REPORTED OFFENSE SUMMARY</Text><Text style={styles.summary}>{expanded?form.incident.description:form.incident.description.slice(0,250)}</Text>{form.incident.description.length>250&&<Pressable accessibilityRole="button" accessibilityState={{expanded}} onPress={()=>setExpanded(v=>!v)} style={styles.more}><Text style={styles.moreText}>{expanded?'Show less':'Show more'}</Text>{expanded?<ChevronUp size={t.moreIcon}/>:<ChevronDown size={t.moreIcon}/>}</Pressable>}</>:<Text style={styles.value}>No narrative entered. Use Edit to describe the incident.</Text>}
+   <Field label="ADDITIONAL INFORMATION" value={form.incident.additional}/></View></Card>
+  <Card icon={UsersRound} title="People Involved" link="View / Edit"><View style={styles.panel}><View style={styles.labelRow}><Text style={styles.label}>REGISTERED ENTRIES</Text><View style={styles.countChip}><Text style={styles.countChipText}>{form.people.length} People Added</Text></View></View>{!form.people.length&&<Text style={styles.value}>No people entered. Use View / Edit to add the complainant and anyone involved.</Text>}{form.people.map((p,i)=><View key={p.id??i} style={{marginTop:12}}><View style={styles.pill}><View style={[styles.pillDot,{backgroundColor:p.kind==='accused'?colors.danger:colors.brandCheck}]}/><Text style={styles.pillText}>{p.kind==='complainant'?'Complainant':p.kind==='witness'?'Witness':'Accused'} · {p.name||(p.unknown?'Unknown suspect':'Details incomplete')}</Text></View>{p.primary&&<Text style={styles.note}>Primary accused</Text>}<Field label="CONTACT" value={p.phone??''}/><Field label="REGISTERED RESIDENCE" value={p.residence??''}/><Field label="ALIAS / IDENTIFYING INFORMATION" value={p.alias??''}/><Field label="ROLE / RELATIONSHIP" value={p.role??''}/><Field label="WHEN PRESENT" value={p.presence??''}/><Field label={p.kind==='witness'?'STATEMENT NOTE':'OTHER DETAILS'} value={p.details}/></View>)}</View></Card>
+  <Card icon={Folder} title="Documents & Evidence" link="Manage"><View style={styles.panel}><View style={styles.labelRow}><Text style={styles.label}>ATTACHED DOCUMENTS</Text><Text style={styles.dossierText}>{docs.length} Files Attached</Text></View>{!docs.length&&<Text style={styles.value}>No documents uploaded. Use Manage to attach identity evidence and supporting files.</Text>}{docs.map(d=><Pressable accessibilityRole="button" accessibilityLabel={'View '+d.filename} key={d.id} onPress={()=>void m.action(()=>openDocument(d.id))} style={styles.file}><View style={[styles.tag,{backgroundColor:d.mime_type==='application/pdf'?t.pdfBg:t.imgBg}]}><Text style={styles.tagText}>{d.mime_type==='application/pdf'?'PDF':'IMG'}</Text></View><Text style={styles.fileName}>{d.filename}</Text><Text style={styles.fileSize}>{Math.ceil(Number(d.size_bytes??0)/1024)} KB</Text></Pressable>)}</View></Card>
+  <View style={styles.privilege}><Text style={styles.privilegeBody}>{copy[46].declaration}</Text></View>
+  {m.error&&<Text role="alert" style={styles.note}>{m.error}</Text>}{Object.keys(m.errors).length>0&&<Text role="alert" style={styles.note}>Review the highlighted fields before submitting.</Text>}
+  <Pressable accessibilityRole="button" disabled={m.busy} onPress={()=>void m.submit()} style={({pressed})=>[styles.button,pressed&&styles.pressed]}><Text style={styles.buttonLabel}>{m.busy?'Saving…':'Proceed To Pay'}</Text><ArrowRight size={t.buttonIcon} color={ink.onBrand} style={styles.buttonIcon}/></Pressable>
+ </FirShell>;
 }
 
 function Card({
@@ -209,6 +67,7 @@ function Card({
   first?: boolean;
   children: ReactNode;
 }) {
+  const m=useFir();
   return (
     <View style={[styles.card, first && styles.firstCard]}>
       <View style={styles.head}>
@@ -218,8 +77,8 @@ function Card({
         <Text style={styles.headTitle} {...shrinkToFit(0.8)}>
           {title}
         </Text>
-        {/* Edit / Manage have no destination: the preview notice says so. */}
-        <Pressable onPress={() => previewNotice(link)} accessibilityRole="link" hitSlop={8}>
+        {/* Editing preserves the current case and returns to the relevant step. */}
+        <Pressable onPress={() => void m.go(title==='Basic Details'?1:title==='Incident Details'?2:title==='People Involved'?3:4)} accessibilityRole="link" hitSlop={8}>
           <Text style={styles.link} {...shrinkToFit(0.8)}>
             {link}
           </Text>
@@ -233,6 +92,7 @@ function Card({
 // The right-hand column carries the longer values (email, location), so it is given
 // the larger share of the row rather than an even split.
 function Field({ label, value, wide }: { label: string; value: string; wide?: boolean }) {
+  if(!value.trim())return null;
   return (
     <View style={[styles.col, { flex: wide ? t.colWide : t.colNarrow }]}>
       <Text style={styles.label} {...shrinkToFit(0.8)}>
@@ -529,6 +389,4 @@ const styles = StyleSheet.create({
     marginLeft: t.buttonIconGap,
   },
 });
-import FirClient from '../../features/fir/FirClient';
-import {DATA_SOURCE} from '../../lib/data-source';
-export default function LiveFirScreen() { return DATA_SOURCE === 'api' ? <FirClient/> : <FixtureFirStep5Screen/>; }
+export default function LiveFirScreen() { return <IntakeBoundary step={5} title="Review & Submit"><FirStep5Screen/></IntakeBoundary>; }
