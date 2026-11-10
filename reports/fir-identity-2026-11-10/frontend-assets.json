@@ -1,0 +1,64 @@
+[
+  {
+    "site": "https://legalitt-5.vercel.app",
+    "status": 200,
+    "current_ui": true,
+    "markers": [
+      {
+        "marker": "PDF not ready",
+        "present": true
+      },
+      {
+        "marker": "Discard edits and reload",
+        "present": true
+      },
+      {
+        "marker": "No answer is assumed.",
+        "present": true
+      },
+      {
+        "marker": "Identity proof required",
+        "present": true
+      },
+      {
+        "marker": "I confirm this is masked Aadhaar",
+        "present": true
+      },
+      {
+        "marker": "Upload Identity Proof",
+        "present": true
+      }
+    ],
+    "scripts": [
+      {
+        "url": "https://legalitt-5.vercel.app/_expo/static/js/web/entry-14dc6e013d2a904bc0df094c0de2b51d.js",
+        "sha256": "4a256e85f69a27b7a41cac0b94a2aa539835b701400c500071165959915671ea"
+      }
+    ]
+  },
+  {
+    "site": "https://legalitt-admin-panel.vercel.app",
+    "status": 200,
+    "current_ui": true,
+    "markers": [
+      {
+        "marker": "Approve and send to client",
+        "present": true
+      },
+      {
+        "marker": "Declared type:",
+        "present": true
+      },
+      {
+        "marker": "never transcribe any identity document number",
+        "present": true
+      }
+    ],
+    "scripts": [
+      {
+        "url": "https://legalitt-admin-panel.vercel.app/assets/index-CraWuzNW.js",
+        "sha256": "6a7069b098e221503e9e1c6d802f1b9fb30a4527da08841223cf763d7a2dc14d"
+      }
+    ]
+  }
+]

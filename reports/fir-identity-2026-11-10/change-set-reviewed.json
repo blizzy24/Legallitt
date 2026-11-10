@@ -1,0 +1,213 @@
+{
+    "Changes": [
+        {
+            "Type": "Resource",
+            "ResourceChange": {
+                "Action": "Modify",
+                "LogicalResourceId": "ApiService",
+                "PhysicalResourceId": "arn:aws:ecs:ap-south-1:026379630400:service/legalitt-dev-cluster/legalitt-dev-api",
+                "ResourceType": "AWS::ECS::Service",
+                "Replacement": "False",
+                "Scope": [
+                    "Properties"
+                ],
+                "Details": [
+                    {
+                        "Target": {
+                            "Attribute": "Properties",
+                            "Name": "TaskDefinition",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Static",
+                        "ChangeSource": "ResourceReference",
+                        "CausingEntity": "Task"
+                    }
+                ]
+            }
+        },
+        {
+            "Type": "Resource",
+            "ResourceChange": {
+                "PolicyAction": "ReplaceAndDelete",
+                "Action": "Modify",
+                "LogicalResourceId": "OpsTask",
+                "PhysicalResourceId": "arn:aws:ecs:ap-south-1:026379630400:task-definition/legalitt-dev-ops:24",
+                "ResourceType": "AWS::ECS::TaskDefinition",
+                "Replacement": "True",
+                "Scope": [
+                    "Properties"
+                ],
+                "Details": [
+                    {
+                        "Target": {
+                            "Attribute": "Properties",
+                            "Name": "ContainerDefinitions",
+                            "RequiresRecreation": "Always"
+                        },
+                        "Evaluation": "Static",
+                        "ChangeSource": "ParameterReference",
+                        "CausingEntity": "ApiImageTag"
+                    },
+                    {
+                        "Target": {
+                            "Attribute": "Properties",
+                            "Name": "ContainerDefinitions",
+                            "RequiresRecreation": "Always"
+                        },
+                        "Evaluation": "Dynamic",
+                        "ChangeSource": "DirectModification"
+                    }
+                ]
+            }
+        },
+        {
+            "Type": "Resource",
+            "ResourceChange": {
+                "PolicyAction": "ReplaceAndDelete",
+                "Action": "Modify",
+                "LogicalResourceId": "Task",
+                "PhysicalResourceId": "arn:aws:ecs:ap-south-1:026379630400:task-definition/legalitt-dev-api:15",
+                "ResourceType": "AWS::ECS::TaskDefinition",
+                "Replacement": "True",
+                "Scope": [
+                    "Properties"
+                ],
+                "Details": [
+                    {
+                        "Target": {
+                            "Attribute": "Properties",
+                            "Name": "ContainerDefinitions",
+                            "RequiresRecreation": "Always"
+                        },
+                        "Evaluation": "Static",
+                        "ChangeSource": "ParameterReference",
+                        "CausingEntity": "ApiImageTag"
+                    },
+                    {
+                        "Target": {
+                            "Attribute": "Properties",
+                            "Name": "ContainerDefinitions",
+                            "RequiresRecreation": "Always"
+                        },
+                        "Evaluation": "Dynamic",
+                        "ChangeSource": "DirectModification"
+                    }
+                ]
+            }
+        }
+    ],
+    "ChangeSetName": "fir-identity-694a77e",
+    "ChangeSetId": "arn:aws:cloudformation:ap-south-1:026379630400:changeSet/fir-identity-694a77e/890dffd4-1bed-4768-89f6-111a0acf6ecc",
+    "StackId": "arn:aws:cloudformation:ap-south-1:026379630400:stack/LegalittDev-Compute-DevelopmentOnly/6a722080-d717-11f1-acc7-0affd88faab9",
+    "StackName": "LegalittDev-Compute-DevelopmentOnly",
+    "Description": null,
+    "Parameters": [
+        {
+            "ParameterKey": "CorsOrigins",
+            "ParameterValue": "https://legalitt-5.vercel.app,https://legalitt-admin-panel.vercel.app"
+        },
+        {
+            "ParameterKey": "BootstrapVersion",
+            "ParameterValue": "/cdk-bootstrap/hnb659fds/version",
+            "ResolvedValue": "32"
+        },
+        {
+            "ParameterKey": "DatabaseDeletionProtection",
+            "ParameterValue": "true"
+        },
+        {
+            "ParameterKey": "PrivateSubnet2Cidr",
+            "ParameterValue": "10.20.11.0/24"
+        },
+        {
+            "ParameterKey": "TaskCount",
+            "ParameterValue": "1"
+        },
+        {
+            "ParameterKey": "DatabaseStorageGiB",
+            "ParameterValue": "20"
+        },
+        {
+            "ParameterKey": "Postgres16Version",
+            "ParameterValue": "16.13"
+        },
+        {
+            "ParameterKey": "PrivateSubnet1Cidr",
+            "ParameterValue": "10.20.10.0/24"
+        },
+        {
+            "ParameterKey": "PublicSubnet2Cidr",
+            "ParameterValue": "10.20.1.0/24"
+        },
+        {
+            "ParameterKey": "UserPoolId",
+            "ParameterValue": "ap-south-1_u98M4TfS9"
+        },
+        {
+            "ParameterKey": "VpcCidr",
+            "ParameterValue": "10.20.0.0/16"
+        },
+        {
+            "ParameterKey": "TaskCpu",
+            "ParameterValue": "256"
+        },
+        {
+            "ParameterKey": "TaskMemoryMiB",
+            "ParameterValue": "512"
+        },
+        {
+            "ParameterKey": "ApiPort",
+            "ParameterValue": "3001"
+        },
+        {
+            "ParameterKey": "GeminiSecretArn",
+            "ParameterValue": "arn:aws:secretsmanager:ap-south-1:026379630400:secret:legalitt-dev/gemini-api-key-PbZXqB"
+        },
+        {
+            "ParameterKey": "PublicSubnet1Cidr",
+            "ParameterValue": "10.20.0.0/24"
+        },
+        {
+            "ParameterKey": "ApiImageTag",
+            "ParameterValue": "694a77e"
+        },
+        {
+            "ParameterKey": "DatabaseInstanceClass",
+            "ParameterValue": "db.t4g.micro"
+        }
+    ],
+    "CreationTime": "2026-11-10T11:23:43.293000+00:00",
+    "ExecutionStatus": "AVAILABLE",
+    "Status": "CREATE_COMPLETE",
+    "StatusReason": null,
+    "NotificationARNs": [],
+    "RollbackConfiguration": {},
+    "Capabilities": [
+        "CAPABILITY_NAMED_IAM"
+    ],
+    "Tags": [
+        {
+            "Key": "environment",
+            "Value": "dev"
+        },
+        {
+            "Key": "application",
+            "Value": "legalitt"
+        },
+        {
+            "Key": "purpose",
+            "Value": "development-only"
+        }
+    ],
+    "ParentChangeSetId": null,
+    "IncludeNestedStacks": false,
+    "RootChangeSetId": null,
+    "OnStackFailure": null,
+    "ImportExistingResources": null,
+    "StackDriftStatus": null,
+    "DeploymentMode": null,
+    "DeploymentConfig": {
+        "Mode": "STANDARD",
+        "DisableRollback": false
+    }
+}

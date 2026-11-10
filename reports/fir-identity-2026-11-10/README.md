@@ -54,8 +54,32 @@ charge: total ₹1,498.53 with the existing FIR tariff.
 
 ## Release evidence
 
-Deployment and live walkthrough results are recorded alongside this report
-after the API image is pushed, its migration succeeds, Compute is updated, and
-the published frontend bundles are verified. `capture-final.cjs` records the
+Implementation commit/image: **`694a77e`**. ECR digest:
+`sha256:ebfd5bf8ad9daa423362b87046101933040d5ec4f18f2f9f95d1e4a066596713`.
+The image's migration succeeded at **11:22:49 UTC**, before deploying
+`LegalittDev-Compute-DevelopmentOnly` to `legalitt-dev-api:16`.
+CloudFormation reached `UPDATE_COMPLETE`; health and the running task digest
+passed. Only `Task`, `OpsTask` and `ApiService` changed; capacity stayed the same.
+The source was pushed to `origin/main` after API health/digest verification.
+
+Deployment and live walkthrough results are recorded alongside this report.
+`capture-final.cjs` records the
 persisted approval/release audit; the walkthrough's approval snapshot represents
 the earlier pending review, so its `approved_at` is null at that point.
+
+Both Vercel projects completed deployment of `694a77e`; published bundle markers
+and hashes are in `frontend-assets.json`. The deployed browser walkthrough
+passed for **FIR_DRAFT-2026-0007**, case
+`7385d6be-6367-4ba5-be29-32c00e3b7da1`. The client uploaded a synthetic passport
+through the real browser control; the advocate sent version 2; admin approved
+that exact version; the client received the same PDF bytes and the case closed.
+Missing-ID submission returned **400**; duplicate send **409**; client approval
+**403**; unapproved PDF access **404**. Both cross-client case reads returned
+**404**. There were no browser errors.
+
+Released PDF SHA-256:
+`3be6b40dd045f6aedb02bc437e930a2ce7fc89bb52d8d0b06f7c300327b52cac`.
+The earlier optional-ID completed case `7ac3567f-0d42-49ad-bbe9-557f155243e4`
+remains completed and its PDF still hashes to
+`fa00843d4648dee9636b653dae4fc24192bb688495f49c279c25a7d16d05bae4`.
+No existing case was reset and no existing credential was changed.

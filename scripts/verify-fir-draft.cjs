@@ -63,6 +63,7 @@ async function main(){let browser,apiProcess,restoreProfile;const servers=[],pag
   if(deployed){const [chooser]=await Promise.all([client.waitForFileChooser(),click(client,'Upload Identity Proof')]);await chooser.accept([idFile]);await text(client,'Identity document attached.');}
   else{const ticket=await clients.client.presign({case_id:caseId,kind:'id_proof',filename:'TEST-original-ID-filename.pdf',mime:'application/pdf',identity:{document_type:'passport',masked_copy:false}});await clients.client.upload(ticket,new Blob([idBytes],{type:'application/pdf'}));}
   const identity=(await clients.client.case(caseId)).documents.find(d=>d.kind==='id_proof'&&d.status==='uploaded');assert.ok(identity);assert.equal(identity.identity_evidence.document_type,'passport');assert.match(identity.filename,/^Identity-proof-/);
+  assert.deepEqual(Object.keys(identity.identity_evidence).sort(),['declared_at','document_type','masked_copy','policy_version']);
   // Upload through the real API/storage pipeline; browser checks uploaded evidence.
   for(const [pages,kind,filename]of [[25,'supporting_document','TEST-FIR-25-pages.pdf']]){
    const pdf=await PDFDocument.create();for(let i=0;i<pages;i++)pdf.addPage();const bytes=await pdf.save();const ticket=await clients.client.presign({case_id:caseId,kind,filename,mime:'application/pdf'});await clients.client.upload(ticket,new Blob([bytes],{type:'application/pdf'}));

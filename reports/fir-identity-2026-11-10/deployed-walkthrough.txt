@@ -1,0 +1,4 @@
+Client personal facts saved; reloading
+Client personal facts resumed
+PASS client intake, uploaded 26 pages, quote and simulated payment
+PASS advocate draft → admin frozen-version review → client exact PDF → completed; duplicate send and private access refused

@@ -3,6 +3,7 @@
 set -euo pipefail
 export AWS_PAGER=''
 export MSYS_NO_PATHCONV=1
+export PYTHONIOENCODING=utf-8 PYTHONUTF8=1
 python3() { python "$@"; }
 aws() { command aws "$@" | tr -d '\r'; }
 export -f python3 aws

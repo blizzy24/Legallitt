@@ -1,0 +1,99 @@
+{
+    "tasks": [
+        {
+            "attachments": [
+                {
+                    "id": "13c10714-10ea-4dae-83d3-ee63b9778890",
+                    "type": "ElasticNetworkInterface",
+                    "status": "ATTACHED",
+                    "details": [
+                        {
+                            "name": "subnetId",
+                            "value": "subnet-060f72908da2419ee"
+                        },
+                        {
+                            "name": "networkInterfaceId",
+                            "value": "eni-06e18dc7baccc4f28"
+                        },
+                        {
+                            "name": "macAddress",
+                            "value": "02:ff:ee:43:12:ab"
+                        },
+                        {
+                            "name": "privateDnsName",
+                            "value": "ip-10-20-0-17.ap-south-1.compute.internal"
+                        },
+                        {
+                            "name": "privateIPv4Address",
+                            "value": "10.20.0.17"
+                        }
+                    ]
+                }
+            ],
+            "attributes": [
+                {
+                    "name": "ecs.cpu-architecture",
+                    "value": "arm64"
+                }
+            ],
+            "availabilityZone": "ap-south-1a",
+            "clusterArn": "arn:aws:ecs:ap-south-1:026379630400:cluster/legalitt-dev-cluster",
+            "connectivity": "CONNECTED",
+            "connectivityAt": "2026-11-10T16:55:30.367000+05:30",
+            "containers": [
+                {
+                    "containerArn": "arn:aws:ecs:ap-south-1:026379630400:container/legalitt-dev-cluster/9bc5a637f9e34a08a1adffb3ebda475e/89895e41-106e-42cf-8bc8-c812f2c9fa14",
+                    "taskArn": "arn:aws:ecs:ap-south-1:026379630400:task/legalitt-dev-cluster/9bc5a637f9e34a08a1adffb3ebda475e",
+                    "name": "api",
+                    "image": "026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api:694a77e",
+                    "imageDigest": "sha256:ebfd5bf8ad9daa423362b87046101933040d5ec4f18f2f9f95d1e4a066596713",
+                    "runtimeId": "9bc5a637f9e34a08a1adffb3ebda475e-0946514567",
+                    "lastStatus": "RUNNING",
+                    "networkBindings": [],
+                    "networkInterfaces": [
+                        {
+                            "attachmentId": "13c10714-10ea-4dae-83d3-ee63b9778890",
+                            "privateIpv4Address": "10.20.0.17"
+                        }
+                    ],
+                    "healthStatus": "HEALTHY",
+                    "cpu": "0"
+                }
+            ],
+            "cpu": "256",
+            "createdAt": "2026-11-10T16:55:08.548000+05:30",
+            "desiredStatus": "RUNNING",
+            "enableExecuteCommand": false,
+            "group": "service:legalitt-dev-api",
+            "healthStatus": "HEALTHY",
+            "lastStatus": "RUNNING",
+            "launchType": "FARGATE",
+            "memory": "512",
+            "overrides": {
+                "containerOverrides": [
+                    {
+                        "name": "api"
+                    }
+                ],
+                "inferenceAcceleratorOverrides": []
+            },
+            "platformVersion": "1.4.0",
+            "platformFamily": "Linux",
+            "pullStartedAt": "2026-11-10T16:55:38.513000+05:30",
+            "pullStoppedAt": "2026-11-10T16:55:46.896000+05:30",
+            "startedAt": "2026-11-10T16:55:54.749000+05:30",
+            "startedBy": "ecs-svc/5201422938409146146",
+            "tags": [],
+            "taskArn": "arn:aws:ecs:ap-south-1:026379630400:task/legalitt-dev-cluster/9bc5a637f9e34a08a1adffb3ebda475e",
+            "taskDefinitionArn": "arn:aws:ecs:ap-south-1:026379630400:task-definition/legalitt-dev-api:16",
+            "version": 5,
+            "ephemeralStorage": {
+                "sizeInGiB": 20
+            },
+            "fargateEphemeralStorage": {
+                "sizeInGiB": 20
+            }
+        }
+    ],
+    "failures": []
+}
