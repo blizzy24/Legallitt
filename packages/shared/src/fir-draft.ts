@@ -1,6 +1,7 @@
 import {z} from 'zod';
 import {FirIntakeSchema,FirPersonSchema,validFirDate,type FirIntake} from './fir';
 import {firText,FirTextAnswerSchema,answerSchema,answerText,FIR_PERSONAL_LABELS,type Answer} from './fir-answer';
+import type {FirIdentityPolicy} from './fir-identity';
 
 const uuid=z.uuid();
 const phoneAnswer=answerSchema(z.string().trim().min(1).max(50)).nullable();
@@ -53,7 +54,7 @@ export const FirDraftContentSchema=z.strictObject({
 export type FirDraftContent=z.infer<typeof FirDraftContentSchema>;
 export const FirDraftSaveSchema=z.strictObject({base_draft_id:uuid.nullable(),filing_hash:z.string().regex(/^[a-f0-9]{64}$/),content:FirDraftEditableSchema});
 export type FirDraftSave=z.infer<typeof FirDraftSaveSchema>;
-export type FirDraftContext={intake:FirIntake;filing_hash:string;latest_draft_id:string|null;latest_version:number;latest_content:FirDraftContent|null;legacy_content:unknown|null;initial_content:FirDraftEditable};
+export type FirDraftContext={identity_policy:FirIdentityPolicy;intake:FirIntake;filing_hash:string;latest_draft_id:string|null;latest_version:number;latest_content:FirDraftContent|null;legacy_content:unknown|null;initial_content:FirDraftEditable};
 
 export function firEditableContent(c:FirDraftContent):FirDraftEditable {
   return {distance_and_direction_from_station:c.incident.distance_and_direction_from_station,accused:c.accused,legal_sections:c.legal_sections,
@@ -96,7 +97,7 @@ export function firDraftProblems(c:FirDraftContent):{field:string;message:string
   });
   need('Witnesses',c.witnesses,'Add witnesses or explicitly select None reported.');
   if(c.witnesses?.status==='listed')c.witnesses.items.forEach((w,n)=>{need(`Witness ${n+1}: name`,w.name);for(const k of ['phone','role_or_relationship','when_present','statement_note']as const)need(`Witness ${n+1}: ${k.replaceAll('_',' ')}`,w[k]);});
-  if(c.complainant.identity_document_id&&!c.attachments.some(d=>d.document_id===c.complainant.identity_document_id))issues.push({field:'Identity document',message:'Include the selected optional identity document in attachments, or clear the selection.'});
+  if(!c.complainant.identity_document_id||!c.attachments.some(d=>d.document_id===c.complainant.identity_document_id))issues.push({field:'Identity document',message:'Select one accepted identity document and include it in attachments before generating the PDF.'});
   return issues;
 }
 // One complete rendering contract, shared by preview, submission and PDF tests.

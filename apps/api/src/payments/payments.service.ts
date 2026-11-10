@@ -7,6 +7,7 @@ import { type CaseActor } from '../cases/case-access';
 import { parse } from '../auth/auth.service';
 import { PAYMENTS, type PaymentsPort } from './payments.port';
 import { NOTIFICATIONS, type NotificationsPort } from '../notifications/notifications.port';
+import {requireFirIdentity} from '../documents/fir-identity';
 import { createPriceQuote, quoteDocuments, type QuoteSnapshot } from './price-quotes';
 const request = z.strictObject({case_id: z.uuid(), purpose: z.enum(['service_fee','courier']), quote_id: z.uuid().optional()});
 @Injectable()
@@ -47,6 +48,7 @@ export class PaymentsService {
       if (captured) throw new ConflictException('This payment has already been captured');
       const now = new Date();
       if (input.purpose === 'service_fee') {
+        if(record.service_code==='fir_draft')await requireFirIdentity(tx,record.id);
         let quoteId = input.quote_id;
         if (!quoteId) {
           const tariff = record.pricing_id ? await tx.servicePricing.findUnique({where: {id: record.pricing_id}}) : null;

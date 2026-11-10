@@ -1,4 +1,5 @@
 import { z } from "zod";
+import {IdentityUploadSchema} from './fir-identity';
 
 export const DOCUMENT_MAX_BYTES = 25_000_000;
 export const DOCUMENT_URL_SECONDS = 300;
@@ -29,8 +30,9 @@ export const DocumentPresignSchema = z.strictObject({
       !value.includes("${"),
   ),
   mime: DocumentMimeSchema,
+  identity: IdentityUploadSchema.optional(),
 });
 // General guidance from §6d, not a per-service acceptance policy. The client
 // still has to confirm acceptable evidence for each flow (§8).
 export const ID_PROOF_NOTICE =
-  "Do not require Aadhaar. The ID proof upload accepts PAN, passport, driving licence or voter ID. If Aadhaar is used, masked only. Identity verification is DigiLocker, never an uploaded image.";
+  "Use only the identity documents accepted for this service. Aadhaar must be masked. Identity files are excluded from content extraction; no ID numbers are extracted or recorded. An uploaded document is not identity verification.";

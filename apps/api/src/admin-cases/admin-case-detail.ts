@@ -1,6 +1,6 @@
 import { Injectable, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { z } from 'zod';
-import {ServiceCodeSchema, firIntakeDetails, type AdminCaseDetail, type AdminContact} from '@legalitt/shared';
+import {IdentityEvidenceSchema, ServiceCodeSchema, firIntakeDetails, type AdminCaseDetail, type AdminContact} from '@legalitt/shared';
 import { PrismaService } from '../prisma.service';
 import { parse } from '../auth/auth.service';
 import { caseScope, type CaseActor } from '../cases/case-access';
@@ -47,6 +47,7 @@ export class AdminCaseDetailRepository {
     const documents = row.documents_case_id_relations.map(d => ({id: d.id, filename: d.filename, kind: d.kind,
       origin: generated.has(d.id) ? 'generated' as const : d.owner_id_relation.role, owner: d.owner_id_relation.full_name,
       status: d.status, mime_type: d.mime_type, page_count: d.page_count, size_bytes: d.size_bytes.toString(), simulated: d.simulated,
+      identity_evidence: IdentityEvidenceSchema.safeParse(d.identity_evidence).data ?? null,
       created_at: d.created_at.toISOString(), final: row.notice_document_id === d.id, draft_version: row.drafts_case_id_relations.find(v => v.document_id === d.id)?.version ?? null}));
     const payments = row.payments_case_id_relations.map(p => ({id: p.id, purpose: p.purpose, base_amount_paise: p.base_amount_paise.toString(), gst_paise: p.gst_paise.toString(), total_paise: p.total_paise.toString(), status: p.status,
       payer: {name: p.payer.full_name, role: p.payer.role}, simulated: p.simulated, created_at: p.created_at.toISOString(), captured_at: p.captured_at?.toISOString() ?? null}));

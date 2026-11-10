@@ -5,8 +5,9 @@ import {
   SERVICE_NAMES,
   type ServiceCode,
 } from "@legalitt/shared";
-import { PrismaClient } from "../src/generated/prisma/client";
+import { PrismaClient, type Prisma } from "../src/generated/prisma/client";
 import data from "./seed-data.json";
+import firIdentityPolicy from './fir-identity-policy.json';
 
 /** Stable UUIDv5 in the standard URL namespace; a changed record gets a new ID. */
 export function seedId(table: string, record: unknown): string {
@@ -35,6 +36,9 @@ export async function seed(client: PrismaClient) {
         update: {},
       });
     }
+    const fir=await tx.service.findUniqueOrThrow({where:{code:'fir_draft'}});
+    const config=fir.config as Record<string,Prisma.JsonValue>;
+    if(!('fir_identity_policy' in config))await tx.service.update({where:{code:'fir_draft'},data:{config:{...config,fir_identity_policy:firIdentityPolicy}}});
     for (const row of data.prices) {
       if (!SERVICE_CODES.includes(row.service_code as ServiceCode)) {
         throw new Error(`Unknown seed service ${row.service_code}`);

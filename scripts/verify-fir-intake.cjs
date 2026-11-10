@@ -61,15 +61,16 @@ async function main(){let browser,api,server,page;const proof={};
   await page.goto(mobile+'/fir/status?caseId='+id,{waitUntil:'networkidle0'});await click(page,'Continue intake');await text(page,'Documents & Evidence');assert.ok(page.url().includes('/step4'));proof.resume_through_existing_status_url=true;
   // Actual upload control, synthetic PNG only; no draft/PDF generation or AI.
   const fixture=path.join(out,'TEST-intake-evidence.png');fs.copyFileSync('apps/mobile/assets/legalitt-mark.png',fixture);
-  if(deployed){const choosing=page.waitForFileChooser();await click(page,'Upload ID Proof (Optional)');await(await choosing).accept([fixture]);proof.browser_file_upload=true;}
+  await page.click('[aria-label="Identity type: Passport"]');
+  if(deployed){const choosing=page.waitForFileChooser();await click(page,'Upload Identity Proof');await(await choosing).accept([fixture]);proof.browser_file_upload=true;await text(page,'Identity document attached.');}
   else{
    // 8083 is an isolated test origin outside the existing S3 CORS allowlist.
    // Keep browser security and cloud settings intact; deployed proof uses the button.
-   const ticket=await clients.client.presign({case_id:id,kind:'id_proof',filename:'TEST-intake-evidence.png',mime:'image/png'});await clients.client.upload(ticket,new Blob([fs.readFileSync(fixture)],{type:'image/png'}));await page.reload({waitUntil:'networkidle0'});proof.local_upload='API upload; isolated browser origin not allowed by existing S3 CORS';
+   const ticket=await clients.client.presign({case_id:id,kind:'id_proof',filename:'TEST-intake-evidence.png',mime:'image/png',identity:{document_type:'passport',masked_copy:false}});await clients.client.upload(ticket,new Blob([fs.readFileSync(fixture)],{type:'image/png'}));await page.reload({waitUntil:'networkidle0'});proof.local_upload='API upload; isolated browser origin not allowed by existing S3 CORS';
   }
-  await text(page,'TEST-intake-evidence.png');await text(page,'Identity evidence');await page.screenshot({path:path.join(out,'step4.png'),fullPage:true});
+  const identity=(await clients.client.case(id)).documents.find(d=>d.kind==='id_proof'&&d.status==='uploaded');assert.ok(identity);await text(page,identity.filename);await text(page,'Identity evidence');await page.screenshot({path:path.join(out,'step4.png'),fullPage:true});
   await click(page,'Continue Draft');await text(page,'Review Your Request');
-  for(const value of ['TEST ONLY Intake Complainant','TEST ONLY free text station','TEST ONLY narrative entered by the client.','TEST ONLY additional context retained on review.','Unknown suspect','TEST ONLY named accused','TEST ONLY witness','TEST witness statement note','TEST-intake-evidence.png'])await text(page,value);
+  for(const value of ['TEST ONLY Intake Complainant','TEST ONLY free text station','TEST ONLY narrative entered by the client.','TEST ONLY additional context retained on review.','Unknown suspect','TEST ONLY named accused','TEST ONLY witness','TEST witness statement note',identity.filename])await text(page,value);
   await page.screenshot({path:path.join(out,'step5.png'),fullPage:true});const body=await page.evaluate(()=>document.body.innerText);assert.ok(!body.includes('Verified KYC'));proof.review_actual_values=true;
   const stored=await clients.client.case(id);assert.equal(stored.details.people.length,4);assert.equal(stored.details.people.filter(p=>p.kind==='accused').length,2);assert.equal(stored.details.people.find(p=>p.unknown).name,'');
   const adminDetail=await clients.admin.adminCase(id);assert.deepEqual(adminDetail.intake.people,stored.details.people);assert.equal(adminDetail.intake.incident.additional,stored.details.incident.additional);proof.admin_original_intake=true;

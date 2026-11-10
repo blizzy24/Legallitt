@@ -42,7 +42,8 @@ export type AdminCaseDetail = {
     actor: {name: string; role: string | null} | null; source: string; payload: Record<string, unknown>; created_at: string}[];
   documents: {id: string; filename: string; kind: string; origin: 'client' | 'advocate' | 'admin' | 'generated';
     owner: string; status: string; mime_type: string; page_count: number | null; size_bytes: string;
-    simulated: boolean; created_at: string; final: boolean; draft_version: number | null}[];
+    simulated: boolean; created_at: string; final: boolean; draft_version: number | null;
+    identity_evidence?: import('./fir-identity').IdentityEvidence | null}[];
   drafts: {id: string; version: number; content: Record<string, unknown>; document_id: string | null;
     generated_by: string | null; author: string; created_at: string}[];
   payments: {id: string; purpose: string; base_amount_paise: string; gst_paise: string; total_paise: string;

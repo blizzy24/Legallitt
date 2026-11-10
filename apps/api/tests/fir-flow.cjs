@@ -28,16 +28,25 @@ test('FIR: paid intake, advocate version freeze, admin-only approval, oldest-fir
   global.fetch=async(url,options)=>url==='https://fir-storage.invalid'?(objects.set(options.body.get('key'),new Uint8Array(await options.body.get('file').arrayBuffer())),new Response(null,{status:204})):originalFetch(url,options);
   const docs=new DocumentService(prisma,storage,{inspect:async bytes=>({mime:'application/pdf',pageCount:(await PDFDocument.load(bytes)).getPageCount()})});
   const fir=new FirService(prisma,docs,inbox),queue=new AdminCasesRepository(prisma),detail=new AdminCaseDetailRepository(prisma);
-  const pay=new PaymentsService(prisma,state,{capture:async()=>({paymentId:randomUUID(),simulated:true,source:'simulated'})},inbox);
+  let captures=0;
+  const pay=new PaymentsService(prisma,state,{capture:async()=>{captures++;return {paymentId:randomUUID(),simulated:true,source:'simulated'};}},inbox);
   const before={};for(const model of ['servicePricing','commissionRate','feePolicy','pageOveragePolicy'])before[model]=await db[model].findMany({select:{id:true}});
   const fixture=require('./helpers/fir.cjs'),intake=fixture.intake(),content=fixture.editable(intake);
-  const saveInput=async id=>{const c=await fir.context(advocate,id);return {base_draft_id:c.latest_draft_id,filing_hash:c.filing_hash,content:fixture.editable(c.intake)};};
+  const saveInput=async id=>{const c=await fir.context(advocate,id),doc=await db.document.findFirst({where:{case_id:id,kind:'id_proof',status:'uploaded'}}),content=fixture.editable(c.intake);content.identity_document_id=doc.id;content.attachment_ids=[doc.id];return {base_draft_id:c.latest_draft_id,filing_hash:c.filing_hash,content};};
   const save=async(id,patch={})=>{const input=await saveInput(id);return fir.save(advocate,id,{...input,content:{...input.content,...patch}});};
   const working=async(owner=client)=>{const c=await state.create(owner,{service_code:'fir_draft'});ids.push(c.id);await fir.intake(owner,c.id,fixture.intake());
-    assert.equal(await db.document.count({where:{case_id:c.id}}),0);
+    assert.equal(await db.document.count({where:{case_id:c.id}}),0);await assert.rejects(state.submitForPayment(owner,c.id),{status:400});await db.document.create({data:{case_id:c.id,owner_id:owner.id,kind:'id_proof',filename:'TEST-identity.pdf',mime_type:'application/pdf',size_bytes:100n,page_count:1,status:'uploaded',s3_key:randomUUID(),identity_evidence:{document_type:'passport',masked_copy:false,policy_version:1,declared_at:new Date().toISOString()}}});
     await state.submitForPayment(owner,c.id);const q=await pay.quote(owner,{case_id:c.id});assert.equal(q.status,'ready');assert.equal(q.breakdown.total_paise,'147353');await pay.intent(owner,{case_id:c.id,purpose:'service_fee',quote_id:q.id},randomUUID());await state.assign(admin,c.id,{advocate_id:advocate.id});await state.transition(advocate,c.id,'advocate_accepted');return c;};
   try{
     await db.user.createMany({data:users});await db.advocateProfile.create({data:{user_id:advocate.id,verification:'approved',city:'Mumbai'}});await seedConfirmedPricing(db);
+    await t.test('identity removed after submission blocks payment before gateway capture',async()=>{
+      const c=await state.create(client,{service_code:'fir_draft'});ids.push(c.id);await fir.intake(client,c.id,fixture.intake());
+      const doc=await db.document.create({data:{case_id:c.id,owner_id:client.id,kind:'id_proof',filename:'TEST-identity.pdf',mime_type:'application/pdf',size_bytes:100n,page_count:1,status:'uploaded',s3_key:randomUUID(),identity_evidence:{document_type:'passport',masked_copy:false,policy_version:1,declared_at:new Date().toISOString()}}});
+      await state.submitForPayment(client,c.id);await db.document.update({where:{id:doc.id},data:{status:'deleted'}});
+      const q=await pay.quote(client,{case_id:c.id}),before=captures;
+      await assert.rejects(pay.intent(client,{case_id:c.id,purpose:'service_fee',quote_id:q.id},randomUUID()),e=>e.status===400&&e.message.includes('identity document'));
+      assert.equal(captures,before);assert.equal(await db.payment.count({where:{case_id:c.id,status:'captured'}}),0);
+    });
     const c=await working();
     await t.test('partial drafts save, complete errors block PDF, and stale concurrent saves cannot replace current work',async()=>{
       const input=await saveInput(c.id);

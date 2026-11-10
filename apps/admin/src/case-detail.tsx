@@ -43,6 +43,7 @@ export function CaseDetail() {
   <span className="file-symbol">{doc.mime_type==='application/pdf'?'PDF':'FILE'}</span><div className="file-description">
   {doc.status==='uploaded'?<button className="text-button" onClick={()=>setPreview(doc)}>{doc.filename} ↗</button>:<strong>{doc.filename}</strong>}
   <p>{doc.final?(service==='legal_notice'?'Final notice':'Final document'):doc.draft_version!==null?`Draft · v${doc.draft_version}`:label(doc.kind)}<Demo show={doc.simulated}/></p>
+  {doc.identity_evidence&&<p>Declared type: {label(doc.identity_evidence.document_type)}{doc.identity_evidence.masked_copy?' · Masked copy declared by uploader':''}. Uploaded evidence, not identity verification.</p>}
   <p>{doc.owner}{doc.page_count!==null?` · ${doc.page_count} ${doc.page_count===1?'page':'pages'}`:''}{doc.status!=='uploaded'?` · ${label(doc.status)}`:''}</p></div></div>;
  const relatedDoc=(docId:string|null)=>{const doc=d.documents.find(v=>v.id===docId);return doc?<button className="text-button" onClick={()=>setPreview(doc)}>{doc.filename} ↗<Demo show={doc.simulated}/></button>:null;};
  return <main className="case-detail">

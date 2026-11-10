@@ -1,0 +1,44 @@
+{
+  "historical_pdf_unchanged": null,
+  "case_id": "89772d1a-0a08-4a8f-8b5d-554c85fdd72f",
+  "reference": "FIR_DRAFT-2026-0023",
+  "approval": {
+    "version": 2,
+    "draft_id": "58f9ddfa-840a-495a-9323-a06c8c508b57",
+    "document_id": "18ca8c19-f03d-45e3-8174-6f09321b9b57",
+    "submitted_at": "2026-11-10T11:13:00.967Z",
+    "approved_at": null
+  },
+  "total_paise": "149853",
+  "completed_status": "completed",
+  "pdf_sha256": "c31d6e9c8c5cb2067e3fcdaf5eaa447a504c54bd322cb18118511ca3078a9371",
+  "second_submission": 409,
+  "client_approval": 403,
+  "unapproved_client_pdf": 404,
+  "isolation": {
+    "other_client_to_case": 404,
+    "client_to_other_case": 404,
+    "other_case_id": "399b3f33-6037-44aa-81db-77564bbabd77"
+  },
+  "browser_errors": [],
+  "required_identity": {
+    "uploaded": 1,
+    "document_type": "passport",
+    "policy_version": 1,
+    "missing_at_submission": 400,
+    "masked_confirmation_required": true,
+    "original_filename_discarded": true,
+    "number_fields_stored": false
+  },
+  "client_facts_read_only": true,
+  "stale_save": 409,
+  "preview_equals_released_pdf": true,
+  "editable_values_in_actual_pdf": true,
+  "screen_states": {
+    "loading": true,
+    "empty": true,
+    "partial": true,
+    "error_and_retry": true,
+    "ideal": true
+  }
+}

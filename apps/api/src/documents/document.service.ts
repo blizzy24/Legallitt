@@ -15,6 +15,8 @@ import {
   DocumentMimeSchema,
   DocumentPresignSchema,
   ID_PROOF_NOTICE,
+  FIR_ID_NOTICE,
+  IdentityEvidenceSchema,
 } from "@legalitt/shared";
 import type { Prisma, Document } from "../generated/prisma/client";
 import { parse } from "../auth/auth.service";
@@ -23,6 +25,7 @@ import { caseScope, type CaseActor } from "../cases/case-access";
 import { lockedCase } from "../cases/case-state-machine";
 import { DocumentStorage, stagingKey } from "./document-storage";
 import { FileInspector } from "./file-inspector";
+import {firIdentityPolicy} from './fir-identity';
 
 const transactionOptions = { timeout: 60_000 };
 @Injectable()
@@ -70,7 +73,7 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
     return {
       ...doc,
       size_bytes: doc.size_bytes.toString(),
-      ...(doc.kind === "id_proof" ? { identity_notice: ID_PROOF_NOTICE } : {}),
+      ...(doc.kind === "id_proof" ? { identity_notice: doc.identity_evidence ? FIR_ID_NOTICE : ID_PROOF_NOTICE } : {}),
     };
   }
   async presign(actor: CaseActor, body: unknown) {
@@ -83,7 +86,18 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
         actor.role === 'advocate' && ['advocate_accepted','in_progress'].includes(record.status) && !record.sub_status
       )) throw new ConflictException('FIR documents are frozen at this stage');
       const id = randomUUID();
-      const key = `cases/${input.case_id}/${id}/${input.filename}`;
+      if(input.identity&&(record.service_code!=='fir_draft'||input.kind!=='id_proof'))throw new BadRequestException('Identity declarations belong only to FIR identity uploads');
+      let identity:ReturnType<typeof IdentityEvidenceSchema.parse>|undefined;
+      if(record.service_code==='fir_draft'&&input.kind==='id_proof'){
+        const policy=await firIdentityPolicy(tx),type=policy.accepted_documents.find(t=>t.code===input.identity?.document_type);
+        if(!input.identity||!type)throw new BadRequestException('Choose one accepted identity document type before uploading.');
+        if(type.requires_masking&&!input.identity.masked_copy)throw new BadRequestException('Full Aadhaar is not accepted. Download and confirm a masked copy showing only the last four digits.');
+        identity={...input.identity,policy_version:policy.version,declared_at:new Date().toISOString()};
+      }
+      // Original identity filenames may contain ID numbers. Never persist them,
+      // including in object keys, download headers, the draft or PDF manifest.
+      const filename=input.kind==='id_proof'?`Identity-proof-${id}.${input.mime==='application/pdf'?'pdf':input.mime==='image/png'?'png':'jpg'}`:input.filename;
+      const key = `cases/${input.case_id}/${id}/${filename}`;
       const doc = await tx.document.create({
         data: {
           id,
@@ -91,7 +105,8 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
           owner_id: actor.id,
           simulated: actor.source === "simulated",
           kind: input.kind,
-          filename: input.filename,
+          filename,
+          ...(identity?{identity_evidence:identity}:{}),
           s3_key: key,
           mime_type: input.mime,
           size_bytes: 0n,

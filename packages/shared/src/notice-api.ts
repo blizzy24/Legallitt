@@ -74,6 +74,7 @@ export type ApiDocument = {
   page_count: number | null;
   status: string;
   identity_notice?: string;
+  identity_evidence?: import('./fir-identity').IdentityEvidence | null;
 };
 export type ApiDraft = {
   compliance_period_days?: number | null;

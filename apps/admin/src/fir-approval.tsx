@@ -27,6 +27,7 @@ export function FirApprovalPanel({record,reload}:{record:AdminCaseDetail;reload(
       {!url&&!error&&approval&&<p role="status">Loading submitted PDF… Approval is blocked until it is available.</p>}
       {url&&<><a href={url} target="_blank" rel="noreferrer">Open submitted PDF in new tab ↗</a><iframe className="fir-pdf" title="Submitted FIR draft" src={url} onLoad={()=>setPdfLoaded(true)} onError={()=>{setPdfLoaded(false);setError('PDF could not be loaded. Retry before approving.');}}/></>}
       <p>Compare this draft with the intake and supporting documents below. Approval sends this exact PDF to the client and closes the drafting case.</p>
+      <p>Review the attached identity evidence. Aadhaar must be masked; never transcribe any identity document number. The uploader’s declaration is not identity verification.</p>
       <label className="fir-confirm"><input type="checkbox" checked={confirmed} disabled={!pdfLoaded||busy} onChange={e=>setConfirmed(e.target.checked)}/>I have reviewed the submitted PDF, intake and supporting documents.</label>
       {!confirmed&&<p>Review the documents and confirm above to enable approval.</p>}
       <button className="primary" disabled={busy||!draft||!pdfLoaded||!confirmed} onClick={approve}>{busy?'Approving…':'Approve and send to client'}</button>

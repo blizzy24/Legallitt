@@ -263,6 +263,7 @@ model CaseParty {
 }
 
 model Document {
+  identity_evidence                   Json?      @db.JsonB
   id                                  String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   case_id                             String?    @db.Uuid
   owner_id                            String     @db.Uuid

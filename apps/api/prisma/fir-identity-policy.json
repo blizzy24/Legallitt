@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "required": true,
+  "accepted_documents": [
+    {"code": "masked_aadhaar", "label": "Masked Aadhaar", "requires_masking": true},
+    {"code": "passport", "label": "Passport", "requires_masking": false},
+    {"code": "voter_id", "label": "Voter ID", "requires_masking": false},
+    {"code": "driving_licence", "label": "Driving licence", "requires_masking": false}
+  ]
+}

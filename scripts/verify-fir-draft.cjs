@@ -6,7 +6,7 @@ const {PDFDocument}=require('../apps/api/node_modules/pdf-lib');
 process.loadEnvFile('apps/api/.env.local');
 const deployed=process.env.FIR_DEPLOYED==='1',base=deployed?'https://gvycg0n3u8.execute-api.ap-south-1.amazonaws.com':'http://127.0.0.1:3003';
 const mobile=deployed?'https://legalitt-5.vercel.app':'http://localhost:8083',adminWeb=deployed?'https://legalitt-admin-panel.vercel.app':'http://localhost:5174';
-const out=path.resolve('reports/fir-draft-2026-11-10',deployed?'deployed':'local');fs.mkdirSync(out,{recursive:true});
+const out=path.resolve('reports/fir-identity-2026-11-10',deployed?'deployed':'local');fs.mkdirSync(out,{recursive:true});
 const json=(name,data)=>fs.writeFileSync(path.join(out,name),JSON.stringify(data,null,2)+'\n');
 const delay=ms=>new Promise(r=>setTimeout(r,ms));
 async function click(page,text){await page.waitForFunction(text=>[...document.querySelectorAll('[role="button"],[role="checkbox"],[role="radio"],button,a')].some(e=>e.getClientRects().length&&e.textContent.trim()===text&&!e.disabled&&e.getAttribute('aria-disabled')!=='true'),{timeout:60000},text);const h=await page.evaluateHandle(text=>[...document.querySelectorAll('[role="button"],[role="checkbox"],[role="radio"],button,a')].find(e=>e.getClientRects().length&&e.textContent.trim()===text&&!e.disabled&&e.getAttribute('aria-disabled')!=='true'),text);await h.asElement().evaluate(e=>e.scrollIntoView({block:'center'}));await h.asElement().click();await h.dispose();if(text==='Done')await page.waitForFunction(()=>![...document.querySelectorAll('input')].some(e=>['Complainant name','Accused name','Witness name'].includes(e.getAttribute('aria-label'))&&e.getClientRects().length),{timeout:60000});}
@@ -49,11 +49,25 @@ async function main(){let browser,apiProcess,restoreProfile;const servers=[],pag
   await click(client,'+ Add Accused / Opposite Party');await click(client,'☐ Identity unknown');await fill(client,'Other known details','TEST unknown blue coat');await click(client,'Done');
   await click(client,'+ Add Witness');await fill(client,'Witness name','TEST Witness One');await fill(client,'Contact number','2025550102');await fill(client,'Witness role / relationship','TEST passerby');await fill(client,'When present','TEST at start');await fill(client,'Statement note','TEST original witness note');await click(client,'Done');
   await client.screenshot({path:path.join(out,'client-personal-facts.png'),fullPage:true});await click(client,'Continue to Evidence & Documents');await text(client,'Documents & Evidence');
-  // Upload through the same real API/storage pipeline; browser checks uploaded evidence.
-  for(const [pages,kind,filename]of [[25,'supporting_document','TEST-FIR-25-pages.pdf'],[1,'supporting_document','TEST-FIR-extra-page.pdf']]){
+  await text(client,'Identity proof required');
+  for(const label of ['Masked Aadhaar','Passport','Voter ID','Driving licence'])await text(client,label);
+  await assert.rejects(clients.client.submit(caseId),e=>e.status===400&&e.message.includes('identity document'));
+  await selectorClick(client,'[aria-label="Identity type: Masked Aadhaar"]');
+  await text(client,'Confirm the masked copy before choosing a file.');await text(client,'Open UIDAI My Aadhaar');
+  assert.ok(await client.evaluate(()=>[...document.querySelectorAll('[role="button"],button')].some(e=>e.textContent.trim()==='Upload Identity Proof'&&(e.disabled||e.getAttribute('aria-disabled')==='true'))));
+  await client.screenshot({path:path.join(out,'client-masked-aadhaar-guidance.png'),fullPage:true});
+  await selectorClick(client,'[aria-label="Identity type: Passport"]');
+  // Synthetic evidence only. No real identity numbers or card images.
+  const idPdf=await PDFDocument.create();idPdf.addPage().drawText('TEST ONLY identity evidence fixture. No real identity data.');const idBytes=await idPdf.save();
+  const idFile=path.join(out,'TEST-identity-fixture.pdf');fs.writeFileSync(idFile,idBytes);
+  if(deployed){const [chooser]=await Promise.all([client.waitForFileChooser(),click(client,'Upload Identity Proof')]);await chooser.accept([idFile]);await text(client,'Identity document attached.');}
+  else{const ticket=await clients.client.presign({case_id:caseId,kind:'id_proof',filename:'TEST-original-ID-filename.pdf',mime:'application/pdf',identity:{document_type:'passport',masked_copy:false}});await clients.client.upload(ticket,new Blob([idBytes],{type:'application/pdf'}));}
+  const identity=(await clients.client.case(caseId)).documents.find(d=>d.kind==='id_proof'&&d.status==='uploaded');assert.ok(identity);assert.equal(identity.identity_evidence.document_type,'passport');assert.match(identity.filename,/^Identity-proof-/);
+  // Upload through the real API/storage pipeline; browser checks uploaded evidence.
+  for(const [pages,kind,filename]of [[25,'supporting_document','TEST-FIR-25-pages.pdf']]){
    const pdf=await PDFDocument.create();for(let i=0;i<pages;i++)pdf.addPage();const bytes=await pdf.save();const ticket=await clients.client.presign({case_id:caseId,kind,filename,mime:'application/pdf'});await clients.client.upload(ticket,new Blob([bytes],{type:'application/pdf'}));
   }
-  await client.reload({waitUntil:'networkidle0'});await text(client,'TEST-FIR-25-pages.pdf');await text(client,'TEST-FIR-extra-page.pdf');await click(client,'Continue Draft');await text(client,'Review Your Request');await click(client,'Proceed To Pay');await text(client,'₹1,498.53');await client.screenshot({path:path.join(out,'client-quote.png'),fullPage:true});await click(client,'Pay using UPI App');await text(client,'Paid ₹1,498.53');
+  await client.reload({waitUntil:'networkidle0'});await text(client,'TEST-FIR-25-pages.pdf');await text(client,identity.filename);await click(client,'Continue Draft');await text(client,'Review Your Request');await click(client,'Proceed To Pay');await text(client,'₹1,498.53');await client.screenshot({path:path.join(out,'client-quote.png'),fullPage:true});await click(client,'Pay using UPI App');await text(client,'Paid ₹1,498.53');
   console.log('PASS client intake, uploaded 26 pages, quote and simulated payment');
   const admin=await login('admin');await admin.goto(adminWeb+'/services/fir_draft/cases/'+caseId,{waitUntil:'networkidle0'});await click(admin,'+ Assign');await admin.waitForSelector('.advocate-option');const chosen=await admin.$(`[aria-label="Assign to ${sessions.advocate.user.name}"]`);assert.ok(chosen);await chosen.click();await text(admin,sessions.advocate.user.name);
   const adv=await login('advocate');await adv.goto(mobile+'/advocate/fir/draft?caseId='+caseId,{waitUntil:'networkidle0'});let holdContext=true,releaseContext,failSave=false;
@@ -76,7 +90,8 @@ async function main(){let browser,apiProcess,restoreProfile;const servers=[],pag
   await fill(adv,'Statement of Facts','TEST ONLY advocate edited narrative. हिंदी कथन। No real offence or police filing.');
   await fill(adv,'Witness 1: Statement note','TEST edited witness note');await click(adv,'Add Witness');await fill(adv,'Witness 2 name','TEST Witness Two');
   for(const [label,value]of [['Phone','2025550106'],['Role / relationship','TEST shopkeeper'],['When present','TEST at end'],['Statement note','TEST second witness note']])await fill(adv,'Witness 2: '+label,value);
-  await selectorClick(adv,'[aria-label="Include TEST-FIR-extra-page.pdf"]');await selectorClick(adv,'[aria-label="Include TEST-FIR-25-pages.pdf"]');
+  await text(adv,'Select one accepted identity document');
+  await click(adv,'Use identity reference: '+identity.filename);await selectorClick(adv,'[aria-label="Include TEST-FIR-25-pages.pdf"]');
   await click(adv,'Save Draft');await text(adv,'Saved v1');await adv.screenshot({path:path.join(out,'advocate-structured-draft.png'),fullPage:true});
   const stale=await login('advocate');await stale.goto(mobile+'/advocate/fir/draft?caseId='+caseId,{waitUntil:'networkidle0'});await text(stale,'Saved v1');
   await fill(adv,'Statement of Facts','TEST ONLY advocate final edited narrative. हिंदी कथन। No real offence or police filing.');failSave=true;await click(adv,'Save Draft');await text(adv,'TEST transient save failure');assert.ok((await adv.$eval('[aria-label="Statement of Facts"]',e=>e.value)).includes('final edited narrative'));await adv.screenshot({path:path.join(out,'advocate-save-error.png'),fullPage:true});await click(adv,'Save Draft');await text(adv,'Saved v2');
@@ -86,8 +101,8 @@ async function main(){let browser,apiProcess,restoreProfile;const servers=[],pag
   const previewBytes=Buffer.from(pdfPreview.pdf_base64,'base64');fs.writeFileSync(path.join(out,'preview.pdf'),previewBytes);
   const pdfText=await require('../apps/api/tests/helpers/pdf-text.cjs').readPdfText(previewBytes);
   for(const value of ['TEST Father Rao','TEST Present Street 22','TEST Registered Street 11','TEST 2 km north','Unknown suspect','TEST Second Suspect','TEST second alias','TEST bicycle','TEST manually selected provision','TEST ONLY advocate final edited narrative.','हिंदी कथन।','TEST edited witness note','TEST Witness Two','TEST second witness note'])assert.ok(pdfText.text.includes(value),value);
-  assert.ok(pdfText.text.indexOf('TEST-FIR-extra-page.pdf')<pdfText.text.indexOf('TEST-FIR-25-pages.pdf'));
-  assert.ok(!pdfText.text.includes('Identity document:'));assert.equal((await clients.client.case(caseId)).documents.filter(d=>d.kind==='id_proof').length,0);
+  assert.ok(pdfText.text.indexOf(identity.filename)<pdfText.text.indexOf('TEST-FIR-25-pages.pdf'));
+  assert.ok(pdfText.text.includes('Identity document:'));assert.equal((await clients.client.case(caseId)).documents.filter(d=>d.kind==='id_proof').length,1);assert.ok(!pdfText.text.includes('TEST-original-ID-filename'));
   await click(adv,'Send for Admin Approval');await text(adv,'Awaiting Admin Approval');await adv.screenshot({path:path.join(out,'advocate-waiting.png'),fullPage:true});
   const pending=await clients.admin.adminCase(caseId),approval=pending.approval;assert.ok(approval);assert.equal(pending.sub_status,'awaiting_admin_approval');
   await assert.rejects(clients.advocate.sendFirDraft(caseId,approval.draft_id),{status:409});await assert.rejects(clients.client.approveFirDraft(caseId,approval.draft_id),{status:403});
@@ -102,8 +117,8 @@ async function main(){let browser,apiProcess,restoreProfile;const servers=[],pag
   await client.reload({waitUntil:'networkidle0'});await text(client,'Your FIR Draft Is Ready');await text(client,'View FIR Draft');await client.screenshot({path:path.join(out,'client-completed.png'),fullPage:true});
   await adv.reload({waitUntil:'networkidle0'});await text(adv,'FIR Draft Completed');assert.deepEqual(errors,[]);
   let historicalPdfUnchanged=null;
-  if(deployed){const previous=require('../reports/fir-approval-2026-11-10/deployed/verification.json'),old=await clients.client.case(previous.case_id);assert.equal(old.status,'completed');assert.equal(old.approval.document_id,previous.approval.document_id);const url=await clients.client.documentUrl(old.approval.document_id),bytes=Buffer.from(await(await fetch(url.url)).arrayBuffer());assert.equal(createHash('sha256').update(bytes).digest('hex'),previous.pdf_sha256);historicalPdfUnchanged={case_id:old.id,sha256:previous.pdf_sha256};}
-  json('verification.json',{historical_pdf_unchanged:historicalPdfUnchanged,case_id:caseId,reference:pending.reference,approval,total_paise:done.client_fees.total_paise,completed_status:done.status,pdf_sha256:createHash('sha256').update(final).digest('hex'),second_submission:409,client_approval:403,unapproved_client_pdf:404,isolation:{other_client_to_case:404,client_to_other_case:404,other_case_id:isolation.id},browser_errors:errors,optional_id:{uploaded:0,submission:true,pdf:true},client_facts_read_only:true,stale_save:409,preview_equals_released_pdf:true,editable_values_in_actual_pdf:true,screen_states:{loading:true,empty:true,partial:true,error_and_retry:true,ideal:true}});
+  if(deployed){const previous=require('../reports/fir-draft-2026-11-10/deployed/verification.json'),old=await clients.client.case(previous.case_id);assert.equal(old.status,'completed');assert.equal(old.approval.document_id,previous.approval.document_id);const url=await clients.client.documentUrl(old.approval.document_id),bytes=Buffer.from(await(await fetch(url.url)).arrayBuffer());assert.equal(createHash('sha256').update(bytes).digest('hex'),previous.pdf_sha256);historicalPdfUnchanged={case_id:old.id,sha256:previous.pdf_sha256};}
+  json('verification.json',{historical_pdf_unchanged:historicalPdfUnchanged,case_id:caseId,reference:pending.reference,approval,total_paise:done.client_fees.total_paise,completed_status:done.status,pdf_sha256:createHash('sha256').update(final).digest('hex'),second_submission:409,client_approval:403,unapproved_client_pdf:404,isolation:{other_client_to_case:404,client_to_other_case:404,other_case_id:isolation.id},browser_errors:errors,required_identity:{uploaded:1,document_type:identity.identity_evidence.document_type,policy_version:identity.identity_evidence.policy_version,missing_at_submission:400,masked_confirmation_required:true,original_filename_discarded:true,number_fields_stored:false},client_facts_read_only:true,stale_save:409,preview_equals_released_pdf:true,editable_values_in_actual_pdf:true,screen_states:{loading:true,empty:true,partial:true,error_and_retry:true,ideal:true}});
   console.log('PASS advocate draft → admin frozen-version review → client exact PDF → completed; duplicate send and private access refused');
  }catch(e){console.error('Original failure: '+e.stack);for(const [role,page]of pages)if(!page.isClosed()){await page.screenshot({path:path.join(out,role+'-failure.png'),fullPage:true}).catch(()=>{});fs.writeFileSync(path.join(out,role+'-failure.txt'),await page.evaluate(()=>document.body.innerText));}throw e;}
  finally{await browser?.close();for(const server of servers)server.close();apiProcess?.kill();await restoreProfile?.();}

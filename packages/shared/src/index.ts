@@ -18,5 +18,6 @@ export * from './case-routing';
 export * from './pricing';
 export * from './fir';
 export * from './fir-answer';
+export * from './fir-identity';
 export * from './fir-draft';
 export * from './jurisdictions';

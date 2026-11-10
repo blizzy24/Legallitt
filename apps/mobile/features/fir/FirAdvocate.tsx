@@ -3,7 +3,7 @@ import {useEffect,useRef,useState} from 'react';
 import {Linking,Platform,ScrollView,Text,View} from 'react-native';
 import {router,useLocalSearchParams} from 'expo-router';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {FirIntakeSchema,firAwaitingApproval,waitingDuration,firEditableContent,assembleFirDraft,firDraftProblems,FirDraftEditableSchema,type FirDraftContext,type FirDraftEditable} from '@legalitt/shared';
+import {acceptedFirIdentity,FirIntakeSchema,firAwaitingApproval,waitingDuration,firEditableContent,assembleFirDraft,firDraftProblems,FirDraftEditableSchema,type FirDraftContext,type FirDraftEditable} from '@legalitt/shared';
 import {backend} from '../../lib/auth';
 import {Button,Card,ErrorBox,useFirCase,openDocument,uploadEvidence,s} from './shared';
 import {DraftEditor} from './DraftEditor';
@@ -39,6 +39,7 @@ export default function FirAdvocate(){
   const parsed=FirDraftEditableSchema.safeParse(draft);
   if(!parsed.success)problems=parsed.error.issues.map(i=>`${i.path.join('.')}: ${i.message}`);
   else{const docs=r.documents??[],attachments=draft.attachment_ids.flatMap(id=>{const doc=docs.find(d=>d.id===id&&d.status==='uploaded');return doc?[{document_id:doc.id,filename:doc.filename,mime_type:doc.mime_type as 'application/pdf'}]:[];});
+   if(draft.identity_document_id&&!docs.some(d=>d.id===draft.identity_document_id&&acceptedFirIdentity(context.identity_policy,d)))problems.push('The selected identity document is not accepted. Clear it and choose an accepted identity upload.');
    if(attachments.length!==draft.attachment_ids.length)problems.push('Remove unavailable attachments before generating the PDF.');
    problems.push(...firDraftProblems(assembleFirDraft(r.id,context.intake,context.filing_hash,new Date().toISOString(),parsed.data,attachments)).map(p=>p.message));
   }

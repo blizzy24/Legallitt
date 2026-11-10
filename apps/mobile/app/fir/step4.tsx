@@ -1,6 +1,7 @@
 import {designSubstitutions as copy} from '../../copy/substitutions';
 import {useState} from 'react';
-import {FIR_OPTIONAL_ID_NOTICE} from '@legalitt/shared';
+import {acceptedFirIdentity} from '@legalitt/shared';
+import {IdentityUpload,IdentityRequirement,useFirIdentityPolicy} from '../../features/fir/IdentityEvidence';
 import {useFir} from '../../context/fir';
 import {backend} from '../../lib/auth';
 import {uploadEvidence,openDocument} from '../../features/fir/shared';
@@ -46,12 +47,13 @@ const SECTION_ICONS: LucideIcon[] = [FileText, Camera, MessageSquare, FolderOpen
 
 function FirStep4Screen() {
  const m=useFir(),[uploading,setUploading]=useState<number|null>(null),docs=m.record?.documents??[];
+ const identity=useFirIdentityPolicy(),identityReady=!!identity.policy&&docs.some(d=>acceptedFirIdentity(identity.policy!,d));
  const group=(kind:string)=>kind==='id_proof'||kind==='fir_primary'?1:kind==='fir_scene'?2:kind==='fir_communications'?3:4;
  const upload=(category:number,kind:string)=>{setUploading(category);void m.action(()=>uploadEvidence(m.record!.id,kind)).finally(()=>setUploading(null));};
  const bytes=docs.reduce((n,d)=>n+Number(d.size_bytes??0),0);
  return <FirShell step={4} title="Fir Draft"><IntakeStatus/><Text style={styles.heading}>Documents &amp; Evidence</Text><Text style={styles.subtitle}>Upload supporting materials, receipts or media records for your request.</Text>
  {EVIDENCE_SECTIONS.map((item,i)=>{const files=docs.filter(d=>group(d.kind)===item.n),kind=['fir_primary','fir_scene','fir_communications','supporting_document'][i];return <Section key={item.n} icon={SECTION_ICONS[i]} section={{...item,state:files.length+ (files.length===1?' File':' Files')}} first={i===0}>
-  {item.n===1&&<><Text style={styles.perPage}>{FIR_OPTIONAL_ID_NOTICE}</Text><Text style={styles.perPage}>{copy[45].identity}</Text><Pressable accessibilityRole="button" disabled={m.busy||!m.record} onPress={()=>upload(1,'id_proof')} style={styles.attach}><FileUp size={t.attachIcon} color={colors.textPrimary}/><Text style={styles.attachLabel}>Upload ID Proof (Optional)</Text></Pressable></>}
+  {item.n===1&&<><IdentityRequirement state={identity} documents={docs}/><IdentityUpload state={identity} caseId={m.record?.id??''} run={m.action} busy={m.busy}/></>}
   {files.map(d=><FileRow key={d.id} icon={d.mime_type==='application/pdf'?FileText:Images} name={d.filename} meta={[Math.ceil(Number(d.size_bytes??0)/1024)+' KB',d.page_count!=null?d.page_count+' pages':null,d.kind==='id_proof'?'Identity evidence':null].filter(Boolean).join(' · ')} onView={()=>void m.action(()=>openDocument(d.id))} onRemove={()=>void m.action(()=>backend.deleteDocument(d.id))} disabled={m.busy}/>)}
   {!files.length&&<Text style={styles.perPage}>No files attached in this category.</Text>}
   {uploading===item.n&&<Text role="status" style={styles.perPage}>Choosing or uploading a file…</Text>}
@@ -61,7 +63,7 @@ function FirStep4Screen() {
  <Text style={styles.perPage}>{copy[45].overage}</Text>
  <Pressable accessibilityRole="button" onPress={()=>previewNotice('Custom categories are not available yet. Use Ancillary / Other Records.')} style={styles.slot}><Plus size={t.slotIcon} color={colors.textPrimary}/><Text style={styles.slotLabel}>Add Custom Category Slot</Text></Pressable>
  <View style={styles.custody}><View style={styles.custodyRow}><Scale size={t.custodyIcon} color={t.custodyStateColour}/><Text style={styles.custodyLabel}>{copy[45].summary}</Text></View><View style={styles.stats}><View style={styles.stat}><Text style={styles.statValue}>{docs.length}</Text><Text style={styles.statLabel}>Files attached</Text></View><View style={styles.stat}><Text style={styles.statValue}>{(bytes/1024/1024).toFixed(2)} MB</Text><Text style={styles.statLabel}>Total size</Text></View></View></View>
- {m.error&&<Text role="alert" style={styles.perPage}>{m.error}</Text>}<Pressable accessibilityRole="button" disabled={m.busy} onPress={()=>void m.next(4)} style={({pressed})=>[styles.button,pressed&&styles.pressed]}><Text style={styles.buttonLabel}>Continue Draft</Text><ArrowRight size={t.buttonIcon} color={ink.onBrand} style={styles.buttonIcon}/></Pressable>
+ {m.error&&<Text role="alert" style={styles.perPage}>{m.error}</Text>}<Pressable accessibilityRole="button" disabled={m.busy||!identityReady} onPress={()=>void m.next(4)} style={({pressed})=>[styles.button,pressed&&styles.pressed]}><Text style={styles.buttonLabel}>Continue Draft</Text><ArrowRight size={t.buttonIcon} color={ink.onBrand} style={styles.buttonIcon}/></Pressable>
  </FirShell>;
 }
 

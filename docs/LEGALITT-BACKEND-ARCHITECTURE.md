@@ -1614,10 +1614,12 @@ a refusal, not a URL.
 
 **6d — Identity documents.**
 
-FIR identity evidence is **optional**, confirmed by the project owner on
-10 November 2026: neither intake submission nor PDF generation requires an
-identity document. Q15 (which documents are accepted in each flow) remains open;
-do not infer a requirement or accepted-document policy from the drawn example.
+FIR identity evidence is **required**, confirmed by the client on
+10 November 2026, superseding the earlier optional-ID instruction that day.
+Choose any one: **masked Aadhaar, passport, voter ID or driving licence**.
+Intake submission, service payment and PDF generation require an uploaded,
+classified document accepted by the current configured policy. Q15 is answered
+for FIR; it remains open for other services.
 §7.1 forbids storing Aadhaar numbers, and an unmasked Aadhaar image contains the
 number, so storing one would breach it.
 
@@ -1627,20 +1629,39 @@ as a download for exactly this purpose.
 
 Rules:
 
-- **Do not require Aadhaar.** In FIR, do not claim that PAN, passport, driving
-  licence or voter ID is approved for this flow until the client answers Q15.
+- **Do not require Aadhaar specifically.** Any one of the four confirmed FIR
+  documents satisfies the requirement. Do not infer acceptance for other flows.
 - **If Aadhaar is used, masked only.** The upload screen must say so. The
-  system cannot enforce it technically, so the wording carries the weight.
+  client selects the masked type and explicitly confirms the masked copy before
+  upload. This is a declaration, not automated inspection or verification.
 - **Never extract content from an identity file** — no OCR, no text
-  extraction, no reading fields. Structural metadata such as page count and
+  extraction, no QR decoding, no reading or storing ID-number fields for **any
+  of the four types**. Do not send identity uploads to AI. Structural metadata such as page count and
   file size is not content and is fine to read (see 6b).
 - Mark these documents `kind = 'id_proof'` so stricter retention and access
   rules can be applied later.
 - Identity *verification* is DigiLocker, never an uploaded image. An uploaded
   ID card is evidence on a case, not a KYC record.
 
-**Client question:** which identity documents are acceptable for each flow is
-the client's decision, not ours. Added to §8.
+**Configuration and audit:** `services.config.fir_identity_policy` on the
+`fir_draft` row stores `version`, `required: true`, and `accepted_documents`
+(`code`, `label`, `requires_masking`). The additive migration and base seed
+initialise version 1 with the four confirmed types only when this setting is
+absent; seeds preserve operator changes. To change acceptance, update this JSON
+setting and increment its version; no application migration is needed. Unknown
+types, missing configuration and unmasked Aadhaar declarations fail closed.
+`documents.identity_evidence` records only type, masked-copy declaration,
+policy version and declaration timestamp. No number field is accepted. Identity
+filenames/storage keys use generated names so a supplied filename cannot persist
+an ID number or propagate it into the PDF attachment manifest. Partial drafts
+remain saveable; generation requires one selected accepted identity attachment.
+Already released PDFs remain unchanged.
+
+**Masked Aadhaar guidance:** use [UIDAI My Aadhaar](https://myaadhaar.uidai.gov.in/),
+choose Download Aadhaar and the masked option, and complete OTP authentication.
+The masked download displays only the last four digits. Sources checked
+**2026-11-10**: [UIDAI My Aadhaar services](https://www.uidai.gov.in/en/my-aadhaar)
+and [Government of India PIB guidance](https://www.pib.gov.in/Pressreleaseshare.aspx?PRID=1828797&lang=2&reg=48).
 
 Commit: `feat(api): document upload, download and page counting`
 
@@ -1752,6 +1773,11 @@ Never store: full Aadhaar numbers, raw Aadhaar card images, Aadhaar in any
 free-text or JSONB field. Add a CI check for twelve-digit patterns in document
 metadata if practical.
 
+For FIR, the client also forbids extracting, reading or recording the ID number
+from passport, voter ID and driving licence uploads. These files remain opaque
+identity evidence, excluded from content extraction. Masking is specific to
+Aadhaar; do not invent a masking requirement for the other three (§6d).
+
 ### 7.2 Razorpay Route: advocates need linked accounts
 
 Route pays out to *linked accounts*. Each advocate must complete Razorpay's own
@@ -1809,7 +1835,7 @@ before the backend needs it.
 | 12 | Heading font | Typography |
 | 13 | DPDP consent text and retention periods | Compliance |
 | 14 | Is any AI output client-facing without an advocate between? Check the AI chat screens (160–182, 170) | AI gating |
-| 15 | Which identity documents are accepted for each flow? Aadhaar must be masked if used at all (§6d) | ID proof uploads |
+| 15 | **Answered for FIR, 2026-11-10:** identity proof required; any one of masked Aadhaar (last four digits only, never full card), passport, voter ID or driving licence. Configurable accepted list. Never extract, read or record any ID number from any of these uploads; identity files excluded from content extraction. **Still open for other services.** (§6d) | ID proof uploads |
 | 16 | The advocate pays the courier out of pocket (196–198). Is that cost reimbursed, deducted from the payout, or absorbed by the advocate? The schema records the payment either way; the **payout calculation** needs the answer. **Still open (4 Nov 2026):** while the delivery partner is not built (§9.1) the notice flow takes no courier payment | Payouts, advocate wallet |
 | 17 | Designs 194–195 are drawn for client → advocate delivery, but Legal Notice dispatch is advocate → noticee. Approve the substituted wording in §9.2, or supply corrected screens | Dispatch screens |
 | 18 | Design 185 lets an advocate decline a request without giving a reason. Built as drawn. Was that intended? Whoever reassigns the case sees no explanation, and repeated unexplained declines can't be spotted | Assignment, advocate quality |
@@ -1852,6 +1878,7 @@ is re-litigated mid-build.
 | Payout on reassignment | **Confirmed by the client.** The advocate who completes the case receives the full **80% advocate share**. A replaced advocate receives **nothing**, regardless of the stage reached. When the rejection and reassignment lifecycle is built, store this rule as a **versioned policy row**, not an application constant, and retain the applicable policy version for historical payouts. Storage must preserve the history of **every advocate who worked on the case**, including replaced advocates, for quality tracking even though only the completing advocate is paid. **Decision recorded only; implementation deferred to that lifecycle chunk.** | 2026-11-10 |
 | Advocate's courier payment (196–198) | A **payment**, not a lifecycle step. Writes `payments` with `purpose='courier'` and `payer_id` = the advocate, writes a `case_events` row, and **leaves `case_status` unchanged**. `payment_pending → paid` belongs to the service fee alone | 2026-10-26 |
 | Admin panel | Built **after** the backend, because it consumes the API. Designs requested from the client | 2026-10-26 |
+| FIR identity evidence | **Client confirmed:** required at intake and draft generation; choose any one of masked Aadhaar, passport, voter ID or driving licence. Store the accepted list in configuration, with policy version recorded on uploads. Aadhaar must show only the last four digits; never accept the full card. No ID-number extraction, reading or recording from any of the four uploads; all remain excluded from content extraction. Supersedes the earlier optional-ID instruction. Q15 answered for FIR only; personal intake facts remain confirmed. | 2026-11-10 |
 
 ### 9.1 Register of simulated capabilities
 
@@ -1905,7 +1932,8 @@ the registered residence. Values live in the complainant `case_parties.details`.
 They appear in review and read-only in the advocate editor as **From client's
 filing**. There is no advocate endpoint for changing them.
 
-Design 45's mandatory-ID title/button and design 46's missing-ID requirement are
+**Superseded later on 10 November 2026 by the client's required-ID decision:**
+Design 45's mandatory-ID title/button and design 46's missing-ID requirement were
 replaced with **optional ID proof** wording; design 447's preselected Aadhaar
 example is replaced by an optional selection from this case's actual uploads.
 Reason: **Q15 remains open and ID proof is not confirmed as required for FIR**.
@@ -1913,6 +1941,17 @@ No upload is identity verification. If Aadhaar is uploaded, it must be masked
 (§7.1); no identity numbers are extracted or required. Empty selection never
 blocks submission, preview or send. Selected ID evidence must belong to this
 case and be included in the attachment list.
+
+**Current FIR identity substitution — client confirmed 10 November 2026.**
+Restore required-ID copy in designs 45/46 and required selection in 447. Replace
+the drawn fixed Aadhaar example with the configured four-document choice and
+actual uploaded evidence. Add masked-Aadhaar download guidance and explicit
+masked-copy confirmation in the existing field/card style. Reason: the client
+confirmed the four accepted types and forbids full Aadhaar and all ID-number
+extraction. Missing evidence and unavailable configuration explain the block
+beside submission/payment/generation, with upload or retry actions. Admin review
+shows declared type/masking and a privacy reminder using the existing panel
+style; neither upload nor declaration is presented as identity verification.
 
 Jurisdiction, complainant facts and incident type/date/time/location are frozen
 server-side snapshots from the client filing, read-only in the editor. The
@@ -1984,7 +2023,7 @@ advocate/admin compatibility. Legacy JSON-only intakes remain readable until
 edited; existing completed cases are not rewritten. Saves and party replacement
 are atomic under the case lock; the browser supplies `expected_updated_at` to
 reject stale writes without discarding its unsaved text. Submission validates
-complete data; ID proof is optional (10 November decision above). Partial drafts
+complete data and accepted identity evidence (latest 10 November decision above). Partial drafts
 remain saveable.
 
 `packages/shared/src/reference/india-jurisdictions.json` is the single shared

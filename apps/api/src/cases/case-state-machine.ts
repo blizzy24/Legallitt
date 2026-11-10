@@ -38,6 +38,7 @@ import { PrismaService } from "../prisma.service";
 import { Prisma, type PrismaClient } from "../generated/prisma/client";
 import { caseScope, type CaseActor } from "./case-access";
 import { caseReference } from './case-reference';
+import {requireFirIdentity} from '../documents/fir-identity';
 
 export const createCaseSchema = CreateCaseSchema;
 export const updateCaseSchema = z
@@ -333,6 +334,7 @@ export class CaseStateMachine {
     ].includes(to)) throw new ConflictException('This service workflow is not available yet');
     if (to === CaseStatus.submitted && record.service_code === 'fir_draft') {
       parse(FirSubmissionSchema,firIntakeDetails(record.details,await tx.caseParty.findMany({where:{case_id:record.id}})));
+      await requireFirIdentity(tx,record.id);
     }
     if (to === CaseStatus.submitted && record.service_code === 'legal_notice') {
       parse(LegalNoticeSubmissionSchema, record.details);

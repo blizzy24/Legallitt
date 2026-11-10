@@ -23,11 +23,11 @@ export function Button({title,onPress,disabled=false}:{title:string;onPress():vo
 export function Field({label,value,onChange,multiline=false}:{label:string;value:string;onChange(v:string):void;multiline?:boolean}) {return <View style={{gap:7,marginVertical:8}}><Text style={s.label}>{label}</Text><TextInput accessibilityLabel={label} value={value} onChangeText={onChange} multiline={multiline} style={[s.input,multiline&&{minHeight:100,textAlignVertical:'top'}]}/></View>;}
 export function ErrorBox({error,retry}:{error:string;retry():void}) {return error?<Card><Text accessibilityRole="alert" style={s.error}>{error}</Text><Button title="Retry" onPress={retry}/></Card>:null;}
 export async function openDocument(id:string) {const r=await backend.documentUrl(id);await Linking.openURL(r.url);}
-export async function uploadEvidence(id:string,kind='supporting_document') {
+export async function uploadEvidence(id:string,kind='supporting_document',identity?:import('@legalitt/shared').IdentityUpload) {
   const picked=await DocumentPicker.getDocumentAsync({type:['application/pdf','image/png','image/jpeg'],copyToCacheDirectory:true});
   if(picked.canceled)return;const file=picked.assets[0];
   const mime=file.mimeType??'application/pdf';
-  const ticket=await backend.presign({case_id:id,kind,filename:file.name,mime:mime as 'application/pdf'});
-  await backend.upload(ticket,Platform.OS==='web'?await(await fetch(file.uri)).blob():{uri:file.uri,name:file.name,type:mime});
+  const ticket=await backend.presign({case_id:id,kind,filename:kind==='id_proof'?'Identity-proof':file.name,mime:mime as 'application/pdf',...(identity?{identity}:{})});
+  await backend.upload(ticket,Platform.OS==='web'?await(await fetch(file.uri)).blob():{uri:file.uri,name:ticket.document.filename,type:mime});
 }
 export const s=StyleSheet.create({screen:{flex:1,backgroundColor:colors.appBg},content:{padding:20,paddingBottom:40,gap:12},card:{backgroundColor:colors.card,borderRadius:16,padding:18,marginBottom:16,gap:9},heading:{fontFamily:font.appHeading,fontSize:19,color:colors.textPrimary},body:{fontFamily:font.appBody,fontSize:14,lineHeight:22,color:colors.textBody},label:{fontFamily:font.appSemi,fontSize:13,color:colors.textPrimary},input:{backgroundColor:'#F4F2EF',borderRadius:9,padding:12,fontFamily:font.appBody,fontSize:14,color:colors.textPrimary},button:{backgroundColor:colors.brand,padding:15,borderRadius:12,alignItems:'center',marginVertical:7},buttonText:{fontFamily:font.appSemi,fontSize:15,color:'#fff'},error:{color:'#9C2929',lineHeight:22},row:{flexDirection:'row',justifyContent:'space-between',gap:12},muted:{fontFamily:font.appBody,color:colors.textBody,fontSize:12,lineHeight:19}});

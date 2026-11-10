@@ -61,11 +61,13 @@ test("seed reruns never update existing price versions", async () => {
         async upsert({ where, create, update }) {
           assert.deepEqual(update, {});
           const key = where.id ?? where.code;
-          if (!store.has(key)) store.set(key, create);
+          if (!store.has(key)) store.set(key, name==='service'?{config:{},...create}:create);
         },
       },
     ]),
   );
+  tx.service.findUniqueOrThrow=async({where})=>stores.service.get(where.code);
+  tx.service.update=async({where,data})=>{const row=stores.service.get(where.code);Object.assign(row,data);return row;};
   const client = { $transaction: (fn) => fn(tx) };
   await seed(client);
   const first = structuredClone(stores);
@@ -75,6 +77,11 @@ test("seed reruns never update existing price versions", async () => {
   assert.equal(stores.servicePricing.size, seedManifest.prices.length);
   for (const row of stores.servicePricing.values())
     assert.equal(typeof row.base_amount_paise, "bigint");
+  const fir=stores.service.get('fir_draft');
+  assert.equal(fir.config.fir_identity_policy.accepted_documents.length,4);
+  fir.config.fir_identity_policy={...fir.config.fir_identity_policy,version:2,accepted_documents:fir.config.fir_identity_policy.accepted_documents.slice(1)};
+  const configured=structuredClone(fir.config);await seed(client);
+  assert.deepEqual(fir.config,configured,'seed preserves operator identity configuration');
 });
 
 test("/health answers HTTP without AWS/database configuration", async () => {

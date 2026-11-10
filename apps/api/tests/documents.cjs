@@ -281,7 +281,7 @@ test(
           const signed = await presign(client, "id_proof");
           const d = signed.document;
           assert.equal(d.status, "pending");
-          assert.match(d.identity_notice, /masked only/);
+          assert.match(d.identity_notice, /Aadhaar must be masked/);
           await assert.rejects(service.complete(client, d.id), { status: 409 });
           storage.put(stagingKey(d.s3_key), bytes);
           const results = await Promise.all([
