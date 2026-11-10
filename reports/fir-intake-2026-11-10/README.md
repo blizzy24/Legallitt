@@ -60,5 +60,50 @@ FIR navigation follows taps; autosave timing never navigates.
 
 `local/verification.json` and screenshots record the successful local run.
 Synthetic evidence is the project logo labelled TEST, not a person's identity.
-No password/token is written to reports. Deployment and deployed verification
-evidence are appended after rollout.
+No password/token is written to reports.
+
+## Development rollout
+
+Source commit: `5d03e9e78493c5c74aed011427e104850a9c22f8`.
+The commit was pushed to a remote branch before API rollout, then to
+`origin/main` once the API was healthy, triggering the connected frontend builds.
+
+Order: push image → run that image's migration task in Git Bash → inspect and
+execute the development Compute change set → verify health and image → push main.
+The migration task exited 0: 15 migrations found, none pending. The reviewed
+change set changed only API/ops task image revisions and the API service.
+`LegalittDev-Compute-DevelopmentOnly` reached `UPDATE_COMPLETE`; task definition
+`legalitt-dev-api:14` is healthy on tag `5d03e9e`, digest
+`sha256:0e04951cf6dd675ec8564e1dadae188228e8e3aa68784397d4eb6f396e63dbc2`.
+The public API health endpoint returned `{"status":"ok"}`.
+
+## Deployed walkthrough
+
+Both connected Vercel deployments completed successfully for `5d03e9e`.
+The published mobile bundle contains the restored intake, conflict recovery
+controls and LGD retrieval timestamp. Asset hashes and deployment statuses are
+recorded in `frontend-assets.json` and `vercel-status.json`.
+
+The browser walkthrough at https://legalitt-5.vercel.app passed with no browser
+errors. Synthetic case `FIR_DRAFT-2026-0003`
+(`391e089c-0e21-4fcf-bdf8-feec1ddcb68a`) demonstrates:
+
+- Partial autosave survives reload; a failed save preserves entries and retries.
+- State selection clears the old district/station; real LGD choices save.
+- A concurrent edit returns a visible conflict without overwriting local text;
+  reloading the other version requires explicit confirmation.
+- The original case/status URL resumes at the saved step; waiting does not navigate.
+- The actual Upload ID Proof button uploads the labelled synthetic PNG.
+- Review shows the entered contact, incident, narrative, additional information,
+  complainant/residence, two accused (one unnamed), witness and document.
+- The admin detail API returns the same people and additional information.
+- Held loading and inaccessible-case errors are distinct from empty data.
+- Other client → this case: **404**. This client → the other client's FIR case
+  `d2eac684-ef65-4684-aaa5-9e014d59fe68`: **404**. Opening that inaccessible case's
+  intake URL shows a recoverable error and no intake data.
+- Submission reaches `payment_pending`; zero drafts exist. No payment, draft,
+  PDF generation, AI operation or approval was performed in this walkthrough.
+
+See `deployed/verification.json`, `browser-deployed.txt` and the five deployed
+screen captures. The test-created cases/evidence remain available for review;
+existing credentials and cases were not changed.

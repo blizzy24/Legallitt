@@ -1,0 +1,23 @@
+{
+  "case_id": "391e089c-0e21-4fcf-bdf8-feec1ddcb68a",
+  "partial_autosave_reload": true,
+  "save_error_retry": true,
+  "state_change_clears_dependents": true,
+  "concurrent_edit_conflict": true,
+  "no_timer_navigation": true,
+  "resume_through_existing_status_url": true,
+  "browser_file_upload": true,
+  "review_actual_values": true,
+  "admin_original_intake": true,
+  "loading_state": true,
+  "isolation": {
+    "other_client_to_case": 404,
+    "client_to_other_case": 404,
+    "other_case_id": "d2eac684-ef65-4684-aaa5-9e014d59fe68"
+  },
+  "load_error_no_leak": true,
+  "status": "payment_pending",
+  "reference": "FIR_DRAFT-2026-0003",
+  "no_draft": true,
+  "browser_errors": []
+}
