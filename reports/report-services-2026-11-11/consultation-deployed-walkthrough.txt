@@ -1,0 +1,35 @@
+UI: Continue
+UI: Continue
+UI: Sign in
+UI: Sunday
+UI: Monday
+UI: Tuesday
+UI: Wednesday
+UI: Thursday
+UI: Friday
+UI: Saturday
+UI: Save availability
+UI: Book consultation
+UI: Continue to documents
+UI: Upload document
+UI: Continue
+UI: Adv. Arjun Sharma
+UI: 12
+UI: 09:00 am
+UI: Reserve time & review
+UI: I confirm my information is correct and agree to submit this request.
+UI: Continue to payment
+UI: Pay now (demo)
+UI: Assign booked advocate: Adv. Arjun Sharma
+UI: Join chat consultation
+UI: Start consultation
+ApiError: Too Many Requests
+    at ApiClient.decode (D:\Legalitt\Legallitt\packages\shared\dist\api-client.js:116:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async eventually (D:\Legalitt\Legallitt\scripts\verify-consultation-services.cjs:15:80)
+    at async main (D:\Legalitt\Legallitt\scripts\verify-consultation-services.cjs:83:75)
+ApiError: Too Many Requests
+    at ApiClient.decode (D:\Legalitt\Legallitt\packages\shared\dist\api-client.js:116:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async eventually (D:\Legalitt\Legallitt\scripts\verify-consultation-services.cjs:15:80)
+    at async main (D:\Legalitt\Legallitt\scripts\verify-consultation-services.cjs:83:75)

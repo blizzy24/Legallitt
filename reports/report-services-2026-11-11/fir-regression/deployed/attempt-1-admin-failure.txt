@@ -1,0 +1,622 @@
+LEGALITT
+ADMIN
+▤
+Legal Notices
+▤
+FIR Drafts
+▤
+Legal Advice
+▤
+District Court Representation
+▤
+High Court Representation
+▤
+Property Search Report
+▤
+Document Forensic
+▤
+Court Marriage
+Demo admin
+ADMIN
+Sign out
+FIR Draft
+49
+ADMIN
+← FIR Draft
+
+FIR DRAFT
+
+FIR_DRAFT-2026-0011demo
+
+Demo client
+
+Changes requested
+Matter
+Theft
+Service fee
+₹999.00
+Additional fees
+₹274.75
+Charged before GST
+₹1,273.75
+GST paid
+₹224.78
+Total paid
+₹1,498.53
+GST rate
+18% exclusive
+Created
+11 Nov 2026, 02:10 am
+Sub-status
+Advocate revision required
+FIR review and corrections
+
+0h since payment · 24–48h turnaround
+
+Waiting 1m
+Since 11/11/2026, 2:11:41 am IST
+
+1 draft rejections for the current advocate. Reassignment becomes available after 2.
+
+Identity returned 11/11/2026, 2:11:30 am: accepted. File removal: pending — removing all stored versions and allowing temporary upload links to expire.
+
+Review history
+Draft v2 · returned
+
+Adv. Arjun Sharma · 11/11/2026, 2:11:22 am
+
+TEST FIRST RETURN: clarify the chronology and supporting facts.
+
+Adv. Arjun Sharma: 1 draft rejections · Current assignment
+
+Original intake
+Contact
+Mobile
+2025550101
+Full Name
+TEST ONLY FIR Complainant
+Dial code
++91
+Country code
+IN
+Incident
+Date
+10/11/2026
+Time
+09:00
+Type
+theft
+Location
+TEST ONLY synthetic location
+Description
+TEST ONLY synthetic verification. No real offence or police filing.
+Intake step
+5
+Jurisdiction
+State
+Maharashtra
+District
+Mumbai
+State code
+27
+District code
+482
+Police Station
+TEST ONLY Station
+Source retrieved at
+2026-11-10T06:30:15.665Z
+Intake version
+2
+People
+0
+Id
+1663467b-447e-4d2b-ae4a-880c9496f46a
+Kind
+complainant
+Name
+TEST ONLY FIR Complainant
+Phone
++91 2025550101
+Residence
+TEST Registered Street 11
+Unknown
+false
+Primary
+false
+Personal details
+Age
+Value
+37
+Status
+provided
+Gender
+Value
+Woman
+Status
+provided
+Occupation
+Value
+TEST Teacher
+Status
+provided
+Father name
+Value
+TEST Father Rao
+Status
+provided
+Present address
+Value
+TEST Present Street 22
+Status
+provided
+1
+Id
+b1870228-ddef-495a-9bff-e06a762514c7
+Kind
+accused
+Details
+TEST unknown blue coat
+Unknown
+true
+Primary
+false
+2
+Id
+77d0f350-b461-4ea7-8906-0c72abf16bd6
+Kind
+witness
+Name
+TEST Witness One
+Details
+TEST original witness note
+Phone
+2025550102
+Unknown
+false
+Primary
+false
+Role
+TEST passerby
+Presence
+TEST at start
+People
+
+CLIENT
+
+Demo client
+Email
+demo-client@legalitt.invalid
+
+ADVOCATE
+
+Adv. Arjun Sharma
+Email
+demo-advocate@legalitt.invalid
+
+WITNESS
+
+TEST Witness One
+Phone
+2025550102
+
+COMPLAINANT
+
+TEST ONLY FIR Complainant
+Phone
++91 2025550101
+
+ACCUSED
+
+Timeline 23
+Drafts 2
+Documents 3
+Payments 1
+Case timeline
+23 events · newest first
+Fir identity reviewed
+11 Nov 2026, 02:11 am
+
+Demo admin · Admin
+
+Event details
+Notification created
+11 Nov 2026, 02:11 am
+Event details
+Notification created
+11 Nov 2026, 02:11 am
+Event details
+Notification created
+11 Nov 2026, 02:11 am
+Event details
+Fir identity replaced
+11 Nov 2026, 02:11 am
+
+Demo client · Client
+
+Event details
+Notification created
+11 Nov 2026, 02:11 am
+Event details
+Notification created
+11 Nov 2026, 02:11 am
+Event details
+Fir admin returned
+11 Nov 2026, 02:11 am
+
+Demo admin · Admin
+
+Event details
+Notification created
+11 Nov 2026, 02:11 am
+Event details
+Fir draft submitted
+11 Nov 2026, 02:11 am
+
+Adv. Arjun Sharma · Advocate
+
+Event details
+Fir draft saved
+11 Nov 2026, 02:11 am
+
+Adv. Arjun Sharma · Advocate
+
+Event details
+Fir draft saved
+11 Nov 2026, 02:11 am
+
+Adv. Arjun Sharma · Advocate
+Advocate accepted → In progress
+
+Event details
+Advocate accepted
+11 Nov 2026, 02:10 am
+
+Adv. Arjun Sharma · Advocate
+Assigned → Advocate accepted
+
+Notification created
+11 Nov 2026, 02:10 am
+Event details
+Notification created
+11 Nov 2026, 02:10 am
+Event details
+Assigned
+11 Nov 2026, 02:10 am
+
+Demo admin · Admin
+Assigning → Assigned
+
+Event details
+Assigning
+11 Nov 2026, 02:10 am
+
+Demo admin · Admin
+Paid → Assigning
+
+Notification created
+11 Nov 2026, 02:10 am
+Event details
+Notification created
+11 Nov 2026, 02:10 am
+Event details
+Payment captured
+demo
+11 Nov 2026, 02:10 am
+
+Demo client · Client
+Payment pending → Paid
+
+Event details
+Payment pending
+11 Nov 2026, 02:10 am
+
+Demo client · Client
+Submitted → Payment pending
+
+Submitted
+11 Nov 2026, 02:10 am
+
+Demo client · Client
+Draft → Submitted
+
+Case created
+11 Nov 2026, 02:10 am
+
+Demo client · Client
+
+Drafts
+Latest first
+Current draft · v2Adv. Arjun Sharma · 11 Nov 2026, 02:11 am
+FIR_Draft_v2.pdf ↗
+Accused
+Items
+0
+Id
+b1870228-ddef-495a-9bff-e06a762514c7
+Alias
+Status
+unknown
+Phone
+Status
+unknown
+Primary
+false
+Identity
+Status
+unknown
+Description
+TEST unknown blue coat
+Vehicle used
+Status
+unknown
+Other details
+Value
+TEST unknown blue coat
+Status
+provided
+Source party id
+b1870228-ddef-495a-9bff-e06a762514c7
+Suspected motive
+Status
+unknown
+1
+Id
+e10a2d13-ae80-465c-92c0-e0b5b502620e
+Alias
+Value
+TEST second alias
+Status
+provided
+Phone
+Value
+2025550105
+Status
+provided
+Primary
+false
+Identity
+Name
+TEST Second Suspect
+Status
+known
+Vehicle used
+Value
+TEST bicycle
+Status
+provided
+Other details
+Value
+TEST second jacket
+Status
+provided
+Suspected motive
+Value
+TEST motive recorded
+Status
+provided
+Status
+listed
+Incident
+Filed
+Value
+Date
+10/11/2026
+Time
+09:00
+Type
+theft
+Location
+TEST ONLY synthetic location
+Description
+TEST ONLY synthetic verification. No real offence or police filing.
+Source
+client_filing
+Distance and direction from station
+Value
+TEST 2 km north
+Status
+provided
+Witnesses
+Items
+0
+Id
+77d0f350-b461-4ea7-8906-0c72abf16bd6
+Name
+TEST Witness One
+Phone
+Value
+2025550102
+Status
+provided
+When present
+Value
+TEST at start
+Status
+provided
+Statement note
+Value
+TEST edited witness note
+Status
+provided
+Source party id
+77d0f350-b461-4ea7-8906-0c72abf16bd6
+Role or relationship
+Value
+TEST passerby
+Status
+provided
+1
+Id
+beb3ebfc-32de-422c-b3c8-5f68679ff6cb
+Name
+TEST Witness Two
+Phone
+Value
+2025550106
+Status
+provided
+When present
+Value
+TEST at end
+Status
+provided
+Statement note
+Value
+TEST second witness note
+Status
+provided
+Role or relationship
+Value
+TEST shopkeeper
+Status
+provided
+Status
+listed
+Attachments
+0
+Filename
+Identity-proof-35a1b080-da49-4aff-bfcb-965c9e1e606b.pdf
+Mime type
+application/pdf
+Document id
+35a1b080-da49-4aff-bfcb-965c9e1e606b
+1
+Filename
+TEST-FIR-25-pages.pdf
+Mime type
+application/pdf
+Document id
+59a587d4-1fad-4cc4-b31a-2bd15399a297
+Complainant
+Email
+Source
+client_filing
+Filed
+Value
+Id
+1663467b-447e-4d2b-ae4a-880c9496f46a
+Kind
+complainant
+Name
+TEST ONLY FIR Complainant
+Phone
++91 2025550101
+Primary
+false
+Unknown
+false
+Residence
+TEST Registered Street 11
+Personal details
+Age
+Value
+37
+Status
+provided
+Gender
+Value
+Woman
+Status
+provided
+Occupation
+Value
+TEST Teacher
+Status
+provided
+Father name
+Value
+TEST Father Rao
+Status
+provided
+Present address
+Value
+TEST Present Street 22
+Status
+provided
+Source
+client_filing
+Identity document id
+35a1b080-da49-4aff-bfcb-965c9e1e606b
+Police filing
+Station use
+Fir number
+handwritten_at_station
+Report received at
+handwritten_at_station
+Receiving officer signature
+handwritten_at_station
+Jurisdiction
+Value
+State
+Maharashtra
+District
+Mumbai
+State code
+27
+District code
+482
+Police Station
+TEST ONLY Station
+Source retrieved at
+2026-11-10T06:30:15.665Z
+Source
+client_filing
+Legal sections
+0
+Id
+c00c1baf-51e6-44b8-9a06-b0d4a4853c9c
+Act
+TEST Act (synthetic)
+Section
+TEST 123
+Description
+TEST manually selected provision
+Schema version
+2
+Filing snapshot
+Case id
+41aed703-75ed-4cfd-84a9-259a0bdd8d02
+Captured at
+2026-11-10T20:41:12.200Z
+Intake hash
+cf8e70703bec2bcbf3a56e85c6622b01ec60ed9aa876df9be1e6f03e8d3c96a6
+Statement of facts
+TEST ONLY advocate final edited narrative. हिंदी कथन। No real offence or police filing.
+Draft · v1Adv. Arjun Sharma · 11 Nov 2026, 02:11 am
+Documents
+3 files
+CLIENT 2
+PDF
+Identity-proof-85ff2d77-cc93-4aa8-8f14-7da13744bda5.pdf ↗
+
+Id proof
+
+Declared type: Masked aadhaar · Masked copy declared by uploader. Uploaded evidence, not identity verification.
+
+Demo client · 1 page
+
+PDF
+TEST-FIR-25-pages.pdf ↗
+
+Supporting document
+
+Demo client · 25 pages
+
+GENERATED 1
+PDF
+FIR_Draft_v2.pdf ↗
+
+Draft · v2
+
+Adv. Arjun Sharma · 2 pages
+
+Payments
+1 record
+Service feedemo
+₹1,498.53
+
+Demo client · Client
+
+Captured · 11 Nov 2026, 02:10 am
+
+Amount breakdown

@@ -2217,8 +2217,8 @@ gate or explicit framing that it is not legal advice.
 
 **Report services — 11 November 2026.** Reconnect Property Search 72–80/206–212
 and Document Forensic 82–90/223–232 using their field groups, document cards,
-research sections, review and tracking sequence. The API boundary prevents the
-archived fixture children and their timer-driven progression from mounting.
+research sections, review and tracking sequence. Existing route URLs are kept;
+duplicate fixture implementations are retired. Navigation follows user actions.
 Read-only client facts replace editable copies in advocate research screens to
 prevent silently altering the filing. Every editable research/report/affidavit
 field reaches its generated preview. Working Property Search preview still leads

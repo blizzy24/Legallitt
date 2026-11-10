@@ -1,0 +1,4 @@
+image tag febdde6 (one-off legalitt-dev-ops:33)
+task arn:aws:ecs:ap-south-1:026379630400:task/legalitt-dev-cluster/f267e979de424549a8c1b1a9311a0fcb
+exit 0 (Essential container in task exited)
+2026-11-10T20:30:27 Activated versioned confirmed pricing and provisional report-service tariffs (confirmed=false); historical rows unchanged; no standalone courier commission.

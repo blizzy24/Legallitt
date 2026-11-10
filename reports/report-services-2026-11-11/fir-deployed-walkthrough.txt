@@ -1,0 +1,21 @@
+Client personal facts saved; reloading
+Client personal facts resumed
+PASS client intake, uploaded 26 pages, quote and simulated payment
+Original failure: TimeoutError: Waiting failed: 60000ms exceeded
+    at new WaitTask (D:\Legalitt\Legallitt\node_modules\.pnpm\puppeteer-core@24.16.0\node_modules\puppeteer-core\lib\cjs\puppeteer\common\WaitTask.js:48:34)
+    at IsolatedWorld.waitForFunction (D:\Legalitt\Legallitt\node_modules\.pnpm\puppeteer-core@24.16.0\node_modules\puppeteer-core\lib\cjs\puppeteer\api\Realm.js:25:26)
+    at CdpFrame.waitForFunction (D:\Legalitt\Legallitt\node_modules\.pnpm\puppeteer-core@24.16.0\node_modules\puppeteer-core\lib\cjs\puppeteer\api\Frame.js:587:43)
+    at CdpFrame.<anonymous> (D:\Legalitt\Legallitt\node_modules\.pnpm\puppeteer-core@24.16.0\node_modules\puppeteer-core\lib\cjs\puppeteer\util\decorators.js:109:27)
+    at CdpPage.waitForFunction (D:\Legalitt\Legallitt\node_modules\.pnpm\puppeteer-core@24.16.0\node_modules\puppeteer-core\lib\cjs\puppeteer\api\Page.js:1443:37)
+    at text (D:\Legalitt\Legallitt\scripts\verify-fir-admin-rejection.cjs:19:44)
+    at module.exports (D:\Legalitt\Legallitt\scripts\helpers\fir-admin-return-walk.cjs:38:241)
+    at async main (D:\Legalitt\Legallitt\scripts\verify-fir-admin-rejection.cjs:120:16)
+TimeoutError: Waiting failed: 60000ms exceeded
+    at new WaitTask (D:\Legalitt\Legallitt\node_modules\.pnpm\puppeteer-core@24.16.0\node_modules\puppeteer-core\lib\cjs\puppeteer\common\WaitTask.js:48:34)
+    at IsolatedWorld.waitForFunction (D:\Legalitt\Legallitt\node_modules\.pnpm\puppeteer-core@24.16.0\node_modules\puppeteer-core\lib\cjs\puppeteer\api\Realm.js:25:26)
+    at CdpFrame.waitForFunction (D:\Legalitt\Legallitt\node_modules\.pnpm\puppeteer-core@24.16.0\node_modules\puppeteer-core\lib\cjs\puppeteer\api\Frame.js:587:43)
+    at CdpFrame.<anonymous> (D:\Legalitt\Legallitt\node_modules\.pnpm\puppeteer-core@24.16.0\node_modules\puppeteer-core\lib\cjs\puppeteer\util\decorators.js:109:27)
+    at CdpPage.waitForFunction (D:\Legalitt\Legallitt\node_modules\.pnpm\puppeteer-core@24.16.0\node_modules\puppeteer-core\lib\cjs\puppeteer\api\Page.js:1443:37)
+    at text (D:\Legalitt\Legallitt\scripts\verify-fir-admin-rejection.cjs:19:44)
+    at module.exports (D:\Legalitt\Legallitt\scripts\helpers\fir-admin-return-walk.cjs:38:241)
+    at async main (D:\Legalitt\Legallitt\scripts\verify-fir-admin-rejection.cjs:120:16)

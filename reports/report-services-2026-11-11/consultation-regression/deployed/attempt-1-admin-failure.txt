@@ -1,0 +1,201 @@
+LEGALITT
+ADMIN
+▤
+Legal Notices
+▤
+FIR Drafts
+▤
+Legal Advice
+▤
+District Court Representation
+▤
+High Court Representation
+▤
+Property Search Report
+▤
+Document Forensic
+▤
+Court Marriage
+Demo admin
+ADMIN
+Sign out
+Legal Advice
+48
+ADMIN
+← Legal Advice
+
+LEGAL ADVICE
+
+LEGAL_ADVICE-2026-0003demo
+
+Demo client
+
+Assigned
+Service fee
+₹600.00
+Additional fees
+₹150.00
+Charged before GST
+₹750.00
+GST paid
+₹135.00
+Total paid
+₹885.00
+GST rate
+18% exclusive
+Created
+11 Nov 2026, 02:11 am
+Sub-status
+Consultation scheduled
+Consultation & court service
+Refresh
+Booked appointment
+
+Adv. Arjun Sharma · 12/11/2026, 9:00:00 am IST · 30 minutes · Chat
+
+Status: scheduled. Voice and video are not available.
+
+Representation quotes
+
+No representation quote yet.
+
+No report currently awaits approval.
+
+Report history
+
+No report saved yet.
+
+Original client intake
+Email
+consultation@example.invalid
+Phone
+2025550101
+Consent
+true
+Full name
+TEST ONLY Consultation Client
+Description
+TEST ONLY synthetic consultation walkthrough. A fictional civil matter needs advice. No real dispute or filing.
+Bench unknown
+false
+Existing case
+false
+Intake version
+1
+People
+
+CLIENT
+
+Demo client
+Email
+demo-client@legalitt.invalid
+
+ADVOCATE
+
+Adv. Arjun Sharma
+Email
+demo-advocate@legalitt.invalid
+Timeline 16
+Documents 1
+Payments 1
+Case timeline
+16 events · newest first
+Notification created
+11 Nov 2026, 02:11 am
+Event details
+Notification created
+11 Nov 2026, 02:11 am
+Event details
+Assigned
+11 Nov 2026, 02:11 am
+
+Demo admin · Admin
+Assigning → Assigned
+
+Event details
+Assigning
+11 Nov 2026, 02:11 am
+
+Demo admin · Admin
+Paid → Assigning
+
+Notification created
+11 Nov 2026, 02:11 am
+Event details
+Notification created
+11 Nov 2026, 02:11 am
+Event details
+Consultation payment captured
+11 Nov 2026, 02:11 am
+
+Demo client · Client
+Payment pending → Paid
+
+Event details
+Consultation payment pending
+11 Nov 2026, 02:11 am
+
+Demo client · Client
+Submitted → Payment pending
+
+Consultation submitted
+11 Nov 2026, 02:11 am
+
+Demo client · Client
+Draft → Submitted
+
+Consultation intake saved
+11 Nov 2026, 02:11 am
+
+Demo client · Client
+
+Consultation intake saved
+11 Nov 2026, 02:11 am
+
+Demo client · Client
+
+Consultation intake saved
+11 Nov 2026, 02:11 am
+
+Demo client · Client
+
+Consultation intake saved
+11 Nov 2026, 02:11 am
+
+Demo client · Client
+
+Consultation intake saved
+11 Nov 2026, 02:11 am
+
+Demo client · Client
+
+Consultation intake saved
+11 Nov 2026, 02:11 am
+
+Demo client · Client
+
+Case created
+11 Nov 2026, 02:11 am
+
+Demo client · Client
+
+Documents
+1 file
+CLIENT 1
+PDF
+legal_advice-supporting.pdf ↗
+
+Supporting document
+
+Demo client · 1 page
+
+Payments
+1 record
+Service feedemo
+₹885.00
+
+Demo client · Client
+
+Captured · 11 Nov 2026, 02:11 am
+
+Amount breakdown

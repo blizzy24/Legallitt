@@ -1,0 +1,73 @@
+{
+  "checked_at": "2026-11-10T20:36:14.858Z",
+  "rows": [
+    {
+      "service_code": "property_search",
+      "confirmed": false,
+      "tiers": [
+        {
+          "tier": "ordinary",
+          "pricing_id": "b4e0b608-a7d0-56ae-b2f7-2c064f0aef9f",
+          "base_amount_paise": "249900",
+          "platform_fee_paise": "62475",
+          "gst_paise": "56228",
+          "total_paise": "368603",
+          "included_pages": 25,
+          "page_unit_paise": "2500"
+        },
+        {
+          "tier": "urgent",
+          "pricing_id": "6748404e-b446-51bd-843b-1127966bf904",
+          "base_amount_paise": "399900",
+          "platform_fee_paise": "99975",
+          "gst_paise": "89978",
+          "total_paise": "589853",
+          "included_pages": 25,
+          "page_unit_paise": "2500"
+        }
+      ]
+    },
+    {
+      "service_code": "document_forensic",
+      "confirmed": false,
+      "tiers": [
+        {
+          "tier": "ordinary",
+          "pricing_id": "4b669ec3-0087-5a18-96db-e7905550125e",
+          "base_amount_paise": "399900",
+          "platform_fee_paise": "99975",
+          "gst_paise": "89978",
+          "total_paise": "589853",
+          "included_pages": 25,
+          "page_unit_paise": "2500"
+        },
+        {
+          "tier": "urgent",
+          "pricing_id": "03051cfe-ed7f-514e-9ff7-3bdc88638b92",
+          "base_amount_paise": "599900",
+          "platform_fee_paise": "149975",
+          "gst_paise": "134978",
+          "total_paise": "884853",
+          "included_pages": 25,
+          "page_unit_paise": "2500"
+        }
+      ]
+    },
+    {
+      "service_code": "court_marriage",
+      "confirmed": false,
+      "tiers": [
+        {
+          "tier": null,
+          "pricing_id": "514c2ebb-9216-5946-ba54-9250a5475ca2",
+          "base_amount_paise": "599900",
+          "platform_fee_paise": "149975",
+          "gst_paise": "134978",
+          "total_paise": "884853",
+          "included_pages": 25,
+          "page_unit_paise": "2500"
+        }
+      ]
+    }
+  ]
+}

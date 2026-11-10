@@ -1,0 +1,276 @@
+LEGALITT
+ADMIN
+▤
+Legal Notices
+▤
+FIR Drafts
+▤
+Legal Advice
+▤
+District Court Representation
+▤
+High Court Representation
+▤
+Property Search Report
+▤
+Document Forensic
+▤
+Court Marriage
+Demo admin
+ADMIN
+Sign out
+Document Forensic
+39
+ADMIN
+← Document Forensic
+
+DOCUMENT FORENSIC
+
+DOCUMENT_FORENSIC-2026-0001demo
+
+Demo client
+
+In progress
+Matter
+Agreement contract
+Tier
+Ordinary
+Service fee
+₹3,999.00
+Unconfirmed price
+Additional fees
+₹999.75
+Charged before GST
+₹4,998.75
+GST paid
+₹899.78
+Total paid
+₹5,898.53
+GST rate
+18% exclusive
+Created
+11 Nov 2026, 02:03 am
+Sub-status
+Admin changes requested
+Document Forensic Report
+Refresh report
+
+Payment recorded 11/11/2026, 2:03:16 am IST · 0 hours elapsed. Estimated turnaround: 24 - 48 Hours.
+
+Waiting for advocate corrections
+Waiting less than a minuteSince 11/11/2026, 2:04:16 am IST
+
+1. TEST INTERNAL correction: clarify the scope — TEST INTERNAL explain limitations without claiming physical examination.
+
+The corrected version must return to admin before the client can receive it.
+
+Version & review history
+
+Version 2 · Adv. Arjun Sharma · 11/11/2026, 2:03:56 am IST
+
+Version 1 · Adv. Arjun Sharma · 11/11/2026, 2:03:52 am IST
+
+service report changes requested · v2
+
+11/11/2026, 2:04:16 am IST
+
+TEST INTERNAL correction: clarify the scope — TEST INTERNAL explain limitations without claiming physical examination.
+
+service report submitted · v2
+
+11/11/2026, 2:04:06 am IST
+
+Original client intake
+Instructions
+TEST ONLY review the synthetic digital copy and explain its limitations.
+Document type
+agreement_contract
+No reference sample
+true
+Questioned description
+TEST ONLY questioned signature
+People
+
+CLIENT
+
+Demo client
+Email
+demo-client@legalitt.invalid
+
+ADVOCATE
+
+Adv. Arjun Sharma
+Email
+demo-advocate@legalitt.invalid
+Timeline 18
+Drafts 2
+Documents 3
+Payments 1
+Case timeline
+18 events · newest first
+Notification created
+11 Nov 2026, 02:04 am
+Event details
+Service report changes requested
+11 Nov 2026, 02:04 am
+
+Demo admin · Admin
+
+Event details
+Notification created
+11 Nov 2026, 02:04 am
+Event details
+Service report submitted
+11 Nov 2026, 02:04 am
+
+Adv. Arjun Sharma · Advocate
+
+Event details
+Service report saved
+11 Nov 2026, 02:03 am
+
+Adv. Arjun Sharma · Advocate
+
+Event details
+Service report saved
+11 Nov 2026, 02:03 am
+
+Adv. Arjun Sharma · Advocate
+
+Event details
+In progress
+11 Nov 2026, 02:03 am
+
+Adv. Arjun Sharma · Advocate
+Advocate accepted → In progress
+
+Advocate accepted
+11 Nov 2026, 02:03 am
+
+Adv. Arjun Sharma · Advocate
+Assigned → Advocate accepted
+
+Notification created
+11 Nov 2026, 02:03 am
+Event details
+Notification created
+11 Nov 2026, 02:03 am
+Event details
+Assigned
+11 Nov 2026, 02:03 am
+
+Demo admin · Admin
+Assigning → Assigned
+
+Event details
+Assigning
+11 Nov 2026, 02:03 am
+
+Demo admin · Admin
+Paid → Assigning
+
+Notification created
+11 Nov 2026, 02:03 am
+Event details
+Notification created
+11 Nov 2026, 02:03 am
+Event details
+Payment captured
+demo
+11 Nov 2026, 02:03 am
+
+Demo client · Client
+Payment pending → Paid
+
+Event details
+Payment pending
+11 Nov 2026, 02:03 am
+
+Demo client · Client
+Submitted → Payment pending
+
+Submitted
+11 Nov 2026, 02:03 am
+
+Demo client · Client
+Draft → Submitted
+
+Case created
+11 Nov 2026, 02:03 am
+
+Demo client · Client
+
+Drafts
+Latest first
+Current draft · v2Adv. Arjun Sharma · 11 Nov 2026, 02:03 am
+Forensic_Report.pdf ↗
+Report
+Findings
+TEST FINDINGS: insufficient reference material for a definite attribution.
+How checked
+TEST METHOD: visual review of the uploaded copy only; no physical examination.
+Final result
+TEST RESULT: no real authenticity opinion; synthetic demonstration only.
+What checked
+TEST SCOPE: digital copy of the fictional document.
+Affidavit
+Age
+35
+Paragraphs
+0
+Scope & Engagement: That I was engaged under Request ID #DOCUMENT_FORENSIC-2026-0001 by client Demo client to examine the submitted document titled questioned-document.pdf, within the scope and limitations recorded in my report.
+1
+Methodology: That the materials available to me, the methods I used and their limitations are described in the accompanying Preliminary Forensic Examination Report.
+2
+Confirmation: That the findings set forth in the Preliminary Forensic Examination Report represent my true and honest professional evaluation without fear, bias, or external influence.
+3
+Verification: That the contents of this affidavit are true to my personal professional knowledge and nothing material has been concealed therein.
+Deponent name
+TEST ONLY Advocate
+Office address
+TEST ONLY Office, Pune
+Enrolment number
+TEST-BAR-2026
+Signature
+Drawn signature recorded with this version; see the PDF.
+Signed at
+2026-11-10T20:33:56.769Z
+Production
+forensic
+Draft · v1Adv. Arjun Sharma · 11 Nov 2026, 02:03 am
+Documents
+3 files
+CLIENT 1
+PDF
+questioned-document.pdf ↗
+
+Questioned document
+
+Demo client · 1 page
+
+ADVOCATE 1
+PDF
+Affidavit.pdf ↗
+
+Forensic affidavit
+
+Adv. Arjun Sharma · 1 page
+
+GENERATED 1
+PDF
+Forensic_Report.pdf ↗
+
+Draft · v2
+
+Adv. Arjun Sharma · 1 page
+
+Payments
+1 record
+Service feedemo
+₹5,898.53
+
+Demo client · Client
+
+Captured · 11 Nov 2026, 02:03 am
+
+Amount breakdown

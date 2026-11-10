@@ -1,0 +1,69 @@
+{
+  "checked_at": "2026-11-10T20:53:47.563Z",
+  "results": [
+    {
+      "service": "property_search",
+      "case_id": "6fd68881-024b-43e6-ab71-723ce1b3c0ce",
+      "reference": "PROPERTY_SEARCH-2026-0001",
+      "foreign_case_id": "4103926f-b27d-431a-87f6-c2e0fda0b2a0",
+      "other_client_to_completed_case": 404,
+      "client_to_other_case": 404
+    },
+    {
+      "service": "document_forensic",
+      "case_id": "71f45d0a-e0ac-489d-9c7b-d7996e933d1d",
+      "reference": "DOCUMENT_FORENSIC-2026-0001",
+      "foreign_case_id": "f92f1c19-717a-4b4c-bd09-0dad51917b3c",
+      "other_client_to_completed_case": 404,
+      "client_to_other_case": 404
+    },
+    {
+      "service": "court_marriage",
+      "case_id": "e8ff2c33-7e49-4e98-bc9b-69e6556a7023",
+      "reference": "COURT_MARRIAGE-2026-0001",
+      "foreign_case_id": "decdb23e-3b9a-4f68-94fb-79a15941f6f4",
+      "other_client_to_completed_case": 404,
+      "client_to_other_case": 404
+    },
+    {
+      "service": "legal_advice",
+      "case_id": "df6855f0-6503-4209-9862-bec0ae0b7457",
+      "reference": "LEGAL_ADVICE-2026-0003",
+      "foreign_case_id": "1a227934-cf3b-4bbc-90af-4bf957ae734f",
+      "other_client_to_completed_case": 404,
+      "client_to_other_case": 404
+    },
+    {
+      "service": "district_court",
+      "case_id": "5608e84e-530c-4d2d-95b0-a103b49d954b",
+      "reference": "DISTRICT_COURT-2026-0003",
+      "foreign_case_id": "4e9e4dce-ce68-4ca1-afc3-f1badc64cee2",
+      "other_client_to_completed_case": 404,
+      "client_to_other_case": 404
+    },
+    {
+      "service": "high_court",
+      "case_id": "4f1f99bc-afc2-4fa7-8bfe-f220f8c9a9e5",
+      "reference": "HIGH_COURT-2026-0003",
+      "foreign_case_id": "bf95dc62-579e-4ea6-8c94-b0bc01ba00b8",
+      "other_client_to_completed_case": 404,
+      "client_to_other_case": 404
+    },
+    {
+      "service": "fir_draft",
+      "case_id": "41aed703-75ed-4cfd-84a9-259a0bdd8d02",
+      "reference": "FIR_DRAFT-2026-0011",
+      "foreign_case_id": "11ec1256-5dca-4870-8e3b-9415e2f8aad7",
+      "other_client_to_completed_case": 404,
+      "client_to_other_case": 404
+    },
+    {
+      "service": "legal_notice",
+      "case_id": "e30cd884-6bff-477b-977d-e6b7a020b497",
+      "reference": "LN-2026-0025",
+      "foreign_case_id": "28e9dbf2-0e04-4a6d-8c54-03fe9e58da61",
+      "other_client_to_completed_case": 404,
+      "client_to_other_case": 404
+    }
+  ]
+}

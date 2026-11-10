@@ -20,22 +20,28 @@ module.exports=async function(w){
  await admin.click('fieldset label:nth-of-type(3) input').catch(async()=>{const boxes=await admin.$$('fieldset input[type="checkbox"]');await boxes[1].click();});
  await shot(admin,'admin-combined-return');await click(admin,'Return for correction');await text(admin,'Waiting for the client to upload replacement identity evidence.');
  }
- let l=await life();
+ let l=await life(),replacement;
  if(l.submissions.length===1){
  const oldToken=token(l);assert.equal(l.rejection_count,1);assert.equal(l.submissions[0].state,'returned');
  await assert.rejects(clients.admin.approveFirDraft(caseId,approval.draft_id,oldToken),{status:409});
  await assert.rejects(clients.admin.documentUrl(identity.id),{status:404});await assert.rejects(clients.client.documentUrl(identity.id),{status:404});
+ if(l.identity_returns.at(-1)?.state!=='accepted'){
  await client.reload({waitUntil:'networkidle0'});await text(client,'Action needed: replace your identity document');await text(client,'Your payment remains recorded.');assert.ok(!(await client.evaluate(()=>document.body.innerText)).includes('TEST FIRST RETURN'));await shot(client,'client-replacement-required');
  await adv.goto(mobile+'/advocate/fir/draft?caseId='+caseId,{waitUntil:'networkidle0'});await text(adv,'TEST FIRST RETURN');await text(adv,'Identity correction is outstanding.');await shot(adv,'advocate-first-return');
  await selectorClick(client,'[aria-label="Identity type: Masked Aadhaar"]');await selectorClick(client,'[aria-label="I confirm this is masked Aadhaar showing only the last four digits"]');
  const pdf=await PDFDocument.create();pdf.addPage().drawText('TEST ONLY masked identity replacement fixture. No actual ID number.');const bytes=await pdf.save(),file=path.join(out,'TEST-replacement-fixture.pdf');fs.writeFileSync(file,bytes);
  if(deployed){const[chooser]=await Promise.all([client.waitForFileChooser(),click(client,'Upload Identity Proof')]);await chooser.accept([file]);}
  else{const ticket=await clients.client.presign({case_id:caseId,kind:'id_proof',filename:'TEST-masked-replacement.pdf',mime:'application/pdf',identity:{document_type:'masked_aadhaar',masked_copy:true}});await clients.client.upload(ticket,new Blob([bytes],{type:'application/pdf'}));await client.reload({waitUntil:'networkidle0'});}
- let replacement;for(let i=0;i<40;i++){replacement=(await clients.client.case(caseId)).documents.find(d=>d.kind==='id_proof'&&d.status==='uploaded');if(replacement)break;await delay(500);}assert.ok(replacement);
+ for(let i=0;i<40;i++){replacement=(await clients.client.case(caseId)).documents.find(d=>d.kind==='id_proof'&&d.status==='uploaded');if(replacement)break;await delay(1500);}assert.ok(replacement);
  await click(client,'Send replacement for review: '+replacement.filename);await text(client,'Your replacement identity document is awaiting review.');await shot(client,'client-replacement-submitted');
  await goAdmin();await text(admin,'Uploaded identity document');await click(admin,'Accept identity document');await text(admin,'accepted. File removal:');await shot(admin,'admin-replacement-accepted');
- await adv.reload({waitUntil:'networkidle0'});await text(adv,'TEST FIRST RETURN');await text(adv,'Unavailable — remove this attachment');await click(adv,'Remove attachment 1');await click(adv,'Use identity reference: '+replacement.filename);
- await fill(adv,'Statement of Facts','TEST corrected chronology after first admin return. हिंदी कथन। No real offence or police filing.');await click(adv,'Save Draft');await text(adv,'Saved v3');await click(adv,'Generate PDF Preview');await text(adv,'Open PDF Preview');await click(adv,'Send for Admin Approval');await text(adv,'Awaiting Admin Approval');
+ }
+ replacement??=(await clients.client.case(caseId)).documents.find(d=>d.id===l.identity_returns.at(-1)?.replacement_document_id);assert.ok(replacement);
+ await adv.goto(mobile+'/advocate/fir/draft?caseId='+caseId,{waitUntil:'networkidle0'});await text(adv,'TEST FIRST RETURN');
+ const versions=(await clients.admin.adminCase(caseId)).drafts.map(d=>d.version);
+ if(Math.max(...versions)<3){await text(adv,'Unavailable — remove this attachment');await click(adv,'Remove attachment 1');await click(adv,'Use identity reference: '+replacement.filename);
+ await fill(adv,'Statement of Facts','TEST corrected chronology after first admin return. हिंदी कथन। No real offence or police filing.');await click(adv,'Save Draft');await text(adv,'Saved v3');}
+ await click(adv,'Generate PDF Preview');await text(adv,'Open PDF Preview');await click(adv,'Send for Admin Approval');await text(adv,'Awaiting Admin Approval');
  await goAdmin();await text(admin,'Submitted draft · v3');await admin.click('fieldset input[type="checkbox"]');await admin.type('#fir-reason','TEST SECOND RETURN: explain the witness sequence before finalising.');await click(admin,'Return for correction');await text(admin,'2 draft rejections for the current advocate.');await shot(admin,'admin-second-return-reassign');
  await adv.reload({waitUntil:'networkidle0'});await text(adv,'2 draft rejections on your current assignment.');await text(adv,'TEST SECOND RETURN');await shot(adv,'advocate-second-return');
  }

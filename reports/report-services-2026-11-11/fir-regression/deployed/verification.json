@@ -1,0 +1,105 @@
+{
+  "case_id": "41aed703-75ed-4cfd-84a9-259a0bdd8d02",
+  "reference": "FIR_DRAFT-2026-0011",
+  "status": "completed",
+  "submissions": [
+    {
+      "id": "baf0bb48-d29d-467c-856b-178a5927e705",
+      "assignment_id": "924e49b3-6f73-4ef1-a97f-f15bfdfb9543",
+      "draft_id": "fc9834a1-e514-4192-afe6-2faeba09413a",
+      "version": 2,
+      "document_id": "780b4ea9-a9fd-4d8f-8e9e-3929686e836a",
+      "identity_document_id": "35a1b080-da49-4aff-bfcb-965c9e1e606b",
+      "identity_checked_at": null,
+      "state": "returned",
+      "draft_reason": "TEST FIRST RETURN: clarify the chronology and supporting facts.",
+      "submitted_at": "2026-11-10T20:41:22.262Z",
+      "decided_at": "2026-11-10T20:41:30.762Z"
+    },
+    {
+      "id": "2bf26a7f-c574-4711-acad-95b4e947e012",
+      "assignment_id": "924e49b3-6f73-4ef1-a97f-f15bfdfb9543",
+      "draft_id": "ffe14195-3aeb-44e0-9391-a1db71561411",
+      "version": 3,
+      "document_id": "0d559e5d-e20d-4348-ab6a-282bdbb46e9f",
+      "identity_document_id": "85ff2d77-cc93-4aa8-8f14-7da13744bda5",
+      "identity_checked_at": null,
+      "state": "returned",
+      "draft_reason": "TEST SECOND RETURN: explain the witness sequence before finalising.",
+      "submitted_at": "2026-11-10T20:46:32.668Z",
+      "decided_at": "2026-11-10T20:46:36.355Z"
+    },
+    {
+      "id": "92ca79e8-823c-4c46-9e34-6cecc6764287",
+      "assignment_id": "dbe4e1d8-4d90-4b74-9d56-f7bbeccdc856",
+      "draft_id": "1e80e8cd-f7ef-41a9-bf9d-e0da4cdff10d",
+      "version": 4,
+      "document_id": "a5cd2205-d30e-4967-8a11-96b432489fa8",
+      "identity_document_id": "85ff2d77-cc93-4aa8-8f14-7da13744bda5",
+      "identity_checked_at": "2026-11-10T20:47:07.416Z",
+      "state": "approved",
+      "draft_reason": null,
+      "submitted_at": "2026-11-10T20:47:04.096Z",
+      "decided_at": "2026-11-10T20:47:09.216Z"
+    }
+  ],
+  "assignments": [
+    {
+      "id": "924e49b3-6f73-4ef1-a97f-f15bfdfb9543",
+      "advocate_id": "08c69d48-858a-4dc3-aa7b-514576881ecf",
+      "name": "Adv. Arjun Sharma",
+      "assigned_at": "2026-11-10T20:40:46.157Z",
+      "ended_at": "2026-11-10T20:46:40.693Z",
+      "rejections": 2
+    },
+    {
+      "id": "dbe4e1d8-4d90-4b74-9d56-f7bbeccdc856",
+      "advocate_id": "f102db2b-c155-453f-92f6-3e62109e91d1",
+      "name": "Demo Advocate Asha",
+      "assigned_at": "2026-11-10T20:46:40.694Z",
+      "ended_at": null,
+      "rejections": 0
+    }
+  ],
+  "identity_returns": [
+    {
+      "id": "3e366f52-7515-4431-b685-2bab811dd81e",
+      "document_id": "35a1b080-da49-4aff-bfcb-965c9e1e606b",
+      "replacement_document_id": "85ff2d77-cc93-4aa8-8f14-7da13744bda5",
+      "state": "accepted",
+      "purge_status": "pending",
+      "rejected_at": "2026-11-10T20:41:30.761Z"
+    }
+  ],
+  "payout": {
+    "assignment_id": "dbe4e1d8-4d90-4b74-9d56-f7bbeccdc856",
+    "amount_paise": "99900",
+    "policy_id": "93ca3013-05a7-4adc-a82f-681974f6394d",
+    "commission_rate_id": "c8b9588f-e7e7-5f92-9009-24793b6c2813"
+  },
+  "paid_at_unchanged": true,
+  "approval": {
+    "version": 4,
+    "draft_id": "1e80e8cd-f7ef-41a9-bf9d-e0da4cdff10d",
+    "document_id": "a5cd2205-d30e-4967-8a11-96b432489fa8",
+    "submitted_at": "2026-11-10T20:47:04.100Z",
+    "approved_at": "2026-11-10T20:47:09.219Z"
+  },
+  "pdf_sha256": "88a5cc06f49e32f0dc926962b9bba92e20cd8c367326c1b7acaa86bc97ce3c18",
+  "preview_equals_released_pdf": true,
+  "historical_pdf_unchanged": {
+    "case_id": "7385d6be-6367-4ba5-be29-32c00e3b7da1",
+    "pdf_sha256": "3be6b40dd045f6aedb02bc437e930a2ce7fc89bb52d8d0b06f7c300327b52cac"
+  },
+  "stale_approval": 409,
+  "manual_identity_check_required": 409,
+  "rejected_identity_download": 404,
+  "replaced_advocate_case": 404,
+  "replaced_advocate_pdf": 404,
+  "old_client_pdf": 404,
+  "replaced_advocate_notified": true,
+  "client_neutral_notification": true,
+  "reassignment_count_reset": true,
+  "all_human_lifecycle_actions_through_ui": true,
+  "browser_errors": []
+}

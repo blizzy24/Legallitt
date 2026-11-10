@@ -1,0 +1,54 @@
+{
+  "checked_at": "2026-11-10T20:26:28.645Z",
+  "commit": "febdde6405242008bf31219d4cb09a1bd93d0ea4",
+  "sites": [
+    {
+      "url": "https://legalitt-5.vercel.app",
+      "status": 200,
+      "ready": true,
+      "scripts": [
+        {
+          "url": "https://legalitt-5.vercel.app/_expo/static/js/web/entry-1f18257b7aa71597324b618bbc489b71.js",
+          "status": 200,
+          "sha256": "186b20354e59a8813756597da8955ae685bb64f4fae63a422a8308ef6e3987b5",
+          "contains_release_marker": true
+        }
+      ]
+    },
+    {
+      "url": "https://legalitt-admin-panel.vercel.app",
+      "status": 200,
+      "ready": true,
+      "scripts": [
+        {
+          "url": "https://legalitt-admin-panel.vercel.app/assets/index-QwNBJifm.js",
+          "status": 200,
+          "sha256": "9722d6b0a116118c29993a4bd76714c4950649f9491b81ce5d7a7162ac80e556",
+          "contains_release_marker": true
+        }
+      ]
+    }
+  ],
+  "github": {
+    "state": "success",
+    "sha": "febdde6405242008bf31219d4cb09a1bd93d0ea4",
+    "statuses": [
+      {
+        "context": "Vercel – legalitt",
+        "state": "success",
+        "url": "https://vercel.com/blizzard7/legalitt/2TPbHQ4k9HFgwieDHVmMNYUzdvuu"
+      },
+      {
+        "context": "Vercel – legalitt-admin-panel",
+        "state": "success",
+        "url": "https://vercel.com/blizzard7/legalitt-admin-panel/BxAr7NUHquAscY9qJpcTGNENUeuu"
+      }
+    ]
+  },
+  "api_health": {
+    "status": 200,
+    "body": {
+      "status": "ok"
+    }
+  }
+}

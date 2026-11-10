@@ -1,0 +1,185 @@
+My Cases
+ADVOCATE WORKSPACE
+FIR Draft
+FIR_DRAFT-2026-0011
+in progress
+Admin review
+0 draft rejections on your current assignment.
+No draft has been submitted yet.
+Manual draft
+Review the client’s filing and complete all eight sections. No AI is used.
+Maharashtra
+FIRST INFORMATION REPORT
+FORM I — Police Information Proforma
+1
+Police Station & Filing Time
+From client’s filing · read-only
+Police station
+TEST ONLY Station
+District
+Mumbai
+State / UT
+Maharashtra
+For completion at the police station: FIR number, date/time received and receiving officer’s signature. These spaces are deliberately blank in the PDF.
+2
+Complainant / Reporter Info
+From client’s filing · read-only
+Full legal name
+TEST ONLY FIR Complainant
+Father’s name: TEST Father Rao
+Age: 37
+Gender: Woman
+Occupation: TEST Teacher
+Present address: TEST Present Street 22
+Registered residence
+TEST Registered Street 11
+Phone
++91 2025550101
+Upload any one accepted identity document. Never upload a full Aadhaar card: use the masked copy showing only the last four digits. We do not extract or record ID numbers from identity uploads. An upload is not identity verification.
+Accepted: Masked Aadhaar · Passport · Voter ID · Driving licence
+Required identity document: Identity-proof-35a1b080-da49-4aff-bfcb-965c9e1e606b.pdf
+Clear identity reference: Identity-proof-35a1b080-da49-4aff-bfcb-965c9e1e606b.pdf
+3
+When and Where It Happened
+From client’s filing · read-only
+Incident type
+theft
+Date of incident
+10/11/2026
+Time of incident
+09:00
+Place of incident
+TEST ONLY synthetic location
+Distance / direction from police station
+○ Unknown
+○ Not applicable
+Clear answer
+4
+Accused Person(s)
+Editable records, initially copied from the client’s filing. Every answer below prints in the PDF.
+Accused 1
+Unknown suspect — change to known
+Accused 1 known description (optional)
+Primary accused 1
+Accused 1: Alias / identifying information
+◉ Unknown
+○ Not applicable
+Clear answer
+Accused 1: Phone
+◉ Unknown
+○ Not applicable
+Clear answer
+Accused 1: Other details
+○ Unknown
+○ Not applicable
+Clear answer
+Accused 1: Vehicle used
+◉ Unknown
+○ Not applicable
+Clear answer
+Accused 1: Suspected reason / motive
+◉ Unknown
+○ Not applicable
+Clear answer
+Remove accused 1
+Accused 2
+Known person — change to unknown suspect
+Accused 2 name
+Primary accused 2
+Accused 2: Alias / identifying information
+○ Unknown
+○ Not applicable
+Clear answer
+Accused 2: Phone
+○ Unknown
+○ Not applicable
+Clear answer
+Accused 2: Other details
+○ Unknown
+○ Not applicable
+Clear answer
+Accused 2: Vehicle used
+○ Unknown
+○ Not applicable
+Clear answer
+Accused 2: Suspected reason / motive
+○ Unknown
+○ Not applicable
+Clear answer
+Remove accused 2
+Add Another Accused
+5
+Applicable Legal Sections
+Enter the applicable act, section and description manually.
+Legal section 1: act
+Legal section 1: section
+Legal section 1: description
+Remove legal section 1
+Add Legal Section
+6
+Statement of Facts
+Editable. Initially copied from the client’s narrative and additional information; your saved wording is printed in full.
+Statement of Facts
+6 Words · Editable
+7
+Witnesses
+Editable records, initially copied from the client’s filing.
+Witness 1 name
+Witness 1: Phone
+○ Unknown
+○ Not applicable
+Clear answer
+Witness 1: Role / relationship
+○ Unknown
+○ Not applicable
+Clear answer
+Witness 1: When present
+○ Unknown
+○ Not applicable
+Clear answer
+Witness 1: Statement note
+○ Unknown
+○ Not applicable
+Clear answer
+Remove witness 1
+Witness 2 name
+Witness 2: Phone
+○ Unknown
+○ Not applicable
+Clear answer
+Witness 2: Role / relationship
+○ Unknown
+○ Not applicable
+Clear answer
+Witness 2: When present
+○ Unknown
+○ Not applicable
+Clear answer
+Witness 2: Statement note
+○ Unknown
+○ Not applicable
+Clear answer
+Remove witness 2
+Add Witness
+8
+Attached Documents
+Select the case’s uploads to list in this PDF. The original files remain separate attachments.
+☑ Identity-proof-35a1b080-da49-4aff-bfcb-965c9e1e606b.pdf
+View
+☑ TEST-FIR-25-pages.pdf
+View
+Attachment 1: Identity-proof-35a1b080-da49-4aff-bfcb-965c9e1e606b.pdf
+Remove attachment 1
+Attachment 2: TEST-FIR-25-pages.pdf
+Move attachment 2 up
+Remove attachment 2
+Attach Document
+Unsaved changes
+A newer FIR draft was saved in another session. Your unsaved edits are still on screen. Reload the saved version before editing again.
+Retry
+Save Draft
+Generate PDF Preview
+Sending freezes this version for admin approval. It will not be sent to the client yet.
+Send for Admin Approval
+Reload saved draft
+Refresh status

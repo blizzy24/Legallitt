@@ -1,0 +1,65 @@
+UI: Continue
+UI: Continue
+UI: Sign in
+UI: Continue
+UI: Continue
+UI: State
+UI: Maharashtra
+UI: District
+UI: Pune
+UI: Property type
+UI: Residential
+UI: 30 Years
+UI: Upload property document
+UI: Upload property document
+UI: Review request
+UI: Review request
+UI: Continue to payment
+UI: Review documents
+UI: Continue
+UI: Pay now (demo)
+UI: + Assign
+UI: Assign to Adv. Arjun Sharma
+UI: Accept request
+UI: Chat with client
+UI: Send
+UI: Send
+UI: Start property report
+UI: Add document record
+UI: Save report version
+UI: Generate PDF preview
+UI: Continue to final upload
+UI: Upload final PDF
+UI: Save report version
+UI: I have checked and signed the final report and am ready to send it to the client.
+UI: Send Report to Client
+UI: Continue
+UI: Upload questioned document
+UI: Document type
+UI: Agreement / Contract
+UI: I do not have a reference sample
+UI: Review request
+UI: Review request
+UI: Continue to payment
+UI: Pay now (demo)
+UI: + Assign
+UI: Assign to Adv. Arjun Sharma
+UI: Accept request
+UI: Chat with client
+UI: Send
+UI: Send
+UI: Prepare forensic report
+UI: Save report & prepare affidavit
+UI: I confirm that I reviewed the report and affidavit and that this is my signature.
+UI: Save affidavit & review
+UI: Generate PDF preview
+UI: I have checked the files and am ready to submit this version to admin.
+UI: Submit to Admin
+UI: Return version 2 for correction
+UI: Save report & prepare affidavit
+AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+  assert.ok(pad)
+
+    at sign (D:\Legalitt\Legallitt\scripts\verify-report-services.cjs:29:96)
+    at async main (D:\Legalitt\Legallitt\scripts\verify-report-services.cjs:58:322)
