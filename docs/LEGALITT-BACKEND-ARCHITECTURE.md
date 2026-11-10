@@ -1,8 +1,9 @@
 # Legalitt — Backend & Cloud Architecture
 
-Version 6.6 · 1 November 2026
-Status: steps 0–7 complete for Legal Notice. The screen-rework (§1a) is in
-flight. §2.11 now governs every capability that is not yet real.
+Version 6.6 baseline · updated 11 November 2026
+Status: Legal Notice, FIR, the three consultation services and the three report
+services have connected client, advocate and admin flows. The service sections
+record their current scope; §9.1 lists simulations and integrations still unbuilt.
 
 This document is the specification for the backend phase. It is written to be
 handed to a coding agent as the source of truth. Where something is undecided,
@@ -14,9 +15,10 @@ produce schema that has to be migrated later.
 ## 1. Context
 
 The mobile app is built: Expo SDK 57, React Native 0.86, TypeScript, Expo
-Router, 322 routes covering nine services across three roles. All data is
-currently local fixtures. This phase replaces those fixtures with a real
-backend.
+Router, 329 routes covering the drawn services across three roles. Legal Notice,
+FIR, Legal Advice, District Court, High Court, Property Search, Document Forensic
+and Court Marriage now use the real API. Remaining disconnected capabilities
+must follow §2.11 rather than present fixture content as live data.
 
 **Roles**
 
@@ -1468,6 +1470,11 @@ notifications, membership-scoped chat and the canonical case state writer.
 There is no schema migration. Intake saves compare `updated_at`; saved drafts
 compare `base_draft_id` under the case lock. State writes live in
 `case-state-machine.ts`, including report sub-status changes.
+
+All existing client and advocate report URLs resolve to this one implementation.
+The old in-memory prototype screens are retired rather than maintained as a
+second flow (§1a). A disconnected preview explains that the connected app is
+required; it cannot pretend to save, pay or deliver a report.
 
 Common flow: draft intake → submitted → payment_pending → paid → admin assignment
 → assigned → advocate_accepted → in_progress. Property Search's final upload is

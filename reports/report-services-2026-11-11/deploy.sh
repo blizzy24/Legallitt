@@ -22,6 +22,7 @@ case "$phase" in
   docker buildx imagetools inspect "$repo:$tag" --raw > "$out/image-manifest.json"
   ;;
  migrate) bash infra/scripts/dev-ops-task.sh migrate "$tag" ;;
+ seed-pricing) bash infra/scripts/dev-ops-task.sh seed-pricing "$tag" ;;
  prepare)
   aws cloudformation describe-stacks --region "$region" --stack-name "$stack" > "$out/stack-before.json"
   python - "$out" "$tag" <<'PY'

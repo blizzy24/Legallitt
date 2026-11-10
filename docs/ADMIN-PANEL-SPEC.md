@@ -6,6 +6,16 @@
 visual reference. It is **not** a feature list. Features come from our
 lifecycle and our designs. See `ADMIN-PANEL-SURVEY.md` for what is there.
 
+**Approved extension, 11 November 2026: report services.** Property Search,
+Document Forensic and Court Marriage have separate queues and assignment using
+the existing panel language. Property Search releases directly from advocate to
+client (design 211); admin has no approval gate. Forensic and Court Marriage
+review the exact submitted version and its PDFs, with required action items for
+return to the same advocate (design 231). A corrected new version returns to
+admin; stale actions fail, superseded files and internal reasons stay private.
+Show intake, source documents, version history and elapsed review/payment age.
+See architecture §4.7 for assumptions and §9.2 for screens without supplied designs.
+
 **Approved extension, 10 November 2026: consultation services.** Legal Advice,
 District Court and High Court have separate queues. Admin confirms the advocate
 the client booked, sees appointment time and missed starts, and reviews the exact

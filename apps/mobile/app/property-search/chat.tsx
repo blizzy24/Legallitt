@@ -1,3 +1,2 @@
-import {useLocalSearchParams} from 'expo-router';
-import {ReportChat} from '../../features/reports/Chat';
-export default function Chat(){const {caseId}=useLocalSearchParams<{caseId?:string}>();return <ReportChat caseId={caseId}/>;}
+import {ReportRouteScreen} from '../../features/reports/RouteScreen';
+export default function ServiceRoute(){return <ReportRouteScreen name="property-search/chat"/>;}

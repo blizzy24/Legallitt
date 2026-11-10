@@ -1,3 +1,2 @@
-import {useLocalSearchParams} from 'expo-router';
-import {ReportClientScreen} from '../../features/reports/ClientScreen';
-export default function Documents(){const {caseId}=useLocalSearchParams<{caseId?:string}>();return <ReportClientScreen service="property_search" step="documents" caseId={caseId}/>;}
+import {ReportRouteScreen} from '../../features/reports/RouteScreen';
+export default function ServiceRoute(){return <ReportRouteScreen name="property-search/documents"/>;}

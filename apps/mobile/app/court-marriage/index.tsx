@@ -1,2 +1,2 @@
-import {ReportClientScreen} from '../../features/reports/ClientScreen';
-export default function CourtMarriage(){return <ReportClientScreen service="court_marriage" step="index"/>;}
+import {ReportRouteScreen} from '../../features/reports/RouteScreen';
+export default function ServiceRoute(){return <ReportRouteScreen name="court-marriage/index"/>;}
