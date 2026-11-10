@@ -6,6 +6,8 @@ import { PrismaService } from "../prisma.service";
 import { caseScope, type CaseActor } from "./case-access";
 import { caseClientFees } from './client-fees';
 import {firApproval} from './fir-approval';
+import {isConsultationService} from '@legalitt/shared';
+import {consultationDocumentVisible} from '../consultations/consultation-documents';
 
 const cursorSchema = z.strictObject({
   id: z.uuid(),
@@ -110,6 +112,10 @@ export class CaseRepository {
         events:actor.role==='client'?events.filter(e=>!['fir_admin_returned','fir_identity_reviewed','fir_advocate_reassigned','fir_draft_saved'].includes(e.type)).map(e=>({...e,payload:{}})):events, drafts, reviews:actor.role==='client'?reviews.filter(r=>r.decision==='approved'):reviews, shipments, approval:actor.role==='client'&&!approval?.approved_at?null:approval,
         documents: actor.role==='client'?documents.filter(d=>d.owner_id===record.client_id || !!approval?.approved_at&&d.id===approval.document_id):documents,
         client_fees:snapshot?{...snapshot.breakdown,breakdown_complete:true,simulated:captured.simulated}:null};
+    }
+    if(isConsultationService(record.service_code)){
+      const visible=await Promise.all(documents.map(async d=>await consultationDocumentVisible(db,actor,record,d)?d:null));
+      return {...caseRecord,parties,pricing,advocate:advocate?{...advocateUser,profile}:null,events,documents:visible.filter(Boolean),drafts:[],reviews:[],shipments};
     }
     if (record.service_code !== 'legal_notice')
       return { ...caseRecord, parties, pricing, advocate: advocate ? {...advocateUser, profile} : advocate, events, documents, drafts, reviews, shipments };

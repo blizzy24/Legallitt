@@ -1342,6 +1342,77 @@ CREATE INDEX fir_identity_returns_case_id_state_idx ON fir_identity_returns(case
 
 ```
 
+### 4.6 Consultation services — 10 November 2026
+
+Legal Advice, District Court and High Court reuse the case spine and each service's
+versioned 30-minute consultation tariff. **Client instruction:** the client chooses
+an advocate and time; the session uses real in-app chat. Court representation has a
+separate advocate quote and client acceptance/payment after consultation. Court work
+is offline. No fixed representation price, voice/video, or automatic court filing.
+
+`consultation_policies` and `advocate_availability` are versioned rows. Existing
+`consultations` rows gain nullable booking, policy, hold and session timestamps;
+new workflows have one booking per case. A case workspace revision protects stale
+actions. Immutable `court_quotes` and `consultation_reports` record versions and
+supersession; one report may await review. Admin approves the exact filed PDF, or
+returns it with a reason visible only to the advocate/admin. `court_progress` keeps
+public manual updates and published document IDs. Internal notes are stored separately
+from case intake, public events and the PDF. Case membership predicates are unchanged.
+
+Consultation checkout uses the existing tariff and fee policies. Representation
+checkout has its own quote source (`case_price_quotes.pricing_id` is widened to
+nullable; `court_quote_id` identifies the private offer). Both pin full pricing,
+commission and page-policy snapshots; initial checkout also pins the booking revision.
+Rebooking invalidates a previously displayed checkout. Slot reservations serialize
+on the client and advocate; capture rechecks both the hold and conflicts. Page overage
+is case-wide, excludes generated client briefs and credits already charged pages.
+
+The full lifecycle, **assumptions awaiting client confirmation**, and layout sources
+are recorded in [CONSULTATION-IMPLEMENTATION.md](CONSULTATION-IMPLEMENTATION.md).
+These assumptions are authorized implementation choices for this chunk, not claims
+of client confirmation. Initial policy: IST, half-hour slots, 28-day horizon,
+30-minute notice, 10-minute hold, seven-day representation quotes. Admin confirms
+the client's selected advocate. Paid unstarted sessions can be rescheduled with the
+same advocate without another charge. Both parties may explicitly start early;
+there is no clock-driven navigation or automatic session completion. Completing
+advocate entitlement uses captured pricing; no payout transfer is implemented.
+
+Authoritative additive table inventory (full field definitions and foreign keys are
+in migration `202611100006_consultation_services` and Prisma):
+
+```sql
+CREATE TABLE consultation_policies (
+  id UUID PRIMARY KEY, version INTEGER UNIQUE, config JSONB,
+  effective_from TIMESTAMPTZ, effective_to TIMESTAMPTZ
+);
+CREATE TABLE advocate_availability (
+  id UUID PRIMARY KEY, advocate_id UUID, version INTEGER,
+  timezone TEXT, intervals JSONB, created_at TIMESTAMPTZ
+);
+CREATE TABLE consultation_workspaces (
+  case_id UUID PRIMARY KEY, revision INTEGER, current_report_id UUID,
+  current_court_quote_id UUID, internal_notes TEXT,
+  consultation_approved_at TIMESTAMPTZ, updated_at TIMESTAMPTZ
+);
+CREATE TABLE court_quotes (
+  id UUID PRIMARY KEY, case_id UUID, version INTEGER, advocate_id UUID,
+  base_amount_paise BIGINT, scope TEXT, exclusions TEXT, fee_policy_id UUID,
+  commission_rate_id UUID, gst_bps INTEGER, expires_at TIMESTAMPTZ, status TEXT,
+  supersedes_id UUID, accepted_at TIMESTAMPTZ, payment_id UUID, created_at TIMESTAMPTZ
+);
+CREATE TABLE consultation_reports (
+  id UUID PRIMARY KEY, case_id UUID, kind TEXT, version INTEGER, advocate_id UUID,
+  content JSONB, filing_snapshot JSONB, document_id UUID, status TEXT,
+  supersedes_id UUID, submitted_at TIMESTAMPTZ, reviewed_at TIMESTAMPTZ,
+  reviewed_by UUID, reason TEXT, created_at TIMESTAMPTZ
+);
+CREATE TABLE court_progress (
+  id UUID PRIMARY KEY, case_id UUID, advocate_id UUID, stage TEXT, "update" TEXT,
+  court TEXT, case_number TEXT, next_hearing TIMESTAMPTZ,
+  document_ids UUID[], created_at TIMESTAMPTZ
+);
+```
+
 ## 5. API surface
 
 Conventions: `/api/v1`, JWT bearer from Cognito, cursor pagination,
@@ -1912,7 +1983,7 @@ before the backend needs it.
 | 7 | Advocate Route onboarding — designs needed | Payouts |
 | 8 | Admin panel — scope, designs, price, timeline | Assignment, release |
 | ~~9~~ | ~~Whose profile is design 433~~ — **closed 29 Oct.** 433 is the advocate profile: its header, bar council enrolment, practice areas, availability and client reviews admit no other reading. "Rahul Sharma" is a placeholder name, as the High Court matter drawn on Send Documents is a placeholder matter | — |
-| 24 | **Advocate availability** — design 433 draws an availability block (days, hours, "Slots open"). No data model exists for it | Advocate profile |
+| 24 | **Weekly availability implemented, 2026-11-10:** versioned advocate hours support the three consultation services (§4.6), with actual slot conflicts checked. Date exceptions and instant presence remain unbuilt; booking-window assumptions await client confirmation. | Advocate profile / consultation booking |
 | ~~23~~ | ~~Legal Notice letterhead~~ — **closed 2 Nov.** The project owner identified the supplied Legal Notice Response template (189/267). Generated draft/final PDFs now use this measured letterhead; see the instructed addition below | — |
 | 26 | **Registered company name** — the supplied letterhead says `INT LegalConsultants Pvt. Ltd.` in the header and `INT LegalConsultant Pvt. Ltd.` in the sign-off. Both remain exactly as drawn until the client confirms | Letterhead |
 | 25 | **Client reviews** — design 433 draws reviews with names, stars and quotes; designs 264–265 draw the advocate's own reviews list. No data model exists | Advocate profile, ratings |
@@ -1967,7 +2038,17 @@ is re-litigated mid-build.
 | FIR identity evidence | **Client confirmed:** required at intake and draft generation; choose any one of masked Aadhaar, passport, voter ID or driving licence. Store the accepted list in configuration, with policy version recorded on uploads. Aadhaar must show only the last four digits; never accept the full card. No ID-number extraction, reading or recording from any of the four uploads; all remain excluded from content extraction. Supersedes the earlier optional-ID instruction. Q15 answered for FIR only; personal intake facts remain confirmed. | 2026-11-10 |
 | FIR admin rejection, reassignment and turnaround | **Client confirmed:** one shared submission/supersession model for draft and identity returns plus reassignment. Required reasons are visible to every advocate assigned to the case. Reassign optionally after two draft rejections per assignment; preserve history and reset the new assignment count. Notify the replaced advocate and use the approved neutral client message. Purge rejected unmasked Aadhaar including all S3 versions. Warn after 24 hours from captured payment; mark overdue after 48 hours, without resetting on returns. Versioned policy gives the completing advocate the full captured advocate share and replaced advocates zero. | 2026-11-10 |
 
+| Consultation services | **Client instruction:** Legal Advice is a paid 30-minute chat consultation; District Court/High Court have their own paid consultation and a separate representation quote/payment. Weekly advocate hours, client selection, admin assignment and report approval, offline court updates. Booking/review/payment assumptions are explicitly awaiting client confirmation in §4.6 and the linked implementation record. | 2026-11-10 |
+
 ### 9.1 Register of simulated capabilities
+
+**Consultation service update — 10 November 2026:** booking, weekly availability,
+intake persistence, chat, versioned quotes, report PDF filing, admin review and inbox
+notifications are real application features. Payment capture uses the existing
+simulated adapter, and external notification delivery remains simulated. Voice/video,
+bank payout/escrow, court-system integration, AI consultation summaries, instant
+presence and date-specific availability overrides are not implemented and are not
+presented as working. No timed advancement stands in for client, advocate or admin.
 
 Everything currently standing in for a real integration. This list must be
 empty, or explicitly accepted in writing by the client, before production.
@@ -2005,6 +2086,26 @@ client without an advocate in between. If one does, it needs either an advocate
 gate or explicit framing that it is not legal advice.
 
 ### 9.2 Register of design substitutions
+
+**Consultation services — 10 November 2026.** The API routes reuse the drawn intake
+field groups, review cards, date/time grid, weekly hours, chat, docket and court
+progress layouts (Legal Advice 104–112/124, advocate 149/274/180/181/288, District
+Court 340–344/397–432, High Court 291–294/362–396). These routes replace their archived
+fixture children at the API navigation boundary; the fixture screens never mount.
+Confirmed flat tariffs replace experience/mode tiers and drawn fixed court prices.
+Court/bench is entered by the client or explicitly unknown, not hard-coded to MP.
+Booking steps now name the actual details/documents/appointment/review sequence.
+Voice/video choices and payout/escrow/AI/HSM/P2P claims are replaced by honest current
+capability copy. The client brief excludes internal notes. The client sees their
+saved intake, paid booking and report waiting state, never fixture identities.
+
+**Built without supplied designs:** admin selected-advocate confirmation,
+consultation/report review and correction panel, appointment-missed indicator,
+representation quote editor/acceptance, and recoverable checkout/upload errors.
+Reason: the newly instructed chat-first consultation and quote lifecycle lacks these
+screens; existing admin visual language and the services' drawn cards/fields are used.
+The exact assumptions and omissions are listed in the linked §4.6 implementation
+record rather than silently treating them as confirmed product rules.
 
 **FIR admin rejection — authorised 10 November 2026, built without supplied designs.**
 Reason: the client confirmed draft returns, optional reassignment after two

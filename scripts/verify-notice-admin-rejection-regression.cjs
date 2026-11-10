@@ -5,8 +5,9 @@ const {ApiClient}=require('../packages/shared/dist');
 const {PDFDocument,StandardFonts}=require('../apps/api/node_modules/pdf-lib');
 const {demoPassword}=require('../apps/api/dist/src/auth/demo');
 process.loadEnvFile('apps/api/.env.local');
-const out=path.resolve('reports/fir-admin-rejection-2026-11-10/legal-notice');fs.mkdirSync(out,{recursive:true});
-const mobile='https://legalitt-5.vercel.app',panel='https://legalitt-admin-panel.vercel.app',base='https://gvycg0n3u8.execute-api.ap-south-1.amazonaws.com';
+const local=process.env.NOTICE_LOCAL==='1';
+const out=path.resolve('reports/consultation-services-2026-11-10',local?'legal-notice-local':'legal-notice-deployed');fs.mkdirSync(out,{recursive:true});
+const mobile=local?'http://localhost:8083':'https://legalitt-5.vercel.app',panel=local?'http://localhost:5174':'https://legalitt-admin-panel.vercel.app',base=local?'http://127.0.0.1:3003':'https://gvycg0n3u8.execute-api.ap-south-1.amazonaws.com';
 const delay=ms=>new Promise(r=>setTimeout(r,ms));
 const save=(name,data)=>fs.writeFileSync(path.join(out,name+'.json'),JSON.stringify(data,null,2)+'\n');
 async function click(p,label,role='button'){
@@ -30,13 +31,14 @@ async function goto(p,url){
 }
 async function shot(p,name){await p.screenshot({path:path.join(out,name+'.png'),fullPage:true});}
 async function main(){
+ const localServer=local?await require('./helpers/local-walkthrough.cjs')():null;
  const password=await demoPassword(),sessions={},api={},work={},errors=[],network=[];
  for(const role of ['client','advocate','admin']){const r=await fetch(base+'/api/v1/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:'demo-'+role+'@legalitt.invalid',password})});assert.equal(r.status,201,role+' API login');sessions[role]=await r.json();api[role]=new ApiClient({baseUrl:base,getTokens:async()=>sessions[role].tokens});}
  const browser=await puppeteer.launch({executablePath:process.env.CHROME_PATH??'C:/Program Files/Google/Chrome/Application/chrome.exe',headless:true,args:['--disable-background-timer-throttling','--disable-backgrounding-occluded-windows','--disable-renderer-backgrounding']});
  let record;const casePath=path.join(out,'case.json');
  try{
   for(const role of ['client','advocate','admin']){
-   const context=await browser.createBrowserContext(),p=await context.newPage();work[role]=p;
+   const context=await browser.createBrowserContext(),p=await context.newPage();work[role]=p;await localServer?.attach(p);
    await p.setViewport({width:role==='admin'?1440:430,height:1000});await p.emulateTimezone('Asia/Kolkata');
    p.on('dialog',async d=>d.accept());
    p.on('pageerror',e=>errors.push({role,message:e.message}));
@@ -116,6 +118,6 @@ async function main(){
   save('verification',{commit:'FIR-admin-rejection-regression',case:{id,reference:record.reference,status:record.status},urls:{mobile,panel,base},uiSignInRoles:['client','advocate','admin'],allLifecycleMutationsThroughUi:true,proofDownloadedInClientBrowser:true,proofSha256:hash(Buffer.from(bytes)),statusEvents:record.events.filter(e=>e.type==='status_changed').map(e=>({from:e.from_status,to:e.to_status,source:e.source})),errors});
   assert.deepEqual(errors,[]);console.log('PASS deployed UI lifecycle:',record.reference,record.status);
  }catch(e){for(const[role,p]of Object.entries(work)){await shot(p,role+'-failure').catch(()=>{});fs.writeFileSync(path.join(out,role+'-failure.txt'),await p.evaluate(()=>document.body.innerText).catch(()=>''));}throw e;}
- finally{save('browser-network',network);const timer=setTimeout(()=>{browser.process()?.kill('SIGKILL');browser.disconnect();},5000);try{await browser.close();}finally{clearTimeout(timer);}}
+ finally{save('browser-network',network);const timer=setTimeout(()=>{browser.process()?.kill('SIGKILL');browser.disconnect();},5000);try{await browser.close();}finally{clearTimeout(timer);localServer?.close();}}
 }
 main().catch(e=>{console.error(e.name,e.message);process.exitCode=1;});

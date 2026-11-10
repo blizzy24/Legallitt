@@ -80,6 +80,7 @@ test('multi-service spine: real DB ownership, references, locks, documents, inbo
         docs.push(ticket.document.id);
         await db.document.update({where:{id:ticket.document.id},data:{status:'uploaded'}});
         await db.case.update({where:{id:row.id},data:{status:'paid'}}); // fixture only: no new payment workflow
+        if(['legal_advice','district_court','high_court'].includes(service))await db.consultation.create({data:{case_id:row.id,advocate_id:advocate.id,client_id:owner.id,mode:'chat',scheduled_at:new Date(Date.now()+86400000),duration_min:30,status:'scheduled'}});
         await assert.rejects(machine.assign(owner,row.id,{advocate_id:advocate.id}),{status:403});
         await machine.assign(admin,row.id,{advocate_id:advocate.id});
         assert.equal((await cases.read(advocate,row.id)).advocate_id,advocate.id);
@@ -178,6 +179,7 @@ test('multi-service spine: real DB ownership, references, locks, documents, inbo
     await db.caseEvent.deleteMany({where:{case_id:{in:ids}}});
     await db.adminAction.deleteMany({where:{admin_id:admin.id}});
     await db.document.deleteMany({where:{id:{in:docs}}});
+    await db.consultation.deleteMany({where:{case_id:{in:ids}}});
     await db.case.deleteMany({where:{id:{in:ids}}});
     await db.advocateProfile.deleteMany({where:{user_id:{in:users.map(u=>u.id)}}});
     await db.user.deleteMany({where:{id:{in:users.map(u=>u.id)}}});

@@ -26,6 +26,8 @@ import { lockedCase } from "../cases/case-state-machine";
 import { DocumentStorage, stagingKey } from "./document-storage";
 import { FileInspector } from "./file-inspector";
 import {firIdentityPolicy} from './fir-identity';
+import {isConsultationService} from '@legalitt/shared';
+import {consultationDocumentVisible} from '../consultations/consultation-documents';
 
 const transactionOptions = { timeout: 60_000 };
 @Injectable()
@@ -76,11 +78,14 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
       ...(doc.kind === "id_proof" ? { identity_notice: doc.identity_evidence ? FIR_ID_NOTICE : ID_PROOF_NOTICE } : {}),
     };
   }
-  async presign(actor: CaseActor, body: unknown) {
+  async presign(actor: CaseActor, body: unknown, internal?:{consultationReport?:boolean}) {
     const input = parse(DocumentPresignSchema, body);
     const db = await this.prisma.getClient();
     return db.$transaction(async (tx) => {
       const record = await lockedCase(tx, actor, input.case_id);
+      if(input.kind==='consultation_report'&&(!internal?.consultationReport||actor.role!=='advocate'||!isConsultationService(record.service_code)))
+        throw new BadRequestException('Consultation briefs must be generated from the report editor.');
+      if(isConsultationService(record.service_code)&&['completed','cancelled','refunded'].includes(record.status))throw new ConflictException('This case is closed; documents cannot be added.');
       const replacingIdentity=record.service_code==='fir_draft'&&['assigned','advocate_accepted','in_progress','changes_requested'].includes(record.status)&&actor.role==='client'&&input.kind==='id_proof'&&!!await tx.firIdentityReturn.findFirst({where:{case_id:record.id,state:'replacement_required'}});
       if (record.service_code === 'fir_draft' && !(
         replacingIdentity || actor.role === 'client' && ['draft','payment_pending'].includes(record.status) && input.kind !== 'fir_draft' ||
@@ -133,6 +138,7 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
       const doc = await this.locked(tx, actor, id);
       if (doc.status === "uploaded") return this.publicRecord(doc);
       const record = await tx.case.findUniqueOrThrow({where:{id:doc.case_id!}});
+      if(!await consultationDocumentVisible(tx,actor,record,doc))throw new NotFoundException('Document not found');
       if (record.service_code === 'fir_draft' && (record.sub_status === 'awaiting_admin_approval' || record.status === 'completed'))
         throw new ConflictException('FIR documents are frozen at this stage');
       if (doc.status !== "pending")
@@ -183,6 +189,7 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
       if (doc.status !== "uploaded")
         throw new NotFoundException("Document not found");
       const record = await tx.case.findUniqueOrThrow({where:{id:doc.case_id!}});
+      if(!await consultationDocumentVisible(tx,actor,record,doc))throw new NotFoundException('Document not found');
       if (record.service_code === 'fir_draft' && actor.role === 'client' && doc.owner_id !== record.client_id) {
         const approved = await tx.draft.findFirst({where:{case_id:record.id,document_id:doc.id,
           draft_reviews_draft_id_relations:{some:{decision:'approved',reviewer_id_relation:{role:'admin'}}}}});
@@ -201,6 +208,11 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
     const doc = await db.$transaction(async (tx) => {
       const record = await this.locked(tx, actor, id);
       const parent = await tx.case.findUniqueOrThrow({where:{id:record.case_id!}});
+      if(isConsultationService(parent.service_code)){
+        const reports=await tx.consultationReport.findMany({where:{case_id:parent.id,status:{in:['submitted','approved']}}});
+        if(reports.some(r=>r.document_id===id||((r.content as {attachment_ids?:string[]}).attachment_ids??[]).includes(id))||await tx.courtProgress.findFirst({where:{case_id:parent.id,document_ids:{has:id}}}))
+          throw new ConflictException('Published or submitted case documents are retained with their report.');
+      }
       if (parent.service_code === 'fir_draft') {
         if(record.kind==='id_proof'&&!['draft','payment_pending'].includes(parent.status))throw new ConflictException('Use the admin identity review to replace submitted identity evidence.');
         const linked = await tx.draft.findFirst({where:{case_id:parent.id,document_id:id}});

@@ -22,3 +22,5 @@ export * from './fir-identity';
 export * from './fir-draft';
 export * from './jurisdictions';
 export * from './fir-lifecycle';
+export * from './consultation';
+export * from './consultation-api';

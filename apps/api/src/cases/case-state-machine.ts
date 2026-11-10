@@ -1,4 +1,5 @@
 import {ensureFirLifecycle,firCorrectionState} from './fir-lifecycle';
+import {isConsultationService} from '@legalitt/shared';
 import { NOTIFICATIONS, type NotificationsPort } from '../notifications/notifications.port';
 import { notifyCaseTransition } from '../notifications/case-notifications';
 import { requireDemoMode } from '../auth/demo';
@@ -411,6 +412,10 @@ export class CaseStateMachine {
       // Initial assignment only. A declined case retaining its former advocate
       // needs a separately approved reassignment flow, not this action.
       if (record.advocate_id) throw new ConflictException("Case already has an advocate");
+      if (isConsultationService(record.service_code)) {
+        const booked = await tx.consultation.findFirst({where:{case_id:id,status:'scheduled'}});
+        if (!booked || booked.advocate_id !== advocate_id) throw new ConflictException('Assign the advocate selected in the paid consultation booking.');
+      }
       const advocate = await tx.user.findFirst({
         where: { id: advocate_id, role: "advocate", status: "active",
           advocate_profiles_user_id_relations: {is: {verification: "approved"}} },
@@ -676,6 +681,18 @@ export class CaseStateMachine {
 /** Append-only non-lifecycle events share the case event writer. */
 export function appendCaseEvent(tx: Prisma.TransactionClient, data: Prisma.CaseEventUncheckedCreateInput) {
   return tx.caseEvent.create({data});
+}
+
+/** Consultation orchestration validates action, role and revision under this same
+ * lock. Keep private notes/review reasons in their own tables, never in events. */
+export async function writeConsultationCase(tx:Prisma.TransactionClient,actor:CaseActor,id:string,
+  data:Pick<Prisma.CaseUncheckedUpdateInput,'status'|'sub_status'|'title'|'details'|'matter_type'|'pricing_id'|'completed_at'>,
+  type:string,payload:Prisma.InputJsonObject={}) {
+  const before=await lockedCase(tx,actor,id);
+  if(!isConsultationService(before.service_code))throw new NotFoundException('Case not found');
+  const updated=await tx.case.update({where:{id},data:{...data,updated_at:new Date()}});
+  await appendCaseEvent(tx,{case_id:id,type,actor_id:actor.id,actor_role:actor.role,from_status:before.status,to_status:updated.status,payload});
+  return updated;
 }
 
 // FIR uses the same sole case/event writer. Service orchestration handles the

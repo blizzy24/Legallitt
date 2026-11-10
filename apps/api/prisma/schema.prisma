@@ -497,11 +497,13 @@ model FeePolicy {
 }
 
 model CasePriceQuote {
+  purpose               String @default("service_fee")
+  court_quote_id        String? @db.Uuid
   id                    String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   case_id               String @db.Uuid
   case                  Case @relation(fields: [case_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  pricing_id            String @db.Uuid
-  pricing               ServicePricing @relation("quote_price", fields: [pricing_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  pricing_id            String? @db.Uuid
+  pricing               ServicePricing? @relation("quote_price", fields: [pricing_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   commission_rate_id    String? @db.Uuid
   commission_rate       CommissionRate? @relation(fields: [commission_rate_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   fee_policy_id         String? @db.Uuid
@@ -605,6 +607,15 @@ model Hearing {
 }
 
 model Consultation {
+  advocate_id      String? @db.Uuid
+  client_id        String? @db.Uuid
+  policy_id        String? @db.Uuid
+  availability_id  String? @db.Uuid
+  reserved_until   DateTime? @db.Timestamptz(6)
+  client_joined_at DateTime? @db.Timestamptz(6)
+  started_at      DateTime? @db.Timestamptz(6)
+  ended_at        DateTime? @db.Timestamptz(6)
+  revision        Int @default(0)
   id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   case_id          String   @db.Uuid
   mode             String
@@ -617,6 +628,93 @@ model Consultation {
   case_id_relation Case     @relation("consultations_case_id_cases", fields: [case_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@map("consultations")
+}
+
+model ConsultationPolicy {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  version Int @unique
+  config Json @db.JsonB
+  effective_from DateTime @default(now()) @db.Timestamptz(6)
+  effective_to DateTime? @db.Timestamptz(6)
+  @@map("consultation_policies")
+}
+
+model AdvocateAvailability {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  advocate_id String @db.Uuid
+  version Int
+  timezone String
+  intervals Json @db.JsonB
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  @@unique([advocate_id,version])
+  @@map("advocate_availability")
+}
+
+model ConsultationWorkspace {
+  case_id String @id @db.Uuid
+  revision Int @default(0)
+  current_report_id String? @db.Uuid
+  current_court_quote_id String? @db.Uuid
+  internal_notes String @default("")
+  consultation_approved_at DateTime? @db.Timestamptz(6)
+  updated_at DateTime @default(now()) @db.Timestamptz(6)
+  @@map("consultation_workspaces")
+}
+
+model CourtQuote {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  case_id String @db.Uuid
+  version Int
+  advocate_id String @db.Uuid
+  base_amount_paise BigInt
+  scope String
+  exclusions String
+  fee_policy_id String @db.Uuid
+  commission_rate_id String @db.Uuid
+  gst_bps Int
+  expires_at DateTime @db.Timestamptz(6)
+  status String @default("offered")
+  supersedes_id String? @db.Uuid
+  accepted_at DateTime? @db.Timestamptz(6)
+  payment_id String? @db.Uuid
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  @@unique([case_id,version])
+  @@map("court_quotes")
+}
+
+model ConsultationReport {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  case_id String @db.Uuid
+  kind String
+  version Int
+  advocate_id String @db.Uuid
+  content Json @db.JsonB
+  filing_snapshot Json @db.JsonB
+  document_id String? @db.Uuid
+  status String @default("draft")
+  supersedes_id String? @db.Uuid
+  submitted_at DateTime? @db.Timestamptz(6)
+  reviewed_at DateTime? @db.Timestamptz(6)
+  reviewed_by String? @db.Uuid
+  reason String?
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  @@unique([case_id,version])
+  @@map("consultation_reports")
+}
+
+model CourtProgress {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  case_id String @db.Uuid
+  advocate_id String @db.Uuid
+  stage String
+  update String
+  court String?
+  case_number String?
+  next_hearing DateTime? @db.Timestamptz(6)
+  document_ids String[] @db.Uuid
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  @@index([case_id,created_at])
+  @@map("court_progress")
 }
 
 model KycVerification {

@@ -6,6 +6,18 @@
 visual reference. It is **not** a feature list. Features come from our
 lifecycle and our designs. See `ADMIN-PANEL-SURVEY.md` for what is there.
 
+**Approved extension, 10 November 2026: consultation services.** Legal Advice,
+District Court and High Court have separate queues. Admin confirms the advocate
+the client booked, sees appointment time and missed starts, and reviews the exact
+submitted consultation brief PDF. A required correction reason returns it to the
+same advocate; the client sees a neutral preparation status. Courts also show
+representation quotes/payments and public court updates, followed by a final
+summary approval. Pending reports belong in Open, oldest first; returned reports
+belong in In Progress. Private notes and correction reasons remain internal.
+See architecture §4.6 and `CONSULTATION-IMPLEMENTATION.md` for the versioned policy,
+assumptions, simulations and substitutions. These controls reuse the panel's
+visual language because no admin consultation design was supplied.
+
 **Approved extension, 10 November 2026: FIR admin rejection.** Architecture §4.3 and §9.2 supersede the initial approval-only restrictions below. Admin can review identity evidence, return a draft with a required reason, reject unmasked Aadhaar and optionally reassign after two draft rejections for the current assignment. Preserve assignment/review history, show 24/48-hour age from payment, and notify both the client and replaced advocate as specified. FIR `changes_requested` buckets depend on the outstanding actor; Legal Notice keeps its client-request meaning.
 
 **Earlier release: FIR draft approval.** The client confirmed

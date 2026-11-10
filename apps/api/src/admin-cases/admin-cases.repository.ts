@@ -7,6 +7,7 @@ import { caseScope, type CaseActor } from '../cases/case-access';
 import type { Prisma } from '../generated/prisma/client';
 import {firApproval} from '../cases/fir-approval';
 import {FirPolicyConfig} from '../cases/fir-lifecycle';
+import {isConsultationService} from '@legalitt/shared';
 
 export const adminCaseQuerySchema = z.strictObject({
   service: z.enum(SERVICE_CODES).default('legal_notice'),
@@ -43,8 +44,10 @@ export class AdminCasesRepository {
         {matter_type: {contains: input.search.replace(/\s+/g, '_'), mode: 'insensitive' as const}},
       ]}] : []),
     ]};
-    const waiting: Prisma.CaseWhereInput = {service_code:'fir_draft',OR:[{status:'in_progress',sub_status:'awaiting_admin_approval'},{status:{in:['assigned','advocate_accepted','in_progress','changes_requested']},sub_status:{in:['identity_review_pending','multiple_corrections_required']}}]};
-    const bucketWhere: Prisma.CaseWhereInput = {status:{in:eligible.filter(s=>adminBucketFor(s)===input.bucket)}};
+    const consultation=isConsultationService(input.service);
+    const waiting: Prisma.CaseWhereInput = consultation?{status:'in_progress',sub_status:'awaiting_admin_approval'}:{service_code:'fir_draft',OR:[{status:'in_progress',sub_status:'awaiting_admin_approval'},{status:{in:['assigned','advocate_accepted','in_progress','changes_requested']},sub_status:{in:['identity_review_pending','multiple_corrections_required']}}]};
+    const ordinaryBucket:Prisma.CaseWhereInput={status:{in:eligible.filter(s=>adminBucketFor(s,input.service)===input.bucket)}};
+    const bucketWhere: Prisma.CaseWhereInput = consultation&&input.bucket==='open'?{OR:[ordinaryBucket,waiting]}:consultation&&input.bucket==='in_progress'?{AND:[ordinaryBucket,{NOT:waiting}]}:ordinaryBucket;
     const filtered: Prisma.CaseWhereInput = {AND:[base,
       ...(input.bucket ? [input.service==='fir_draft'?{OR:eligible.flatMap(status=>[null,'awaiting_admin_approval','advocate_revision_required','identity_replacement_required','identity_review_pending','multiple_corrections_required'].filter(sub=>adminBucketFor(status,input.service,sub)===input.bucket).map(sub_status=>({status,sub_status})))}:bucketWhere] : []),
       ...(input.queue ? [waiting] : [])]};
@@ -79,6 +82,9 @@ export class AdminCasesRepository {
           documents_case_id_relations: {where: {status: 'uploaded'}, select: {id: true, simulated: true, owner_id_relation: {select: {role: true}}}},
         },
       });
+      const consultationIds=consultation?rows.map(r=>r.id):[];
+      const sessions=consultation?await tx.consultation.findMany({where:{case_id:{in:consultationIds}}}):[];
+      const pendingReports=consultation?await tx.consultationReport.findMany({where:{case_id:{in:consultationIds},status:'submitted'}}):[];
       const items: AdminCaseRow[] = rows.slice(0, input.limit).map(row => {
         const policy=row.fir_lifecycle?FirPolicyConfig.parse(row.fir_lifecycle.policy.config):defaultPolicy;
         const details = obj(row.details);
@@ -97,6 +103,8 @@ export class AdminCasesRepository {
         }
         return {
           service_code: input.service,
+          ...(consultation?{sub_status:row.sub_status,review_submitted_at:pendingReports.find(r=>r.case_id===row.id)?.submitted_at?.toISOString()??null,
+            consultation:sessions.find(s=>s.case_id===row.id)?{scheduled_at:sessions.find(s=>s.case_id===row.id)!.scheduled_at.toISOString(),status:sessions.find(s=>s.case_id===row.id)!.status}:null}:{}),
           ...(input.service==='fir_draft'?{turnaround:!['completed','cancelled','refunded'].includes(row.status)&&policy?{paid_at:(row.fir_lifecycle?.paid_at??row.payments_case_id_relations[0]?.captured_at)?.toISOString()??null,warning_hours:policy.turnaround_warning_hours,overdue_hours:policy.turnaround_overdue_hours}:null}:{}),
           id: row.id, reference: row.reference, client: {id: row.client_id_relation.id, name: row.client_id_relation.full_name},
           matter_type: row.matter_type, parties: parties.filter(p => p.name.trim()),

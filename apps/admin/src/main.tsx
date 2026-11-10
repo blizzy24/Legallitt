@@ -40,7 +40,8 @@ function Shell() {
   return <div className="shell">
     <aside className={drawer ? 'sidebar open' : 'sidebar'}>
       <div className="wordmark">LEGALITT<span>ADMIN</span></div>
-      <nav aria-label="Admin navigation"><NavLink to="/legal-notices" onClick={() => setDrawer(false)}><span aria-hidden="true">▤</span> Legal Notices</NavLink><NavLink to="/services/fir_draft/cases?queue=approval" onClick={()=>setDrawer(false)}><span aria-hidden="true">▤</span> FIR Drafts</NavLink></nav>
+      <nav aria-label="Admin navigation"><NavLink to="/legal-notices" onClick={() => setDrawer(false)}><span aria-hidden="true">▤</span> Legal Notices</NavLink><NavLink to="/services/fir_draft/cases?queue=approval" onClick={()=>setDrawer(false)}><span aria-hidden="true">▤</span> FIR Drafts</NavLink>
+      {(['legal_advice','district_court','high_court'] as const).map(code=><NavLink key={code} to={`/services/${code}/cases`} onClick={()=>setDrawer(false)}><span aria-hidden="true">▤</span> {SERVICE_NAMES[code]}</NavLink>)}</nav>
       <div className="identity"><span>{user.name}</span><small>ADMIN</small><button onClick={logout}>Sign out</button></div>
     </aside>
     {drawer && <button className="scrim" aria-label="Close navigation" onClick={() => setDrawer(false)}/>}

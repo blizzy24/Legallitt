@@ -1,5 +1,7 @@
 import { ConfirmDelivery } from './confirm-delivery';
 import {FirApprovalPanel} from './fir-approval';
+import {ConsultationPanel} from './consultation-panel';
+import {isConsultationService} from '@legalitt/shared';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, useParams } from 'react-router';
 import { ApiError, adminBucketFor, adminCaseListPath, SERVICE_NAMES, ServiceCodeSchema, type AdminCaseDetail } from '@legalitt/shared';
@@ -37,7 +39,7 @@ export function CaseDetail() {
  if(!data)return <main className="case-detail"><Link className="back-link" to={backPath}>← {heading}</Link>{error?<div className="error" role="alert">{error} <button onClick={()=>setReload(n=>n+1)}>Retry</button></div>:<p role="status">Loading case…</p>}</main>;
  const charged=data.payments.find(p=>p.purpose==='service_fee'&&p.status==='captured');
  const additional=charged&&data.pricing?BigInt(charged.base_amount_paise)-BigInt(data.pricing.base_amount_paise):null;
- const d=data, bucket=adminBucketFor(d.status,d.service_code,d.sub_status), canAssign=!d.advocate_id && ['paid','assigning','advocate_declined'].includes(d.status);
+ const d=data, bucket=adminBucketFor(d.status,d.service_code,d.sub_status), canAssign=!isConsultationService(service)&&!d.advocate_id && ['paid','assigning','advocate_declined'].includes(d.status);
  const task=canAssign?'Assign an advocate':d.status==='advocate_declined'?'Advocate declined · assignment needs review':service==='legal_notice'&&d.status==='dispatched'?'Delivery confirmation awaits admin':null;
  const document=(doc: AdminCaseDetail['documents'][number])=><div className="document-row" key={doc.id}>
   <span className="file-symbol">{doc.mime_type==='application/pdf'?'PDF':'FILE'}</span><div className="file-description">
@@ -59,6 +61,7 @@ export function CaseDetail() {
    {task&&<div className="admin-attention"><span className="attention-dot"/><div><small>NEEDS ADMIN</small><strong>{task}</strong></div>{canAssign&&<button className="assign" onClick={()=>setAssign(true)}>+ Assign</button>}{d.status==='dispatched'&&<button className="assign" onClick={()=>setDelivering(true)}>Confirm delivery</button>}</div>}
   </section>
   {service==='fir_draft'&&<FirApprovalPanel record={d} reload={()=>setReload(n=>n+1)}/>}
+  {isConsultationService(service)&&<><ConsultationPanel record={d} reload={()=>setReload(n=>n+1)}/><section className="detail-panel"><div className="section-title"><h2>Original client intake</h2></div>{Object.values(d.intake).some(present)?<Values value={d.intake}/>:<p>No intake saved yet.</p>}</section></>}
   {service==='fir_draft'&&<section className="detail-panel fir-intake"><div className="section-title"><h2>Original intake</h2></div>{Object.values(d.intake).some(present)?<Values value={d.intake}/>:<p>No intake was recorded for this case.</p>}</section>}
   <section className="people-section"><h2>People</h2><div className="people-grid">{d.contacts.map((c,i)=><article className="person" key={i}><p className="eyebrow">{c.role==='sender'?'SENDER · INTAKE':label(c.role)}</p>{c.name&&<h3>{c.name}</h3>}<dl><Field name="Title" value={c.salutation}/><Field name="Age" value={c.age}/><Field name="Relation" value={c.relation}/><Field name="Father’s or husband’s name" value={c.relative_name}/><Field name="Email" value={c.email}/><Field name="Phone" value={c.phone}/><Field name="Address" value={c.address}/><Field name="Relationship" value={c.relationship}/></dl></article>)}</div></section>
   <nav className="case-sections" aria-label="Case sections">

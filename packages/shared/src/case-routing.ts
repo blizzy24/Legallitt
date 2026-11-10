@@ -9,6 +9,9 @@ export function adminCasePath(service: ServiceCode, id: string) {
   return `${adminCaseListPath(service)}/${encodeURIComponent(id)}`;
 }
 export function unbuiltCasePath(service: ServiceCode, id: string, role: 'client' | 'advocate') {
+  if(['legal_advice','district_court','high_court'].includes(service))return role==='advocate'
+    ? `/advocate/consultation/${encodeURIComponent(id)}/room?caseId=${encodeURIComponent(id)}`
+    : `${service==='legal_advice'?'/legal-advice/track':`/services/${service.replaceAll('_','-')}/case-details`}?step=track&caseId=${encodeURIComponent(id)}`;
   if (service === 'fir_draft') return `${role === 'advocate' ? '/advocate/fir/draft' : '/fir/status'}?caseId=${encodeURIComponent(id)}`;
   return `${role === 'advocate' ? '/advocate/requests' : '/cases'}/${encodeURIComponent(id)}?service=${service}&caseId=${encodeURIComponent(id)}`;
 }

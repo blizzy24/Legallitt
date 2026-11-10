@@ -10,8 +10,8 @@ export const newest = [{effective_from: 'desc' as const}, {id: 'asc' as const}];
 export const blockedQuote = (code: string, message: string, documents: {id: string; filename: string; reason: string}[] = []): PaymentQuote =>
   ({status: 'blocked', code, message, documents});
 
-export async function quoteDocuments(tx: Prisma.TransactionClient, caseId: string) {
-  const documents = await tx.document.findMany({where: {case_id: caseId, status: {not: 'deleted'}}, orderBy: {id: 'asc'},
+export async function quoteDocuments(tx: Prisma.TransactionClient, caseId: string, excludeGeneratedConsultation = false) {
+  const documents = await tx.document.findMany({where: {case_id: caseId, status: {not: 'deleted'}, ...(excludeGeneratedConsultation ? {kind:{not:'consultation_report'}} : {})}, orderBy: {id: 'asc'},
     select: {id: true, filename: true, mime_type: true, status: true, page_count: true, size_bytes: true}});
   const snapshot = documents.map(d => ({...d, size_bytes: d.size_bytes.toString()}));
   const fingerprint = createHash('sha256').update(JSON.stringify(snapshot)).digest('hex');
