@@ -1,0 +1,65 @@
+{
+  "id": "7ac3567f-0d42-49ad-bbe9-557f155243e4",
+  "reference": "FIR_DRAFT-2026-0005",
+  "status": "completed",
+  "sub_status": null,
+  "approval": {
+    "version": 2,
+    "draft_id": "9800e74b-8c1a-4b65-abde-6e0904ac726a",
+    "document_id": "dd216ffc-8af9-4be4-a9e2-c32cfe4dc6c9",
+    "submitted_at": "2026-11-10T10:46:21.367Z",
+    "approved_at": "2026-11-10T10:46:29.233Z"
+  },
+  "events": [
+    {
+      "id": "402",
+      "type": "fir_released_to_client",
+      "from_status": "approved",
+      "to_status": "completed",
+      "actor": {
+        "name": "Demo admin",
+        "role": "admin"
+      },
+      "source": "real",
+      "payload": {
+        "draft_id": "9800e74b-8c1a-4b65-abde-6e0904ac726a",
+        "document_id": "dd216ffc-8af9-4be4-a9e2-c32cfe4dc6c9"
+      },
+      "created_at": "2026-11-10T10:46:29.239Z"
+    },
+    {
+      "id": "401",
+      "type": "fir_draft_approved",
+      "from_status": "in_progress",
+      "to_status": "approved",
+      "actor": {
+        "name": "Demo admin",
+        "role": "admin"
+      },
+      "source": "real",
+      "payload": {
+        "version": 2,
+        "draft_id": "9800e74b-8c1a-4b65-abde-6e0904ac726a",
+        "document_id": "dd216ffc-8af9-4be4-a9e2-c32cfe4dc6c9"
+      },
+      "created_at": "2026-11-10T10:46:29.233Z"
+    },
+    {
+      "id": "398",
+      "type": "fir_draft_submitted",
+      "from_status": "in_progress",
+      "to_status": "in_progress",
+      "actor": {
+        "name": "Adv. Arjun Sharma",
+        "role": "advocate"
+      },
+      "source": "real",
+      "payload": {
+        "version": 2,
+        "draft_id": "9800e74b-8c1a-4b65-abde-6e0904ac726a",
+        "document_id": "dd216ffc-8af9-4be4-a9e2-c32cfe4dc6c9"
+      },
+      "created_at": "2026-11-10T10:46:21.367Z"
+    }
+  ]
+}

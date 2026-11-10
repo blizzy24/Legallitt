@@ -1,0 +1,48 @@
+[
+  {
+    "site": "https://legalitt-5.vercel.app",
+    "status": 200,
+    "current_ui": true,
+    "markers": [
+      {
+        "marker": "PDF not ready",
+        "present": true
+      },
+      {
+        "marker": "Discard edits and reload",
+        "present": true
+      },
+      {
+        "marker": "No answer is assumed.",
+        "present": true
+      },
+      {
+        "marker": "ID proof is optional for FIR",
+        "present": true
+      }
+    ],
+    "scripts": [
+      {
+        "url": "https://legalitt-5.vercel.app/_expo/static/js/web/entry-748781f9bbaa78de90269a1efa1cc7ec.js",
+        "sha256": "ceb3f916f3d560f11b66f6dc0c17ccd5e47bd68013631a1afa862533aa3e4390"
+      }
+    ]
+  },
+  {
+    "site": "https://legalitt-admin-panel.vercel.app",
+    "status": 200,
+    "current_ui": true,
+    "markers": [
+      {
+        "marker": "Approve and send to client",
+        "present": true
+      }
+    ],
+    "scripts": [
+      {
+        "url": "https://legalitt-admin-panel.vercel.app/assets/index-Bx0X1YO7.js",
+        "sha256": "6a2f44d86d31cbd852e06a6778202df10af166050e187031dba85962a8be0b19"
+      }
+    ]
+  }
+]

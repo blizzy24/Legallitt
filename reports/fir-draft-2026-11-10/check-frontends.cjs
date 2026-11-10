@@ -4,11 +4,11 @@ async function main(){
  const status=await fetch(`https://api.github.com/repos/blizzy24/Legallitt/commits/${tag}/status`);
  if(status.ok)fs.writeFileSync(__dirname+'/vercel-status.json',JSON.stringify(await status.json(),null,2)+'\n');
  const results=[];
- for(const [site,markers]of [['https://legalitt-5.vercel.app',['PDF not ready','Discard edits and reload','Father’s name','ID proof is optional for FIR']],['https://legalitt-admin-panel.vercel.app',['Approve and send to client']]]){
+ for(const [site,markers]of [['https://legalitt-5.vercel.app',['PDF not ready','Discard edits and reload','No answer is assumed.','ID proof is optional for FIR']],['https://legalitt-admin-panel.vercel.app',['Approve and send to client']]]){
   const response=await fetch(site),html=await response.text();if(response.status!==200)throw new Error(site+' unavailable');
   const assets=[...html.matchAll(/<script[^>]*src="([^"]+)"/g)].map(m=>new URL(m[1],site).href),scripts=[];let source='';
   for(const url of assets){const js=await(await fetch(url)).text();source+=js;scripts.push({url,sha256:createHash('sha256').update(js).digest('hex')});}
-  results.push({site,status:response.status,current_ui:markers.every(m=>source.includes(m)),scripts});
+  results.push({site,status:response.status,current_ui:markers.every(m=>source.includes(m)),markers:markers.map(marker=>({marker,present:source.includes(marker)})),scripts});
  }
  fs.writeFileSync(__dirname+'/frontend-assets.json',JSON.stringify(results,null,2)+'\n');
  if(results.some(r=>!r.current_ui))throw new Error('Waiting for the deployed intake frontend');

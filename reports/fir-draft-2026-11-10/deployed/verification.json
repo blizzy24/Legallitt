@@ -1,0 +1,43 @@
+{
+  "historical_pdf_unchanged": {
+    "case_id": "ef4db04e-bfe8-4bfc-86c3-47d7f75b1866",
+    "sha256": "c7c0a0d085bb5b2e667faddd0d338c2a2b7e88ac7e9fd4f8d7b3272eeedd56c7"
+  },
+  "case_id": "7ac3567f-0d42-49ad-bbe9-557f155243e4",
+  "reference": "FIR_DRAFT-2026-0005",
+  "approval": {
+    "version": 2,
+    "draft_id": "9800e74b-8c1a-4b65-abde-6e0904ac726a",
+    "document_id": "dd216ffc-8af9-4be4-a9e2-c32cfe4dc6c9",
+    "submitted_at": "2026-11-10T10:46:21.367Z",
+    "approved_at": null
+  },
+  "total_paise": "149853",
+  "completed_status": "completed",
+  "pdf_sha256": "fa00843d4648dee9636b653dae4fc24192bb688495f49c279c25a7d16d05bae4",
+  "second_submission": 409,
+  "client_approval": 403,
+  "unapproved_client_pdf": 404,
+  "isolation": {
+    "other_client_to_case": 404,
+    "client_to_other_case": 404,
+    "other_case_id": "723064f9-cbc0-4e51-bb74-10c75a87e07d"
+  },
+  "browser_errors": [],
+  "optional_id": {
+    "uploaded": 0,
+    "submission": true,
+    "pdf": true
+  },
+  "client_facts_read_only": true,
+  "stale_save": 409,
+  "preview_equals_released_pdf": true,
+  "editable_values_in_actual_pdf": true,
+  "screen_states": {
+    "loading": true,
+    "empty": true,
+    "partial": true,
+    "error_and_retry": true,
+    "ideal": true
+  }
+}

@@ -30,5 +30,26 @@ The first browser harness attempts needed sheet/route waits, checkbox selectors
 and an explicit wait for Done to finish saving before reload. These were harness
 fixes, not application navigation timers. Successful evidence is under local/.
 
-Deployment evidence and deployed walkthrough results are recorded alongside
-this file once the authorised dev rollout completes.
+Deployment:
+- API image 9b428dd, running task definition legalitt-dev-api:15, healthy ARM64.
+  Digest: sha256:80f5f4d572386212d1192fd8f380f601cc87680dea2aff1d83edc4729e829ad4.
+- Image pushed first; dev-ops-task.sh migrate 9b428dd ran in Git Bash, exit 0:
+  15 migrations found, no pending migrations. Then the reviewed Compute update
+  changed only ApiService, Task and OpsTask. Stack finished UPDATE_COMPLETE.
+- Main 8425285 includes the implementation plus a client-facing wording cleanup:
+  internal Q15 reasoning stays in architecture, not in the client's upload copy.
+  Both Vercel deployments succeeded; public bundle markers/hashes are recorded.
+
+Deployed walkthrough passed on legalitt-5.vercel.app and
+legalitt-admin-panel.vercel.app against the updated API. Synthetic case
+FIR_DRAFT-2026-0005 (7ac3567f-0d42-49ad-bbe9-557f155243e4), approved version 2,
+completed. No identity document was uploaded. All local checks listed above
+also passed live, with zero browser errors. Preview/submitted/released PDF SHA256:
+fa00843d4648dee9636b653dae4fc24192bb688495f49c279c25a7d16d05bae4.
+
+The original completed demo FIR_DRAFT-2026-0001 remains completed with the same
+document ID and original PDF SHA256:
+c7c0a0d085bb5b2e667faddd0d338c2a2b7e88ac7e9fd4f8d7b3272eeedd56c7.
+The walkthrough's approval object captures submission; final-audit.json captures
+the persisted approval timestamp and the admin approval/client release events.
+These checks exercised deployed web browsers; native-device testing was not run.
