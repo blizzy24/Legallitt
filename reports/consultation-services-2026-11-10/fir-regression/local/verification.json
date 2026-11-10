@@ -1,0 +1,117 @@
+{
+  "case_id": "fb52943d-5b39-4f6f-a1a0-1e513b76662a",
+  "reference": "FIR_DRAFT-2026-0026",
+  "status": "completed",
+  "submissions": [
+    {
+      "id": "64374da1-eaa3-43f9-b22d-23f74161553a",
+      "assignment_id": "99432c01-e982-450e-8935-ea3866489449",
+      "draft_id": "8dad5908-584f-4c28-97e5-7f2e3a7ab14e",
+      "version": 2,
+      "document_id": "8dee6b8a-67b7-4d7e-a3e9-f9814e17e29a",
+      "identity_document_id": "ec0b3dd9-621a-4800-a047-20cc97abbf24",
+      "identity_checked_at": null,
+      "state": "returned",
+      "draft_reason": "TEST FIRST RETURN: clarify the chronology and supporting facts.",
+      "submitted_at": "2026-11-10T16:55:00.854Z",
+      "decided_at": "2026-11-10T16:55:07.265Z"
+    },
+    {
+      "id": "6f1b5d81-9fb0-4069-8784-d7b1a53bbbf6",
+      "assignment_id": "99432c01-e982-450e-8935-ea3866489449",
+      "draft_id": "55f03f53-dd0c-4b05-b71d-ab36ceea1fab",
+      "version": 3,
+      "document_id": "aaf4f856-020b-40ed-89d4-d305c1a5452d",
+      "identity_document_id": "5c367e40-cce9-425e-b0c3-003e23d3a2f0",
+      "identity_checked_at": null,
+      "state": "returned",
+      "draft_reason": "TEST SECOND RETURN: explain the witness sequence before finalising.",
+      "submitted_at": "2026-11-10T16:55:24.147Z",
+      "decided_at": "2026-11-10T16:55:26.412Z"
+    },
+    {
+      "id": "f18a7b03-28c9-495e-87c9-e9f0b146fb07",
+      "assignment_id": "999ee328-4e86-4b88-bbb9-75532e1ce662",
+      "draft_id": "3cb0f0af-fd4f-4f8b-a7c4-c7cfe7b61e02",
+      "version": 4,
+      "document_id": "9ccbd4c0-d929-40e2-bb5f-0e345ced80d0",
+      "identity_document_id": "5c367e40-cce9-425e-b0c3-003e23d3a2f0",
+      "identity_checked_at": "2026-11-10T16:55:43.373Z",
+      "state": "approved",
+      "draft_reason": null,
+      "submitted_at": "2026-11-10T16:55:41.441Z",
+      "decided_at": "2026-11-10T16:55:45.185Z"
+    }
+  ],
+  "assignments": [
+    {
+      "id": "99432c01-e982-450e-8935-ea3866489449",
+      "advocate_id": "c91ab690-8472-4d41-ab8a-6c0589850240",
+      "name": "Demo advocate",
+      "assigned_at": "2026-11-10T16:54:32.498Z",
+      "ended_at": "2026-11-10T16:55:29.511Z",
+      "rejections": 2
+    },
+    {
+      "id": "999ee328-4e86-4b88-bbb9-75532e1ce662",
+      "advocate_id": "b12816cc-83b9-4e2c-a0cd-9fdcc2a271a2",
+      "name": "Demo Advocate Asha",
+      "assigned_at": "2026-11-10T16:55:29.515Z",
+      "ended_at": null,
+      "rejections": 0
+    }
+  ],
+  "identity_returns": [
+    {
+      "id": "fef6257a-79bf-46b0-a3d7-251618f013ff",
+      "document_id": "ec0b3dd9-621a-4800-a047-20cc97abbf24",
+      "replacement_document_id": "5c367e40-cce9-425e-b0c3-003e23d3a2f0",
+      "state": "accepted",
+      "purge_status": "pending",
+      "rejected_at": "2026-11-10T16:55:07.258Z"
+    }
+  ],
+  "payout": {
+    "assignment_id": "999ee328-4e86-4b88-bbb9-75532e1ce662",
+    "amount_paise": "99900",
+    "policy_id": "861ecfbd-d6c5-499f-9e5b-95142dd10b9d",
+    "commission_rate_id": "c8b9588f-e7e7-5f92-9009-24793b6c2813"
+  },
+  "paid_at_unchanged": true,
+  "approval": {
+    "version": 4,
+    "draft_id": "3cb0f0af-fd4f-4f8b-a7c4-c7cfe7b61e02",
+    "document_id": "9ccbd4c0-d929-40e2-bb5f-0e345ced80d0",
+    "submitted_at": "2026-11-10T16:55:41.455Z",
+    "approved_at": "2026-11-10T16:55:45.212Z"
+  },
+  "pdf_sha256": "a80d2ed022b0fa505ba77aded2fe4c1a4ab7841bf9233219d74547acdd65e7c4",
+  "preview_equals_released_pdf": true,
+  "historical_pdf_unchanged": null,
+  "stale_approval": 409,
+  "manual_identity_check_required": 409,
+  "rejected_identity_download": 404,
+  "replaced_advocate_case": 404,
+  "replaced_advocate_pdf": 404,
+  "old_client_pdf": 404,
+  "replaced_advocate_notified": true,
+  "client_neutral_notification": true,
+  "reassignment_count_reset": true,
+  "all_human_lifecycle_actions_through_ui": true,
+  "isolation": {
+    "other_client_to_case": 404,
+    "client_to_other_case": 404,
+    "other_case_id": "379a2481-9e96-46bc-81ce-f3fbf0cfcd2b"
+  },
+  "browser_errors": [],
+  "required_identity": true,
+  "client_facts_read_only": true,
+  "stale_save": 409,
+  "screen_states": {
+    "loading": true,
+    "empty": true,
+    "partial": true,
+    "error_and_retry": true,
+    "ideal": true
+  }
+}

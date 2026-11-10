@@ -1,0 +1,26 @@
+{
+  "case_id": "1a227934-cf3b-4bbc-90af-4bf957ae734f",
+  "private_upload_hidden": true,
+  "private_download_status": 404,
+  "hidden_error": {
+    "status": "blocked",
+    "code": "advocate_upload_pending",
+    "message": "Payment is blocked by an unfinished upload from your advocate or review team. Ask your advocate in case chat to finish it. No payment has been taken.",
+    "documents": []
+  },
+  "client_owned_error": {
+    "status": "blocked",
+    "code": "document_pages_unresolved",
+    "message": "Payment is blocked because an upload or PDF page count is incomplete. Finish or remove the listed upload in Documents, then retry.",
+    "documents": [
+      {
+        "id": "0df2d2a3-6ae2-4965-a10b-1094f4bbdef0",
+        "filename": "TEST client upload.pdf",
+        "reason": "Upload unfinished. Return to Documents and finish or remove this upload."
+      }
+    ]
+  },
+  "ready_total_paise": "88500",
+  "pdf_pages": 2,
+  "payments": 0
+}

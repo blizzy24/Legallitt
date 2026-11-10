@@ -1,0 +1,196 @@
+{
+  "deployed": true,
+  "results": [
+    {
+      "service": "legal_advice",
+      "case_id": "d2add68a-d2b0-496f-878f-248804823ea0",
+      "reference": "LEGAL_ADVICE-2026-0001",
+      "status": "completed",
+      "consultation": {
+        "version": 1,
+        "document_id": "49c65f70-da7a-4e92-9eab-fe90e43f8a66",
+        "sha256": "6c41d29923ae19989c988c3998c423dc9dd168b074c5eb0ac5ee304e41047a02"
+      },
+      "quote": null,
+      "payments": [
+        {
+          "id": "ea53c475-0e82-499c-a870-fbae3df533d1",
+          "purpose": "service_fee",
+          "simulated": true,
+          "captured_at": "2026-11-10T17:16:29.271Z",
+          "total_paise": "88500",
+          "breakdown": {
+            "gst_paise": "13500",
+            "total_pages": 1,
+            "total_paise": "88500",
+            "charged_pages": 0,
+            "included_pages": 25,
+            "page_unit_paise": "2500",
+            "service_fee_paise": "60000",
+            "delivery_fee_paise": "0",
+            "page_overage_paise": "0",
+            "platform_fee_paise": "15000",
+            "page_overage_gst_paise": "0",
+            "platform_revenue_paise": "15000",
+            "taxable_subtotal_paise": "75000",
+            "advocate_entitlement_paise": "60000"
+          }
+        }
+      ],
+      "isolation": {
+        "other_client_to_case": 404,
+        "client_to_other_case": 404,
+        "other_case_id": "1a227934-cf3b-4bbc-90af-4bf957ae734f"
+      }
+    },
+    {
+      "service": "district_court",
+      "case_id": "952fad67-c0db-4ef5-9f56-b110114fb91a",
+      "reference": "DISTRICT_COURT-2026-0001",
+      "status": "completed",
+      "consultation": {
+        "version": 1,
+        "document_id": "cdbda680-dce4-48bb-ba0d-249bc4ba486c",
+        "sha256": "c5dc2abc87502a3ffb1fdbd2dbe9eff2a382f68e22055f2079dc009205bf9e4e"
+      },
+      "completion": {
+        "version": 2,
+        "document_id": "c0bee7e1-88d7-4988-bab3-766c84b029bb",
+        "sha256": "def473911e9eff7a754d7a91ff5df67d1f82bc58852379e7657d77a9776bcc7a"
+      },
+      "quote": {
+        "version": 1,
+        "base_amount_paise": "100000",
+        "status": "paid"
+      },
+      "payments": [
+        {
+          "id": "7951efc8-5720-41c5-8da7-e8806d2b7032",
+          "purpose": "service_fee",
+          "simulated": true,
+          "captured_at": "2026-11-10T17:38:55.459Z",
+          "total_paise": "88500",
+          "breakdown": {
+            "gst_paise": "13500",
+            "total_pages": 1,
+            "total_paise": "88500",
+            "charged_pages": 0,
+            "included_pages": 25,
+            "page_unit_paise": "2500",
+            "service_fee_paise": "60000",
+            "delivery_fee_paise": "0",
+            "page_overage_paise": "0",
+            "platform_fee_paise": "15000",
+            "page_overage_gst_paise": "0",
+            "platform_revenue_paise": "15000",
+            "taxable_subtotal_paise": "75000",
+            "advocate_entitlement_paise": "60000"
+          }
+        },
+        {
+          "id": "970b62b7-a02d-4186-b9b0-bcc9db2921c9",
+          "purpose": "representation",
+          "simulated": true,
+          "captured_at": "2026-11-10T17:39:41.435Z",
+          "total_paise": "147500",
+          "breakdown": {
+            "gst_paise": "22500",
+            "total_pages": 1,
+            "total_paise": "147500",
+            "charged_pages": 0,
+            "included_pages": 25,
+            "page_unit_paise": "2500",
+            "service_fee_paise": "100000",
+            "delivery_fee_paise": "0",
+            "page_overage_paise": "0",
+            "platform_fee_paise": "25000",
+            "page_overage_gst_paise": "0",
+            "platform_revenue_paise": "25000",
+            "taxable_subtotal_paise": "125000",
+            "advocate_entitlement_paise": "100000"
+          }
+        }
+      ],
+      "isolation": {
+        "other_client_to_case": 404,
+        "client_to_other_case": 404,
+        "other_case_id": "4e9e4dce-ce68-4ca1-afc3-f1badc64cee2"
+      }
+    },
+    {
+      "service": "high_court",
+      "case_id": "5a248914-67cd-4a6e-8876-bb4dce97a0a1",
+      "reference": "HIGH_COURT-2026-0001",
+      "status": "completed",
+      "consultation": {
+        "version": 1,
+        "document_id": "7a327d55-15f7-487d-9438-a3d0a691a881",
+        "sha256": "663c735ed3178b713c1a3e38eee778340a150b3b39769430741d75705fb2816f"
+      },
+      "completion": {
+        "version": 2,
+        "document_id": "9a64c2d8-9ee6-4413-977c-c62af3c8673f",
+        "sha256": "02423fd609d12987deedbe11fcf74a09615572d5cd4066e80b81efc7b21a0239"
+      },
+      "quote": {
+        "version": 1,
+        "base_amount_paise": "100000",
+        "status": "paid"
+      },
+      "payments": [
+        {
+          "id": "4c2cc3d0-2f14-45ea-9496-2e66cf442893",
+          "purpose": "service_fee",
+          "simulated": true,
+          "captured_at": "2026-11-10T17:40:40.901Z",
+          "total_paise": "88500",
+          "breakdown": {
+            "gst_paise": "13500",
+            "total_pages": 1,
+            "total_paise": "88500",
+            "charged_pages": 0,
+            "included_pages": 25,
+            "page_unit_paise": "2500",
+            "service_fee_paise": "60000",
+            "delivery_fee_paise": "0",
+            "page_overage_paise": "0",
+            "platform_fee_paise": "15000",
+            "page_overage_gst_paise": "0",
+            "platform_revenue_paise": "15000",
+            "taxable_subtotal_paise": "75000",
+            "advocate_entitlement_paise": "60000"
+          }
+        },
+        {
+          "id": "cbad7ad7-104d-472a-a4b1-0e784f7856cb",
+          "purpose": "representation",
+          "simulated": true,
+          "captured_at": "2026-11-10T17:41:25.769Z",
+          "total_paise": "147500",
+          "breakdown": {
+            "gst_paise": "22500",
+            "total_pages": 1,
+            "total_paise": "147500",
+            "charged_pages": 0,
+            "included_pages": 25,
+            "page_unit_paise": "2500",
+            "service_fee_paise": "100000",
+            "delivery_fee_paise": "0",
+            "page_overage_paise": "0",
+            "platform_fee_paise": "25000",
+            "page_overage_gst_paise": "0",
+            "platform_revenue_paise": "25000",
+            "taxable_subtotal_paise": "125000",
+            "advocate_entitlement_paise": "100000"
+          }
+        }
+      ],
+      "isolation": {
+        "other_client_to_case": 404,
+        "client_to_other_case": 404,
+        "other_case_id": "bf95dc62-579e-4ea6-8c94-b0bc01ba00b8"
+      }
+    }
+  ],
+  "browser_errors": []
+}

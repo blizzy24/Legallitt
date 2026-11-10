@@ -1,0 +1,157 @@
+{
+  "results": [
+    {
+      "service": "legal_advice",
+      "viewer": "client-isolation",
+      "case_id": "d2add68a-d2b0-496f-878f-248804823ea0",
+      "browser_url": "https://legalitt-5.vercel.app/legal-advice/track?step=track&caseId=d2add68a-d2b0-496f-878f-248804823ea0",
+      "requests": [
+        {
+          "path": "/api/v1/consultations/d2add68a-d2b0-496f-878f-248804823ea0",
+          "status": 404
+        },
+        {
+          "path": "/api/v1/cases/d2add68a-d2b0-496f-878f-248804823ea0",
+          "status": 404
+        }
+      ],
+      "visible_message": "Case not found"
+    },
+    {
+      "service": "district_court",
+      "viewer": "client-isolation",
+      "case_id": "952fad67-c0db-4ef5-9f56-b110114fb91a",
+      "browser_url": "https://legalitt-5.vercel.app/services/district-court/case-details?step=track&caseId=952fad67-c0db-4ef5-9f56-b110114fb91a",
+      "requests": [
+        {
+          "path": "/api/v1/consultations/952fad67-c0db-4ef5-9f56-b110114fb91a",
+          "status": 404
+        },
+        {
+          "path": "/api/v1/cases/952fad67-c0db-4ef5-9f56-b110114fb91a",
+          "status": 404
+        }
+      ],
+      "visible_message": "Case not found"
+    },
+    {
+      "service": "high_court",
+      "viewer": "client-isolation",
+      "case_id": "5a248914-67cd-4a6e-8876-bb4dce97a0a1",
+      "browser_url": "https://legalitt-5.vercel.app/services/high-court/case-details?step=track&caseId=5a248914-67cd-4a6e-8876-bb4dce97a0a1",
+      "requests": [
+        {
+          "path": "/api/v1/consultations/5a248914-67cd-4a6e-8876-bb4dce97a0a1",
+          "status": 404
+        },
+        {
+          "path": "/api/v1/cases/5a248914-67cd-4a6e-8876-bb4dce97a0a1",
+          "status": 404
+        }
+      ],
+      "visible_message": "Case not found"
+    },
+    {
+      "service": "legal_advice",
+      "viewer": "client",
+      "case_id": "1a227934-cf3b-4bbc-90af-4bf957ae734f",
+      "browser_url": "https://legalitt-5.vercel.app/legal-advice/track?step=track&caseId=1a227934-cf3b-4bbc-90af-4bf957ae734f",
+      "requests": [
+        {
+          "path": "/api/v1/consultations/1a227934-cf3b-4bbc-90af-4bf957ae734f",
+          "status": 404
+        },
+        {
+          "path": "/api/v1/cases/1a227934-cf3b-4bbc-90af-4bf957ae734f",
+          "status": 404
+        }
+      ],
+      "visible_message": "Case not found"
+    },
+    {
+      "service": "district_court",
+      "viewer": "client",
+      "case_id": "4e9e4dce-ce68-4ca1-afc3-f1badc64cee2",
+      "browser_url": "https://legalitt-5.vercel.app/services/district-court/case-details?step=track&caseId=4e9e4dce-ce68-4ca1-afc3-f1badc64cee2",
+      "requests": [
+        {
+          "path": "/api/v1/consultations/4e9e4dce-ce68-4ca1-afc3-f1badc64cee2",
+          "status": 404
+        },
+        {
+          "path": "/api/v1/cases/4e9e4dce-ce68-4ca1-afc3-f1badc64cee2",
+          "status": 404
+        }
+      ],
+      "visible_message": "Case not found"
+    },
+    {
+      "service": "high_court",
+      "viewer": "client",
+      "case_id": "bf95dc62-579e-4ea6-8c94-b0bc01ba00b8",
+      "browser_url": "https://legalitt-5.vercel.app/services/high-court/case-details?step=track&caseId=bf95dc62-579e-4ea6-8c94-b0bc01ba00b8",
+      "requests": [
+        {
+          "path": "/api/v1/consultations/bf95dc62-579e-4ea6-8c94-b0bc01ba00b8",
+          "status": 404
+        },
+        {
+          "path": "/api/v1/cases/bf95dc62-579e-4ea6-8c94-b0bc01ba00b8",
+          "status": 404
+        }
+      ],
+      "visible_message": "Case not found"
+    },
+    {
+      "service": "legal_advice",
+      "viewer": "advocate-2",
+      "case_id": "d2add68a-d2b0-496f-878f-248804823ea0",
+      "browser_url": "https://legalitt-5.vercel.app/advocate/consultation/d2add68a-d2b0-496f-878f-248804823ea0/room?caseId=d2add68a-d2b0-496f-878f-248804823ea0",
+      "requests": [
+        {
+          "path": "/api/v1/consultations/d2add68a-d2b0-496f-878f-248804823ea0",
+          "status": 404
+        },
+        {
+          "path": "/api/v1/cases/d2add68a-d2b0-496f-878f-248804823ea0",
+          "status": 404
+        }
+      ],
+      "visible_message": "Case not found"
+    },
+    {
+      "service": "district_court",
+      "viewer": "advocate-2",
+      "case_id": "952fad67-c0db-4ef5-9f56-b110114fb91a",
+      "browser_url": "https://legalitt-5.vercel.app/advocate/consultation/952fad67-c0db-4ef5-9f56-b110114fb91a/room?caseId=952fad67-c0db-4ef5-9f56-b110114fb91a",
+      "requests": [
+        {
+          "path": "/api/v1/consultations/952fad67-c0db-4ef5-9f56-b110114fb91a",
+          "status": 404
+        },
+        {
+          "path": "/api/v1/cases/952fad67-c0db-4ef5-9f56-b110114fb91a",
+          "status": 404
+        }
+      ],
+      "visible_message": "Case not found"
+    },
+    {
+      "service": "high_court",
+      "viewer": "advocate-2",
+      "case_id": "5a248914-67cd-4a6e-8876-bb4dce97a0a1",
+      "browser_url": "https://legalitt-5.vercel.app/advocate/consultation/5a248914-67cd-4a6e-8876-bb4dce97a0a1/room?caseId=5a248914-67cd-4a6e-8876-bb4dce97a0a1",
+      "requests": [
+        {
+          "path": "/api/v1/consultations/5a248914-67cd-4a6e-8876-bb4dce97a0a1",
+          "status": 404
+        },
+        {
+          "path": "/api/v1/cases/5a248914-67cd-4a6e-8876-bb4dce97a0a1",
+          "status": 404
+        }
+      ],
+      "visible_message": "Case not found"
+    }
+  ]
+}

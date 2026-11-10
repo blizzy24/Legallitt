@@ -1,0 +1,116 @@
+[
+  {
+    "role": "client",
+    "method": "POST",
+    "path": "/api/v1/auth/login",
+    "status": 201
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 200
+  },
+  {
+    "role": "advocate",
+    "method": "POST",
+    "path": "/api/v1/auth/login",
+    "status": 201
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases",
+    "status": 200
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 200
+  },
+  {
+    "role": "admin",
+    "method": "POST",
+    "path": "/api/v1/auth/login",
+    "status": 201
+  },
+  {
+    "role": "admin",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 200
+  },
+  {
+    "role": "admin",
+    "method": "GET",
+    "path": "/api/v1/admin/cases",
+    "status": 200
+  },
+  {
+    "role": "admin",
+    "method": "GET",
+    "path": "/api/v1/me",
+    "status": 200
+  },
+  {
+    "role": "admin",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "admin",
+    "method": "GET",
+    "path": "/api/v1/admin/cases/1a2d8a2c-c032-4322-bdc9-48cd5dbbaacc",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/me",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/services/legal_notice",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/1a2d8a2c-c032-4322-bdc9-48cd5dbbaacc",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/services/legal_notice",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/1a2d8a2c-c032-4322-bdc9-48cd5dbbaacc",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/documents/0b71b5ac-4048-432e-9b1b-465dc392b96a/url",
+    "status": 200
+  }
+]

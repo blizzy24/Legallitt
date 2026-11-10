@@ -1,0 +1,22 @@
+// Read-only follow-up after the signed-URL grace period. Never reads ID bytes.
+const fs=require('node:fs'),assert=require('node:assert/strict');process.loadEnvFile('apps/api/.env.local');
+async function main(){
+ const {ApiClient}=require('../../packages/shared/dist'),folder=__dirname+'/fir-regression/deployed',proof=JSON.parse(fs.readFileSync(folder+'/verification.json'));
+ const password=await require('../../apps/api/dist/src/auth/demo').demoPassword(),baseUrl='https://gvycg0n3u8.execute-api.ap-south-1.amazonaws.com';
+ const response=await fetch(baseUrl+'/api/v1/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:'demo-admin@legalitt.invalid',password})});assert.equal(response.status,201);
+ const session=await response.json(),api=new ApiClient({baseUrl,getTokens:async()=>session.tokens});
+ const record=await api.adminCase(proof.case_id),life=await api.firLifecycle(record.id),service=await api.request('/services/fir_draft');
+ assert.equal(record.status,'completed');assert.equal(life.submissions.length,3);assert.equal(life.submissions.filter(s=>s.state==='approved').length,1);assert.equal(life.assignments.length,2);assert.equal(life.assignments[0].rejections,2);assert.equal(life.assignments[1].rejections,0);assert.equal(life.entitlement.assignment_id,life.assignments[1].id);assert.equal(life.entitlement.amount_paise,'99900');assert.equal(proof.paid_at_unchanged,true);
+ const identity=record.documents.filter(d=>d.kind==='id_proof');assert.equal(identity.length,1);assert.equal(identity[0].identity_evidence.document_type,'masked_aadhaar');assert.deepEqual(Object.keys(identity[0].identity_evidence).sort(),['declared_at','document_type','masked_copy','policy_version']);
+ const {S3Client,ListObjectVersionsCommand}=require('../../apps/api/node_modules/@aws-sdk/client-s3'),{SecretsManagerClient,GetSecretValueCommand}=require('../../apps/api/node_modules/@aws-sdk/client-secrets-manager');
+ let Bucket=process.env.DOCUMENT_BUCKET;if(!Bucket){const secrets=new SecretsManagerClient({region:'ap-south-1'});try{Bucket=JSON.parse((await secrets.send(new GetSecretValueCommand({SecretId:process.env.AUTH_CONFIG_SECRET_ARN}))).SecretString).bucketName;}finally{secrets.destroy();}}
+ const s3=new S3Client({region:'ap-south-1'}),purges=[];
+ try{for(const returned of life.identity_returns){assert.equal(returned.purge_status,'complete','Purge still pending its signed-URL grace period');let count=0,KeyMarker,VersionIdMarker;
+  do{const page=await s3.send(new ListObjectVersionsCommand({Bucket,Prefix:`cases/${record.id}/${returned.document_id}/`,KeyMarker,VersionIdMarker}));count+=(page.Versions??[]).length+(page.DeleteMarkers??[]).length;KeyMarker=page.IsTruncated?page.NextKeyMarker:undefined;VersionIdMarker=page.IsTruncated?page.NextVersionIdMarker:undefined;}while(KeyMarker);
+  assert.equal(count,0);purges.push({document_id:returned.document_id,state:returned.purge_status,remaining_versions_and_delete_markers:count});
+ }}finally{s3.destroy();}
+ const events=record.events.filter(e=>e.type.startsWith('fir_'));assert.equal(events.filter(e=>e.type==='fir_draft_approved').length,1);assert.equal(events.find(e=>e.type==='fir_draft_approved').actor.role,'admin');
+ fs.writeFileSync(folder+'/final-audit.json',JSON.stringify({id:record.id,reference:record.reference,status:record.status,approval:record.approval,lifecycle:life,events,identity_policy:service.config.fir_identity_policy,purges},null,2)+'\n');
+ console.log('PASS final FIR approval, assignment entitlement and zero rejected identity versions');
+}
+main().catch(e=>{console.error(e.message);process.exitCode=1;});

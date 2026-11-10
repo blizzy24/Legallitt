@@ -1,0 +1,1124 @@
+[
+  {
+    "role": "client",
+    "method": "POST",
+    "path": "/api/v1/auth/login",
+    "status": 201
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 200
+  },
+  {
+    "role": "advocate",
+    "method": "POST",
+    "path": "/api/v1/auth/login",
+    "status": 201
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases",
+    "status": 200
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 200
+  },
+  {
+    "role": "admin",
+    "method": "POST",
+    "path": "/api/v1/auth/login",
+    "status": 201
+  },
+  {
+    "role": "admin",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 200
+  },
+  {
+    "role": "admin",
+    "method": "GET",
+    "path": "/api/v1/admin/cases",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/me",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/services/legal_notice",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/services/legal_notice",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "POST",
+    "path": "/api/v1/cases",
+    "status": 201
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/services/legal_notice",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/me",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/services/legal_notice",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "PATCH",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "POST",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de/subject",
+    "status": 201
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/services/legal_notice",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "admin",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "PATCH",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/services/legal_notice",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "PATCH",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/services/legal_notice",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "POST",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de/demand-options",
+    "status": 201
+  },
+  {
+    "role": "client",
+    "method": "PATCH",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/services/legal_notice",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "POST",
+    "path": "/api/v1/documents/presign",
+    "status": 201
+  },
+  {
+    "role": "client",
+    "method": "POST",
+    "path": "/api/v1/documents/c2acfa1b-21b4-4476-898b-0ac823dc330e/complete",
+    "status": 201
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "admin",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/services/legal_notice",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "PATCH",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/services/legal_notice",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "PATCH",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/services/legal_notice",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "PATCH",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "POST",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de/submit",
+    "status": 201
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/services/legal_notice",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "POST",
+    "path": "/api/v1/payments/quotes",
+    "status": 201
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/me",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/services/legal_notice",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "POST",
+    "path": "/api/v1/payments/quotes",
+    "status": 201
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "admin",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "POST",
+    "path": "/api/v1/payments/quotes",
+    "status": 201
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/services/legal_notice",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "POST",
+    "path": "/api/v1/payments/intents",
+    "status": 201
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/services/legal_notice",
+    "status": 304
+  },
+  {
+    "role": "admin",
+    "method": "GET",
+    "path": "/api/v1/me",
+    "status": 200
+  },
+  {
+    "role": "admin",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 200
+  },
+  {
+    "role": "admin",
+    "method": "GET",
+    "path": "/api/v1/admin/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "admin",
+    "method": "GET",
+    "path": "/api/v1/admin/advocates",
+    "status": 200
+  },
+  {
+    "role": "admin",
+    "method": "POST",
+    "path": "/api/v1/admin/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de/assign",
+    "status": 201
+  },
+  {
+    "role": "admin",
+    "method": "GET",
+    "path": "/api/v1/admin/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/me",
+    "status": 200
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 200
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "advocate",
+    "method": "POST",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de/accept",
+    "status": 201
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de/thread",
+    "status": 200
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/threads/14cfa69a-3403-4442-8a81-4831b7432956/messages",
+    "status": 200
+  },
+  {
+    "role": "advocate",
+    "method": "POST",
+    "path": "/api/v1/threads/14cfa69a-3403-4442-8a81-4831b7432956/messages",
+    "status": 201
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 200
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/me",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 200
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "POST",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de/start",
+    "status": 201
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/me",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "admin",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 200
+  },
+  {
+    "role": "advocate",
+    "method": "POST",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de/drafts",
+    "status": 201
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "advocate",
+    "method": "POST",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de/drafts/d0cd197c-3b8d-4a90-b53e-5a1174334618/pdf",
+    "status": 201
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 200
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "admin",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "POST",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de/drafts/d0cd197c-3b8d-4a90-b53e-5a1174334618/send",
+    "status": 201
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/me",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/services/legal_notice",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "POST",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de/drafts/d0cd197c-3b8d-4a90-b53e-5a1174334618/request-changes",
+    "status": 201
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/me",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 200
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/me",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "POST",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de/start",
+    "status": 201
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "admin",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "POST",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de/drafts",
+    "status": 201
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "advocate",
+    "method": "POST",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de/drafts/851121ca-d759-4d06-856f-cd0861faef20/pdf",
+    "status": 201
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 200
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "POST",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de/drafts/851121ca-d759-4d06-856f-cd0861faef20/send",
+    "status": 201
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/me",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/services/legal_notice",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/me",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/services/legal_notice",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 304
+  },
+  {
+    "role": "admin",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "POST",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de/drafts/851121ca-d759-4d06-856f-cd0861faef20/approve",
+    "status": 201
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/me",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 200
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 304
+  },
+  {
+    "role": "advocate",
+    "method": "POST",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de/shipment",
+    "status": 201
+  },
+  {
+    "role": "advocate",
+    "method": "POST",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de/shipment/book",
+    "status": 201
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "advocate",
+    "method": "POST",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de/dispatch",
+    "status": 201
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 200
+  },
+  {
+    "role": "admin",
+    "method": "GET",
+    "path": "/api/v1/me",
+    "status": 304
+  },
+  {
+    "role": "admin",
+    "method": "GET",
+    "path": "/api/v1/admin/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "admin",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 200
+  },
+  {
+    "role": "admin",
+    "method": "POST",
+    "path": "/api/v1/documents/presign",
+    "status": 201
+  },
+  {
+    "role": "admin",
+    "method": "POST",
+    "path": "/api/v1/documents/525cc01a-4f6c-44fb-9aca-914f7e67e419/complete",
+    "status": 201
+  },
+  {
+    "role": "admin",
+    "method": "POST",
+    "path": "/api/v1/documents/525cc01a-4f6c-44fb-9aca-914f7e67e419/complete",
+    "status": 201
+  },
+  {
+    "role": "admin",
+    "method": "POST",
+    "path": "/api/v1/admin/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de/deliver",
+    "status": 201
+  },
+  {
+    "role": "admin",
+    "method": "GET",
+    "path": "/api/v1/admin/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "admin",
+    "method": "GET",
+    "path": "/api/v1/me",
+    "status": 304
+  },
+  {
+    "role": "admin",
+    "method": "GET",
+    "path": "/api/v1/admin/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 304
+  },
+  {
+    "role": "admin",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 200
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 200
+  },
+  {
+    "role": "advocate",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/me",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/services/legal_notice",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "status": 200
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/services/legal_notice",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/cases/1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "status": 304
+  },
+  {
+    "role": "client",
+    "method": "GET",
+    "path": "/api/v1/documents/525cc01a-4f6c-44fb-9aca-914f7e67e419/url",
+    "status": 200
+  }
+]

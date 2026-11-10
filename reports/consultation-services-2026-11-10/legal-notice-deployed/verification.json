@@ -1,0 +1,94 @@
+{
+  "commit": "FIR-admin-rejection-regression",
+  "case": {
+    "id": "1725be10-eaa4-4bcb-a8b4-6a9c2e8bc5de",
+    "reference": "LN-2026-0024",
+    "status": "completed"
+  },
+  "urls": {
+    "mobile": "https://legalitt-5.vercel.app",
+    "panel": "https://legalitt-admin-panel.vercel.app",
+    "base": "https://gvycg0n3u8.execute-api.ap-south-1.amazonaws.com"
+  },
+  "uiSignInRoles": [
+    "client",
+    "advocate",
+    "admin"
+  ],
+  "allLifecycleMutationsThroughUi": true,
+  "proofDownloadedInClientBrowser": true,
+  "proofSha256": "f5c2c3161546f9fb571729600ee153710729539c8c717556b55ff141fed82bed",
+  "statusEvents": [
+    {
+      "from": "draft",
+      "to": "submitted",
+      "source": "real"
+    },
+    {
+      "from": "submitted",
+      "to": "payment_pending",
+      "source": "real"
+    },
+    {
+      "from": "paid",
+      "to": "assigning",
+      "source": "real"
+    },
+    {
+      "from": "assigning",
+      "to": "assigned",
+      "source": "real"
+    },
+    {
+      "from": "assigned",
+      "to": "advocate_accepted",
+      "source": "real"
+    },
+    {
+      "from": "advocate_accepted",
+      "to": "in_progress",
+      "source": "real"
+    },
+    {
+      "from": "in_progress",
+      "to": "client_review",
+      "source": "real"
+    },
+    {
+      "from": "client_review",
+      "to": "changes_requested",
+      "source": "real"
+    },
+    {
+      "from": "changes_requested",
+      "to": "in_progress",
+      "source": "real"
+    },
+    {
+      "from": "in_progress",
+      "to": "client_review",
+      "source": "real"
+    },
+    {
+      "from": "client_review",
+      "to": "approved",
+      "source": "real"
+    },
+    {
+      "from": "approved",
+      "to": "dispatching",
+      "source": "real"
+    },
+    {
+      "from": "dispatching",
+      "to": "dispatched",
+      "source": "real"
+    },
+    {
+      "from": "dispatched",
+      "to": "completed",
+      "source": "real"
+    }
+  ],
+  "errors": []
+}

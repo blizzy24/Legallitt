@@ -1,0 +1,72 @@
+[
+  {
+    "site": "https://legalitt-5.vercel.app",
+    "status": 200,
+    "current_ui": true,
+    "markers": [
+      {
+        "marker": "Weekly availability saved.",
+        "present": true
+      },
+      {
+        "marker": "Reserve time & review",
+        "present": true
+      },
+      {
+        "marker": "Your representation payment is complete.",
+        "present": true
+      },
+      {
+        "marker": "Refresh fee breakdown",
+        "present": true
+      },
+      {
+        "marker": "Send replacement for review:",
+        "present": true
+      },
+      {
+        "marker": "Session: ",
+        "present": true
+      }
+    ],
+    "scripts": [
+      {
+        "url": "https://legalitt-5.vercel.app/_expo/static/js/web/entry-127044e0ba5eaaae94c7dd16545fe858.js",
+        "sha256": "42d02d819201c8521fa818fa37a0194718deea0f4e6d8398b56d3bcee0a54f03"
+      }
+    ]
+  },
+  {
+    "site": "https://legalitt-admin-panel.vercel.app",
+    "status": 200,
+    "current_ui": true,
+    "markers": [
+      {
+        "marker": "Assign booked advocate:",
+        "present": true
+      },
+      {
+        "marker": "Approve & release report v",
+        "present": true
+      },
+      {
+        "marker": "Return report for correction",
+        "present": true
+      },
+      {
+        "marker": "Visible to any advocate who works this case.",
+        "present": true
+      },
+      {
+        "marker": "Reassign case",
+        "present": true
+      }
+    ],
+    "scripts": [
+      {
+        "url": "https://legalitt-admin-panel.vercel.app/assets/index-BTR3CQjx.js",
+        "sha256": "37eeb9640563ee6bd13508844bf3c040178e7a68f6e0f8799754397b69f7109b"
+      }
+    ]
+  }
+]
