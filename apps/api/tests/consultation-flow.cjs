@@ -86,6 +86,9 @@ test('three consultation services: booking contention, immutable prices, real ch
    if(code==='legal_advice'){assert.equal((await service.read(client,c.id)).case.status,'completed');assert.equal((await db.payout.findFirst({where:{case_id:c.id}})).net_paise,60000n);}
    else{
     const first=await payments.offer(advocate,c.id,{...await revision(c.id),base_amount_paise:'100000',scope:'Prepare and represent the client in the stated matter.',exclusions:'Court filing fees and out-of-pocket expenses are separate.'});
+    const privateUpload=await db.document.create({data:{case_id:c.id,owner_id:advocate.id,kind:'supporting_document',filename:'PRIVATE advocate working paper.pdf',mime_type:'application/pdf',size_bytes:0n,status:'pending',s3_key:randomUUID()}});
+    const blocked=await payments.quote(client,c.id,{purpose:'representation',court_quote_id:first.id});assert.equal(blocked.status,'blocked');assert.equal(blocked.code,'advocate_upload_pending');assert.match(blocked.message,/case chat/);assert.doesNotMatch(stringify(blocked),/PRIVATE advocate/);assert.equal(blocked.documents.some(d=>d.id===privateUpload.id),false);
+    await db.document.update({where:{id:privateUpload.id},data:{status:'deleted'}});
     const firstQ=await payments.quote(client,c.id,{purpose:'representation',court_quote_id:first.id});
     const second=await payments.offer(advocate,c.id,{...await revision(c.id),base_amount_paise:'200000',scope:'Prepare filings and represent the client through the first hearing.',exclusions:'Court fees are paid separately outside this app.'});
     await assert.rejects(payments.pay(client,c.id,{purpose:'representation',quote_id:firstQ.id,court_quote_id:first.id},randomUUID()),{status:409});

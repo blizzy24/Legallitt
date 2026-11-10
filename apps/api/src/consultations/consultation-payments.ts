@@ -11,6 +11,7 @@ import {activeAt,newest,quoteDocuments,blockedQuote,type QuoteSnapshot} from '..
 import {calculateQuote} from '../payments/quote-math';
 import {booking,bump,consultationCase,jsonValue,lockPeople,policy,requireSlot,role,workspace} from './consultation-rules';
 import type {Case,Prisma} from '../generated/prisma/client';
+import {consultationDocumentVisible} from './consultation-documents';
 
 @Injectable()
 export class ConsultationPayments {
@@ -49,7 +50,14 @@ export class ConsultationPayments {
     if(purpose==='service_fee'?record.status!=='payment_pending':record.sub_status!=='court_quote_offered'||!court||court.id!==work.current_court_quote_id||court.status!=='offered'||court.expires_at<=new Date())
       return blockedQuote('quote_unavailable','This price is no longer available. Reload your case and review the current booking or representation quote.');
     const docs=await quoteDocuments(tx,record.id,true);
-    if(docs.unresolved.length)return blockedQuote('document_pages_unresolved','Payment is blocked because an upload or PDF page count is incomplete. Finish or remove the listed upload in Documents, then retry.',docs.unresolved);
+    if(docs.unresolved.length){
+      const files=await tx.document.findMany({where:{case_id:record.id,id:{in:docs.unresolved.map(d=>d.id)}}}),visible=new Set<string>();
+      for(const file of files)if(await consultationDocumentVisible(tx,{id:record.client_id,role:'client'},record,file))visible.add(file.id);
+      const own=docs.unresolved.filter(d=>visible.has(d.id));
+      if(own.length!==docs.unresolved.length)return blockedQuote(own.length?'document_pages_unresolved':'advocate_upload_pending',
+        'Payment is blocked by an unfinished upload from your advocate or review team. Ask your advocate in case chat to finish it. No payment has been taken.'+(own.length?' Also finish or remove the files listed below in Documents.':''),own);
+      return blockedQuote('document_pages_unresolved','Payment is blocked because an upload or PDF page count is incomplete. Finish or remove the listed upload in Documents, then retry.',own);
+    }
     const tariff=record.pricing_id?await tx.servicePricing.findUnique({where:{id:record.pricing_id}}):null;
     const feeId=court?.fee_policy_id??tariff?.fee_policy_id;
     const fee=feeId?await tx.feePolicy.findUnique({where:{id:feeId},include:{page_overage_policy:true}}):null;
