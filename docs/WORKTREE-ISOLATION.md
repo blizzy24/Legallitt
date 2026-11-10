@@ -1,5 +1,16 @@
 # Parallel service work — 10 November 2026
 
+**Consolidated 11 November 2026, by explicit owner instruction.** The remainder
+of this document records the earlier handoff. Work now takes place only in
+`D:\Legalitt\Legallitt`, on `services-consultation`. Claude's `6b33341` was rebased
+onto main `d73f459` as `0545947` before cleanup. Both extra worktrees were checked
+for tracked and untracked changes and were clean. `git worktree remove` removed
+their registrations; Windows long-path dependency remnants were then removed
+only after checking each absolute target. Ignored local settings are preserved
+under the primary folder's ignored `.env.worktree-backups.local` directory.
+The original branch/commit and all database volumes are retained. The primary
+test database remains `legalitt_consultation_test`; no database was dropped.
+
 Use Git Bash with Node 22 in each folder. Each agent must keep its worktree on
 its assigned branch; do not switch branches in the other agent's folder.
 

@@ -119,10 +119,14 @@ export class CaseRepository {
       const visible=await Promise.all(documents.map(async d=>await consultationDocumentVisible(db,actor,record,d)?d:null));
       return {...caseRecord,parties,pricing,advocate:advocate?{...advocateUser,profile}:null,events,documents:visible.filter(Boolean),drafts:[],reviews:[],shipments};
     }
-    if (isReportService(record.service_code))
-      return reportCaseView({actor, record, caseRecord, events, documents, drafts: allDrafts, payment: payments[0], pricing, parties,
+    if (isReportService(record.service_code)) {
+      // An interrupted upload blocks pricing. Its owner must be able to find
+      // and remove it; other case members still see completed uploads only.
+      const pending = await db.document.findMany({where:{case_id:record.id,owner_id:actor.id,status:'pending'},orderBy:[{created_at:'asc'},{id:'asc'}]});
+      return reportCaseView({actor, record, caseRecord, events, documents:[...documents,...pending], drafts: allDrafts, payment: payments[0], pricing, parties,
         advocate: advocate ? {...advocateUser, profile} : null,
         client: await db.user.findUnique({where: {id: record.client_id}, select: {full_name: true}})});
+    }
     if (record.service_code !== 'legal_notice')
       return { ...caseRecord, parties, pricing, advocate: advocate ? {...advocateUser, profile} : advocate, events, documents, drafts, reviews, shipments };
     const notice_policy = parse(NoticePolicySchema, (service.config as {notice_policy?: unknown}).notice_policy ?? {});
@@ -211,7 +215,9 @@ export class CaseRepository {
     const caseRow=await db.case.findUniqueOrThrow({where:{id},select:{service_code:true}});
     const clientFir=actor.role==='client'&&caseRow.service_code==='fir_draft';
     const page=rows.slice(0,input.limit);
-    const items=clientFir?page.filter(e=>!['fir_admin_returned','fir_identity_reviewed','fir_advocate_reassigned','fir_draft_saved'].includes(e.type)).map(e=>({...e,payload:{}})):page;
+    const clientReport=actor.role==='client'&&isReportService(caseRow.service_code);
+    const items=clientFir?page.filter(e=>!['fir_admin_returned','fir_identity_reviewed','fir_advocate_reassigned','fir_draft_saved'].includes(e.type)).map(e=>({...e,payload:{}})):
+      clientReport?page.filter(e=>e.from_status!==e.to_status||e.type==='service_report_released').map(e=>e.type==='service_report_released'?e:{...e,payload:{}}):page;
     return {
       items,
       next_cursor:

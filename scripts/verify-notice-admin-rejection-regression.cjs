@@ -6,7 +6,7 @@ const {PDFDocument,StandardFonts}=require('../apps/api/node_modules/pdf-lib');
 const {demoPassword}=require('../apps/api/dist/src/auth/demo');
 process.loadEnvFile('apps/api/.env.local');
 const local=process.env.NOTICE_LOCAL==='1';
-const out=path.resolve('reports/consultation-services-2026-11-10',local?'legal-notice-local':'legal-notice-deployed');fs.mkdirSync(out,{recursive:true});
+const out=path.resolve(process.env.NOTICE_REPORT_ROOT??'reports/consultation-services-2026-11-10',local?'legal-notice-local':'legal-notice-deployed');fs.mkdirSync(out,{recursive:true});
 const mobile=local?'http://localhost:8083':'https://legalitt-5.vercel.app',panel=local?'http://localhost:5174':'https://legalitt-admin-panel.vercel.app',base=local?'http://127.0.0.1:3003':'https://gvycg0n3u8.execute-api.ap-south-1.amazonaws.com';
 const delay=ms=>new Promise(r=>setTimeout(r,ms));
 const save=(name,data)=>fs.writeFileSync(path.join(out,name+'.json'),JSON.stringify(data,null,2)+'\n');
@@ -14,7 +14,7 @@ async function click(p,label,role='button'){
  console.log('UI click:',label);await p.bringToFront();
  await p.waitForFunction((label,role)=>[...document.querySelectorAll(`[role="${role}"],button,a`)].some(e=>!e.closest('[aria-hidden="true"],[inert]')&&e.getClientRects().length&&(e.getAttribute('aria-label')===label||e.textContent.trim()===label)&&e.getAttribute('aria-disabled')!=='true'&&!e.disabled),{timeout:90000,polling:200},label,role);
  const el=await p.evaluateHandle((label,role)=>[...document.querySelectorAll(`[role="${role}"],button,a`)].filter(e=>!e.closest('[aria-hidden="true"],[inert]')&&e.getClientRects().length&&(e.getAttribute('aria-label')===label||e.textContent.trim()===label)&&e.getAttribute('aria-disabled')!=='true'&&!e.disabled).at(-1),label,role);
- await el.asElement().evaluate(e=>e.scrollIntoView({block:'center'}));await el.asElement().click();await el.dispose();
+ await el.asElement().evaluate(e=>e.scrollIntoView({block:'center'}));await delay(350);await el.asElement().click();await el.dispose();
 }
 async function fill(p,label,value){
  const selector=`input[aria-label=${JSON.stringify(label)}],textarea[aria-label=${JSON.stringify(label)}]`;

@@ -11,8 +11,10 @@ module.exports=async function start(){
   await new Promise(resolve=>server.listen(port,'127.0.0.1',resolve));servers.push(server);
  }
  const relay=createServer(async(req,res)=>{try{
-  if(!origins.includes(req.headers.origin)){res.writeHead(403).end();return;}
-  res.setHeader('Access-Control-Allow-Origin',req.headers.origin);res.setHeader('Vary','Origin');res.setHeader('Access-Control-Allow-Methods','POST,GET,OPTIONS');res.setHeader('Access-Control-Allow-Headers','Content-Type');
+  // A signed PDF opened in a browser tab has no Origin header. The random
+  // capability URL still resolves only to a signed target issued in this run.
+  if(!origins.includes(req.headers.origin)&&!(req.method==='GET'&&!req.headers.origin)){res.writeHead(403).end();return;}
+  if(req.headers.origin)res.setHeader('Access-Control-Allow-Origin',req.headers.origin);res.setHeader('Vary','Origin');res.setHeader('Access-Control-Allow-Methods','POST,GET,OPTIONS');res.setHeader('Access-Control-Allow-Headers','Content-Type');
   if(req.method==='OPTIONS'){res.writeHead(204).end();return;}
   const target=targets.get(req.url);if(!target){res.writeHead(404).end();return;}
   const chunks=[];for await(const chunk of req)chunks.push(chunk);

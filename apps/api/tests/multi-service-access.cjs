@@ -76,7 +76,8 @@ test('multi-service spine: real DB ownership, references, locks, documents, inbo
       const documents=new DocumentService(prisma,{upload:async()=>({url:'https://storage.invalid',fields:{}}),download:async()=>{downloads++;return 'https://storage.invalid/file';}},{});
       for(const service of SERVICE_CODES){
         const row=await create(service);
-        const ticket=await documents.presign(owner,{case_id:row.id,kind:'supporting_document',filename:'test.pdf',mime:'application/pdf'});
+        const kind=service==='property_search'?'property_document':service==='document_forensic'?'questioned_document':'supporting_document';
+        const ticket=await documents.presign(owner,{case_id:row.id,kind,filename:'test.pdf',mime:'application/pdf'});
         docs.push(ticket.document.id);
         await db.document.update({where:{id:ticket.document.id},data:{status:'uploaded'}});
         await db.case.update({where:{id:row.id},data:{status:'paid'}}); // fixture only: no new payment workflow
@@ -139,8 +140,8 @@ test('multi-service spine: real DB ownership, references, locks, documents, inbo
     await t.test('other services cannot enter the unchanged notice intake/draft/payment/dispatch workflow',async()=>{
       const row=await create('property_search');
       await assert.rejects(machine.updateDraft(owner,row.id,{tier:'urgent'}),{status:404});
-      await assert.rejects(machine.submitForPayment(owner,row.id),{status:404});
-      await assert.rejects(machine.transition(owner,row.id,'submitted'),{status:409});
+      await assert.rejects(machine.submitForPayment(owner,row.id),e=>[400,409].includes(e.status));
+      await assert.rejects(machine.transition(owner,row.id,'submitted'),{status:400});
       await db.case.update({where:{id:row.id},data:{advocate_id:advocate.id}});
       await assert.rejects(machine.startDrafting(advocate,row.id),{status:404});
       await assert.rejects(machine.dispatch(advocate,row.id,{}),{status:404});
@@ -148,7 +149,7 @@ test('multi-service spine: real DB ownership, references, locks, documents, inbo
       await assert.rejects(new NoticePdfService(prisma,{}).preview(advocate,row.id,randomUUID()),{status:409,message:'Case not found'});
       const {PaymentsService}=require('../dist/src/payments/payments.service');
       const payments=new PaymentsService(prisma,machine,{capture:()=>{throw Error('Must not capture');}},{});
-      await assert.rejects(payments.intent(owner,{case_id:row.id,purpose:'service_fee'},randomUUID()),{status:404});
+      await assert.rejects(payments.intent(owner,{case_id:row.id,purpose:'service_fee'},randomUUID()),{status:409});
       assert.equal((await machine.transition(owner,row.id,'cancelled')).status,'cancelled');
     });
     await t.test('HTTP uses token identity, never a service filter or supplied owner to grant access',async()=>{

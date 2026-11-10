@@ -2,7 +2,7 @@ const assert = require("node:assert/strict");
 const test = require("node:test");
 const { PrismaClient } = require("../dist/src/generated/prisma/client");
 const { PrismaPg } = require("@prisma/adapter-pg");
-const { seed, seedManifest } = require("../dist/prisma/seed-records");
+const { seed, seedManifest, seedId } = require("../dist/prisma/seed-records");
 
 // Opt-in: point only at an isolated test database with the migration applied.
 test(
@@ -32,13 +32,14 @@ test(
         before,
       );
       assert.equal(await db.service.count(), 9);
-      assert.equal(before.length, seedManifest.prices.length);
+      const basePrices=seedManifest.prices.map(row=>seedId('service_pricing',row));
+      assert.equal(before.filter(row=>basePrices.includes(row.id)).length, seedManifest.prices.length);
       assert.equal(
-        await db.commissionRate.count(),
+        await db.commissionRate.count({where:{id:{in:seedManifest.commissions.map(row=>seedId('commission_rates',row))}}}),
         seedManifest.commissions.length,
       );
       assert.equal(
-        await db.servicePricing.count({ where: { confirmed: true } }),
+        await db.servicePricing.count({ where: { id:{in:basePrices}, confirmed: true } }),
         0,
       );
       await assert.rejects(

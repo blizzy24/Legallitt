@@ -11,15 +11,17 @@ const {AdminCasesRepository}=require('../dist/src/admin-cases/admin-cases.reposi
 const {InAppNotifications}=require('../dist/src/notifications/in-app-notifications');
 const {SimulatedNotifications}=require('../dist/src/notifications/simulated-notifications');
 const {seedConfirmedPricing,seedProvisionalPricing}=require('../dist/prisma/seed-pricing');
-const {defaultAffidavitParagraphs}=require('@legalitt/shared');
+const {defaultAffidavitParagraphs,INDIA_JURISDICTIONS}=require('@legalitt/shared');
+const jurisdiction=(stateName,districtName)=>{const s=INDIA_JURISDICTIONS.find(s=>s.name===stateName),d=s.districts.find(d=>d.name===districtName);return {state_code:s.code,state:s.name,district_code:d.code,district:d.name};};
+const signature=[[{x:.1,y:.1},{x:.4,y:.8},{x:.8,y:.2}]];
 
 const intakes={
   property_search:{tier:'ordinary',details:{contact:{fullName:'TEST Applicant',mobile:'+91 90000 00000',email:'test@legalitt.invalid'},
-    jurisdiction:{state_code:'23',state:'Madhya Pradesh',district:'Indore'},property_address:'Plot 42, Scheme 78, Indore',property_type:'residential',
+    jurisdiction:jurisdiction('Madhya Pradesh','Indore'),property_address:'Plot 42, Scheme 78, Indore',property_type:'residential',
     survey_number:'Sy. 104/2',search_duration:'30_years',requirement:'Thirty-year title search before purchase.'}},
   document_forensic:{tier:'urgent',details:{document_type:'agreement_contract',questioned_description:'Signature clause',no_reference_sample:false,instructions:'Compare page 3 signature.'}},
   court_marriage:{tier:null,details:{contact:{mobile:'+91 90000 00001'},party_one:{full_name:'TEST One',date_of_birth:'1995-04-02',address:'Pune',marital_status:'never_married'},
-    party_two:{full_name:'TEST Two',date_of_birth:'1996-05-03',address:'Pune',marital_status:'never_married'},jurisdiction:{state:'Maharashtra',district:'Pune'}}},
+    party_two:{full_name:'TEST Two',date_of_birth:'1996-05-03',address:'Pune',marital_status:'never_married'},jurisdiction:jurisdiction('Maharashtra','Pune')}},
 };
 const totals={property_search:'368603',document_forensic:'884853',court_marriage:'884853'};
 
@@ -71,6 +73,11 @@ test('Report services: provisional pricing, paid intake, assignment, advocate re
       await assert.rejects(reports.intake(client,c.id,{tier:'express',details:{}}),{status:400});
       await assert.rejects(docs.presign(client,{case_id:c.id,kind:'questioned_document',filename:'x.pdf',mime:'application/pdf'}),{status:409});
       const saved=await reports.intake(client,c.id,{details:{contact:{fullName:'Partial'}}});assert.equal(saved.status,'draft');
+      const pending=await docs.presign(client,{case_id:c.id,kind:'property_document',filename:'Interrupted.pdf',mime:'application/pdf'});
+      assert.ok((await repo.read(client,c.id)).documents.some(d=>d.id===pending.document.id&&d.status==='pending'),'owner can recover an interrupted upload');
+      assert.ok(!(await repo.read(admin,c.id)).documents.some(d=>d.id===pending.document.id),'unfinished content is not exposed to other members');
+      await docs.delete(client,pending.document.id);
+      assert.ok(!(await repo.read(client,c.id)).documents.some(d=>d.id===pending.document.id),'removed upload no longer blocks recovery');
       const minor=await state.create(client,{service_code:'court_marriage'});ids.push(minor.id);
       await reports.intake(client,minor.id,{details:{...intakes.court_marriage.details,party_two:{...intakes.court_marriage.details.party_two,date_of_birth:new Date().toISOString().slice(0,10)}}});
       await upload(client,minor.id,'id_proof');await upload(client,minor.id,'id_proof');
@@ -84,7 +91,13 @@ test('Report services: provisional pricing, paid intake, assignment, advocate re
       assert.equal((await repo.read(client,c.id)).documents.some(d=>d.id===report.id),false,'unsent report invisible');
       await assert.rejects(docs.url(client,report.id),{status:404});
       await assert.rejects(reports.save(advocate,c.id,{base_draft_id:randomUUID(),report_document_id:report.id,note:''}),{status:409});
-      const draft=await reports.save(advocate,c.id,{base_draft_id:null,report_document_id:report.id,note:'Title clear for 30 years.'});
+      const research={owner_details:'TEST owner research',documents_checked:[{description:'TEST checked record',reference:'TEST record reference'}],search_date:'2026-11-11',search_period:'1996–2026',records_inspected:'TEST inspected records',registry_office:'TEST registry office',search_notes:'TEST search notes',ownership_history:'TEST ownership history',findings:'TEST search findings',conclusion:'TEST final opinion'};
+      const working=await reports.save(advocate,c.id,{base_draft_id:null,production:'property',report:research,note:''});
+      const preview=await reports.preview(advocate,c.id,working.id),extracted=await require('./helpers/pdf-text.cjs').readPdfText(Buffer.from(preview.files[0].pdf_base64,'base64'));
+      for(const text of ['TEST owner research','TEST checked record','TEST record reference','TEST inspected records','TEST registry office','TEST search notes','TEST ownership history','TEST search findings','TEST final opinion','Plot 42, Scheme 78, Indore'])assert.ok(extracted.text.includes(text),text+' reaches PDF');
+      await assert.rejects(reports.submit(advocate,c.id,working.id),{status:400},'working preview must not bypass final upload/sign-off');
+      const draft=await reports.save(advocate,c.id,{base_draft_id:working.id,report_document_id:report.id,note:'Title clear for 30 years.'});
+      assert.equal((await repo.read(advocate,c.id)).report.property_draft.id,working.id,'research survives final-upload versions');
       await assert.rejects(reports.approve(admin,c.id,draft.id),{status:409},'no admin gate for property search');
       const done=await reports.submit(advocate,c.id,draft.id);assert.equal(done.status,'completed');
       const seen=await repo.read(client,c.id);assert.equal(seen.report.stage,'released');assert.equal(seen.report.released.note,'Title clear for 30 years.');
@@ -101,7 +114,7 @@ test('Report services: provisional pricing, paid intake, assignment, advocate re
       const unsigned=await reports.save(advocate,c.id,{base_draft_id:null,report,affidavit,signed:false});
       assert.equal((await db.case.findUnique({where:{id:c.id}})).status,'in_progress');
       await assert.rejects(reports.preview(advocate,c.id,unsigned.id),e=>e.status===400&&/Sign/.test(e.message));
-      const v2=await reports.save(advocate,c.id,{base_draft_id:unsigned.id,report,affidavit,signed:true});
+      const v2=await reports.save(advocate,c.id,{base_draft_id:unsigned.id,report,affidavit,signature,signed:true});
       const preview=await reports.preview(advocate,c.id,v2.id);assert.equal(preview.files.length,2);
       for(const f of preview.files)assert.ok(Buffer.from(f.pdf_base64,'base64').subarray(0,4).equals(Buffer.from('%PDF')));
       assert.equal(await db.document.count({where:{case_id:c.id,kind:{in:['forensic_report','forensic_affidavit']}}}),0,'preview stores nothing');
@@ -115,9 +128,12 @@ test('Report services: provisional pricing, paid intake, assignment, advocate re
       for(const d of await db.document.findMany({where:{case_id:c.id,kind:{in:['forensic_report','forensic_affidavit']}}}))await assert.rejects(docs.url(client,d.id),{status:404});
       await assert.rejects(reports.requestChanges(advocate,c.id,v2.id,{items:[{title:'x'}]}),{status:403});
       await reports.requestChanges(admin,c.id,v2.id,{items:[{title:'Add more details to the findings',detail:'Seal ink under UV.'}]});
+      await assert.rejects(reports.submit(advocate,c.id,v2.id),{status:409},'an old returned submission cannot be requeued');
+      for(const clientData of [await repo.read(client,c.id),await repo.events(client,c.id,{})])assert.doesNotMatch(JSON.stringify(clientData,(_,v)=>typeof v==='bigint'?v.toString():v),/Add more details|Seal ink under UV|service_report_saved|service_report_changes_requested/,'private review data stays internal on both case and event APIs');
+      await assert.rejects(docs.presign(advocate,{case_id:c.id,kind:'forensic_report',filename:'forged.pdf',mime:'application/pdf'}),{status:409},'public uploads cannot impersonate server-generated reports');
       const adv=await repo.read(advocate,c.id);assert.equal(adv.report.stage,'changes_requested');assert.equal(adv.report.changes.items[0].title,'Add more details to the findings');
       await assert.rejects(reports.approve(admin,c.id,v2.id),{status:409});
-      const v3=await reports.save(advocate,c.id,{base_draft_id:v2.id,report:{...report,findings:'Hesitation marks; seal ink differs under UV.'},affidavit,signed:true});
+      const v3=await reports.save(advocate,c.id,{base_draft_id:v2.id,report:{...report,findings:'Hesitation marks; seal ink differs under UV.'},affidavit,signature,signed:true});
       await reports.submit(advocate,c.id,v3.id);
       await assert.rejects(reports.approve(admin,c.id,v2.id),{status:409},'stale version cannot be approved');
       const done=await reports.approve(admin,c.id,v3.id);assert.equal(done.status,'completed');

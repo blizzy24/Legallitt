@@ -10,6 +10,7 @@ import { DATA_SOURCE } from '../lib/data-source';
 import { unavailableSection } from '../lib/unavailable-sections';
 import TabBar from './TabBar';
 import {consultationRoute} from '../features/consultation/router';
+import {reportRoute} from '../features/reports/router';
 
 /** Navigator boundary: blocked fixture screens never mount, including deep links.
  * Uses the existing header, profile card and button tokens. No pretend zero data. */
@@ -18,6 +19,8 @@ export default function AccountDataBoundary({ name, params, children }: { name: 
   const { role } = useSession();
   const consultation=DATA_SOURCE==='api'?consultationRoute(name,params as Readonly<Record<string,unknown>>|undefined):null;
   if(consultation)return consultation;
+  const report=DATA_SOURCE==='api'?reportRoute(name,params as Readonly<Record<string,unknown>>|undefined):null;
+  if(report)return report;
   const section = DATA_SOURCE === 'api' ? unavailableSection(name, params as Readonly<Record<string, unknown>> | undefined) : undefined;
   if (!section) return <>{children}</>;
   const advocate = role === 'lawyer';

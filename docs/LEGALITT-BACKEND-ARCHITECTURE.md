@@ -235,6 +235,52 @@ ALTER TABLE service_pricing ADD COLUMN fee_policy_id UUID REFERENCES fee_policie
 ALTER TABLE payments ADD COLUMN quote_id UUID UNIQUE REFERENCES case_price_quotes(id);
 ```
 
+### 2.5b Provisional report-service tariffs — 11 November 2026
+
+Owner instruction: retain the five estimates inherited from `6b33341`. They are
+**not client-confirmed prices**. `prisma/provisional-pricing.json` is the versioned
+seed input (`provisional-2026-11-10`); both its `service_pricing` and `fee_policies`
+rows have `confirmed=false`. Existing confirmed 80/20 commission and case-wide
+page-overage policy rows apply. No delivery charge is included. No price depends
+on advocate experience. New confirmed rows must supersede these later; never
+rewrite a case's pinned pricing or captured quote.
+
+| Service / speed | Advocate base | Platform (25% of base) | GST (18% of both) | Client total before extra pages |
+|---|---:|---:|---:|---:|
+| Property Search ordinary | ₹2,499 | ₹624.75 | ₹562.28 | ₹3,686.03 |
+| Property Search urgent | ₹3,999 | ₹999.75 | ₹899.78 | ₹5,898.53 |
+| Document Forensic ordinary | ₹3,999 | ₹999.75 | ₹899.78 | ₹5,898.53 |
+| Document Forensic urgent | ₹5,999 | ₹1,499.75 | ₹1,349.78 | ₹8,848.53 |
+| Court Marriage application preparation | ₹5,999 | ₹1,499.75 | ₹1,349.78 | ₹8,848.53 |
+
+All calculations use integer paise with the existing half-up rule. PDF overage
+remains ₹25 per page above 25 across the case, no GST, platform revenue. The
+payment step resolves every PDF's verified page count before offering payment;
+unfinished uploads identify the affected file and how to replace/remove it.
+
+Market comparison retrieved **11 November 2026 (IST)**:
+
+- [Legal Verifier](https://www.legalverifier.com/home) advertises property
+  verification packages at ₹2,999, ₹4,999 and ₹5,999. Retained PS bases ₹2,499/₹3,999
+  place the full Legalitt totals in that broad range. Packages differ in scope;
+  the source does not establish Legalitt's tax treatment or an urgent premium.
+- [Forensicindia consultancy terms](https://www.forensicindia.com/index.php?r=page%2Fconsultancy-terms)
+  list a ₹5,000 minimum for an Indian expert consultation, expressly excluding
+  a written report unless separately agreed. This is **an adjacent-service
+  benchmark only**, not a verified tariff for this exact report. The retained
+  ₹3,999/₹5,999 bases are provisional judgments for preliminary advocate review
+  plus priority handling. No sourced laboratory-report price is asserted.
+- [Arya Samaj Court Marriage Delhi](https://aryasamajcourtmarriagedelhi.com/)
+  advertises ₹6,100 for court-marriage assistance and ₹6,000 for registration,
+  with government fees separate. This supports only the order of magnitude of
+  the retained ₹5,999 base. Legalitt currently prepares an application; it does
+  not sell that provider's ceremony, registration or filing package.
+
+The comparisons justify provisional development estimates, not legal-service
+equivalence, professional certification or a confirmed commercial offer. Both
+landing and payment screens label the estimates. Payment remains simulated in
+development. Activate the seed only after the new API and payment frontend serve.
+
 ### 2.6 One AWS account, two stages
 
 Confirmed: a single account. Environments are separated by VPC, resource
@@ -1413,6 +1459,73 @@ CREATE TABLE court_progress (
 );
 ```
 
+### 4.7 Property Search, Document Forensic and Court Marriage — 11 November 2026
+
+The inherited backend is rebased onto the consultation mainline and reviewed.
+These services reuse `cases.details`, `documents`, versioned `drafts` with
+`kind=service_report`, `draft_reviews`, `case_events`, pricing snapshots,
+notifications, membership-scoped chat and the canonical case state writer.
+There is no schema migration. Intake saves compare `updated_at`; saved drafts
+compare `base_draft_id` under the case lock. State writes live in
+`case-state-machine.ts`, including report sub-status changes.
+
+Common flow: draft intake → submitted → payment_pending → paid → admin assignment
+→ assigned → advocate_accepted → in_progress. Property Search's final upload is
+sent directly to the client and completes the case (design 211). Forensic and
+Court Marriage remain `in_progress/awaiting_admin_approval`; admin approves the
+exact submitted draft ID or returns required action items using
+`in_progress/admin_changes_requested`. A corrected **new version** returns to
+admin. An already submitted version cannot be requeued. There is one pending
+submission; stale approval/return actions fail. This does not change FIR's or
+Legal Notice's use of `changes_requested`.
+
+Release events name the exact document IDs available to the client. Until
+release, the client sees only their own uploads and neutral preparation status;
+draft content, review reasons and internal events are excluded from both case
+reads and event pagination. Downloads and chat attachments apply the same
+release rule. Paid intake files and submitted report files are immutable.
+Server-generated Forensic kinds cannot be uploaded through public presigning.
+Upload completion rechecks the current stage, not just the earlier presign.
+
+Design 208's eight-section Property Search editor persists structured research
+in versioned drafts. Client details and property details are read-only, labelled
+**From client's filing**. Owner details, checked records, search details,
+ownership history, findings and conclusion are editable and all reach the PDF.
+Required research blocks preview when absent. The advocate downloads the working
+preview, verifies/signs it offline and uploads the final PDF (210); final-upload
+versions retain access to the previous structured research. No AI invents facts.
+
+Forensic stores four findings sections plus affidavit paragraphs and a bounded
+vector signature, all rendered with the shared bundled-font/pagination pipeline.
+Any edit to findings or affidavit requires signing again in the editor. Signature
+confirmation and the drawn mark are recorded with that version. The affidavit
+is a **proforma for formal execution**, not a platform-administered oath,
+notarisation or digital-certificate signature. Intake metadata is read-only.
+Generated PDFs are filed through the existing signed-upload/document pipeline.
+
+Assumptions awaiting client confirmation (owner authorised decisions rather than
+blocking this chunk):
+
+| ID | Assumption / boundary |
+|---|---|
+| A-PS-1 | State/district use the existing sourced LGD dataset. Ward, tehsil/village and colony use client text because no official subordinate dataset is supplied. Property address and purpose are collected because review design 76 needs them. |
+| A-PS-2 | The advocate verifies records offline and supplies the final signed PDF. Working preview is not an unsigned final certification. AI assistance is unavailable, visibly labelled. |
+| A-PRICE-1 | The retained ordinary/urgent estimates and urgent premiums are provisional (§2.5b). Drawn turnaround windows are estimates, not independently confirmed service guarantees. |
+| A-DF-1 | The assigned advocate prepares the preliminary examination; no separate laboratory or specialist actor/assignment exists. Methods and limitations must be stated; no default assertion of physical/optical examination of originals. |
+| A-DF-2 | One questioned file per request, plus reference files or an explicit no-reference declaration, following 84–85. A multi-page PDF is one file. |
+| A-DF-3 | Drawn signature is embedded in the affidavit proforma. Formal execution, notarisation and any laboratory testing occur outside the app. Admin approval is internal quality review, not scientific accreditation. |
+| A-REVIEW-1 | Required admin corrections return DF/CM to the same advocate; no automatic reassignment or rejection-count threshold is added to these services. FIR's confirmed policy remains service-specific. |
+| A-CM-1 | No Court Marriage service-flow design was found in `design/`. Restore an All Services tile and use the approved app card/field language; add the admin review in the existing panel language. |
+| A-CM-2 | Intake captures both parties' names, DOB, present address, marital status, contact, LGD jurisdiction, preferred date and notes. Separate identity/age proof files for both parties are provisionally required; accepted document types and local requirements remain Q15 for this service. Identity numbers are never extracted; Aadhaar must be masked. |
+| A-CM-3 | The sold deliverable is an advocate-prepared application PDF, approved by admin. Completion means delivery of that application, **not** marriage solemnisation/registration. Government fees, travel, notarisation and representation are not included. |
+| A-CM-4 | The 5–7-working-day estimate concerns application preparation. The advocate must verify age/eligibility, residence, witnesses and local filing requirements before offline filing. The form's minimum-age check is only a preliminary check, not statutory approval. Preferred date is not an appointment. |
+| A-OPS-1 | Client/advocate chat uses the real case thread. Pre-booking callback/support, external notifications, bank payouts and escrow are not working integrations and are labelled accordingly. No timer advances a case or navigates a screen. |
+
+Legal process reference checked 11 November 2026: the official
+[Special Marriage Act on India Code](https://www.indiacode.nic.in/bitstream/123456789/20574/1/special_marriage_act.pdf),
+sections 4, 5 and 7, sets eligibility, residence/notice and the objection period.
+Application delivery cannot promise a marriage in the app's preparation window.
+
 ## 5. API surface
 
 Conventions: `/api/v1`, JWT bearer from Cognito, cursor pagination,
@@ -2039,8 +2152,16 @@ is re-litigated mid-build.
 | FIR admin rejection, reassignment and turnaround | **Client confirmed:** one shared submission/supersession model for draft and identity returns plus reassignment. Required reasons are visible to every advocate assigned to the case. Reassign optionally after two draft rejections per assignment; preserve history and reset the new assignment count. Notify the replaced advocate and use the approved neutral client message. Purge rejected unmasked Aadhaar including all S3 versions. Warn after 24 hours from captured payment; mark overdue after 48 hours, without resetting on returns. Versioned policy gives the completing advocate the full captured advocate share and replaced advocates zero. | 2026-11-10 |
 
 | Consultation services | **Client instruction:** Legal Advice is a paid 30-minute chat consultation; District Court/High Court have their own paid consultation and a separate representation quote/payment. Weekly advocate hours, client selection, admin assignment and report approval, offline court updates. Booking/review/payment assumptions are explicitly awaiting client confirmation in §4.6 and the linked implementation record. | 2026-11-10 |
+| Property Search, Document Forensic, Court Marriage | **Owner authorised:** take over `6b33341`, preserve the consultation mainline and complete all roles. PS releases directly per 211; DF/CM require exact-version admin approval or correction. Keep provisional tariffs `confirmed=false`, with comparisons and limitations in §2.5b. Typed property research, forensic report/affidavit and privacy safeguards are in §4.7; all unconfirmed product assumptions remain explicit there. | 2026-11-11 |
 
 ### 9.1 Register of simulated capabilities
+
+**Report services — 11 November 2026:** intake, uploads, chat, assignment,
+version history, PDF production, admin review, release and inbox notifications
+are real application paths. Payment and external notification delivery reuse the
+simulated adapters. No real bank payout, escrow, laboratory examination, registry
+integration, AI research, notarisation or marriage registration is claimed.
+Advocates and admins perform their own actions; none is timer-driven.
 
 **Consultation service update — 10 November 2026:** booking, weekly availability,
 intake persistence, chat, versioned quotes, report PDF filing, admin review and inbox
@@ -2086,6 +2207,35 @@ client without an advocate in between. If one does, it needs either an advocate
 gate or explicit framing that it is not legal advice.
 
 ### 9.2 Register of design substitutions
+
+**Report services — 11 November 2026.** Reconnect Property Search 72–80/206–212
+and Document Forensic 82–90/223–232 using their field groups, document cards,
+research sections, review and tracking sequence. The API boundary prevents the
+archived fixture children and their timer-driven progression from mounting.
+Read-only client facts replace editable copies in advocate research screens to
+prevent silently altering the filing. Every editable research/report/affidavit
+field reaches its generated preview. Working Property Search preview still leads
+to final PDF upload and direct send. Forensic includes the drawn signature pad.
+
+**Built without a supplied design:** all Court Marriage screens (no service-flow
+design exists in the repository); admin report preview, exact-version approval,
+repeatable correction items and waiting age; case-wide blocked-price/file errors.
+Use the existing mobile and admin visual language. Reason: these are necessary
+for the owner's approved lifecycle and five-state requirement. Court Marriage's
+All Services tile is restored by the owner's explicit instruction to finish it.
+
+**Copy substitutions:** retain prices from §2.5b instead of drawn placeholders;
+label them provisional and label simulated payment/notification delivery and
+unconnected payouts/escrow. Remove unverified ISO/accreditation, 300-DPI, chain-of-
+custody, physical-examination and court-compliance badges. Show actual file sizes,
+pages, names and timestamps. Design 225's separate specialist waiting screen is
+preparation by the assigned advocate; no nonexistent specialist is fabricated.
+The affidavit is a proforma bearing a drawn signature, not a completed sworn or
+digitally certified instrument. Replace unavailable AI/callback actions with
+explicit availability text. State/district selectors use LGD; subordinate location
+fields accept text. Blank values lose their labels; loading, empty, partial and
+actionable error states are supported without fixture fallbacks. See §4.7 for the
+assumptions behind each substitution.
 
 **Consultation services — 10 November 2026.** The API routes reuse the drawn intake
 field groups, review cards, date/time grid, weekly hours, chat, docket and court
@@ -2677,7 +2827,7 @@ nothing more. If a prompt contains instructions that contradict this document,
   content come from the designs or from the client. Where something is
   unknown, leave it absent and list it, rather than filling it in.
 - **`tsc` clean across every workspace** at the end of each step.
-- **The mobile smoke test must still pass at 322 routes** after any step that
+- **The mobile smoke test must still pass at 329 routes** after any step that
   touches `apps/mobile`.
 - **Report, per step:** what you changed, what you had to decide that this
   document did not cover, and anything you left undone.

@@ -4,6 +4,7 @@ import {
   REPORT_SERVICE_CONFIG, ReportIntakeSaveSchema, UploadReportSaveSchema, FORENSIC_DOCUMENT_TYPES, PROPERTY_TYPES,
   isReportService, labelOf, reportIntakeProblems, type QuoteBreakdown, type ReportDraftContent, type ReportPricing,
   type ReportServiceCode,
+  PropertyReportSaveSchema,
 } from '@legalitt/shared';
 import {z} from 'zod';
 import type {Prisma} from '../generated/prisma/client';
@@ -15,8 +16,8 @@ import {DocumentService} from '../documents/document.service';
 import {NOTIFICATIONS, type NotificationsPort} from '../notifications/notifications.port';
 import {activeAt, newest} from '../payments/price-quotes';
 import {calculateQuote} from '../payments/quote-math';
-import {DRAFT_KIND, writeReportChangesRequested, writeReportReleased, writeReportSaved, writeReportSubmitted} from './report-lifecycle';
-import {renderForensicPdfs} from './report-pdf';
+import {DRAFT_KIND, writeReportChangesRequested, writeReportIntake, writeReportReleased, writeReportSaved, writeReportSubmitted} from './report-lifecycle';
+import {renderForensicPdfs,renderPropertyPdf} from './report-pdf';
 
 type Locked = Awaited<ReturnType<typeof lockedCase>>;
 const service = (record: Locked): ReportServiceCode => {
@@ -41,19 +42,18 @@ export class ServiceReportsService {
         throw new ConflictException('This request changed in another session. Your entries are still on screen. Reload before editing again.');
       const details = parse(REPORT_INTAKE_SCHEMAS[code] as unknown as z.ZodType<Record<string, unknown>>, input.details);
       const j = details.jurisdiction as {state_code?: string; state?: string; district_code?: string; district?: string} | undefined;
-      if (j?.state_code || j?.district_code) {
+      if (j?.state_code || j?.district_code || j?.state || j?.district) {
         const state = INDIA_JURISDICTIONS.find(s => s.code === j.state_code);
         if (!state || state.name !== j.state) throw new BadRequestException('Choose a state from the list');
-        if (j.district_code && state.districts.find(d => d.code === j.district_code)?.name !== j.district)
+        if ((j.district_code || j.district) && state.districts.find(d => d.code === j.district_code)?.name !== j.district)
           throw new BadRequestException('Choose a district in the selected state');
       }
       if (input.tier !== undefined && input.tier !== null && !(config.tiers as readonly string[]).includes(input.tier))
         throw new BadRequestException('This service has no such speed option');
       const matter = code === 'property_search' ? details.property_type : code === 'document_forensic' ? details.document_type : null;
-      return tx.case.update({where: {id}, data: {details: details as Prisma.InputJsonObject,
+      return writeReportIntake(tx, actor, id, {details: details as Prisma.InputJsonObject,
         ...(input.tier !== undefined ? {tier: config.tiers.length ? input.tier : null} : {}),
-        matter_type: typeof matter === 'string' ? matter : null,
-        updated_at: new Date(Math.max(Date.now(), record.updated_at.getTime() + 1))}});
+        matter_type: typeof matter === 'string' ? matter : null});
     });
   }
 
@@ -62,7 +62,7 @@ export class ServiceReportsService {
     if (!isReportService(code)) throw new NotFoundException('Service not found');
     const db = await this.prisma.getClient(), now = new Date();
     const rows = await db.servicePricing.findMany({where: {service_code: code, variant: null, fee_policy_id: {not: null}, ...activeAt(now)},
-      orderBy: newest, include: {fee_policy: {include: {page_overage_policy: true}}}});
+      orderBy: [{confirmed:'desc'},...newest], include: {fee_policy: {include: {page_overage_policy: true}}}});
     const commission = await db.commissionRate.findFirst({where: {service_code: code, confirmed: true, ...activeAt(now)}, orderBy: newest});
     const tiers: ReportPricing['tiers'] = [];
     const wanted = REPORT_SERVICE_CONFIG[code].tiers.length ? REPORT_SERVICE_CONFIG[code].tiers : [null];
@@ -100,7 +100,11 @@ export class ServiceReportsService {
         throw new ConflictException('The submitted report is frozen while awaiting admin review.');
       const last = await tx.draft.findFirst({where: {case_id: id, kind: DRAFT_KIND}, orderBy: {version: 'desc'}});
       let content: ReportDraftContent;
-      if (config.production === 'upload') {
+      if (code==='property_search' && (body as {production?:string})?.production==='property') {
+        const input=parse(PropertyReportSaveSchema,body);
+        if((last?.id??null)!==input.base_draft_id)throw new ConflictException('A newer report version was saved in another session. Reload before continuing.');
+        content={production:'property',report:input.report,note:input.note};
+      } else if (config.production === 'upload') {
         const input = parse(UploadReportSaveSchema, body);
         if ((last?.id ?? null) !== input.base_draft_id) throw new ConflictException('A newer report version was saved in another session. Reload before continuing.');
         const doc = await tx.document.findFirst({where: {id: input.report_document_id, case_id: id, status: 'uploaded', kind: 'service_report', owner_id: actor.id}});
@@ -112,9 +116,9 @@ export class ServiceReportsService {
         if ((last?.id ?? null) !== input.base_draft_id) throw new ConflictException('A newer report version was saved in another session. Reload before continuing.');
         const previous = last?.content as ReportDraftContent | undefined;
         const keepSignature = previous?.production === 'forensic' && previous.signed_at &&
-          JSON.stringify(previous.affidavit) === JSON.stringify(input.affidavit) && JSON.stringify(previous.report) === JSON.stringify(input.report);
+          JSON.stringify(previous.affidavit) === JSON.stringify(input.affidavit) && JSON.stringify(previous.report) === JSON.stringify(input.report) && JSON.stringify(previous.signature)===JSON.stringify(input.signature);
         // Any change to the sworn content requires signing again.
-        content = {production: 'forensic', report: input.report, affidavit: input.affidavit, note: input.note,
+        content = {production: 'forensic', report: input.report, affidavit: input.affidavit, signature:input.signature, note: input.note,
           signed_at: input.signed ? (keepSignature ? (previous as {signed_at: string}).signed_at : new Date().toISOString()) : null};
       }
       const draft = await tx.draft.create({data: {case_id: id, kind: DRAFT_KIND, version: (last?.version ?? 0) + 1,
@@ -134,6 +138,8 @@ export class ServiceReportsService {
         throw new ConflictException('This report cannot be submitted in the current state.');
       const draft = await tx.draft.findFirst({where: {case_id: id, kind: DRAFT_KIND}, orderBy: {version: 'desc'}});
       if (!draft || draft.id !== draftId) throw new ConflictException('Refresh to use the latest report version.');
+      if (await tx.caseEvent.findFirst({where: {case_id: id, type: 'service_report_submitted', payload: {path: ['draft_id'], equals: draftId}}}))
+        throw new ConflictException('Save a new corrected version before resubmitting. The earlier submission remains in the review history.');
       const content = draft.content as unknown as ReportDraftContent;
       if (content.production === 'upload' && !await tx.document.findFirst({where: {id: content.report_document_id, case_id: id, status: 'uploaded'}}))
         throw new ConflictException('The uploaded report is no longer available. Upload it again and save.');
@@ -144,12 +150,16 @@ export class ServiceReportsService {
   }
 
   private async render(input: Awaited<ReturnType<ServiceReportsService['submittable']>>) {
+    if(input.content.production==='property'){
+      try{return [{filename:'Property_Search_Report.pdf',kind:'service_report',bytes:await renderPropertyPdf({reference:input.record.reference,intake:input.record.details,report:input.content.report,generatedAt:input.draft.created_at})}];}
+      catch(e){throw new BadRequestException(e instanceof Error?e.message:'Unable to render the report');}
+    }
     if (input.content.production !== 'forensic') throw new BadRequestException('Open the uploaded report to preview it.');
     const details = input.record.details as {document_type?: string};
     try {
       return await renderForensicPdfs({reference: input.record.reference, client: input.client.full_name,
         documentName: input.questioned?.filename ?? 'Questioned document', documentType: labelOf(FORENSIC_DOCUMENT_TYPES, details.document_type),
-        report: input.content.report, affidavit: input.content.affidavit, signedAt: input.content.signed_at, generatedAt: input.draft.created_at});
+        report: input.content.report, affidavit: input.content.affidavit, signature:input.content.signature, signedAt: input.content.signed_at, generatedAt: input.draft.created_at});
     } catch (e) { throw new BadRequestException(e instanceof Error ? e.message : 'Unable to render the report'); }
   }
 
@@ -160,6 +170,7 @@ export class ServiceReportsService {
 
   async submit(actor: CaseActor, id: string, draftId: string) {
     const input = await this.submittable(actor, id, draftId);
+    if(input.content.production==='property')throw new BadRequestException('Preview and download your draft, then upload the final PDF before sending it to the client.');
     const config = REPORT_SERVICE_CONFIG[input.code];
     const created: string[] = [];
     try {
@@ -167,7 +178,7 @@ export class ServiceReportsService {
       if (input.content.production === 'forensic') {
         documentIds = [];
         for (const file of await this.render(input)) {
-          const ticket = await this.documents.presign(actor, {case_id: id, kind: file.kind, filename: file.filename, mime: 'application/pdf'});
+          const ticket = await this.documents.presign(actor, {case_id: id, kind: file.kind, filename: file.filename, mime: 'application/pdf'}, {serviceReport:true});
           created.push(ticket.document.id);
           const form = new FormData();
           for (const [key, value] of Object.entries(ticket.upload.fields)) form.append(key, value as string);

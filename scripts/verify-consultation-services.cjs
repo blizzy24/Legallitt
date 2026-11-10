@@ -5,7 +5,7 @@ const {spawn}=require('node:child_process'),{createServer}=require('node:http'),
 const {ApiClient}=require('../packages/shared/dist');
 process.loadEnvFile('apps/api/.env.local');
 const deployed=process.env.CONSULTATION_DEPLOYED==='1',base=deployed?'https://gvycg0n3u8.execute-api.ap-south-1.amazonaws.com':'http://127.0.0.1:3003',mobile=deployed?'https://legalitt-5.vercel.app':'http://localhost:8083',panel=deployed?'https://legalitt-admin-panel.vercel.app':'http://localhost:5174';
-const out=path.resolve('reports/consultation-services-2026-11-10',deployed?'deployed':'local');fs.mkdirSync(out,{recursive:true});
+const out=path.resolve(process.env.CONSULTATION_REPORT_ROOT??'reports/consultation-services-2026-11-10',deployed?'deployed':'local');fs.mkdirSync(out,{recursive:true});
 const delay=ms=>new Promise(r=>setTimeout(r,ms)),save=(name,v)=>fs.writeFileSync(path.join(out,name+'.json'),JSON.stringify(v,(_,x)=>typeof x==='bigint'?x.toString():x,2)+'\n');
 async function text(p,value){await p.waitForFunction(v=>document.body.innerText.includes(v),{timeout:90000},value);}
 async function click(p,label){console.log('UI:',label);await p.bringToFront();const find=label=>[...document.querySelectorAll('[role="button"],[role="radio"],button,a')].filter(e=>!e.closest('[aria-hidden="true"],[inert]')&&e.getClientRects().length&&!e.disabled&&e.getAttribute('aria-disabled')!=='true'&&(e.textContent.trim()===label||e.getAttribute('aria-label')===label)).at(-1);await p.waitForFunction(find,{timeout:90000},label);const h=await p.evaluateHandle(find,label);await h.asElement().evaluate(e=>e.scrollIntoView({block:'center'}));await h.asElement().click();await h.dispose();}

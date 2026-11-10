@@ -1,0 +1,10 @@
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),{createServer}=require('node:http'),puppeteer=require('puppeteer-core');
+const {readPdfText}=require('../apps/api/tests/helpers/pdf-text.cjs');
+const out=path.resolve('reports/report-services-2026-11-11',process.env.REPORT_DEPLOYED==='1'?'deployed':'local');
+const names=['Property_Search_Report.pdf','document_forensic-released-Forensic_Report.pdf','document_forensic-released-Affidavit.pdf'];
+(async()=>{let browser;const server=createServer((req,res)=>{const name=decodeURIComponent(new URL(req.url,'http://localhost').pathname.slice(1));if(!names.includes(name)){res.writeHead(404).end();return;}res.setHeader('Content-Type','application/pdf');res.end(fs.readFileSync(path.join(out,name)));});await new Promise(r=>server.listen(0,'127.0.0.1',r));try{
+ browser=await puppeteer.launch({executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe',headless:true});const results=[];
+ for(const name of names){const bytes=fs.readFileSync(path.join(out,name)),pdf=await readPdfText(bytes);for(const p of pdf.pages)for(const r of p.runs){assert.ok(r.x>=49&&r.x+r.width<=550,`${name}: horizontal bounds ${r.x} + ${r.width}`);assert.ok(r.y>=20&&r.y<=815,`${name}: vertical bounds ${r.y}`);assert.ok(!r.text.includes('\uFFFD'),name+': missing font glyph');}
+  const page=await browser.newPage();await page.setViewport({width:1000,height:1150});await page.goto(`http://127.0.0.1:${server.address().port}/${encodeURIComponent(name)}#toolbar=0&zoom=90`,{waitUntil:'networkidle0'});await new Promise(r=>setTimeout(r,1200));await page.screenshot({path:path.join(out,name.replace('.pdf','-page1.png'))});await page.close();results.push({file:name,pages:pdf.pages.length,textWithinPage:true,noMissingGlyphs:true});
+ }fs.writeFileSync(path.join(out,'pdf-layout.json'),JSON.stringify(results,null,2)+'\n');console.log('PASS PDF page bounds and bundled glyphs; browser renders saved for visual review.');
+ }finally{await browser?.close();server.close();}})().catch(e=>{console.error(e.message);process.exitCode=1;});

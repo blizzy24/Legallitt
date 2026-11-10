@@ -7,6 +7,7 @@ import {parse} from '../auth/auth.service';
 import {caseScope,type CaseActor} from './case-access';
 import {lockedCase} from './case-state-machine';
 import {isConsultationService} from '@legalitt/shared';
+import {assertReportDocumentReadable} from '../service-reports/report-access';
 const input=z.strictObject({body:NoticeCommentSchema.shape.comment.optional(),document_id:z.uuid().optional()}).refine(v=>v.body||v.document_id,'Enter a message or attach a document');
 @Injectable()
 export class NoticeMessages {
@@ -37,6 +38,10 @@ export class NoticeMessages {
    // Recheck membership under the case lock; assignment may change between calls.
    const record=await lockedCase(tx,actor,thread.case_id!);
    if(value.document_id&&!await tx.document.findFirst({where:{id:value.document_id,case_id:thread.case_id,status:'uploaded'}}))throw new BadRequestException('Attach an uploaded document from this case');
+   if(value.document_id){
+    const doc=await tx.document.findUniqueOrThrow({where:{id:value.document_id}});
+    await assertReportDocumentReadable(tx,{id:record.client_id,role:'client'},record,doc);
+   }
    if(value.document_id&&isConsultationService(record.service_code)){
     const doc=await tx.document.findUniqueOrThrow({where:{id:value.document_id}});
     if(doc.kind==='consultation_report'&&!await tx.consultationReport.findFirst({where:{case_id:record.id,document_id:doc.id,status:'approved'}}))throw new BadRequestException('A report must be approved by admin before it can be shared with the client.');

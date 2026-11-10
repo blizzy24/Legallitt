@@ -79,7 +79,7 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
       ...(doc.kind === "id_proof" ? { identity_notice: doc.identity_evidence ? FIR_ID_NOTICE : ID_PROOF_NOTICE } : {}),
     };
   }
-  async presign(actor: CaseActor, body: unknown, internal?:{consultationReport?:boolean}) {
+  async presign(actor: CaseActor, body: unknown, internal?:{consultationReport?:boolean;serviceReport?:boolean}) {
     const input = parse(DocumentPresignSchema, body);
     const db = await this.prisma.getClient();
     return db.$transaction(async (tx) => {
@@ -92,7 +92,7 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
         replacingIdentity || actor.role === 'client' && ['draft','payment_pending'].includes(record.status) && input.kind !== 'fir_draft' ||
         actor.role === 'advocate' && ['advocate_accepted','in_progress','changes_requested'].includes(record.status) && record.sub_status!=='awaiting_admin_approval'
       )) throw new ConflictException('FIR documents are frozen at this stage');
-      assertReportUploadAllowed(actor, record, input.kind);
+      assertReportUploadAllowed(actor, record, input.kind, internal?.serviceReport);
       const id = randomUUID();
       if(input.identity&&(record.service_code!=='fir_draft'||input.kind!=='id_proof'))throw new BadRequestException('Identity declarations belong only to FIR identity uploads');
       let identity:ReturnType<typeof IdentityEvidenceSchema.parse>|undefined;
@@ -140,6 +140,7 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
       const doc = await this.locked(tx, actor, id);
       if (doc.status === "uploaded") return this.publicRecord(doc);
       const record = await tx.case.findUniqueOrThrow({where:{id:doc.case_id!}});
+      assertReportUploadAllowed(actor, record, doc.kind, true);
       if(!await consultationDocumentVisible(tx,actor,record,doc))throw new NotFoundException('Document not found');
       if (record.service_code === 'fir_draft' && (record.sub_status === 'awaiting_admin_approval' || record.status === 'completed'))
         throw new ConflictException('FIR documents are frozen at this stage');

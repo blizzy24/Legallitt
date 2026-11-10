@@ -21,6 +21,7 @@ export function reportState(record: CaseRow, events: EventRow[],
   const config = REPORT_SERVICE_CONFIG[record.service_code as keyof typeof REPORT_SERVICE_CONFIG];
   const own = drafts.filter(d => d.kind === DRAFT_KIND).sort((a, b) => a.version - b.version);
   const latest = own.at(-1);
+  const property=own.filter(d=>(d.content as {production?:string}).production==='property').at(-1);
   const submitted = events.filter(e => e.type === 'service_report_submitted').at(-1);
   const changes = events.filter(e => e.type === 'service_report_changes_requested').at(-1);
   const released = events.filter(e => e.type === 'service_report_released').at(-1);
@@ -34,6 +35,7 @@ export function reportState(record: CaseRow, events: EventRow[],
   const client = actor.role === 'client';
   return {
     production: config.production, requires_admin_approval: config.requiresAdminApproval,
+    property_draft:!client&&property?{id:property.id,version:property.version,report:(property.content as Extract<ReportDraftContent,{production:'property'}>).report}:null,
     stage: client && stage !== 'released' ? (record.status === 'in_progress' || record.status === 'advocate_accepted' ? 'preparing' : 'not_started') : stage,
     latest_draft: !client && latest ? {id: latest.id, version: latest.version, content: latest.content as ReportDraftContent, created_at: latest.created_at.toISOString()} : null,
     submission: !client && sub && submitted ? {...sub, submitted_at: submitted.created_at.toISOString()} : null,
@@ -65,12 +67,12 @@ export function reportCaseView<C extends CaseRow & {details: unknown}, D extends
   return {
     ...input.caseRecord, parties: input.parties, pricing: input.pricing, advocate: input.advocate,
     // Clients follow the timeline through lifecycle moves and the release only.
-    events: client ? events.filter(e => e.from_status !== e.to_status || e.type === 'service_report_released') : events,
+    events: client ? events.filter(e => e.from_status !== e.to_status || e.type === 'service_report_released').map(e=>e.type==='service_report_released'?e:{...e,payload:{}}) : events,
     documents: visibleReportDocuments(record, input.documents, events, actor),
     drafts: [], reviews: [], shipments: [],
     client_name: input.client?.full_name ?? null,
     report: reportState(record, events, input.drafts, actor),
-    client_fees: breakdown ? {...breakdown, breakdown_complete: true, simulated: input.payment!.simulated} : null,
+    client_fees: breakdown ? {service_fee_paise:breakdown.service_fee_paise,platform_fee_paise:breakdown.platform_fee_paise,delivery_fee_paise:breakdown.delivery_fee_paise,gst_paise:breakdown.gst_paise,page_overage_paise:breakdown.page_overage_paise,total_paise:breakdown.total_paise,breakdown_complete: true, simulated: input.payment!.simulated} : null,
     advocate_payout: !client && breakdown?.advocate_entitlement_paise ? {net_paise: breakdown.advocate_entitlement_paise} : null,
   };
 }
@@ -78,12 +80,12 @@ export function reportCaseView<C extends CaseRow & {details: unknown}, D extends
 /** Download guard used by DocumentService.url. */
 export async function assertReportDocumentReadable(tx: Prisma.TransactionClient, actor: CaseActor, record: CaseRow, doc: {id: string; owner_id: string}) {
   if (!isReportService(record.service_code) || actor.role !== 'client' || doc.owner_id === record.client_id) return;
-  const events = await tx.caseEvent.findMany({where: {case_id: record.id, type: 'service_report_released'}, select: {type: true, created_at: true, payload: true}});
+  const events = await tx.caseEvent.findMany({where: {case_id: record.id, type: 'service_report_released'}, orderBy:{id:'asc'}, select: {type: true, created_at: true, payload: true}});
   if (record.status !== 'completed' || !releasedDocumentIds(events).includes(doc.id)) throw new NotFoundException('Document not found');
 }
 
 /** Presign guard: who may add which kind of file at which stage. */
-export function assertReportUploadAllowed(actor: CaseActor, record: CaseRow, kind: string) {
+export function assertReportUploadAllowed(actor: CaseActor, record: CaseRow, kind: string, generated=false) {
   if (!isReportService(record.service_code)) return;
   const code = record.service_code;
   if (actor.role === 'client') {
@@ -94,7 +96,7 @@ export function assertReportUploadAllowed(actor: CaseActor, record: CaseRow, kin
   if (actor.role === 'advocate') {
     if (!['advocate_accepted', 'in_progress'].includes(record.status) || record.sub_status === REPORT_AWAITING_APPROVAL)
       throw new ConflictException('Report files are frozen while awaiting admin review.');
-    if (!REPORT_ADVOCATE_DOCUMENT_KINDS[code].includes(kind) && !(REPORT_GENERATED_KINDS as readonly string[]).includes(kind))
+    if (!REPORT_ADVOCATE_DOCUMENT_KINDS[code].includes(kind) && !(generated && code==='document_forensic' && (REPORT_GENERATED_KINDS as readonly string[]).includes(kind)))
       throw new ConflictException('This document type is not used by this service.');
     return;
   }

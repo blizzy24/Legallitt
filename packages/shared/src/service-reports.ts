@@ -21,7 +21,7 @@ export const REPORT_CHANGES_REQUESTED = 'admin_changes_requested';
 /** 'upload': the advocate uploads a finished PDF (designs 210/211).
  *  'forensic': the advocate fills four findings sections and an affidavit; the
  *  platform renders both PDFs (designs 226–228). */
-export type ReportProduction = 'upload' | 'forensic';
+export type ReportProduction = 'upload' | 'forensic' | 'property';
 export type ReportServiceConfig = {
   code: ReportServiceCode;
   /** Route prefix of the client screens. */
@@ -95,13 +95,13 @@ export type DocumentForensicIntake = z.infer<typeof DocumentForensicIntakeSchema
 export const MARITAL_STATUSES = [
   {code: 'never_married', label: 'Never married'}, {code: 'divorced', label: 'Divorced'}, {code: 'widowed', label: 'Widowed'},
 ] as const;
-const party = z.strictObject({full_name: opt(120), date_of_birth: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+const party = z.strictObject({full_name: opt(120), date_of_birth: opt(10),
   address: opt(500), marital_status: z.enum(MARITAL_STATUSES.map(m => m.code) as [string, ...string[]]).optional()}).default({});
 export const CourtMarriageIntakeSchema = z.strictObject({
   contact: z.strictObject({mobile: opt(20), email: opt(200)}).default({}),
   party_one: party, party_two: party,
   jurisdiction: z.strictObject({state_code: opt(10), state: opt(80), district_code: opt(10), district: opt(80)}).default({}),
-  preferred_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  preferred_date: opt(10),
   notes: opt(2000),
 });
 export type CourtMarriageIntake = z.infer<typeof CourtMarriageIntakeSchema>;
@@ -133,7 +133,7 @@ export const REPORT_GENERATED_KINDS = ['forensic_report', 'forensic_affidavit'] 
 
 export type ReportProblem = {field: string; message: string};
 const blank = (v?: string | null) => !v || !v.trim();
-const iso = (v?: string) => !!v && !Number.isNaN(Date.parse(v + 'T00:00:00Z'));
+const iso = (v?: string) => !!v && !Number.isNaN(Date.parse(v + 'T00:00:00Z')) && new Date(v+'T00:00:00Z').toISOString().slice(0,10)===v;
 function age(dob: string, at: Date) {
   const d = new Date(dob + 'T00:00:00Z');
   let years = at.getUTCFullYear() - d.getUTCFullYear();
@@ -167,6 +167,7 @@ export function reportIntakeProblems(code: ReportServiceCode, details: unknown, 
       'Upload a reference document or confirm you do not have a reference sample.');
   } else {
     const v = parsed.data as CourtMarriageIntake;
+    if(v.preferred_date)need(iso(v.preferred_date),'preferred_date','Enter a valid preferred date (YYYY-MM-DD).');
     for (const [key, label] of [['party_one', 'first party'], ['party_two', 'second party']] as const) {
       const p = v[key];
       need(!blank(p.full_name), `${key}.full_name`, `Enter the ${label}'s full name.`);
@@ -190,6 +191,24 @@ export function reportIntakeProblems(code: ReportServiceCode, details: unknown, 
 
 // ---------------- Advocate output ----------------
 export const ReportNoteSchema = z.string().trim().max(300);
+/** Design 208. Client and property facts come from the frozen filing; only
+ * research fields are editable. Every field below is rendered in the preview. */
+export const PropertyReportSchema = z.strictObject({
+  owner_details: text(2000),
+  documents_checked: z.array(z.strictObject({description:text(500),reference:text(200)})).max(30),
+  search_date:text(10), search_period:text(120), records_inspected:text(2000), registry_office:text(500), search_notes:text(3000),
+  ownership_history:text(4000), findings:text(6000), conclusion:text(4000),
+});
+export type PropertyReport = z.infer<typeof PropertyReportSchema>;
+export const PropertyReportSaveSchema=z.strictObject({production:z.literal('property'),base_draft_id:z.uuid().nullable(),report:PropertyReportSchema,note:ReportNoteSchema.default('')});
+export const emptyPropertyReport=():PropertyReport=>({owner_details:'',documents_checked:[],search_date:'',search_period:'',records_inspected:'',registry_office:'',search_notes:'',ownership_history:'',findings:'',conclusion:''});
+export function propertyReportProblems(r:PropertyReport):ReportProblem[]{
+ const required:([keyof PropertyReport,string])[]=[['owner_details','Owner details'],['search_date','Search date'],['search_period','Search period'],['records_inspected','Records inspected'],['registry_office','Registry office'],['ownership_history','Ownership history'],['findings','Search findings'],['conclusion','Search conclusion']];
+ const issues=required.filter(([k])=>!String(r[k]).trim()).map(([k,label])=>({field:String(k),message:`Complete ${label.toLowerCase()}.`}));
+ if(r.search_date&&!iso(r.search_date))issues.push({field:'search_date',message:'Enter a valid search date (YYYY-MM-DD).'});
+ if(!r.documents_checked.length||r.documents_checked.some(d=>!d.description.trim()))issues.push({field:'documents_checked',message:'Record the documents checked, with a description for each.'});
+ return issues;
+}
 export const UploadReportSaveSchema = z.strictObject({
   base_draft_id: z.uuid().nullable(),
   report_document_id: z.uuid(),
@@ -204,20 +223,24 @@ export const AffidavitSchema = z.strictObject({
   office_address: text(300),
   paragraphs: z.array(z.string().trim().max(2000)).min(1).max(8),
 });
-/** Design 227's drawn signature pad is substituted by an explicit electronic
- *  declaration (assumption A-DF-3); the rendered PDF says exactly that. */
+export const ReportSignatureSchema=z.array(z.array(z.strictObject({x:z.number().min(0).max(1),y:z.number().min(0).max(1)})).min(2).max(1000)).min(1).max(30);
+export type ReportSignature=z.infer<typeof ReportSignatureSchema>;
+/** Design 227's drawn mark is stored with this exact version. It is not a
+ *  digital-certificate signature or a notarised/oath-administered affidavit. */
 export const ForensicReportSaveSchema = z.strictObject({
   base_draft_id: z.uuid().nullable(),
   report: ForensicReportSchema,
   affidavit: AffidavitSchema,
   signed: z.boolean(),
+  signature: ReportSignatureSchema.optional(),
   note: ReportNoteSchema.default(''),
 });
 export type ForensicReport = z.infer<typeof ForensicReportSchema>;
 export type Affidavit = z.infer<typeof AffidavitSchema>;
 export type ReportDraftContent =
   | {production: 'upload'; report_document_id: string; note: string}
-  | {production: 'forensic'; report: ForensicReport; affidavit: Affidavit; signed_at: string | null; note: string};
+  | {production: 'property'; report:PropertyReport; note:string}
+  | {production: 'forensic'; report: ForensicReport; affidavit: Affidavit; signature?:ReportSignature; signed_at: string | null; note: string};
 
 export const FORENSIC_SECTIONS: {key: keyof ForensicReport; title: string; tag: string}[] = [
   {key: 'what_checked', title: 'What Was Checked?', tag: 'Scope'},
@@ -225,7 +248,7 @@ export const FORENSIC_SECTIONS: {key: keyof ForensicReport; title: string; tag: 
   {key: 'findings', title: 'Findings', tag: 'Observations'},
   {key: 'final_result', title: 'Final Result', tag: 'Conclusion'},
 ];
-export function forensicProblems(content: {report: ForensicReport; affidavit: Affidavit; signed_at: string | null}): ReportProblem[] {
+export function forensicProblems(content: {report: ForensicReport; affidavit: Affidavit; signature?:ReportSignature; signed_at: string | null}): ReportProblem[] {
   const out: ReportProblem[] = [];
   for (const s of FORENSIC_SECTIONS) if (blank(content.report[s.key])) out.push({field: `report.${s.key}`, message: `Complete “${s.title}”.`});
   const a = content.affidavit;
@@ -234,13 +257,14 @@ export function forensicProblems(content: {report: ForensicReport; affidavit: Af
   if (blank(a.office_address)) out.push({field: 'affidavit.office_address', message: 'Enter the office address.'});
   if (!a.paragraphs.some(p => !blank(p))) out.push({field: 'affidavit.paragraphs', message: 'The affidavit needs at least one statement.'});
   if (!content.signed_at) out.push({field: 'signed', message: 'Sign the affidavit declaration before submitting.'});
+  if (!content.signature?.some(stroke=>stroke.length>1)) out.push({field:'signature',message:'Draw your signature on the affidavit before submitting.'});
   return out;
 }
 /** Design 227's four statements, with the case's own values bound in. */
 export function defaultAffidavitParagraphs(v: {reference: string; client: string; document: string}) {
   return [
-    `Scope & Engagement: That I was formally engaged under Request ID #${v.reference} by client ${v.client} to conduct a direct physical and optical forensic evaluation of the questioned document titled ${v.document}.`,
-    'Methodology: That I examined the questioned document against the reference material provided, using the methods described in the accompanying Preliminary Forensic Examination Report.',
+    `Scope & Engagement: That I was engaged under Request ID #${v.reference} by client ${v.client} to examine the submitted document titled ${v.document}, within the scope and limitations recorded in my report.`,
+    'Methodology: That the materials available to me, the methods I used and their limitations are described in the accompanying Preliminary Forensic Examination Report.',
     'Confirmation: That the findings set forth in the Preliminary Forensic Examination Report represent my true and honest professional evaluation without fear, bias, or external influence.',
     'Verification: That the contents of this affidavit are true to my personal professional knowledge and nothing material has been concealed therein.',
   ];
@@ -253,6 +277,7 @@ export type ChangeItem = z.infer<typeof ChangeItemsSchema>['items'][number];
 
 /** Projection of the report lifecycle returned with GET /cases/:id. */
 export type ReportState = {
+  property_draft?:{id:string;version:number;report:PropertyReport}|null;
   production: ReportProduction;
   requires_admin_approval: boolean;
   stage: 'not_started' | 'preparing' | 'awaiting_admin_approval' | 'changes_requested' | 'released';

@@ -75,7 +75,7 @@ export class AdminCasesRepository {
           id: true, reference: true, service_code: true, status: true, matter_type: true, created_at: true,
           details: true, notice_document_id: true, sub_status:true, updated_at:true,
           fir_lifecycle:{include:{policy:true}},payments_case_id_relations:{where:{purpose:'service_fee',status:'captured'},orderBy:{captured_at:'asc'},take:1,select:{captured_at:true}},
-          case_events_case_id_relations: {where: {OR:[{source:'simulated'},{type:{in:['fir_draft_submitted','fir_draft_approved']}}]}, select: {id:true,type:true,payload:true,created_at:true,source:true}},
+          case_events_case_id_relations: {where: {OR:[{source:'simulated'},{type:{in:['fir_draft_submitted','fir_draft_approved','service_report_submitted']}}]}, orderBy:{id:'asc'}, select: {id:true,type:true,payload:true,created_at:true,source:true}},
           client_id_relation: {select: {id: true, full_name: true}},
           advocate_id_relation: {select: {id: true, full_name: true}},
           pricing_id_relation: {select: {base_amount_paise: true}},
@@ -113,7 +113,7 @@ export class AdminCasesRepository {
           advocate: row.advocate_id_relation ? {id: row.advocate_id_relation.id, name: row.advocate_id_relation.full_name} : null,
           documents, simulated_documents, simulated: row.case_events_case_id_relations.some(e=>e.source==='simulated'), status: row.status as CaseStatus, bucket: adminBucketFor(row.status as CaseStatus,row.service_code,row.sub_status)!,
           ...(row.service_code==='fir_draft'?{sub_status:row.sub_status,approval:firApproval(row.case_events_case_id_relations)}:{}),
-          ...(isReportService(row.service_code)?{sub_status:row.sub_status}:{}),
+          ...(isReportService(row.service_code)?{sub_status:row.sub_status,review_submitted_at:row.sub_status==='awaiting_admin_approval'?row.case_events_case_id_relations.filter(e=>e.type==='service_report_submitted').at(-1)?.created_at.toISOString()??null:null}:{}),
           amount_paise: row.pricing_id_relation?.base_amount_paise.toString() ?? null,
           created_at: row.created_at.toISOString(),
         };

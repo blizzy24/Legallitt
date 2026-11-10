@@ -12,6 +12,7 @@ export const SERVICE_ROUTES: Partial<Record<ServiceId, Href & string>> = {
   'fir-draft': '/fir',
   'property-search': '/property-search',
   'document-forensic': '/document-forensic',
+  'court-marriage': '/court-marriage',
   // designs 289–337 and 338–355.
   'high-court-rep': '/services/high-court',
   'district-court-rep': '/services/district-court',

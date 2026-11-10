@@ -81,7 +81,8 @@ test(
       const payments = new PaymentsService(prisma, state, new SimulatedPayments(), inbox());
       await assert.rejects(payments.intent(other, {case_id: c.id, purpose: 'service_fee'}, randomUUID()), {status: 404});
       const key = randomUUID();
-      const payment = await payments.intent(client, {case_id: c.id, purpose: 'service_fee'}, key);
+      const quote=await payments.quote(client,{case_id:c.id});assert.equal(quote.status,'ready');
+      const payment = await payments.intent(client, {case_id: c.id, purpose: 'service_fee',quote_id:quote.id}, key);
       assert.equal(payment.simulated, true);
       assert.equal(payment.payer_id, client.id);
       assert.equal((await payments.intent(client, {case_id: c.id, purpose: 'service_fee'}, key)).id, payment.id);

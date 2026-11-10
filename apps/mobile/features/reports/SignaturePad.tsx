@@ -1,0 +1,10 @@
+import {useMemo,useRef,useState} from 'react';
+import {PanResponder,Text,View} from 'react-native';
+import Svg,{Path} from 'react-native-svg';
+import type {ReportSignature} from '@legalitt/shared';
+import {Button,s} from '../consultation/ui';
+export function SignaturePad({value,onChange}:{value:ReportSignature;onChange:(v:ReportSignature)=>void}){
+ const [width,setWidth]=useState(300),[drawing,setDrawing]=useState<{x:number;y:number}[]>([]),ref=useRef({value,onChange,width});ref.current={value,onChange,width};const stroke=useRef<{x:number;y:number}[]>([]);
+ const responder=useMemo(()=>PanResponder.create({onStartShouldSetPanResponder:()=>true,onMoveShouldSetPanResponder:()=>true,onPanResponderGrant:e=>{stroke.current=[{x:Math.max(0,Math.min(1,e.nativeEvent.locationX/ref.current.width)),y:Math.max(0,Math.min(1,e.nativeEvent.locationY/130))}];setDrawing([...stroke.current]);},onPanResponderMove:e=>{if(stroke.current.length>=1000)return;stroke.current.push({x:Math.max(0,Math.min(1,e.nativeEvent.locationX/ref.current.width)),y:Math.max(0,Math.min(1,e.nativeEvent.locationY/130))});setDrawing([...stroke.current]);},onPanResponderRelease:()=>{if(stroke.current.length>1)ref.current.onChange([...ref.current.value.slice(-29),stroke.current]);stroke.current=[];setDrawing([]);},onPanResponderTerminationRequest:()=>false}),[]);
+ return <><Text style={s.label}>Draw your signature</Text><View accessibilityLabel="Affidavit signature pad" onLayout={e=>setWidth(e.nativeEvent.layout.width)} {...responder.panHandlers} style={{height:130,borderRadius:12,borderWidth:1,borderColor:'#C4B59C',backgroundColor:'#fff',overflow:'hidden',touchAction:'none'} as never}><Svg width="100%" height={130} pointerEvents="none">{[...value,drawing].map((line,i)=><Path key={i} d={line.map((p,n)=>`${n?'L':'M'} ${p.x*width} ${p.y*130}`).join(' ')} stroke="#3E3428" strokeWidth={2} fill="none"/>)}</Svg></View><Button secondary onPress={()=>onChange([])}>Clear signature</Button><Text style={s.muted}>Your drawn signature appears on the affidavit proforma. This is not a digital-certificate signature or notarisation.</Text></>;
+}

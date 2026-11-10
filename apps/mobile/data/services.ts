@@ -114,7 +114,7 @@ export const SERVICES: Service[] = [
     id: 'court-marriage',
     title: 'Court Marriage',
     shortTitle: 'Court Marriage',
-    // Was on All Services in design/10; design/13 drops it. Not shown on any screen now.
+    // Restored by the owner's 11 Nov 2026 instruction to make this service purchasable.
     description: 'Assistance with court marriage procedures',
     icon: 'blend',
   },
@@ -165,10 +165,11 @@ export const HOME_SERVICE_IDS: ServiceId[] = [
 
 /**
  * Order shown on the All Services screen (design/13, supersedes design/10).
- * Court Marriage was dropped from this screen, so it is currently not shown anywhere;
- * it stays in the catalogue until the client confirms whether it is retired.
+ * The owner's 11 Nov 2026 service instruction restores Court Marriage here;
+ * its intake uses the existing card language because no service design was supplied.
  */
 export const ALL_SERVICE_IDS: ServiceId[] = [
+  'court-marriage',
   'legal-notice',
   'property-search',
   'fir-draft',
