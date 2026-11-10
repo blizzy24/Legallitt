@@ -1,0 +1,71 @@
+Scope: all 6 workspace projects
+Lockfile is up to date, resolution step is skipped
+Progress: resolved 1, reused 0, downloaded 0, added 0
+Packages: +882
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 882, reused 51, downloaded 0, added 0
+Progress: resolved 882, reused 149, downloaded 0, added 0
+Progress: resolved 882, reused 229, downloaded 0, added 0
+Progress: resolved 882, reused 347, downloaded 0, added 0
+Progress: resolved 882, reused 421, downloaded 0, added 0
+Progress: resolved 882, reused 512, downloaded 0, added 0
+Progress: resolved 882, reused 634, downloaded 0, added 0
+Progress: resolved 882, reused 761, downloaded 0, added 0
+Progress: resolved 882, reused 825, downloaded 0, added 0
+Progress: resolved 882, reused 876, downloaded 0, added 0
+Progress: resolved 882, reused 880, downloaded 0, added 65
+Progress: resolved 882, reused 880, downloaded 0, added 104
+Progress: resolved 882, reused 881, downloaded 0, added 110
+Progress: resolved 882, reused 882, downloaded 0, added 127
+Progress: resolved 882, reused 882, downloaded 0, added 211
+Progress: resolved 882, reused 882, downloaded 0, added 240
+Progress: resolved 882, reused 882, downloaded 0, added 270
+Progress: resolved 882, reused 882, downloaded 0, added 320
+Progress: resolved 882, reused 882, downloaded 0, added 350
+Progress: resolved 882, reused 882, downloaded 0, added 370
+Progress: resolved 882, reused 882, downloaded 0, added 384
+Progress: resolved 882, reused 882, downloaded 0, added 394
+Progress: resolved 882, reused 882, downloaded 0, added 455
+Progress: resolved 882, reused 882, downloaded 0, added 474
+Progress: resolved 882, reused 882, downloaded 0, added 512
+Progress: resolved 882, reused 882, downloaded 0, added 557
+Progress: resolved 882, reused 882, downloaded 0, added 645
+Progress: resolved 882, reused 882, downloaded 0, added 769
+Progress: resolved 882, reused 882, downloaded 0, added 835
+Progress: resolved 882, reused 882, downloaded 0, added 854
+Progress: resolved 882, reused 882, downloaded 0, added 872
+Progress: resolved 882, reused 882, downloaded 0, added 874
+Progress: resolved 882, reused 882, downloaded 0, added 877
+Progress: resolved 882, reused 882, downloaded 0, added 879
+Progress: resolved 882, reused 882, downloaded 0, added 880
+Progress: resolved 882, reused 882, downloaded 0, added 881
+Progress: resolved 882, reused 882, downloaded 0, added 882, done
+
+devDependencies:
++ pngjs 7.0.0
++ puppeteer-core 24.16.0
++ turbo 2.11.9
++ typescript 6.0.3
+
+╭ Warning ─────────────────────────────────────────────────────────────────────╮
+│                                                                              │
+│   Ignored build scripts: @prisma/engines@7.10.1, esbuild@0.28.2,             │
+│   prisma@7.10.1.                                                             │
+│   Run "pnpm approve-builds" to pick which dependencies should be allowed     │
+│   to run scripts.                                                            │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+Done in 48.7s using pnpm v10.34.7
+
+> @legalitt/shared@0.0.0 build D:\Legalitt\Legallitt-documents\packages\shared
+> tsc
+
+
+> @legalitt/api@0.0.0 build D:\Legalitt\Legallitt-documents\apps\api
+> prisma generate && tsc
+
+Loaded Prisma config from prisma.config.ts.
+
+Prisma schema loaded from prisma\schema.prisma.
+
+✔ Generated Prisma Client (7.10.1) to .\src\generated\prisma in 1.18s

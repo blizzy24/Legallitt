@@ -1,0 +1,188 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 30B 0.0s
+#1 transferring dockerfile: 2.72kB 0.1s done
+#1 DONE 0.2s
+
+#2 [internal] load metadata for docker.io/library/node:22-bookworm-slim
+#2 ...
+
+#3 [auth] library/node:pull token for registry-1.docker.io
+#3 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/node:22-bookworm-slim
+#2 DONE 2.5s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 253B 0.0s done
+#4 DONE 0.1s
+
+#5 [build  1/13] FROM docker.io/library/node:22-bookworm-slim@sha256:5ec23b7c622b00547753bc6ffd78085dd868a68aeb41c8e0a1418f033e13d96d
+#5 resolve docker.io/library/node:22-bookworm-slim@sha256:5ec23b7c622b00547753bc6ffd78085dd868a68aeb41c8e0a1418f033e13d96d 0.1s done
+#5 DONE 0.1s
+
+#6 [internal] load build context
+#6 transferring context: 3.68MB 0.2s done
+#6 DONE 0.3s
+
+#7 [stage-1 3/8] ADD https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem /etc/ssl/rds/global-bundle.pem
+#7 ...
+
+#8 [build  3/13] RUN corepack enable && corepack prepare pnpm@10.34.7 --activate
+#8 CACHED
+
+#9 [build  4/13] WORKDIR /repo
+#9 CACHED
+
+#10 [build  2/13] RUN apt-get update && apt-get install -y --no-install-recommends openssl ca-certificates && rm -rf /var/lib/apt/lists/*
+#10 CACHED
+
+#11 [build  5/13] COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+#11 CACHED
+
+#12 [build  6/13] COPY packages/shared/package.json packages/shared/
+#12 CACHED
+
+#13 [build  7/13] COPY apps/api/package.json apps/api/
+#13 CACHED
+
+#14 [build  8/13] RUN pnpm install --frozen-lockfile --filter @legalitt/api... --config.only-built-dependencies=prisma --config.only-built-dependencies=@prisma/engines
+#14 CACHED
+
+#15 [build  9/13] COPY tsconfig.json ./
+#15 CACHED
+
+#7 [stage-1 3/8] ADD https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem /etc/ssl/rds/global-bundle.pem
+#7 DONE 0.6s
+
+#16 [build 10/13] COPY packages/shared packages/shared
+#16 DONE 0.5s
+
+#17 [build 11/13] COPY apps/api apps/api
+#17 DONE 1.1s
+
+#18 [build 12/13] RUN pnpm --filter @legalitt/shared build && pnpm --filter @legalitt/api build
+#18 13.48
+#18 13.48 > @legalitt/shared@0.0.0 build /repo/packages/shared
+#18 13.48 > tsc
+#18 13.48
+#18 83.91
+#18 83.91 > @legalitt/api@0.0.0 build /repo/apps/api
+#18 83.91 > prisma generate && tsc
+#18 83.91
+#18 105.6 Loaded Prisma config from prisma.config.ts.
+#18 105.6
+#18 108.8 Prisma schema loaded from prisma/schema.prisma.
+#18 125.5
+#18 125.5 ✔ Generated Prisma Client (7.10.1) to ./src/generated/prisma in 9.01s
+#18 125.5
+#18 DONE 285.8s
+
+#19 [build 13/13] RUN cd apps/api && pnpm exec prisma version >/dev/null
+#19 28.80 Loaded Prisma config from prisma.config.ts.
+#19 28.80
+#19 37.25 Prisma schema loaded from prisma/schema.prisma.
+#19 37.36 ┌─────────────────────────────────────────────────────────┐
+#19 37.36 │  Update available 7.10.1 -> 8.0.0-rc.33                 │
+#19 37.36 │                                                         │
+#19 37.36 │  This is a major update - please follow the guide at    │
+#19 37.36 │  https://pris.ly/d/major-version-upgrade                │
+#19 37.36 │                                                         │
+#19 37.36 │  Run the following to update                            │
+#19 37.36 │    npm i --save-dev prisma@latest                       │
+#19 37.36 │    npm i @prisma/client@latest                          │
+#19 37.36 └─────────────────────────────────────────────────────────┘
+#19 DONE 37.7s
+
+#20 [stage-1 5/8] RUN cd /tmp && awk '/BEGIN CERT/{n++} {print > ("cert-" n ".pem")}' /etc/ssl/rds/global-bundle.pem  && for f in cert-*.pem; do if openssl x509 -noout -subject -in "$f" | grep -q "ap-south-1 Root CA RSA2048 G1"; then cp "$f" /etc/ssl/rds/ap-south-1-rsa2048-g1.pem; fi; done  && rm -f cert-*.pem && test -s /etc/ssl/rds/ap-south-1-rsa2048-g1.pem && chmod 0644 /etc/ssl/rds/ap-south-1-rsa2048-g1.pem
+#20 CACHED
+
+#21 [stage-1 3/8] ADD https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem /etc/ssl/rds/global-bundle.pem
+#21 CACHED
+
+#22 [stage-1 4/8] RUN chmod 0755 /etc/ssl/rds && chmod 0644 /etc/ssl/rds/global-bundle.pem
+#22 CACHED
+
+#23 [stage-1 6/8] WORKDIR /repo
+#23 CACHED
+
+#24 [stage-1 7/8] COPY --from=build /repo /repo
+#24 DONE 7.6s
+
+#25 [stage-1 8/8] WORKDIR /repo/apps/api
+#25 DONE 0.4s
+
+#26 exporting to image
+#26 exporting layers
+#26 exporting layers 26.1s done
+#26 exporting manifest sha256:14e156c026846c0d0634b8e2001194957d199127ae8f52d8ed086494cdeb8500 0.0s done
+#26 exporting config sha256:87621ba5b89a66745dc235fdb929e1da4ec6a6e0cc5ae051b7b1ba0763bcf061 0.0s done
+#26 exporting attestation manifest sha256:e9bbed0316c95baab98a5058046662d480d48f0dac6bc0d75d839300ac8d8a34 0.0s done
+#26 exporting manifest list sha256:483de09520b3b31811ee28383178cc366f7d39106fc6e36fa1d02639f4fcfeda
+#26 exporting manifest list sha256:483de09520b3b31811ee28383178cc366f7d39106fc6e36fa1d02639f4fcfeda 0.0s done
+#26 naming to 026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api:62c3d76 done
+#26 DONE 26.3s
+Login Succeeded
+The push refers to repository [026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api]
+b0221e21e8e0: Waiting
+70e9e92fb86c: Waiting
+4c6f27133e68: Waiting
+a044f3bd5c10: Waiting
+e1fa61ef5c24: Waiting
+6238b0873792: Waiting
+4f4fb700ef54: Waiting
+b8da3bb2ce20: Waiting
+d770ae3b65f1: Waiting
+b502bf2b24d6: Waiting
+2d66c782e484: Waiting
+33ea1952272f: Waiting
+f456727cea7d: Waiting
+a044f3bd5c10: Waiting
+e1fa61ef5c24: Waiting
+6238b0873792: Waiting
+4f4fb700ef54: Waiting
+b8da3bb2ce20: Waiting
+d770ae3b65f1: Waiting
+b502bf2b24d6: Waiting
+2d66c782e484: Waiting
+33ea1952272f: Waiting
+f456727cea7d: Waiting
+b0221e21e8e0: Waiting
+70e9e92fb86c: Waiting
+4c6f27133e68: Waiting
+4f4fb700ef54: Waiting
+b8da3bb2ce20: Waiting
+d770ae3b65f1: Waiting
+b502bf2b24d6: Waiting
+2d66c782e484: Waiting
+33ea1952272f: Waiting
+f456727cea7d: Waiting
+b0221e21e8e0: Waiting
+70e9e92fb86c: Waiting
+4c6f27133e68: Waiting
+a044f3bd5c10: Waiting
+e1fa61ef5c24: Waiting
+6238b0873792: Waiting
+b502bf2b24d6: Waiting
+2d66c782e484: Layer already exists
+33ea1952272f: Layer already exists
+f456727cea7d: Layer already exists
+b0221e21e8e0: Waiting
+70e9e92fb86c: Waiting
+4c6f27133e68: Layer already exists
+a044f3bd5c10: Waiting
+e1fa61ef5c24: Waiting
+6238b0873792: Waiting
+4f4fb700ef54: Layer already exists
+b8da3bb2ce20: Layer already exists
+d770ae3b65f1: Waiting
+70e9e92fb86c: Layer already exists
+a044f3bd5c10: Layer already exists
+e1fa61ef5c24: Layer already exists
+d770ae3b65f1: Layer already exists
+b502bf2b24d6: Waiting
+b0221e21e8e0: Layer already exists
+6238b0873792: Pushed
+b502bf2b24d6: Pushed
+62c3d76: digest: sha256:483de09520b3b31811ee28383178cc366f7d39106fc6e36fa1d02639f4fcfeda size: 856

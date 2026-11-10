@@ -1,0 +1,177 @@
+Loaded Prisma config from prisma.config.ts.
+
+Prisma schema loaded from prisma\schema.prisma.
+Datasource "db": PostgreSQL database "legalitt_documents", schema "public" at "127.0.0.1:55432"
+
+16 migrations found in prisma/migrations
+
+Applying migration `20261020000000_initial`
+Applying migration `20261020010000_legal_notice_references`
+Applying migration `202610260001_simulator_audit`
+Applying migration `202610270001_notice_matter_type`
+Applying migration `202610270002_simulated_documents`
+Applying migration `202610270003_shipment_details`
+Applying migration `202610280001_advocate_photo_key`
+Applying migration `202610280002_notice_documents`
+Applying migration `202610290001_advocate_education`
+Applying migration `202611020001_delivery_receiver`
+Applying migration `20261102120000_notice_intake`
+Applying migration `202611040001_notice_compliance`
+Applying migration `202611040002_notice_sender_salutation`
+Applying migration `202611080001_service_references`
+Applying migration `202611090001_versioned_checkout`
+Applying migration `202611100003_fir_identity_evidence`
+
+┌─────────────────────────────────────────────────────────┐
+│  Update available 7.10.1 -> 8.0.0-rc.33                 │
+│                                                         │
+│  This is a major update - please follow the guide at    │
+│  https://pris.ly/d/major-version-upgrade                │
+│                                                         │
+│  Run the following to update                            │
+│    npm i --save-dev prisma@latest                       │
+│    npm i @prisma/client@latest                          │
+└─────────────────────────────────────────────────────────┘
+The following migration(s) have been applied:
+
+migrations/
+  └─ 20261020000000_initial/
+    └─ migration.sql
+  └─ 20261020010000_legal_notice_references/
+    └─ migration.sql
+  └─ 202610260001_simulator_audit/
+    └─ migration.sql
+  └─ 202610270001_notice_matter_type/
+    └─ migration.sql
+  └─ 202610270002_simulated_documents/
+    └─ migration.sql
+  └─ 202610270003_shipment_details/
+    └─ migration.sql
+  └─ 202610280001_advocate_photo_key/
+    └─ migration.sql
+  └─ 202610280002_notice_documents/
+    └─ migration.sql
+  └─ 202610290001_advocate_education/
+    └─ migration.sql
+  └─ 202611020001_delivery_receiver/
+    └─ migration.sql
+  └─ 20261102120000_notice_intake/
+    └─ migration.sql
+  └─ 202611040001_notice_compliance/
+    └─ migration.sql
+  └─ 202611040002_notice_sender_salutation/
+    └─ migration.sql
+  └─ 202611080001_service_references/
+    └─ migration.sql
+  └─ 202611090001_versioned_checkout/
+    └─ migration.sql
+  └─ 202611100003_fir_identity_evidence/
+    └─ migration.sql
+
+All migrations have been successfully applied.
+Seeded nine services, 65 price observations and 6 commission observations.
+Unresolved: Court Marriage: no drawn fee found; service seeded without a price.
+Unresolved: design/108 and design/279: 1377 is a disputed total, not a base. Legal Notice derived 1377 consists of separately recorded 999 + 179 + 199; do not double-charge it.
+Unresolved: design/296: 379 GST / 40680 total are inconsistent template observations, not prices to insert as base amounts.
+Unresolved: design/215 FIR fixed deduction 500 of 3500 has no exact integer-bps rate. No rounded commission invented.
+Unresolved: design/206 Property Search fixed deduction 700 of 4500 has no exact integer-bps rate. No rounded commission invented.
+Unresolved: design/223 and design/232 forensic fee 15000 versus payout 4500 does not establish a commission rate for the same transaction.
+Unresolved: design/359 withdrawal processing 0% is not a service commission; commission_rates has no payout-processing category.
+Unresolved: An old data comment mentions admin commission 15%, without a supplied design or service mapping; not seeded.
+Unresolved: Historical wallet balances, dispute sums, payouts and gross aggregates are not service prices. Only service-labelled transaction fees are retained as unconfirmed observations.
+Unresolved: commission_rates has no source_note in authoritative DDL. Citations remain in this manifest, not an invented database column.
+Unresolved: All GST fields retain the authoritative 1800-bps default. Whether statutory court charges, historical gross figures or consultation prices include tax needs confirmation before backend checkout. No pricing endpoint is implemented in this step.
+Unresolved: Advocate-profile individual consultation fees (apps/mobile/data/advocates.ts) belong to advocate_profiles, not a universal service tariff; no identity fixtures seeded in step 3.
+Unresolved: design/156 also draws Legal Consultation Strategy 5000 and Pre-litigation Mediation Fee 2500; those service labels are outside the nine canonical names, so no service-code mapping was invented.
+Loaded Prisma config from prisma.config.ts.
+
+Prisma schema loaded from prisma\schema.prisma.
+Datasource "db": PostgreSQL database "legalitt_documents_test", schema "public" at "127.0.0.1:55432"
+
+16 migrations found in prisma/migrations
+
+Applying migration `20261020000000_initial`
+Applying migration `20261020010000_legal_notice_references`
+Applying migration `202610260001_simulator_audit`
+Applying migration `202610270001_notice_matter_type`
+Applying migration `202610270002_simulated_documents`
+Applying migration `202610270003_shipment_details`
+Applying migration `202610280001_advocate_photo_key`
+Applying migration `202610280002_notice_documents`
+Applying migration `202610290001_advocate_education`
+Applying migration `202611020001_delivery_receiver`
+Applying migration `20261102120000_notice_intake`
+Applying migration `202611040001_notice_compliance`
+Applying migration `202611040002_notice_sender_salutation`
+Applying migration `202611080001_service_references`
+Applying migration `202611090001_versioned_checkout`
+Applying migration `202611100003_fir_identity_evidence`
+
+The following migration(s) have been applied:
+
+migrations/
+  └─ 20261020000000_initial/
+    └─ migration.sql
+  └─ 20261020010000_legal_notice_references/
+    └─ migration.sql
+  └─ 202610260001_simulator_audit/
+    └─ migration.sql
+  └─ 202610270001_notice_matter_type/
+    └─ migration.sql
+  └─ 202610270002_simulated_documents/
+    └─ migration.sql
+  └─ 202610270003_shipment_details/
+    └─ migration.sql
+  └─ 202610280001_advocate_photo_key/
+    └─ migration.sql
+  └─ 202610280002_notice_documents/
+    └─ migration.sql
+  └─ 202610290001_advocate_education/
+    └─ migration.sql
+  └─ 202611020001_delivery_receiver/
+    └─ migration.sql
+  └─ 20261102120000_notice_intake/
+    └─ migration.sql
+  └─ 202611040001_notice_compliance/
+    └─ migration.sql
+  └─ 202611040002_notice_sender_salutation/
+    └─ migration.sql
+  └─ 202611080001_service_references/
+    └─ migration.sql
+  └─ 202611090001_versioned_checkout/
+    └─ migration.sql
+  └─ 202611100003_fir_identity_evidence/
+    └─ migration.sql
+
+All migrations have been successfully applied.
+Seeded nine services, 65 price observations and 6 commission observations.
+Unresolved: Court Marriage: no drawn fee found; service seeded without a price.
+Unresolved: design/108 and design/279: 1377 is a disputed total, not a base. Legal Notice derived 1377 consists of separately recorded 999 + 179 + 199; do not double-charge it.
+Unresolved: design/296: 379 GST / 40680 total are inconsistent template observations, not prices to insert as base amounts.
+Unresolved: design/215 FIR fixed deduction 500 of 3500 has no exact integer-bps rate. No rounded commission invented.
+Unresolved: design/206 Property Search fixed deduction 700 of 4500 has no exact integer-bps rate. No rounded commission invented.
+Unresolved: design/223 and design/232 forensic fee 15000 versus payout 4500 does not establish a commission rate for the same transaction.
+Unresolved: design/359 withdrawal processing 0% is not a service commission; commission_rates has no payout-processing category.
+Unresolved: An old data comment mentions admin commission 15%, without a supplied design or service mapping; not seeded.
+Unresolved: Historical wallet balances, dispute sums, payouts and gross aggregates are not service prices. Only service-labelled transaction fees are retained as unconfirmed observations.
+Unresolved: commission_rates has no source_note in authoritative DDL. Citations remain in this manifest, not an invented database column.
+Unresolved: All GST fields retain the authoritative 1800-bps default. Whether statutory court charges, historical gross figures or consultation prices include tax needs confirmation before backend checkout. No pricing endpoint is implemented in this step.
+Unresolved: Advocate-profile individual consultation fees (apps/mobile/data/advocates.ts) belong to advocate_profiles, not a universal service tariff; no identity fixtures seeded in step 3.
+Unresolved: design/156 also draws Legal Consultation Strategy 5000 and Pre-litigation Mediation Fee 2500; those service labels are outside the nine canonical names, so no service-code mapping was invented.
+TAP version 13
+# Subtest: database seed is idempotent and ledger rejects non-positive amounts
+ok 1 - database seed is idempotent and ledger rejects non-positive amounts
+  ---
+  duration_ms: 2036.071
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2447.4617
+PASS isolated database setup: legalitt_documents, legalitt_documents_test
