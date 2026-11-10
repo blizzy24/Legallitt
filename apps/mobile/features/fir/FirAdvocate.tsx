@@ -1,3 +1,4 @@
+import {useFirLifecycle,AdvocateFirFeedback} from './Lifecycle';
 import {designSubstitutions as copy} from '../../copy/substitutions';
 import {useEffect,useRef,useState} from 'react';
 import {Linking,Platform,ScrollView,Text,View} from 'react-native';
@@ -14,8 +15,9 @@ export default function FirAdvocate(){
  const params=useLocalSearchParams<{id?:string;caseId?:string}>(),id=params.caseId??params.id,m=useFirCase(id),r=m.record,insets=useSafeAreaInsets();
  const [context,setContext]=useState<FirDraftContext|null>(null),[draft,setDraft]=useState<FirDraftEditable|null>(null),[dirty,setDirty]=useState(false);
  const [loading,setLoading]=useState(false),[error,setError]=useState(''),[busy,setBusy]=useState(false),[reloadConfirm,setReloadConfirm]=useState(false),[preview,setPreview]=useState<{filename:string;pdf_base64:string}|null>(null);
+ const history=useFirLifecycle(id,r?.updated_at);
  const generation=useRef(0),lock=useRef(false);
- const waiting=!!r&&firAwaitingApproval(r),editable=!!r&&['advocate_accepted','in_progress'].includes(r.status)&&!waiting;
+ const waiting=!!r&&firAwaitingApproval(r),editable=!!r&&['advocate_accepted','in_progress','changes_requested'].includes(r.status)&&!waiting;
  const load=async()=>{
   if(!id)return;const token=++generation.current;setLoading(true);setError('');
   try{const c=await backend.firDraftContext(id);if(token!==generation.current)return;setContext(c);setDraft(c.latest_content?firEditableContent(c.latest_content):c.initial_content);setDirty(false);setReloadConfirm(false);setPreview(null);}
@@ -30,11 +32,12 @@ export default function FirAdvocate(){
  const save=async()=>{
   if(!r||!context||!draft)throw new Error('Load the draft first.');
   const parsed=FirDraftEditableSchema.safeParse(draft);if(!parsed.success)throw new Error(parsed.error.issues.map(i=>`${i.path.join('.')}: ${i.message}`).join('\n'));
-  if(!dirty&&context.latest_draft_id&&context.latest_content)return {id:context.latest_draft_id,version:context.latest_version};
+  if(!dirty&&!context.requires_new_version&&context.latest_draft_id&&context.latest_content)return {id:context.latest_draft_id,version:context.latest_version};
   const saved=await backend.saveFirDraft(r.id,{base_draft_id:context.latest_draft_id,filing_hash:context.filing_hash,content:parsed.data});
-  setContext({...context,latest_draft_id:saved.id,latest_version:saved.version,latest_content:saved.content,legacy_content:null});setDirty(false);return saved;
+  setContext({...context,latest_draft_id:saved.id,latest_version:saved.version,latest_content:saved.content,legacy_content:null,requires_new_version:false});setDirty(false);return saved;
  };
  let problems:string[]=[];
+ if(history.data?.identity_returns.some(r=>['replacement_required','review_pending'].includes(r.state)))problems.push('Identity replacement must be accepted by admin before generation.');
  if(context&&draft&&r){
   const parsed=FirDraftEditableSchema.safeParse(draft);
   if(!parsed.success)problems=parsed.error.issues.map(i=>`${i.path.join('.')}: ${i.message}`);
@@ -55,6 +58,7 @@ export default function FirAdvocate(){
   <ScrollView contentContainerStyle={d.content} keyboardShouldPersistTaps="handled"><ErrorBox error={m.error} retry={m.reload}/>
    {m.loading&&!r?<Text role="status">Loading FIR case…</Text>:!r?<Text>No FIR case selected. Open a case from My Cases.</Text>:<>
     <View style={d.docket}><View style={d.docketText}><Text style={d.docketTitle}>{r.reference}</Text><Text style={d.docketSub}>{waiting?copy[219].waiting:r.status==='completed'?copy[220].completed:r.status.replaceAll('_',' ')}</Text></View></View>
+    <AdvocateFirFeedback life={history.data} error={history.error} retry={history.reload}/>
     {waiting&&<Card><Text>{copy[219].frozen}</Text>{r.approval&&<Text>{waitingDuration(r.approval.submitted_at)}</Text>}</Card>}
     {r.status==='completed'&&<Text style={s.body}>{copy[220].body}</Text>}
     {r.status==='assigned'&&<><OriginalFiling details={r.details}/><Card title="Documents">{r.documents?.length?r.documents.map(doc=><Button key={doc.id} title={`View ${doc.filename}`} onPress={()=>void m.run(()=>openDocument(doc.id))}/>):<Text>No documents uploaded.</Text>}</Card><Card title="Review Request"><Button title="Accept Request" disabled={m.busy} onPress={()=>void m.run(()=>backend.accept(r.id))}/><Button title="Decline Assignment" disabled={m.busy} onPress={()=>void m.run(()=>backend.decline(r.id))}/></Card></>}

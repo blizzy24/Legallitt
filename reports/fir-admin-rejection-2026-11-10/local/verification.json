@@ -1,0 +1,102 @@
+{
+  "case_id": "71b7dc19-706c-4d5a-b9a7-d27747f8a213",
+  "reference": "FIR_DRAFT-2026-0025",
+  "status": "completed",
+  "submissions": [
+    {
+      "id": "9e3dcc93-1252-47f4-bcba-ef801a2a432d",
+      "assignment_id": "df256d49-7865-41a8-9db5-b77f6d62e79e",
+      "draft_id": "079e8a59-7e47-4a8d-8e77-9e1f49be10bf",
+      "version": 2,
+      "document_id": "575100d4-7ee8-422f-83d3-61ee08647f98",
+      "identity_document_id": "71662c57-c9f1-4257-b03a-bdf35efe4c60",
+      "identity_checked_at": null,
+      "state": "returned",
+      "draft_reason": "TEST FIRST RETURN: clarify the chronology and supporting facts.",
+      "submitted_at": "2026-11-10T14:52:40.884Z",
+      "decided_at": "2026-11-10T14:54:03.849Z"
+    },
+    {
+      "id": "746cdd13-5ca7-4922-9e9a-5b3975b1e785",
+      "assignment_id": "df256d49-7865-41a8-9db5-b77f6d62e79e",
+      "draft_id": "78e38eb1-f360-4774-b6d6-e361fa5843cc",
+      "version": 3,
+      "document_id": "0812c107-e67c-49ba-b739-3ead84b283c3",
+      "identity_document_id": "4c4f6ff1-8892-4b9d-a6c8-17db6334f009",
+      "identity_checked_at": null,
+      "state": "returned",
+      "draft_reason": "TEST SECOND RETURN: explain the witness sequence before finalising.",
+      "submitted_at": "2026-11-10T14:56:54.110Z",
+      "decided_at": "2026-11-10T14:56:58.170Z"
+    },
+    {
+      "id": "12f5a398-1e36-49a0-bdd6-3de6f6ec8615",
+      "assignment_id": "3808455f-8869-49d9-aa96-a86261d48652",
+      "draft_id": "dae8e177-f30c-4cee-893f-a4053d71013d",
+      "version": 4,
+      "document_id": "5dfda157-de08-4fb6-9ce9-51a36fcbfe7e",
+      "identity_document_id": "4c4f6ff1-8892-4b9d-a6c8-17db6334f009",
+      "identity_checked_at": "2026-11-10T15:00:56.213Z",
+      "state": "approved",
+      "draft_reason": null,
+      "submitted_at": "2026-11-10T15:00:52.841Z",
+      "decided_at": "2026-11-10T15:00:59.828Z"
+    }
+  ],
+  "assignments": [
+    {
+      "id": "df256d49-7865-41a8-9db5-b77f6d62e79e",
+      "advocate_id": "c91ab690-8472-4d41-ab8a-6c0589850240",
+      "name": "Demo advocate",
+      "assigned_at": "2026-11-10T14:51:56.201Z",
+      "ended_at": "2026-11-10T15:00:24.371Z",
+      "rejections": 2
+    },
+    {
+      "id": "3808455f-8869-49d9-aa96-a86261d48652",
+      "advocate_id": "b12816cc-83b9-4e2c-a0cd-9fdcc2a271a2",
+      "name": "Demo Advocate Asha",
+      "assigned_at": "2026-11-10T15:00:24.387Z",
+      "ended_at": null,
+      "rejections": 0
+    }
+  ],
+  "identity_returns": [
+    {
+      "id": "5843598c-151b-46f7-b966-845aea47128e",
+      "document_id": "71662c57-c9f1-4257-b03a-bdf35efe4c60",
+      "replacement_document_id": "4c4f6ff1-8892-4b9d-a6c8-17db6334f009",
+      "state": "accepted",
+      "purge_status": "pending",
+      "rejected_at": "2026-11-10T14:54:03.843Z"
+    }
+  ],
+  "payout": {
+    "assignment_id": "3808455f-8869-49d9-aa96-a86261d48652",
+    "amount_paise": "99900",
+    "policy_id": "861ecfbd-d6c5-499f-9e5b-95142dd10b9d",
+    "commission_rate_id": "c8b9588f-e7e7-5f92-9009-24793b6c2813"
+  },
+  "paid_at_unchanged": true,
+  "approval": {
+    "version": 4,
+    "draft_id": "dae8e177-f30c-4cee-893f-a4053d71013d",
+    "document_id": "5dfda157-de08-4fb6-9ce9-51a36fcbfe7e",
+    "submitted_at": "2026-11-10T15:00:52.909Z",
+    "approved_at": "2026-11-10T15:00:59.876Z"
+  },
+  "pdf_sha256": "bad9bc636763d024270e2e2896241e7047e547ff97b8b62fa1a3f45bb6974495",
+  "preview_equals_released_pdf": true,
+  "historical_pdf_unchanged": null,
+  "stale_approval": 409,
+  "manual_identity_check_required": 409,
+  "rejected_identity_download": 404,
+  "replaced_advocate_case": 404,
+  "replaced_advocate_pdf": 404,
+  "old_client_pdf": 404,
+  "replaced_advocate_notified": true,
+  "client_neutral_notification": true,
+  "reassignment_count_reset": true,
+  "all_human_lifecycle_actions_through_ui": true,
+  "browser_errors": []
+}

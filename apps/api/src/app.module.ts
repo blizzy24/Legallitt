@@ -1,3 +1,4 @@
+import {FirAdminService} from './cases/fir-admin.service';
 import {FirController} from './cases/fir.controller';
 import {FirService} from './cases/fir.service';
 import { NotificationsController, NotificationRepository } from './notifications/notifications.controller';
@@ -58,7 +59,7 @@ export class HealthController {
     ServicesController,
     DocumentController,
   ],
-  providers: [FirService, NotificationRepository, AdminCaseDetailRepository, AdminAdvocatesRepository, AdminCasesRepository, NoticeMessages,
+  providers: [FirAdminService, FirService, NotificationRepository, AdminCaseDetailRepository, AdminAdvocatesRepository, AdminCasesRepository, NoticeMessages,
     ShipmentService,
     NoticePdfService,
     PaymentsService,

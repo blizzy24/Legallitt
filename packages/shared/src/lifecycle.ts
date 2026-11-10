@@ -29,6 +29,8 @@ export const ADMIN_CASE_BUCKET_LABELS: Record<AdminCaseBucket, string> = {
 
 // null deliberately excludes unpaid intake from admin counters and lists.
 export function adminBucketFor(status: CaseStatus, service?: string, subStatus?: string | null): AdminCaseBucket | null {
+  if(service==='fir_draft'&&['assigned','advocate_accepted','in_progress','changes_requested'].includes(status)&&['identity_review_pending','multiple_corrections_required'].includes(subStatus??''))return 'open';
+  if(service==='fir_draft'&&status==='changes_requested')return subStatus==='advocate_revision_required'?'in_progress':subStatus==='identity_replacement_required'?'pending':'open';
   if (service === 'fir_draft' && status === CaseStatus.in_progress && subStatus === 'awaiting_admin_approval') return 'open';
   switch (status) {
     case CaseStatus.draft:

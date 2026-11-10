@@ -107,7 +107,7 @@ export class CaseRepository {
       const captured = payments[0];
       const snapshot = captured?.quote?.snapshot as unknown as {breakdown: import('@legalitt/shared').QuoteBreakdown} | undefined;
       return {...caseRecord,details:firIntakeDetails(record.details,parties),parties,pricing,advocate:advocate?{...advocateUser,profile}:null,
-        events, drafts, reviews, shipments, approval:actor.role==='client'&&!approval?.approved_at?null:approval,
+        events:actor.role==='client'?events.filter(e=>!['fir_admin_returned','fir_identity_reviewed','fir_advocate_reassigned','fir_draft_saved'].includes(e.type)).map(e=>({...e,payload:{}})):events, drafts, reviews:actor.role==='client'?reviews.filter(r=>r.decision==='approved'):reviews, shipments, approval:actor.role==='client'&&!approval?.approved_at?null:approval,
         documents: actor.role==='client'?documents.filter(d=>d.owner_id===record.client_id || !!approval?.approved_at&&d.id===approval.document_id):documents,
         client_fees:snapshot?{...snapshot.breakdown,breakdown_complete:true,simulated:captured.simulated}:null};
     }
@@ -196,11 +196,14 @@ export class CaseRepository {
       orderBy: { id: "asc" },
       take: input.limit + 1,
     });
-    const items = rows.slice(0, input.limit);
+    const caseRow=await db.case.findUniqueOrThrow({where:{id},select:{service_code:true}});
+    const clientFir=actor.role==='client'&&caseRow.service_code==='fir_draft';
+    const page=rows.slice(0,input.limit);
+    const items=clientFir?page.filter(e=>!['fir_admin_returned','fir_identity_reviewed','fir_advocate_reassigned','fir_draft_saved'].includes(e.type)).map(e=>({...e,payload:{}})):page;
     return {
       items,
       next_cursor:
-        rows.length > input.limit ? items.at(-1)!.id.toString() : null,
+        rows.length > input.limit ? page.at(-1)!.id.toString() : null,
     };
   }
 }

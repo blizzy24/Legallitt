@@ -54,7 +54,7 @@ export const FirDraftContentSchema=z.strictObject({
 export type FirDraftContent=z.infer<typeof FirDraftContentSchema>;
 export const FirDraftSaveSchema=z.strictObject({base_draft_id:uuid.nullable(),filing_hash:z.string().regex(/^[a-f0-9]{64}$/),content:FirDraftEditableSchema});
 export type FirDraftSave=z.infer<typeof FirDraftSaveSchema>;
-export type FirDraftContext={identity_policy:FirIdentityPolicy;intake:FirIntake;filing_hash:string;latest_draft_id:string|null;latest_version:number;latest_content:FirDraftContent|null;legacy_content:unknown|null;initial_content:FirDraftEditable};
+export type FirDraftContext={requires_new_version?:boolean;identity_policy:FirIdentityPolicy;intake:FirIntake;filing_hash:string;latest_draft_id:string|null;latest_version:number;latest_content:FirDraftContent|null;legacy_content:unknown|null;initial_content:FirDraftEditable};
 
 export function firEditableContent(c:FirDraftContent):FirDraftEditable {
   return {distance_and_direction_from_station:c.incident.distance_and_direction_from_station,accused:c.accused,legal_sections:c.legal_sections,

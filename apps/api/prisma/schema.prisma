@@ -183,6 +183,10 @@ model CommissionRate {
 }
 
 model Case {
+  fir_lifecycle FirLifecycle?
+  assignments CaseAssignment[]
+  fir_submissions FirSubmission[]
+  fir_identity_returns FirIdentityReturn[]
   price_quotes                      CasePriceQuote[]
   id                                String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   reference                         String          @unique
@@ -227,6 +231,81 @@ model Case {
   notice_document_id_relation       Document?       @relation("cases_notice_document_id_documents", fields: [notice_document_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@map("cases")
+}
+
+model FirPolicy {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  version Int @unique
+  config Json @db.JsonB
+  effective_from DateTime @default(now()) @db.Timestamptz(6)
+  lifecycles FirLifecycle[]
+  @@map("fir_policies")
+}
+model FirLifecycle {
+  case_id String @id @db.Uuid
+  revision Int @default(0)
+  current_submission_id String? @db.Uuid
+  policy_id String @db.Uuid
+  paid_at DateTime? @db.Timestamptz(6)
+  completing_assignment_id String? @db.Uuid
+  advocate_entitlement_paise BigInt?
+  commission_rate_id String? @db.Uuid
+  case Case @relation(fields:[case_id],references:[id],onDelete:Cascade)
+  policy FirPolicy @relation(fields:[policy_id],references:[id])
+  @@map("fir_lifecycles")
+}
+model CaseAssignment {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  case_id String @db.Uuid
+  advocate_id String @db.Uuid
+  assigned_by String? @db.Uuid
+  assigned_at DateTime @default(now()) @db.Timestamptz(6)
+  ended_at DateTime? @db.Timestamptz(6)
+  end_reason String?
+  case Case @relation(fields:[case_id],references:[id],onDelete:Cascade)
+  submissions FirSubmission[]
+  @@index([case_id,assigned_at])
+  @@map("case_assignments")
+}
+model FirSubmission {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  case_id String @db.Uuid
+  assignment_id String @db.Uuid
+  draft_id String @unique @db.Uuid
+  version Int
+  document_id String @db.Uuid
+  identity_document_id String? @db.Uuid
+  identity_checked_by String? @db.Uuid
+  identity_checked_at DateTime? @db.Timestamptz(6)
+  supersedes_submission_id String? @unique @db.Uuid
+  state String @default("pending")
+  draft_reason String?
+  decided_by String? @db.Uuid
+  decided_at DateTime? @db.Timestamptz(6)
+  submitted_at DateTime @default(now()) @db.Timestamptz(6)
+  case Case @relation(fields:[case_id],references:[id],onDelete:Cascade)
+  assignment CaseAssignment @relation(fields:[assignment_id],references:[id],onDelete:Cascade)
+  @@index([case_id,submitted_at])
+  @@map("fir_submissions")
+}
+model FirIdentityReturn {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  case_id String @db.Uuid
+  submission_id String @db.Uuid
+  document_id String @unique @db.Uuid
+  rejected_by String @db.Uuid
+  rejected_at DateTime @default(now()) @db.Timestamptz(6)
+  reason String @default("unmasked_aadhaar")
+  replacement_document_id String? @db.Uuid
+  state String @default("replacement_required")
+  reviewed_by String? @db.Uuid
+  reviewed_at DateTime? @db.Timestamptz(6)
+  purge_status String @default("pending")
+  purge_after DateTime @db.Timestamptz(6)
+  purge_attempted_at DateTime? @db.Timestamptz(6)
+  case Case @relation(fields:[case_id],references:[id],onDelete:Cascade)
+  @@index([case_id,state])
+  @@map("fir_identity_returns")
 }
 
 model CaseEvent {

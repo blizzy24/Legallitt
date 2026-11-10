@@ -1,9 +1,11 @@
+import {FirAdminService} from './fir-admin.service';
+import {ensureFirLifecycle} from './fir-lifecycle';
 import {BadRequestException, ConflictException, ForbiddenException, Inject, Injectable} from '@nestjs/common';
 import {createHash,randomUUID} from 'node:crypto';
 import {FIR_AWAITING_APPROVAL, FirDraftSaveSchema, FirDraftContentSchema, FirIntakeSchema, FirIntakeSaveSchema, firIntakeDetails, assembleFirDraft, seedFirDraft, firDraftProblems, type FirDraftContent, type FirIntake} from '@legalitt/shared';
 import {PrismaService} from '../prisma.service';
 import {parse} from '../auth/auth.service';
-import {lockedCase,writeFirIntake,writeFirDraftSaved,writeFirSubmitted,writeFirApproved} from './case-state-machine';
+import {lockedCase,writeFirIntake,writeFirDraftSaved,writeFirSubmitted} from './case-state-machine';
 import type {CaseActor} from './case-access';
 import {DocumentService} from '../documents/document.service';
 import {renderFirPdf} from '../documents/fir-pdf';
@@ -34,7 +36,7 @@ export class FirService {
     const db = await this.prisma.getClient();
     return db.$transaction(async tx => {
       const record = await lockedCase(tx,actor,id,'fir_draft');
-      if (!['advocate_accepted','in_progress'].includes(record.status) || record.sub_status === FIR_AWAITING_APPROVAL)
+      if (!['advocate_accepted','in_progress','changes_requested'].includes(record.status) || record.sub_status === FIR_AWAITING_APPROVAL)
         throw new ConflictException('The submitted draft is frozen while awaiting admin approval. A second version cannot be saved or sent.');
       const last = await tx.draft.findFirst({where:{case_id:id,kind:'fir_proforma'},orderBy:{version:'desc'}});
       if((last?.id??null)!==input.base_draft_id)throw new ConflictException('A newer FIR draft was saved in another session. Your unsaved edits are still on screen. Reload the saved version before editing again.');
@@ -63,7 +65,9 @@ export class FirService {
       const intake=parse(FirIntakeSchema,firIntakeDetails(record.details,await tx.caseParty.findMany({where:{case_id:id}})));
       const latest=await tx.draft.findFirst({where:{case_id:id,kind:'fir_proforma'},orderBy:{version:'desc'}});
       const parsed=FirDraftContentSchema.safeParse(latest?.content);
-      return {identity_policy:await firIdentityPolicy(tx),intake,filing_hash:filingHash(intake),latest_draft_id:latest?.id??null,latest_version:latest?.version??0,latest_content:parsed.success?parsed.data:null,legacy_content:latest&&!parsed.success?latest.content:null,initial_content:seedFirDraft(intake,randomUUID)};
+      const {assignment}=await ensureFirLifecycle(tx,record);
+      const requires_new_version=!!latest&&(latest.created_by!==actor.id||!!await tx.firSubmission.findUnique({where:{draft_id:latest.id}})||!!assignment&&latest.created_at<assignment.assigned_at);
+      return {requires_new_version,identity_policy:await firIdentityPolicy(tx),intake,filing_hash:filingHash(intake),latest_draft_id:latest?.id??null,latest_version:latest?.version??0,latest_content:parsed.success?parsed.data:null,legacy_content:latest&&!parsed.success?latest.content:null,initial_content:seedFirDraft(intake,randomUUID)};
     });
   }
   private async renderable(actor:CaseActor,id:string,draftId:string){
@@ -78,6 +82,10 @@ export class FirService {
       if(!result.success)throw new ConflictException('This legacy draft must be reviewed and saved in the structured editor before generation.');
       const content=result.data,intake=parse(FirIntakeSchema,firIntakeDetails(record.details,await tx.caseParty.findMany({where:{case_id:id}})));
       if(content.filing_snapshot.intake_hash!==filingHash(intake))throw new ConflictException('Client filing changed. Save a reviewed draft with the current filing before generation.');
+      const {assignment}=await ensureFirLifecycle(tx,record);
+      if(draft.created_by!==record.advocate_id||!assignment||draft.created_at<assignment.assigned_at)throw new ConflictException('Save your own reviewed version before generation.');
+      if(await tx.firIdentityReturn.count({where:{case_id:id,state:{in:['replacement_required','review_pending']}}}))throw new ConflictException('Identity replacement must be accepted by admin before generation.');
+      if(await tx.firSubmission.findUnique({where:{draft_id:draftId}}))throw new ConflictException('Save a new draft version after a return before generating or sending.');
       const issues=firDraftProblems(content);
       if(issues.length)throw new BadRequestException({message:issues.map(i=>i.message).join('\n'),issues});
       await requireFirIdentity(tx,id,content.complainant.identity_document_id!);
@@ -132,29 +140,7 @@ export class FirService {
       throw error;
     }
   }
-  async approve(actor: CaseActor, id: string, draftId: string) {
-    if (actor.role !== 'admin') throw new ForbiddenException('Admin approval required');
-    const db = await this.prisma.getClient();
-    return db.$transaction(async tx => {
-      const record = await lockedCase(tx,actor,id,'fir_draft');
-      const sent = await tx.caseEvent.findFirst({where:{case_id:id,type:'fir_draft_submitted'}});
-      const submitted = sent?.payload as {draft_id?:string;document_id?:string;version?:number} | undefined;
-      if (submitted?.draft_id !== draftId) throw new ConflictException('Refresh to review the submitted draft');
-      if (record.status === 'completed' && await tx.draftReview.findFirst({where:{draft_id:draftId,decision:'approved'}})) return record;
-      if (record.status !== 'in_progress' || record.sub_status !== FIR_AWAITING_APPROVAL)
-        throw new ConflictException('This case is not awaiting admin approval');
-      const draft = await tx.draft.findFirst({where:{id:draftId,case_id:id,document_id:submitted.document_id}});
-      const doc = submitted.document_id ? await tx.document.findFirst({where:{id:submitted.document_id,case_id:id,status:'uploaded',kind:'fir_draft'}}) : null;
-      if (!draft || !doc) throw new ConflictException('The submitted PDF is unavailable. Reload the case; approval cannot continue.');
-      const now = new Date();
-      await tx.draftReview.create({data:{draft_id:draftId,reviewer_id:actor.id,decision:'approved',created_at:now}});
-      const updated = await writeFirApproved(tx,actor,id,{draft_id:draftId,version:draft.version,document_id:doc.id},now);
-      await tx.adminAction.create({data:{admin_id:actor.id,action:'approve_fir_draft',subject_type:'case',subject_id:id,payload:{draft_id:draftId,version:submitted.version,document_id:doc.id}}});
-      await this.notifications.send(tx,{user_id:record.client_id,case_id:id,kind:'fir_ready',title:'Your FIR draft is ready',body:record.reference});
-      if(record.advocate_id) await this.notifications.send(tx,{user_id:record.advocate_id,case_id:id,kind:'fir_approved',title:'Admin approved the FIR draft',body:record.reference});
-      return updated;
-    });
-  }
+  async approve(actor:CaseActor,id:string,draftId:string,body?:unknown){return new FirAdminService(this.prisma,this.documents,this.notifications).approve(actor,id,draftId,body);}
 }
 
 function filingHash(intake:FirIntake){return createHash('sha256').update(JSON.stringify(intake)).digest('hex');}

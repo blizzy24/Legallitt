@@ -773,7 +773,7 @@ Admin approval checks the submitted ID and document, records `draft_reviews`
 and `admin_actions`, and atomically releases/closes; duplicate approval is
 idempotent. The owner cannot fetch an unapproved advocate PDF even by direct ID.
 
-**Rejection remains an open client decision.** No reject, return-for-changes,
+**Historical approval-only release, superseded by §4.3 on 10 November 2026.** No reject, return-for-changes,
 cancel, refund or other transition is exposed from this waiting state. Generic
 cancellation cannot bypass it. The admin queue explicitly says approval is the
 only available action, shows submission time and live waiting age, includes
@@ -1255,6 +1255,92 @@ quoted at even after rates change. **Do not hard-code any amount in
 application code.**
 
 ---
+
+### 4.5 FIR admin rejection and assignment history — 10 November 2026
+
+The following additive tables extend the shared lifecycle. This is the single
+supersession model for draft returns, identity returns and reassignment.
+Case writes still pass through case-state-machine.ts; role/service-specific
+orchestration validates each action under the same case lock.
+
+`fir_lifecycles.current_submission_id` and `revision` identify the current
+review. Every admin action supplies both; stale actions return 409. Each
+submission pins assignment, draft version, PDF and selected identity. A returned
+or withdrawn version cannot be approved; corrections create a new draft and
+submission linked by `supersedes_submission_id`. Rejected versions and reasons
+remain attributable. One pending submission and one active assignment per case
+are enforced with partial unique indexes. Existing events are imported under
+the case lock by the new API, covering activity during the migration/rollout
+window without regenerating any historical PDF.
+
+Draft rejection requires a reason and returns to the same advocate using
+`changes_requested/advocate_revision_required`. Identity rejection uses
+`identity_replacement_required`, then `identity_review_pending`.
+`multiple_corrections_required` exposes both outstanding obligations.
+These sub-statuses are FIR-specific; Legal Notice client change requests retain
+their existing transitions and UI. Corrected FIR drafts always return to admin.
+
+Count draft-rejection decisions per assignment, once per rejected submission.
+Identity-only rejection does not increment it. At two draft rejections admin
+may choose a different approved advocate. The old assignment ends; a new row
+starts at zero while preserving all previous work/reasons. The old advocate
+loses case access and receives a standalone in-app notice (reference and outcome,
+no broken case link). The client receives exactly: “We’ve assigned a new advocate
+to your case to make sure your draft meets our standards”. Internal reasons and
+rejection counts are excluded from client API responses and notifications.
+
+`fir_policies` stores versioned reassignment, turnaround and payout allocation
+rules. Its version is pinned to the case lifecycle. The 24–48-hour clock begins
+at captured service payment and never resets during corrections or reassignment.
+Admin sees a warning at 24 hours and overdue at 48 hours. Both client and admin
+see current progress and the last update; no new deadline is invented. Completion
+records the approved submission's assignment as the sole payout beneficiary,
+using the captured quote's advocate entitlement and commission version. The
+completer receives the entire advocate share (currently 80%); replaced advocates
+receive zero. This records entitlement; external bank transfer remains the
+existing separately scoped payout integration.
+
+Identity review shows the actual upload and requires explicit manual acceptance
+before draft approval. Unmasked Aadhaar can be rejected regardless of its declared
+type. Rejection tombstones the document before storage deletion, invalidates the
+review package, and requests replacement without another payment. Only identity
+uploads are reopened to the client. A replacement must be reviewed by admin;
+the advocate then selects it and generates a fresh PDF manifest. No ID number,
+image, OCR, QR or text extraction enters the rejection audit. Purge deletes all
+versions and markers for final and staging keys. Persist pending/failed/complete,
+retry failures, and re-sweep after temporary upload URLs expire to cover replay.
+Previously downloaded copies cannot be recalled; no new signed URL is issued
+after tombstoning. Already completed cases are not reopened by these actions.
+
+```sql
+-- Additive tables. Old API can continue serving until the new image is deployed.
+CREATE TABLE fir_policies (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), version INTEGER NOT NULL UNIQUE,
+ config JSONB NOT NULL, effective_from TIMESTAMPTZ NOT NULL DEFAULT now());
+INSERT INTO fir_policies(version,config) VALUES (1,'{"reassign_after_draft_rejections":2,"turnaround_warning_hours":24,"turnaround_overdue_hours":48,"payout_allocation":"completing_assignment_only","replaced_advocate_share_bps":0}');
+CREATE TABLE fir_lifecycles (case_id UUID PRIMARY KEY REFERENCES cases(id) ON DELETE CASCADE,
+ revision INTEGER NOT NULL DEFAULT 0,current_submission_id UUID,policy_id UUID NOT NULL REFERENCES fir_policies(id),paid_at TIMESTAMPTZ,
+ completing_assignment_id UUID,advocate_entitlement_paise BIGINT,commission_rate_id UUID);
+CREATE TABLE case_assignments (id UUID PRIMARY KEY DEFAULT gen_random_uuid(),case_id UUID NOT NULL REFERENCES cases(id) ON DELETE CASCADE,
+ advocate_id UUID NOT NULL,assigned_by UUID,assigned_at TIMESTAMPTZ NOT NULL DEFAULT now(),ended_at TIMESTAMPTZ,end_reason TEXT);
+CREATE INDEX case_assignments_case_id_assigned_at_idx ON case_assignments(case_id,assigned_at);
+CREATE UNIQUE INDEX case_assignments_one_current ON case_assignments(case_id) WHERE ended_at IS NULL;
+CREATE TABLE fir_submissions (id UUID PRIMARY KEY DEFAULT gen_random_uuid(),case_id UUID NOT NULL REFERENCES cases(id) ON DELETE CASCADE,
+ assignment_id UUID NOT NULL REFERENCES case_assignments(id) ON DELETE CASCADE,draft_id UUID NOT NULL UNIQUE,version INTEGER NOT NULL,
+ document_id UUID NOT NULL,identity_document_id UUID,identity_checked_by UUID,identity_checked_at TIMESTAMPTZ,
+ supersedes_submission_id UUID UNIQUE,state TEXT NOT NULL DEFAULT 'pending',draft_reason TEXT,decided_by UUID,decided_at TIMESTAMPTZ,
+ submitted_at TIMESTAMPTZ NOT NULL DEFAULT now(),CHECK(state IN ('pending','returned','withdrawn','approved')));
+CREATE INDEX fir_submissions_case_id_submitted_at_idx ON fir_submissions(case_id,submitted_at);
+CREATE UNIQUE INDEX fir_submissions_one_pending ON fir_submissions(case_id) WHERE state='pending';
+CREATE TABLE fir_identity_returns (id UUID PRIMARY KEY DEFAULT gen_random_uuid(),case_id UUID NOT NULL REFERENCES cases(id) ON DELETE CASCADE,
+ submission_id UUID NOT NULL,document_id UUID NOT NULL UNIQUE,rejected_by UUID NOT NULL,rejected_at TIMESTAMPTZ NOT NULL DEFAULT now(),reason TEXT NOT NULL DEFAULT 'unmasked_aadhaar',
+ replacement_document_id UUID,state TEXT NOT NULL DEFAULT 'replacement_required',reviewed_by UUID,reviewed_at TIMESTAMPTZ,
+ purge_status TEXT NOT NULL DEFAULT 'pending',purge_after TIMESTAMPTZ NOT NULL,purge_attempted_at TIMESTAMPTZ);
+CREATE INDEX fir_identity_returns_case_id_state_idx ON fir_identity_returns(case_id,state);
+-- Existing history is imported by the new API under the case lock, so actions
+-- performed by the old image during rollout are not missed. Completed PDFs and
+-- decisions are retained verbatim; there is no data rewrite or deletion here.
+
+```
 
 ## 5. API surface
 
@@ -1830,7 +1916,7 @@ before the backend needs it.
 | ~~23~~ | ~~Legal Notice letterhead~~ — **closed 2 Nov.** The project owner identified the supplied Legal Notice Response template (189/267). Generated draft/final PDFs now use this measured letterhead; see the instructed addition below | — |
 | 26 | **Registered company name** — the supplied letterhead says `INT LegalConsultants Pvt. Ltd.` in the header and `INT LegalConsultant Pvt. Ltd.` in the sign-off. Both remain exactly as drawn until the client confirms | Letterhead |
 | 25 | **Client reviews** — design 433 draws reviews with names, stars and quotes; designs 264–265 draw the advocate's own reviews list. No data model exists | Advocate profile, ratings |
-| 10 | FIR admin rejection/return outcome — client is being asked. Approval-only flow confirmed 10 Nov; no client review/change-request path. Waiting stalls are explicit in the admin queue until this decision arrives. | FIR admin approval |
+| 10 | **Answered 10 November 2026:** admin returns drafts with a required reason; after two draft rejections for one assignment admin may reassign. Identity rejection requests replacement and purges the unsafe upload. Corrected drafts always return to admin; no client draft approval. See §4.5. | FIR admin approval |
 | 11 | Design 348 — the supplied file is a 1× copy of 381 | Token values |
 | 12 | Heading font | Typography |
 | 13 | DPDP consent text and retention periods | Compliance |
@@ -1875,10 +1961,11 @@ is re-litigated mid-build.
 | Source precedence | The Figma files outrank the previous team's admin panel, which is a visual reference only (§1a.1) | 2026-11-01 |
 | Inbound receipt (design 201) | "Confirm Received" writes a `documents_received` event **and** closes out the inbound shipment — `status='delivered'`, `delivered_at=now()`. The advocate's word is the proof for inbound; no POD is required, because the recipient is the one confirming. **`case_status` is unchanged.** Nobody else can ever confirm an inbound shipment, so not closing it would strand every one of them | 2026-10-28 |
 | Advocate decline reason | **Optional.** Design 185 draws a Decline Request button and no reason input, so the API relaxes to match (§1a). `reason` is nullable; no dialog is invented. Flagged to the client as question 18 | 2026-10-27 |
-| Payout on reassignment | **Confirmed by the client.** The advocate who completes the case receives the full **80% advocate share**. A replaced advocate receives **nothing**, regardless of the stage reached. When the rejection and reassignment lifecycle is built, store this rule as a **versioned policy row**, not an application constant, and retain the applicable policy version for historical payouts. Storage must preserve the history of **every advocate who worked on the case**, including replaced advocates, for quality tracking even though only the completing advocate is paid. **Decision recorded only; implementation deferred to that lifecycle chunk.** | 2026-11-10 |
+| Payout on reassignment | **Confirmed by the client.** The advocate who completes the case receives the full **80% advocate share**. A replaced advocate receives **nothing**, regardless of the stage reached. The FIR admin-rejection chunk implements this as a versioned policy row, pinned entitlement and assignment history (§4.5). Every advocate who worked on the case remains attributable for quality tracking even though only the completer is paid. | 2026-11-10 |
 | Advocate's courier payment (196–198) | A **payment**, not a lifecycle step. Writes `payments` with `purpose='courier'` and `payer_id` = the advocate, writes a `case_events` row, and **leaves `case_status` unchanged**. `payment_pending → paid` belongs to the service fee alone | 2026-10-26 |
 | Admin panel | Built **after** the backend, because it consumes the API. Designs requested from the client | 2026-10-26 |
 | FIR identity evidence | **Client confirmed:** required at intake and draft generation; choose any one of masked Aadhaar, passport, voter ID or driving licence. Store the accepted list in configuration, with policy version recorded on uploads. Aadhaar must show only the last four digits; never accept the full card. No ID-number extraction, reading or recording from any of the four uploads; all remain excluded from content extraction. Supersedes the earlier optional-ID instruction. Q15 answered for FIR only; personal intake facts remain confirmed. | 2026-11-10 |
+| FIR admin rejection, reassignment and turnaround | **Client confirmed:** one shared submission/supersession model for draft and identity returns plus reassignment. Required reasons are visible to every advocate assigned to the case. Reassign optionally after two draft rejections per assignment; preserve history and reset the new assignment count. Notify the replaced advocate and use the approved neutral client message. Purge rejected unmasked Aadhaar including all S3 versions. Warn after 24 hours from captured payment; mark overdue after 48 hours, without resetting on returns. Versioned policy gives the completing advocate the full captured advocate share and replaced advocates zero. | 2026-11-10 |
 
 ### 9.1 Register of simulated capabilities
 
@@ -1918,6 +2005,29 @@ client without an advocate in between. If one does, it needs either an advocate
 gate or explicit framing that it is not legal advice.
 
 ### 9.2 Register of design substitutions
+
+**FIR admin rejection — authorised 10 November 2026, built without supplied designs.**
+Reason: the client confirmed draft returns, optional reassignment after two
+rejections, unsafe-ID rejection and the 24–48-hour commitment. Extend the existing
+admin dark panel/orange accents with actual ID preview, manual acceptance,
+draft/identity return controls, required reason, history, removal status and the
+existing advocate picker for reassignment. Exact helper text: **“Visible to any
+advocate who works this case. Describe what’s wrong with the draft.”** Queue
+warnings distinguish over 24 hours from overdue beyond 48; identity review stays
+in the admin queue even during reassignment. Every changed screen handles loading,
+empty, partial, actionable error/retry and populated states.
+
+Extend the existing advocate workspace with version-specific feedback, assignment
+rejection count, identity blockers and inherited history. Extend the paid client
+status screen with neutral revision/review progress, elapsed time, last update,
+and identity-only replacement upload/review. Internal rejection reasons and
+quality counts never appear to clients. Replaced advocates get an inbox notice
+without a link to a case they can no longer access. No timer navigates a screen.
+These replace the historical “only action: approve” wording below. The completed
+PDF remains pinned to the final approved submission. Legal Notice screens and
+client Request Changes behavior are unchanged and require a deployed regression
+walkthrough in this release.
+
 
 **Structured FIR draft and personal facts — authorised 10 November 2026.**
 Design 447 retains its eight numbered sections, field boxes, document rows and

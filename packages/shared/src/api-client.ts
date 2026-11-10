@@ -35,7 +35,8 @@ export class ApiClient {
   saveFirDraft(id: string, input: import('./fir-draft').FirDraftSave) {return this.request<{id:string;version:number;content:import('./fir-draft').FirDraftContent}>(`/fir/${id}/drafts`,input);}
   previewFirDraft(id:string,draft:string){return this.request<{filename:string;pdf_base64:string}>(`/fir/${id}/drafts/${draft}/pdf`,{},'POST',undefined,{},60000);}
   sendFirDraft(id: string, draft: string) {return this.request(`/fir/${id}/drafts/${draft}/send`,{},'POST',undefined,{},60000);}
-  approveFirDraft(id: string, draft: string) {return this.request(`/fir/${id}/drafts/${draft}/approve`,{});}
+  firLifecycle(id:string){return this.request<import('./fir-lifecycle').FirLifecycleView>(`/fir/${id}/lifecycle`);}
+  approveFirDraft(id: string, draft: string,token:import('./fir-lifecycle').FirLifecycleToken) {return this.request(`/fir/${id}/drafts/${draft}/approve`,token);}
   private refreshing?: Promise<ApiTokens>;
   constructor(private readonly options: Options) {}
   private async transport(

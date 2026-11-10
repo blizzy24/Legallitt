@@ -63,6 +63,7 @@ export type ApiEvent = {
   created_at: string;
 };
 export type ApiDocument = {
+  created_at?: string;
   id: string;
   owner_id: string;
   simulated: boolean;

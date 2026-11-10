@@ -1,5 +1,5 @@
 import { AssignAdvocate } from './assign-advocate';
-import {WaitingAge} from './fir-approval';
+import {WaitingAge,Turnaround} from './fir-approval';
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import { ADMIN_CASE_BUCKETS, ADMIN_CASE_BUCKET_LABELS, ApiError, SERVICE_NAMES, adminCasePath, type ServiceCode, type AdminCaseBucket, type AdminCasePage } from '@legalitt/shared';
@@ -44,7 +44,7 @@ export function Notices({service = 'legal_notice'}: {service?: ServiceCode}) {
     setParams({...nextBucket ? {bucket: nextBucket} : {}, ...nextSearch ? {search: nextSearch} : {}});
   }
   return <main className="notices"><div className="page-title"><div><h1>{heading}</h1><p>{data ? `${data.total} total ${noun}` : loading ? `Loading ${noun}…` : ''}</p></div></div>
-    {service==='fir_draft'&&<section className="fir-stall" aria-label="Approval queue"><strong>{data?.approval_waiting??'—'} FIR drafts awaiting admin approval</strong><p>Paid cases cannot progress without approval. There is currently no rejection or return-for-changes action.</p><button onClick={()=>{setCursors([undefined]);setPage(0);setParams({queue:'approval'});}}>Review waiting drafts · oldest first</button><button onClick={()=>setReload(n=>n+1)}>Refresh queue</button></section>}
+    {service==='fir_draft'&&<section className="fir-stall" aria-label="Approval queue"><strong>{data?.approval_waiting??'—'} FIR drafts awaiting admin approval</strong><p>Review drafts and identity replacements, return corrections, and monitor the promised turnaround from payment.</p><button onClick={()=>{setCursors([undefined]);setPage(0);setParams({queue:'approval'});}}>Review waiting drafts · oldest first</button><button onClick={()=>setReload(n=>n+1)}>Refresh queue</button></section>}
     <div className="counters" aria-label="Notice status filters">{ADMIN_CASE_BUCKETS.map(b => <button key={b} className={'counter ' + (bucket === b ? 'selected' : '')} aria-pressed={bucket === b} onClick={() => filter(bucket === b ? undefined : b)}>
       <span className={'counter-dot ' + b}/><span>{ADMIN_CASE_BUCKET_LABELS[b]}</span><strong>{data?.counts[b] ?? '—'}</strong>
     </button>)}</div>
@@ -58,7 +58,7 @@ export function Notices({service = 'legal_notice'}: {service?: ServiceCode}) {
         <td className="matter">{row.matter_type && matterLabels[row.matter_type] && <strong>{matterLabels[row.matter_type]}</strong>}{row.parties.map((party, i) => <div className="party" key={i}>{partyLabels[party.kind] && <span>{partyLabels[party.kind]}: </span>}{party.name}</div>)}</td>
         <td>{row.advocate ? row.advocate.name : row.bucket === 'open' ? <button className="assign" onClick={() => setAssigning({id: row.id, reference: row.reference})}>+ Assign</button> : null}</td>
         <td className="documents">{(['client', 'advocate', 'admin', 'generated'] as const).map(origin => row.documents[origin] > 0 && <span key={origin}>{row.documents[origin]} {origin} {row.documents[origin] === 1 ? 'doc' : 'docs'}{row.simulated_documents[origin] > 0 && <small className="demo" title={`${row.simulated_documents[origin]} of ${row.documents[origin]} documents are simulated`}>{row.simulated_documents[origin] === row.documents[origin] ? 'demo' : `${row.simulated_documents[origin]} demo`}</small>}</span>)}</td>
-        <td><span className={'status ' + row.bucket}>{row.sub_status==='awaiting_admin_approval'?'Awaiting admin approval':ADMIN_CASE_BUCKET_LABELS[row.bucket]}</span>{row.sub_status==='awaiting_admin_approval'&&<div className="waiting-age">{row.approval?<WaitingAge since={row.approval.submitted_at}/>:<strong>Submission time unavailable · open case to investigate</strong>}<small>Only action: approve. No rejection path.</small></div>}</td>
+        <td><span className={'status ' + row.bucket}>{row.sub_status==='awaiting_admin_approval'?'Awaiting admin approval':row.service_code==='fir_draft'&&row.sub_status?row.sub_status.replaceAll('_',' '):ADMIN_CASE_BUCKET_LABELS[row.bucket]}</span>{row.sub_status==='awaiting_admin_approval'&&<div className="waiting-age">{row.approval?<WaitingAge since={row.approval.submitted_at}/>:<strong>Submission time unavailable · open case to investigate</strong>}<small>Review the current submission or return it for correction.</small></div>}</td>
         <td className="amount">{row.amount_paise !== null && rupees(row.amount_paise)}</td>
         <td className="date">{new Date(row.created_at).toLocaleDateString('en-IN', {day: '2-digit', month: 'short', year: 'numeric'})}</td><td>{row.sub_status==='awaiting_admin_approval'&&<Link to={adminCasePath(service,row.id)}>Review draft</Link>}</td>
       </tr>)}

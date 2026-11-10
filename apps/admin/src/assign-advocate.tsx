@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { ApiError, type AdminAdvocate, type ServiceCode } from '@legalitt/shared';
 import { api, useSession } from './session';
 
-export function AssignAdvocate({caseId, reference, service = 'legal_notice', close, assigned}: {
-  caseId: string; reference: string; service?: ServiceCode; close(): void; assigned(): void;
+export function AssignAdvocate({caseId, reference, service = 'legal_notice', close, assigned,choose:onChoose,excludeId}: {
+  caseId: string; reference: string; service?: ServiceCode; close(): void; assigned(): void;choose?(id:string):Promise<unknown>;excludeId?:string;
 }) {
   const {refuse} = useSession();
   const dialog = useRef<HTMLDialogElement>(null);
@@ -17,7 +17,7 @@ export function AssignAdvocate({caseId, reference, service = 'legal_notice', clo
   useEffect(() => {
     let alive = true;
     setLoading(true); setError('');
-    api.adminAdvocates(service).then(result => {if (alive) setItems(result.items);})
+    api.adminAdvocates(service).then(result => {if (alive) setItems(result.items.filter(a=>a.id!==excludeId));})
       .catch(e => {if (alive) setError(e instanceof Error ? e.message : 'Unable to load advocates');})
       .finally(() => {if (alive) setLoading(false);});
     return () => {alive = false;};
@@ -25,7 +25,7 @@ export function AssignAdvocate({caseId, reference, service = 'legal_notice', clo
   const choose = async (advocate: AdminAdvocate) => {
     if (busy) return;
     setBusy(advocate.id); setError('');
-    try {await api.assign(caseId, advocate.id); assigned();}
+    try {await (onChoose?onChoose(advocate.id):api.assign(caseId, advocate.id)); assigned();}
     catch (e) {
       if (e instanceof ApiError && [401, 403].includes(e.status)) refuse('Admin access required. Sign in again.');
       else setError(e instanceof Error ? e.message : 'Unable to assign advocate');

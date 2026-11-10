@@ -3,6 +3,7 @@ const {PDFDocument}=require('pdf-lib');
 const {PrismaClient}=require('../dist/src/generated/prisma/client'),{PrismaPg}=require('@prisma/adapter-pg');
 const {CaseStateMachine}=require('../dist/src/cases/case-state-machine');
 const {CaseRepository}=require('../dist/src/cases/case-repository');
+const {FirAdminService}=require('../dist/src/cases/fir-admin.service');
 const {FirService}=require('../dist/src/cases/fir.service');
 const {DocumentService}=require('../dist/src/documents/document.service');
 const {stagingKey}=require('../dist/src/documents/document-storage');
@@ -27,6 +28,7 @@ test('FIR: paid intake, advocate version freeze, admin-only approval, oldest-fir
     remove:async key=>objects.delete(key),discard:async key=>objects.delete(key),download:async key=>'https://fir-storage.invalid/'+key};
   global.fetch=async(url,options)=>url==='https://fir-storage.invalid'?(objects.set(options.body.get('key'),new Uint8Array(await options.body.get('file').arrayBuffer())),new Response(null,{status:204})):originalFetch(url,options);
   const docs=new DocumentService(prisma,storage,{inspect:async bytes=>({mime:'application/pdf',pageCount:(await PDFDocument.load(bytes)).getPageCount()})});
+  const review=new FirAdminService(prisma,docs,inbox),token=async id=>{const v=await review.read(admin,id);return {revision:v.revision,submission_id:v.current_submission_id};};
   const fir=new FirService(prisma,docs,inbox),queue=new AdminCasesRepository(prisma),detail=new AdminCaseDetailRepository(prisma);
   let captures=0;
   const pay=new PaymentsService(prisma,state,{capture:async()=>{captures++;return {paymentId:randomUUID(),simulated:true,source:'simulated'};}},inbox);
@@ -83,7 +85,7 @@ test('FIR: paid intake, advocate version freeze, admin-only approval, oldest-fir
       assert.equal(pending.status,'in_progress');assert.equal(pending.sub_status,'awaiting_admin_approval');
       for(const action of [()=>save(c.id),()=>fir.send(advocate,c.id,submitted.draft_id),()=>state.transition(admin,c.id,'cancelled'),()=>state.transition(client,c.id,'approved'),()=>state.transition(advocate,c.id,'client_review')])await assert.rejects(action(),{status:409});
       await assert.rejects(fir.approve(client,c.id,submitted.draft_id),{status:403});await assert.rejects(fir.approve(advocate,c.id,submitted.draft_id),{status:403});
-      await assert.rejects(fir.approve(admin,c.id,randomUUID()),{status:409});
+      await assert.rejects(fir.approve(admin,c.id,randomUUID(),await token(c.id)),{status:409});
       await assert.rejects(docs.delete(admin,submitted.document_id),{status:409});
       await assert.rejects(docs.presign(advocate,{case_id:c.id,kind:'fir_draft',filename:'second.pdf',mime:'application/pdf'}),{status:409});
       assert.equal(await db.caseEvent.count({where:{case_id:c.id,type:'fir_draft_submitted'}}),1);
@@ -105,7 +107,9 @@ test('FIR: paid intake, advocate version freeze, admin-only approval, oldest-fir
     });
     await t.test('approval pins reviewed PDF and closes once; client can read only approved version',async()=>{
       const doc=await db.document.findUniqueOrThrow({where:{id:submitted.document_id}}),bytes=objects.get(doc.s3_key);
-      await Promise.all([fir.approve(admin,c.id,submitted.draft_id),fir.approve(admin,c.id,submitted.draft_id)]);
+      const life=await review.read(admin,c.id),sub=life.submissions.find(s=>s.id===life.current_submission_id);
+      await review.identityReview(admin,c.id,{...await token(c.id),document_id:sub.identity_document_id,decision:'accepted'});
+      const approvalToken=await token(c.id);await Promise.all([fir.approve(admin,c.id,submitted.draft_id,approvalToken),fir.approve(admin,c.id,submitted.draft_id,approvalToken)]);
       const done=await repo.read(client,c.id);assert.equal(done.status,'completed');assert.equal(done.drafts.length,1);assert.equal(done.drafts[0].id,submitted.draft_id);assert.equal(done.approval.document_id,doc.id);
       assert.ok((await docs.url(client,doc.id)).url);assert.deepEqual(objects.get(doc.s3_key),bytes);
       assert.equal(await db.draftReview.count({where:{draft_id:submitted.draft_id}}),1);assert.equal(await db.adminAction.count({where:{subject_id:c.id,action:'approve_fir_draft'}}),1);

@@ -81,9 +81,10 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
     const db = await this.prisma.getClient();
     return db.$transaction(async (tx) => {
       const record = await lockedCase(tx, actor, input.case_id);
+      const replacingIdentity=record.service_code==='fir_draft'&&['assigned','advocate_accepted','in_progress','changes_requested'].includes(record.status)&&actor.role==='client'&&input.kind==='id_proof'&&!!await tx.firIdentityReturn.findFirst({where:{case_id:record.id,state:'replacement_required'}});
       if (record.service_code === 'fir_draft' && !(
-        actor.role === 'client' && ['draft','payment_pending'].includes(record.status) && input.kind !== 'fir_draft' ||
-        actor.role === 'advocate' && ['advocate_accepted','in_progress'].includes(record.status) && !record.sub_status
+        replacingIdentity || actor.role === 'client' && ['draft','payment_pending'].includes(record.status) && input.kind !== 'fir_draft' ||
+        actor.role === 'advocate' && ['advocate_accepted','in_progress','changes_requested'].includes(record.status) && record.sub_status!=='awaiting_admin_approval'
       )) throw new ConflictException('FIR documents are frozen at this stage');
       const id = randomUUID();
       if(input.identity&&(record.service_code!=='fir_draft'||input.kind!=='id_proof'))throw new BadRequestException('Identity declarations belong only to FIR identity uploads');
@@ -201,6 +202,7 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
       const record = await this.locked(tx, actor, id);
       const parent = await tx.case.findUniqueOrThrow({where:{id:record.case_id!}});
       if (parent.service_code === 'fir_draft') {
+        if(record.kind==='id_proof'&&!['draft','payment_pending'].includes(parent.status))throw new ConflictException('Use the admin identity review to replace submitted identity evidence.');
         const linked = await tx.draft.findFirst({where:{case_id:parent.id,document_id:id}});
         if (linked || ((parent.sub_status === 'awaiting_admin_approval' || parent.status === 'completed') && record.kind !== 'fir_draft'))
           throw new ConflictException('Submitted FIR documents cannot be deleted');
@@ -221,8 +223,16 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
     return { deleted: true };
   }
   private async purge(doc: Document) {
-    await this.storage.remove(doc.s3_key);
-    await this.storage.remove(stagingKey(doc.s3_key));
+    const db=await this.prisma.getClient();
+    try{await this.storage.remove(doc.s3_key);await this.storage.remove(stagingKey(doc.s3_key));}
+    catch(error){await db.firIdentityReturn.updateMany({where:{document_id:doc.id},data:{purge_status:'failed',purge_attempted_at:new Date()}});throw error;}
+    await db.firIdentityReturn.updateMany({where:{document_id:doc.id},data:{purge_attempted_at:new Date(),purge_status:'pending'}});
+    await db.firIdentityReturn.updateMany({where:{document_id:doc.id,purge_after:{lte:new Date()}},data:{purge_status:'complete'}});
+  }
+  async purgeRejectedIdentity(id:string){
+    const db=await this.prisma.getClient(),doc=await db.document.findUnique({where:{id}});
+    if(!doc||doc.status!=='deleted'||!await db.firIdentityReturn.findUnique({where:{document_id:id}}))throw new ConflictException('No rejected identity document to purge');
+    try{await this.purge(doc);}catch{await db.firIdentityReturn.update({where:{document_id:id},data:{purge_status:'failed',purge_attempted_at:new Date()}});}
   }
   async cleanupAbandoned(now = new Date()) {
     if (this.cleanupRunning) return;

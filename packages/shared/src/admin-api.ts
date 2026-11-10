@@ -2,6 +2,7 @@ import type { AdminCaseBucket, CaseStatus } from './lifecycle';
 import type { ServiceCode } from './services';
 export type AdminCaseQuery = {service?: ServiceCode; bucket?: AdminCaseBucket; search?: string; cursor?: string; limit?: number; queue?: 'approval'};
 export type AdminCaseRow = {
+  turnaround?:{paid_at:string|null;warning_hours:number;overdue_hours:number}|null;
   service_code: ServiceCode;
   id: string; reference: string;
   client: {id: string; name: string};

@@ -6,7 +6,9 @@
 visual reference. It is **not** a feature list. Features come from our
 lifecycle and our designs. See `ADMIN-PANEL-SURVEY.md` for what is there.
 
-**Approved extension, 10 November 2026: FIR draft approval.** The client confirmed
+**Approved extension, 10 November 2026: FIR admin rejection.** Architecture §4.3 and §9.2 supersede the initial approval-only restrictions below. Admin can review identity evidence, return a draft with a required reason, reject unmasked Aadhaar and optionally reassign after two draft rejections for the current assignment. Preserve assignment/review history, show 24/48-hour age from payment, and notify both the client and replaced advocate as specified. FIR `changes_requested` buckets depend on the outstanding actor; Legal Notice keeps its client-request meaning.
+
+**Earlier release: FIR draft approval.** The client confirmed
 an admin reviews the advocate's submitted draft before it reaches the client.
 The owner authorised building this screen in the panel's existing visual
 language without a supplied design; architecture §9.2 records the reason.

@@ -6,6 +6,7 @@ import { parse } from '../auth/auth.service';
 import { caseScope, type CaseActor } from '../cases/case-access';
 import type { Prisma } from '../generated/prisma/client';
 import {firApproval} from '../cases/fir-approval';
+import {FirPolicyConfig} from '../cases/fir-lifecycle';
 
 export const adminCaseQuerySchema = z.strictObject({
   service: z.enum(SERVICE_CODES).default('legal_notice'),
@@ -42,13 +43,15 @@ export class AdminCasesRepository {
         {matter_type: {contains: input.search.replace(/\s+/g, '_'), mode: 'insensitive' as const}},
       ]}] : []),
     ]};
-    const waiting: Prisma.CaseWhereInput = {service_code:'fir_draft',status:'in_progress',sub_status:'awaiting_admin_approval'};
+    const waiting: Prisma.CaseWhereInput = {service_code:'fir_draft',OR:[{status:'in_progress',sub_status:'awaiting_admin_approval'},{status:{in:['assigned','advocate_accepted','in_progress','changes_requested']},sub_status:{in:['identity_review_pending','multiple_corrections_required']}}]};
     const bucketWhere: Prisma.CaseWhereInput = {status:{in:eligible.filter(s=>adminBucketFor(s)===input.bucket)}};
     const filtered: Prisma.CaseWhereInput = {AND:[base,
-      ...(input.bucket ? [input.bucket==='open'?{OR:[bucketWhere,waiting]}:input.bucket==='in_progress'?{AND:[bucketWhere,{NOT:waiting}]}:bucketWhere] : []),
+      ...(input.bucket ? [input.service==='fir_draft'?{OR:eligible.flatMap(status=>[null,'awaiting_admin_approval','advocate_revision_required','identity_replacement_required','identity_review_pending','multiple_corrections_required'].filter(sub=>adminBucketFor(status,input.service,sub)===input.bucket).map(sub_status=>({status,sub_status})))}:bucketWhere] : []),
       ...(input.queue ? [waiting] : [])]};
     const db = await this.prisma.getClient();
     return db.$transaction(async tx => {
+      const policyRow=input.service==='fir_draft'?await tx.firPolicy.findFirst({orderBy:{version:'desc'},where:{effective_from:{lte:new Date()}}}):null;
+      const defaultPolicy=policyRow?FirPolicyConfig.parse(policyRow.config):null;
       const grouped = await tx.case.groupBy({by: ['status','sub_status'], where: base, _count: {_all: true}});
       const approval_waiting = await tx.case.count({where:{AND:[base,waiting]}});
       const counts = {open: 0, pending: 0, in_progress: 0, completed: 0, closed: 0};
@@ -66,6 +69,7 @@ export class AdminCasesRepository {
         select: {
           id: true, reference: true, service_code: true, status: true, matter_type: true, created_at: true,
           details: true, notice_document_id: true, sub_status:true, updated_at:true,
+          fir_lifecycle:{include:{policy:true}},payments_case_id_relations:{where:{purpose:'service_fee',status:'captured'},orderBy:{captured_at:'asc'},take:1,select:{captured_at:true}},
           case_events_case_id_relations: {where: {OR:[{source:'simulated'},{type:{in:['fir_draft_submitted','fir_draft_approved']}}]}, select: {id:true,type:true,payload:true,created_at:true,source:true}},
           client_id_relation: {select: {id: true, full_name: true}},
           advocate_id_relation: {select: {id: true, full_name: true}},
@@ -76,6 +80,7 @@ export class AdminCasesRepository {
         },
       });
       const items: AdminCaseRow[] = rows.slice(0, input.limit).map(row => {
+        const policy=row.fir_lifecycle?FirPolicyConfig.parse(row.fir_lifecycle.policy.config):defaultPolicy;
         const details = obj(row.details);
         const parties = [...row.case_parties_case_id_relations];
         for (const [key, kind] of row.service_code === 'legal_notice' ? [['client', 'sender'], ['noticee', 'noticee']] as const : []) {
@@ -92,6 +97,7 @@ export class AdminCasesRepository {
         }
         return {
           service_code: input.service,
+          ...(input.service==='fir_draft'?{turnaround:!['completed','cancelled','refunded'].includes(row.status)&&policy?{paid_at:(row.fir_lifecycle?.paid_at??row.payments_case_id_relations[0]?.captured_at)?.toISOString()??null,warning_hours:policy.turnaround_warning_hours,overdue_hours:policy.turnaround_overdue_hours}:null}:{}),
           id: row.id, reference: row.reference, client: {id: row.client_id_relation.id, name: row.client_id_relation.full_name},
           matter_type: row.matter_type, parties: parties.filter(p => p.name.trim()),
           advocate: row.advocate_id_relation ? {id: row.advocate_id_relation.id, name: row.advocate_id_relation.full_name} : null,
