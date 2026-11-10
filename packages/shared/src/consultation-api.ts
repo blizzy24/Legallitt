@@ -9,7 +9,7 @@ export type ConsultationView={
   session:{id:string;advocate_id:string;scheduled_at:string;duration_min:number;status:string;reserved_until:string|null;client_joined_at:string|null;started_at:string|null;ended_at:string|null;rating:number|null;review:string|null}|null;
   quotes:CourtQuoteView[];reports:ConsultationReportView[];current_report_id?:string|null;internal_notes?:string;
   consultation_approved_at:string|null;pending_review:{kind:string;submitted_at:string}|null;
-  progress:{id:string;stage:string;update:string;court:string|null;case_number:string|null;next_hearing:string|null;document_ids:string[];created_at:string}[];
+  progress:{id:string;stage:string;update:string;court:string|null;case_number:string|null;next_hearing:string|null;hearing_at:string|null;court_room:string|null;next_steps:string|null;document_ids:string[];created_at:string}[];
   payments:{id:string;purpose:string;simulated:boolean;captured_at:string;total_paise:string;breakdown:QuoteBreakdown|null}[];
   payouts?:{id:string;net_paise:string;status:string}[];
 };

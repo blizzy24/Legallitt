@@ -1361,7 +1361,7 @@ from case intake, public events and the PDF. Case membership predicates are unch
 
 Consultation checkout uses the existing tariff and fee policies. Representation
 checkout has its own quote source (`case_price_quotes.pricing_id` is widened to
-nullable; `court_quote_id` identifies the private offer). Both pin full pricing,
+nullable; `court_quote_id` identifies the case-specific offer). Both pin full pricing,
 commission and page-policy snapshots; initial checkout also pins the booking revision.
 Rebooking invalidates a previously displayed checkout. Slot reservations serialize
 on the client and advocate; capture rechecks both the hold and conflicts. Page overage

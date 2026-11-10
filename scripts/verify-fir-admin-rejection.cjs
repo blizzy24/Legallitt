@@ -6,7 +6,7 @@ const {PDFDocument}=require('../apps/api/node_modules/pdf-lib');
 process.loadEnvFile('apps/api/.env.local');
 const deployed=process.env.FIR_DEPLOYED==='1',base=deployed?'https://gvycg0n3u8.execute-api.ap-south-1.amazonaws.com':'http://127.0.0.1:3003';
 const mobile=deployed?'https://legalitt-5.vercel.app':'http://localhost:8083',adminWeb=deployed?'https://legalitt-admin-panel.vercel.app':'http://localhost:5174';
-const out=path.resolve('reports/fir-admin-rejection-2026-11-10',deployed?'deployed':'local');fs.mkdirSync(out,{recursive:true});
+const out=path.resolve(process.env.FIR_REPORT_ROOT??'reports/consultation-services-2026-11-10/fir-regression',deployed?'deployed':'local');fs.mkdirSync(out,{recursive:true});
 const json=(name,data)=>fs.writeFileSync(path.join(out,name),JSON.stringify(data,null,2)+'\n');
 const delay=ms=>new Promise(r=>setTimeout(r,ms));
 async function click(page,text){await page.waitForFunction(text=>[...document.querySelectorAll('[role="button"],[role="checkbox"],[role="radio"],button,a')].some(e=>e.getClientRects().length&&e.textContent.trim()===text&&!e.disabled&&e.getAttribute('aria-disabled')!=='true'),{timeout:60000},text);const h=await page.evaluateHandle(text=>[...document.querySelectorAll('[role="button"],[role="checkbox"],[role="radio"],button,a')].find(e=>e.getClientRects().length&&e.textContent.trim()===text&&!e.disabled&&e.getAttribute('aria-disabled')!=='true'),text);await h.asElement().evaluate(e=>e.scrollIntoView({block:'center'}));await h.asElement().click();await h.dispose();if(text==='Done')await page.waitForFunction(()=>![...document.querySelectorAll('input')].some(e=>['Complainant name','Accused name','Witness name'].includes(e.getAttribute('aria-label'))&&e.getClientRects().length),{timeout:60000});}

@@ -93,7 +93,8 @@ test('three consultation services: booking contention, immutable prices, real ch
     const quoted=await payments.quote(client,c.id,{purpose:'representation',court_quote_id:second.id});assert.equal(quoted.breakdown.charged_pages,2);assert.equal(quoted.breakdown.total_paise,'300000');
     await payments.pay(client,c.id,{purpose:'representation',quote_id:quoted.id,court_quote_id:second.id},randomUUID());
     await assert.rejects(payments.offer(advocate,c.id,{...await revision(c.id),base_amount_paise:'100000',scope:'Changed representation offer',exclusions:'None'}),{status:409});
-    for(const stage of ['preparation','filed','hearing','decision'])await reports.progress(advocate,c.id,{...await revision(c.id),stage,update:`TEST offline court ${stage} recorded by advocate.`,document_ids:[document.id]});
+    for(const stage of ['preparation','filed','hearing','decision'])await reports.progress(advocate,c.id,{...await revision(c.id),stage,update:`TEST offline court ${stage} recorded by advocate.`,document_ids:[document.id],...(stage==='hearing'?{hearing_at:'2026-11-10T05:30:00Z',court_room:'TEST Room 3',next_steps:'TEST preserve the order.',next_hearing:'2026-12-10T05:30:00Z'}:{})});
+    const hearing=(await service.read(client,c.id)).progress.find(p=>p.stage==='hearing');assert.equal(hearing.court_room,'TEST Room 3');assert.equal(hearing.next_steps,'TEST preserve the order.');assert.equal(hearing.hearing_at.toISOString(),'2026-11-10T05:30:00.000Z');assert.deepEqual(hearing.document_ids,[document.id]);
     await reviewBrief(c.id,'completion');assert.equal((await service.read(client,c.id)).case.status,'completed');
     assert.equal((await db.payout.findMany({where:{case_id:c.id}})).reduce((s,p)=>s+p.net_paise,0n),260000n);
    }

@@ -12,7 +12,7 @@ there is no fixed court-service price. Existing cases retain their price snapsho
    starts with 28 days ahead, 30 minutes' notice and a 10-minute checkout hold.
 2. Client chooses an approved advocate; admin confirms that same advocate's
    assignment. Selection alone never grants access to a case. A missed appointment
-   remains visible; client/admin can reschedule with the same advocate without
+   remains visible; the client can reschedule with the same advocate without
    charging again, provided the session has not started. No invented refund.
 3. All sessions use actual in-app chat. Both participants explicitly join/start;
    they may mutually start early. Ending is an advocate action, never a timer.
@@ -30,7 +30,9 @@ there is no fixed court-service price. Existing cases retain their price snapsho
    extra pages beyond those already charged, never the same pages twice. Generated
    client briefs are not client uploads and do not create another overage charge.
 7. Court stages are manual records: preparation, filed, hearing and decision.
-   Court/bench is client-entered (or explicitly unknown), then advocate-verified;
+   Hearing updates retain design 425's hearing date/time, court room, next step,
+   next hearing and explicitly selected order documents. Court/bench is
+   client-entered (or explicitly unknown), then advocate-verified;
    state/district use the existing LGD data. There is no court-system integration,
    automatic filing, real-time hearing feed, or in-app collection of court fees.
 8. On completion, the advocate submits a final client summary and supporting

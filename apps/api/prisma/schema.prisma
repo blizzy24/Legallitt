@@ -711,6 +711,9 @@ model CourtProgress {
   court String?
   case_number String?
   next_hearing DateTime? @db.Timestamptz(6)
+  hearing_at DateTime? @db.Timestamptz(6)
+  court_room String?
+  next_steps String?
   document_ids String[] @db.Uuid
   created_at DateTime @default(now()) @db.Timestamptz(6)
   @@index([case_id,created_at])

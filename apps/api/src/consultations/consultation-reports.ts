@@ -109,7 +109,7 @@ export class ConsultationReports {
       const record=await consultationCase(tx,actor,id);await workspace(tx,id,input.expected_revision);
       if(record.service_code==='legal_advice'||record.status!=='in_progress'||record.sub_status==='awaiting_admin_approval'||!await tx.courtQuote.findFirst({where:{case_id:id,status:'paid'}}))throw new ConflictException('Paid representation is required before recording court progress.');
       await this.attachments(tx,id,input.document_ids);
-      const row=await tx.courtProgress.create({data:{case_id:id,advocate_id:actor.id,stage:input.stage,update:input.update,court:input.court,case_number:input.case_number,next_hearing:input.next_hearing?new Date(input.next_hearing):null,document_ids:input.document_ids}});
+      const row=await tx.courtProgress.create({data:{case_id:id,advocate_id:actor.id,stage:input.stage,update:input.update,court:input.court,case_number:input.case_number,next_hearing:input.next_hearing?new Date(input.next_hearing):null,hearing_at:input.hearing_at?new Date(input.hearing_at):null,court_room:input.court_room,next_steps:input.next_steps,document_ids:input.document_ids}});
       await bump(tx,id);await writeConsultationCase(tx,actor,id,{sub_status:`court_${input.stage}`},'court_progress_recorded',{stage:input.stage,progress_id:row.id});
       await this.notifications.send(tx,{user_id:record.client_id,case_id:id,kind:'court_progress',title:'Your advocate updated your court case',body:input.update.slice(0,250)});return row;
     });

@@ -21,7 +21,7 @@ export function useConsultation(id:string|undefined,service?:ConsultationService
   setView(v);setRecord(r);const intake=ConsultationIntakeSchema.parse(v.case.details);setForm(intake);saved.current={id,stamp:v.case.updated_at,form:intake,generation:0,done:0,promise:null,conflict:false};setSaveState('Saved');
  }catch(e){if(seq===active.current){setError(message(e));setView(undefined);setRecord(undefined);}}finally{if(seq===active.current)setLoading(false);}};
  useEffect(()=>{saved.current=null;setView(undefined);setRecord(undefined);void load();return()=>{active.current++;};},[id,user?.id]);
- const flush=():Promise<boolean>=>{const entry=saved.current;if(!entry||view?.case.status!=='draft')return Promise.resolve(true);if(entry.promise)return entry.promise;if(entry.conflict)return Promise.resolve(false);
+ const flush=():Promise<boolean>=>{const entry=saved.current;if(!entry||view?.case.status!=='draft')return Promise.resolve(true);if(entry.promise)return entry.promise;if(entry.conflict)return Promise.resolve(false);if(entry.generation<=entry.done)return Promise.resolve(true);
   entry.promise=(async()=>{try{setError('');while(saved.current===entry&&entry.generation>entry.done){setSaveState('Saving…');const generation=entry.generation;
     const r=await backend.request<ApiCase>(`/consultations/${entry.id}/intake`,{expected_updated_at:entry.stamp,intake:entry.form},'PATCH');entry.stamp=r.updated_at;entry.done=generation;
     if(saved.current===entry){setRecord(old=>old?{...old,...r}:r);setView(old=>old?{...old,case:{...old.case,...r}}:old);}}

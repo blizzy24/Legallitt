@@ -63,6 +63,7 @@ export const ConsultationReportReviewSchema=z.strictObject({expected_revision:z.
   .refine(v=>v.decision==='approved'||!!v.reason?.trim(),'Describe what must be corrected.');
 export const CourtProgressSchema=z.strictObject({expected_revision:z.number().int().nonnegative(),stage:z.enum(['preparation','filed','hearing','decision']),
   update:text(10000).min(3),court:text(300).optional(),case_number:text(100).optional(),next_hearing:z.iso.datetime().optional(),
+  hearing_at:z.iso.datetime().optional(),court_room:text(200).optional(),next_steps:text(5000).optional(),
   document_ids:z.array(z.uuid()).max(30).default([])});
 export const ConsultationPaymentSchema=z.strictObject({purpose:z.enum(['service_fee','representation']),quote_id:z.uuid(),court_quote_id:z.uuid().optional()});
 export const ConsultationReviewSchema=z.strictObject({rating:z.number().int().min(1).max(5),review:text(2000).default('')});

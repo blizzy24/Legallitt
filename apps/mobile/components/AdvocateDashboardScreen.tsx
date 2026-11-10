@@ -181,6 +181,14 @@ export default function AdvocateDashboardScreen({self, stats, events, dateLine, 
           </Pressable>
         </View>}
 
+        {!availability && work && <View style={styles.card}>
+          <Pressable accessibilityRole="button" onPress={()=>router.push('/advocate/availability')} style={styles.manage}>
+            <View style={styles.manageIcon}><CalendarDays size={t.manageIconGlyph} color={colors.brandDark}/></View>
+            <View style={styles.manageText}><Text style={styles.manageTitle}>Manage Availability</Text><Text style={styles.manageSub}>Set weekly hours for chat consultations</Text></View>
+            <ChevronRight size={t.manageChevron} color={colors.textMuted}/>
+          </Pressable>
+        </View>}
+
         {stats.length > 0 && <View style={styles.grid}>
           {stats.map((s) => {
             const Icon = STAT_ICONS[s.id] ?? FileText;

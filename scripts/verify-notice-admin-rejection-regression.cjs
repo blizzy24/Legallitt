@@ -26,7 +26,7 @@ async function goto(p,url){
  const parsed=new URL(url),id=parsed.searchParams.get('caseId')??parsed.pathname.match(/\/(?:notice|legal-notices)\/([0-9a-f-]{36})/)?.[1];
  const loaded=id?p.waitForResponse(r=>r.request().method()==='GET'&&new URL(r.url()).pathname.endsWith('/cases/'+id)&&[200,304].includes(r.status()),{timeout:60000}):null;
  await p.goto(url,{waitUntil:'domcontentloaded',timeout:60000});
- if(loaded){const response=await loaded;if(response.status()===200)await response.json();await delay(800);}
+ if(loaded){await loaded;await delay(800);}
  console.log('Opened:',parsed.pathname);
 }
 async function shot(p,name){await p.screenshot({path:path.join(out,name+'.png'),fullPage:true});}
@@ -34,6 +34,8 @@ async function main(){
  const localServer=local?await require('./helpers/local-walkthrough.cjs')():null;
  const password=await demoPassword(),sessions={},api={},work={},errors=[],network=[];
  for(const role of ['client','advocate','admin']){const r=await fetch(base+'/api/v1/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:'demo-'+role+'@legalitt.invalid',password})});assert.equal(r.status,201,role+' API login');sessions[role]=await r.json();api[role]=new ApiClient({baseUrl:base,getTokens:async()=>sessions[role].tokens});}
+ let restoreProfile;
+ if(local){const db=await require('../apps/api/dist/src/database').createDatabaseClient(),user_id=sessions.advocate.user.id,old=await db.advocateProfile.findUnique({where:{user_id}});await db.advocateProfile.upsert({where:{user_id},create:{user_id,verification:'approved',city:'Indore'},update:{verification:'approved',city:'Indore'}});restoreProfile=async()=>{try{if(old)await db.advocateProfile.update({where:{user_id},data:{verification:old.verification,city:old.city}});else await db.advocateProfile.delete({where:{user_id}});}finally{await db.$disconnect();}};}
  const browser=await puppeteer.launch({executablePath:process.env.CHROME_PATH??'C:/Program Files/Google/Chrome/Application/chrome.exe',headless:true,args:['--disable-background-timer-throttling','--disable-backgrounding-occluded-windows','--disable-renderer-backgrounding']});
  let record;const casePath=path.join(out,'case.json');
  try{
@@ -118,6 +120,6 @@ async function main(){
   save('verification',{commit:'FIR-admin-rejection-regression',case:{id,reference:record.reference,status:record.status},urls:{mobile,panel,base},uiSignInRoles:['client','advocate','admin'],allLifecycleMutationsThroughUi:true,proofDownloadedInClientBrowser:true,proofSha256:hash(Buffer.from(bytes)),statusEvents:record.events.filter(e=>e.type==='status_changed').map(e=>({from:e.from_status,to:e.to_status,source:e.source})),errors});
   assert.deepEqual(errors,[]);console.log('PASS deployed UI lifecycle:',record.reference,record.status);
  }catch(e){for(const[role,p]of Object.entries(work)){await shot(p,role+'-failure').catch(()=>{});fs.writeFileSync(path.join(out,role+'-failure.txt'),await p.evaluate(()=>document.body.innerText).catch(()=>''));}throw e;}
- finally{save('browser-network',network);const timer=setTimeout(()=>{browser.process()?.kill('SIGKILL');browser.disconnect();},5000);try{await browser.close();}finally{clearTimeout(timer);localServer?.close();}}
+ finally{save('browser-network',network);const timer=setTimeout(()=>{browser.process()?.kill('SIGKILL');browser.disconnect();},5000);try{await browser.close();}finally{clearTimeout(timer);localServer?.close();await restoreProfile?.();}}
 }
 main().catch(e=>{console.error(e.name,e.message);process.exitCode=1;});
