@@ -28,6 +28,7 @@ import { FileInspector } from "./file-inspector";
 import {firIdentityPolicy} from './fir-identity';
 import {isConsultationService} from '@legalitt/shared';
 import {consultationDocumentVisible} from '../consultations/consultation-documents';
+import {assertReportDocumentDeletable,assertReportDocumentReadable,assertReportUploadAllowed} from '../service-reports/report-access';
 
 const transactionOptions = { timeout: 60_000 };
 @Injectable()
@@ -91,6 +92,7 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
         replacingIdentity || actor.role === 'client' && ['draft','payment_pending'].includes(record.status) && input.kind !== 'fir_draft' ||
         actor.role === 'advocate' && ['advocate_accepted','in_progress','changes_requested'].includes(record.status) && record.sub_status!=='awaiting_admin_approval'
       )) throw new ConflictException('FIR documents are frozen at this stage');
+      assertReportUploadAllowed(actor, record, input.kind);
       const id = randomUUID();
       if(input.identity&&(record.service_code!=='fir_draft'||input.kind!=='id_proof'))throw new BadRequestException('Identity declarations belong only to FIR identity uploads');
       let identity:ReturnType<typeof IdentityEvidenceSchema.parse>|undefined;
@@ -195,6 +197,7 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
           draft_reviews_draft_id_relations:{some:{decision:'approved',reviewer_id_relation:{role:'admin'}}}}});
         if (record.status !== 'completed' || !approved) throw new NotFoundException('Document not found');
       }
+      await assertReportDocumentReadable(tx, actor, record, doc);
       return {
         url: await this.storage.download(doc.s3_key, doc.filename,
           preview && actor.role === 'admin' && ['application/pdf', 'image/png', 'image/jpeg'].includes(doc.mime_type)),
@@ -219,6 +222,7 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
         if (linked || ((parent.sub_status === 'awaiting_admin_approval' || parent.status === 'completed') && record.kind !== 'fir_draft'))
           throw new ConflictException('Submitted FIR documents cannot be deleted');
       }
+      await assertReportDocumentDeletable(tx, parent, record);
       if (actor.role !== "admin" && record.owner_id !== actor.id)
         throw new ForbiddenException(
           "Only the uploader or admin may delete evidence",

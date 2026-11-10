@@ -41,6 +41,8 @@ import { Prisma, type PrismaClient } from "../generated/prisma/client";
 import { caseScope, type CaseActor } from "./case-access";
 import { caseReference } from './case-reference';
 import {requireFirIdentity} from '../documents/fir-identity';
+import {isReportService} from '@legalitt/shared';
+import {assertReportSubmittable} from '../service-reports/report-submission';
 
 export const createCaseSchema = CreateCaseSchema;
 export const updateCaseSchema = z
@@ -333,7 +335,9 @@ export class CaseStateMachine {
       CaseStatus.assigning, CaseStatus.assigned, CaseStatus.advocate_accepted,
       CaseStatus.advocate_declined, CaseStatus.cancelled, CaseStatus.refunded,
       ...(record.service_code === 'fir_draft' ? [CaseStatus.submitted,CaseStatus.payment_pending,CaseStatus.paid] : []),
+      ...(isReportService(record.service_code) ? [CaseStatus.submitted,CaseStatus.payment_pending,CaseStatus.paid,CaseStatus.in_progress] : []),
     ].includes(to)) throw new ConflictException('This service workflow is not available yet');
+    if (to === CaseStatus.submitted) await assertReportSubmittable(tx, record);
     if (to === CaseStatus.submitted && record.service_code === 'fir_draft') {
       parse(FirSubmissionSchema,firIntakeDetails(record.details,await tx.caseParty.findMany({where:{case_id:record.id}})));
       await requireFirIdentity(tx,record.id);
@@ -379,13 +383,14 @@ export class CaseStateMachine {
     const db = await this.prisma.getClient();
     return db.$transaction(async (tx) => {
       let record = await lockedCase(tx, actor, id);
-      if (!['legal_notice','fir_draft'].includes(record.service_code)) throw new NotFoundException('Case not found');
+      if (!['legal_notice','fir_draft'].includes(record.service_code) && !isReportService(record.service_code)) throw new NotFoundException('Case not found');
       if (actor.role !== "client")
         throw new ForbiddenException("Only clients submit");
       if (record.status === "payment_pending") return record;
       if (record.status === "draft") {
         const now = new Date();
-        const pricing = await tx.servicePricing.findFirst({where: {service_code: record.service_code, tier: record.tier, variant: null, ...(record.service_code === 'fir_draft' ? {confirmed:true} : {}), effective_from: {lte: now}, OR: [{effective_to: null}, {effective_to: {gt: now}}]}, orderBy: [{confirmed: 'desc'}, {effective_from: 'desc'}, {id: 'asc'}]});
+        // Report services use only versioned provisional tariffs with a fee policy (§2.5a).
+        const pricing = await tx.servicePricing.findFirst({where: {service_code: record.service_code, tier: record.tier, variant: null, ...(record.service_code === 'fir_draft' ? {confirmed:true} : {}), ...(isReportService(record.service_code) ? {fee_policy_id: {not: null}} : {}), effective_from: {lte: now}, OR: [{effective_to: null}, {effective_to: {gt: now}}]}, orderBy: [{confirmed: 'desc'}, {effective_from: 'desc'}, {id: 'asc'}]});
         if (!pricing) throw new ConflictException('Case pricing is unavailable');
         await tx.case.update({where: {id}, data: {pricing_id: pricing.id}});
         record = await this.advance(tx, actor, record, CaseStatus.submitted);

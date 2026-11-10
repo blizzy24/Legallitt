@@ -8,6 +8,7 @@ import { parse } from '../auth/auth.service';
 import { PAYMENTS, type PaymentsPort } from './payments.port';
 import { NOTIFICATIONS, type NotificationsPort } from '../notifications/notifications.port';
 import {requireFirIdentity} from '../documents/fir-identity';
+import { isReportService } from '@legalitt/shared';
 import { createPriceQuote, quoteDocuments, type QuoteSnapshot } from './price-quotes';
 const request = z.strictObject({case_id: z.uuid(), purpose: z.enum(['service_fee','courier']), quote_id: z.uuid().optional()});
 @Injectable()
@@ -20,7 +21,7 @@ export class PaymentsService {
     const db = await this.prisma.getClient();
     return db.$transaction(async tx => {
       const record = await lockedCase(tx, actor, case_id);
-      if (!['legal_notice','fir_draft'].includes(record.service_code)) throw new NotFoundException('Case not found');
+      if (!['legal_notice','fir_draft'].includes(record.service_code) && !isReportService(record.service_code)) throw new NotFoundException('Case not found');
       if (actor.role !== 'client') throw new ForbiddenException('Only the client may request a payment quote');
       return createPriceQuote(tx, record);
     });
@@ -32,7 +33,7 @@ export class PaymentsService {
     return db.$transaction(async tx => {
       // Serialise both retries and distinct keys for the same case before capture.
       const record = await lockedCase(tx, actor, input.case_id);
-      if (!['legal_notice','fir_draft'].includes(record.service_code) || (input.purpose === 'courier' && record.service_code !== 'legal_notice'))
+      if ((!['legal_notice','fir_draft'].includes(record.service_code) && !isReportService(record.service_code)) || (input.purpose === 'courier' && record.service_code !== 'legal_notice'))
         throw new NotFoundException('Case not found');
       if ((input.purpose === 'service_fee' && (actor.role !== 'client' || actor.id !== record.client_id)) ||
           (input.purpose === 'courier' && (actor.role !== 'advocate' || actor.id !== record.advocate_id)))

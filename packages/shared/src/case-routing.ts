@@ -13,5 +13,7 @@ export function unbuiltCasePath(service: ServiceCode, id: string, role: 'client'
     ? `/advocate/consultation/${encodeURIComponent(id)}/room?caseId=${encodeURIComponent(id)}`
     : `${service==='legal_advice'?'/legal-advice/track':`/services/${service.replaceAll('_','-')}/case-details`}?step=track&caseId=${encodeURIComponent(id)}`;
   if (service === 'fir_draft') return `${role === 'advocate' ? '/advocate/fir/draft' : '/fir/status'}?caseId=${encodeURIComponent(id)}`;
+  const report = ({property_search: '/property-search', document_forensic: '/document-forensic', court_marriage: '/court-marriage'} as Partial<Record<ServiceCode, string>>)[service];
+  if (report) return `${role === 'advocate' ? '/advocate/service-report' : report + '/track'}?caseId=${encodeURIComponent(id)}`;
   return `${role === 'advocate' ? '/advocate/requests' : '/cases'}/${encodeURIComponent(id)}?service=${service}&caseId=${encodeURIComponent(id)}`;
 }

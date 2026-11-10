@@ -8,6 +8,8 @@ import { caseClientFees } from './client-fees';
 import {firApproval} from './fir-approval';
 import {isConsultationService} from '@legalitt/shared';
 import {consultationDocumentVisible} from '../consultations/consultation-documents';
+import {isReportService} from '@legalitt/shared';
+import {reportCaseView} from '../service-reports/report-access';
 
 const cursorSchema = z.strictObject({
   id: z.uuid(),
@@ -117,6 +119,10 @@ export class CaseRepository {
       const visible=await Promise.all(documents.map(async d=>await consultationDocumentVisible(db,actor,record,d)?d:null));
       return {...caseRecord,parties,pricing,advocate:advocate?{...advocateUser,profile}:null,events,documents:visible.filter(Boolean),drafts:[],reviews:[],shipments};
     }
+    if (isReportService(record.service_code))
+      return reportCaseView({actor, record, caseRecord, events, documents, drafts: allDrafts, payment: payments[0], pricing, parties,
+        advocate: advocate ? {...advocateUser, profile} : null,
+        client: await db.user.findUnique({where: {id: record.client_id}, select: {full_name: true}})});
     if (record.service_code !== 'legal_notice')
       return { ...caseRecord, parties, pricing, advocate: advocate ? {...advocateUser, profile} : advocate, events, documents, drafts, reviews, shipments };
     const notice_policy = parse(NoticePolicySchema, (service.config as {notice_policy?: unknown}).notice_policy ?? {});

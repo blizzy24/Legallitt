@@ -1,0 +1,15 @@
+{
+  "version": "provisional-2026-11-10",
+  "source_note": "PROVISIONAL, awaiting client approval (architecture §2.5b). Market-rate estimate 10 Nov 2026; base is the advocate share; platform fee 25% of base; GST 18% on both.",
+  "fee_policy": {
+    "pricing_mode": "fixed", "base_represents": "advocate_share", "platform_calculation": "commission_gross_up",
+    "gst_basis": "base_plus_platform", "delivery_recipient": "advocate", "rounding": "half_up_paise"
+  },
+  "prices": [
+    {"service_code": "property_search", "tier": "ordinary", "variant": null, "base_amount_paise": "249900", "gst_bps": 1800, "duration_minutes": null},
+    {"service_code": "property_search", "tier": "urgent", "variant": null, "base_amount_paise": "399900", "gst_bps": 1800, "duration_minutes": null},
+    {"service_code": "document_forensic", "tier": "ordinary", "variant": null, "base_amount_paise": "399900", "gst_bps": 1800, "duration_minutes": null},
+    {"service_code": "document_forensic", "tier": "urgent", "variant": null, "base_amount_paise": "599900", "gst_bps": 1800, "duration_minutes": null},
+    {"service_code": "court_marriage", "tier": null, "variant": null, "base_amount_paise": "599900", "gst_bps": 1800, "duration_minutes": null}
+  ]
+}

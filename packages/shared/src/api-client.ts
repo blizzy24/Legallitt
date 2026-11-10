@@ -37,6 +37,15 @@ export class ApiClient {
   sendFirDraft(id: string, draft: string) {return this.request(`/fir/${id}/drafts/${draft}/send`,{},'POST',undefined,{},60000);}
   firLifecycle(id:string){return this.request<import('./fir-lifecycle').FirLifecycleView>(`/fir/${id}/lifecycle`);}
   approveFirDraft(id: string, draft: string,token:import('./fir-lifecycle').FirLifecycleToken) {return this.request(`/fir/${id}/drafts/${draft}/approve`,token);}
+  // Report services: Property Search, Document Forensic, Court Marriage.
+  reportPricing(code: import('./service-reports').ReportServiceCode) {return this.request<import('./service-reports').ReportPricing>(`/service-reports/pricing/${code}`);}
+  saveReportIntake(id: string, input: {tier?: 'ordinary'|'urgent'|null; details: Record<string, unknown>; expected_updated_at?: string}) {return this.request<ApiCase>(`/service-reports/${id}/intake`,input,'PATCH');}
+  startReport(id: string) {return this.request<ApiCase>(`/service-reports/${id}/start`,{});}
+  saveReport(id: string, input: Record<string, unknown>) {return this.request<{id:string;version:number}>(`/service-reports/${id}/drafts`,input);}
+  previewReport(id: string, draft: string) {return this.request<{files:{filename:string;pdf_base64:string}[]}>(`/service-reports/${id}/drafts/${draft}/preview`,{},'POST',undefined,{},60000);}
+  submitReport(id: string, draft: string) {return this.request<ApiCase>(`/service-reports/${id}/drafts/${draft}/submit`,{},'POST',undefined,{},60000);}
+  approveReport(id: string, draft: string) {return this.request<ApiCase>(`/service-reports/${id}/drafts/${draft}/approve`,{});}
+  requestReportChanges(id: string, draft: string, items: import('./service-reports').ChangeItem[]) {return this.request<ApiCase>(`/service-reports/${id}/drafts/${draft}/request-changes`,{items});}
   private refreshing?: Promise<ApiTokens>;
   constructor(private readonly options: Options) {}
   private async transport(

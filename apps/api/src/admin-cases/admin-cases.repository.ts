@@ -1,5 +1,6 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { z } from 'zod';
+import { isReportService } from '@legalitt/shared';
 import { ADMIN_CASE_BUCKETS, adminBucketFor, CaseStatus, SERVICE_CODES, type AdminCasePage, type AdminCaseRow } from '@legalitt/shared';
 import { PrismaService } from '../prisma.service';
 import { parse } from '../auth/auth.service';
@@ -45,9 +46,10 @@ export class AdminCasesRepository {
       ]}] : []),
     ]};
     const consultation=isConsultationService(input.service);
-    const waiting: Prisma.CaseWhereInput = consultation?{status:'in_progress',sub_status:'awaiting_admin_approval'}:{service_code:'fir_draft',OR:[{status:'in_progress',sub_status:'awaiting_admin_approval'},{status:{in:['assigned','advocate_accepted','in_progress','changes_requested']},sub_status:{in:['identity_review_pending','multiple_corrections_required']}}]};
+    const report=isReportService(input.service);
+    const waiting: Prisma.CaseWhereInput = consultation||report?{status:'in_progress',sub_status:'awaiting_admin_approval'}:{service_code:'fir_draft',OR:[{status:'in_progress',sub_status:'awaiting_admin_approval'},{status:{in:['assigned','advocate_accepted','in_progress','changes_requested']},sub_status:{in:['identity_review_pending','multiple_corrections_required']}}]};
     const ordinaryBucket:Prisma.CaseWhereInput={status:{in:eligible.filter(s=>adminBucketFor(s,input.service)===input.bucket)}};
-    const bucketWhere: Prisma.CaseWhereInput = consultation&&input.bucket==='open'?{OR:[ordinaryBucket,waiting]}:consultation&&input.bucket==='in_progress'?{AND:[ordinaryBucket,{NOT:waiting}]}:ordinaryBucket;
+    const bucketWhere: Prisma.CaseWhereInput = (consultation||report)&&input.bucket==='open'?{OR:[ordinaryBucket,waiting]}:(consultation||report)&&input.bucket==='in_progress'?{AND:[ordinaryBucket,{NOT:waiting}]}:ordinaryBucket;
     const filtered: Prisma.CaseWhereInput = {AND:[base,
       ...(input.bucket ? [input.service==='fir_draft'?{OR:eligible.flatMap(status=>[null,'awaiting_admin_approval','advocate_revision_required','identity_replacement_required','identity_review_pending','multiple_corrections_required'].filter(sub=>adminBucketFor(status,input.service,sub)===input.bucket).map(sub_status=>({status,sub_status})))}:bucketWhere] : []),
       ...(input.queue ? [waiting] : [])]};
@@ -111,6 +113,7 @@ export class AdminCasesRepository {
           advocate: row.advocate_id_relation ? {id: row.advocate_id_relation.id, name: row.advocate_id_relation.full_name} : null,
           documents, simulated_documents, simulated: row.case_events_case_id_relations.some(e=>e.source==='simulated'), status: row.status as CaseStatus, bucket: adminBucketFor(row.status as CaseStatus,row.service_code,row.sub_status)!,
           ...(row.service_code==='fir_draft'?{sub_status:row.sub_status,approval:firApproval(row.case_events_case_id_relations)}:{}),
+          ...(isReportService(row.service_code)?{sub_status:row.sub_status}:{}),
           amount_paise: row.pricing_id_relation?.base_amount_paise.toString() ?? null,
           created_at: row.created_at.toISOString(),
         };
