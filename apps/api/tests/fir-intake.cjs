@@ -4,7 +4,7 @@ const {CaseStateMachine}=require('../dist/src/cases/case-state-machine'),{CaseRe
 const {FirSubmissionSchema,validFirDate,INDIA_JURISDICTIONS}=require('@legalitt/shared');
 const source=require('../../../packages/shared/src/reference/india-jurisdictions.json');
 const state=INDIA_JURISDICTIONS.find(s=>s.name==='Maharashtra'),district=state.districts.find(d=>d.name==='Mumbai');
-const intake=()=>({intake_version:2,intake_step:3,contact:{fullName:'TEST Intake',mobile:'2025550100',email:'',country_code:'IN',dial_code:'+91'},jurisdiction:{state:state.name,state_code:state.code,district:district.name,district_code:district.code,policeStation:'TEST free text station',source_retrieved_at:source.retrieved_at},incident:{type:'theft',date:'10/11/2026',time:'09:30',location:'TEST location',description:'TEST ONLY intake; no police filing.',additional:'TEST additional information'},people:[{id:randomUUID(),kind:'complainant',name:'TEST Intake',phone:'+91 2025550100',residence:'TEST residence',details:''},{id:randomUUID(),kind:'accused',name:'',unknown:true,alias:'TEST identifying description',primary:true,details:'TEST unknown suspect'},{id:randomUUID(),kind:'witness',name:'TEST witness',phone:'2025550101',role:'Passerby',presence:'At incident',details:'TEST statement'}]});
+const intake=()=>({intake_version:2,intake_step:3,contact:{fullName:'TEST Intake',mobile:'2025550100',email:'',country_code:'IN',dial_code:'+91'},jurisdiction:{state:state.name,state_code:state.code,district:district.name,district_code:district.code,policeStation:'TEST free text station',source_retrieved_at:source.retrieved_at},incident:{type:'theft',date:'10/11/2026',time:'09:30',location:'TEST location',description:'TEST ONLY intake; no police filing.',additional:'TEST additional information'},people:[{id:randomUUID(),kind:'complainant',name:'TEST Intake',phone:'+91 2025550100',residence:'TEST residence',details:'',personal_details:require('./helpers/fir.cjs').personal()},{id:randomUUID(),kind:'accused',name:'',unknown:true,alias:'TEST identifying description',primary:true,details:'TEST unknown suspect'},{id:randomUUID(),kind:'witness',name:'TEST witness',phone:'2025550101',role:'Passerby',presence:'At incident',details:'TEST statement'}]});
 test('official jurisdiction snapshot has unique LGD codes and a reproducible checksum',()=>{
  assert.equal(source.source,'https://lgdirectory.gov.in/downloadDirectory.do');
  assert.equal(INDIA_JURISDICTIONS.length,36);const districts=INDIA_JURISDICTIONS.flatMap(s=>s.districts);
@@ -17,7 +17,7 @@ test('FIR submission validates real dates, contact, complainant and known versus
  const input=intake();assert.equal(FirSubmissionSchema.safeParse(input).success,true);
  for(const date of ['31/02/2026','29/02/2025','2026-13-01','yesterday'])assert.equal(validFirDate(date),false,date);
  assert.equal(validFirDate('29/02/2024'),true);
- for(const change of [v=>v.people[1].unknown=false,v=>v.people[0].phone='',v=>v.contact.email='invalid',v=>v.incident.time='25:99',v=>v.incident.description='']){
+ for(const change of [v=>v.people[0].personal_details.age=null,v=>v.people[0].residence='',v=>v.people[1].unknown=false,v=>v.people[0].phone='',v=>v.contact.email='invalid',v=>v.incident.time='25:99',v=>v.incident.description='']){
   const v=intake();change(v);assert.equal(FirSubmissionSchema.safeParse(v).success,false);
  }
 });
@@ -37,7 +37,7 @@ test('FIR intake persists partial cases and parties atomically, with ownership a
    assert.equal((await db.case.findUnique({where:{id:c.id}})).details.people,undefined);
    assert.equal(await db.caseParty.count({where:{case_id:c.id}}),3);
    const read=await repo.read(client,c.id);assert.deepEqual(read.details.people.map(p=>p.id),partial.people.map(p=>p.id));
-   assert.equal(read.details.people[1].unknown,true);assert.equal(read.details.people[0].residence,'TEST residence');
+   assert.deepEqual(read.details.people[0].personal_details,partial.people[0].personal_details);assert.equal(read.details.people[1].unknown,true);assert.equal(read.details.people[0].residence,'TEST residence');
    assert.equal(read.details.people[2].role,'Passerby');assert.equal(read.details.people[2].presence,'At incident');
   });
   await t.test('another client cannot read or write; foreign party IDs roll back all changes',async()=>{
@@ -58,9 +58,8 @@ test('FIR intake persists partial cases and parties atomically, with ownership a
    const keep=saved.details.people.slice(0,2);saved=await fir.intake(client,c.id,{...saved.details,people:keep,expected_updated_at:saved.updated_at.toISOString()});
    assert.deepEqual((await repo.read(client,c.id)).details.people.map(p=>p.id),keep.map(p=>p.id));assert.equal(await db.caseParty.count({where:{case_id:c.id}}),2);
   });
-  await t.test('submission requires identity evidence and locks further intake changes',async()=>{
-   await assert.rejects(sm.submitForPayment(client,c.id),{status:400});
-   await db.document.create({data:{case_id:c.id,owner_id:client.id,kind:'id_proof',filename:'TEST.png',mime_type:'image/png',size_bytes:100n,status:'uploaded',s3_key:randomUUID()}});
+  await t.test('submission works without identity evidence and locks further intake changes',async()=>{
+   assert.equal(await db.document.count({where:{case_id:c.id}}),0);
    await sm.submitForPayment(client,c.id);assert.equal((await repo.read(client,c.id)).status,'payment_pending');await assert.rejects(fir.intake(client,c.id,intake()),{status:409});
   });
  }finally{

@@ -52,7 +52,7 @@ async function main(){let browser,api,server,page;const proof={};
   await fill(page,'Additional details','TEST local unsaved conflict text');await text(page,'changed in another session');assert.equal(await page.$eval('textarea[aria-label="Additional details"]',e=>e.value),'TEST local unsaved conflict text');await click(page,'Reload saved intake…');await text(page,'Copy any entries');await click(page,'Reload and replace unsaved entries');await saved(page);
   assert.equal(await page.$eval('textarea[aria-label="Additional details"]',e=>e.value),'TEST other session saved context');proof.concurrent_edit_conflict=true;
   await fill(page,'Additional details','TEST ONLY additional context retained on review.');await saved(page);await page.screenshot({path:path.join(out,'step2.png'),fullPage:true});await click(page,'Continue to People Involved');await text(page,'No accused or suspects added.');
-  await click(page,'Edit complainant',true);await fill(page,'Registered residence','TEST ONLY residence');await click(page,'Done');
+  await click(page,'Edit complainant',true);await fill(page,'Registered residence','TEST ONLY residence');for(const [label,value]of [['Father’s name','TEST Father'],['Age','37'],['Gender','Woman'],['Occupation','TEST Teacher'],['Present address','TEST Present Address']])await fill(page,label,value);await click(page,'Done');
   await click(page,'+ Add Accused / Opposite Party');await click(page,'☐ Identity unknown');await fill(page,'Alias / identifying information','TEST ONLY unidentified person in blue');await fill(page,'Other known details','TEST ONLY unknown suspect description');await click(page,'Done');
   await click(page,'+ Add Accused / Opposite Party');await fill(page,'Accused name','TEST ONLY named accused');await fill(page,'Contact number','2025550102');await click(page,'☐ Primary accused');await click(page,'Done');
   await click(page,'+ Add Witness');await fill(page,'Witness name','TEST ONLY witness');await fill(page,'Contact number','2025550103');await fill(page,'Witness role / relationship','TEST passerby');await fill(page,'When present','TEST at incident');await fill(page,'Statement note','TEST witness statement note');await click(page,'Done');await saved(page);await page.screenshot({path:path.join(out,'step3.png'),fullPage:true});
@@ -61,7 +61,7 @@ async function main(){let browser,api,server,page;const proof={};
   await page.goto(mobile+'/fir/status?caseId='+id,{waitUntil:'networkidle0'});await click(page,'Continue intake');await text(page,'Documents & Evidence');assert.ok(page.url().includes('/step4'));proof.resume_through_existing_status_url=true;
   // Actual upload control, synthetic PNG only; no draft/PDF generation or AI.
   const fixture=path.join(out,'TEST-intake-evidence.png');fs.copyFileSync('apps/mobile/assets/legalitt-mark.png',fixture);
-  if(deployed){const choosing=page.waitForFileChooser();await click(page,'Upload ID Proof');await(await choosing).accept([fixture]);proof.browser_file_upload=true;}
+  if(deployed){const choosing=page.waitForFileChooser();await click(page,'Upload ID Proof (Optional)');await(await choosing).accept([fixture]);proof.browser_file_upload=true;}
   else{
    // 8083 is an isolated test origin outside the existing S3 CORS allowlist.
    // Keep browser security and cloud settings intact; deployed proof uses the button.

@@ -2,10 +2,11 @@
 import 'regenerator-runtime/runtime';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import fontkit, * as kit from '@pdf-lib/fontkit';
-import { PDFDocument, rgb, type PDFFont, type PDFPage, type PDFImage, type RGB, PDFOperator, PDFOperatorNames, PDFName, PDFHexString } from 'pdf-lib';
+import { PDFDocument, rgb, type PDFFont, type PDFPage, type PDFImage, type RGB,  } from 'pdf-lib';
 import { DEFAULT_NOTICE_POLICY, noticeClosing, noticePdfProblem, noticeSenderIntroduction, type NoticeSenderPhrase, type NoticePolicy, type NoticeDraftContent } from '@legalitt/shared';
 import { noticeLetterhead as t } from './notice-letterhead';
+import {PdfText,embedTextFonts,needsPage,type Run,type Span,type Weight} from './pdf-text';
+export {unsupportedCharacters} from './pdf-text';
 
 export type NoticePdfInput = {
   reference: string; date: Date; place?: string | null;
@@ -17,79 +18,23 @@ export type NoticePdfInput = {
   content: NoticeDraftContent;
 };
 const ASSETS = resolve(__dirname, '../../../assets');
-const bytes = (name: string) => readFileSync(resolve(ASSETS, 'fonts', name));
-const files = {
-  latin: {regular: bytes('NotoSans-Regular.ttf'), bold: bytes('NotoSans-Bold.ttf')},
-  devanagari: {regular: bytes('NotoSansDevanagari-Regular.ttf'), bold: bytes('NotoSansDevanagari-Bold.ttf')},
-};
-type Script = keyof typeof files;
-type Weight = keyof typeof files.latin;
-const faces = {latin: kit.create(files.latin.regular), devanagari: kit.create(files.devanagari.regular)};
-const scriptOf = (ch: string): Script => /[ऀ-ॿ꣠-ꣿ᳐-᳿]/.test(ch) ? 'devanagari' : 'latin';
-function covered(ch: string) {
-  const cp = ch.codePointAt(0)!;
-  return faces.latin.hasGlyphForCodePoint(cp) || faces.devanagari.hasGlyphForCodePoint(cp);
-}
-export function unsupportedCharacters(text: string) {
-  return [...new Set([...text].filter(ch => !/\s/.test(ch) && !covered(ch)))];
-}
 const color = (hex: string) => rgb(...[1, 3, 5].map(i => parseInt(hex.slice(i,i+2),16)/255) as [number,number,number]);
 const INK=color(t.ink), GOLD=color(t.gold), WHITE=color(t.white), BAND=color(t.band);
 const X=(px:number)=>px*t.width/t.sourceWidth, Y=(px:number)=>px*t.height/t.sourceHeight;
 const BODY=X(t.bodySize), LEAD=Y(t.leading), LEFT=X(t.left), RIGHT=X(t.right), BOTTOM=Y(852);
 const paragraphs=(text:string)=>text.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
 const dateText=(date:Date)=>date.toLocaleDateString('en-GB',{timeZone:'Asia/Kolkata'});
-type Span={text:string; weight?:Weight};
-type Run={text:string; font:PDFFont};
 class Letter {
   page!:PDFPage;
   top=0;
   headerBottom=Y(t.headerHeight+t.headerRule);
-  constructor(private readonly pdf:PDFDocument,private readonly fonts:Record<Script,Record<Weight,PDFFont>>,
-    private readonly wordmark:PDFImage,private readonly input:NoticePdfInput) {}
-  runs(text:string,weight:Weight='regular'):Run[] {
-    const out:Run[]=[];
-    for(const ch of text){
-      const font=this.fonts[scriptOf(ch)][weight],last=out.at(-1);
-      const printable=covered(ch)||/\s/.test(ch)?ch:'?';
-      if(last?.font===font)last.text+=printable;else out.push({text:printable,font});
-    }
-    return out;
-  }
-  width(runs:Run[],size=BODY){return runs.reduce((sum,r)=>sum+r.font.widthOfTextAtSize(r.text,size),0);}
-  wrap(spans:Span[],max:number,size=BODY):Run[][] {
-    // Break oversized words by grapheme, retaining Indic clusters. Normal words
-    // and mixed regular/bold spans keep their exact spaces and wrap together.
-    const out:Run[][]=[[]];
-    const segmenter=new Intl.Segmenter('en',{granularity:'grapheme'});
-    for(const span of spans)for(const token of span.text.match(/\s+|\S+/g)??[]){
-      if(/\n/.test(token)){out.push([]);continue;}
-      const run=this.runs(token,span.weight);
-      if(/^\s+$/.test(token)){if(out.at(-1)!.length)out.at(-1)!.push(...this.runs(' ',span.weight));continue;}
-      if(this.width(out.at(-1)!,size)+this.width(run,size)>max&&out.at(-1)!.length)out.push([]);
-      if(this.width(run,size)<=max)out.at(-1)!.push(...run);
-      else for(const {segment} of segmenter.segment(token)){
-        const piece=this.runs(segment,span.weight);
-        if(this.width(out.at(-1)!,size)+this.width(piece,size)>max&&out.at(-1)!.length)out.push([]);
-        out.at(-1)!.push(...piece);
-      }
-    }
-    return out.filter(line=>line.length).map(line=>{
-      while(line.at(-1)?.text===' ')line.pop();return line;
-    });
-  }
-  draw(runs:Run[],x:number,top:number,size=BODY,ink=INK){
-    // Preserve the entire logical line across glyph reordering and font/script
-    // switches. Marking individual shaped glyph runs loses combining clusters
-    // in some PDF readers even though their visual appearance is correct.
-    this.page.pushOperators(PDFOperator.of(PDFOperatorNames.BeginMarkedContentSequence, [PDFName.of('Span'),
-      this.pdf.context.obj({ActualText:PDFHexString.fromText(runs.map(run=>run.text).join(''))}).toString()]));
-    for(const run of runs){
-      this.page.drawText(run.text,{x,y:t.height-top-size,size,font:run.font,color:ink});
-      x+=this.width([run],size);
-    }
-    this.page.pushOperators(PDFOperator.of(PDFOperatorNames.EndMarkedContent));
-  }
+  private readonly typography:PdfText;
+  constructor(private readonly pdf:PDFDocument,fonts:Awaited<ReturnType<typeof embedTextFonts>>,
+    private readonly wordmark:PDFImage,private readonly input:NoticePdfInput) {this.typography=new PdfText(pdf,fonts);}
+  runs(text:string,weight:Weight='regular'){return this.typography.runs(text,weight);}
+  width(runs:Run[],size=BODY){return this.typography.width(runs,size);}
+  wrap(spans:Span[],max:number,size=BODY){return this.typography.wrap(spans,max,size);}
+  draw(runs:Run[],x:number,top:number,size=BODY,ink=INK){this.typography.draw(this.page,runs,x,top,size,ink);}
   text(text:string,x:number,top:number,size=BODY,weight:Weight='regular',ink=INK){this.draw(this.runs(text,weight),x,top,size,ink);}
   line(x:number,top:number,x2:number,ink=INK,thickness=X(0.6)){
     this.page.drawLine({start:{x,y:t.height-top},end:{x:x2,y:t.height-top},thickness,color:ink});
@@ -145,7 +90,7 @@ class Letter {
     let top=Y(898);for(const row of rows){this.draw(row,X(36),top,X(6),WHITE);top+=Y(8);}
   }
   newPage(){this.page=this.pdf.addPage([t.width,t.height]);this.header();this.footer();this.top=this.headerBottom+Y(24);}
-  ensure(height:number){if(this.top+height>BOTTOM)this.newPage();}
+  ensure(height:number){if(needsPage(this.top,height,BOTTOM))this.newPage();}
   gap(px:number){this.top+=Y(px);}
   paragraph(spans:string|Span[],indent=0,size=BODY,leading=LEAD){
     const rows=this.wrap(typeof spans==='string'?[{text:spans}]:spans,RIGHT-LEFT-indent,size);
@@ -206,11 +151,9 @@ class Letter {
 export async function renderNoticePdf(input:NoticePdfInput):Promise<Uint8Array>{
   const problem=noticePdfProblem(input);
   if(problem)throw Object.assign(new Error(problem.message),problem);
-  const pdf=await PDFDocument.create();pdf.registerFontkit(fontkit);
+  const pdf=await PDFDocument.create();
   pdf.setTitle(input.reference);pdf.setCreationDate(input.date);pdf.setModificationDate(input.date);
-  const embed=(data:Buffer)=>pdf.embedFont(data,{subset:true});
-  const fonts={latin:{regular:await embed(files.latin.regular),bold:await embed(files.latin.bold)},
-    devanagari:{regular:await embed(files.devanagari.regular),bold:await embed(files.devanagari.bold)}};
+  const fonts=await embedTextFonts(pdf);
   const wordmark=await pdf.embedPng(readFileSync(resolve(ASSETS,'letterhead/legalitt-wordmark-white.png')));
   new Letter(pdf,fonts,wordmark,input).render();return pdf.save();
 }

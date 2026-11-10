@@ -5,7 +5,7 @@
 export const designSubstitutions = {
   // Restored FIR intake layouts, owner-approved 10 Nov 2026 (§9.2).
   43: {next: 'Continue to People Involved'},
-  45: {summary: 'ATTACHMENT SUMMARY', identity: 'Identity evidence is required before submission. Uploading it does not verify your identity.', media: 'PDF, PNG or JPEG. Video and audio uploads are not available.', overage: '₹25 per PDF page beyond 25 across all files combined, with no GST on extra pages. The total is shown before payment.'},
+  45: {summary: 'ATTACHMENT SUMMARY', identity: 'ID proof is optional for FIR while requirement and accepted documents await client confirmation (Q15).', media: 'PDF, PNG or JPEG. Video and audio uploads are not available.', overage: '₹25 per PDF page beyond 25 across all files combined, with no GST on extra pages. The total is shown before payment.'},
   46: {review: 'Review the information you provided before submitting your FIR Draft request.', declaration: 'By submitting, you confirm that the information provided is accurate and truthful to the best of your knowledge.'},
   // Owner-approved 10 Nov 2026: admin review replaces client review for FIR.
   218: {send: 'Send for Admin Approval', freeze: 'Sending freezes this version for admin approval. It will not be sent to the client yet.'},

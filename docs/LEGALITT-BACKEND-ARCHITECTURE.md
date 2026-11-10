@@ -1614,9 +1614,12 @@ a refusal, not a URL.
 
 **6d — Identity documents.**
 
-Flows such as FIR require identity evidence attached to the case. §7.1 forbids
-storing Aadhaar numbers, and an unmasked Aadhaar image contains the number, so
-storing one would breach it.
+FIR identity evidence is **optional**, confirmed by the project owner on
+10 November 2026: neither intake submission nor PDF generation requires an
+identity document. Q15 (which documents are accepted in each flow) remains open;
+do not infer a requirement or accepted-document policy from the drawn example.
+§7.1 forbids storing Aadhaar numbers, and an unmasked Aadhaar image contains the
+number, so storing one would breach it.
 
 The client's own design already points the right way: 447 draws
 `Aadhaar Card (XXXX-XXXX-4812)` — a **masked** Aadhaar, which UIDAI provides
@@ -1624,8 +1627,8 @@ as a download for exactly this purpose.
 
 Rules:
 
-- **Do not require Aadhaar.** The ID proof upload accepts PAN, passport,
-  driving licence or voter ID. Offer those first.
+- **Do not require Aadhaar.** In FIR, do not claim that PAN, passport, driving
+  licence or voter ID is approved for this flow until the client answers Q15.
 - **If Aadhaar is used, masked only.** The upload screen must say so. The
   system cannot enforce it technically, so the wording carries the weight.
 - **Never extract content from an identity file** — no OCR, no text
@@ -1889,6 +1892,62 @@ gate or explicit framing that it is not legal advice.
 
 ### 9.2 Register of design substitutions
 
+**Structured FIR draft and personal facts — authorised 10 November 2026.**
+Design 447 retains its eight numbered sections, field boxes, document rows and
+save/send workspace. It now edits `FirDraftContentSchema` v2 rather than flattening
+the proforma into notice content. Manual drafting only; no AI in this release.
+Designs 44/46 gain complainant father's name, age, gender, occupation and present
+address, using the existing intake card/field style. Reason: these are client
+facts, not details an advocate should guess. Each uses a typed `Answer<T>`:
+provided value, explicitly unknown, or not applicable; null means not answered.
+Draft intakes autosave incomplete answers; submission requires each answer and
+the registered residence. Values live in the complainant `case_parties.details`.
+They appear in review and read-only in the advocate editor as **From client's
+filing**. There is no advocate endpoint for changing them.
+
+Design 45's mandatory-ID title/button and design 46's missing-ID requirement are
+replaced with **optional ID proof** wording; design 447's preselected Aadhaar
+example is replaced by an optional selection from this case's actual uploads.
+Reason: **Q15 remains open and ID proof is not confirmed as required for FIR**.
+No upload is identity verification. If Aadhaar is uploaded, it must be masked
+(§7.1); no identity numbers are extracted or required. Empty selection never
+blocks submission, preview or send. Selected ID evidence must belong to this
+case and be included in the attachment list.
+
+Jurisdiction, complainant facts and incident type/date/time/location are frozen
+server-side snapshots from the client filing, read-only in the editor. The
+advocate edits distance/direction, repeatable accused (including explicitly
+unknown suspects), manual act/section/description rows, the complete statement
+of facts, repeatable witnesses, and ordered attachment selections. Every editable
+answer reaches the PDF. Narrative initially copies intake but the saved edited
+text is authoritative. Original uploaded files remain separate; the proforma
+prints their ordered manifest. Source party IDs preserve links without changing
+the original intake. Missing answers block preview/send beside those actions;
+partial draft versions remain saveable.
+
+The generated document is a neutral all-state police proforma, using the saved
+LGD state/district and free-text station, with no MP-only branding, notice
+letterhead, disclaimer or consequence clauses. Only fonts, Unicode shaping,
+wrapping and pagination are shared with notices. A typed station-use marker
+permits ruled handwriting spaces for **FIR number, date/time received at the
+station, and receiving officer's signature**. The signature space is an
+owner-authorised addition, not a claimed detail of the drawing. All three are
+labelled **For completion at the police station**; these are the explicit
+exception to §1a.1, not placeholders for missing client/advocate data.
+
+Draft saves supply `base_draft_id` (null for first version) and the filing hash.
+Case locks plus comparison reject stale saves with 409 and keep browser edits
+until explicit reload. Preview/send require the latest complete version and
+unchanged filing/evidence; pending approval blocks second versions. Admin still
+approves exactly the submitted version/PDF, which is released unchanged to the
+client and closes the case. No new rejection path or AI is added.
+
+**Existing paid-case audit, 10 November 2026:** one paid FIR, already completed,
+matched to our recorded synthetic walkthrough; zero unfinished paid FIRs and
+zero unverified cases. Its approved PDF/history stay unchanged. No data reset
+was needed and no paid-case completion action was built. Evidence:
+`reports/fir-draft-2026-11-10/paid-case-audit.json`.
+
 **FIR intake layout restoration — authorised 10 November 2026.** Restore the
 approved layouts 42–46 (cards, spacing, typography, step progress and review
 sections) over the API-backed intake. The earlier compact form is removed;
@@ -1925,7 +1984,8 @@ advocate/admin compatibility. Legacy JSON-only intakes remain readable until
 edited; existing completed cases are not rewritten. Saves and party replacement
 are atomic under the case lock; the browser supplies `expected_updated_at` to
 reject stale writes without discarding its unsaved text. Submission validates
-complete data and identity evidence; partial drafts remain saveable.
+complete data; ID proof is optional (10 November decision above). Partial drafts
+remain saveable.
 
 `packages/shared/src/reference/india-jurisdictions.json` is the single shared
 snapshot, retrieved **10 November 2026 at 06:30:15.665 UTC** from the Government

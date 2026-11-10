@@ -333,8 +333,6 @@ export class CaseStateMachine {
     ].includes(to)) throw new ConflictException('This service workflow is not available yet');
     if (to === CaseStatus.submitted && record.service_code === 'fir_draft') {
       parse(FirSubmissionSchema,firIntakeDetails(record.details,await tx.caseParty.findMany({where:{case_id:record.id}})));
-      if (!await tx.document.findFirst({where:{case_id:record.id,owner_id:actor.id,kind:'id_proof',status:'uploaded'}}))
-        throw new BadRequestException('Upload identity evidence in Documents before submitting. PAN, passport, driving licence or voter ID are accepted; Aadhaar is optional and must be masked.');
     }
     if (to === CaseStatus.submitted && record.service_code === 'legal_notice') {
       parse(LegalNoticeSubmissionSchema, record.details);

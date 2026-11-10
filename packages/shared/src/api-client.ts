@@ -31,7 +31,9 @@ type Options = {
 };
 export class ApiClient {
   saveFirIntake(id: string, intake: import('./fir').FirIntake, expected_updated_at?:string) {return this.request<ApiCase>(`/fir/${id}/intake`,{...intake,...(expected_updated_at?{expected_updated_at}:{})},'PATCH');}
-  saveFirDraft(id: string, content: import('./fir').FirDraftContent) {return this.request<{id:string;version:number}>(`/fir/${id}/drafts`,content);}
+  firDraftContext(id:string){return this.request<import('./fir-draft').FirDraftContext>(`/fir/${id}/draft-context`);}
+  saveFirDraft(id: string, input: import('./fir-draft').FirDraftSave) {return this.request<{id:string;version:number;content:import('./fir-draft').FirDraftContent}>(`/fir/${id}/drafts`,input);}
+  previewFirDraft(id:string,draft:string){return this.request<{filename:string;pdf_base64:string}>(`/fir/${id}/drafts/${draft}/pdf`,{},'POST',undefined,{},60000);}
   sendFirDraft(id: string, draft: string) {return this.request(`/fir/${id}/drafts/${draft}/send`,{},'POST',undefined,{},60000);}
   approveFirDraft(id: string, draft: string) {return this.request(`/fir/${id}/drafts/${draft}/approve`,{});}
   private refreshing?: Promise<ApiTokens>;

@@ -1,0 +1,128 @@
+TAP version 13
+# Subtest: FIR: paid intake, advocate version freeze, admin-only approval, oldest-first stalled queue, private PDF and atomic release
+    # Subtest: partial drafts save, complete errors block PDF, and stale concurrent saves cannot replace current work
+    ok 1 - partial drafts save, complete errors block PDF, and stale concurrent saves cannot replace current work
+      ---
+      duration_ms: 829.825
+      type: 'test'
+      ...
+    # Subtest: draft permissions and newest version only
+    ok 2 - draft permissions and newest version only
+      ---
+      duration_ms: 2260.51
+      type: 'test'
+      ...
+    # Subtest: waiting draft frozen and no alternate exit or client review
+    ok 3 - waiting draft frozen and no alternate exit or client review
+      ---
+      duration_ms: 272.7689
+      type: 'test'
+      ...
+    # Subtest: unapproved PDF denied even by direct document ID; case isolation both ways
+    ok 4 - unapproved PDF denied even by direct document ID; case isolation both ways
+      ---
+      duration_ms: 528.8775
+      type: 'test'
+      ...
+# (node:37016) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+# (Use `node --trace-deprecation ...` to show where the warning was created)
+    # Subtest: paid approval stalls are in Open; queue paginates oldest first and reports three days
+    ok 5 - paid approval stalls are in Open; queue paginates oldest first and reports three days
+      ---
+      duration_ms: 1651.4451
+      type: 'test'
+      ...
+    # Subtest: approval pins reviewed PDF and closes once; client can read only approved version
+    ok 6 - approval pins reviewed PDF and closes once; client can read only approved version
+      ---
+      duration_ms: 259.2718
+      type: 'test'
+      ...
+    1..6
+ok 1 - FIR: paid intake, advocate version freeze, admin-only approval, oldest-first stalled queue, private PDF and atomic release
+  ---
+  duration_ms: 6900.2436
+  type: 'test'
+  ...
+# Subtest: official jurisdiction snapshot has unique LGD codes and a reproducible checksum
+ok 2 - official jurisdiction snapshot has unique LGD codes and a reproducible checksum
+  ---
+  duration_ms: 1.9217
+  type: 'test'
+  ...
+# Subtest: FIR submission validates real dates, contact, complainant and known versus unknown suspects
+ok 3 - FIR submission validates real dates, contact, complainant and known versus unknown suspects
+  ---
+  duration_ms: 14.5056
+  type: 'test'
+  ...
+# Subtest: FIR intake persists partial cases and parties atomically, with ownership and revision protection
+    # Subtest: partial save resumes with exact row IDs and all entered fields
+    ok 1 - partial save resumes with exact row IDs and all entered fields
+      ---
+      duration_ms: 126.2602
+      type: 'test'
+      ...
+    # Subtest: another client cannot read or write; foreign party IDs roll back all changes
+    ok 2 - another client cannot read or write; foreign party IDs roll back all changes
+      ---
+      duration_ms: 91.3521
+      type: 'test'
+      ...
+    # Subtest: simultaneous saves admit one revision; stale writes and v1 downgrade are blocked
+    ok 3 - simultaneous saves admit one revision; stale writes and v1 downgrade are blocked
+      ---
+      duration_ms: 66.4539
+      type: 'test'
+      ...
+    # Subtest: district parent validation is atomic; removed people disappear and remaining IDs survive
+    ok 4 - district parent validation is atomic; removed people disappear and remaining IDs survive
+      ---
+      duration_ms: 75.9419
+      type: 'test'
+      ...
+    # Subtest: submission works without identity evidence and locks further intake changes
+    ok 5 - submission works without identity evidence and locks further intake changes
+      ---
+      duration_ms: 75.0798
+      type: 'test'
+      ...
+    1..5
+ok 4 - FIR intake persists partial cases and parties atomically, with ownership and revision protection
+  ---
+  duration_ms: 1115.8618
+  type: 'test'
+  ...
+# Subtest: FIR PDF prints all eight structured sections, repeatable records and edited values; ID is optional
+ok 5 - FIR PDF prints all eight structured sections, repeatable records and edited values; ID is optional
+  ---
+  duration_ms: 579.5224
+  type: 'test'
+  ...
+# Subtest: FIR PDF refuses unanswered client facts and incomplete advocate answers, but accepts explicit answers without ID
+ok 6 - FIR PDF refuses unanswered client facts and incomplete advocate answers, but accepts explicit answers without ID
+  ---
+  duration_ms: 336.7625
+  type: 'test'
+  ...
+# Subtest: FIR PDF wraps long content and Hindi across pages without clipping or changing logical text
+ok 7 - FIR PDF wraps long content and Hindi across pages without clipping or changing logical text
+  ---
+  duration_ms: 4606.4421
+  type: 'test'
+  ...
+# Subtest: FIR save accepts only editable content, explicit base token and source hash
+ok 8 - FIR save accepts only editable content, explicit base token and source hash
+  ---
+  duration_ms: 8.7714
+  type: 'test'
+  ...
+1..8
+# tests 19
+# suites 0
+# pass 19
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 16873.5173

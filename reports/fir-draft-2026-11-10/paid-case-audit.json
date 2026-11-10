@@ -1,0 +1,21 @@
+{
+  "checked_at": "2026-11-10T09:38:12.314Z",
+  "source": "https://gvycg0n3u8.execute-api.ap-south-1.amazonaws.com",
+  "eligible_case_count": 1,
+  "paid_case_count": 1,
+  "unfinished_paid_case_count": 0,
+  "unverified_cases": 0,
+  "cases": [
+    {
+      "id": "ef4db04e-bfe8-4bfc-86c3-47d7f75b1866",
+      "reference": "FIR_DRAFT-2026-0001",
+      "status": "completed",
+      "captured_payments": 1,
+      "all_payments_simulated": true,
+      "demo_owner": true,
+      "matches_previous_walkthrough": true,
+      "confirmed_ours": true
+    }
+  ],
+  "mutation": "none"
+}

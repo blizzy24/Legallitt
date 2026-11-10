@@ -30,18 +30,40 @@ test('FIR: paid intake, advocate version freeze, admin-only approval, oldest-fir
   const fir=new FirService(prisma,docs,inbox),queue=new AdminCasesRepository(prisma),detail=new AdminCaseDetailRepository(prisma);
   const pay=new PaymentsService(prisma,state,{capture:async()=>({paymentId:randomUUID(),simulated:true,source:'simulated'})},inbox);
   const before={};for(const model of ['servicePricing','commissionRate','feePolicy','pageOveragePolicy'])before[model]=await db[model].findMany({select:{id:true}});
-  const intake={contact:{fullName:'TEST complainant',mobile:'2025550100',email:''},jurisdiction:{state:'Maharashtra',district:'Mumbai',policeStation:'TEST station'},incident:{type:'theft',date:'2026-11-10',time:'09:00',location:'TEST location',description:'TEST ONLY synthetic incident.',additional:''},people:[]};
-  const content={fields:{'Police Station':'TEST station','Full Legal Name':'TEST complainant'},legal_sections:[],narrative:'TEST ONLY synthetic complaint. No real offence or filing.',witnesses:[],document_ids:[]};
-  const working=async(owner=client)=>{const c=await state.create(owner,{service_code:'fir_draft'});ids.push(c.id);await fir.intake(owner,c.id,intake);
-    await assert.rejects(state.submitForPayment(owner,c.id),{status:400});
-    await db.document.create({data:{case_id:c.id,owner_id:owner.id,kind:'id_proof',filename:'TEST-ID-proof.pdf',mime_type:'application/pdf',size_bytes:100n,page_count:1,status:'uploaded',s3_key:randomUUID()}});
+  const fixture=require('./helpers/fir.cjs'),intake=fixture.intake(),content=fixture.editable(intake);
+  const saveInput=async id=>{const c=await fir.context(advocate,id);return {base_draft_id:c.latest_draft_id,filing_hash:c.filing_hash,content:fixture.editable(c.intake)};};
+  const save=async(id,patch={})=>{const input=await saveInput(id);return fir.save(advocate,id,{...input,content:{...input.content,...patch}});};
+  const working=async(owner=client)=>{const c=await state.create(owner,{service_code:'fir_draft'});ids.push(c.id);await fir.intake(owner,c.id,fixture.intake());
+    assert.equal(await db.document.count({where:{case_id:c.id}}),0);
     await state.submitForPayment(owner,c.id);const q=await pay.quote(owner,{case_id:c.id});assert.equal(q.status,'ready');assert.equal(q.breakdown.total_paise,'147353');await pay.intent(owner,{case_id:c.id,purpose:'service_fee',quote_id:q.id},randomUUID());await state.assign(admin,c.id,{advocate_id:advocate.id});await state.transition(advocate,c.id,'advocate_accepted');return c;};
   try{
     await db.user.createMany({data:users});await db.advocateProfile.create({data:{user_id:advocate.id,verification:'approved',city:'Mumbai'}});await seedConfirmedPricing(db);
     const c=await working();
+    await t.test('partial drafts save, complete errors block PDF, and stale concurrent saves cannot replace current work',async()=>{
+      const input=await saveInput(c.id);
+      await assert.rejects(fir.save(advocate,c.id,{...input,content:{...input.content,complainant:{name:'Invented'}}}),{status:400});
+      await assert.rejects(fir.save(advocate,c.id,{...input,content:{...input.content,attachment_ids:[randomUUID()]}}),{status:400});
+      const partial=await fir.save(advocate,c.id,{...input,content:{...input.content,distance_and_direction_from_station:null,legal_sections:[],statement_of_facts:''}});
+      await assert.rejects(fir.preview(advocate,c.id,partial.id),e=>e.status===400&&e.message.includes('Statement of facts')&&e.message.includes('legal section'));
+      await assert.rejects(fir.send(advocate,c.id,partial.id),{status:400});
+      assert.equal(await db.document.count({where:{case_id:c.id,kind:'fir_draft'}}),0);
+      await assert.rejects(fir.save(advocate,c.id,input),{status:409});
+      const current=await saveInput(c.id),race=await Promise.allSettled([fir.save(advocate,c.id,current),fir.save(advocate,c.id,current)]);
+      assert.equal(race.filter(r=>r.status==='fulfilled').length,1);assert.equal(race.find(r=>r.status==='rejected').reason.status,409);
+      await assert.rejects(fir.preview(advocate,c.id,partial.id),{status:409});
+      const latest=race.find(r=>r.status==='fulfilled').value;
+      const preview=await fir.preview(advocate,c.id,latest.id);assert.ok(Buffer.from(preview.pdf_base64,'base64').subarray(0,4).equals(Buffer.from('%PDF')));
+      assert.equal(await db.document.count({where:{case_id:c.id,kind:'fir_draft'}}),0,'preview is not a released document');
+      const person=await db.caseParty.findFirst({where:{case_id:c.id,kind:'complainant'}});
+      assert.deepEqual(latest.content.complainant.filed.value.personal_details,person.details.personal_details);
+      await db.caseParty.update({where:{id:person.id},data:{name:'TEST changed source'}});
+      await assert.rejects(fir.preview(advocate,c.id,latest.id),{status:409});
+      await assert.rejects(fir.save(advocate,c.id,{...current,base_draft_id:latest.id}),{status:409});
+      await db.caseParty.update({where:{id:person.id},data:{name:person.name}});
+    });
     await t.test('draft permissions and newest version only',async()=>{
-      await assert.rejects(fir.save(client,c.id,content),{status:403});await assert.rejects(fir.save(otherAdvocate,c.id,content),{status:404});
-      const old=await fir.save(advocate,c.id,content),next=await fir.save(advocate,c.id,{...content,narrative:content.narrative+' Latest.'});
+      await assert.rejects(fir.save(client,c.id,await saveInput(c.id)),{status:403});await assert.rejects(fir.save(otherAdvocate,c.id,await saveInput(c.id)),{status:404});
+      const old=await save(c.id),next=await save(c.id,{statement_of_facts:content.statement_of_facts+' Latest.'});
       await assert.rejects(fir.send(advocate,c.id,old.id),{status:409});
       assert.equal((await repo.read(client,c.id)).drafts.length,0);
       const results=await Promise.allSettled([fir.send(advocate,c.id,next.id),fir.send(advocate,c.id,next.id)]);
@@ -50,7 +72,7 @@ test('FIR: paid intake, advocate version freeze, admin-only approval, oldest-fir
     const pending=await detail.get(admin,c.id),submitted=pending.approval;
     await t.test('waiting draft frozen and no alternate exit or client review',async()=>{
       assert.equal(pending.status,'in_progress');assert.equal(pending.sub_status,'awaiting_admin_approval');
-      for(const action of [()=>fir.save(advocate,c.id,content),()=>fir.send(advocate,c.id,submitted.draft_id),()=>state.transition(admin,c.id,'cancelled'),()=>state.transition(client,c.id,'approved'),()=>state.transition(advocate,c.id,'client_review')])await assert.rejects(action(),{status:409});
+      for(const action of [()=>save(c.id),()=>fir.send(advocate,c.id,submitted.draft_id),()=>state.transition(admin,c.id,'cancelled'),()=>state.transition(client,c.id,'approved'),()=>state.transition(advocate,c.id,'client_review')])await assert.rejects(action(),{status:409});
       await assert.rejects(fir.approve(client,c.id,submitted.draft_id),{status:403});await assert.rejects(fir.approve(advocate,c.id,submitted.draft_id),{status:403});
       await assert.rejects(fir.approve(admin,c.id,randomUUID()),{status:409});
       await assert.rejects(docs.delete(admin,submitted.document_id),{status:409});
@@ -65,7 +87,7 @@ test('FIR: paid intake, advocate version freeze, admin-only approval, oldest-fir
     });
     await t.test('paid approval stalls are in Open; queue paginates oldest first and reports three days',async()=>{
       const old=new Date(Date.now()-3*86400000);await db.case.update({where:{id:c.id},data:{updated_at:old}});await db.caseEvent.updateMany({where:{case_id:c.id,type:'fir_draft_submitted'},data:{created_at:old}});
-      const another=await working(),d=await fir.save(advocate,another.id,content);await fir.send(advocate,another.id,d.id);
+      const another=await working(),d=await save(another.id);await fir.send(advocate,another.id,d.id);
       const first=await queue.list(admin,{service:'fir_draft',queue:'approval',limit:1,search:'TEST FIR client'});
       assert.equal(first.items[0].id,c.id);assert.equal(first.items[0].bucket,'open');assert.equal(first.approval_waiting,2);assert.match(waitingDuration(first.items[0].approval.submitted_at),/3 days/);
       const next=await queue.list(admin,{service:'fir_draft',queue:'approval',limit:1,search:'TEST FIR client',cursor:first.next_cursor});assert.equal(next.items[0].id,another.id);
@@ -87,7 +109,7 @@ test('FIR: paid intake, advocate version freeze, admin-only approval, oldest-fir
     global.fetch=originalFetch;
     await db.notification.deleteMany({where:{case_id:{in:ids}}});await db.draftReview.deleteMany({where:{draft_id_relation:{case_id:{in:ids}}}});
     await db.draft.deleteMany({where:{case_id:{in:ids}}});await db.payment.deleteMany({where:{case_id:{in:ids}}});await db.caseEvent.deleteMany({where:{case_id:{in:ids}}});await db.adminAction.deleteMany({where:{admin_id:admin.id}});
-    await db.document.deleteMany({where:{case_id:{in:ids}}});await db.case.deleteMany({where:{id:{in:ids}}});await db.advocateProfile.deleteMany({where:{user_id:advocate.id}});await db.user.deleteMany({where:{id:{in:users.map(u=>u.id)}}});
+    await db.document.deleteMany({where:{case_id:{in:ids}}});await db.caseParty.deleteMany({where:{case_id:{in:ids}}});await db.case.deleteMany({where:{id:{in:ids}}});await db.advocateProfile.deleteMany({where:{user_id:advocate.id}});await db.user.deleteMany({where:{id:{in:users.map(u=>u.id)}}});
     await db.servicePricing.deleteMany({where:{id:{notIn:before.servicePricing.map(x=>x.id)},fee_policy_id:{not:null}}});await db.feePolicy.deleteMany({where:{id:{notIn:before.feePolicy.map(x=>x.id)}}});await db.servicePricing.deleteMany({where:{id:{notIn:before.servicePricing.map(x=>x.id)}}});await db.commissionRate.deleteMany({where:{id:{notIn:before.commissionRate.map(x=>x.id)}}});await db.pageOveragePolicy.deleteMany({where:{id:{notIn:before.pageOveragePolicy.map(x=>x.id)}}});await db.$disconnect();
   }
 });
