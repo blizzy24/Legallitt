@@ -11,7 +11,9 @@ there is no fixed court-service price. Existing cases retain their price snapsho
    an availability edit. Empty hours mean no bookable slots. A versioned policy
    starts with 28 days ahead, 30 minutes' notice and a 10-minute checkout hold.
 2. Client chooses an approved advocate; admin confirms that same advocate's
-   assignment. Selection alone never grants access to a case. A missed appointment
+   assignment. Active approved advocates who publish hours are bookable for all
+   three services; no unconfirmed service-specific roster restrictions are added.
+   Selection alone never grants access to a case. A missed appointment
    remains visible; the client can reschedule with the same advocate without
    charging again, provided the session has not started. No invented refund.
 3. All sessions use actual in-app chat. Both participants explicitly join/start;

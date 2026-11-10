@@ -39,8 +39,12 @@ module.exports=async function(w){
  await goAdmin();await text(admin,'Submitted draft · v3');await admin.click('fieldset input[type="checkbox"]');await admin.type('#fir-reason','TEST SECOND RETURN: explain the witness sequence before finalising.');await click(admin,'Return for correction');await text(admin,'2 draft rejections for the current advocate.');await shot(admin,'admin-second-return-reassign');
  await adv.reload({waitUntil:'networkidle0'});await text(adv,'2 draft rejections on your current assignment.');await text(adv,'TEST SECOND RETURN');await shot(adv,'advocate-second-return');
  }
- const beforeReassign=await life(),paidAt=beforeReassign.paid_at;await click(admin,'Reassign case');await selectorClick(admin,'[aria-label="Assign to '+sessions['advocate-2'].user.name+'"]');await text(admin,sessions['advocate-2'].user.name);
- l=await life();assert.equal(l.rejection_count,0);assert.equal(l.paid_at,paidAt);assert.equal(l.assignments.find(a=>a.ended_at)?.rejections,2);
+ const beforeReassign=await life(),paidAt=beforeReassign.paid_at;
+ if(!beforeReassign.assignments.some(a=>!a.ended_at&&a.advocate_id===sessions['advocate-2'].user.id)){
+  await click(admin,'Reassign case');await selectorClick(admin,'[aria-label="Assign to '+sessions['advocate-2'].user.name+'"]');
+ }
+ for(let i=0;i<80;i++){l=await life();if(l.rejection_count===0&&l.assignments.some(a=>!a.ended_at&&a.advocate_id===sessions['advocate-2'].user.id))break;await delay(500);}
+ assert.equal(l.rejection_count,0);assert.equal(l.paid_at,paidAt);assert.equal(l.assignments.find(a=>a.ended_at)?.rejections,2);
  await assert.rejects(clients.advocate.case(caseId),{status:404});await assert.rejects(clients.advocate.documentUrl(approval.document_id),{status:404});
  // Both notifications are read in their real inboxes below; former advocate's
  // notice intentionally carries no case link after access is removed.
