@@ -27,4 +27,4 @@ export const emptyFirPersonalDetails = ():FirPersonalDetails => ({father_name:nu
 export function answerText(answer:Answer<string|number>|null|undefined) {
   return answer?.status==='provided'?String(answer.value):answer?.status==='unknown'?'Unknown':answer?.status==='not_applicable'?'Not applicable':'';
 }
-export const FIR_OPTIONAL_ID_NOTICE = 'ID proof is optional for FIR. Which identity documents are accepted is awaiting client confirmation (Q15). If you upload Aadhaar, use a masked copy only. An upload does not verify identity.';
+export const FIR_OPTIONAL_ID_NOTICE = 'ID proof is optional for FIR. If you upload Aadhaar, use a masked copy only. An upload does not verify identity.';
