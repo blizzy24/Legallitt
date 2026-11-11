@@ -1,3 +1,4 @@
+import {AdvocateCompletionCard} from '../cases/AdvocateCompletion';
 import {useEffect,useState} from 'react';
 import {Linking,Platform,Text,View} from 'react-native';
 import {router} from 'expo-router';
@@ -26,7 +27,7 @@ export function ReportAdvocateScreen({caseId,step='request'}:{caseId?:string;ste
  const doc=r.documents?.find(d=>d.id===documentId),fileStage=['upload','send','submit'].includes(step)||!ps&&!df;
  const dirty=!latest||(()=>{const c=latest.content;if(df)return c.production!=='forensic'||JSON.stringify(c.report)!==JSON.stringify(report)||JSON.stringify(c.affidavit)!==JSON.stringify(affidavit)||JSON.stringify(c.signature??[])!==JSON.stringify(signature)||!!c.signed_at!==signed||c.note!==note;if(ps&&!fileStage)return c.production!=='property'||JSON.stringify(c.report)!==JSON.stringify(property)||c.note!==note;return c.production!=='upload'||c.report_document_id!==documentId||c.note!==note;})();
  const issues=df?forensicProblems({report,affidavit,signature,signed_at:signed?'confirmed':null}):ps&&!fileStage?propertyReportProblems(property):!doc?[{field:'document',message:'Upload the final PDF before continuing.'}]:[];
- return <Screen title={closed?'Report delivered':waiting?'Waiting for admin review':SERVICE_NAMES[code]} subtitle={r.reference}><ErrorBox message={m.error}/><Button secondary disabled={m.busy} onPress={()=>void m.load()}>Reload saved case</Button>
+ return <Screen title={closed?'Report delivered':waiting?'Waiting for admin review':SERVICE_NAMES[code]} subtitle={r.reference}><ErrorBox message={m.error}/>{closed&&<AdvocateCompletionCard caseId={r.id}/>}<Button secondary disabled={m.busy} onPress={()=>void m.load()}>Reload saved case</Button>
  {r.report.changes&&<Card title={`Admin requested changes to v${r.report.submission?.version}`}><Text style={s.muted}>Internal review · These instructions are not shown to the client.</Text>{r.report.changes.items.map((v,i)=><View key={i} style={{gap:4}}><Text style={s.label}>{i+1}. {v.title}</Text>{v.detail&&<Text style={s.body}>{v.detail}</Text>}</View>)}<Text style={s.muted}>Requested {when(r.report.changes.requested_at)}. Save a corrected version and return it to admin.</Text></Card>}
  <IntakeSummary service={code} form={m.form} filing/>
  {(step==='request'||step==='documents'||waiting||closed)&&<ReportDocuments model={m}/>}
