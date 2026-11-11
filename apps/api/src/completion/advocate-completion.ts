@@ -16,7 +16,7 @@ export class AdvocateCompletionService {
     if (actor.role !== 'advocate' && actor.role !== 'admin') throw new ForbiddenException('Advocate access required');
     const db = await this.prisma.getClient();
     const record = await db.case.findFirst({where: {AND: [caseScope(actor), {id}]},
-      include: {shipments_case_id_relations: true, case_events_case_id_relations: {where: {type: {in: ['fir_released_to_client', 'service_report_released']}}, orderBy: {id: 'asc'}}}});
+      include: {shipments_case_id_relations: true, case_events_case_id_relations: {where: {type: {in: ['fir_released_to_client', 'fir_sent_to_client', 'fir_police_submitted', 'service_report_released']}}, orderBy: {id: 'asc'}}}});
     if (!record) throw new NotFoundException('Case not found');
     const base = {service_code: record.service_code as AdvocateCompletion['service_code'], reference: record.reference, status: record.status};
     // D-53: a cancelled case says only that no further work is needed — never the
@@ -34,9 +34,13 @@ export class AdvocateCompletionService {
         if (shipment.pod_document_id) docs.push({id: shipment.pod_document_id, label: 'Proof of delivery'});
       }
     }
+    // FIR: the last draft sent to the client is the one they approved; then the police receipt (C14).
+    const firSent = record.case_events_case_id_relations.filter(e => e.type === 'fir_sent_to_client').at(-1)?.payload as {document_id?: string} | undefined;
+    if (firSent?.document_id) docs.push({id: firSent.document_id, label: 'Approved FIR draft'});
     for (const e of record.case_events_case_id_relations) {
-      const p = e.payload as {document_id?: string; document_ids?: string[]};
+      const p = e.payload as {document_id?: string; document_ids?: string[]; receipt_document_id?: string};
       if (e.type === 'fir_released_to_client' && p.document_id) docs.push({id: p.document_id, label: 'Approved FIR draft'});
+      if (e.type === 'fir_police_submitted' && p.receipt_document_id) docs.push({id: p.receipt_document_id, label: 'Police receipt'});
       if (e.type === 'service_report_released') for (const d of p.document_ids ?? []) docs.push({id: d, label: 'Released report'});
     }
     if (['legal_advice', 'high_court', 'district_court'].includes(record.service_code)) {

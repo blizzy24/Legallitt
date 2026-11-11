@@ -19,13 +19,15 @@ export function firStage(input: {status: string; sub_status?: string | null; adv
   const client = (stage: 1 | 2 | 3 | 4 | 5, statusText: string, note: string | null = null, done = false, decision_due = false) =>
     ({stage, label: FIR_CLIENT_STAGES[stage - 1], status: statusText, note, done, decision_due});
   const advocate = (chip: string, action: string | null, screen: FirAdvocateScreen | null) => ({chip, action, screen});
+  const redraft = sub === FIR_CLIENT_CHANGES ? client(3, 'Draft being updated', 'Advocate is updating your draft') : sub ? client(3, 'Draft being prepared', 'Drafting team assigned') : null;
   switch (status) {
     case 'draft': return {client: client(1, 'Draft – not submitted'), advocate: advocate('Draft', null, null), admin: {label: 'Not submitted'}};
     case 'submitted': case 'payment_pending': return {client: client(1, 'Awaiting payment'), advocate: advocate('Awaiting payment', null, null), admin: {label: 'Awaiting payment'}};
     case 'paid': case 'assigning': return {client: client(2, 'Under review'), advocate: advocate('New Request', null, null), admin: {label: 'New request · assign an advocate'}};
-    case 'advocate_declined': return {client: client(2, 'Under review'), advocate: advocate('Returned to admin', null, null), admin: {label: 'Advocate rejected · reassign'}};
-    case 'assigned': return {client: client(2, 'Under review', 'Drafting team assigned'), advocate: advocate('New Request', 'Review Request', 'request'), admin: {label: 'Assigned · awaiting advocate'}};
-    case 'advocate_accepted': return {client: client(2, 'Under review', 'Drafting team assigned'), advocate: advocate('Accepted', 'Review Documents', 'documents'), admin: {label: 'Accepted by advocate'}};
+    case 'advocate_declined': return {client: redraft ? {...redraft, note: null} : client(2, 'Under review'), advocate: advocate('Returned to admin', null, null), admin: {label: 'Advocate rejected · reassign'}};
+    // A case reassigned after drafting began keeps its marker: the client's timeline never goes backwards.
+    case 'assigned': return {client: redraft ?? client(2, 'Under review', 'Drafting team assigned'), advocate: advocate('New Request', 'Review Request', 'request'), admin: {label: 'Assigned · awaiting advocate'}};
+    case 'advocate_accepted': return {client: redraft ?? client(2, 'Under review', 'Drafting team assigned'), advocate: advocate('Accepted', 'Review Documents', 'documents'), admin: {label: 'Accepted by advocate'}};
     case 'in_progress':
       if (sub === 'awaiting_admin_approval') return {client: client(3, 'Draft being prepared'), advocate: advocate('Sent to Admin', 'View Status', 'status'), admin: {label: 'Awaiting admin approval'}};
       if (sub === FIR_CLIENT_CHANGES) return {client: client(3, 'Draft being updated', 'Advocate is updating your draft'), advocate: advocate('Client Changes', 'Continue Draft', 'draft'), admin: {label: 'Advocate revising after client changes'}};
@@ -33,7 +35,8 @@ export function firStage(input: {status: string; sub_status?: string | null; adv
     case 'changes_requested':
       if (sub === FIR_CLIENT_CHANGES) return {client: client(3, 'Draft being updated', 'Advocate is updating your draft'), advocate: advocate('Client Changes', 'Continue Draft', 'draft'), admin: {label: 'Client asked for changes'}};
       if (sub === 'identity_replacement_required') return {client: client(3, 'Draft being prepared'), advocate: advocate('Identity Replacement', 'View Status', 'status'), admin: {label: 'Waiting for the client’s replacement ID'}};
-      if (sub === 'identity_review_pending' || sub === 'multiple_corrections_required') return {client: client(3, 'Draft being prepared'), advocate: advocate('Admin Returned', 'Continue Draft', 'draft'), admin: {label: 'Replacement ID awaits admin review'}};
+      if (sub === 'identity_review_pending') return {client: client(3, 'Draft being prepared'), advocate: advocate('Admin Returned', 'Continue Draft', 'draft'), admin: {label: 'Replacement ID awaits admin review'}};
+      if (sub === 'multiple_corrections_required') return {client: client(3, 'Draft being prepared'), advocate: advocate('Admin Returned', 'Continue Draft', 'draft'), admin: {label: 'Returned to advocate · identity correction outstanding'}};
       return {client: client(3, 'Draft being prepared'), advocate: advocate('Admin Returned', 'Continue Draft', 'draft'), admin: {label: 'Returned to advocate'}};
     case 'client_review': return {client: client(4, 'Awaiting your approval', null, false, true), advocate: advocate('Waiting for Client', 'View Status', 'status'), admin: {label: 'Sent to client'}};
     case 'approved': return {client: client(5, 'Approved', 'Police station submission by your advocate'), advocate: advocate('Client Approved', 'Mark Submitted', 'status'), admin: {label: 'Client approved · awaiting police submission'}};

@@ -10,7 +10,7 @@ import {
 } from "@nestjs/common";
 import { randomUUID } from "node:crypto";
 import {
-  documentMaxBytes, MEDIA_MIMES, FIR_MEDIA_KINDS, FIR_CHANGE_ATTACHMENT_KIND, FIR_POLICE_RECEIPT_KIND, FIR_CUSTOM_SLOT_KIND, FIR_CHANGE_ATTACHMENT_MAX_BYTES,
+  documentMaxBytes, MEDIA_MIMES, FIR_MEDIA_KINDS, FIR_UPLOAD_SLOTS, FIR_CHANGE_ATTACHMENT_KIND, FIR_POLICE_RECEIPT_KIND, FIR_CUSTOM_SLOT_KIND, FIR_CHANGE_ATTACHMENT_MAX_BYTES,
   DOCUMENT_URL_SECONDS,
   DocumentMimeSchema,
   DocumentPresignSchema,
@@ -100,6 +100,12 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
       // Video and audio are accepted only in the FIR slots drawn for them (flow C6).
       if (MEDIA_MIMES.includes(input.mime) && !(record.service_code === 'fir_draft' && FIR_MEDIA_KINDS[input.kind]?.includes(input.mime)))
         throw new BadRequestException('Upload a PDF, JPEG or PNG file.');
+      // Design 45 slots: each takes only its drawn file types and holds a bounded number of files.
+      const slot = record.service_code === 'fir_draft' ? FIR_UPLOAD_SLOTS.find(s => s.kind === input.kind) : undefined;
+      if (slot && !(slot.accept as readonly string[]).includes(input.mime))
+        throw new BadRequestException(`${slot.title} doesn’t accept this file type.`);
+      if (slot && await tx.document.count({where: {case_id: record.id, kind: slot.kind, status: 'uploaded'}}) >= slot.max)
+        throw new BadRequestException(`${slot.title} holds up to ${slot.max} files. Remove one to add another.`);
       if (input.kind === FIR_CUSTOM_SLOT_KIND && (record.service_code !== 'fir_draft' || !input.slot_label))
         throw new BadRequestException('Name the custom category before uploading.');
       if (input.identity_last4 && (record.service_code !== 'fir_draft' || input.kind !== 'id_proof'))
@@ -137,7 +143,7 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
           status: "pending",
         },
       });
-      const upload = await this.storage.upload(key, input.mime);
+      const upload = await this.storage.upload(key, input.mime, documentMaxBytes(input.mime, input.kind));
       return {
         document: this.publicRecord(doc),
         ...(doc.simulated ? {simulated: true} : {}),
@@ -145,7 +151,7 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
           ...upload,
           method: "POST",
           expires_in: DOCUMENT_URL_SECONDS,
-          max_bytes: documentMaxBytes(input.mime),
+          max_bytes: documentMaxBytes(input.mime, input.kind),
         },
       };
     }, transactionOptions);
@@ -162,6 +168,10 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
         throw new ConflictException('FIR documents are frozen at this stage');
       if (doc.status !== "pending")
         throw new NotFoundException("Document not found");
+      // Two uploads started together cannot both land in a full slot (the case row is locked).
+      const slot = record.service_code === 'fir_draft' ? FIR_UPLOAD_SLOTS.find(s => s.kind === doc.kind) : undefined;
+      if (slot && await tx.document.count({where: {case_id: record.id, kind: slot.kind, status: 'uploaded'}}) >= slot.max)
+        throw new BadRequestException(`${slot.title} holds up to ${slot.max} files. Remove one to add another.`);
       const key = stagingKey(doc.s3_key);
       const info = await this.storage.head(key);
       if (!info)
@@ -170,13 +180,13 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
         if (
           !DocumentMimeSchema.safeParse(info.mime).success ||
           info.size < 1 ||
-          info.size > documentMaxBytes(info.mime) ||
+          info.size > documentMaxBytes(info.mime, doc.kind) ||
           (doc.kind === FIR_CHANGE_ATTACHMENT_KIND && info.size > FIR_CHANGE_ATTACHMENT_MAX_BYTES)
         )
           throw new BadRequestException(
             "File exceeds the upload limits or has an unsupported type",
           );
-        const bytes = await this.storage.read(key, info);
+        const bytes = await this.storage.read(key, info, documentMaxBytes(info.mime, doc.kind));
         const actual = await this.inspector.inspect(bytes);
         if (actual.mime !== info.mime)
           throw new BadRequestException(
@@ -242,7 +252,10 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
         const linked = await tx.draft.findFirst({where:{case_id:parent.id,document_id:id}}) ||
           await tx.draftReview.findFirst({where:{attachment_document_id:id}}) ||
           await tx.firPoliceSubmission.findFirst({where:{receipt_document_id:id}});
-        if (linked || ((parent.sub_status === 'awaiting_admin_approval' || parent.status === 'completed') && record.kind !== 'fir_draft'))
+        // Evidence in a submitted or approved dossier is frozen. An unused change
+        // attachment or a mistaken receipt upload stays removable until it is linked.
+        if (linked || ((parent.sub_status === 'awaiting_admin_approval' || ['client_review','approved','completed'].includes(parent.status)) &&
+          !['fir_draft', FIR_CHANGE_ATTACHMENT_KIND, FIR_POLICE_RECEIPT_KIND].includes(record.kind)))
           throw new ConflictException('Submitted FIR documents cannot be deleted');
       }
       await assertReportDocumentDeletable(tx, parent, record);

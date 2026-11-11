@@ -62,7 +62,7 @@ export class DocumentStorage {
       });
     return this.configuration;
   }
-  async upload(key: string, mime: string) {
+  async upload(key: string, mime: string, maxBytes = documentMaxBytes(mime)) {
     const { bucketName: Bucket } = await this.config();
     // POST policy enforces the limit at S3; a presigned PUT alone cannot impose
     // a content-length range. The destination bucket applies its default SSE-KMS.
@@ -72,7 +72,7 @@ export class DocumentStorage {
       Expires: DOCUMENT_URL_SECONDS,
       Fields: { "Content-Type": mime, success_action_status: "204" },
       Conditions: [
-        ["content-length-range", 1, documentMaxBytes(mime)],
+        ["content-length-range", 1, maxBytes],
         ["eq", "$Content-Type", mime],
       ],
     });
@@ -98,8 +98,8 @@ export class DocumentStorage {
       throw error; // Access denied/service errors are not evidence of absence.
     }
   }
-  async read(key: string, info: ObjectInfo) {
-    if (info.size < 1 || info.size > documentMaxBytes(info.mime))
+  async read(key: string, info: ObjectInfo, maxBytes = documentMaxBytes(info.mime)) {
+    if (info.size < 1 || info.size > maxBytes)
       throw new BadRequestException("File exceeds the upload limits");
     const { bucketName: Bucket } = await this.config();
     const result = await this.s3.send(
@@ -116,7 +116,7 @@ export class DocumentStorage {
     try {
       for await (const chunk of result.Body as AsyncIterable<Uint8Array>) {
         size += chunk.byteLength;
-        if (size > documentMaxBytes(info.mime) || size > info.size)
+        if (size > maxBytes || size > info.size)
           throw new BadRequestException("File exceeds the upload limits");
         chunks.push(chunk);
       }

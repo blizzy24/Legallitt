@@ -41,6 +41,20 @@ function decodeCursor(value: string) {
   return parse(cursorSchema, decoded);
 }
 
+// FIR (docs/flows/FIR-DRAFT-FLOW.md C10): the client never sees the admin step,
+// internal reviews, an advocate's rejection or reminders, and gets no payloads.
+// A later advocate does not see why an earlier advocate left the case.
+const FIR_CLIENT_HIDDEN_EVENTS = ['fir_admin_returned','fir_identity_reviewed','fir_advocate_reassigned','fir_draft_saved','fir_draft_submitted','fir_draft_approved','fir_advocate_rejected','fir_client_reminded'];
+const FIR_ADVOCATE_PRIVATE_EVENTS = ['fir_advocate_rejected','fir_advocate_reassigned'];
+function firEventsFor<T extends {type: string; payload: unknown}>(role: string, events: T[]): T[] {
+  if (role === 'client') return events.filter(e => !FIR_CLIENT_HIDDEN_EVENTS.includes(e.type)).map(e => ({...e, payload: {}}));
+  if (role === 'advocate') return events.map(e => FIR_ADVOCATE_PRIVATE_EVENTS.includes(e.type) ? {...e, payload: {}} : e);
+  return events;
+}
+/** The police receipt the advocate recorded (C14); other receipt uploads stay private. */
+const firReceiptId = (events: {type: string; payload: unknown}[]) =>
+  ([...events].reverse().find(e => e.type === 'fir_police_submitted')?.payload as {receipt_document_id?: string} | undefined)?.receipt_document_id ?? null;
+
 @Injectable()
 export class CaseRepository {
   constructor(private readonly prisma: PrismaService) {}
@@ -113,8 +127,8 @@ export class CaseRepository {
       const captured = payments[0];
       const snapshot = captured?.quote?.snapshot as unknown as {breakdown: import('@legalitt/shared').QuoteBreakdown} | undefined;
       return {...caseRecord,details:firIntakeDetails(record.details,parties),parties,pricing,advocate:advocate?{...advocateUser,profile}:null,
-        events:actor.role==='client'?events.filter(e=>!['fir_admin_returned','fir_identity_reviewed','fir_advocate_reassigned','fir_draft_saved','fir_draft_submitted','fir_draft_approved','fir_advocate_rejected','fir_client_reminded'].includes(e.type)).map(e=>({...e,payload:{}})):events, drafts, reviews:actor.role==='client'?reviews.filter(r=>r.reviewer_id===actor.id):reviews, shipments, approval:actor.role==='client'&&!approval?.approved_at?null:approval,
-        documents: actor.role==='client'?documents.filter(d=>d.owner_id===record.client_id || drafts.some(x=>x.document_id===d.id) || d.kind==='fir_police_receipt'&&record.status==='completed'):documents,
+        events:firEventsFor(actor.role,events), drafts, reviews:actor.role==='client'?reviews.filter(r=>r.reviewer_id===actor.id):reviews, shipments, approval:actor.role==='client'&&!approval?.approved_at?null:approval,
+        documents: actor.role==='client'?documents.filter(d=>d.owner_id===record.client_id || drafts.some(x=>x.document_id===d.id) || d.id===firReceiptId(events)):documents,
         client_fees:snapshot?{...snapshot.breakdown,breakdown_complete:true,simulated:captured.simulated}:null};
     }
     if(isConsultationService(record.service_code)){
@@ -218,7 +232,7 @@ export class CaseRepository {
     const clientFir=actor.role==='client'&&caseRow.service_code==='fir_draft';
     const page=rows.slice(0,input.limit);
     const clientReport=actor.role==='client'&&isReportService(caseRow.service_code);
-    const items=clientFir?page.filter(e=>!['fir_admin_returned','fir_identity_reviewed','fir_advocate_reassigned','fir_draft_saved'].includes(e.type)).map(e=>({...e,payload:{}})):
+    const items=clientFir?firEventsFor('client',page):actor.role==='advocate'&&caseRow.service_code==='fir_draft'?firEventsFor('advocate',page):
       clientReport?page.filter(e=>e.from_status!==e.to_status||e.type==='service_report_released').map(e=>e.type==='service_report_released'?e:{...e,payload:{}}):page;
     return {
       items,

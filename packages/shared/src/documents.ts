@@ -14,8 +14,9 @@ export const DocumentMimeSchema = z.enum([
   "audio/mpeg",
 ]);
 export const MEDIA_MIMES: readonly string[] = ["video/mp4", "audio/mpeg"];
-export const documentMaxBytes = (mime: string | undefined) =>
-  mime === "video/mp4" ? DOCUMENT_MEDIA_MAX_BYTES : DOCUMENT_MAX_BYTES;
+// Design 45: the Scene Photos & Video slot takes JPEG, PNG and MP4 up to 50 MB each.
+export const documentMaxBytes = (mime: string | undefined, kind?: string) =>
+  mime === "video/mp4" || kind === "fir_scene" ? DOCUMENT_MEDIA_MAX_BYTES : DOCUMENT_MAX_BYTES;
 // Metadata must not carry a full identity number. No OCR or identity-field
 // extraction is used to inspect the file itself.
 const metadata = z

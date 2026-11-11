@@ -23,9 +23,12 @@ export async function renderFirPdf(reference:string,input:FirDraftContent){
    ensure(size+6);text.draw(page,row,left,top,size,color);top+=size+6;
   }
  };
+ // Flow A5 [DECIDE]: the heading names who it is for, never a police office as its author.
+ const j=content.police_filing.jurisdiction.value;
+ const heading=`FIR DRAFT — prepared for submission at ${[j.policeStation,j.state].map(v=>v.trim()).filter(Boolean).join(', ')}`;
  const newPage=()=>{
   page=pdf.addPage([595,842]);top=35;
-  text.draw(page,text.runs('FIRST INFORMATION REPORT','bold'),left,top,14,ink);top+=23;
+  for(const row of text.wrap([{text:heading,weight:'bold'}],right-left,13)){text.draw(page,row,left,top,13,ink);top+=18;}top+=5;
   text.draw(page,text.runs('FORM I — POLICE INFORMATION PROFORMA'),left,top,10,ink);top+=19;
   text.draw(page,text.runs(reference),left,top,9,muted);top+=23;
   page.drawLine({start:{x:left,y:842-top},end:{x:right,y:842-top},thickness:.7,color:muted});top+=14;

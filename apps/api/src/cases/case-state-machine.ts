@@ -418,6 +418,12 @@ export class CaseStateMachine {
       let record = await lockedCase(tx, actor, id);
       // Initial assignment only. A declined case retaining its former advocate
       // needs a separately approved reassignment flow, not this action.
+      // FIR declines recorded before the reason-based rejection kept the advocate
+      // on the case; returning it to admin means the admin can assign again (flow §3.2).
+      if (record.service_code === 'fir_draft' && record.status === 'advocate_declined' && record.advocate_id) {
+        await tx.caseAssignment.updateMany({where: {case_id: id, ended_at: null}, data: {ended_at: new Date(), end_reason: 'advocate_declined'}});
+        record = await tx.case.update({where: {id}, data: {advocate_id: null}});
+      }
       if (record.advocate_id) throw new ConflictException("Case already has an advocate");
       if (isConsultationService(record.service_code)) {
         const booked = await tx.consultation.findFirst({where:{case_id:id,status:'scheduled'}});
@@ -438,7 +444,11 @@ export class CaseStateMachine {
       if (record.status !== "assigning")
         throw new ConflictException("Case is not awaiting assignment");
       record = await tx.case.update({ where: { id }, data: { advocate_id } });
-      if(record.service_code==='fir_draft')await ensureFirLifecycle(tx,record);
+      if(record.service_code==='fir_draft'){
+        // Recorded as this admin's assignment, now; never inferred from an earlier 'assigned' event.
+        if(!await tx.caseAssignment.findFirst({where:{case_id:id,ended_at:null}}))await tx.caseAssignment.create({data:{case_id:id,advocate_id,assigned_by:actor.id}});
+        await ensureFirLifecycle(tx,record);
+      }
       const updated = await this.advance(
         tx,
         actor,

@@ -9,7 +9,7 @@ const {FirService}=require('../dist/src/cases/fir.service'),{FirAdminService}=re
 const {DocumentService}=require('../dist/src/documents/document.service'),{stagingKey}=require('../dist/src/documents/document-storage');
 const {PaymentsService}=require('../dist/src/payments/payments.service'),{seedConfirmedPricing}=require('../dist/prisma/seed-pricing');
 const {InAppNotifications}=require('../dist/src/notifications/in-app-notifications'),{SimulatedNotifications}=require('../dist/src/notifications/simulated-notifications');
-const {SupportService}=require('../dist/src/support/support.service'),{WalletService}=require('../dist/src/wallet/wallet.service');
+const {SupportService}=require('../dist/src/support/support.service'),{WalletService}=require('../dist/src/wallet/wallet.service'),{AdvocateCompletionService}=require('../dist/src/completion/advocate-completion');
 const {firStage,adminBucketFor,firDateInFuture,firIntakeErrors}=require('@legalitt/shared'),fixture=require('./helpers/fir.cjs');
 
 test('C10 mapping gives client, advocate and admin one state for every FIR status',()=>{
@@ -18,6 +18,8 @@ test('C10 mapping gives client, advocate and admin one state for every FIR statu
     ['changes_requested','client_changes_requested',3,'Continue Draft'],['approved','awaiting_police_submission',5,'Mark Submitted'],['completed',null,5,'View']];
   for(const [status,sub,stage,action]of cases){const v=firStage({status,sub_status:sub});assert.equal(v.client.stage,stage,status);assert.equal(v.advocate.action,action,status);assert.ok(v.admin.label);}
   assert.equal(firStage({status:'changes_requested',sub_status:'client_changes_requested'}).client.note,'Advocate is updating your draft');
+  assert.equal(firStage({status:'assigned',sub_status:null}).client.stage,2);assert.equal(firStage({status:'assigned',sub_status:'advocate_revision_required'}).client.stage,3,'a reassigned case never moves the client backwards');
+  assert.equal(firStage({status:'advocate_accepted',sub_status:'client_changes_requested'}).client.note,'Advocate is updating your draft');
   assert.equal(firStage({status:'client_review'}).client.decision_due,true);assert.equal(firStage({status:'completed'}).client.done,true);
   assert.equal(adminBucketFor('changes_requested','fir_draft','client_changes_requested'),'in_progress');assert.equal(adminBucketFor('client_review','fir_draft',null),'pending');
 });
@@ -35,7 +37,9 @@ test('FIR full flow',{skip:!process.env.LEGALITT_TEST_DATABASE_URL},async t=>{
   const storage={upload:async key=>({url:'https://fir-flow.invalid',fields:{key:stagingKey(key)}}),head:async key=>objects.has(key)?{size:objects.get(key).length,mime:'application/pdf'}:null,read:async key=>objects.get(key),promote:async key=>objects.set(key,objects.get(stagingKey(key))),remove:async key=>objects.delete(key),discard:async()=>{},download:async key=>'https://fir-flow.invalid/'+key};
   global.fetch=async(url,options)=>url==='https://fir-flow.invalid'?(objects.set(options.body.get('key'),new Uint8Array(await options.body.get('file').arrayBuffer())),new Response(null,{status:204})):originalFetch(url,options);
   const inbox=new InAppNotifications(new SimulatedNotifications()),state=new CaseStateMachine(prisma,inbox),docs=new DocumentService(prisma,storage,{inspect:async()=>({mime:'application/pdf',pageCount:1})});
-  const fir=new FirService(prisma,docs,inbox),review=new FirAdminService(prisma,docs,inbox),flow=new FirFlowService(prisma,inbox),repo=new CaseRepository(prisma),support=new SupportService(prisma,inbox),wallet=new WalletService(prisma,inbox);
+  const fir=new FirService(prisma,docs,inbox),review=new FirAdminService(prisma,docs,inbox),flow=new FirFlowService(prisma,inbox),repo=new CaseRepository(prisma),support=new SupportService(prisma,inbox),wallet=new WalletService(prisma,inbox),completion=new AdvocateCompletionService(prisma);
+  const json=value=>JSON.stringify(value,(_,v)=>typeof v==='bigint'?v.toString():v);
+  const HIDDEN=['fir_admin_returned','fir_identity_reviewed','fir_advocate_reassigned','fir_draft_saved','fir_draft_submitted','fir_draft_approved','fir_advocate_rejected','fir_client_reminded'];
   const pay=new PaymentsService(prisma,state,{capture:async()=>({paymentId:randomUUID(),simulated:true,source:'simulated'})},inbox);
   const before={};for(const model of ['servicePricing','commissionRate','feePolicy','pageOveragePolicy'])before[model]=await db[model].findMany({select:{id:true}});
   const settingsBefore=await db.firSettings.findUnique({where:{id:1}});
@@ -52,6 +56,22 @@ test('FIR full flow',{skip:!process.env.LEGALITT_TEST_DATABASE_URL},async t=>{
     await db.user.createMany({data:users});await db.advocateProfile.createMany({data:[first,advocate,stranger].map(u=>({user_id:u.id,verification:'approved',city:'Indore'}))});await seedConfirmedPricing(db);
     await db.firSettings.upsert({where:{id:1},create:{id:1,police_submission_by_advocate:true},update:{police_submission_by_advocate:true}});
     const c=await paidCase();let draft,changed;
+    const elsewhere=await state.create(client,{service_code:'fir_draft'});ids.push(elsewhere.id);
+    const strayDoc=(owner,kind)=>db.document.create({data:{case_id:elsewhere.id,owner_id:owner.id,kind,filename:'TEST-other-case.pdf',mime_type:'application/pdf',size_bytes:100n,page_count:1,status:'uploaded',s3_key:randomUUID()}});
+
+    await t.test('upload slots: file types, sizes and counts are enforced on the server',async()=>{
+      await assert.rejects(docs.presign(client,{case_id:elsewhere.id,kind:'fir_primary',filename:'x.mp4',mime:'video/mp4'}),{status:400});
+      await assert.rejects(docs.presign(client,{case_id:elsewhere.id,kind:'fir_scene',filename:'x.pdf',mime:'application/pdf'}),{status:400});
+      await assert.rejects(docs.presign(client,{case_id:elsewhere.id,kind:'supporting_document',filename:'x.mp4',mime:'video/mp4'}),{status:400});
+      assert.equal((await docs.presign(client,{case_id:elsewhere.id,kind:'fir_scene',filename:'clip.mp4',mime:'video/mp4'})).upload.max_bytes,50_000_000);
+      assert.equal((await docs.presign(client,{case_id:elsewhere.id,kind:'fir_scene',filename:'photo.png',mime:'image/png'})).upload.max_bytes,50_000_000);
+      assert.equal((await docs.presign(client,{case_id:elsewhere.id,kind:'fir_primary',filename:'a.pdf',mime:'application/pdf'})).upload.max_bytes,25_000_000);
+      assert.equal((await docs.presign(client,{case_id:elsewhere.id,kind:'fir_other',filename:'call.mp3',mime:'audio/mpeg'})).upload.max_bytes,25_000_000);
+      await db.document.createMany({data:Array.from({length:5},()=>({case_id:elsewhere.id,owner_id:client.id,kind:'fir_scene',filename:'TEST-scene.png',mime_type:'image/png',size_bytes:100n,status:'uploaded',s3_key:randomUUID()}))});
+      await assert.rejects(docs.presign(client,{case_id:elsewhere.id,kind:'fir_scene',filename:'x.png',mime:'image/png'}),{status:400},'Scene Photos & Video holds five files');
+      await assert.rejects(docs.presign(client,{case_id:elsewhere.id,kind:'fir_custom',filename:'x.pdf',mime:'application/pdf'}),{status:400});
+      assert.equal((await docs.presign(client,{case_id:elsewhere.id,kind:'fir_custom',filename:'x.pdf',mime:'application/pdf',slot_label:'Medical bills'})).document.slot_label,'Medical bills');
+    });
 
     await t.test('identity upload stores only the last four digits, shown masked',async()=>{
       const id=await db.document.findFirst({where:{case_id:c.id,kind:'id_proof'}});assert.equal(id.identity_last4,'4812');
@@ -70,6 +90,11 @@ test('FIR full flow',{skip:!process.env.LEGALITT_TEST_DATABASE_URL},async t=>{
       assert.equal((await flow.view(client,c.id)).events.some(e=>e.label.includes('conflict')),false);
       await state.assign(admin,c.id,{advocate_id:advocate.id});await state.transition(advocate,c.id,'advocate_accepted');
       assert.equal((await flow.view(client,c.id)).stage.client.note,'Drafting team assigned');
+      assert.equal(json(await flow.view(advocate,c.id)).includes('TEST conflict of interest'),false,'the next advocate never sees why the first left');
+      assert.equal(json(await repo.read(advocate,c.id)).includes('TEST conflict of interest'),false);assert.equal(json(await repo.events(advocate,c.id,{})).includes('TEST conflict of interest'),false);
+      await assert.rejects(repo.read(first,c.id),{status:404});
+      const rows=await db.caseAssignment.findMany({where:{case_id:c.id},orderBy:{assigned_at:'asc'}});assert.equal(rows.length,2);assert.equal(rows[0].end_reason,'advocate_rejected');
+      assert.equal(rows[1].assigned_by,admin.id);assert.ok(rows[1].assigned_at>=rows[0].ended_at,'the new assignment is recorded now, not back-dated');
     });
     await t.test('admin returns, advocate fixes and resends, admin approves → sent to client',async()=>{
       draft=await draftAndSend(advocate,c.id);
@@ -78,7 +103,12 @@ test('FIR full flow',{skip:!process.env.LEGALITT_TEST_DATABASE_URL},async t=>{
       await review.reject(admin,c.id,{...await token(c.id),draft_reason:'TEST add the BNS section'});
       assert.equal((await flow.view(advocate,c.id)).reviews.at(-1).comment,'TEST add the BNS section');
       assert.equal((await flow.view(client,c.id)).reviews.length,0,'client never sees the admin step');
-      draft=await draftAndSend(advocate,c.id);await adminApprove(c.id,draft.id);
+      draft=await draftAndSend(advocate,c.id);
+      assert.equal((await repo.read(client,c.id)).drafts.length,0,'an unapproved version never reaches the client');assert.equal((await flow.view(client,c.id)).draft,null);
+      await adminApprove(c.id,draft.id);assert.equal((await review.read(admin,c.id)).entitlement,null,'entitlement is reported once the case completes');
+      const seen=[...(await repo.read(client,c.id)).events,...(await repo.events(client,c.id,{})).items];
+      assert.equal(seen.some(e=>HIDDEN.includes(e.type)),false,'client never sees the admin step');assert.ok(seen.every(e=>Object.keys(e.payload).length===0));
+      assert.deepEqual((await repo.read(client,c.id)).drafts.map(d=>d.id),[draft.id]);
       const v=await flow.view(client,c.id);assert.equal(v.status,'client_review');assert.equal(v.stage.client.stage,4);assert.equal(v.draft.draft_id,draft.id);
       assert.ok((await docs.url(client,v.draft.document.id)).url);await assert.rejects(docs.url(other,v.draft.document.id),{status:404});
     });
@@ -93,6 +123,8 @@ test('FIR full flow',{skip:!process.env.LEGALITT_TEST_DATABASE_URL},async t=>{
       const attachment=await upload(client,c.id,'fir_change_attachment');
       const body={draft_id:draft.id,sections:['complainant','date_time_place'],comment:'TEST correct my father’s name and the time',attachment_document_id:attachment.id};
       await assert.rejects(flow.clientChanges(other,c.id,body),{status:404});await assert.rejects(flow.clientChanges(advocate,c.id,body),{status:403});
+      await assert.rejects(flow.clientChanges(client,c.id,{...body,attachment_document_id:(await strayDoc(client,'fir_change_attachment')).id}),{status:400},'an attachment from another case is refused');
+      const evidence=await db.document.findFirst({where:{case_id:c.id,kind:'fir_primary'}});await assert.rejects(docs.delete(client,evidence.id),{status:409},'evidence is frozen once the admin approved');
       await assert.rejects(flow.clientChanges(client,c.id,{...body,sections:[]}),{status:400});await assert.rejects(flow.clientChanges(client,c.id,{...body,comment:'x'.repeat(601)}),{status:400});
       changed=await flow.clientChanges(client,c.id,body);
       assert.equal(changed.status,'changes_requested');assert.equal(changed.sub_status,'client_changes_requested');assert.equal(changed.stage.client.note,'Advocate is updating your draft');
@@ -110,25 +142,33 @@ test('FIR full flow',{skip:!process.env.LEGALITT_TEST_DATABASE_URL},async t=>{
       const v=await flow.clientApprove(client,c.id,{draft_id:draft.id});assert.equal(v.status,'approved');assert.equal(v.sub_status,'awaiting_police_submission');
       assert.equal((await flow.view(advocate,c.id)).stage.advocate.action,'Mark Submitted');
       await assert.rejects(docs.presign(client,{case_id:c.id,kind:'fir_police_receipt',filename:'x.pdf',mime:'application/pdf'}),{status:409});
-      const receipt=await upload(advocate,c.id,'fir_police_receipt');
+      await assert.rejects(docs.presign(stranger,{case_id:c.id,kind:'fir_police_receipt',filename:'x.pdf',mime:'application/pdf'}),{status:404});
+      const receipt=await upload(advocate,c.id,'fir_police_receipt'),spare=await upload(advocate,c.id,'fir_police_receipt');
       await assert.rejects(docs.url(client,receipt.id),{status:404},'receipt is visible to the client only once recorded');
       const today=new Date(Date.now()+330*60000).toISOString().slice(0,10);
       await assert.rejects(flow.policeSubmitted(stranger,c.id,{submitted_on:today,receipt_document_id:receipt.id}),{status:404});
       await assert.rejects(flow.policeSubmitted(client,c.id,{submitted_on:today,receipt_document_id:receipt.id}),{status:403});
       await assert.rejects(flow.policeSubmitted(advocate,c.id,{submitted_on:'2099-01-01',receipt_document_id:receipt.id}),{status:400});
+      await assert.rejects(flow.policeSubmitted(advocate,c.id,{submitted_on:today,receipt_document_id:(await strayDoc(advocate,'fir_police_receipt')).id}),{status:400},'a receipt from another case is refused');
       const done=await flow.policeSubmitted(advocate,c.id,{submitted_on:today,receipt_document_id:receipt.id});
       assert.equal(done.status,'completed');assert.equal(done.police.receipt.id,receipt.id);assert.ok((await docs.url(client,receipt.id)).url);
       assert.equal((await flow.view(client,c.id)).stage.client.done,true);
+      const listed=(await repo.read(client,c.id)).documents.map(d=>d.id);assert.ok(listed.includes(receipt.id));assert.equal(listed.includes(spare.id),false,'only the recorded receipt is listed for the client');
+      await assert.rejects(docs.url(client,spare.id),{status:404});
+      assert.deepEqual((await completion.completion(advocate,c.id)).documents.map(d=>d.label).sort(),['Approved FIR draft','Police receipt']);
+      assert.equal((await review.read(admin,c.id)).entitlement.amount_paise,done.share_paise);
       const entries=await wallet.wallet(advocate,{period:'all'}),entry=entries.entries.find(e=>e.case_id===c.id);
       assert.ok(entry,'completed FIR appears in the advocate wallet');assert.equal(entry.share_paise,done.share_paise);
       assert.equal((await wallet.wallet(first,{period:'all'})).entries.some(e=>e.case_id===c.id),false,'the advocate who rejected is not paid');
     });
     await t.test('setting off: client approval completes the case and the client submits to police',async()=>{
       await assert.rejects(flow.updateSettings(advocate,{police_submission_by_advocate:false}),{status:403});
-      assert.equal((await flow.updateSettings(admin,{police_submission_by_advocate:false})).police_submission_by_advocate,false);
+      await assert.rejects(flow.updateSettings(client,{police_submission_by_advocate:false}),{status:403});
+      assert.equal((await flow.updateSettings(admin,{police_submission_by_advocate:false})).police_submission_by_advocate,false);assert.equal((await flow.settings()).police_submission_by_advocate,false);
       const d=await paidCase();await state.assign(admin,d.id,{advocate_id:advocate.id});await state.transition(advocate,d.id,'advocate_accepted');
       const sent=await draftAndSend(advocate,d.id);await adminApprove(d.id,sent.id);
-      const v=await flow.clientApprove(client,d.id,{draft_id:sent.id});assert.equal(v.status,'completed');assert.equal(v.settings.police_submission_by_advocate,false);
+      const v=await flow.clientApprove(client,d.id,{draft_id:sent.id});assert.equal(v.status,'completed');
+      assert.deepEqual((await completion.completion(advocate,d.id)).documents.map(x=>x.label),['Approved FIR draft']);assert.ok((await wallet.wallet(advocate,{period:'all'})).entries.some(e=>e.case_id===d.id));assert.equal(v.settings.police_submission_by_advocate,false);
       await assert.rejects(flow.policeSubmitted(advocate,d.id,{submitted_on:'2026-11-01',receipt_document_id:randomUUID()}),{status:409});
     });
     await t.test('view isolation: another client, an unassigned advocate and a former advocate get 404',async()=>{

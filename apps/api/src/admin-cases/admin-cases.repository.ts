@@ -107,7 +107,7 @@ export class AdminCasesRepository {
           service_code: input.service,
           ...(consultation?{sub_status:row.sub_status,review_submitted_at:pendingReports.find(r=>r.case_id===row.id)?.submitted_at?.toISOString()??null,
             consultation:sessions.find(s=>s.case_id===row.id)?{scheduled_at:sessions.find(s=>s.case_id===row.id)!.scheduled_at.toISOString(),status:sessions.find(s=>s.case_id===row.id)!.status}:null}:{}),
-          ...(input.service==='fir_draft'?{turnaround:!['completed','cancelled','refunded'].includes(row.status)&&policy?{paid_at:(row.fir_lifecycle?.paid_at??row.payments_case_id_relations[0]?.captured_at)?.toISOString()??null,warning_hours:policy.turnaround_warning_hours,overdue_hours:policy.turnaround_overdue_hours}:null}:{}),
+          ...(input.service==='fir_draft'?{turnaround:!['client_review','approved','completed','cancelled','refunded'].includes(row.status)&&policy?{paid_at:(row.fir_lifecycle?.paid_at??row.payments_case_id_relations[0]?.captured_at)?.toISOString()??null,warning_hours:policy.turnaround_warning_hours,overdue_hours:policy.turnaround_overdue_hours}:null}:{}),
           id: row.id, reference: row.reference, client: {id: row.client_id_relation.id, name: row.client_id_relation.full_name},
           matter_type: row.matter_type, parties: parties.filter(p => p.name.trim()),
           advocate: row.advocate_id_relation ? {id: row.advocate_id_relation.id, name: row.advocate_id_relation.full_name} : null,

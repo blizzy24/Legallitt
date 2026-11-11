@@ -9,7 +9,7 @@ import type {Prisma,Case,Document} from '../generated/prisma/client';
 import {PrismaService} from '../prisma.service';
 import {parse} from '../auth/auth.service';
 import {appendCaseEvent,lockedCase,writeFirFlowTransition} from './case-state-machine';
-import {ensureFirLifecycle} from './fir-lifecycle';
+import {ensureFirLifecycle,firCorrectionState} from './fir-lifecycle';
 import type {CaseActor} from './case-access';
 import {NOTIFICATIONS,type NotificationsPort} from '../notifications/notifications.port';
 
@@ -22,9 +22,9 @@ const hours=(h:number)=>h*3600_000;
 const LABELS:Record<string,string>={fir_draft_saved:'Draft saved',fir_draft_submitted:'Sent to admin',fir_admin_returned:'Admin returned the draft',
   fir_draft_approved:'Admin approved',fir_sent_to_client:'Sent to client',fir_client_approved:'Client approved',fir_client_changes_requested:'Client requested changes',
   fir_client_reminded:'Client reminded',fir_police_submitted:'Submitted to police',fir_advocate_reassigned:'Advocate reassigned',fir_advocate_rejected:'Advocate rejected · returned to admin',
-  fir_identity_reviewed:'Identity document reviewed',fir_identity_replaced:'Replacement identity uploaded',payment_captured:'Payment received',case_cancelled:'Request cancelled',refund_recorded:'Refund recorded'};
+  fir_released_to_client:'Draft released to client · completed',fir_identity_reviewed:'Identity document reviewed',fir_identity_replaced:'Replacement identity uploaded',payment_captured:'Payment received',case_cancelled:'Request cancelled',refund_recorded:'Refund recorded'};
 const STATUS_LABELS:Record<string,string>={submitted:'Request submitted',paid:'Payment received',assigned:'Advocate assigned',advocate_accepted:'Advocate accepted',advocate_declined:'Advocate rejected · returned to admin',completed:'Completed'};
-const CLIENT_EVENTS=new Set(['payment_captured','fir_sent_to_client','fir_client_approved','fir_client_changes_requested','fir_police_submitted','case_cancelled','refund_recorded']);
+const CLIENT_EVENTS=new Set(['payment_captured','fir_sent_to_client','fir_released_to_client','fir_client_approved','fir_client_changes_requested','fir_police_submitted','case_cancelled','refund_recorded']);
 const CLIENT_STATUS_LABELS:Record<string,string>={submitted:'Request submitted',assigned:'Drafting team assigned',completed:'Completed'};
 
 @Injectable()
@@ -91,12 +91,13 @@ export class FirFlowService {
       if(isClient){
         if(e.type==='status_changed'&&CLIENT_STATUS_LABELS[e.to_status??''])return {type:e.type,label:CLIENT_STATUS_LABELS[e.to_status!],actor:actorRole,created_at:e.created_at.toISOString()};
         if(!CLIENT_EVENTS.has(e.type))return null;
-        return {type:e.type,label:e.type==='fir_sent_to_client'?'Draft ready for your review':e.type==='fir_client_approved'?'You approved the draft':e.type==='fir_client_changes_requested'?'You requested changes':LABELS[e.type],actor:actorRole,created_at:e.created_at.toISOString()};
+        return {type:e.type,label:e.type==='fir_sent_to_client'?'Draft ready for your review':e.type==='fir_released_to_client'?'Draft ready':e.type==='fir_client_approved'?'You approved the draft':e.type==='fir_client_changes_requested'?'You requested changes':LABELS[e.type],actor:actorRole,created_at:e.created_at.toISOString()};
       }
       const p=(e.payload??{}) as {version?:number;reason?:string};
       const base=e.type==='status_changed'?STATUS_LABELS[e.to_status??'']:LABELS[e.type];
       if(!base)return null;
-      return {type:e.type,label:`${base}${p.version?` (v${p.version})`:''}${p.reason?`: ${p.reason}`:''}`,actor:actorRole,created_at:e.created_at.toISOString()};
+      // Why an advocate left a case, or was replaced, is for the admin only.
+      return {type:e.type,label:`${base}${p.version?` (v${p.version})`:''}${p.reason&&actor.role==='admin'?`: ${p.reason}`:''}`,actor:actorRole,created_at:e.created_at.toISOString()};
     };
     const breakdown=(paid?.quote?.snapshot as {breakdown?:{advocate_entitlement_paise?:string|null}}|undefined)?.breakdown;
     return {case_id:c.id,reference:c.reference,status:c.status,sub_status:c.sub_status,stage:firStage(c),settings,
@@ -166,7 +167,9 @@ export class FirFlowService {
       if(c.status!=='assigned')throw new ConflictException('Only a new request can be rejected.');
       const {assignment}=await ensureFirLifecycle(tx,c);
       if(assignment)await tx.caseAssignment.update({where:{id:assignment.id},data:{ended_at:new Date(),end_reason:'advocate_rejected'}});
-      await writeFirFlowTransition(tx,actor,id,{to:'advocate_declined',sub_status:null,advocate_id:null},'fir_advocate_rejected',{reason:input.reason,assignment_id:assignment?.id??null});
+      // A correction marker carried by a reassigned case survives the rejection, for the next advocate.
+      const marker=(await firCorrectionState(tx,id))??(c.sub_status===FIR_CLIENT_CHANGES?FIR_CLIENT_CHANGES:null);
+      await writeFirFlowTransition(tx,actor,id,{to:'advocate_declined',sub_status:marker,advocate_id:null},'fir_advocate_rejected',{reason:input.reason,assignment_id:assignment?.id??null});
       await tx.firLifecycle.update({where:{case_id:id},data:{revision:{increment:1}}});
       await this.notifyAdmins(tx,id,'fir_advocate_rejected','Advocate rejected an FIR request',`${c.reference}: ${input.reason}`);
     });

@@ -1,6 +1,6 @@
 import {BadRequestException,ConflictException,ForbiddenException,Inject,Injectable} from '@nestjs/common';
 import {z} from 'zod';
-import {DOCUMENT_URL_SECONDS,FirRejectSchema,FirReassignSchema,FirIdentityReviewSchema,FirLifecycleTokenSchema,FIR_REASSIGNED_CLIENT,type FirLifecycleToken} from '@legalitt/shared';
+import {DOCUMENT_URL_SECONDS,FIR_CLIENT_CHANGES,FirRejectSchema,FirReassignSchema,FirIdentityReviewSchema,FirLifecycleTokenSchema,FIR_REASSIGNED_CLIENT,type FirLifecycleToken} from '@legalitt/shared';
 import {PrismaService} from '../prisma.service';
 import {parse} from '../auth/auth.service';
 import {lockedCase,appendCaseEvent,writeFirReviewState,writeFirFlowTransition} from './case-state-machine';
@@ -72,7 +72,7 @@ export class FirAdminService {
     }else await tx.firSubmission.update({where:{id:sub.id},data:{identity_checked_by:actor.id,identity_checked_at:new Date()}});
    }
    await tx.firLifecycle.update({where:{case_id:id},data:{revision:{increment:1}}});
-   if(replacement){const correction=await firCorrectionState(tx,id);await writeFirReviewState(tx,actor,id,{status:['assigned','advocate_accepted'].includes(c.status)?c.status:correction?'changes_requested':'in_progress',sub_status:correction,updated_at:new Date()});}
+   if(replacement){const correction=await firCorrectionState(tx,id);await writeFirReviewState(tx,actor,id,{status:['in_progress','changes_requested'].includes(c.status)?(correction?'changes_requested':'in_progress'):c.status,sub_status:correction??(c.sub_status===FIR_CLIENT_CHANGES?FIR_CLIENT_CHANGES:null),updated_at:new Date()});}
    await this.event(tx,actor,id,'fir_identity_reviewed',{document_id:input.document_id,decision:input.decision});
   });if(input.decision==='unmasked_aadhaar')await this.documents.purgeRejectedIdentity(input.document_id);return this.read(actor,id);
  }
@@ -86,7 +86,7 @@ export class FirAdminService {
    await tx.caseAssignment.create({data:{case_id:id,advocate_id:next.id,assigned_by:actor.id}});
    await tx.firSubmission.updateMany({where:{case_id:id,state:'pending'},data:{state:'withdrawn',decided_by:actor.id,decided_at:new Date()}});
    await tx.firLifecycle.update({where:{case_id:id},data:{revision:{increment:1}}});
-   await writeFirReviewState(tx,actor,id,{advocate_id:next.id,status:'assigned',sub_status:await firCorrectionState(tx,id),updated_at:new Date()});
+   await writeFirReviewState(tx,actor,id,{advocate_id:next.id,status:'assigned',sub_status:(await firCorrectionState(tx,id))??(c.sub_status===FIR_CLIENT_CHANGES?FIR_CLIENT_CHANGES:null),updated_at:new Date()});
    await this.event(tx,actor,id,'fir_advocate_reassigned',{previous_assignment_id:assignment.id,advocate_id:next.id,reason:input.reason});
    // Standalone notification deliberately survives removal of case access and
    // has no dead case link. It contains only the reference and outcome.
