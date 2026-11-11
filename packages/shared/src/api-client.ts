@@ -63,6 +63,13 @@ export class ApiClient {
   savedAdvocates() {return this.request<{items: import('./account').SavedAdvocate[]}>('/account/saved-advocates');}
   saveAdvocate(id: string) {return this.request<{saved: boolean}>(`/account/saved-advocates/${encodeURIComponent(id)}`, {}, 'PUT');}
   unsaveAdvocate(id: string) {return this.request<{saved: boolean}>(`/account/saved-advocates/${encodeURIComponent(id)}`, undefined, 'DELETE');}
+  // Client account area (D-15, D-17, D-18, D-19).
+  accountProfile() {return this.request<import('./account-data').AccountProfile>('/account/profile');}
+  updateAccountProfile(input: import('./account-data').AccountProfileUpdate) {return this.request<import('./account-data').AccountProfile>('/account/profile',input,'PATCH');}
+  accountDocuments(caseId?: string) {return this.request<{items: import('./account-data').AccountDocument[]}>(`/account/documents${caseId?`?case_id=${encodeURIComponent(caseId)}`:''}`);}
+  accountPayments() {return this.request<{items: import('./account-data').AccountPayment[]; totals: {captured_paise: string; captured_count: number}}>('/account/payments');}
+  accountPayment(id: string) {return this.request<import('./account-data').AccountPayment>(`/account/payments/${encodeURIComponent(id)}`);}
+  accountReceipt(id: string) {return this.request<{filename: string; pdf_base64: string}>(`/account/payments/${encodeURIComponent(id)}/receipt`,undefined,'GET',undefined,{},60000);}
   private refreshing?: Promise<ApiTokens>;
   constructor(private readonly options: Options) {}
   private async transport(

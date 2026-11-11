@@ -23,11 +23,9 @@ export function unavailableSection(name: string, params?: Readonly<Record<string
   if (route.startsWith('advocates/')) return unavailable('Advocates', copy.advocates); // D-27: 'advocates' (Saved Advocates) is live
   // D-28: the Messages inbox, case conversations and support threads are API-backed.
   if (route === 'messages/[id]') return unavailable('Messages', copy.messages);
-  if (route === 'documents' || route.startsWith('documents/')) return unavailable('My Documents', copy.documents);
-  if (route === 'payments') return unavailable('Payments', copy.payments);
-  if (['profile/edit'].includes(route)) return unavailable('Account Settings', copy.settings); // D-21–D-23: privacy and language are live
-  // D-25/D-26: Help, Contact Support, Request a Callback and Support Chat are API-backed.
-  if (route.startsWith('hearings') || route === 'cases/[id]' || route === 'requests/[id]') return unavailable('Case Details');
+  // D-15–D-18: documents, payments, Edit Profile and Request Details are real (account area).
+  // D-21–D-26: privacy, language, help and support routes are real.
+  if (route.startsWith('hearings') || route === 'cases/[id]') return unavailable('Case Details');
   if (route.startsWith('courier/') && !(route === 'courier/self/details' && params?.noticeOutbound === '1')) return unavailable('Courier');
   const service = [['legal-advice','Legal Advice'],['fir','FIR Draft'],['property-search','Property Search'],['document-forensic','Document Forensic'],['services/high-court','High Court Representation'],['services/district-court','District Court Representation']].find(([prefix])=>route===prefix||route.startsWith(prefix+'/'));
   if (service) return unavailable(service[1], copy.service);

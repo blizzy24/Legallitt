@@ -1,5 +1,7 @@
 import {SupportController} from './support/support.controller';
 import {SupportService} from './support/support.service';
+import {AccountDataController} from './account/account-data.controller';
+import {AccountDataService} from './account/account-data.service';
 import {FirAdminService} from './cases/fir-admin.service';
 import {ConsultationController} from './consultations/consultation.controller';
 import {ConsultationService} from './consultations/consultation.service';
@@ -63,7 +65,7 @@ import {ACCOUNT_COGNITO, CognitoAccountAdapter} from './account/account-cognito'
 
 @Module({
   imports: [AiModule, CourierModule, AdminUiModule, DemoModule, DatabaseModule, PhoneAuthModule, PaymentsModule, NotificationsModule],
-  controllers: [AccountController, SupportController, ConsultationController, FirController, NotificationsController, NoticeIntakeAiController, AdminAdvocatesController, AdminCasesController, NoticeMessagesController,
+  controllers: [AccountController, AccountDataController, SupportController, ConsultationController, FirController, NotificationsController, NoticeIntakeAiController, AdminAdvocatesController, AdminCasesController, NoticeMessagesController,
     PaymentsController, ServiceReportsController, CancellationsController,
     HealthController,
     AuthController,
@@ -73,7 +75,7 @@ import {ACCOUNT_COGNITO, CognitoAccountAdapter} from './account/account-cognito'
     ServicesController,
     DocumentController,
   ],
-  providers: [AccountService, {provide: ACCOUNT_COGNITO, useClass: CognitoAccountAdapter}, SupportService, ConsultationService, ConsultationPayments, ConsultationReports, FirAdminService, FirService, NotificationRepository, AdminCaseDetailRepository, AdminAdvocatesRepository, AdminCasesRepository, NoticeMessages,
+  providers: [AccountService, AccountDataService, {provide: ACCOUNT_COGNITO, useClass: CognitoAccountAdapter}, SupportService, ConsultationService, ConsultationPayments, ConsultationReports, FirAdminService, FirService, NotificationRepository, AdminCaseDetailRepository, AdminAdvocatesRepository, AdminCasesRepository, NoticeMessages,
     ShipmentService,
     NoticePdfService,
     PaymentsService, ServiceReportsService, CancellationsService,

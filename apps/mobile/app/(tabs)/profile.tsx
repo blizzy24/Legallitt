@@ -1,6 +1,6 @@
 import { DATA_SOURCE } from '../../lib/data-source';
 import { previewNotice } from '../../components/PreviewNotice';
-import { router, type Href } from 'expo-router';
+import { router, useFocusEffect, type Href } from 'expo-router';
 import {
   Bell,
   BriefcaseBusiness,
@@ -18,7 +18,7 @@ import {
   Wallet,
   type LucideIcon,
 } from 'lucide-react-native';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -51,7 +51,9 @@ type Row = {
 
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
-  const { profile } = useProfile();
+  const { profile, account: me, refreshAccount } = useProfile();
+  // D-15: the hub's counts reflect the latest data whenever it is shown.
+  useFocusEffect(useCallback(() => { if (DATA_SOURCE === 'api') void refreshAccount(); }, [refreshAccount]));
   const { signOut } = useSession();
   const [confirming, setConfirming] = useState(false);
 
@@ -61,7 +63,7 @@ export default function ProfileScreen() {
       title: 'My Cases',
       subtitle: 'View and manage your active legal matters',
       href: '/(tabs)/cases',
-      chip: DATA_SOURCE === 'fixtures' ? PROFILE_COUNTS.activeCases : undefined,
+      chip: DATA_SOURCE === 'fixtures' ? PROFILE_COUNTS.activeCases : me?.counts.active_cases ? `${me.counts.active_cases} Active` : undefined,
     },
     {
       icon: CalendarCheck,
@@ -94,7 +96,8 @@ export default function ProfileScreen() {
     },
   ];
 
-  const shownPreferences = DATA_SOURCE === 'api' ? preferences.filter(row => row.title !== 'Language') : preferences;
+  // D-22: English is the only language; the Language screen explains the rest.
+  const shownPreferences = preferences;
 
   const help: Row[] = [
     // INFERRED — blank on design/50; design/71 draws a round glyph here.

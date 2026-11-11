@@ -443,7 +443,12 @@ const styles = StyleSheet.create({
 });
 
 // The deployed fixture path remains unchanged; API mode is explicit.
-export default function RequestsScreen() {
+function FixtureRequestsScreen() {
   const model=useNoticeLists();
   return <NoticeScreenFeedback error={model.error}><RequestsScreenView requests={model.requests} onOpen={model.api?id=>model.open(id):undefined} /></NoticeScreenFeedback>;
 }
+
+import {RequestsLive} from '../../features/account/Requests';
+import {DATA_SOURCE as LIVE_SOURCE} from '../../lib/data-source';
+// D-16 My Requests (profile-4): API mode shows the signed-in client's real cases.
+export default function RequestsScreen() { return LIVE_SOURCE === 'api' ? <RequestsLive/> : <FixtureRequestsScreen/>; }

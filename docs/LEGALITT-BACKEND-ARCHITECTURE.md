@@ -1294,7 +1294,7 @@ CREATE TABLE admin_actions (
 ### 4.3a Tables added in the 11 November 2026 final build
 
 Additive migrations `202611110010_cancellations_refunds`, `202611110020_support_inbox`
-and `202611110040_account_settings`. Decisions are in `docs/DECISIONS.md` §13.
+`202611110030_profile_fields` and `202611110040_account_settings`. Decisions are in `docs/DECISIONS.md` §13.
 
 ```sql
 -- ---------- cancellations and simulated refunds (D-12, D-13, D-14, D-50..D-55) ----------
@@ -1331,6 +1331,12 @@ CREATE TABLE support_messages (
   id UUID PRIMARY KEY, ticket_id UUID NOT NULL REFERENCES support_tickets(id),
   sender_id UUID NOT NULL REFERENCES users(id), sender_role TEXT NOT NULL,
   body TEXT NOT NULL, created_at TIMESTAMPTZ NOT NULL, read_at TIMESTAMPTZ
+);
+-- ---------- client profile (D-15, D-62..D-67) ----------
+CREATE TABLE client_profiles (
+  user_id UUID PRIMARY KEY REFERENCES users(id), date_of_birth DATE,
+  gender TEXT,                   -- female | male | other | prefer_not_to_say
+  city TEXT, state TEXT, country TEXT, updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 -- ---------- account settings (D-20, D-22, D-24, D-27, D-68..D-75) ----------
 CREATE TABLE user_preferences (
