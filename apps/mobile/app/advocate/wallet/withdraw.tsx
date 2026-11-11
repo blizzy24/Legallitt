@@ -39,7 +39,7 @@ import { formatINR, WALLET_WITHDRAW } from '../../../data/advocateWallet';
 
 const grey = advWalletPalette.text;
 
-export default function AdvocateWithdrawScreen() {
+function AdvocateWithdrawScreen() {
   const insets = useSafeAreaInsets();
   const d = WALLET_WITHDRAW;
   const [amount, setAmount] = useState<number>(d.initial);
@@ -290,3 +290,8 @@ const styles = StyleSheet.create({
   btnNext: { marginTop: t.btnGap },
   btnText: { flexShrink: 1, fontFamily: font.appSemi, fontSize: t.btnSize, color: ink.onBrand },
 });
+
+import {WithdrawScreen as LiveWalletScreen} from '../../../features/wallet/Wallet';
+import {DATA_SOURCE as WALLET_DATA_SOURCE} from '../../../lib/data-source';
+// D-36: API mode renders the real wallet; fixture mode keeps the design preview.
+export default function WalletRoute() { return WALLET_DATA_SOURCE === 'api' ? <LiveWalletScreen/> : <AdvocateWithdrawScreen/>; }

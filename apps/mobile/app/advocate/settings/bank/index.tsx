@@ -33,7 +33,7 @@ import { advBank as t, colors, font, ink, status } from '../../../../constants/t
 
 const ICONS = { id: IdCard, bank: Landmark, cash: Banknote };
 
-export default function AdvocateBankScreen() {
+function AdvocateBankScreen() {
   const insets = useSafeAreaInsets();
   const d = AS_BANK;
 
@@ -405,3 +405,8 @@ const styles = StyleSheet.create({
     color: '#4D463D',
   },
 });
+
+import {BankAccountScreen as LiveWalletScreen} from '../../../../features/wallet/Wallet';
+import {DATA_SOURCE as WALLET_DATA_SOURCE} from '../../../../lib/data-source';
+// D-36: API mode renders the real wallet; fixture mode keeps the design preview.
+export default function WalletRoute() { return WALLET_DATA_SOURCE === 'api' ? <LiveWalletScreen/> : <AdvocateBankScreen/>; }

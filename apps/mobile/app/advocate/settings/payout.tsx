@@ -36,7 +36,7 @@ import { advSettingsPage as t, colors, font, ink, status } from '../../../consta
 
 const ICONS = { trend: TrendingUp, receipt: Receipt, file: FileText };
 
-export default function AdvocatePayoutScreen() {
+function AdvocatePayoutScreen() {
   const d = AS_PAYOUT;
   return (
     <SettingsHero
@@ -212,3 +212,8 @@ const styles = StyleSheet.create({
     color: '#4D463D',
   },
 });
+
+import {PayoutSettingsScreen as LiveWalletScreen} from '../../../features/wallet/Wallet';
+import {DATA_SOURCE as WALLET_DATA_SOURCE} from '../../../lib/data-source';
+// D-36: API mode renders the real wallet; fixture mode keeps the design preview.
+export default function WalletRoute() { return WALLET_DATA_SOURCE === 'api' ? <LiveWalletScreen/> : <AdvocatePayoutScreen/>; }

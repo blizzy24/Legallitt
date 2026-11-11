@@ -37,7 +37,7 @@ import { advForensicRed, advBank as t, colors, font, ink, status } from '../../.
 // drawn; it does not start, succeed or fail a verification, because there is
 // no penny drop and no payment rail in this project.
 
-export default function AdvocateBankVerifyScreen() {
+function AdvocateBankVerifyScreen() {
   const insets = useSafeAreaInsets();
   const d = AS_BANK_VERIFY;
   const [segment, setSegment] = useState<'Checking' | 'Verified' | 'Failed'>('Checking');
@@ -471,3 +471,8 @@ const styles = StyleSheet.create({
     color: '#4D463D',
   },
 });
+
+import {BankAccountScreen as LiveWalletScreen} from '../../../../features/wallet/Wallet';
+import {DATA_SOURCE as WALLET_DATA_SOURCE} from '../../../../lib/data-source';
+// D-36: API mode renders the real wallet; fixture mode keeps the design preview.
+export default function WalletRoute() { return WALLET_DATA_SOURCE === 'api' ? <LiveWalletScreen/> : <AdvocateBankVerifyScreen/>; }
