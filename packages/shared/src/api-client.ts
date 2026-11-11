@@ -37,6 +37,11 @@ export class ApiClient {
   sendFirDraft(id: string, draft: string) {return this.request(`/fir/${id}/drafts/${draft}/send`,{},'POST',undefined,{},60000);}
   firLifecycle(id:string){return this.request<import('./fir-lifecycle').FirLifecycleView>(`/fir/${id}/lifecycle`);}
   approveFirDraft(id: string, draft: string,token:import('./fir-lifecycle').FirLifecycleToken) {return this.request(`/fir/${id}/drafts/${draft}/approve`,token);}
+  // D-12/D-13 cancellations and simulated refunds.
+  caseCancellation(id: string) {return this.request<import('./cancellations').CaseCancellation>(`/cases/${encodeURIComponent(id)}/cancellation`);}
+  cancelCase(id: string, input: {reason?: import('./cancellations').CancellationReasonCode | null; note?: string; confirm: true}) {return this.request<import('./cancellations').CaseCancellation>(`/cases/${encodeURIComponent(id)}/cancellation`, input);}
+  adminCancellations(status: 'pending' | 'decided' = 'pending') {return this.request<{items: import('./cancellations').AdminCancellationRow[]; status: string}>(`/admin/cancellations?status=${status}`);}
+  decideCancellation(id: string, input: {decision: 'approve' | 'decline'; refund_amount_paise?: string; reason: string; advocate_entitlement_paise?: string | null}) {return this.request<import('./cancellations').CaseCancellation>(`/admin/cancellations/${encodeURIComponent(id)}/decide`, input);}
   // Report services: Property Search, Document Forensic, Court Marriage.
   reportPricing(code: import('./service-reports').ReportServiceCode) {return this.request<import('./service-reports').ReportPricing>(`/service-reports/pricing/${code}`);}
   saveReportIntake(id: string, input: {tier?: 'ordinary'|'urgent'|null; details: Record<string, unknown>; expected_updated_at?: string}) {return this.request<ApiCase>(`/service-reports/${id}/intake`,input,'PATCH');}

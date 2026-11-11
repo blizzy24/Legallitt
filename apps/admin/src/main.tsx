@@ -6,6 +6,7 @@ import { BrowserRouter, Navigate, Route, Routes, NavLink, Outlet, useParams } fr
 import {ServiceCodeSchema, SERVICE_NAMES} from '@legalitt/shared';
 import { SessionProvider, useSession } from './session';
 import { Notices } from './notices';
+import { Cancellations } from './cancellations';
 import './style.css';
 
 function SignIn() {
@@ -41,7 +42,8 @@ function Shell() {
     <aside className={drawer ? 'sidebar open' : 'sidebar'}>
       <div className="wordmark">LEGALITT<span>ADMIN</span></div>
       <nav aria-label="Admin navigation"><NavLink to="/legal-notices" onClick={() => setDrawer(false)}><span aria-hidden="true">▤</span> Legal Notices</NavLink><NavLink to="/services/fir_draft/cases?queue=approval" onClick={()=>setDrawer(false)}><span aria-hidden="true">▤</span> FIR Drafts</NavLink>
-      {(['legal_advice','district_court','high_court','property_search','document_forensic','court_marriage'] as const).map(code=><NavLink key={code} to={`/services/${code}/cases`} onClick={()=>setDrawer(false)}><span aria-hidden="true">▤</span> {SERVICE_NAMES[code]}</NavLink>)}</nav>
+      {(['legal_advice','district_court','high_court','property_search','document_forensic','court_marriage'] as const).map(code=><NavLink key={code} to={`/services/${code}/cases`} onClick={()=>setDrawer(false)}><span aria-hidden="true">▤</span> {SERVICE_NAMES[code]}</NavLink>)}
+      <NavLink to="/cancellations" onClick={()=>setDrawer(false)}><span aria-hidden="true">▤</span> Cancellations &amp; refunds</NavLink></nav>
       <div className="identity"><span>{user.name}</span><small>ADMIN</small><button onClick={logout}>Sign out</button></div>
     </aside>
     {drawer && <button className="scrim" aria-label="Close navigation" onClick={() => setDrawer(false)}/>}
@@ -54,6 +56,6 @@ function ServiceCases() {
 }
 createRoot(document.getElementById('root')!).render(<StrictMode><BrowserRouter><SessionProvider><NotificationsProvider><Routes>
   <Route path="/sign-in" element={<SignIn/>}/>
-  <Route element={<Shell/>}><Route path="/notifications" element={<Notifications/>}/><Route path="/legal-notices" element={<Notices/>}/><Route path="/legal-notices/:id" element={<CaseDetail/>}/><Route path="/services/:service/cases" element={<ServiceCases/>}/><Route path="/services/:service/cases/:id" element={<CaseDetail/>}/></Route>
+  <Route element={<Shell/>}><Route path="/notifications" element={<Notifications/>}/><Route path="/cancellations" element={<Cancellations/>}/><Route path="/legal-notices" element={<Notices/>}/><Route path="/legal-notices/:id" element={<CaseDetail/>}/><Route path="/services/:service/cases" element={<ServiceCases/>}/><Route path="/services/:service/cases/:id" element={<CaseDetail/>}/></Route>
   <Route path="*" element={<Navigate to="/legal-notices" replace/>}/>
 </Routes></NotificationsProvider></SessionProvider></BrowserRouter></StrictMode>);

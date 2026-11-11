@@ -166,6 +166,7 @@
     "callback",
     "cases/[id]",
     "cases/all",
+    "cases/cancel",
     "chat/advocate",
     "courier/choose",
     "courier/delivery-details",
