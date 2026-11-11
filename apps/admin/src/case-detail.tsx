@@ -1,5 +1,6 @@
 import { ConfirmDelivery } from './confirm-delivery';
 import {FirApprovalPanel} from './fir-approval';
+import {FirFlowPanel} from './fir-flow-panel';
 import {ConsultationPanel} from './consultation-panel';
 import {isConsultationService,isReportService} from '@legalitt/shared';
 import {ReportPanel} from './report-panel';
@@ -63,6 +64,7 @@ export function CaseDetail() {
    {task&&<div className="admin-attention"><span className="attention-dot"/><div><small>NEEDS ADMIN</small><strong>{task}</strong></div>{canAssign&&<button className="assign" onClick={()=>setAssign(true)}>+ Assign</button>}{d.status==='dispatched'&&<button className="assign" onClick={()=>setDelivering(true)}>Confirm delivery</button>}</div>}
   </section>
   <CaseRefunds key={d.id+':'+d.status} caseId={d.id}/>
+  {service==='fir_draft'&&<FirFlowPanel caseId={d.id} status={d.status+':'+(d.sub_status??'')}/>}
   {service==='fir_draft'&&<FirApprovalPanel record={d} reload={()=>setReload(n=>n+1)}/>}
   {isReportService(service)&&<><ReportPanel record={d} reload={()=>setReload(n=>n+1)}/><section className="detail-panel"><div className="section-title"><h2>Original client intake</h2></div>{Object.values(d.intake).some(present)?<Values value={d.intake}/>:<p>No intake saved yet.</p>}</section></>}
   {isConsultationService(service)&&<><ConsultationPanel record={d} reload={()=>setReload(n=>n+1)}/><section className="detail-panel"><div className="section-title"><h2>Original client intake</h2></div>{Object.values(d.intake).some(present)?<Values value={d.intake}/>:<p>No intake saved yet.</p>}</section></>}

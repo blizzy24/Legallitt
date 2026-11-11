@@ -37,6 +37,16 @@ export class ApiClient {
   sendFirDraft(id: string, draft: string) {return this.request(`/fir/${id}/drafts/${draft}/send`,{},'POST',undefined,{},60000);}
   firLifecycle(id:string){return this.request<import('./fir-lifecycle').FirLifecycleView>(`/fir/${id}/lifecycle`);}
   approveFirDraft(id: string, draft: string,token:import('./fir-lifecycle').FirLifecycleToken) {return this.request(`/fir/${id}/drafts/${draft}/approve`,token);}
+  // docs/flows/FIR-DRAFT-FLOW.md: role-shaped view and the client / advocate / admin actions.
+  firFlow(id:string){return this.request<import('./fir-flow').FirFlowView>(`/fir/${id}/flow`);}
+  firSettings(){return this.request<import('./fir-flow').FirSettings>('/fir/settings');}
+  updateFirSettings(input:{police_submission_by_advocate:boolean}){return this.request<import('./fir-flow').FirSettings>('/fir/settings',input,'PUT');}
+  firClientApprove(id:string,draft_id:string){return this.request<import('./fir-flow').FirFlowView>(`/fir/${id}/client-approve`,{draft_id});}
+  firClientChanges(id:string,input:{draft_id:string;sections:string[];comment:string;attachment_document_id?:string|null}){return this.request<import('./fir-flow').FirFlowView>(`/fir/${id}/client-changes`,input);}
+  firReject(id:string,reason:string){return this.request<{rejected:true}>(`/fir/${id}/reject`,{reason});}
+  firRemindClient(id:string){return this.request<import('./fir-flow').FirFlowView>(`/fir/${id}/remind-client`,{});}
+  firPoliceSubmission(id:string,input:{submitted_on:string;receipt_document_id:string}){return this.request<import('./fir-flow').FirFlowView>(`/fir/${id}/police-submission`,input);}
+  reassignFir(id:string,input:import('./fir-lifecycle').FirLifecycleToken&{advocate_id:string;reason:string}){return this.request<import('./fir-lifecycle').FirLifecycleView>(`/fir/${id}/reassign`,input);}
   // D-12/D-13 cancellations and simulated refunds.
   caseCancellation(id: string) {return this.request<import('./cancellations').CaseCancellation>(`/cases/${encodeURIComponent(id)}/cancellation`);}
   cancelCase(id: string, input: {reason?: import('./cancellations').CancellationReasonCode | null; note?: string; confirm: true}) {return this.request<import('./cancellations').CaseCancellation>(`/cases/${encodeURIComponent(id)}/cancellation`, input);}
@@ -348,9 +358,9 @@ export class ApiClient {
   supportTicket(id:string){return this.request<import('./support').SupportTicketView>(`/support/tickets/${id}`);}
   replySupport(id:string,body:string){return this.request<import('./support').SupportTicketView>(`/support/tickets/${id}/messages`,{body});}
   readSupport(id:string){return this.request<{read:true}>(`/support/tickets/${id}/read`,{});}
-  requestCallback(input:{name:string;phone:string;note?:string}){return this.request<import('./support').SupportTicketView>('/support/callbacks',input);}
+  requestCallback(input:{name:string;phone:string;note?:string;service_code?:import('./services').ServiceCode}){return this.request<import('./support').SupportTicketView>('/support/callbacks',input);}
   supportChat(){return this.request<{chat:import('./support').SupportTicketView|null}>('/support/chat');}
-  sendSupportChat(body:string){return this.request<import('./support').SupportTicketView>('/support/chat',{body});}
+  sendSupportChat(body:string,service_code?:import('./services').ServiceCode){return this.request<import('./support').SupportTicketView>('/support/chat',{body,...(service_code?{service_code}:{})});}
   adminSupport(status:'open'|'closed'='open'){return this.request<{items:import('./support').SupportInboxRow[];counts:{open:number;closed:number}}>(`/admin/support?status=${status}`);}
   adminSupportTicket(id:string){return this.request<import('./support').SupportAdminTicket>(`/admin/support/${id}`);}
   adminSupportReply(id:string,body:string){return this.request<{replied:true}>(`/admin/support/${id}/messages`,{body});}

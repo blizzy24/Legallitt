@@ -1,6 +1,6 @@
 import {useEffect, useState, type FormEvent} from 'react';
 import {Link, useNavigate, useParams, useSearchParams} from 'react-router';
-import {ApiError, adminCasePath, ServiceCodeSchema, type SupportAdminTicket, type SupportInboxRow} from '@legalitt/shared';
+import {ApiError, adminCasePath, ServiceCodeSchema, SERVICE_NAMES, type ServiceCode, type SupportAdminTicket, type SupportInboxRow} from '@legalitt/shared';
 import {api, useSession} from './session';
 import {WaitingAge} from './fir-approval';
 
@@ -32,7 +32,7 @@ export function SupportInbox() {
       {error && <div role="alert" className="error">{error} <button onClick={() => setReload(n => n + 1)}>Retry</button></div>}
       <div className="table-scroll" aria-busy={loading}><table><thead><tr>{['REQUEST', 'FROM', 'TYPE', 'LATEST MESSAGE', 'WAITING', 'RECEIVED', 'ACTIONS'].map(h => <th key={h} scope="col">{h}</th>)}</tr></thead><tbody>
         {loading && !data ? <tr><td colSpan={7} className="empty" role="status">Loading support requests…</td></tr> : data?.items.map(row => <tr key={row.id}>
-          <td className="reference"><Link className="case-reference-link" to={`/support/${row.id}`}>{row.subject ?? kinds[row.kind]}</Link>{row.unread > 0 && <small className="demo">{row.unread} new</small>}</td>
+          <td className="reference"><Link className="case-reference-link" to={`/support/${row.id}`}>{row.subject ?? kinds[row.kind]}</Link>{row.service_code && <small className="demo">{SERVICE_NAMES[row.service_code as ServiceCode] ?? row.service_code}</small>}{row.unread > 0 && <small className="demo">{row.unread} new</small>}</td>
           <td className="client">{row.requester.name}<small> · {row.requester.role}</small></td>
           <td>{kinds[row.kind]}</td>
           <td className="matter">{row.last_message && <div className="party">{row.last_message.length > 90 ? row.last_message.slice(0, 90) + '…' : row.last_message}</div>}</td>
@@ -67,7 +67,7 @@ export function SupportTicketDetail() {
   if (!t) return <main className="notices"><div role="alert" className="error">{error || 'Support request not found.'} <button onClick={() => setReload(n => n + 1)}>Retry</button> <button onClick={() => navigate('/support')}>Back to inbox</button></div></main>;
   const service = t.case ? ServiceCodeSchema.safeParse(t.case.service_code) : null;
   return <main className="notices">
-    <div className="page-title"><div><p><Link to="/support">← Support inbox</Link></p><h1>{t.subject ?? kinds[t.kind]}</h1><p>{kinds[t.kind]} · {t.status === 'open' ? 'Open' : `Closed ${t.closed_at ? ist(t.closed_at) : ''}`} · received {ist(t.created_at)}</p></div></div>
+    <div className="page-title"><div><p><Link to="/support">← Support inbox</Link></p><h1>{t.subject ?? kinds[t.kind]}</h1><p>{kinds[t.kind]}{t.service_code ? ` · Regarding: ${SERVICE_NAMES[t.service_code as ServiceCode] ?? t.service_code}` : ''} · {t.status === 'open' ? 'Open' : `Closed ${t.closed_at ? ist(t.closed_at) : ''}`} · received {ist(t.created_at)}</p></div></div>
     <section className="detail-panel" aria-label="Requester">
       <div className="section-title"><h2>Requester</h2></div>
       <p><strong>{t.requester.name}</strong> · {t.requester.role}</p>

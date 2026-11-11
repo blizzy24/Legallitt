@@ -17,7 +17,7 @@ import {
 } from "@aws-sdk/client-s3";
 import { createPresignedPost } from "@aws-sdk/s3-presigned-post";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { DOCUMENT_MAX_BYTES, DOCUMENT_URL_SECONDS } from "@legalitt/shared";
+import { DOCUMENT_URL_SECONDS, documentMaxBytes } from "@legalitt/shared";
 import { z } from "zod";
 
 export type ObjectInfo = {
@@ -72,7 +72,7 @@ export class DocumentStorage {
       Expires: DOCUMENT_URL_SECONDS,
       Fields: { "Content-Type": mime, success_action_status: "204" },
       Conditions: [
-        ["content-length-range", 1, DOCUMENT_MAX_BYTES],
+        ["content-length-range", 1, documentMaxBytes(mime)],
         ["eq", "$Content-Type", mime],
       ],
     });
@@ -99,7 +99,7 @@ export class DocumentStorage {
     }
   }
   async read(key: string, info: ObjectInfo) {
-    if (info.size < 1 || info.size > DOCUMENT_MAX_BYTES)
+    if (info.size < 1 || info.size > documentMaxBytes(info.mime))
       throw new BadRequestException("File exceeds the upload limits");
     const { bucketName: Bucket } = await this.config();
     const result = await this.s3.send(
@@ -116,7 +116,7 @@ export class DocumentStorage {
     try {
       for await (const chunk of result.Body as AsyncIterable<Uint8Array>) {
         size += chunk.byteLength;
-        if (size > DOCUMENT_MAX_BYTES || size > info.size)
+        if (size > documentMaxBytes(info.mime) || size > info.size)
           throw new BadRequestException("File exceeds the upload limits");
         chunks.push(chunk);
       }

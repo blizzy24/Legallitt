@@ -9,6 +9,7 @@ import {SupportService} from './support/support.service';
 import {AccountDataController} from './account/account-data.controller';
 import {AccountDataService} from './account/account-data.service';
 import {FirAdminService} from './cases/fir-admin.service';
+import {FirFlowService} from './cases/fir-flow.service';
 import {ConsultationController} from './consultations/consultation.controller';
 import {ConsultationService} from './consultations/consultation.service';
 import {ConsultationPayments} from './consultations/consultation-payments';
@@ -81,7 +82,7 @@ import {ACCOUNT_COGNITO, CognitoAccountAdapter} from './account/account-cognito'
     ServicesController,
     DocumentController,
   ],
-  providers: [WalletService, AdvocateVerificationService, AdvocateCompletionService, AccountDeletionsAdminService, AccountService, AccountDataService, {provide: ACCOUNT_COGNITO, useClass: CognitoAccountAdapter}, SupportService, ConsultationService, ConsultationPayments, ConsultationReports, FirAdminService, FirService, NotificationRepository, AdminCaseDetailRepository, AdminAdvocatesRepository, AdminCasesRepository, NoticeMessages,
+  providers: [WalletService, AdvocateVerificationService, AdvocateCompletionService, AccountDeletionsAdminService, AccountService, AccountDataService, {provide: ACCOUNT_COGNITO, useClass: CognitoAccountAdapter}, SupportService, ConsultationService, ConsultationPayments, ConsultationReports, FirAdminService, FirFlowService, FirService, NotificationRepository, AdminCaseDetailRepository, AdminAdvocatesRepository, AdminCasesRepository, NoticeMessages,
     ShipmentService,
     NoticePdfService,
     PaymentsService, ServiceReportsService, CancellationsService,

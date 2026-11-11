@@ -3,7 +3,8 @@ export const FIR_REJECTION_HELP='Visible to any advocate who works this case. De
 export const FIR_REASSIGNED_CLIENT='We’ve assigned a new advocate to your case to make sure your draft meets our standards';
 export const FirLifecycleTokenSchema=z.strictObject({revision:z.number().int().nonnegative(),submission_id:z.uuid().nullable()});
 export const FirRejectSchema=FirLifecycleTokenSchema.extend({draft_reason:z.string().trim().min(1).max(4000).optional(),identity_document_id:z.uuid().optional()}).refine(v=>!!v.draft_reason||!!v.identity_document_id,'Choose a draft or identity rejection.');
-export const FirReassignSchema=FirLifecycleTokenSchema.extend({advocate_id:z.uuid()});
+// Flow §3.4: the reason is shown in the case timeline.
+export const FirReassignSchema=FirLifecycleTokenSchema.extend({advocate_id:z.uuid(),reason:z.string().trim().min(1,'Enter the reason for reassignment').max(2000)});
 export const FirIdentityReviewSchema=FirLifecycleTokenSchema.extend({document_id:z.uuid(),decision:z.enum(['accepted','unmasked_aadhaar'])});
 export type FirLifecycleToken=z.infer<typeof FirLifecycleTokenSchema>;
 export type FirLifecycleView={revision:number;current_submission_id:string|null;paid_at:string|null;updated_at:string;warning_hours:number;overdue_hours:number;reassign_after:number;rejection_count:number;

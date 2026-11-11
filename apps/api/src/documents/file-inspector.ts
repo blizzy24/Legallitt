@@ -1,17 +1,18 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { Worker } from "node:worker_threads";
 import { join } from "node:path";
-import { DOCUMENT_MAX_BYTES, DocumentMimeSchema } from "@legalitt/shared";
+import { DOCUMENT_MEDIA_MAX_BYTES, DocumentMimeSchema } from "@legalitt/shared";
 import { z } from "zod";
 
 const resultSchema = z.strictObject({
   mime: DocumentMimeSchema,
-  pageCount: z.number().int().min(1).max(2147483647),
+  // Media (MP4 / MP3) has no pages.
+  pageCount: z.number().int().min(1).max(2147483647).nullable(),
 });
 @Injectable()
 export class FileInspector {
   inspect(bytes: Uint8Array): Promise<z.infer<typeof resultSchema>> {
-    if (!bytes.length || bytes.length > DOCUMENT_MAX_BYTES)
+    if (!bytes.length || bytes.length > DOCUMENT_MEDIA_MAX_BYTES)
       return Promise.reject(
         new BadRequestException("File exceeds the upload limits"),
       );

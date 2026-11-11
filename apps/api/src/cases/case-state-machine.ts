@@ -3,7 +3,7 @@ import {isConsultationService} from '@legalitt/shared';
 import { NOTIFICATIONS, type NotificationsPort } from '../notifications/notifications.port';
 import { notifyCaseTransition } from '../notifications/case-notifications';
 import { requireDemoMode } from '../auth/demo';
-import {FIR_AWAITING_APPROVAL, FirSubmissionSchema, FirIntakeSchema, firIntakeDetails, INDIA_JURISDICTIONS, type FirIntake} from '@legalitt/shared';
+import {FIR_AWAITING_APPROVAL, FIR_CLIENT_CHANGES, FirSubmissionSchema, FirIntakeSchema, firIntakeDetails, INDIA_JURISDICTIONS, type FirIntake} from '@legalitt/shared';
 import {
   BadRequestException,
   ConflictException,
@@ -341,6 +341,8 @@ export class CaseStateMachine {
     if (to === CaseStatus.submitted && record.service_code === 'fir_draft') {
       parse(FirSubmissionSchema,firIntakeDetails(record.details,await tx.caseParty.findMany({where:{case_id:record.id}})));
       await requireFirIdentity(tx,record.id);
+      // Flow C6: Primary Documents is a required slot alongside Identity Proof.
+      if(!await tx.document.count({where:{case_id:record.id,kind:'fir_primary',status:'uploaded'}}))throw new BadRequestException('Upload at least one primary document (agreement, notice, receipt or stamp paper).');
     }
     if (to === CaseStatus.submitted && record.service_code === 'legal_notice') {
       parse(LegalNoticeSubmissionSchema, record.details);
@@ -471,15 +473,18 @@ export class CaseStateMachine {
   async decline(actor: CaseActor, id: string, body: unknown) {
     const input = parse(NoticeDeclineSchema, body ?? {});
     const db = await this.prisma.getClient();
-    return db.$transaction(async (tx) =>
-      this.advance(
+    return db.$transaction(async (tx) => {
+      const record = await lockedCase(tx, actor, id);
+      // FIR rejection needs a reason and returns the case to admin (POST /fir/:id/reject).
+      if (record.service_code === 'fir_draft') throw new ConflictException('Reject this FIR request with a reason.');
+      return this.advance(
         tx,
         actor,
-        await lockedCase(tx, actor, id),
+        record,
         CaseStatus.advocate_declined,
         {reason: input.reason ?? null},
-      ),
-    );
+      );
+    });
   }
   async saveNoticeDraft(actor: CaseActor, id: string, body: unknown) {
     const input = parse(NoticeDraftInputSchema, body);
@@ -725,6 +730,26 @@ export async function writeFirReviewState(tx:Prisma.TransactionClient,actor:Case
   if(actor.role!=='admin'&&(data.status!==undefined||data.advocate_id!==undefined||data.completed_at!==undefined))throw new ForbiddenException('Admin lifecycle action required');
   return tx.case.update({where:{id},data});
 }
+// docs/flows/FIR-DRAFT-FLOW.md transitions that sit outside the admin review
+// writer. Each (role, from, to) pair is listed explicitly; nothing else passes.
+const FIR_FLOW_MOVES: {role: CaseActor['role']; from: string; to: string}[] = [
+  {role: 'admin', from: 'in_progress', to: 'client_review'},        // admin approves → sent to client
+  {role: 'client', from: 'client_review', to: 'approved'},          // client approves, advocate submits to police
+  {role: 'client', from: 'client_review', to: 'completed'},         // client approves, client submits to police
+  {role: 'client', from: 'client_review', to: 'changes_requested'}, // client asks for changes
+  {role: 'advocate', from: 'assigned', to: 'advocate_declined'},    // advocate rejects → returns to admin
+  {role: 'advocate', from: 'approved', to: 'completed'},            // advocate marks submitted to police
+];
+export async function writeFirFlowTransition(tx:Prisma.TransactionClient,actor:CaseActor,id:string,
+  move:{to:string;sub_status:string|null;advocate_id?:null},type:string,payload:Prisma.InputJsonObject={}){
+  const before=await lockedCase(tx,actor,id,'fir_draft');
+  if(!FIR_FLOW_MOVES.some(m=>m.role===actor.role&&m.from===before.status&&m.to===move.to))throw new ConflictException('This FIR request has moved on. Reload and try again.');
+  const now=new Date();
+  const updated=await tx.case.update({where:{id},data:{status:move.to as CaseStatus,sub_status:move.sub_status,updated_at:now,
+    ...(move.to==='completed'?{completed_at:now}:{}),...(move.advocate_id===null?{advocate_id:null}:{})}});
+  await appendCaseEvent(tx,{case_id:id,type,actor_id:actor.id,actor_role:actor.role,from_status:before.status,to_status:move.to as CaseStatus,payload});
+  return updated;
+}
 export async function writeFirIntake(tx: Prisma.TransactionClient,actor: CaseActor,id:string,input:FirIntake) {
   const record=await lockedCase(tx,actor,id,'fir_draft');
   if(actor.role!=='client')throw new ForbiddenException('Case client required');
@@ -769,7 +794,9 @@ export async function writeFirDraftSaved(tx: Prisma.TransactionClient,actor: Cas
     throw new ConflictException('Draft cannot be edited while awaiting admin approval');
   const correction=await firCorrectionState(tx,id);
   const status=correction&&correction!=='advocate_revision_required'?'changes_requested':'in_progress';
-  await tx.case.update({where:{id},data:{status,sub_status:correction,updated_at:new Date()}});
+  // A revision answering the client's change request keeps that marker until it is sent (C10).
+  const sub=correction??(record.sub_status===FIR_CLIENT_CHANGES?FIR_CLIENT_CHANGES:null);
+  await tx.case.update({where:{id},data:{status,sub_status:sub,updated_at:new Date()}});
   return appendCaseEvent(tx,{case_id:id,type:'fir_draft_saved',actor_id:actor.id,actor_role:actor.role,from_status:record.status,to_status:status,payload:{draft_id:draft.id,version:draft.version}});
 }
 export async function writeFirSubmitted(tx: Prisma.TransactionClient,actor: CaseActor,id:string,payload:{draft_id:string;version:number;document_id:string}) {

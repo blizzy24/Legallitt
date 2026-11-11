@@ -1,0 +1,107 @@
+import {z} from 'zod';
+
+// docs/flows/FIR-DRAFT-FLOW.md. The C10 mapping below is the single source of
+// truth for the FIR state shown to client, advocate and admin.
+export const FIR_CLIENT_CHANGES = 'client_changes_requested';
+export const FIR_AWAITING_POLICE = 'awaiting_police_submission';
+
+export const FIR_CLIENT_STAGES = ['Request Submitted', 'Information Review', 'Draft Preparation', 'Awaiting Your Approval', 'Draft Ready'] as const;
+export type FirAdvocateScreen = 'request' | 'documents' | 'draft' | 'status' | 'completed';
+export type FirStageView = {
+  /** Client stage 1–5 (C10). `done` marks the last stage complete. */
+  client: {stage: 1 | 2 | 3 | 4 | 5; label: string; status: string; note: string | null; done: boolean; decision_due: boolean};
+  advocate: {chip: string; action: string | null; screen: FirAdvocateScreen | null};
+  admin: {label: string};
+};
+
+export function firStage(input: {status: string; sub_status?: string | null; advocate_id?: string | null}): FirStageView {
+  const {status, sub_status: sub = null} = input;
+  const client = (stage: 1 | 2 | 3 | 4 | 5, statusText: string, note: string | null = null, done = false, decision_due = false) =>
+    ({stage, label: FIR_CLIENT_STAGES[stage - 1], status: statusText, note, done, decision_due});
+  const advocate = (chip: string, action: string | null, screen: FirAdvocateScreen | null) => ({chip, action, screen});
+  switch (status) {
+    case 'draft': return {client: client(1, 'Draft – not submitted'), advocate: advocate('Draft', null, null), admin: {label: 'Not submitted'}};
+    case 'submitted': case 'payment_pending': return {client: client(1, 'Awaiting payment'), advocate: advocate('Awaiting payment', null, null), admin: {label: 'Awaiting payment'}};
+    case 'paid': case 'assigning': return {client: client(2, 'Under review'), advocate: advocate('New Request', null, null), admin: {label: 'New request · assign an advocate'}};
+    case 'advocate_declined': return {client: client(2, 'Under review'), advocate: advocate('Returned to admin', null, null), admin: {label: 'Advocate rejected · reassign'}};
+    case 'assigned': return {client: client(2, 'Under review', 'Drafting team assigned'), advocate: advocate('New Request', 'Review Request', 'request'), admin: {label: 'Assigned · awaiting advocate'}};
+    case 'advocate_accepted': return {client: client(2, 'Under review', 'Drafting team assigned'), advocate: advocate('Accepted', 'Review Documents', 'documents'), admin: {label: 'Accepted by advocate'}};
+    case 'in_progress':
+      if (sub === 'awaiting_admin_approval') return {client: client(3, 'Draft being prepared'), advocate: advocate('Sent to Admin', 'View Status', 'status'), admin: {label: 'Awaiting admin approval'}};
+      if (sub === FIR_CLIENT_CHANGES) return {client: client(3, 'Draft being updated', 'Advocate is updating your draft'), advocate: advocate('Client Changes', 'Continue Draft', 'draft'), admin: {label: 'Advocate revising after client changes'}};
+      return {client: client(3, 'Draft being prepared'), advocate: advocate('Draft Preparation', 'Continue Draft', 'draft'), admin: {label: 'Drafting'}};
+    case 'changes_requested':
+      if (sub === FIR_CLIENT_CHANGES) return {client: client(3, 'Draft being updated', 'Advocate is updating your draft'), advocate: advocate('Client Changes', 'Continue Draft', 'draft'), admin: {label: 'Client asked for changes'}};
+      if (sub === 'identity_replacement_required') return {client: client(3, 'Draft being prepared'), advocate: advocate('Identity Replacement', 'View Status', 'status'), admin: {label: 'Waiting for the client’s replacement ID'}};
+      if (sub === 'identity_review_pending' || sub === 'multiple_corrections_required') return {client: client(3, 'Draft being prepared'), advocate: advocate('Admin Returned', 'Continue Draft', 'draft'), admin: {label: 'Replacement ID awaits admin review'}};
+      return {client: client(3, 'Draft being prepared'), advocate: advocate('Admin Returned', 'Continue Draft', 'draft'), admin: {label: 'Returned to advocate'}};
+    case 'client_review': return {client: client(4, 'Awaiting your approval', null, false, true), advocate: advocate('Waiting for Client', 'View Status', 'status'), admin: {label: 'Sent to client'}};
+    case 'approved': return {client: client(5, 'Approved', 'Police station submission by your advocate'), advocate: advocate('Client Approved', 'Mark Submitted', 'status'), admin: {label: 'Client approved · awaiting police submission'}};
+    case 'completed': return {client: client(5, 'Completed', null, true), advocate: advocate('Completed', 'View', 'completed'), admin: {label: 'Completed'}};
+    case 'cancelled': case 'refunded': return {client: client(1, status === 'refunded' ? 'Cancelled and refunded' : 'Cancelled'), advocate: advocate('Cancelled', null, null), admin: {label: status === 'refunded' ? 'Cancelled · refunded' : 'Cancelled'}};
+    default: return {client: client(1, 'Status unavailable'), advocate: advocate('Status unavailable', null, null), admin: {label: status}};
+  }
+}
+
+// C12 Select Section chips (F7). Codes are stored on the review.
+export const FIR_REVIEW_SECTIONS = [
+  {code: 'complainant', label: 'Complainant Info'},
+  {code: 'incident', label: 'Incident Details'},
+  {code: 'date_time_place', label: 'Date, Time, Place'},
+  {code: 'people', label: 'People Involved'},
+  {code: 'missing_data', label: 'Missing Data'},
+  {code: 'other', label: 'Other Clarification'},
+] as const;
+export type FirReviewSection = typeof FIR_REVIEW_SECTIONS[number]['code'];
+const sectionCode = z.enum(FIR_REVIEW_SECTIONS.map(s => s.code) as [FirReviewSection, ...FirReviewSection[]]);
+export const firSectionLabel = (code: string) => FIR_REVIEW_SECTIONS.find(s => s.code === code)?.label ?? code;
+
+export const FirClientApproveSchema = z.strictObject({draft_id: z.uuid()});
+export const FirClientChangesSchema = z.strictObject({
+  draft_id: z.uuid(),
+  sections: z.array(sectionCode).min(1, 'Pick at least one section').max(FIR_REVIEW_SECTIONS.length).refine(v => new Set(v).size === v.length, 'Each section once'),
+  comment: z.string().trim().min(1, 'Describe the changes you need').max(600, 'Use up to 600 characters'),
+  attachment_document_id: z.uuid().nullable().optional(),
+});
+export const FirAdvocateRejectSchema = z.strictObject({reason: z.string().trim().min(1, 'Enter a reason').max(2000)});
+export const FirPoliceSubmissionSchema = z.strictObject({
+  submitted_on: z.iso.date(),
+  receipt_document_id: z.uuid(),
+});
+export const FirSettingsSchema = z.strictObject({police_submission_by_advocate: z.boolean()});
+export type FirSettings = {police_submission_by_advocate: boolean; turnaround: {min_hours: number; max_hours: number}};
+export const firTurnaroundText = (s: Pick<FirSettings, 'turnaround'>) => `${s.turnaround.min_hours}–${s.turnaround.max_hours} Hours`;
+export const FIR_REMIND_HOURS = 24;
+
+// C6 upload slots (design 45). `kind` is stored on the document.
+export const FIR_UPLOAD_SLOTS = [
+  {kind: 'fir_primary', title: 'Primary Documents', hint: 'Agreements, notices, receipts, stamps', required: true, max: 20, accept: ['application/pdf', 'image/jpeg', 'image/png']},
+  {kind: 'fir_scene', title: 'Scene Photos & Video', hint: 'JPEG, PNG, MP4 · up to 50 MB each', required: false, max: 5, accept: ['image/jpeg', 'image/png', 'video/mp4']},
+  {kind: 'fir_communications', title: 'Digital Communications', hint: 'WhatsApp logs, emails, SMS', required: false, max: 20, accept: ['application/pdf', 'image/jpeg', 'image/png']},
+  {kind: 'fir_other', title: 'Ancillary / Other Records', hint: 'Audio, bank statements, affidavits', required: false, max: 20, accept: ['application/pdf', 'image/jpeg', 'image/png', 'audio/mpeg']},
+] as const;
+export const FIR_CUSTOM_SLOT_KIND = 'fir_custom';
+export const FIR_CHANGE_ATTACHMENT_KIND = 'fir_change_attachment';
+export const FIR_POLICE_RECEIPT_KIND = 'fir_police_receipt';
+export const FIR_CHANGE_ATTACHMENT_MAX_BYTES = 10_000_000;
+export const FIR_MEDIA_KINDS: Record<string, readonly string[]> = {fir_scene: ['video/mp4'], fir_other: ['audio/mpeg']};
+export const maskedIdentity = (last4: string | null | undefined) => last4 ? `XXXX-XXXX-${last4}` : null;
+
+export type FirFlowDocument = {id: string; filename: string; mime_type: string; size_bytes: string; page_count: number | null};
+export type FirFlowReview = {role: 'admin' | 'client'; decision: 'approved' | 'returned' | 'changes_requested'; comment: string | null;
+  sections: string[]; attachment: FirFlowDocument | null; version: number | null; created_at: string};
+export type FirFlowEvent = {type: string; label: string; actor: 'client' | 'advocate' | 'admin' | 'system'; created_at: string};
+export type FirFlowView = {
+  case_id: string; reference: string; status: string; sub_status: string | null; stage: FirStageView;
+  settings: FirSettings; created_at: string; submitted_at: string | null; paid_at: string | null; completed_at: string | null;
+  incident_type: string | null; police_station: string | null; city: string | null;
+  client: {name: string; mobile: string | null; email: string | null; city: string | null} | null;
+  advocate: {id: string; name: string; verified: boolean; photo_url: string | null} | null;
+  /** Client: the latest admin-approved draft. Advocate/admin: the latest generated draft. */
+  draft: {draft_id: string; version: number; document: FirFlowDocument; created_by: string; created_at: string; sections: number; files: number} | null;
+  reviews: FirFlowReview[];
+  police: {submitted_on: string; receipt: FirFlowDocument; created_at: string} | null;
+  remind: {allowed: boolean; next_at: string | null; last_at: string | null} | null;
+  share_paise: string | null;
+  events: FirFlowEvent[];
+};

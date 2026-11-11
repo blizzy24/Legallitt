@@ -3,11 +3,19 @@ import {IdentityUploadSchema} from './fir-identity';
 
 export const DOCUMENT_MAX_BYTES = 25_000_000;
 export const DOCUMENT_URL_SECONDS = 300;
+// FIR Scene Photos & Video accepts MP4 up to 50 MB; Ancillary Records accepts MP3
+// audio (flow C6). Other services still take PDF and images only (see presign).
+export const DOCUMENT_MEDIA_MAX_BYTES = 50_000_000;
 export const DocumentMimeSchema = z.enum([
   "application/pdf",
   "image/jpeg",
   "image/png",
+  "video/mp4",
+  "audio/mpeg",
 ]);
+export const MEDIA_MIMES: readonly string[] = ["video/mp4", "audio/mpeg"];
+export const documentMaxBytes = (mime: string | undefined) =>
+  mime === "video/mp4" ? DOCUMENT_MEDIA_MAX_BYTES : DOCUMENT_MAX_BYTES;
 // Metadata must not carry a full identity number. No OCR or identity-field
 // extraction is used to inspect the file itself.
 const metadata = z
@@ -31,6 +39,10 @@ export const DocumentPresignSchema = z.strictObject({
   ),
   mime: DocumentMimeSchema,
   identity: IdentityUploadSchema.optional(),
+  // FIR only: the last four digits of an identity document (shown XXXX-XXXX-1234)
+  // and the client's name for a custom upload slot.
+  identity_last4: z.string().regex(/^\d{4}$/, "Enter the last four digits").optional(),
+  slot_label: metadata.refine((value) => value.length <= 60, "Use up to 60 characters").optional(),
 });
 // General guidance from §6d, not a per-service acceptance policy. The client
 // still has to confirm acceptable evidence for each flow (§8).

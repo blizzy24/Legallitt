@@ -36,3 +36,5 @@ small.block{display:block;margin-top:4px;color:#8f95a6}
 .fir-review-body label{display:block;margin:12px 0}
 .fir-review-body label input:not([type=radio]){display:block;margin-top:6px;max-width:320px}
 .fir-review-body input[type=radio]{width:auto}
+
+.fir-flow .pill{font-size:11px;padding:4px 10px;border-radius:999px;border:1px solid var(--accent);color:var(--accent)}.fir-timeline{margin:8px 0 0;padding-left:18px}.fir-timeline li{margin:6px 0;line-height:1.5}.fir-timeline small{color:var(--muted);margin-left:6px}.fir-setting{border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin:8px 0}.fir-setting p{font-size:12px}

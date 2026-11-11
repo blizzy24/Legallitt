@@ -24,6 +24,8 @@ export type SupportTicketView = {
   id: string; kind: 'ticket' | 'callback' | 'chat'; status: 'open' | 'closed';
   subject: string | null; related_to: string | null; contact_method: string | null;
   contact_name: string | null; contact_phone: string | null; case_id: string | null;
+  /** Service screen the request came from (Request Chat / Request Callback), e.g. fir_draft. */
+  service_code?: string | null;
   created_at: string; closed_at: string | null; messages: SupportMessageView[];
 };
 export type SupportAdminTicket = SupportTicketView & {
@@ -33,6 +35,7 @@ export type SupportAdminTicket = SupportTicketView & {
 };
 export type SupportInboxRow = {
   id: string; kind: 'ticket' | 'callback' | 'chat'; status: 'open' | 'closed'; subject: string | null;
+  service_code?: string | null;
   requester: {id: string; name: string; role: string};
   last_message: string | null; created_at: string;
   /** Oldest requester message not yet answered by support; null when answered or closed. */

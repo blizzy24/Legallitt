@@ -4,7 +4,7 @@ const provided=value=>({status:'provided',value}),unknown=()=>({status:'unknown'
 const personal=()=>({father_name:provided('TEST Father Rao'),age:provided(37),gender:provided('Woman'),occupation:provided('TEST Teacher'),present_address:provided('TEST Present Street 22')});
 function intake(){
  const state=INDIA_JURISDICTIONS.find(s=>s.name==='Maharashtra'),district=state.districts.find(d=>d.name==='Mumbai');
- return {intake_version:2,intake_step:5,contact:{fullName:'TEST Complainant Rao',mobile:'2025550100',email:'fir-test@example.invalid'},jurisdiction:{state:state.name,state_code:state.code,district:district.name,district_code:district.code,policeStation:'TEST Colaba Station'},incident:{type:'theft',date:'2026-11-10',time:'09:30',location:'TEST Harbour Road',description:'TEST ONLY original client narrative.',additional:'TEST original additional information.'},people:[
+ return {intake_version:2,intake_step:5,contact:{fullName:'TEST Complainant Rao',mobile:'2025550100',email:'fir-test@example.invalid'},jurisdiction:{state:state.name,state_code:state.code,district:district.name,district_code:district.code,policeStation:'TEST Colaba Station'},place:{address:'TEST Harbour Road, near the jetty',city:'Mumbai',pin:'400005'},incident:{type:'theft',date:'2026-11-10',time:'09:30',location:'TEST Harbour Road',description:'TEST ONLY original client narrative.',additional:'TEST original additional information.'},people:[
   {id:randomUUID(),kind:'complainant',name:'TEST Complainant Rao',phone:'2025550100',residence:'TEST Registered Street 11',details:'',personal_details:personal()},
   {id:randomUUID(),kind:'accused',name:'TEST Known Suspect',phone:'2025550101',alias:'TEST alias',details:'TEST jacket',primary:true},
   {id:randomUUID(),kind:'accused',name:'',unknown:true,details:'TEST unknown suspect blue coat'},
@@ -21,4 +21,6 @@ function editable(input=intake()){
  draft.statement_of_facts='TEST ONLY advocate edited narrative. No real offence or police filing.';
  return draft;
 }
-module.exports={intake,personal,editable,provided,unknown};
+// Flow C6: Primary Documents is required at submission alongside identity.
+const primary=(db,caseId,ownerId)=>db.document.create({data:{case_id:caseId,owner_id:ownerId,kind:'fir_primary',filename:'TEST-primary-receipt.pdf',mime_type:'application/pdf',size_bytes:100n,page_count:1,status:'uploaded',s3_key:randomUUID()}});
+module.exports={intake,personal,editable,provided,unknown,primary};

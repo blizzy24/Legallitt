@@ -51,7 +51,7 @@ export class AdminCasesRepository {
     const ordinaryBucket:Prisma.CaseWhereInput={status:{in:eligible.filter(s=>adminBucketFor(s,input.service)===input.bucket)}};
     const bucketWhere: Prisma.CaseWhereInput = (consultation||report)&&input.bucket==='open'?{OR:[ordinaryBucket,waiting]}:(consultation||report)&&input.bucket==='in_progress'?{AND:[ordinaryBucket,{NOT:waiting}]}:ordinaryBucket;
     const filtered: Prisma.CaseWhereInput = {AND:[base,
-      ...(input.bucket ? [input.service==='fir_draft'?{OR:eligible.flatMap(status=>[null,'awaiting_admin_approval','advocate_revision_required','identity_replacement_required','identity_review_pending','multiple_corrections_required'].filter(sub=>adminBucketFor(status,input.service,sub)===input.bucket).map(sub_status=>({status,sub_status})))}:bucketWhere] : []),
+      ...(input.bucket ? [input.service==='fir_draft'?{OR:eligible.flatMap(status=>[null,'awaiting_admin_approval','advocate_revision_required','identity_replacement_required','identity_review_pending','multiple_corrections_required','client_changes_requested','awaiting_police_submission'].filter(sub=>adminBucketFor(status,input.service,sub)===input.bucket).map(sub_status=>({status,sub_status})))}:bucketWhere] : []),
       ...(input.queue ? [waiting] : [])]};
     const db = await this.prisma.getClient();
     return db.$transaction(async tx => {

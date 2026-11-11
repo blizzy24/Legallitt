@@ -34,7 +34,7 @@ export function adminBucketFor(status: CaseStatus, service?: string, subStatus?:
     if(status===CaseStatus.changes_requested)return 'in_progress';
   }
   if(service==='fir_draft'&&['assigned','advocate_accepted','in_progress','changes_requested'].includes(status)&&['identity_review_pending','multiple_corrections_required'].includes(subStatus??''))return 'open';
-  if(service==='fir_draft'&&status==='changes_requested')return subStatus==='advocate_revision_required'?'in_progress':subStatus==='identity_replacement_required'?'pending':'open';
+  if(service==='fir_draft'&&status==='changes_requested')return subStatus==='advocate_revision_required'||subStatus==='client_changes_requested'?'in_progress':subStatus==='identity_replacement_required'?'pending':'open';
   if (service === 'fir_draft' && status === CaseStatus.in_progress && subStatus === 'awaiting_admin_approval') return 'open';
   // Report services (Property Search, Document Forensic, Court Marriage) share the admin approval wait.
   if (['property_search','document_forensic','court_marriage'].includes(service ?? '') && status === CaseStatus.in_progress && subStatus === 'awaiting_admin_approval') return 'open';

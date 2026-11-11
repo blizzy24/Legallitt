@@ -51,7 +51,7 @@ export class FirService {
         if(!docs.some(d=>d.id===input.content.identity_document_id&&d.kind==='id_proof'))throw new BadRequestException('Include the selected identity document from this case in attachments');
         await requireFirIdentity(tx,id,input.content.identity_document_id);
       }
-      const content=assembleFirDraft(id,intake,hash,new Date().toISOString(),input.content,input.content.attachment_ids.map(docId=>{const d=docs.find(d=>d.id===docId)!;return {document_id:d.id,filename:d.filename,mime_type:d.mime_type as 'application/pdf'|'image/png'|'image/jpeg'};}));
+      const content=assembleFirDraft(id,intake,hash,new Date().toISOString(),input.content,input.content.attachment_ids.map(docId=>{const d=docs.find(d=>d.id===docId)!;return {document_id:d.id,filename:d.filename,mime_type:d.mime_type as FirDraftContent['attachments'][number]['mime_type']};}));
       const draft = await tx.draft.create({data:{case_id:id,kind:'fir_proforma',version:(last?.version ?? 0)+1,content,created_by:actor.id,generated_by:'manual'}});
       await writeFirDraftSaved(tx,actor,id,draft);
       return draft;

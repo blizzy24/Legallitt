@@ -7,14 +7,16 @@ const phoneText = z.string().trim().max(50);
 export const FirPersonSchema = z.strictObject({
   id: z.uuid().optional(), kind: z.enum(['complainant','accused','witness']), name: text, details: text,
   phone: phoneText.optional(), residence: text.optional(), alias: text.optional(), unknown: z.boolean().optional(),
-  primary: z.boolean().optional(), role: text.optional(), presence: text.optional(),
+  primary: z.boolean().optional(), role: text.optional(), presence: text.optional(), key: z.boolean().optional(),
   personal_details: FirPersonalDetailsSchema.optional(),
 });
 export type FirPerson = z.infer<typeof FirPersonSchema>;
 export const FirIntakeSchema = z.strictObject({
   intake_version: z.literal(2).optional(), intake_step: z.number().int().min(1).max(5).optional(),
   contact: z.strictObject({fullName: text, mobile: phoneText, email: text, country_code:z.string().regex(/^[A-Z]{2}$/).optional(),dial_code:z.string().regex(/^\+\d{1,4}$/).optional()}),
-  jurisdiction: z.strictObject({state: text, district: text, policeStation: text, state_code: z.string().regex(/^\d*$/).optional(), district_code: z.string().regex(/^\d*$/).optional(), source_retrieved_at: z.iso.datetime().optional()}),
+  jurisdiction: z.strictObject({state: text, district: text, policeStation: text, police_station_id: z.string().regex(/^[a-z0-9-]{1,80}$/).optional(), state_code: z.string().regex(/^\d*$/).optional(), district_code: z.string().regex(/^\d*$/).optional(), source_retrieved_at: z.iso.datetime().optional()}),
+  // Step 1 Place of Incident (flow C3). Coordinates only when the person chose Use current location.
+  place: z.strictObject({address: text, city: text, pin: z.string().trim().regex(/^(\d{6})?$/), lat: z.number().min(-90).max(90).optional(), lng: z.number().min(-180).max(180).optional()}).optional(),
   incident: z.strictObject({type: text, date: text, time: text, location: text, description: text, additional: text.default('')}),
   people: z.array(FirPersonSchema).max(100),
 });
@@ -27,7 +29,7 @@ export function firIntakeDetails(details: unknown, parties: {id:string;kind:stri
   if(d.intake_version!==2)return d;
   const people=parties.filter(p=>['complainant','accused','witness'].includes(p.kind)).map(p=>{
     const v=(p.details??{}) as Record<string,unknown>;
-    return {id:p.id,kind:p.kind,name:p.name,details:v.description??'',phone:v.phone??'',residence:v.residence??'',alias:v.alias??'',unknown:v.unknown??false,primary:v.primary??false,role:v.role??'',presence:v.presence??'',...(v.personal_details?{personal_details:v.personal_details}:{}),order:Number(v.order??0)};
+    return {id:p.id,kind:p.kind,name:p.name,details:v.description??'',phone:v.phone??'',residence:v.residence??'',alias:v.alias??'',unknown:v.unknown??false,primary:v.primary??false,role:v.role??'',presence:v.presence??'',...(v.key!==undefined?{key:v.key}:{}),...(v.personal_details?{personal_details:v.personal_details}:{}),order:Number(v.order??0)};
   }).sort((a,b)=>a.order-b.order).map(({order,...person})=>person);
   return {...d,people};
 }
@@ -37,6 +39,13 @@ export function validFirDate(value:string) {
   const [y,m,d]=iso?[+iso[1],+iso[2],+iso[3]]:[+local![3],+local![2],+local![1]],date=new Date(Date.UTC(y,m-1,d));
   return y>=1900&&date.getUTCFullYear()===y&&date.getUTCMonth()===m-1&&date.getUTCDate()===d;
 }
+/** Compared in India Standard Time, the zone every filing is made in. */
+export function firDateInFuture(value:string,now=Date.now()){
+  const iso=/^(\d{4})-(\d{2})-(\d{2})$/.exec(value),local=/^(\d{1,2})\s*\/\s*(\d{1,2})\s*\/\s*(\d{4})$/.exec(value);
+  if(!iso&&!local)return false;
+  const [y,m,d]=iso?[iso[1],iso[2],iso[3]]:[local![3],local![2].padStart(2,'0'),local![1].padStart(2,'0')];
+  return `${y}-${m}-${d}`>new Date(now+330*60000).toISOString().slice(0,10);
+}
 export function firIntakeErrors(v:FirIntake,step=5):Record<string,string> {
   const errors:Record<string,string>={};
   if(!v.contact.fullName.trim())errors.fullName='Enter your full name.';
@@ -45,9 +54,13 @@ export function firIntakeErrors(v:FirIntake,step=5):Record<string,string> {
   if(!v.incident.type)errors.type='Choose the incident type.';
   if(!v.jurisdiction.state_code)errors.state='Choose a state or union territory.';
   if(!v.jurisdiction.district_code)errors.district='Choose a district in the selected state.';
-  if(!v.jurisdiction.policeStation.trim())errors.policeStation='Enter the police station name.';
+  if(!v.jurisdiction.policeStation.trim())errors.policeStation='Choose or type the police station.';
+  if(!v.place?.address.trim())errors.placeAddress='Enter where the incident took place.';
+  if(!v.place?.city.trim())errors.placeCity='Choose the city.';
+  if(v.place?.pin&&!/^\d{6}$/.test(v.place.pin))errors.placePin='Enter a 6-digit PIN code or leave it empty.';
   if(step>=2){
     if(!validFirDate(v.incident.date))errors.date='Enter a valid date as DD/MM/YYYY or YYYY-MM-DD.';
+    else if(firDateInFuture(v.incident.date))errors.date='The incident date can’t be in the future.';
     if(!/^(?:[01]?\d|2[0-3]):[0-5]\d$|^(?:0?[1-9]|1[0-2]):[0-5]\d\s*(?:AM|PM)$/i.test(v.incident.time))errors.time='Enter a valid time, for example 14:30 or 02:30 PM.';
     if(!v.incident.location.trim())errors.location='Enter where the incident happened.';
     if(!v.incident.description.trim()||v.incident.description.length>2000)errors.description='Enter the narrative, up to 2,000 characters.';
@@ -57,6 +70,7 @@ export function firIntakeErrors(v:FirIntake,step=5):Record<string,string> {
     if(complainants.length!==1||!complainants[0].name.trim()||!complainants[0].phone?.trim())errors.complainant='Add the complainant’s name and contact number.';
     if(!complainants[0]?.residence?.trim())errors.residence='Enter the complainant’s registered residence.';
     for(const [key,label] of Object.entries(FIR_PERSONAL_LABELS))if(!complainants[0]?.personal_details?.[key as keyof typeof FIR_PERSONAL_LABELS])errors['complainant_'+key]=`Complete ${label.toLowerCase()}, or explicitly choose Unknown or Not applicable.`;
+    if(!v.people.some(p=>p.kind==='accused'))errors.accused='Add at least one accused person. Choose Unknown if you don’t know who it was.';
     for(const p of v.people)if(p.kind!=='complainant'&&!p.name.trim()&&!(p.kind==='accused'&&p.unknown))errors[p.id??p.kind]='Enter the person’s name, or mark an accused person as unknown.';
     for(const p of v.people)if(p.phone&&(!/^[+\d ()-]+$/.test(p.phone)||p.phone.replace(/\D/g,'').length<7||p.phone.replace(/\D/g,'').length>15))errors[p.id??p.kind]='Enter a valid contact number, or leave optional numbers empty.';
   }

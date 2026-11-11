@@ -22,11 +22,11 @@ test('FIR admin rejection: mixed returns, purge retry, replacement, two draft re
  const pay=new PaymentsService(prisma,state,{capture:async()=>({paymentId:randomUUID(),simulated:true,source:'simulated'})},inbox);
  const before={};for(const model of ['servicePricing','commissionRate','feePolicy','pageOveragePolicy'])before[model]=await db[model].findMany({select:{id:true}});
  const token=async()=>{const v=await review.read(admin,id);return {revision:v.revision,submission_id:v.current_submission_id};};
- const upload=async()=>{const ticket=await docs.presign(client,{case_id:id,kind:'id_proof',filename:'TEST identity.pdf',mime:'application/pdf',identity:{document_type:'passport',masked_copy:false}});objects.set(stagingKey(ticket.document.s3_key),Buffer.from('TEST synthetic structural fixture'));return docs.complete(client,ticket.document.id);};
+ const upload=async()=>{const ticket=await docs.presign(client,{case_id:id,kind:'id_proof',filename:'TEST identity.pdf',mime:'application/pdf',identity_last4:'4812',identity:{document_type:'passport',masked_copy:false}});objects.set(stagingKey(ticket.document.s3_key),Buffer.from('TEST synthetic structural fixture'));return docs.complete(client,ticket.document.id);};
  const save=async(actor,identity)=>{const context=await fir.context(actor,id),content=fixture.editable(context.intake);content.identity_document_id=identity.id;content.attachment_ids=[identity.id];return fir.save(actor,id,{base_draft_id:context.latest_draft_id,filing_hash:context.filing_hash,content});};
  try{
   await db.user.createMany({data:users});await db.advocateProfile.createMany({data:[advocate,next].map(u=>({user_id:u.id,verification:'approved',city:'Mumbai'}))});await seedConfirmedPricing(db);
-  id=(await state.create(client,{service_code:'fir_draft'})).id;await fir.intake(client,id,fixture.intake());const firstIdentity=await upload();await state.submitForPayment(client,id);const quote=await pay.quote(client,{case_id:id});await pay.intent(client,{case_id:id,purpose:'service_fee',quote_id:quote.id},randomUUID());await state.assign(admin,id,{advocate_id:advocate.id});await state.transition(advocate,id,'advocate_accepted');
+  id=(await state.create(client,{service_code:'fir_draft'})).id;await fir.intake(client,id,fixture.intake());const firstIdentity=await upload();await fixture.primary(db,id,client.id);await state.submitForPayment(client,id);const quote=await pay.quote(client,{case_id:id});await pay.intent(client,{case_id:id,purpose:'service_fee',quote_id:quote.id},randomUUID());await state.assign(admin,id,{advocate_id:advocate.id});await state.transition(advocate,id,'advocate_accepted');
   const first=await save(advocate,firstIdentity);await fir.send(advocate,id,first.id);const originalToken=await token(),originalLife=await review.read(admin,id);
   await t.test('manual identity acceptance is required; one concurrent return wins and no client feedback leaks',async()=>{
    await assert.rejects(fir.approve(admin,id,first.id,originalToken),{status:409});await assert.rejects(review.reject(admin,id,{...originalToken,draft_reason:' '}),{status:400});
@@ -36,7 +36,7 @@ test('FIR admin rejection: mixed returns, purge retry, replacement, two draft re
    await assert.rejects(docs.url(client,firstIdentity.id),{status:404});assert.equal((await db.firIdentityReturn.findUnique({where:{document_id:firstIdentity.id}})).purge_status,'failed');
    const json=value=>JSON.stringify(value,(_,v)=>typeof v==='bigint'?v.toString():v);
    const visible=json(await repo.read(client,id));assert.ok(!visible.includes('clarify the incident'));assert.ok(!json(await repo.events(client,id,{})).includes('clarify the incident'));
-   await assert.rejects(review.reassign(admin,id,{...await token(),advocate_id:next.id}),{status:409});
+   await assert.rejects(review.reassign(admin,id,{...await token(),advocate_id:next.id,reason:'TEST two draft rejections'}),{status:409});
   });
   let replacement;
   await t.test('replacement is limited to identity evidence; repeated ID rejection never increments the draft counter',async()=>{
@@ -52,7 +52,7 @@ test('FIR admin rejection: mixed returns, purge retry, replacement, two draft re
   });
   await t.test('second draft rejection enables reassignment; history and payment age survive; former advocate is notified',async()=>{
    const second=await save(advocate,replacement);await fir.send(advocate,id,second.id);await review.reject(admin,id,{...await token(),draft_reason:'TEST explain the applicable section'});
-   const old=await token();await review.reassign(admin,id,{...old,advocate_id:next.id});const life=await review.read(admin,id);
+   const old=await token();await review.reassign(admin,id,{...old,advocate_id:next.id,reason:'TEST two draft rejections'});const life=await review.read(admin,id);
    assert.equal(life.rejection_count,0);assert.equal(life.assignments.length,2);assert.equal(life.assignments[0].rejections,2);assert.ok(life.assignments[0].ended_at);assert.equal(life.paid_at,originalLife.paid_at);
    await assert.rejects(repo.read(advocate,id),{status:404});await assert.rejects(docs.url(advocate,replacement.id),{status:404});await assert.rejects(fir.approve(admin,id,second.id,old),{status:409});
    const inbox=await notifications.list(advocate,{}),notice=inbox.items.find(n=>n.kind==='fir_reassigned_away');assert.ok(notice);assert.equal(notice.case_id,null);await notifications.read(advocate,notice.id);
@@ -63,7 +63,7 @@ test('FIR admin rejection: mixed returns, purge retry, replacement, two draft re
    await state.transition(next,id,'advocate_accepted');await assert.rejects(fir.preview(next,id,first.id),{status:409});
    const finalDraft=await save(next,replacement);await fir.send(next,id,finalDraft.id);const pending=await review.read(admin,id),sub=pending.submissions.find(s=>s.id===pending.current_submission_id);
    await review.identityReview(admin,id,{...await token(),document_id:replacement.id,decision:'accepted'});const approvedToken=await token();await Promise.all([fir.approve(admin,id,finalDraft.id,approvedToken),fir.approve(admin,id,finalDraft.id,approvedToken)]);
-   const done=await review.read(admin,id),clientCase=await repo.read(client,id);assert.equal(clientCase.status,'completed');assert.deepEqual(clientCase.drafts.map(d=>d.id),[finalDraft.id]);assert.equal(done.entitlement.amount_paise,quote.breakdown.advocate_entitlement_paise);assert.equal(done.entitlement.assignment_id,done.assignments[1].id);
+   const done=await review.read(admin,id),clientCase=await repo.read(client,id);assert.equal(clientCase.status,'client_review');assert.deepEqual(clientCase.drafts.map(d=>d.id),[finalDraft.id]);assert.equal(done.entitlement.amount_paise,quote.breakdown.advocate_entitlement_paise);assert.equal(done.entitlement.assignment_id,done.assignments[1].id);
    assert.equal(await db.firSubmission.count({where:{case_id:id,state:'approved'}}),1);assert.equal(await db.draftReview.count({where:{draft_id:finalDraft.id,decision:'approved'}}),1);
    assert.ok((await docs.url(client,sub.document_id)).url);await assert.rejects(docs.url(other,sub.document_id),{status:404});await assert.rejects(review.reject(admin,id,{...approvedToken,draft_reason:'Late return'}),{status:409});
   });

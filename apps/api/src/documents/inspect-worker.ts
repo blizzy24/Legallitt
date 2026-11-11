@@ -8,9 +8,14 @@ import { imageSize } from "image-size";
   const type = await fileTypeFromBuffer(bytes);
   if (
     !type ||
-    !["application/pdf", "image/jpeg", "image/png"].includes(type.mime)
+    !["application/pdf", "image/jpeg", "image/png", "video/mp4", "audio/mpeg"].includes(type.mime)
   )
     throw new Error("Unsupported file structure");
+  // Media is identified by its container signature only; it is never decoded.
+  if (type.mime === "video/mp4" || type.mime === "audio/mpeg") {
+    parentPort!.postMessage({ mime: type.mime, pageCount: null });
+    return;
+  }
   let pageCount = 1;
   if (type.mime === "application/pdf") {
     // Only the page tree is inspected. No getForm, text extraction, OCR,

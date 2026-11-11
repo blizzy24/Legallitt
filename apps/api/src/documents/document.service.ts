@@ -10,7 +10,7 @@ import {
 } from "@nestjs/common";
 import { randomUUID } from "node:crypto";
 import {
-  DOCUMENT_MAX_BYTES,
+  documentMaxBytes, MEDIA_MIMES, FIR_MEDIA_KINDS, FIR_CHANGE_ATTACHMENT_KIND, FIR_POLICE_RECEIPT_KIND, FIR_CUSTOM_SLOT_KIND, FIR_CHANGE_ATTACHMENT_MAX_BYTES,
   DOCUMENT_URL_SECONDS,
   DocumentMimeSchema,
   DocumentPresignSchema,
@@ -88,10 +88,24 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
         throw new BadRequestException('Consultation briefs must be generated from the report editor.');
       if(isConsultationService(record.service_code)&&['completed','cancelled','refunded'].includes(record.status))throw new ConflictException('This case is closed; documents cannot be added.');
       const replacingIdentity=record.service_code==='fir_draft'&&['assigned','advocate_accepted','in_progress','changes_requested'].includes(record.status)&&actor.role==='client'&&input.kind==='id_proof'&&!!await tx.firIdentityReturn.findFirst({where:{case_id:record.id,state:'replacement_required'}});
+      const firSpecial=[FIR_CHANGE_ATTACHMENT_KIND,FIR_POLICE_RECEIPT_KIND].includes(input.kind);
       if (record.service_code === 'fir_draft' && !(
-        replacingIdentity || actor.role === 'client' && ['draft','payment_pending'].includes(record.status) && input.kind !== 'fir_draft' ||
-        actor.role === 'advocate' && ['advocate_accepted','in_progress','changes_requested'].includes(record.status) && record.sub_status!=='awaiting_admin_approval'
+        replacingIdentity || actor.role === 'client' && ['draft','payment_pending'].includes(record.status) && !firSpecial && input.kind !== 'fir_draft' ||
+        // C12: one optional attachment with a client change request.
+        actor.role === 'client' && record.status === 'client_review' && input.kind === FIR_CHANGE_ATTACHMENT_KIND ||
+        // C14: the police receipt, once the client has approved.
+        actor.role === 'advocate' && record.status === 'approved' && input.kind === FIR_POLICE_RECEIPT_KIND ||
+        actor.role === 'advocate' && ['advocate_accepted','in_progress','changes_requested'].includes(record.status) && record.sub_status!=='awaiting_admin_approval' && !firSpecial
       )) throw new ConflictException('FIR documents are frozen at this stage');
+      // Video and audio are accepted only in the FIR slots drawn for them (flow C6).
+      if (MEDIA_MIMES.includes(input.mime) && !(record.service_code === 'fir_draft' && FIR_MEDIA_KINDS[input.kind]?.includes(input.mime)))
+        throw new BadRequestException('Upload a PDF, JPEG or PNG file.');
+      if (input.kind === FIR_CUSTOM_SLOT_KIND && (record.service_code !== 'fir_draft' || !input.slot_label))
+        throw new BadRequestException('Name the custom category before uploading.');
+      if (input.identity_last4 && (record.service_code !== 'fir_draft' || input.kind !== 'id_proof'))
+        throw new BadRequestException('Identity digits belong only to FIR identity uploads');
+      if (record.service_code === 'fir_draft' && input.kind === 'id_proof' && !input.identity_last4)
+        throw new BadRequestException('Enter the last four digits of the identity document.');
       assertReportUploadAllowed(actor, record, input.kind, internal?.serviceReport);
       const id = randomUUID();
       if(input.identity&&(record.service_code!=='fir_draft'||input.kind!=='id_proof'))throw new BadRequestException('Identity declarations belong only to FIR identity uploads');
@@ -115,6 +129,8 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
           kind: input.kind,
           filename,
           ...(identity?{identity_evidence:identity}:{}),
+          ...(input.identity_last4?{identity_last4:input.identity_last4}:{}),
+          ...(input.kind===FIR_CUSTOM_SLOT_KIND&&input.slot_label?{slot_label:input.slot_label}:{}),
           s3_key: key,
           mime_type: input.mime,
           size_bytes: 0n,
@@ -129,7 +145,7 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
           ...upload,
           method: "POST",
           expires_in: DOCUMENT_URL_SECONDS,
-          max_bytes: DOCUMENT_MAX_BYTES,
+          max_bytes: documentMaxBytes(input.mime),
         },
       };
     }, transactionOptions);
@@ -154,7 +170,8 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
         if (
           !DocumentMimeSchema.safeParse(info.mime).success ||
           info.size < 1 ||
-          info.size > DOCUMENT_MAX_BYTES
+          info.size > documentMaxBytes(info.mime) ||
+          (doc.kind === FIR_CHANGE_ATTACHMENT_KIND && info.size > FIR_CHANGE_ATTACHMENT_MAX_BYTES)
         )
           throw new BadRequestException(
             "File exceeds the upload limits or has an unsupported type",
@@ -194,9 +211,12 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
       const record = await tx.case.findUniqueOrThrow({where:{id:doc.case_id!}});
       if(!await consultationDocumentVisible(tx,actor,record,doc))throw new NotFoundException('Document not found');
       if (record.service_code === 'fir_draft' && actor.role === 'client' && doc.owner_id !== record.client_id) {
-        const approved = await tx.draft.findFirst({where:{case_id:record.id,document_id:doc.id,
+        // The client sees a draft PDF once the admin approved it (sent to client),
+        // and the advocate's police receipt (C14). Nothing else the team uploaded.
+        const approved = doc.kind === 'fir_draft' && await tx.draft.findFirst({where:{case_id:record.id,document_id:doc.id,
           draft_reviews_draft_id_relations:{some:{decision:'approved',reviewer_id_relation:{role:'admin'}}}}});
-        if (record.status !== 'completed' || !approved) throw new NotFoundException('Document not found');
+        const receipt = doc.kind === FIR_POLICE_RECEIPT_KIND && await tx.firPoliceSubmission.findFirst({where:{case_id:record.id,receipt_document_id:doc.id}});
+        if (['cancelled','refunded'].includes(record.status) || !(approved || receipt)) throw new NotFoundException('Document not found');
       }
       await assertReportDocumentReadable(tx, actor, record, doc);
       return {
@@ -219,7 +239,9 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
       }
       if (parent.service_code === 'fir_draft') {
         if(record.kind==='id_proof'&&!['draft','payment_pending'].includes(parent.status))throw new ConflictException('Use the admin identity review to replace submitted identity evidence.');
-        const linked = await tx.draft.findFirst({where:{case_id:parent.id,document_id:id}});
+        const linked = await tx.draft.findFirst({where:{case_id:parent.id,document_id:id}}) ||
+          await tx.draftReview.findFirst({where:{attachment_document_id:id}}) ||
+          await tx.firPoliceSubmission.findFirst({where:{receipt_document_id:id}});
         if (linked || ((parent.sub_status === 'awaiting_admin_approval' || parent.status === 'completed') && record.kind !== 'fir_draft'))
           throw new ConflictException('Submitted FIR documents cannot be deleted');
       }

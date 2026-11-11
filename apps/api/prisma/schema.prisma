@@ -289,6 +289,21 @@ model FirSubmission {
   @@index([case_id,submitted_at])
   @@map("fir_submissions")
 }
+model FirPoliceSubmission {
+  case_id             String   @id @db.Uuid
+  submitted_on        DateTime @db.Date
+  receipt_document_id String   @db.Uuid
+  marked_by           String   @db.Uuid
+  created_at          DateTime @default(now()) @db.Timestamptz(6)
+  @@map("fir_police_submissions")
+}
+model FirSettings {
+  id                            Int      @id @default(1)
+  police_submission_by_advocate Boolean  @default(true)
+  updated_by                    String?  @db.Uuid
+  updated_at                    DateTime @default(now()) @db.Timestamptz(6)
+  @@map("fir_settings")
+}
 model FirIdentityReturn {
   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   case_id String @db.Uuid
@@ -344,6 +359,8 @@ model CaseParty {
 
 model Document {
   identity_evidence                   Json?      @db.JsonB
+  slot_label                          String?
+  identity_last4                      String?
   id                                  String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   case_id                             String?    @db.Uuid
   owner_id                            String     @db.Uuid
@@ -377,6 +394,7 @@ model Draft {
   version                          Int
   content                          Json          @db.JsonB
   generated_by                     String?
+  ai_used                          Boolean       @default(false)
   created_by                       String        @db.Uuid
   document_id                      String?       @db.Uuid
   created_at                       DateTime      @default(now()) @db.Timestamptz(6)
@@ -395,6 +413,9 @@ model DraftReview {
   reviewer_id          String   @db.Uuid
   decision             String
   comment              String?
+  reviewer_role        String?
+  sections             String[] @default([])
+  attachment_document_id String? @db.Uuid
   created_at           DateTime @default(now()) @db.Timestamptz(6)
   draft_id_relation    Draft    @relation("draft_reviews_draft_id_drafts", fields: [draft_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   reviewer_id_relation User     @relation("draft_reviews_reviewer_id_users", fields: [reviewer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -839,6 +860,7 @@ model SupportTicket {
   contact_name   String?
   contact_phone  String?
   case_id        String?          @db.Uuid
+  service_code   String?
   created_at     DateTime         @default(now()) @db.Timestamptz(6)
   updated_at     DateTime         @default(now()) @db.Timestamptz(6)
   closed_at      DateTime?        @db.Timestamptz(6)

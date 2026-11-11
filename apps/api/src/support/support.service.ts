@@ -1,7 +1,7 @@
 import {BadRequestException, ConflictException, ForbiddenException, Inject, Injectable, NotFoundException} from '@nestjs/common';
 import {z} from 'zod';
 import {
-  SUPPORT_CONTACT_METHODS, SUPPORT_RELATED_TO, SUPPORT_SUBJECTS,
+  SUPPORT_CONTACT_METHODS, SUPPORT_RELATED_TO, SUPPORT_SUBJECTS, SERVICE_CODES,
   type SupportInboxRow, type SupportTicketView, type MessagesInboxItem,
 } from '@legalitt/shared';
 import type {Prisma} from '../generated/prisma/client';
@@ -22,8 +22,10 @@ const CallbackInput = z.strictObject({
   name: z.string().trim().min(1, 'Enter your name').max(120),
   phone: z.string().trim().regex(/^\+?[0-9 ()-]{7,20}$/, 'Enter a valid mobile number'),
   note: z.string().trim().max(500).optional(),
+  // Raised from a service screen (e.g. FIR Draft's Request Callback): shown in the admin inbox.
+  service_code: z.enum(SERVICE_CODES).optional(),
 });
-const ChatInput = z.strictObject({body});
+const ChatInput = z.strictObject({body, service_code: z.enum(SERVICE_CODES).optional()});
 const InboxQuery = z.strictObject({q: z.string().trim().max(200).optional()});
 const AdminQuery = z.strictObject({status: z.enum(['open', 'closed']).default('open'), kind: z.enum(['ticket', 'callback', 'chat']).optional()});
 
@@ -45,7 +47,7 @@ export class SupportService {
     return {
       id: t.id, kind: t.kind as SupportTicketView['kind'], status: t.status as SupportTicketView['status'],
       subject: t.subject, related_to: t.related_to, contact_method: t.contact_method,
-      contact_name: t.contact_name, contact_phone: t.contact_phone, case_id: t.case_id,
+      contact_name: t.contact_name, contact_phone: t.contact_phone, case_id: t.case_id, service_code: t.service_code,
       created_at: t.created_at.toISOString(), closed_at: t.closed_at?.toISOString() ?? null,
       messages: t.messages.slice().sort((a, b) => a.created_at.getTime() - b.created_at.getTime() || a.id.localeCompare(b.id))
         .map(m => ({id: m.id, body: m.body, from: m.sender_role === 'admin' ? 'support' : 'requester', mine: m.sender_id === viewer.id,
@@ -83,8 +85,12 @@ export class SupportService {
     const db = await this.prisma.getClient();
     return db.$transaction(async tx => {
       const pending = await tx.supportTicket.findFirst({where: {user_id: actor.id, kind: 'callback', status: 'open'}, include: {messages: true}});
-      if (pending) return this.view(pending, actor);
-      const ticket = await tx.supportTicket.create({data: {user_id: actor.id, kind: 'callback', subject: 'Callback request',
+      if (pending) {
+        if (v.service_code && pending.service_code !== v.service_code)
+          await tx.supportTicket.update({where: {id: pending.id}, data: {service_code: v.service_code, updated_at: new Date()}});
+        return this.view(await tx.supportTicket.findUniqueOrThrow({where: {id: pending.id}, include: {messages: true}}), actor);
+      }
+      const ticket = await tx.supportTicket.create({data: {user_id: actor.id, kind: 'callback', subject: 'Callback request', service_code: v.service_code ?? null,
         contact_method: 'phone', contact_name: v.name, contact_phone: v.phone, description: v.note ?? null}});
       await tx.supportMessage.create({data: {ticket_id: ticket.id, sender_id: actor.id, sender_role: actor.role,
         body: `Please call me back on ${v.phone}.${v.note ? ` ${v.note}` : ''}`}});
@@ -102,7 +108,8 @@ export class SupportService {
       await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${'support-chat:' + actor.id}))::text`;
       let ticket = await tx.supportTicket.findFirst({where: {user_id: actor.id, kind: 'chat', status: 'open'}});
       const fresh = !ticket;
-      if (!ticket) ticket = await tx.supportTicket.create({data: {user_id: actor.id, kind: 'chat', subject: 'Support chat', contact_method: 'chat'}});
+      if (!ticket) ticket = await tx.supportTicket.create({data: {user_id: actor.id, kind: 'chat', subject: 'Support chat', contact_method: 'chat', service_code: v.service_code ?? null}});
+      else if (v.service_code && ticket.service_code !== v.service_code) ticket = await tx.supportTicket.update({where: {id: ticket.id}, data: {service_code: v.service_code}});
       await tx.supportMessage.create({data: {ticket_id: ticket.id, sender_id: actor.id, sender_role: actor.role, body: v.body}});
       await tx.supportTicket.update({where: {id: ticket.id}, data: {updated_at: new Date()}});
       if (fresh) await this.notifyAdmins(tx, ticket.id, 'New support chat', v.body.slice(0, 80));
@@ -165,7 +172,7 @@ export class SupportService {
       const lastAdmin = msgs.filter(m => m.sender_role === 'admin').at(-1);
       const waiting = msgs.find(m => m.sender_role !== 'admin' && (!lastAdmin || m.created_at > lastAdmin.created_at));
       const u = users.find(x => x.id === t.user_id);
-      return {id: t.id, kind: t.kind as SupportInboxRow['kind'], status: t.status as SupportInboxRow['status'], subject: t.subject,
+      return {id: t.id, kind: t.kind as SupportInboxRow['kind'], status: t.status as SupportInboxRow['status'], subject: t.subject, service_code: t.service_code,
         requester: {id: t.user_id, name: u?.full_name ?? 'Unknown user', role: u?.role ?? 'client'},
         last_message: msgs.at(-1)?.body ?? null, created_at: t.created_at.toISOString(),
         waiting_since: t.status === 'open' && waiting ? waiting.created_at.toISOString() : null,

@@ -49,7 +49,7 @@ export const FirDraftContentSchema=z.strictObject({
   incident:z.strictObject({filed:sourced(FirIntakeSchema.shape.incident),distance_and_direction_from_station:FirTextAnswerSchema}),
   accused:people(FirAccusedSchema),legal_sections:z.array(FirLegalSectionSchema).max(100),
   statement_of_facts:firText.max(10000),witnesses:people(FirWitnessSchema),
-  attachments:z.array(z.strictObject({document_id:uuid,filename:z.string().min(1).max(512),mime_type:z.enum(['application/pdf','image/png','image/jpeg'])})).max(100),
+  attachments:z.array(z.strictObject({document_id:uuid,filename:z.string().min(1).max(512),mime_type:z.enum(['application/pdf','image/png','image/jpeg','video/mp4','audio/mpeg'])})).max(100),
 });
 export type FirDraftContent=z.infer<typeof FirDraftContentSchema>;
 export const FirDraftSaveSchema=z.strictObject({base_draft_id:uuid.nullable(),filing_hash:z.string().regex(/^[a-f0-9]{64}$/),content:FirDraftEditableSchema});

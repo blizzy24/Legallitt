@@ -9,7 +9,7 @@ test('FIR policy accepts the four confirmed types and refuses full Aadhaar confi
  const policy=FirIdentityPolicySchema.parse(configured);assert.deepEqual(policy.accepted_documents.map(d=>d.code),['masked_aadhaar','passport','voter_id','driving_licence']);
  for(const type of policy.accepted_documents){const doc={kind:'id_proof',status:'uploaded',identity_evidence:{document_type:type.code,masked_copy:type.requires_masking,policy_version:policy.version,declared_at:new Date().toISOString()}};assert.ok(acceptedFirIdentity(policy,doc));assert.equal(acceptedFirIdentity(policy,{...doc,status:'pending'}),false);}
  assert.equal(FirIdentityPolicySchema.safeParse({...policy,accepted_documents:[{code:'full_aadhaar',label:'Aadhaar',requires_masking:false}]}).success,false);
- const input={case_id:randomUUID(),kind:'id_proof',filename:'Identity-proof.pdf',mime:'application/pdf',identity:{document_type:'passport',masked_copy:false,id_number:'TEST-NOT-A-REAL-NUMBER'}};
+ const input={case_id:randomUUID(),kind:'id_proof',filename:'Identity-proof.pdf',mime:'application/pdf',identity_last4:'4812',identity:{document_type:'passport',masked_copy:false,id_number:'TEST-NOT-A-REAL-NUMBER'}};
  assert.equal(DocumentPresignSchema.safeParse(input).success,false);
 });
 test('FIR PDF refuses a missing identity selection even with otherwise complete draft facts',async()=>{
@@ -31,7 +31,7 @@ test('FIR identity uploads use database policy, neutral filenames and structural
   });
   let first;
   await t.test('each accepted type completes without reading or storing any identity number',async()=>{
-   for(const type of configured.accepted_documents){const ticket=await docs.presign(user,{...input,identity:{document_type:type.code,masked_copy:type.requires_masking}});
+   for(const type of configured.accepted_documents){const ticket=await docs.presign(user,{...input,identity_last4:'4812',identity:{document_type:type.code,masked_copy:type.requires_masking}});
     assert.ok(!JSON.stringify(ticket).includes('PASSPORT-NUMBER'));assert.match(ticket.document.filename,/^Identity-proof-/);assert.equal(ticket.document.identity_evidence.document_type,type.code);
     await assert.rejects(requireFirIdentity(db,caseId,ticket.document.id),{status:400});
     const doc=await docs.complete(user,ticket.document.id);assert.equal(doc.page_count,1);assert.equal(doc.identity_evidence.policy_version,1);assert.ok(acceptedFirIdentity(configured,doc));await requireFirIdentity(db,caseId,doc.id);first??=doc;
@@ -42,8 +42,8 @@ test('FIR identity uploads use database policy, neutral filenames and structural
    const policy={...configured,version:2,accepted_documents:[{code:'synthetic_test_id',label:'Synthetic test ID',requires_masking:false}]};
    await db.service.update({where:{code:'fir_draft'},data:{config:{...old.config,fir_identity_policy:policy}}});
    await assert.rejects(requireFirIdentity(db,caseId,first.id),{status:400});
-   const ticket=await docs.presign(user,{...input,identity:{document_type:'synthetic_test_id',masked_copy:false}});assert.equal(ticket.document.identity_evidence.policy_version,2);
-   await db.service.update({where:{code:'fir_draft'},data:{config:{}}});await assert.rejects(firIdentityPolicy(db),{status:503});await assert.rejects(docs.presign(user,{...input,identity:{document_type:'passport',masked_copy:false}}),{status:503});
+   const ticket=await docs.presign(user,{...input,identity_last4:'4812',identity:{document_type:'synthetic_test_id',masked_copy:false}});assert.equal(ticket.document.identity_evidence.policy_version,2);
+   await db.service.update({where:{code:'fir_draft'},data:{config:{}}});await assert.rejects(firIdentityPolicy(db),{status:503});await assert.rejects(docs.presign(user,{...input,identity_last4:'4812',identity:{document_type:'passport',masked_copy:false}}),{status:503});
   });
  }finally{await db.service.update({where:{code:'fir_draft'},data:{config:old.config}});await db.document.deleteMany({where:{case_id:caseId}});await db.case.delete({where:{id:caseId}});await db.user.delete({where:{id:user.id}});await db.$disconnect();}
 });

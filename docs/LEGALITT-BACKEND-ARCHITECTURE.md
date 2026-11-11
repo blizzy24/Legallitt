@@ -1374,6 +1374,35 @@ CREATE TABLE account_deletion_requests (
 );
 ```
 
+### 4.3b FIR Draft full flow (12 November 2026, `docs/flows/FIR-DRAFT-FLOW.md` §4)
+
+Additive only. New columns: `documents.slot_label` (a client-named custom upload slot) and
+`documents.identity_last4` (the only identity digits ever stored, shown as XXXX-XXXX-1234);
+`drafts.ai_used` (false until D-08); `draft_reviews.reviewer_role`, `sections TEXT[]` and
+`attachment_document_id` (client change requests, C12); `support_tickets.service_code`
+(Request Chat / Request Callback raised from a service screen).
+
+Status flow: admin approval moves the case to `client_review`; the client approves
+(`approved` with sub-status `awaiting_police_submission` when the advocate submits to
+police, otherwise `completed`) or asks for changes (`changes_requested` /
+`client_changes_requested`, back to the advocate and then the admin). The advocate's
+police receipt completes the case. An advocate's rejection ends the assignment and
+returns the case to admin (`advocate_declined`, no advocate). `firStage()` in
+`packages/shared/src/fir-flow.ts` maps every status to the client, advocate and admin view.
+
+```sql
+CREATE TABLE fir_police_submissions (
+  case_id UUID PRIMARY KEY REFERENCES cases(id) ON DELETE CASCADE,
+  submitted_on DATE NOT NULL, receipt_document_id UUID NOT NULL REFERENCES documents(id),
+  marked_by UUID NOT NULL REFERENCES users(id), created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE TABLE fir_settings ( -- single row: who takes the approved draft to the police (C14)
+  id INTEGER PRIMARY KEY DEFAULT 1 CHECK (id = 1),
+  police_submission_by_advocate BOOLEAN NOT NULL DEFAULT true,
+  updated_by UUID REFERENCES users(id), updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+```
+
 ### 4.4 Why pricing and commission are versioned tables
 
 Several figures are still unconfirmed: District Court prices, the Legal Advice

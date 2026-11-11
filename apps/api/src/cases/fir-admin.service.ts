@@ -3,7 +3,7 @@ import {z} from 'zod';
 import {DOCUMENT_URL_SECONDS,FirRejectSchema,FirReassignSchema,FirIdentityReviewSchema,FirLifecycleTokenSchema,FIR_REASSIGNED_CLIENT,type FirLifecycleToken} from '@legalitt/shared';
 import {PrismaService} from '../prisma.service';
 import {parse} from '../auth/auth.service';
-import {lockedCase,appendCaseEvent,writeFirReviewState} from './case-state-machine';
+import {lockedCase,appendCaseEvent,writeFirReviewState,writeFirFlowTransition} from './case-state-machine';
 import {checkFirToken,ensureFirLifecycle,firCorrectionState,firLifecycleView} from './fir-lifecycle';
 import {requireFirIdentity} from '../documents/fir-identity';
 import {DocumentService} from '../documents/document.service';
@@ -30,7 +30,7 @@ export class FirAdminService {
    if(!sub||sub.state!=='pending'||c.sub_status!=='awaiting_admin_approval')throw new ConflictException('No current submission awaits review.');
    if(input.identity_document_id)await this.invalidateIdentity(tx,actor,id,sub.id,input.identity_document_id);
    await tx.firSubmission.update({where:{id:sub.id},data:{state:'returned',draft_reason:input.draft_reason??null,decided_by:actor.id,decided_at:new Date()}});
-   await tx.draftReview.create({data:{draft_id:sub.draft_id,reviewer_id:actor.id,decision:input.draft_reason?'changes_requested':'identity_rejected',comment:input.draft_reason??'Unmasked Aadhaar; replacement required.'}});
+   await tx.draftReview.create({data:{draft_id:sub.draft_id,reviewer_id:actor.id,reviewer_role:'admin',decision:input.draft_reason?'changes_requested':'identity_rejected',comment:input.draft_reason??'Unmasked Aadhaar; replacement required.'}});
    await tx.firLifecycle.update({where:{case_id:id},data:{revision:{increment:1}}});
    await writeFirReviewState(tx,actor,id,{status:'changes_requested',sub_status:await firCorrectionState(tx,id),updated_at:new Date()});
    await this.event(tx,actor,id,'fir_admin_returned',{submission_id:sub.id,draft_id:sub.draft_id,version:sub.version,draft_reason:input.draft_reason??null,identity_rejected:!!input.identity_document_id});
@@ -82,12 +82,12 @@ export class FirAdminService {
    const count=await tx.firSubmission.count({where:{assignment_id:assignment.id,state:'returned',draft_reason:{not:null}}});if(count<policy.reassign_after_draft_rejections)throw new ConflictException('Reassignment is available after the required draft rejections.');
    if(input.advocate_id===c.advocate_id)throw new BadRequestException('Choose a different advocate.');
    const next=await tx.user.findFirst({where:{id:input.advocate_id,role:'advocate',status:'active',advocate_profiles_user_id_relations:{is:{verification:'approved'}}}});if(!next)throw new BadRequestException('Choose an active approved advocate.');
-   await tx.caseAssignment.update({where:{id:assignment.id},data:{ended_at:new Date(),end_reason:'admin_reassignment_after_draft_rejections'}});
+   await tx.caseAssignment.update({where:{id:assignment.id},data:{ended_at:new Date(),end_reason:'admin_reassignment_after_draft_rejections: '+input.reason}});
    await tx.caseAssignment.create({data:{case_id:id,advocate_id:next.id,assigned_by:actor.id}});
    await tx.firSubmission.updateMany({where:{case_id:id,state:'pending'},data:{state:'withdrawn',decided_by:actor.id,decided_at:new Date()}});
    await tx.firLifecycle.update({where:{case_id:id},data:{revision:{increment:1}}});
    await writeFirReviewState(tx,actor,id,{advocate_id:next.id,status:'assigned',sub_status:await firCorrectionState(tx,id),updated_at:new Date()});
-   await this.event(tx,actor,id,'fir_advocate_reassigned',{previous_assignment_id:assignment.id,advocate_id:next.id});
+   await this.event(tx,actor,id,'fir_advocate_reassigned',{previous_assignment_id:assignment.id,advocate_id:next.id,reason:input.reason});
    // Standalone notification deliberately survives removal of case access and
    // has no dead case link. It contains only the reference and outcome.
    await this.notifications.send(tx,{user_id:assignment.advocate_id,kind:'fir_reassigned_away',title:'FIR case reassigned',body:`${c.reference} has been reassigned to another advocate. You no longer have access to this case.`});
@@ -98,7 +98,7 @@ export class FirAdminService {
  async approve(actor:CaseActor,id:string,draftId:string,body:unknown){this.admin(actor);const input=parse(FirLifecycleTokenSchema,body),db=await this.prisma.getClient();
   return db.$transaction(async tx=>{const c=await lockedCase(tx,actor,id,'fir_draft'),{life,assignment}=await ensureFirLifecycle(tx,c);
    const sub=life.current_submission_id?await tx.firSubmission.findUnique({where:{id:life.current_submission_id}}):null;
-   if(sub?.state==='approved'&&c.status==='completed'&&sub.draft_id===draftId&&input.submission_id===sub.id)return c;
+   if(sub?.state==='approved'&&c.status!=='in_progress'&&sub.draft_id===draftId&&input.submission_id===sub.id)return c;
    checkFirToken(life,input);
    if(!sub||sub.state!=='pending'||sub.draft_id!==draftId||sub.assignment_id!==assignment?.id||c.sub_status!=='awaiting_admin_approval')throw new ConflictException('This is not the current submission. Reload.');
    if(!sub.identity_checked_at||!sub.identity_document_id)throw new ConflictException('Review and accept the uploaded identity document first.');
@@ -110,12 +110,12 @@ export class FirAdminService {
    if(!breakdown?.advocate_entitlement_paise)throw new ConflictException('Captured advocate entitlement is unavailable. Resolve pricing before completion.');
    await tx.firSubmission.update({where:{id:sub.id},data:{state:'approved',decided_by:actor.id,decided_at:new Date()}});
    await tx.firLifecycle.update({where:{case_id:id},data:{revision:{increment:1},completing_assignment_id:assignment!.id,advocate_entitlement_paise:BigInt(breakdown.advocate_entitlement_paise),commission_rate_id:payment!.quote!.commission_rate_id}});
-   await tx.draftReview.create({data:{draft_id:draftId,reviewer_id:actor.id,decision:'approved'}});
+   await tx.draftReview.create({data:{draft_id:draftId,reviewer_id:actor.id,reviewer_role:'admin',decision:'approved'}});
    await this.event(tx,actor,id,'fir_draft_approved',{submission_id:sub.id,draft_id:draftId,document_id:doc.id,version:sub.version});
-   await appendCaseEvent(tx,{case_id:id,type:'fir_released_to_client',actor_id:actor.id,actor_role:'admin',from_status:'approved',to_status:'completed',payload:{draft_id:draftId,document_id:doc.id}});
-   const done=await writeFirReviewState(tx,actor,id,{status:'completed',sub_status:null,completed_at:new Date(),updated_at:new Date()});
-   await this.notifications.send(tx,{user_id:c.client_id,case_id:id,kind:'fir_ready',title:'Your FIR draft is ready',body:c.reference});
-   await this.notifications.send(tx,{user_id:assignment!.advocate_id,case_id:id,kind:'fir_approved',title:'Admin approved the FIR draft',body:c.reference});return done;
+   // Flow A5/C11: the admin approves before the client sees the draft; the client then approves or asks for changes.
+   const sent=await writeFirFlowTransition(tx,actor,id,{to:'client_review',sub_status:null},'fir_sent_to_client',{draft_id:draftId,document_id:doc.id,version:sub.version});
+   await this.notifications.send(tx,{user_id:c.client_id,case_id:id,kind:'fir_ready',title:'Your FIR draft is ready to review',body:`${c.reference}: approve it or request changes.`});
+   await this.notifications.send(tx,{user_id:assignment!.advocate_id,case_id:id,kind:'fir_approved',title:'Admin approved the FIR draft',body:`${c.reference} has been sent to the client for review.`});return sent;
   });
  }
 }

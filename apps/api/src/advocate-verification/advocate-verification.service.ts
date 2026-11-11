@@ -19,7 +19,7 @@ import {NOTIFICATIONS, type NotificationsPort} from '../notifications/notificati
 // these files; only this service does, to their owner and to admins (D-77).
 const KINDS = VERIFICATION_DOCUMENTS.map(d => d.kind) as string[];
 const PresignSchema = z.strictObject({kind: VerificationDocumentKindSchema, filename: z.string().trim().min(1).max(200)
-  .refine(v => !/[\x00-\x1f\x7f/\\]/.test(v) && !v.includes('..') && !v.includes('${')), mime: DocumentMimeSchema});
+  .refine(v => !/[\x00-\x1f\x7f/\\]/.test(v) && !v.includes('..') && !v.includes('${')), mime: z.enum(['application/pdf', 'image/jpeg', 'image/png'])});
 const EDITABLE = ['not_started', 'needs_update', 'rejected'];
 const ext = (mime: string) => mime === 'application/pdf' ? 'pdf' : mime === 'image/png' ? 'png' : 'jpg';
 const docView = (d: Document): VerificationDocument => ({id: d.id, kind: d.kind as VerificationDocument['kind'], filename: d.filename,
@@ -120,7 +120,7 @@ export class AdvocateVerificationService {
       const key = stagingKey(doc.s3_key), info = await this.storage.head(key);
       if (!info) throw new ConflictException('Upload is not present in storage');
       try {
-        if (!DocumentMimeSchema.safeParse(info.mime).success || info.size < 1 || info.size > DOCUMENT_MAX_BYTES)
+        if (!['application/pdf', 'image/jpeg', 'image/png'].includes(info.mime ?? '') || info.size < 1 || info.size > DOCUMENT_MAX_BYTES)
           throw new BadRequestException('File exceeds the upload limits or has an unsupported type');
         const actual = await this.inspector.inspect(await this.storage.read(key, info));
         if (actual.mime !== info.mime) throw new BadRequestException('File type does not match its storage metadata');
