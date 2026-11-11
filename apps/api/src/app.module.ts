@@ -57,9 +57,13 @@ export class HealthController {
   }
 }
 
+import {AccountController} from './account/account.controller';
+import {AccountService} from './account/account.service';
+import {ACCOUNT_COGNITO, CognitoAccountAdapter} from './account/account-cognito';
+
 @Module({
   imports: [AiModule, CourierModule, AdminUiModule, DemoModule, DatabaseModule, PhoneAuthModule, PaymentsModule, NotificationsModule],
-  controllers: [SupportController, ConsultationController, FirController, NotificationsController, NoticeIntakeAiController, AdminAdvocatesController, AdminCasesController, NoticeMessagesController,
+  controllers: [AccountController, SupportController, ConsultationController, FirController, NotificationsController, NoticeIntakeAiController, AdminAdvocatesController, AdminCasesController, NoticeMessagesController,
     PaymentsController, ServiceReportsController, CancellationsController,
     HealthController,
     AuthController,
@@ -69,7 +73,7 @@ export class HealthController {
     ServicesController,
     DocumentController,
   ],
-  providers: [SupportService, ConsultationService, ConsultationPayments, ConsultationReports, FirAdminService, FirService, NotificationRepository, AdminCaseDetailRepository, AdminAdvocatesRepository, AdminCasesRepository, NoticeMessages,
+  providers: [AccountService, {provide: ACCOUNT_COGNITO, useClass: CognitoAccountAdapter}, SupportService, ConsultationService, ConsultationPayments, ConsultationReports, FirAdminService, FirService, NotificationRepository, AdminCaseDetailRepository, AdminAdvocatesRepository, AdminCasesRepository, NoticeMessages,
     ShipmentService,
     NoticePdfService,
     PaymentsService, ServiceReportsService, CancellationsService,

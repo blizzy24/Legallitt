@@ -22,7 +22,7 @@ function routesIn(dir, base = '') {
   });
 }
 const routes = [...new Set(routesIn(app))].sort().map(route => route.replace(/\[[^\]]+\]/g, '1'));
-assert.equal(routes.length, 332, 'Every route is enumerated, including report-service documents/chat, Court Marriage and the messages/support threads (D-28) and cancellation (D-12)');
+assert.equal(routes.length, 340, 'Every route is enumerated, including report-service documents/chat, Court Marriage and the messages/support threads (D-28), cancellation (D-12) and account settings (D-20..D-27)');
 const fixtureMode = process.env.SMOKE_DATA_SOURCE === 'fixtures';
 const sessions = fixtureMode ? {} : Object.fromEntries(['client', 'advocate'].map(role => {
   const file = process.env[`SMOKE_${role.toUpperCase()}_SESSION`];

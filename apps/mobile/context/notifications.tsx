@@ -1,6 +1,6 @@
 import {createContext, useContext, useEffect, useMemo, useState, useSyncExternalStore, type ReactNode} from 'react';
 import {router, type Href} from 'expo-router';
-import {NotificationFeed, notificationDestination, type ApiNotification} from '@legalitt/shared';
+import {NotificationFeed, notificationDestination, type ApiNotification, notificationCategory} from '@legalitt/shared';
 import {useSession} from './session';
 import {DATA_SOURCE} from '../lib/data-source';
 import {backend} from '../lib/auth';
@@ -40,7 +40,9 @@ function notificationItem(row: ApiNotification): NotificationItem {
   return {id: row.id, title: row.title, body: row.body ?? row.case?.reference ?? '', unread: !row.read_at,
     when: today ? date.toLocaleTimeString('en-IN', {hour: 'numeric', minute: '2-digit'}) : date.toLocaleDateString('en-IN', {day: 'numeric', month: 'short'}),
     group: today ? 'TODAY' : date.toDateString() === yesterday.toDateString() ? 'YESTERDAY' : 'EARLIER',
-    category: row.kind === 'payment_captured' ? 'Payments' : 'Cases', icon: row.kind === 'payment_captured' ? 'wallet' : 'document',
+    // D-20: one shared category rule for filters and preferences.
+    category: ({cases: 'Cases', consultations: 'Consultations', payments: 'Payments'} as const)[notificationCategory(row.kind, row.case?.service_code)],
+    icon: ({cases: 'document', consultations: 'calendar', payments: 'wallet'} as const)[notificationCategory(row.kind, row.case?.service_code)],
     action: row.case ? 'View Details' : '', chip: '', tone: 'neutral'};
 }
 function FixtureInbox({children, advocate}: {children: ReactNode; advocate: boolean}) {

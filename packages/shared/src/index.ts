@@ -27,3 +27,4 @@ export * from './consultation-api';
 export * from './service-reports';
 export * from './cancellations';
 export * from './support';
+export * from './account';

@@ -51,6 +51,18 @@ export class ApiClient {
   submitReport(id: string, draft: string) {return this.request<ApiCase>(`/service-reports/${id}/drafts/${draft}/submit`,{},'POST',undefined,{},60000);}
   approveReport(id: string, draft: string) {return this.request<ApiCase>(`/service-reports/${id}/drafts/${draft}/approve`,{});}
   requestReportChanges(id: string, draft: string, items: import('./service-reports').ChangeItem[]) {return this.request<ApiCase>(`/service-reports/${id}/drafts/${draft}/request-changes`,{items});}
+  // Account area (D-20–D-24, D-27). All act on the signed-in user only.
+  accountPreferences() {return this.request<import('./account').AccountPreferences>('/account/preferences');}
+  updateAccountPreferences(input: {language?: string; notifications?: Partial<Record<import('./account').NotificationCategory, boolean>>}) {return this.request<import('./account').AccountPreferences>('/account/preferences', input, 'PATCH');}
+  accountSecurity() {return this.request<import('./account').AccountSecurity>('/account/security');}
+  changePassword(current_password: string, new_password: string, access_token: string) {return this.request<{changed: true}>('/account/password', {current_password, new_password, access_token});}
+  signOutEverywhere(access_token: string) {return this.request<{signed_out: true}>('/account/sign-out-everywhere', {access_token});}
+  exportAccount() {return this.request<Record<string, unknown>>('/account/export');}
+  accountDeletion() {return this.request<import('./account').DeletionState>('/account/deletion');}
+  requestAccountDeletion(input: {reason?: string; access_token?: string}) {return this.request<{id: string; status: string; created_at: string}>('/account/deletion', input);}
+  savedAdvocates() {return this.request<{items: import('./account').SavedAdvocate[]}>('/account/saved-advocates');}
+  saveAdvocate(id: string) {return this.request<{saved: boolean}>(`/account/saved-advocates/${encodeURIComponent(id)}`, {}, 'PUT');}
+  unsaveAdvocate(id: string) {return this.request<{saved: boolean}>(`/account/saved-advocates/${encodeURIComponent(id)}`, undefined, 'DELETE');}
   private refreshing?: Promise<ApiTokens>;
   constructor(private readonly options: Options) {}
   private async transport(

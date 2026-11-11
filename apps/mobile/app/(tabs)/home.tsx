@@ -3,6 +3,7 @@ import { useProfile } from '../../context/profile';
 import NotificationBell from '../../components/NotificationBell';
 import { router, type Href } from 'expo-router';
 import { Bell, ChevronLeft, Search } from 'lucide-react-native';
+import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -21,6 +22,7 @@ const GRID = homeServices();
 
 // Two independent columns: each card sizes to its content, so a taller card on one side
 // does not stretch the other (design/11 + 12).
+const SEARCHABLE = [...POPULAR, ...GRID].filter((s, i, all) => all.findIndex(x => x.id === s.id) === i);
 const LEFT = GRID.filter((_, i) => i % 2 === 0);
 const RIGHT = GRID.filter((_, i) => i % 2 === 1);
 
@@ -30,6 +32,10 @@ export default function HomeScreen() {
   /** Services without a built route are inert until that section is built. */
   const pressFor = (s: ResolvedService) =>
     SERVICE_ROUTES[s.id] ? () => openAuthenticatedRoute(SERVICE_ROUTES[s.id]!) : undefined;
+  // D-30: "Search legal services" filters the services on this screen.
+  const [query, setQuery] = useState('');
+  const q = query.trim().toLowerCase();
+  const results = q ? SEARCHABLE.filter(s => `${s.title} ${s.description}`.toLowerCase().includes(q)) : [];
 
   return (
     <View style={styles.screen}>
@@ -50,14 +56,41 @@ export default function HomeScreen() {
           <TextInput
             placeholder="Search legal services"
             placeholderTextColor={colors.textBody}
-            editable={false}
+            accessibilityLabel="Search legal services"
+            value={query}
+            onChangeText={setQuery}
+            returnKeyType="search"
             style={styles.searchInput}
           />
+          {!!query && (
+            <Pressable accessibilityRole="button" accessibilityLabel="Clear search" onPress={() => setQuery('')} hitSlop={8}>
+              <Text style={styles.viewAll}>Clear</Text>
+            </Pressable>
+          )}
         </View>
 
-        {/* design/144's guest home draws NO video banner, so it is member-only. */}
-        {isLoggedIn && DATA_SOURCE === 'fixtures' && <VideoCarousel />}
+        {q ? (
+          <>
+            <View style={styles.sectionRow}>
+              <Text style={styles.sectionTitle}>{results.length ? `${results.length} ${results.length === 1 ? 'service' : 'services'} found` : 'No matching services'}</Text>
+            </View>
+            {results.length ? (
+              <View style={[styles.column, styles.results]}>
+                {results.map((s) => (
+                  <ServiceCard key={s.id} icon={serviceIcon(s.icon)} title={s.title} description={s.description} onPress={pressFor(s)} />
+                ))}
+              </View>
+            ) : (
+              <Text style={styles.noResults}>Try another word, such as “notice”, “FIR”, “property” or “court”, or browse All Services.</Text>
+            )}
+          </>
+        ) : null}
 
+        {/* design/144's guest home draws NO video banner, so it is member-only. */}
+        {/* D-30: the carousel stays omitted in the live app until the client supplies the video. */}
+        {!q && isLoggedIn && DATA_SOURCE === 'fixtures' && <VideoCarousel />}
+
+        {!q && <>
         <SectionRow title="Popular Services" badge />
         <View style={styles.popularRow}>
           {POPULAR.map((s) => (
@@ -98,6 +131,7 @@ export default function HomeScreen() {
             ))}
           </View>
         </View>
+        </>}
         <DevPreviewLinks groups={CLIENT_DEV_PREVIEWS} />
       </ScrollView>
     </View>
@@ -359,6 +393,9 @@ const styles = StyleSheet.create({
     fontSize: home.viewAllSize,
     color: ink.accent,
   },
+
+  results: { marginTop: home.popularGap },
+  noResults: { marginTop: home.popularGap, fontFamily: font.appBody, fontSize: home.subtitleSize, lineHeight: 22, color: colors.textBody },
 
   // Cards
   popularRow: {

@@ -160,6 +160,12 @@
     "(tabs)"
   ],
   "authenticated": [
+    "account/data",
+    "account/delete",
+    "account/password",
+    "account/privacy-settings",
+    "account/security",
+    "account/sessions",
     "advocates/[id]",
     "advocates/index",
     "advocates/rahul-sharma",
@@ -257,8 +263,10 @@
     "messages/[id]",
     "messages/support",
     "messages/thread",
+    "notification-preferences",
     "notifications",
     "payments",
+    "privacy-policy",
     "privacy",
     "profile/edit",
     "property-search/chat",
