@@ -782,3 +782,44 @@ model AuthEvent {
   @@index([user_id, created_at(sort: Desc)])
   @@map("auth_events")
 }
+
+// D-12/D-13: client cancellation requests and simulated refunds recorded
+// against the original captured payment. No money moves (§2.11).
+model CancellationRequest {
+  id                         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  case_id                    String    @db.Uuid
+  client_id                  String    @db.Uuid
+  mode                       String    // self_serve | admin_review
+  reason                     String?
+  note                       String?
+  status                     String    // pending | approved | declined | completed
+  status_at_request          String
+  refundable_paise           BigInt
+  refund_amount_paise        BigInt?
+  advocate_entitlement_paise BigInt?
+  decision_reason            String?
+  decided_by                 String?   @db.Uuid
+  requested_at               DateTime  @default(now()) @db.Timestamptz(6)
+  decided_at                 DateTime? @db.Timestamptz(6)
+
+  @@index([status, requested_at])
+  @@index([case_id])
+  @@map("cancellation_requests")
+}
+
+model Refund {
+  id                      String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  case_id                 String   @db.Uuid
+  payment_id              String   @db.Uuid
+  cancellation_request_id String?  @db.Uuid
+  amount_paise            BigInt
+  reason                  String
+  decided_by              String?  @db.Uuid
+  status                  String   @default("recorded")
+  simulated               Boolean  @default(true)
+  created_at              DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([case_id])
+  @@index([payment_id])
+  @@map("refunds")
+}

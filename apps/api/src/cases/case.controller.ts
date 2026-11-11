@@ -15,6 +15,7 @@ import { AuthGuard, type AuthRequest } from "../auth/auth.controller";
 import { parse } from "../auth/auth.service";
 import { CaseRepository } from "./case-repository";
 import { CaseStateMachine } from "./case-state-machine";
+import { CancellationsService } from "../cancellations/cancellations.service";
 
 // JSON has no bigint type. Event IDs and document byte counts use lossless decimal
 // strings; no monetary calculation or payment endpoint is part of this step.
@@ -32,6 +33,7 @@ export class CaseController {
   constructor(
     private readonly cases: CaseRepository,
     private readonly state: CaseStateMachine,
+    private readonly cancellations: CancellationsService,
   ) {}
   @Post() create(@Req() req: AuthRequest, @Body() body: unknown) {
     return json(this.state.create(req.user!, body));
@@ -65,6 +67,9 @@ export class CaseController {
     @Body() body: unknown,
   ) {
     parse(z.strictObject({}), body ?? {});
+    // D-12: clients always go through the refund-aware cancellation rules.
+    if (req.user!.role !== "admin")
+      return json(this.cancellations.cancel(req.user!, id(value), { confirm: true }));
     return json(
       this.state.transition(req.user!, id(value), CaseStatus.cancelled),
     );
