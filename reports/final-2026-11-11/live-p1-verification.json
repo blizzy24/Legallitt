@@ -1,0 +1,53 @@
+{
+  "checked_at": "2026-11-11T08:15:22.820Z",
+  "log": [
+    {
+      "n": "advocate wallet",
+      "d": "{\"period\":\"month\",\"earned_paise\":\"0\",\"ready_paise\":\"0\",\"requested_paise\":\"0\",\"paid_paise\":\"0\",\"period_earned_paise\":\"0\",\"entries\":[],\"reques"
+    },
+    {
+      "n": "advocate bank account (masked)",
+      "d": ""
+    },
+    {
+      "n": "advocate verification state",
+      "d": "{\"status\":\"approved\",\"details\":{\"personal\":{},\"professional\":{},\"bar_council\":{},\"practice\":{}},\"documents\":[],\"submitte"
+    },
+    {
+      "n": "admin payouts queue",
+      "d": "pending=0"
+    },
+    {
+      "n": "admin advocate approvals queue",
+      "d": "{\"items\":[]}"
+    },
+    {
+      "n": "admin account deletions queue",
+      "d": "0 open"
+    },
+    {
+      "n": "client cannot read a wallet",
+      "d": ""
+    },
+    {
+      "n": "client cannot read payouts queue",
+      "d": ""
+    },
+    {
+      "n": "advocate cannot read payouts queue",
+      "d": ""
+    },
+    {
+      "n": "advocate cannot read approvals queue",
+      "d": ""
+    },
+    {
+      "n": "client cannot read deletion queue",
+      "d": ""
+    },
+    {
+      "n": "client has no advocate verification",
+      "d": ""
+    }
+  ]
+}
