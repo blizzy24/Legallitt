@@ -21,12 +21,19 @@ test('Wallet: snapshot entitlements, masked bank account, payout requests, admin
   };
   try{
     await db.user.createMany({data:users});
-    await caseWith('completed','117800');await caseWith('completed','117800');
+    await caseWith('completed','117800');
+    // D-82: a consultation's court-representation payment carries its own entitlement.
+    const rc=await caseWith('completed','117800');
+    const rb={service_fee_paise:'40000',platform_fee_paise:'10000',delivery_fee_paise:'0',taxable_subtotal_paise:'50000',gst_paise:'9000',page_overage_paise:'0',page_overage_gst_paise:'0',total_pages:0,included_pages:0,charged_pages:0,page_unit_paise:'0',total_paise:'59000',advocate_entitlement_paise:'40000',platform_revenue_paise:'10000'};
+    const rq=await db.casePriceQuote.create({data:{case_id:rc.id,purpose:'representation',document_fingerprint:'x',snapshot:{breakdown:rb}}});
+    await db.payment.create({data:{case_id:rc.id,payer_id:client.id,purpose:'representation',quote_id:rq.id,base_amount_paise:50000n,gst_paise:9000n,total_paise:59000n,status:'captured',idempotency_key:randomUUID(),simulated:true,captured_at:new Date()}});
     await caseWith('in_progress','117800');await caseWith('refunded','117800');await caseWith('completed',null);
     await t.test('entitlements come only from completed cases with a recorded snapshot',async()=>{
       const w=await wallet.wallet(advocate,{period:'all'});
-      assert.equal(w.earned_paise,'235600');assert.equal(w.ready_paise,'235600');assert.equal(w.entries.length,2);
-      assert.equal(w.entries[0].client_paid_paise,'165253');assert.equal(w.entries[0].platform_fee_paise,'24975');
+      assert.equal(w.earned_paise,'275600');assert.equal(w.ready_paise,'275600');assert.equal(w.entries.length,2);
+      const plain=w.entries.find(e=>e.case_id!==rc.id),both=w.entries.find(e=>e.case_id===rc.id);
+      assert.equal(plain.client_paid_paise,'165253');assert.equal(plain.platform_fee_paise,'24975');
+      assert.equal(both.share_paise,'157800');assert.equal(both.client_paid_paise,'224253');
       assert.equal((await wallet.wallet(other,{})).earned_paise,'0');
     });
     await t.test('roles and isolation',async()=>{
@@ -43,11 +50,11 @@ test('Wallet: snapshot entitlements, masked bank account, payout requests, admin
     let request;
     await t.test('payout requests: minimum, balance, concurrency',async()=>{
       await assert.rejects(wallet.requestPayout(advocate,{amount_paise:'99999'}),{status:400});
-      await assert.rejects(wallet.requestPayout(advocate,{amount_paise:'235601'}),{status:409});
+      await assert.rejects(wallet.requestPayout(advocate,{amount_paise:'275601'}),{status:409});
       const race=await Promise.allSettled([wallet.requestPayout(advocate,{amount_paise:'200000'}),wallet.requestPayout(advocate,{amount_paise:'200000'})]);
       assert.equal(race.filter(r=>r.status==='fulfilled').length,1);
       request=race.find(r=>r.status==='fulfilled').value;
-      const w=await wallet.wallet(advocate,{});assert.equal(w.ready_paise,'35600');assert.equal(w.requested_paise,'200000');
+      const w=await wallet.wallet(advocate,{});assert.equal(w.ready_paise,'75600');assert.equal(w.requested_paise,'200000');
       assert.equal(JSON.stringify(w).includes('123456789012'),false);
       await assert.rejects(wallet.payoutRequest(other,request.id),{status:404});
     });

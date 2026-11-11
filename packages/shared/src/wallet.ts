@@ -39,7 +39,7 @@ export const PayoutPaidInputSchema = z.strictObject({
 export type AdminPayoutRow = {
   id: string; advocate: {id: string; name: string; email: string | null}; amount_paise: string; status: 'pending' | 'paid';
   requested_at: string; paid_at: string | null; paid_on: string | null; utr: string | null;
-  /** Admin-only: full details needed to pay outside the app (D-82). */
+  /** Admin-only: full details needed to pay outside the app (D-84). */
   bank: {holder_name: string; bank_name: string; ifsc: string; account_number: string; account_type: string | null; verified: boolean};
 };
 export const maskAccount = (n: string) => n.slice(-4);

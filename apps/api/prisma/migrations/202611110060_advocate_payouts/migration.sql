@@ -1,4 +1,4 @@
--- D-36/D-80..D-83: advocate bank account (stored for manual payment by Legalitt,
+-- D-36/D-82..D-85: advocate bank account (stored for manual payment by Legalitt,
 -- shown masked to the advocate, unverified) and payout requests settled outside
 -- the app with a UTR recorded by an admin. Additive only; no money moves.
 CREATE TABLE "advocate_bank_accounts" (

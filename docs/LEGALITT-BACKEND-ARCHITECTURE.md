@@ -1338,7 +1338,7 @@ CREATE TABLE client_profiles (
   gender TEXT,                   -- female | male | other | prefer_not_to_say
   city TEXT, state TEXT, country TEXT, updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
--- ---------- advocate wallet and manual payouts (D-36, D-80..D-83) ----------
+-- ---------- advocate wallet and manual payouts (D-36, D-82..D-85) ----------
 CREATE TABLE advocate_bank_accounts (
   advocate_id UUID PRIMARY KEY REFERENCES users(id), holder_name TEXT NOT NULL, bank_name TEXT NOT NULL,
   ifsc TEXT NOT NULL, account_number TEXT NOT NULL,   -- full: admin pays manually; advocates see last four only

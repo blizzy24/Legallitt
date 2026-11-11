@@ -30,11 +30,11 @@ const requestView = (r: {id: string; amount_paise: bigint; status: string; reque
     bank: {bank_name: b.bank_name ?? '', account_last4: maskAccount(b.account_number ?? '')}};
 };
 
-/** D-36/D-80: entitlements are read from captured price snapshots, never stored twice. */
+/** D-36/D-82: entitlements are read from captured price snapshots, never stored twice. */
 export async function walletEntries(tx: Tx, advocateId: string): Promise<WalletEntry[]> {
   const cases = await tx.case.findMany({where: {advocate_id: advocateId, status: 'completed'},
     select: {id: true, reference: true, service_code: true, completed_at: true,
-      payments_case_id_relations: {where: {status: 'captured', purpose: 'service_fee'}, select: {total_paise: true, quote: {select: {snapshot: true}}}}}});
+      payments_case_id_relations: {where: {status: 'captured', purpose: {in: ['service_fee', 'representation']}}, select: {total_paise: true, quote: {select: {snapshot: true}}}}}});
   const out: WalletEntry[] = [];
   for (const c of cases) {
     let share = 0n, paid = 0n, platform = 0n, gst = 0n, known = false;
@@ -99,7 +99,7 @@ export class WalletService {
     this.advocate(actor);
     const input = parse(BankAccountInputSchema, body);
     const db = await this.prisma.getClient();
-    // D-82: stored so Legalitt can pay manually; returned masked; never marked verified (no penny-drop).
+    // D-84: stored so Legalitt can pay manually; returned masked; never marked verified (no penny-drop).
     const row = await db.advocateBankAccount.upsert({where: {advocate_id: actor.id},
       create: {advocate_id: actor.id, ...input, account_type: input.account_type ?? null, verified: false},
       update: {...input, account_type: input.account_type ?? null, verified: false, updated_at: new Date()}});

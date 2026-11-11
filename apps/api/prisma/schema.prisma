@@ -906,7 +906,7 @@ model ClientProfile {
   @@map("client_profiles")
 }
 
-// D-36/D-80..D-83: manual payouts. FKs exist in SQL; no Prisma back-relations.
+// D-36/D-82..D-85: manual payouts. FKs exist in SQL; no Prisma back-relations.
 model AdvocateBankAccount {
   advocate_id    String   @id @db.Uuid
   holder_name    String
