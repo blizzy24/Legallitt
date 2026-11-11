@@ -1,5 +1,6 @@
 import {AccountDeletions} from './account-deletions';
 import {AdvocateApprovals, AdvocateApprovalDetailPage} from './advocate-approvals';
+import {Payouts} from './payouts';
 import {SupportInbox, SupportTicketDetail} from './support';
 import {NotificationsProvider, Notifications, NotificationBell} from './notifications';
 import { CaseDetail } from './case-detail';
@@ -36,7 +37,7 @@ function SignIn() {
 }
 function Shell() {
   const service = ServiceCodeSchema.safeParse(useParams().service);
-  const heading = service.success && service.data !== 'legal_notice' ? SERVICE_NAMES[service.data] : location.pathname.startsWith('/support') ? 'Support inbox' : location.pathname.startsWith('/account-deletions') ? 'Account deletions' : 'Legal Notices';
+  const heading = service.success && service.data !== 'legal_notice' ? SERVICE_NAMES[service.data] : location.pathname.startsWith('/support') ? 'Support inbox' : location.pathname.startsWith('/account-deletions') ? 'Account deletions' : location.pathname.startsWith('/payouts') ? 'Payouts' : location.pathname.startsWith('/advocate-approvals') ? 'Advocate approvals' : 'Legal Notices';
   const {user, loading, logout} = useSession();
   const [drawer, setDrawer] = useState(false);
   if (loading) return <main className="auth"><p role="status">Checking session…</p></main>;
@@ -50,7 +51,9 @@ function Shell() {
       <NavLink to="/support" onClick={()=>setDrawer(false)}><span aria-hidden="true">▤</span> Support inbox</NavLink>
       <NavLink to="/account-deletions" onClick={()=>setDrawer(false)}><span aria-hidden="true">▤</span> Account deletions</NavLink>
 
-      <NavLink to="/advocate-approvals" onClick={()=>setDrawer(false)}><span aria-hidden="true">▤</span> Advocate approvals</NavLink></nav>
+      <NavLink to="/advocate-approvals" onClick={()=>setDrawer(false)}><span aria-hidden="true">▤</span> Advocate approvals</NavLink>
+
+      <NavLink to="/payouts" onClick={()=>setDrawer(false)}><span aria-hidden="true">▤</span> Payouts</NavLink></nav>
       <div className="identity"><span>{user.name}</span><small>ADMIN</small><button onClick={logout}>Sign out</button></div>
     </aside>
     {drawer && <button className="scrim" aria-label="Close navigation" onClick={() => setDrawer(false)}/>}
@@ -63,6 +66,6 @@ function ServiceCases() {
 }
 createRoot(document.getElementById('root')!).render(<StrictMode><BrowserRouter><SessionProvider><NotificationsProvider><Routes>
   <Route path="/sign-in" element={<SignIn/>}/>
-  <Route element={<Shell/>}><Route path="/notifications" element={<Notifications/>}/><Route path="/cancellations" element={<Cancellations/>}/><Route path="/legal-notices" element={<Notices/>}/><Route path="/legal-notices/:id" element={<CaseDetail/>}/><Route path="/services/:service/cases" element={<ServiceCases/>}/><Route path="/services/:service/cases/:id" element={<CaseDetail/>}/><Route path="/support" element={<SupportInbox/>}/><Route path="/account-deletions" element={<AccountDeletions/>}/><Route path="/support/:id" element={<SupportTicketDetail/>}/><Route path="/advocate-approvals" element={<AdvocateApprovals/>}/><Route path="/advocate-approvals/:id" element={<AdvocateApprovalDetailPage/>}/></Route>
+  <Route element={<Shell/>}><Route path="/notifications" element={<Notifications/>}/><Route path="/cancellations" element={<Cancellations/>}/><Route path="/legal-notices" element={<Notices/>}/><Route path="/legal-notices/:id" element={<CaseDetail/>}/><Route path="/services/:service/cases" element={<ServiceCases/>}/><Route path="/services/:service/cases/:id" element={<CaseDetail/>}/><Route path="/support" element={<SupportInbox/>}/><Route path="/account-deletions" element={<AccountDeletions/>}/><Route path="/support/:id" element={<SupportTicketDetail/>}/><Route path="/advocate-approvals" element={<AdvocateApprovals/>}/><Route path="/advocate-approvals/:id" element={<AdvocateApprovalDetailPage/>}/><Route path="/payouts" element={<Payouts/>}/></Route>
   <Route path="*" element={<Navigate to="/legal-notices" replace/>}/>
 </Routes></NotificationsProvider></SessionProvider></BrowserRouter></StrictMode>);

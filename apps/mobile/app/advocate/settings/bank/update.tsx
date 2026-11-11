@@ -83,7 +83,7 @@ function Field({
   );
 }
 
-export default function AdvocateBankUpdateScreen() {
+function AdvocateBankUpdateScreen() {
   const insets = useSafeAreaInsets();
   const d = AS_BANK_UPDATE;
 
@@ -518,3 +518,8 @@ const styles = StyleSheet.create({
     color: ink.onBrand,
   },
 });
+
+import {BankAccountScreen as LiveWalletScreen} from '../../../../features/wallet/Wallet';
+import {DATA_SOURCE as WALLET_DATA_SOURCE} from '../../../../lib/data-source';
+// D-36: API mode renders the real wallet; fixture mode keeps the design preview.
+export default function WalletRoute() { return WALLET_DATA_SOURCE === 'api' ? <LiveWalletScreen/> : <AdvocateBankUpdateScreen/>; }

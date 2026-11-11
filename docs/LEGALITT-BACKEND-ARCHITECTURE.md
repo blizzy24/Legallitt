@@ -1294,7 +1294,7 @@ CREATE TABLE admin_actions (
 ### 4.3a Tables added in the 11 November 2026 final build
 
 Additive migrations `202611110010_cancellations_refunds`, `202611110020_support_inbox`
-`202611110030_profile_fields` and `202611110040_account_settings`. Decisions are in `docs/DECISIONS.md` §13.
+`202611110030_profile_fields`, `202611110040_account_settings` and `202611110060_advocate_payouts`. Decisions are in `docs/DECISIONS.md` §13.
 
 ```sql
 -- ---------- cancellations and simulated refunds (D-12, D-13, D-14, D-50..D-55) ----------
@@ -1344,6 +1344,18 @@ CREATE TABLE advocate_verifications (
   details JSONB NOT NULL DEFAULT '{}',   -- as entered; published to advocate_profiles on approval
   submitted_at TIMESTAMPTZ, decided_at TIMESTAMPTZ, decided_by UUID REFERENCES users(id),
   decision TEXT, decision_reason TEXT, updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+-- ---------- advocate wallet and manual payouts (D-36, D-82..D-85) ----------
+CREATE TABLE advocate_bank_accounts (
+  advocate_id UUID PRIMARY KEY REFERENCES users(id), holder_name TEXT NOT NULL, bank_name TEXT NOT NULL,
+  ifsc TEXT NOT NULL, account_number TEXT NOT NULL,   -- full: admin pays manually; advocates see last four only
+  account_type TEXT, verified BOOLEAN NOT NULL DEFAULT false, updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE TABLE payout_requests (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(), advocate_id UUID NOT NULL REFERENCES users(id),
+  amount_paise BIGINT NOT NULL CHECK (amount_paise > 0), status TEXT NOT NULL DEFAULT 'pending',  -- pending | paid
+  bank_snapshot JSONB NOT NULL, requested_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  utr TEXT, paid_on DATE, paid_by UUID REFERENCES users(id), paid_at TIMESTAMPTZ
 );
 -- ---------- account settings (D-20, D-22, D-24, D-27, D-68..D-75) ----------
 CREATE TABLE user_preferences (

@@ -89,7 +89,7 @@ function Pill({ label, tone, dot, small }: { label: string; tone: PillTone; dot?
   );
 }
 
-export default function AdvocateWalletScreen() {
+function AdvocateWalletScreen() {
   const insets = useSafeAreaInsets();
   const w = WALLET;
   // ?period=last|year opens a period directly (for review links); default This Month.
@@ -599,3 +599,8 @@ const PILL_TEXT = StyleSheet.create({
   grey: { color: p.text },
   tile: { color: p.text },
 });
+
+import {WalletScreen as LiveWalletScreen} from '../../features/wallet/Wallet';
+import {DATA_SOURCE as WALLET_DATA_SOURCE} from '../../lib/data-source';
+// D-36: API mode renders the real wallet; fixture mode keeps the design preview.
+export default function WalletRoute() { return WALLET_DATA_SOURCE === 'api' ? <LiveWalletScreen/> : <AdvocateWalletScreen/>; }

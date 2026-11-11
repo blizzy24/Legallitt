@@ -125,7 +125,7 @@ function Account({ a }: { a: (typeof WALLET_BANK.accounts)[number] }) {
   );
 }
 
-export default function AdvocateWalletBankScreen() {
+function AdvocateWalletBankScreen() {
   const insets = useSafeAreaInsets();
   const d = WALLET_BANK;
   const back = () => (router.canGoBack() ? router.back() : router.replace('/(advocate)/earnings' as Href));
@@ -377,3 +377,8 @@ const styles = StyleSheet.create({
   btnNext: { marginTop: t.btnGap },
   btnText: { fontFamily: font.appSemi, fontSize: t.btnSize, color: ink.onBrand },
 });
+
+import {BankAccountScreen as LiveWalletScreen} from '../../../features/wallet/Wallet';
+import {DATA_SOURCE as WALLET_DATA_SOURCE} from '../../../lib/data-source';
+// D-36: API mode renders the real wallet; fixture mode keeps the design preview.
+export default function WalletRoute() { return WALLET_DATA_SOURCE === 'api' ? <LiveWalletScreen/> : <AdvocateWalletBankScreen/>; }

@@ -45,7 +45,7 @@ import { WALLET_UTR } from '../../../data/advocateWallet';
 // to Wallet goes to the earnings tab. See WALLET_UTR for the TDS, fee and
 // reference conflicts.
 
-export default function AdvocateWalletUtrScreen() {
+function AdvocateWalletUtrScreen() {
   const insets = useSafeAreaInsets();
   const d = WALLET_UTR;
   const { width } = useWindowDimensions();
@@ -413,3 +413,8 @@ const styles = StyleSheet.create({
   btnNext: { marginTop: t.btnGap },
   btnText: { fontFamily: font.appSemi, fontSize: t.btnSize, color: ink.onBrand },
 });
+
+import {PayoutDetailScreen as LiveWalletScreen} from '../../../features/wallet/Wallet';
+import {DATA_SOURCE as WALLET_DATA_SOURCE} from '../../../lib/data-source';
+// D-36: API mode renders the real wallet; fixture mode keeps the design preview.
+export default function WalletRoute() { return WALLET_DATA_SOURCE === 'api' ? <LiveWalletScreen/> : <AdvocateWalletUtrScreen/>; }

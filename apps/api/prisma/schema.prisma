@@ -921,3 +921,34 @@ model AdvocateVerification {
   @@index([submitted_at], map: "advocate_verifications_submitted_idx")
   @@map("advocate_verifications")
 }
+
+// D-36/D-82..D-85: manual payouts. FKs exist in SQL; no Prisma back-relations.
+model AdvocateBankAccount {
+  advocate_id    String   @id @db.Uuid
+  holder_name    String
+  bank_name      String
+  ifsc           String
+  account_number String
+  account_type   String?
+  verified       Boolean  @default(false)
+  updated_at     DateTime @default(now()) @db.Timestamptz(6)
+
+  @@map("advocate_bank_accounts")
+}
+
+model PayoutRequest {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  advocate_id   String    @db.Uuid
+  amount_paise  BigInt
+  status        String    @default("pending")
+  bank_snapshot Json
+  requested_at  DateTime  @default(now()) @db.Timestamptz(6)
+  utr           String?
+  paid_on       DateTime? @db.Date
+  paid_by       String?   @db.Uuid
+  paid_at       DateTime? @db.Timestamptz(6)
+
+  @@index([status, requested_at], map: "payout_requests_status_requested_idx")
+  @@index([advocate_id, requested_at], map: "payout_requests_advocate_idx")
+  @@map("payout_requests")
+}

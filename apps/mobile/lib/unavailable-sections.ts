@@ -5,12 +5,12 @@ const copy = instructedCopy.navigationAvailability;
  * describes frontend data coverage, not API adapter/simulation flags. */
 export type UnavailableSection = { title: string; body: string };
 const unavailable = (title: string, body: string = copy.general): UnavailableSection => ({ title, body });
-const wallet = unavailable('Wallet & Earnings', copy.wallet);
 export function unavailableSection(name: string, params?: Readonly<Record<string, unknown>>): UnavailableSection | undefined {
   const route = name.replace(/^\((?:tabs|advocate)\)\//, '').replace(/\/index$/, '');
   if (route==='fir'||route.startsWith('fir/')||route.startsWith('advocate/fir/')) return undefined;
   if (route === 'clients' || route.startsWith('advocate/clients')) return unavailable('Clients', copy.clients);
-  if (route === 'earnings' || route.startsWith('advocate/wallet') || /^advocate\/settings\/(bank|payout)/.test(route)) return wallet;
+  // D-36: wallet, withdrawals, transfer details, bank account and payout settings are API-backed.
+  if (route === 'earnings' || route.startsWith('advocate/wallet') || /^advocate\/settings\/(bank|payout)/.test(route)) return undefined;
   if (route.startsWith('advocate/analytics')) return unavailable('Analytics');
   if (route === 'advocate/settings') return undefined;
   if (route.startsWith('advocate/settings/')) return unavailable('Account Settings', copy.settings);

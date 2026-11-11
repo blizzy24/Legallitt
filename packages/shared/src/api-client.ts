@@ -86,6 +86,14 @@ export class ApiClient {
   advocateCompletion(id: string) {return this.request<import('./completion').AdvocateCompletion>(`/advocate/cases/${encodeURIComponent(id)}/completion`);}
   adminAccountDeletions(status: 'open' | 'decided' = 'open') {return this.request<{items: import('./completion').AdminDeletionRow[]}>(`/admin/account-deletions?status=${status}`);}
   decideAccountDeletion(id: string, input: {decision: 'review' | 'complete' | 'reactivate'; note: string}) {return this.request<{id: string; status: string}>(`/admin/account-deletions/${encodeURIComponent(id)}/decide`, input);}
+  // Advocate wallet and manual payouts (D-36, D-42).
+  wallet(period: import('./wallet').WalletPeriod = 'month') {return this.request<import('./wallet').Wallet>(`/advocate/wallet?period=${period}`);}
+  bankAccount() {return this.request<{bank: import('./wallet').MaskedBankAccount | null}>('/advocate/bank-account');}
+  saveBankAccount(input: import('./wallet').BankAccountInput) {return this.request<{bank: import('./wallet').MaskedBankAccount}>('/advocate/bank-account', input, 'PUT');}
+  requestPayout(amount_paise: string) {return this.request<import('./wallet').PayoutRequestView>('/advocate/payout-requests', {amount_paise});}
+  payoutRequest(id: string) {return this.request<import('./wallet').PayoutRequestView>(`/advocate/payout-requests/${encodeURIComponent(id)}`);}
+  adminPayouts(status: 'pending' | 'paid' = 'pending') {return this.request<{items: import('./wallet').AdminPayoutRow[]; counts: {pending: number; paid: number}}>(`/admin/payouts?status=${status}`);}
+  markPayoutPaid(id: string, utr: string, paid_on?: string) {return this.request<import('./wallet').PayoutRequestView>(`/admin/payouts/${encodeURIComponent(id)}/paid`, {utr, ...(paid_on ? {paid_on} : {})});}
   private refreshing?: Promise<ApiTokens>;
   constructor(private readonly options: Options) {}
   private async transport(
