@@ -1,0 +1,15 @@
+Opened: /login
+UI click: Continue
+UI route: /home
+Opened: /login
+UI click: Continue
+UI route: /dashboard
+Opened: /sign-in
+UI click: Sign in
+UI route: /legal-notices
+Opened: /legal-notices/e99f3f43-58e4-4c5f-86c5-8f610589d51c
+Opened: /legal-notice/delivery
+UI click: View Delivery Confirmation
+UI route: /delivered
+UI click: View Proof
+PASS deployed UI lifecycle: LN-2026-0028 completed

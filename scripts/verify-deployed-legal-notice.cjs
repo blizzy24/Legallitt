@@ -5,7 +5,7 @@ const {ApiClient}=require('../packages/shared/dist');
 const {PDFDocument,StandardFonts}=require('../apps/api/node_modules/pdf-lib');
 const {demoPassword}=require('../apps/api/dist/src/auth/demo');
 process.loadEnvFile('apps/api/.env.local');
-const out=path.resolve('reports/deploy-92fd314-2026-11-09/walk');fs.mkdirSync(out,{recursive:true});
+const out=path.resolve(process.env.LN_REPORT_ROOT??'reports/deploy-92fd314-2026-11-09/walk');fs.mkdirSync(out,{recursive:true});
 const mobile='https://legalitt-5.vercel.app',panel='https://legalitt-admin-panel.vercel.app',base='https://gvycg0n3u8.execute-api.ap-south-1.amazonaws.com';
 const delay=ms=>new Promise(r=>setTimeout(r,ms));
 const save=(name,data)=>fs.writeFileSync(path.join(out,name+'.json'),JSON.stringify(data,null,2)+'\n');
@@ -47,7 +47,7 @@ async function main(){
   }
   const p=work.client,a=work.admin,v=work.advocate;
   if(fs.existsSync(casePath))record=await api.client.case(JSON.parse(fs.readFileSync(casePath)).id);
-  else{await goto(p,mobile+'/legal-notice');await click(p,'Get Started');await route(p,'/step3');const id=new URL(p.url()).searchParams.get('caseId');assert.ok(id);record=await api.client.case(id);save('case',{id,reference:record.reference});}
+  else{await goto(p,mobile+'/legal-notice');await p.waitForFunction(()=>[...document.querySelectorAll('[role=button],button,a')].some(e=>e.textContent.trim()==='Get Started'),{timeout:60000});await delay(1500);await p.evaluate(()=>[...document.querySelectorAll('[role=button],button,a')].filter(e=>e.textContent.trim()==='Get Started').at(-1).click());await route(p,'/step3');const id=new URL(p.url()).searchParams.get('caseId');assert.ok(id);record=await api.client.case(id);save('case',{id,reference:record.reference});}
   const id=record.id;const refresh=async()=>record=await api.client.case(id);
   const pdf=await PDFDocument.create(),font=await pdf.embedFont(StandardFonts.Helvetica);const sheet=pdf.addPage();
   sheet.drawText('SIMULATED - DEPLOYMENT VERIFICATION ONLY',{x:35,y:750,size:16,font});sheet.drawText('No actual dispute, dispatch or delivery occurred.',{x:35,y:715,size:12,font});sheet.drawText(record.reference,{x:35,y:680,size:12,font});

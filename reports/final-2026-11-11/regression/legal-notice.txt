@@ -1,0 +1,24 @@
+Opened: /login
+UI click: Continue
+UI route: /home
+Opened: /login
+UI click: Continue
+UI route: /dashboard
+Opened: /sign-in
+UI click: Sign in
+UI route: /legal-notices
+Opened: /legal-notice
+UI click: Get Started
+UI route: /step3
+Opened: /legal-notice/step3
+UI click: Money Recovery
+UI click: Continue
+UI route: /step2
+UI click: Continue
+UI route: /step1
+UI click: Continue
+UI route: /demand
+UI click: Continue
+UI route: /step4
+UI click: Upload Agreement
+UI click: Verify identity

@@ -1,0 +1,12 @@
+=== legal-notice start 13:51:55
+=== legal-notice rc=1 end 13:53:41
+=== fir start 13:53:41
+=== fir rc=1 end 13:56:26
+=== consultation start 13:56:26
+=== consultation rc=0 end 14:02:26
+=== reports start 14:02:26
+=== reports rc=0 end 14:05:11
+=== p0 start 14:05:11
+=== p0 rc=0 end 14:05:25
+=== ui start 14:05:25
+=== ui rc=0 end 14:09:06

@@ -1,0 +1,24 @@
+KEEP 7 seeded: LN-2026-0001, LN-2026-0002, LN-2026-0003, LN-2026-0004, LN-2026-0005, LN-2026-0006, LN-2026-0020
+DELETE candidates 20:
+DISTRICT_COURT-2026-0005	district_court	completed	demo-client@legalitt.invalid	2026-11-11T08:27:57.497Z	TEST ONLY
+DISTRICT_COURT-2026-0006	district_court	draft	demo-client-isolation@legalitt.invalid	2026-11-11T08:30:08.467Z
+DOCUMENT_FORENSIC-2026-0003	document_forensic	completed	demo-client@legalitt.invalid	2026-11-11T08:33:52.206Z	TEST ONLY
+DOCUMENT_FORENSIC-2026-0004	document_forensic	draft	demo-client-isolation@legalitt.invalid	2026-11-11T08:35:05.912Z
+FIR_DRAFT-2026-0013	fir_draft	in_progress	demo-client@legalitt.invalid	2026-11-11T07:48:54.031Z	TEST ONLY
+FIR_DRAFT-2026-0014	fir_draft	payment_pending	demo-client@legalitt.invalid	2026-11-11T08:19:00.773Z	TEST ONLY
+FIR_DRAFT-2026-0015	fir_draft	completed	demo-client@legalitt.invalid	2026-11-11T08:23:50.392Z	TEST ONLY
+FIR_DRAFT-2026-0016	fir_draft	draft	demo-client-isolation@legalitt.invalid	2026-11-11T08:25:13.375Z
+HIGH_COURT-2026-0005	high_court	completed	demo-client@legalitt.invalid	2026-11-11T08:30:12.291Z	TEST ONLY
+HIGH_COURT-2026-0006	high_court	draft	demo-client-isolation@legalitt.invalid	2026-11-11T08:32:24.641Z
+LEGAL_ADVICE-2026-0005	legal_advice	paid	demo-client@legalitt.invalid	2026-11-11T08:19:19.125Z	TEST ONLY
+LEGAL_ADVICE-2026-0006	legal_advice	completed	demo-client@legalitt.invalid	2026-11-11T08:26:47.772Z	TEST ONLY
+LEGAL_ADVICE-2026-0007	legal_advice	draft	demo-client-isolation@legalitt.invalid	2026-11-11T08:27:53.465Z
+LN-2026-0026	legal_notice	draft	demo-client@legalitt.invalid	2026-11-11T07:48:53.563Z	TEST ONLY
+LN-2026-0027	legal_notice	draft	demo-client@legalitt.invalid	2026-11-11T08:24:30.645Z
+PROPERTY_SEARCH-2026-0006	property_search	payment_pending	demo-client@legalitt.invalid	2026-11-11T08:19:17.896Z	TEST ONLY
+PROPERTY_SEARCH-2026-0007	property_search	completed	demo-client@legalitt.invalid	2026-11-11T08:32:47.760Z	TEST ONLY
+PROPERTY_SEARCH-2026-0008	property_search	draft	demo-client-isolation@legalitt.invalid	2026-11-11T08:33:46.290Z
+PROPERTY_SEARCH-2026-0009	property_search	refunded	demo-client@legalitt.invalid	2026-11-11T08:35:16.760Z	TEST ONLY
+PROPERTY_SEARCH-2026-0010	property_search	cancelled	demo-client@legalitt.invalid	2026-11-11T08:35:20.424Z	TEST ONLY
+DELETE TEST ONLY support requests 3
+DRY RUN � nothing deleted.

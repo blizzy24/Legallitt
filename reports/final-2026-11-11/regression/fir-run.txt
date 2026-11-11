@@ -1,0 +1,13 @@
+Client personal facts saved; reloading
+Client personal facts resumed
+PASS client intake, uploaded 26 pages, quote and simulated payment
+Original failure: ApiError: Case not found
+    at ApiClient.decode (D:\Legalitt\Legallitt\packages\shared\dist\api-client.js:164:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async module.exports (D:\Legalitt\Legallitt\scripts\helpers\fir-admin-return-walk.cjs:66:130)
+    at async main (D:\Legalitt\Legallitt\scripts\verify-fir-admin-rejection.cjs:120:16)
+ApiError: Case not found
+    at ApiClient.decode (D:\Legalitt\Legallitt\packages\shared\dist\api-client.js:164:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async module.exports (D:\Legalitt\Legallitt\scripts\helpers\fir-admin-return-walk.cjs:66:130)
+    at async main (D:\Legalitt\Legallitt\scripts\verify-fir-admin-rejection.cjs:120:16)

@@ -1,0 +1,63 @@
+Opened: /login
+UI click: Continue
+UI route: /home
+Opened: /login
+UI click: Continue
+UI route: /dashboard
+Opened: /sign-in
+UI click: Sign in
+UI route: /legal-notices
+Opened: /legal-notice
+UI route: /step3
+Opened: /legal-notice/step3
+UI click: Money Recovery
+UI click: Continue
+UI route: /step2
+UI click: Continue
+UI route: /step1
+UI click: Continue
+UI route: /demand
+UI click: Continue
+UI route: /step4
+UI click: Upload Agreement
+UI click: Continue
+UI route: /step4-review
+UI click: Continue
+UI route: /step5
+UI click: Submit & Proceed to Pay
+UI route: /step6
+Opened: /legal-notice/step6
+UI click: Pay
+UI route: /scan-pay
+UI click: Pay using UPI App
+UI route: /success
+Opened: /legal-notices/e99f3f43-58e4-4c5f-86c5-8f610589d51c
+Opened: /advocate/notice/e99f3f43-58e4-4c5f-86c5-8f610589d51c/fee
+UI click: Accept & Schedule
+UI route: /documents
+UI click: Send
+UI route: /drafting
+Opened: /advocate/notice/e99f3f43-58e4-4c5f-86c5-8f610589d51c/drafting
+UI click: Continue with AI Generation
+UI route: /draft
+Opened: /advocate/notice/e99f3f43-58e4-4c5f-86c5-8f610589d51c/draft
+UI click: Edit Background & Facts
+UI click: Generate Draft
+UI route: /response
+UI click: Share for Review
+UI route: /review
+Opened: /legal-notice/tracking
+UI click: Approve & Proceed
+Opened: /advocate/notice/e99f3f43-58e4-4c5f-86c5-8f610589d51c/final
+UI click: Continue to Send
+UI route: /dispatch
+UI click: Continue to Send
+UI route: /send
+UI click: Continue
+UI route: /courier/self/details
+UI click: Submit Delivery Details
+UI route: /dispatch
+UI click: Confirm Dispatch
+Opened: /legal-notices/e99f3f43-58e4-4c5f-86c5-8f610589d51c
+Opened: /legal-notices/e99f3f43-58e4-4c5f-86c5-8f610589d51c
+ProtocolError Could not load body for this request. This might happen if the request is a preflight request.

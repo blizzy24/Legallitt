@@ -1,0 +1,21 @@
+PASS profile Demo client active=
+PASS my documents 25 documents
+PASS payments 10 payments
+PASS receipt pdf Legalitt_Receipt_F39D32CE.pdf
+PASS isolation: payment + receipt 404 for other client 
+PASS isolation: document 404 for other client 
+PASS preferences, security, saved advocates, deletion state, data export 
+PASS messages inbox 13 conversations
+PASS contact support ticket 35824c55-184b-4cf3-9a17-cfd41b359ed2
+PASS isolation: ticket 404 for other client and advocate 
+PASS admin support inbox lists ticket open=1
+PASS client sees admin reply 
+PASS admin closed ticket 
+PASS paid case A PROPERTY_SEARCH-2026-0009
+PASS isolation: cancellation 404/403 for other client and advocate 
+PASS self-serve cancel before acceptance → full simulated refund refunded
+PASS paid case B assigned and accepted PROPERTY_SEARCH-2026-0010
+PASS cancellation requested after acceptance "pending"
+PASS admin partial refund recorded; client sees amount + reason cancelled 184301 paise
+PASS advocate released from cancelled case 
+ALL P0 LIVE CHECKS PASSED
