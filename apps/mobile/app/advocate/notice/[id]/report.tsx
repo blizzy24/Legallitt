@@ -1,3 +1,5 @@
+import {AdvocateCompletionScreen} from '../../../../features/cases/AdvocateCompletion';
+import {DATA_SOURCE} from '../../../../lib/data-source';
 import NoticeScreenFeedback from '../../../../components/NoticeScreenFeedback';
 import {useAdvocateNoticeModel} from '../../../../features/legal-notice/useAdvocateNoticeModel';
 import { useLocalSearchParams } from 'expo-router';
@@ -14,7 +16,10 @@ import { ADV_NOTICE_REPORT } from '../../../../data/advocateSide';
 // screen for the property search, prints the correct net. Built as drawn;
 // design/185 still computes the real net via advNoticeFee().
 
-export default function AdvocateNoticeReportScreen() {
+// D-07: in API mode a delivered notice shows the completion view (POD, date, entitlement)
+// instead of design 203, which is another service's payout confirmation.
+export default function LiveAdvocateNoticeReportScreen() { return DATA_SOURCE === 'api' ? <AdvocateCompletionScreen/> : <AdvocateNoticeReportScreen/>; }
+function AdvocateNoticeReportScreen() {
   useLocalSearchParams<{ id: string }>();
   const model=useAdvocateNoticeModel('report');
   return <NoticeScreenFeedback error={model.error} state={model.screenState}><ReportSentScreen r={model.data.ADV_NOTICE_REPORT} /></NoticeScreenFeedback>;

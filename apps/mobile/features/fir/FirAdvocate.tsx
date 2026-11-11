@@ -1,3 +1,4 @@
+import {AdvocateCompletionCard,showsCompletion} from '../cases/AdvocateCompletion';
 import {useFirLifecycle,AdvocateFirFeedback} from './Lifecycle';
 import {designSubstitutions as copy} from '../../copy/substitutions';
 import {useEffect,useRef,useState} from 'react';
@@ -60,7 +61,7 @@ export default function FirAdvocate(){
     <View style={d.docket}><View style={d.docketText}><Text style={d.docketTitle}>{r.reference}</Text><Text style={d.docketSub}>{waiting?copy[219].waiting:r.status==='completed'?copy[220].completed:r.status.replaceAll('_',' ')}</Text></View></View>
     <AdvocateFirFeedback life={history.data} error={history.error} retry={history.reload}/>
     {waiting&&<Card><Text>{copy[219].frozen}</Text>{r.approval&&<Text>{waitingDuration(r.approval.submitted_at)}</Text>}</Card>}
-    {r.status==='completed'&&<Text style={s.body}>{copy[220].body}</Text>}
+    {r.status==='completed'&&<Text style={s.body}>{copy[220].body}</Text>}{showsCompletion(r.status)&&<AdvocateCompletionCard caseId={r.id}/>}
     {r.status==='assigned'&&<><OriginalFiling details={r.details}/><Card title="Documents">{r.documents?.length?r.documents.map(doc=><Button key={doc.id} title={`View ${doc.filename}`} onPress={()=>void m.run(()=>openDocument(doc.id))}/>):<Text>No documents uploaded.</Text>}</Card><Card title="Review Request"><Button title="Accept Request" disabled={m.busy} onPress={()=>void m.run(()=>backend.accept(r.id))}/><Button title="Decline Assignment" disabled={m.busy} onPress={()=>void m.run(()=>backend.decline(r.id))}/></Card></>}
     {editable&&<>
      <View style={d.ai}><View style={d.aiText}><Text style={d.aiTitle}>Manual draft</Text><Text style={d.aiBody}>Review the client’s filing and complete all eight sections. No AI is used.</Text></View></View>
