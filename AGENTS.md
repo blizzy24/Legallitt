@@ -153,6 +153,18 @@ safe for the old image too (add or widen first; rename or drop only once no
 deployed code reads the old shape). If a change cannot be made safe that way,
 stop and ask.
 
+**Prune Docker after every deploy.** Once the image is pushed and the deploy is
+done, run:
+
+```bash
+docker builder prune -a -f
+docker image prune -a -f
+```
+
+Deployed images live in ECR, so the local copies are never needed after a push.
+Skipping this fills C:. On 11 November, one day's deploys left 10.8 GB of build
+cache and 1.9 GB of old images, leaving 256 MB free.
+
 For the confirmed pricing rollout (architecture §2.5a), the migration adds schema
 only. After the new API and payment frontend are serving, activate the versioned
 tariffs with `infra/scripts/dev-ops-task.sh seed-pricing <IMAGE_TAG>`. Do not run
