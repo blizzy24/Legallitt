@@ -1,3 +1,5 @@
+import {AccountController} from './account/account.controller';
+import {AccountService} from './account/account.service';
 import {FirAdminService} from './cases/fir-admin.service';
 import {ConsultationController} from './consultations/consultation.controller';
 import {ConsultationService} from './consultations/consultation.service';
@@ -55,7 +57,7 @@ export class HealthController {
 
 @Module({
   imports: [AiModule, CourierModule, AdminUiModule, DemoModule, DatabaseModule, PhoneAuthModule, PaymentsModule, NotificationsModule],
-  controllers: [ConsultationController, FirController, NotificationsController, NoticeIntakeAiController, AdminAdvocatesController, AdminCasesController, NoticeMessagesController,
+  controllers: [AccountController, ConsultationController, FirController, NotificationsController, NoticeIntakeAiController, AdminAdvocatesController, AdminCasesController, NoticeMessagesController,
     PaymentsController, ServiceReportsController,
     HealthController,
     AuthController,
@@ -65,7 +67,7 @@ export class HealthController {
     ServicesController,
     DocumentController,
   ],
-  providers: [ConsultationService, ConsultationPayments, ConsultationReports, FirAdminService, FirService, NotificationRepository, AdminCaseDetailRepository, AdminAdvocatesRepository, AdminCasesRepository, NoticeMessages,
+  providers: [AccountService, ConsultationService, ConsultationPayments, ConsultationReports, FirAdminService, FirService, NotificationRepository, AdminCaseDetailRepository, AdminAdvocatesRepository, AdminCasesRepository, NoticeMessages,
     ShipmentService,
     NoticePdfService,
     PaymentsService, ServiceReportsService,

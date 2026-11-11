@@ -22,11 +22,10 @@ export function unavailableSection(name: string, params?: Readonly<Record<string
   if (route === 'advocates/[id]' && typeof params?.caseId === 'string' && params.caseId) return undefined;
   if (route === 'advocates' || route.startsWith('advocates/')) return unavailable('Advocates', copy.advocates);
   if (route === 'messages' || route.startsWith('messages/')) return unavailable('Messages', copy.messages);
-  if (route === 'documents' || route.startsWith('documents/')) return unavailable('My Documents', copy.documents);
-  if (route === 'payments') return unavailable('Payments', copy.payments);
-  if (['profile/edit','privacy','language'].includes(route)) return unavailable('Account Settings', copy.settings);
+  // D-15–D-18: documents, payments, Edit Profile and Request Details are real (account area).
+  if (['privacy','language'].includes(route)) return unavailable('Account Settings', copy.settings);
   if (['help','support','support-chat','callback'].includes(route)) return unavailable('Support', copy.support);
-  if (route.startsWith('hearings') || route === 'cases/[id]' || route === 'requests/[id]') return unavailable('Case Details');
+  if (route.startsWith('hearings') || route === 'cases/[id]') return unavailable('Case Details');
   if (route.startsWith('courier/') && !(route === 'courier/self/details' && params?.noticeOutbound === '1')) return unavailable('Courier');
   const service = [['legal-advice','Legal Advice'],['fir','FIR Draft'],['property-search','Property Search'],['document-forensic','Document Forensic'],['services/high-court','High Court Representation'],['services/district-court','District Court Representation']].find(([prefix])=>route===prefix||route.startsWith(prefix+'/'));
   if (service) return unavailable(service[1], copy.service);

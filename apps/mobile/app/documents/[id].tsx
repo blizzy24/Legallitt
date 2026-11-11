@@ -32,7 +32,7 @@ import { DOCUMENTS, VIEWER_PAGE as page, VIEWER_RELATED as related, documentById
 // Share, Download and Close are inert: nothing in the prototype can share or write a
 // file, and there is no designed destination for Close beyond going back.
 
-export default function DocumentViewerScreen() {
+function FixtureDocumentViewerScreen() {
   const insets = useSafeAreaInsets();
   const { id, name } = useLocalSearchParams<{ id: string; name?: string }>();
   // A "View" link from another screen may name a file that is not one of the
@@ -691,3 +691,8 @@ const styles = StyleSheet.create({
     color: ink.onBrand,
   },
 });
+
+import {DocumentViewerLive} from '../../features/account/Documents';
+import {DATA_SOURCE as LIVE_SOURCE} from '../../lib/data-source';
+// D-17 document viewer (profile-8): API mode shows the signed-in client's real files.
+export default function DocumentViewerScreen() { return LIVE_SOURCE === 'api' ? <DocumentViewerLive/> : <FixtureDocumentViewerScreen/>; }

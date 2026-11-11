@@ -19,7 +19,7 @@ import { CASE_DOC_FILTERS, CASE_MATTER, caseDocuments, type CaseDocFilter } from
 // design/52 bakes its count into the first chip's label ("All (3)") where design/56
 // uses a separate count badge. Rendered as each file draws it.
 
-export default function CaseDocumentsScreen() {
+function FixtureCaseDocumentsScreen() {
   const insets = useSafeAreaInsets();
   const [filter, setFilter] = useState<CaseDocFilter>('all');
   const [query, setQuery] = useState('');
@@ -384,3 +384,8 @@ const styles = StyleSheet.create({
     color: colors.textBody,
   },
 });
+
+import {DocumentsLive} from '../../features/account/Documents';
+import {DATA_SOURCE as LIVE_SOURCE} from '../../lib/data-source';
+// D-17 Case Documents (profile-3): API mode shows the signed-in client's real files.
+export default function CaseDocumentsScreen() { return LIVE_SOURCE === 'api' ? <DocumentsLive caseOnly/> : <FixtureCaseDocumentsScreen/>; }

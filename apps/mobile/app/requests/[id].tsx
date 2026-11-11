@@ -48,7 +48,7 @@ import { clientDocHref } from '../../data/docLinks';
 const STAT_ICONS: LucideIcon[] = [Scale, CalendarDays, Landmark];
 const ATTR_ICONS: LucideIcon[] = [Briefcase, Scale, MapPin];
 
-export default function RequestDetailScreen() {
+function FixtureRequestDetailScreen() {
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
   const [cancelling, setCancelling] = useState(false);
@@ -829,3 +829,8 @@ const styles = StyleSheet.create({
     color: colors.textBody,
   },
 });
+
+import {RequestDetailLive} from '../../features/account/Requests';
+import {DATA_SOURCE as LIVE_SOURCE} from '../../lib/data-source';
+// D-16 Request Details (profile-5): API mode shows the signed-in client's real cases.
+export default function RequestDetailScreen() { return LIVE_SOURCE === 'api' ? <RequestDetailLive/> : <FixtureRequestDetailScreen/>; }

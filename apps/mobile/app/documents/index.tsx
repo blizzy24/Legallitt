@@ -16,7 +16,7 @@ import { DOCUMENTS, DOC_FILTERS, type DocFilter } from '../../data/documents';
 // with the chip and footer wording taken from each document's per-screen block. See
 // the note at the top of data/documents.ts.
 
-export default function DocumentsScreen() {
+function FixtureDocumentsScreen() {
   const insets = useSafeAreaInsets();
   const [filter, setFilter] = useState<DocFilter>('all');
   const [query, setQuery] = useState('');
@@ -314,3 +314,8 @@ const styles = StyleSheet.create({
     color: ink.onBrand,
   },
 });
+
+import {DocumentsLive} from '../../features/account/Documents';
+import {DATA_SOURCE as LIVE_SOURCE} from '../../lib/data-source';
+// D-17 My Documents (profile-7): API mode shows the signed-in client's real files.
+export default function DocumentsScreen() { return LIVE_SOURCE === 'api' ? <DocumentsLive/> : <FixtureDocumentsScreen/>; }

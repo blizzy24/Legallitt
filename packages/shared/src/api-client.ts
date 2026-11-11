@@ -46,6 +46,13 @@ export class ApiClient {
   submitReport(id: string, draft: string) {return this.request<ApiCase>(`/service-reports/${id}/drafts/${draft}/submit`,{},'POST',undefined,{},60000);}
   approveReport(id: string, draft: string) {return this.request<ApiCase>(`/service-reports/${id}/drafts/${draft}/approve`,{});}
   requestReportChanges(id: string, draft: string, items: import('./service-reports').ChangeItem[]) {return this.request<ApiCase>(`/service-reports/${id}/drafts/${draft}/request-changes`,{items});}
+  // Client account area (D-15, D-17, D-18, D-19).
+  accountProfile() {return this.request<import('./account').AccountProfile>('/account/profile');}
+  updateAccountProfile(input: import('./account').AccountProfileUpdate) {return this.request<import('./account').AccountProfile>('/account/profile',input,'PATCH');}
+  accountDocuments(caseId?: string) {return this.request<{items: import('./account').AccountDocument[]}>(`/account/documents${caseId?`?case_id=${encodeURIComponent(caseId)}`:''}`);}
+  accountPayments() {return this.request<{items: import('./account').AccountPayment[]; totals: {captured_paise: string; captured_count: number}}>('/account/payments');}
+  accountPayment(id: string) {return this.request<import('./account').AccountPayment>(`/account/payments/${encodeURIComponent(id)}`);}
+  accountReceipt(id: string) {return this.request<{filename: string; pdf_base64: string}>(`/account/payments/${encodeURIComponent(id)}/receipt`,undefined,'GET',undefined,{},60000);}
   private refreshing?: Promise<ApiTokens>;
   constructor(private readonly options: Options) {}
   private async transport(

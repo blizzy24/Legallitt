@@ -25,3 +25,4 @@ export * from './fir-lifecycle';
 export * from './consultation';
 export * from './consultation-api';
 export * from './service-reports';
+export * from './account';
