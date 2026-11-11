@@ -9,7 +9,7 @@ import { buttonShadow, callback as k, colors, font, ink } from '../constants/the
 
 // Request a Callback (design/36). Its fields are a third style again: white and
 // elevated, with the label above the field rather than inside it.
-export default function CallbackScreen() {
+function FixtureCallbackScreen() {
   const insets = useSafeAreaInsets();
   const [name, setName] = useState('');
   const [mobile, setMobile] = useState('');
@@ -295,3 +295,7 @@ const styles = StyleSheet.create({
     color: k.footer,
   },
 });
+
+import {RequestCallback} from '../features/messages/Support';
+import {DATA_SOURCE as LIVE_DATA_SOURCE} from '../lib/data-source';
+export default function LiveScreen() { return LIVE_DATA_SOURCE === 'api' ? <RequestCallback/> : <FixtureCallbackScreen/>; }

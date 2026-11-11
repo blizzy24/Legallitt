@@ -27,7 +27,7 @@ const SUGGESTIONS = [
 ];
 
 // Legal Support chat (design/35). Sending appends a local message; nothing replies.
-export default function SupportChatScreen() {
+function FixtureSupportChatScreen() {
   const insets = useSafeAreaInsets();
   const [messages, setMessages] = useState<Message[]>(INITIAL);
   const [draft, setDraft] = useState('');
@@ -439,3 +439,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+import {SupportChat} from '../features/messages/Support';
+import {DATA_SOURCE as LIVE_DATA_SOURCE} from '../lib/data-source';
+export default function LiveScreen() { return LIVE_DATA_SOURCE === 'api' ? <SupportChat/> : <FixtureSupportChatScreen/>; }
