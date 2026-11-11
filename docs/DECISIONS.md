@@ -455,3 +455,371 @@ a support contact. **This is a launch blocker, not a demo blocker** — see
 7. **Advocate no-show** — 15 minutes before the client can reschedule or
    request a refund. (D-11)
 8. **Home screen video** — supply the video for the drawn carousel. (D-30)
+
+---
+
+## 13. Decisions taken during the 11 November build (D-44 onward)
+
+Recorded by the builder of each item, with the §9.1/§9.2 entries that belong to it.
+
+### P0-1/P0-2 — trust claims and Court Marriage (D-44..D-47)
+
+#### New decisions
+
+**D-44. Storage encryption is the only security claim the client app makes.**
+Documents live in S3 with SSE-KMS (§2.3), so "Stored encrypted" is true and is
+the wording D-01 itself uses. Every other claim is replaced with who can see the
+data: "Visible only to you, your advocate and Legalitt's team". "256-bit",
+"end-to-end", "Bar Council compliant", "BNSS compliant", "certified", "official"
+and "secure payment" claims are removed wherever they appear, including fixture
+screens that only render in design-preview mode.
+
+**D-45. "Verified advocate" stays, because it is data.** Only advocates with
+`advocate_profiles.verification = 'approved'` can be assigned or booked, so the
+marketing line "Verified Advocates" and the badge driven by `verification` are
+true. Ratings are shown only when `rating_count > 0` (D-02); experience only when
+`years_experience` is set.
+
+**D-46. The Legal Notice identity checkpoint is hidden in API mode (D-40).** The
+simulated DigiLocker/Video KYC flow advanced on a timer and ended in "Identity
+verified", which is both a false verification and timer navigation (§2.12). In
+API mode the step-5 card is not rendered and Continue goes straight to the next
+step. Fixture previews keep the drawn flow.
+
+**D-47. Chat headers show no presence or typing by default (D-01).** The shared
+chat component defaulted `online`, `typing` and `verified` to true, so the
+consultation and report chats showed a green dot and a typing indicator. The
+defaults are now false; a caller must pass real data.
+
+#### §9.2 substitutions (exact strings)
+
+| Design / screen | Original | Replacement |
+|---|---|---|
+| 40 FIR landing footer | 256-bit Encrypted • Confidential Legal Assistance | Private to you, your advocate and Legalitt's team |
+| 42 FIR step 1 | Your details are encrypted and shared only with authorized legal drafting counsel. | Your details are stored encrypted and shared only with your assigned advocate and Legalitt's team. |
+| 47 FIR submitted | Your information is encrypted • Bar Council Compliant | Stored encrypted • Visible to your advocate and Legalitt's team |
+| 48 FIR status | 256-BIT ENCRYPTED FOLIO · Bar Council Compliant | STORED ENCRYPTED · VISIBLE ONLY TO YOUR CASE TEAM |
+| 49 FIR ready | compiled and certified … / BNSS Compliant / 256-Bit Encrypted • Bar Council Compliant • Confidential | prepared by your advocate and approved by Legalitt … / Approved draft / Stored encrypted • Visible to you, your advocate and Legalitt's team |
+| 22/23 Legal Notice landing/detail | IN COMPLIANCE WITH BAR COUNCIL OF INDIA STANDARDS; "safe/secure and confidential" | Line removed; "Visible only to you, your advocate and Legalitt's team." |
+| 28/434 payment | Fast & Secure | Removed |
+| 440 Notice Delivery | Statutory Evidence Guarantee — digitally stamped certificate of service with physical recipient sign-off | Proof of Delivery — Legalitt records the proof of delivery and it appears in your case file |
+| 101–103 Legal Advice | Secure & Confidential | Private Consultations — Your chat is visible only to you, your advocate and Legalitt's team |
+| WizardShell (LN intake) | Secure & Confidence / Your information is safe and confidential | Private & Confidential / Visible only to you, your advocate and Legalitt's team |
+| 134 login | Login to your verified Legalitt client account | Login to your Legalitt account |
+| 125/130 onboarding | Find Verified Advocates Nearby; "Chat, call…"; Title Verification Certificate | Find Verified Advocates; chat consultations; Property Search Report |
+| OTP screen | END-TO-END ENCRYPTED SESSION | ONE-TIME CODE SIGN-IN |
+| 206–212 PSR (fixture data) | Escrow Secured/Protected, Held securely in Legalitt Escrow… released automatically, Digitally Signed, Verified Identity, Encrypted Vault, certified documents, registry search | Payment recorded; Paid to your bank account by Legalitt after the report is delivered. You'll see the UTR here once sent; size only; omitted; Case documents; documents; search at the registry office |
+| 90 DF report (fixture) | Verified by Forensic AI & Counsel / certified report | Prepared by your advocate / report |
+| 314 court fee (fixture) | 100% Secure Government Court Payment • Verified by Legalitt | Court fee paid through Legalitt • Receipt uploaded by your advocate |
+| 326 hearing (fixture) | Official Registry / Court listing verified | Added by your advocate |
+| 359/257 wallet (fixture, gated) | RBI-compliant clearing network … zero custody of escrowed client retainers; RBI Regulated Payout Gateway | Paid to your bank account by Legalitt. You'll see the UTR here once sent.; Manual payouts |
+| 92–100 KYC (unreachable in API mode) | 256-bit encryption … Official legal compliance; Encrypted Session; encrypted end-to-end | Identity verification is not available yet; Not available yet |
+| Advocate fixture data (consultation, notice fee, drafting, settings) | Escrow Guaranteed/Cleared/Funded, End-to-End Encrypted, Chamber 256-bit HSM, Bar Council two-factor, encrypted per BCI norms | Recorded payment / Payment recorded, omitted, Saved to this case, honest sign-in and storage text |
+
+#### Not changed here (owned by other builders)
+
+Designs 56/57/58/59/142/143/64/54 (documents, viewer, payments, messages,
+security, request details) are rebuilt by builders C, D and E, who apply D-01
+on those screens. Their fixture screens still carry the drawn claims.
+
+#### §9.1
+
+No new simulated capability.
+
+#### D-03
+
+`apps/mobile/copy/support.ts` exports `supportHours` (hours, ticket, callback,
+chat response text) as the single configurable source.
+
+#### D-05
+
+Court Marriage removed from `ALL_SERVICE_IDS` (it was never on Home). Backend,
+admin handling, existing cases and `/court-marriage` deep links remain.
+
+### P0-6 — cancellations and refunds (D-50..D-55)
+
+#### New decisions (for docs/DECISIONS.md)
+
+**D-50. Cancellation stages are lifecycle statuses, the same for every service.**
+`draft`/`submitted`/`payment_pending` → cancel, nothing to refund. `paid`/`assigning`/
+`assigned`/`advocate_declined` → client self-serve, immediate, full refund (no
+advocate has accepted). `advocate_accepted`/`in_progress`/`client_review`/
+`changes_requested`/`approved` (including FIR, report and consultation sub-states)
+→ client request to the admin queue. `dispatching`/`dispatched`/`completed` → no
+cancellation, Contact Support. One open request per case (database-enforced).
+
+**D-51. Refunds are rows, not payment-status changes.** A refund row records the
+amount against a captured client payment (oldest payment first when a case has
+several, e.g. consultation then quote). `payments.status` stays `captured`, so
+receipts and price snapshots stay readable. Courier payments made by advocates are
+never refunded through this flow.
+
+**D-52. Case outcome by refund size.** Full refund of everything still refundable →
+`cancelled` then `refunded` (two `case_events`, the second `source=simulated`).
+Partial or zero refund → stays `cancelled`; the partial refund is visible on the
+case. Declining a request leaves the case where it was and tells the client why.
+
+**D-53. The advocate learns the case ended, not why.** The advocate gets an in-app
+"A case assigned to you was cancelled" notification. Reasons, notes and refund
+amounts are client/admin-only: `GET /cases/:id/cancellation` returns 404 to every
+advocate, including the assigned one. The case leaves the advocate's active work
+because its status is closed; `advocate_id` is kept for history (D-14).
+
+**D-54. Legacy `POST /cases/:id/cancel` for clients now follows D-50.** Previously a
+client could cancel `assigning`/`assigned` (paid) cases without any refund record.
+Client calls are routed through the refund-aware service; admin calls keep the
+existing transition.
+
+**D-55. Advocate entitlement on partial refunds** is recorded only if the admin
+enters one (stored on the request; the API accepts it, the admin form omits it for
+now — none is the default per D-14).
+
+#### §9.1 register — simulated capabilities
+
+| Capability | Flag | Standing in because | Clears when |
+|---|---|---|---|
+| Refunds | follows `PAYMENTS_MODE=simulated` | No Razorpay keys; payments themselves are simulated | Razorpay integration: each refund row becomes a Razorpay refund against the original payment |
+
+Every refund row has `simulated=true`; the `refund_recorded` event has `source=simulated`.
+Admin panel shows "Simulated refunds — no money moved"; client screen shows "Demo
+payment: this refund is recorded but no real money moved."
+
+#### §9.2 — built without a design / substitutions
+
+- **Admin Cancellations & refunds queue** (`/cancellations`, D-12/D-13/D-42) — built
+  without a design from the panel's table, counters, stall banner and detail panel.
+  Oldest-first with live waiting time; Review → decision with refund amount and the
+  reason shown to the client; confirmation stating the outcome cannot be undone.
+- **Admin case detail "Cancellation & refunds" panel** — built without a design.
+- **Client Cancel Request** reuses design 349 for every service at `/cases/cancel?caseId=`.
+  Changes from 349: case-type/court/parties cells shown only where the case holds them
+  (service, speed, status); "Verified Advocate" badge omitted (D-01/D-02); "No penalty
+  or fees apply for cancelling at the review stage" replaced by the API's stage-specific
+  message (full refund / Legalitt decides / not cancellable); added the request-pending,
+  declined, approved and cancelled states, and a demo-refund line. The checkbox
+  wording changes to "…sends a cancellation request" when admin review applies.
+- Entry points added: "Cancel request" on the report-service and consultation client
+  tracking screens. Request Details (builder D) links to the same route.
+
+### P0-4/P0-5 — messages and support (D-56..D-61)
+
+Branch `p0-messages`. For the integrator to merge into `docs/DECISIONS.md` and
+the architecture document.
+
+#### New decisions
+
+- **D-56. One Messages inbox, conversations are case threads plus support requests.**
+  Each case with an assigned advocate is one conversation (the existing
+  `client_advocate` thread, created on first open). Each support request
+  (contact form, callback, support chat) is its own conversation under the
+  Support filter, titled "Legalitt Support" with the request subject. Search
+  runs on the server and matches the counterpart's name, case reference,
+  matter title/type and the text of every message (not only the preview).
+  Advocates see the same inbox for cases assigned to them (filter "Clients");
+  admins use the panel's Support inbox instead.
+- **D-57. Contact Support subject list.** profile-21 draws only "Select an
+  issue". Options: Payment or refund question; Question about my case
+  progress; Documents or uploads; My advocate; Account or sign-in; Something
+  isn’t working in the app; Something else. A linked case must be one the
+  requester can already see (404 otherwise).
+- **D-58. Support attachments are "Not available yet".** Documents are stored
+  per case (`documents.case_id`, case-membership access rules); a support
+  attachment would need a separate owner-scoped storage and admin-only read
+  path. The drawn upload box is shown disabled with an honest explanation.
+- **D-59. Callback requests de-duplicate while open.** A second callback
+  request while one is open returns the existing request. Support chat keeps
+  one open thread per person; a closed chat starts a new one.
+- **D-60. Admin closing a request is final for that request.** The requester
+  sees "This request is closed" with a link to start a new chat; the close is
+  recorded in `admin_actions` (`close_support_request`), with a confirmation
+  step in the panel.
+- **D-61. Support inbox ordering.** Unanswered requests first, oldest
+  unanswered message first (`waiting_since` = oldest requester message after
+  the last support reply); answered/open requests follow, oldest first.
+  The list refreshes every 30 s.
+
+D-03 copy: support response promises live in
+`apps/mobile/copy/supportContact.ts` (`supportContactCopy`):
+"typically responds within 2 business hours" (profile-21, current) and
+"contact you in 24 hours" (design 36). If builder A added a `supportHours`
+constant, fold these into it.
+
+#### §9.2 — built without a design
+
+| Screen | Decision | Notes |
+|---|---|---|
+| Admin **Support inbox** list and request detail (`/support`, `/support/:id`) | D-42, D-61 | Existing dark/orange counters, table, detail panels; waiting age reuses FIR `WaitingAge` |
+| Support conversation screen (`/messages/support?ticketId=`) and Support Chat (`/support-chat`) | D-26, D-56 | Same bubble layout as messages-2; design 35's scripted transcript not used |
+| Contact Support / Callback submitted states | D-26 | profile-21's "Submitted State" toggle shows only a state name; built as a confirmation card with "View in Messages" |
+
+#### §9.2 — substitutions (D-01)
+
+| Design | Drawn | Replacement |
+|---|---|---|
+| 142, messages-1 | "End-to-end encrypted lawyer-client privileged chat" | "Messages are private to you, your advocate and Legalitt support." |
+| 143, messages-2 | Online dot, "Online · Indore", "is typing…" | Omitted |
+| messages-1/2 | "Verified" badge on every advocate | Shown only when the advocate's verification is `approved` (D-02) |
+| profile-21 | Upload document box | Disabled, "Not available yet" (D-58) |
+| 35 | Scripted support transcript | Real messages only |
+
+#### Schema (architecture §4 needs these two tables)
+
+`apps/api/tests/foundations.cjs` asserts that every `CREATE TABLE` in the
+migrations also appears in the architecture document and that the total is 37.
+It fails until the integrator adds the SQL below to §4.3 and raises the count
+(39 with these two tables, plus any other builders' tables):
+
+```sql
+CREATE TABLE support_tickets (
+  id UUID PRIMARY KEY, user_id UUID NOT NULL REFERENCES users(id),
+  kind TEXT NOT NULL,            -- ticket | callback | chat
+  status TEXT NOT NULL,          -- open | closed
+  subject TEXT, related_to TEXT, description TEXT, contact_method TEXT,
+  contact_name TEXT, contact_phone TEXT, case_id UUID REFERENCES cases(id),
+  created_at TIMESTAMPTZ NOT NULL, updated_at TIMESTAMPTZ NOT NULL,
+  closed_at TIMESTAMPTZ, closed_by UUID REFERENCES users(id)
+);
+CREATE TABLE support_messages (
+  id UUID PRIMARY KEY, ticket_id UUID NOT NULL REFERENCES support_tickets(id),
+  sender_id UUID NOT NULL REFERENCES users(id), sender_role TEXT NOT NULL,
+  body TEXT NOT NULL, created_at TIMESTAMPTZ NOT NULL, read_at TIMESTAMPTZ
+);
+```
+
+#### Routes
+
+Mobile: `(tabs)/messages` (API inbox), `messages/thread?caseId=`,
+`messages/support?ticketId=`, `support`, `callback`, `support-chat`.
+`messages/[id]` stays gated (fixture design route). `help` untouched.
+`scripts/mobile-smoke.mjs` route count raised 329 → 331.
+
+Admin: `/support`, `/support/:id`, nav "Support inbox".
+
+API: `GET /messages/inbox?q=`, `POST/GET /support/tickets`,
+`GET /support/tickets/:id`, `POST /support/tickets/:id/messages`,
+`POST /support/tickets/:id/read`, `POST /support/callbacks`,
+`GET/POST /support/chat`, `GET /admin/support?status=`,
+`GET /admin/support/:id`, `POST /admin/support/:id/messages`,
+`POST /admin/support/:id/close`. `GET /threads/:id/messages` now includes
+attachment metadata (`document`) for document cards.
+
+### P0-3 part B — account settings (D-68..D-75)
+
+Branch `p0-account-b`. Covers D-20, D-21, D-22, D-23, D-24, D-25, D-27, D-29, D-30.
+
+#### New decisions (D-68 – D-75)
+
+- **D-68. "Sign Out of All Devices" signs out this device too.** Cognito's global
+  sign-out revokes every refresh and access token for the user, including the
+  current one; it can't spare one device without device tracking (D-21 already
+  omits per-device sign-out). The row reads "Sign out everywhere, including this
+  device", the confirmation says so, and the app returns to sign-in afterwards.
+  Design 15's "except this phone" wording is not used because it would be false.
+- **D-69. Seeded demo accounts can't change their password in the app.** Any
+  account on `@legalitt.invalid` shows "Demo account — managed by Legalitt" and the
+  API refuses with 409. The demo password is a shared credential in Secrets Manager
+  (AGENTS.md: never change it on its own); letting a demo viewer change it would lock
+  everyone else out.
+- **D-70. Notification preferences quiet, they never hide.** Turning off an in-app
+  category (Case updates, Consultations, Payments) still files every notification in
+  the inbox, but it arrives already read, so it raises no unread badge. Nothing a
+  client needs is lost. Category rule is one shared function
+  (`notificationCategory`) used by the inbox filters and the adapter.
+- **D-71. Active Sessions shows sign-in method and time; device only when recorded.**
+  `auth_events` doesn't capture the user agent for current sign-in paths, so the
+  device label appears only on rows that recorded one ("Web browser", "Android
+  device", "iPhone or iPad"); otherwise the row says "Signed in with password / one-
+  time code". Recording the user agent at sign-in is a small follow-up in AuthService.
+- **D-72. Change Password: no in-app reset.** The design's "Forgot your password?
+  Reset Password" link has no built reset flow; the screen says reset isn't available
+  in the app yet and points to Legalitt Support.
+- **D-73. Download My Data is a JSON file** of the caller's own profile (no Cognito
+  identifiers), preferences, cases they own, their payments, messages in their case
+  threads and saved advocates. On web it downloads; on native it opens the share sheet.
+- **D-74. Deletion requests deactivate immediately and are idempotent per user.** One
+  pending request per user (partial unique index). `users.status='deactivated'` makes
+  every authenticated request fail at `AuthService.identity`. Blocked while a case is
+  in any paid, uncompleted state (paid → dispatched, including advocate_declined).
+  Retention after deletion stays an open client question (§12 Q5).
+- **D-75. Saved Advocates shows only active, approved advocates**, labelled "Approved
+  by Legalitt" (a fact from `advocate_profiles.verification`), with availability from
+  their published weekly hours ("Hours today" / weekday list / "No hours published"),
+  and the consultation total computed from the confirmed Legal Advice tariff (₹885).
+  "Book Consultation" preselects the advocate in the Legal Advice booking step; it's
+  disabled, with the reason, if the advocate has no published hours. No ratings,
+  presence dots or "Available Today/Tomorrow" claims (D-02). The heart appears on each
+  advocate in the Legal Advice booking list (advocate profile pages remain gated
+  outside case context).
+
+#### §9.2 entries
+
+- **Privacy & Security hub (profile-13)** — built as drawn minus the "2FA Active"
+  badge and "Verification enabled" line (D-01, D-21).
+- **Login & Security (profile-15)** — Two-Step Verification and Login Alerts omitted;
+  Google shows "Not available yet"; mobile number masked; Sign Out of All Devices
+  wording per D-68.
+- **Active Sessions (profile-16)** — location and per-device sign-out omitted (D-21,
+  D-71).
+- **Privacy Settings (profile-17)** — drawn toggles replaced by a who-sees-what summary
+  (D-23). Built from existing card/row components.
+- **Privacy Policy** — built without a design: placeholder "Being finalised" with
+  Contact Support (D-43).
+- **Data & Documents (profile-18)** — "protected under Legalitt client privacy" footer
+  omitted (D-01); "Delete Uploaded Documents" row replaced by My Documents (builder D's
+  delete rules apply there).
+- **Delete Account (profile-19)** — request flow, blockers listed with links to each
+  case, irreversible-action confirmation (D-24, D-74).
+- **Notification Preferences** — built without a design from existing rows/switches
+  (D-20, D-70); SMS and WhatsApp "Not available yet".
+- **Language (profile-12)** — other languages disabled "Coming soon" (D-22).
+- **Help Center (profile-20)** — answers rewritten from built behaviour (D-25); the
+  "Confidential Legal Assistance" footer omitted (D-01). Support hours in one constant
+  `SUPPORT_HOURS` in `apps/mobile/features/account/faq.ts` (D-03).
+- **Saved Advocates (profile-6)** — D-75.
+- **Home search (11/12)** — live filtering of services; carousel stays omitted (D-30).
+
+#### §9.1 register
+
+Nothing new is simulated. Password change and global sign-out are real Cognito calls.
+
+#### Notes for the integrator
+
+- The Profile hub (builder D) hides the Language row in API mode
+  (`shownPreferences`). Language is now live at `/language`; the hub should show it.
+- `scripts/mobile-smoke.mjs` route count changed 329 → 337 for this branch's eight new
+  routes; recompute after merging all branches.
+- New routes: `/account/password`, `/account/security`, `/account/sessions`,
+  `/account/privacy-settings`, `/account/data`, `/account/delete`,
+  `/notification-preferences`, `/privacy-policy`. Ungated: `/privacy`, `/language`,
+  `/help`, `/advocates`.
+
+#### Required architecture-doc addition (makes `tests/foundations.cjs` pass)
+
+`foundations.cjs` asserts every `CREATE TABLE` in the migrations also appears in
+`docs/LEGALITT-BACKEND-ARCHITECTURE.md` (table count now 40 on this branch). Add to §4.3:
+
+```sql
+-- ---------- account settings (D-20, D-22, D-24, D-27) ----------
+CREATE TABLE user_preferences (
+  user_id UUID PRIMARY KEY REFERENCES users(id),
+  language TEXT NOT NULL DEFAULT 'en',          -- D-22: stored for when translations exist
+  notifications JSONB NOT NULL DEFAULT '{}',    -- D-20/D-70: quieted in-app categories
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE TABLE saved_advocates (
+  user_id UUID NOT NULL REFERENCES users(id),
+  advocate_id UUID NOT NULL REFERENCES users(id),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (user_id, advocate_id)
+);
+CREATE TABLE account_deletion_requests (      -- D-24/D-74: completed by an admin
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES users(id),
+  reason TEXT,
+  status TEXT NOT NULL DEFAULT 'pending',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  completed_at TIMESTAMPTZ
+);
+```
+
+If other branches add tables, the count in `foundations.cjs` must be the merged total.

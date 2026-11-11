@@ -1291,6 +1291,64 @@ CREATE TABLE admin_actions (
 );
 ```
 
+### 4.3a Tables added in the 11 November 2026 final build
+
+Additive migrations `202611110010_cancellations_refunds`, `202611110020_support_inbox`
+and `202611110040_account_settings`. Decisions are in `docs/DECISIONS.md` §13.
+
+```sql
+-- ---------- cancellations and simulated refunds (D-12, D-13, D-14, D-50..D-55) ----------
+CREATE TABLE cancellation_requests (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  case_id UUID NOT NULL REFERENCES cases(id), client_id UUID NOT NULL REFERENCES users(id),
+  mode TEXT NOT NULL,                 -- self_serve | admin_review
+  reason TEXT, note TEXT,
+  status TEXT NOT NULL,               -- pending | approved | declined | completed
+  status_at_request TEXT NOT NULL, refundable_paise BIGINT NOT NULL,
+  refund_amount_paise BIGINT, advocate_entitlement_paise BIGINT, decision_reason TEXT,
+  decided_by UUID REFERENCES users(id),
+  requested_at TIMESTAMPTZ NOT NULL DEFAULT now(), decided_at TIMESTAMPTZ
+);  -- partial unique index: one pending request per case
+CREATE TABLE refunds (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  case_id UUID NOT NULL REFERENCES cases(id), payment_id UUID NOT NULL REFERENCES payments(id),
+  cancellation_request_id UUID REFERENCES cancellation_requests(id),
+  amount_paise BIGINT NOT NULL, reason TEXT NOT NULL, decided_by UUID REFERENCES users(id),
+  status TEXT NOT NULL DEFAULT 'recorded', simulated BOOLEAN NOT NULL DEFAULT true,  -- §2.11: no money moves
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+-- ---------- support inbox (D-26, D-28, D-42, D-56..D-61) ----------
+CREATE TABLE support_tickets (
+  id UUID PRIMARY KEY, user_id UUID NOT NULL REFERENCES users(id),
+  kind TEXT NOT NULL,            -- ticket | callback | chat
+  status TEXT NOT NULL,          -- open | closed
+  subject TEXT, related_to TEXT, description TEXT, contact_method TEXT,
+  contact_name TEXT, contact_phone TEXT, case_id UUID REFERENCES cases(id),
+  created_at TIMESTAMPTZ NOT NULL, updated_at TIMESTAMPTZ NOT NULL,
+  closed_at TIMESTAMPTZ, closed_by UUID REFERENCES users(id)
+);
+CREATE TABLE support_messages (
+  id UUID PRIMARY KEY, ticket_id UUID NOT NULL REFERENCES support_tickets(id),
+  sender_id UUID NOT NULL REFERENCES users(id), sender_role TEXT NOT NULL,
+  body TEXT NOT NULL, created_at TIMESTAMPTZ NOT NULL, read_at TIMESTAMPTZ
+);
+-- ---------- account settings (D-20, D-22, D-24, D-27, D-68..D-75) ----------
+CREATE TABLE user_preferences (
+  user_id UUID PRIMARY KEY REFERENCES users(id),
+  language TEXT NOT NULL DEFAULT 'en', notifications JSONB NOT NULL DEFAULT '{}',
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE TABLE saved_advocates (
+  user_id UUID NOT NULL REFERENCES users(id), advocate_id UUID NOT NULL REFERENCES users(id),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(), PRIMARY KEY (user_id, advocate_id)
+);
+CREATE TABLE account_deletion_requests (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(), user_id UUID NOT NULL REFERENCES users(id),
+  reason TEXT, status TEXT NOT NULL DEFAULT 'pending',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(), completed_at TIMESTAMPTZ
+);
+```
+
 ### 4.4 Why pricing and commission are versioned tables
 
 Several figures are still unconfirmed: District Court prices, the Legal Advice
@@ -2195,6 +2253,8 @@ empty, or explicitly accepted in writing by the client, before production.
 | Legalitt delivery partner | **Not built** — no flag; the choice is removed | No carrier booking or pickup exists (decision: courier integration is manual in v1). Since 4 Nov 2026 the advocate's Send screen (194) offers only Send by Yourself and goes to the 286 courier-details form; designs 195–198 (partner delivery details, courier payment) are kept in code but unreachable from the notice flow, so no courier fee is taken. Who bears the courier cost stays open (**Q16**) | A carrier or pickup partner is integrated and Q16 is answered |
 | KYC | `KYC_MODE=simulated` | No provider chosen | Provider chosen |
 | Client-isolation seed | Explicit dev seed only; no runtime flag | Owner-approved 9 Nov 2026: `demo-client-isolation@legalitt.invalid` uses the existing demo secret and owns a tagged Legal Notice draft. Creation and the seed event record `source=simulated`; no real dispute, payment or notice is represented. `seed-client-isolation` provisions only this account/case, preserves existing confirmed passwords, and reuses the case on reruns. Full seeding/password maintenance includes the seventh account | Never seed in production; retain in development for bidirectional access-control checks |
+| Refunds (D-12, D-13) | Follows `PAYMENTS_MODE` (no separate flag) | No Razorpay keys; refunds are `refunds` rows with `simulated=true` against the original captured payment; admin panel labels "Simulated refunds — no money moved" | Razorpay refunds API wired with real keys |
+| Support callbacks (D-26) | No flag | A callback request is a support ticket for staff to action by phone outside the app; no telephony integration | A calling integration, if the client wants one |
 
 **In-app notifications are real (3 Nov 2026).** Each notification is a real row,
 created in the same transaction as its case action. `NOTIFY_MODE` affects only
