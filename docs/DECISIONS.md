@@ -879,7 +879,7 @@ CREATE TABLE client_profiles (
 );
 ```
 
-### P1-3 — advocate completion view, deletion queue, follow-up booking (D-84..D-87)
+### P1-3 — advocate completion view, deletion queue, follow-up booking (D-88..D-92)
 
 Branch `p1-complete`. No migration (`account_deletion_requests.status` is free text; new values below).
 
