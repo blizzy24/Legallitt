@@ -80,7 +80,7 @@ export default function DigilockerVerifiedScreen() {
         <View style={styles.pill}>
           <View style={styles.pillDot} />
           <Text style={styles.pillText} {...shrinkToFit(0.75)}>
-            STEP 3 OF 3 • ENCRYPTED &amp; VERIFIED
+            STEP 3 OF 3
           </Text>
         </View>
 

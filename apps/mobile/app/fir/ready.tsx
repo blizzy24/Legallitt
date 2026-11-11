@@ -49,8 +49,8 @@ function FixtureFirReadyScreen() {
             Your FIR Draft Is Ready
           </Text>
           <Text style={styles.body}>
-            Your formal First Information Report dossier has been compiled and certified for your
-            preliminary inspection.
+            Your formal First Information Report dossier has been prepared by your advocate and approved
+            by Legalitt for your review.
           </Text>
 
           <RequestIdCard requestId={FIR_REQUEST.requestId} style={styles.idCard} />
@@ -63,7 +63,7 @@ function FixtureFirReadyScreen() {
             </Text>
             <View style={styles.dossierChip}>
               <Text style={styles.dossierChipText} {...shrinkToFit(0.8)}>
-                BNSS Compliant
+                Approved draft
               </Text>
             </View>
           </View>
@@ -162,7 +162,7 @@ function FixtureFirReadyScreen() {
         <View style={styles.footer}>
           <ShieldCheck size={t.footerIcon} color={colors.textBody} />
           <Text style={styles.footerText} {...shrinkToFit(0.75)}>
-            256-Bit Encrypted • Bar Council Compliant • Confidential
+            Stored encrypted • Visible to you, your advocate and Legalitt’s team
           </Text>
         </View>
 

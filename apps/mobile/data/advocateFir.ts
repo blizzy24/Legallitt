@@ -105,7 +105,7 @@ export const FIR_REQUEST = {
     advocateLabel: 'ADVOCATE WILL RECEIVE',
     /** ⚠ Stored as drawn. NOT computed — see FIR_COMMISSION_NOTE. */
     advocateAmount: '₹3,000',
-    escrow: 'Escrow Protected • Direct Bank Transfer upon acceptance',
+    escrow: 'Paid to your bank account by Legalitt after completion',
   },
 
   documents: {

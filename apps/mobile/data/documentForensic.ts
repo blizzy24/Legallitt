@@ -199,16 +199,16 @@ export const DF_STAGES: DfStage[] = [
 export const DF_TRACK = {
   status: 'In Progress',
   stageChip: 'Stage 3 of 6',
-  noteTitle: '100% Confidential & Secure',
-  noteBody: 'Your documents are encrypted and accessible only to authorized experts.',
+  noteTitle: 'Private to your case',
+  noteBody: 'Stored encrypted. Visible only to you, your assigned advocate and Legalitt’s team.',
 };
 
 // ── Report (design/90) ──
 export const DF_REPORT = {
   title: 'Analysis Completed',
-  body: 'Your document forensic analysis is complete and the certified report is ready.',
+  body: 'Your document forensic analysis is complete and the report is ready.',
   status: 'Completed',
-  verifiedBy: 'Verified by Forensic AI & Counsel',
+  verifiedBy: 'Prepared by your advocate',
   rows: [
     { label: 'Document Status', value: 'Likely Genuine', chip: true },
     { label: 'Authenticity Check', value: 'No Issues Found' },

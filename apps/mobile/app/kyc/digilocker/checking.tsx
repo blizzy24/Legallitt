@@ -62,7 +62,7 @@ export default function DigilockerCheckingScreen() {
 
   return (
     <View style={styles.screen}>
-      <KycHeader title="Checking Details" sub="256-BIT ENCRYPTED" subIcon={Lock} />
+      <KycHeader title="Checking Details" sub="NOT AVAILABLE YET" subIcon={Lock} />
 
       <ScrollView
         contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + t.noteGap }]}
@@ -71,7 +71,7 @@ export default function DigilockerCheckingScreen() {
         <View style={styles.pill}>
           <View style={styles.pillDot} />
           <Text style={styles.pillText} {...shrinkToFit(0.8)}>
-            STEP 2 OF 3 • ENCRYPTED CHECK
+            STEP 2 OF 3
           </Text>
         </View>
 
@@ -152,7 +152,7 @@ export default function DigilockerCheckingScreen() {
         <View style={styles.note}>
           <ShieldCheck size={t.noteIcon} color={t.noteText} />
           <Text style={styles.noteText} {...shrinkToFit(0.75)}>
-            256-bit encryption protects all your records
+            DigiLocker is not connected yet.
           </Text>
         </View>
 

@@ -141,7 +141,7 @@ export default function SocialSignInModal({ provider, onClose, onConfirm }: Prop
                 <ChevronRight size={t.rowChevron} color={colors.textMuted} />
               </Pressable>
               <Text style={styles.note}>
-                Your Facebook account will be securely used to sign in to Legalitt.
+                Facebook sign-in is not available yet.
               </Text>
               <Pressable
                 accessibilityRole="button"

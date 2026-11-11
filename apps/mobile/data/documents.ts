@@ -50,7 +50,7 @@ export const DOCUMENTS: DocumentItem[] = [
     vault: { chip: 'Property Dispute', footer: 'Verified Copy', tone: 'verified' },
     caseView: {
       chip: 'Property Document',
-      footer: 'Verified by Advocate',
+      footer: 'Uploaded to case',
       tone: 'verified',
       filter: 'legal',
     },

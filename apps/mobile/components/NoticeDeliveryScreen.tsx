@@ -474,11 +474,10 @@ export default function NoticeDeliveryScreen({
               <NoticeButton onPress={onDeliveryConfirmation}>{instructedCopy[440].deliveryConfirmation}</NoticeButton>
             ) : (
               <View style={s.panel}>
-                <Title>Statutory Evidence Guarantee</Title>
+                <Title>Proof of Delivery</Title>
                 <Body>
-                  Once delivered, a digitally stamped certificate of service with
-                  physical recipient sign-off will automatically appear in your
-                  case file.
+                  Once the courier delivers the notice, Legalitt records the
+                  proof of delivery and it appears in your case file.
                 </Body>
               </View>
             )}

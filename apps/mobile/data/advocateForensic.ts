@@ -451,7 +451,7 @@ export const DF_SUBMIT = {
 
   sworn: {
     label: 'SWORN STATEMENT',
-    note: 'Digitally Signed',
+    note: 'Signed in app',
     name: 'Affidavit.pdf',
     meta: '2 Pages • Advocate Verification & Signed Oath',
     tag: 'Ready',

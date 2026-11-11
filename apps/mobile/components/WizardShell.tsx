@@ -48,7 +48,7 @@ export default function WizardShell({
   align = 'bottom',
   header = 'centred',
   title = 'Legal Notice',
-  subtitle = 'Secure & Confidence',
+  subtitle = 'Private & Confidential',
   hideButton = false,
   bottomInset = 0,
   background = 'white',
@@ -108,7 +108,7 @@ export default function WizardShell({
           <PrimaryButton label={busy ? instructedCopy.legalNoticeIntake.saving : buttonLabel} onPress={onContinue} disabled={busy} />
           <View style={styles.safeRow}>
             <Lock size={w.footerIcon} color={colors.textPrimary} />
-            <Text style={styles.safeText}>Your information is safe and confidential</Text>
+            <Text style={styles.safeText}>Visible only to you, your advocate and Legalitt’s team</Text>
           </View>
         </View>
       )}

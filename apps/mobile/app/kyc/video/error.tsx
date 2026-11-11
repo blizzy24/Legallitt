@@ -58,7 +58,7 @@ export default function VideoKycErrorScreen() {
 
   return (
     <View style={styles.screen}>
-      <KycHeader title="Device & Permission Check" sub="Encrypted Session" />
+      <KycHeader title="Device & Permission Check" sub="Not available yet" />
 
       <ScrollView
         contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + t.cardGap }]}

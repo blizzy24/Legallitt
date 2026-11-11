@@ -354,9 +354,9 @@ export const AS_DOCUMENTS = {
     fill: 0.3,
     // ⚠ The one copy change between the pair: design/248 ends "remain sealed.",
     // design/250 ends "remain sealed and private."
-    note248: 'End-to-end encrypted under Bar Council standards. Document numbers remain sealed.',
+    note248: 'Stored encrypted. Visible only to you and Legalitt’s team.',
     note250:
-      'End-to-end encrypted under Bar Council standards. Document numbers remain sealed and private.',
+      'Stored encrypted. Visible only to you and Legalitt’s team.',
   },
 };
 
@@ -379,7 +379,7 @@ export const AS_SECURITY = {
     {
       icon: 'phone',
       title: 'Two-Step Verification',
-      sub: 'Authenticate high-value actions & client escrow files.',
+      sub: 'Not available yet.',
     },
     { icon: 'bell', title: 'Login Alerts', sub: 'Instant SMS and secure email notice on new sessions.' },
   ],
@@ -399,7 +399,7 @@ export const AS_SECURITY = {
     sub: 'Terminates web portals and companion devices',
   },
 
-  note: 'Your advocate profile is safeguarded with State Bar Council verified dual keys and end-to-end encrypted docket sessions.',
+  note: 'You sign in with your email and password.',
 };
 
 export const AS_PRIVACY = {
@@ -481,7 +481,7 @@ export const AS_DEVICES = {
     sub: 'Windows 11 • Google Chrome',
     where: 'New Delhi, India • Active now',
     pill: 'Current',
-    note: 'Session secured via Bar Council two-factor token. Client consultation escrow access enabled.',
+    note: 'Signed in with your Legalitt account.',
   },
 
   othersTitle: 'OTHER AUTHORIZED SESSIONS (2)',
@@ -541,7 +541,7 @@ export const AS_DATA = {
 
   note: {
     title: 'BCI Privacy Standard',
-    body: 'Your advocate profile data and client dockets are encrypted according to Bar Council of India digital privacy and data protection norms.',
+    body: 'Your profile and case documents are stored encrypted and visible only to the people on each case and Legalitt’s team.',
   },
 };
 
@@ -637,8 +637,8 @@ export const AS_BANK = {
   ],
 
   note: {
-    title: 'Regulatory Trust & Encryption',
-    body: 'For your security, sensitive banking information is partially hidden. Legalitt encrypts all banking details in compliance with Bar Council and RBI settlement guidelines.',
+    title: 'Bank details',
+    body: 'Your account number is shown masked to the last four digits. Bank verification is not available yet.',
   },
 };
 
@@ -681,7 +681,7 @@ export const AS_BANK_UPDATE = {
     body: 'We will check these details before saving them. A nominal test credit of ₹1 will be deposited to verify active ownership.',
     never: 'Legalitt never asks for your ATM PIN, UPI PIN, or bank passwords.',
   },
-  vault: '256-bit encrypted legal-grade payout vault',
+  vault: 'Payout details',
 
   ctaTitle: 'Verify Bank Details',
   ctaSub: 'Saves and validates instantly',

@@ -165,11 +165,10 @@ export const HOME_SERVICE_IDS: ServiceId[] = [
 
 /**
  * Order shown on the All Services screen (design/13, supersedes design/10).
- * The owner's 11 Nov 2026 service instruction restores Court Marriage here;
- * its intake uses the existing card language because no service design was supplied.
+ * D-05: Court Marriage is hidden from client entry points (no client design; not on
+ * either drawn list). Its backend, admin handling and /court-marriage deep links stay.
  */
 export const ALL_SERVICE_IDS: ServiceId[] = [
-  'court-marriage',
   'legal-notice',
   'property-search',
   'fir-draft',

@@ -90,7 +90,6 @@ export function Step6ScreenView({ model }: { model: NoticeIntakeModel }) {
 
         <View style={styles.sectionRow}>
           <Text style={styles.sectionTitle}>SELECT PAYMENT METHOD</Text>
-          <Text style={styles.sectionLink}>Fast &amp; Secure</Text>
         </View>
 
         <PaymentMethods />

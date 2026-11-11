@@ -123,7 +123,7 @@ export default function LegalNoticeInfoScreen() {
           <Lock size={i.footerIcon} color={ink.accent} />
           <View style={styles.footerText}>
             <Text style={styles.footerMain}>Your information is used only to process your legal notice request.</Text>
-            <Text style={styles.footerSub}>Your information is safe and confidential.</Text>
+            <Text style={styles.footerSub}>Visible only to you, your advocate and Legalitt’s team.</Text>
           </View>
         </View>
       </ScrollView>

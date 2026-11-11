@@ -347,7 +347,7 @@ export default function AdvocateRequestDetailScreen() {
             ATTACHED FILINGS ({ADV_REQUEST_FILINGS.length})
           </Text>
           <Text style={styles.sectionNote} {...shrinkToFit(0.8)}>
-            Encrypted Vault
+            Case documents
           </Text>
         </View>
 

@@ -32,7 +32,8 @@ export function useUploadModel(stage: 'step4' | 'step4-review') {
     error: c.error, onBack: model.back,
     documents, count:api ? documents.length : model.form.documents.length || categories.length, returnTo,
     // An already-submitted case is repairing its files, not starting intake again.
-    onContinue: () => (api && c.record?.status === 'payment_pending') || kyc.completed ? model.continue() : begin(returnTo),
+    // D-40: no identity-verification checkpoint in API mode; KYC is not built.
+    onContinue: () => api || kyc.completed ? model.continue() : begin(returnTo),
     onUpload: (title:string) => { if (api) void c.run(()=>upload(title)); else previewNotice(title==='Add More Documents'?title:`Upload ${title}`); },
     onAdd: () => { if(api) c.go('/legal-notice/step4'); else previewNotice('Add More Documents'); },
     onView: (doc:Doc) => { if(api) void c.run(async()=>{if(doc.id) await Linking.openURL((await c.repository.documentUrl(doc.id)).url);}); else router.push(clientDocHref(doc.title) as Href); },

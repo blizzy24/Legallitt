@@ -42,7 +42,7 @@ export default function DigilockerConnectScreen() {
 
   return (
     <View style={styles.screen}>
-      <KycHeader title="Connect Digilocker" sub="Encrypted Session" />
+      <KycHeader title="Connect Digilocker" sub="Not available yet" />
 
       <ScrollView
         contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + t.cardGap }]}

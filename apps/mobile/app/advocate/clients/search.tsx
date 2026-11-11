@@ -160,7 +160,7 @@ export default function AdvocateClientSearchScreen() {
           <View style={styles.ledger}>
             <View style={styles.ledgerDot} />
             <Text style={styles.ledgerText} {...shrinkToFit(0.75)}>
-              Encrypted Ledger
+              Client Ledger
             </Text>
           </View>
         </View>
@@ -230,7 +230,7 @@ export default function AdvocateClientSearchScreen() {
             </Text>
           </View>
           <Text style={styles.helpBody}>
-            Add a new individual client or corporate entity directly to initiate privileged docket
+            Add a new individual client or corporate entity directly to start a docket
             assignments.
           </Text>
           <Pressable onPress={() => previewNotice("+ Invite Client or Add Docket")}

@@ -83,7 +83,7 @@ export function useNoticeTrackingModel(fixtureStage: 'drafting' | 'review' = 'dr
     advocate: name ? { id: record?.advocate_id ?? '', name, initials: name.replace(/^Adv\.?\s+/i, '').split(/\s+/).map(v => v[0] ?? '').join('').slice(0, 2),
       experience: profile?.years_experience ? `${profile.years_experience}+ Years Experience` : '',
       practice: profile?.practice_areas.join(', ') ?? '', barReg: profile?.bar_council_number ?? '',
-      rating: profile?.rating_avg ?? '', reviews: profile?.rating_count ? String(profile.rating_count) : '',
+      rating: profile?.rating_count ? profile.rating_avg ?? '' : '', reviews: profile?.rating_count ? String(profile.rating_count) : '',
       verified: profile?.verification === 'approved' } : null,
     paidAmount: model.invoiceLines.length ? invoiceTotal(model.invoiceLines) : null,
     draftFile: notice?.filename ?? '', allowDemoAdvance: false,

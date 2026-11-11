@@ -248,7 +248,7 @@ export const DC_COURT_FEE = {
     'You will receive the official court filing confirmation and receipt.',
   ],
   cta: 'Pay Court Fee (₹3,500)',
-  foot: '100% Secure Government Court Payment • Verified by Legalitt',
+  foot: 'Court fee paid through Legalitt • Receipt uploaded by your advocate',
 };
 
 /**
@@ -272,7 +272,7 @@ export const DC_FILING = {
   filedBody: 'Your advocate has updated the court filing details.',
   filedNote: 'Details verified and submitted by your assigned advocate.',
   detTitle: 'Filing Details',
-  detMeta: 'Official Registry',
+  detMeta: 'Added by your advocate',
   rows: [
     { label: 'Filing Date', value: '18 October 2026' },
     { label: 'Filing Number', value: 'HC/IND/2026/18452', copy: true },
@@ -419,7 +419,7 @@ export const DC_RECEIPT = {
  * ⚠ CONFLICT 6: "Stage 2 of 5" — 320 put First Hearing at "Stage 3 of 6".
  * ⚠ The hearing is "25 Oct 2026 … Sunday Session" — 25 October 2026 is a
  * Sunday; a district-court listing on a Sunday is unusual. Built as drawn.
- * ⚠ The drawing clips "First Hearing Sche[duled]" and "Court listing verified
+ * ⚠ The drawing clips "First Hearing Sche[duled]" and "Added by your advocate
  * and co[nfirmed]" under the pill; both are shown in full here, shrunk to fit.
  */
 export const DC_HEARING = {
@@ -430,10 +430,10 @@ export const DC_HEARING = {
   alertTitle: 'Your first hearing is on 25 October 2026 at 11:00 AM',
   alertSub: 'District Court · Court Room 3, Indore Bench',
   schedTitle: 'First Hearing Scheduled',
-  schedSub: 'Court listing verified and confirmed',
+  schedSub: 'Added by your advocate and confirmed',
   schedPill: 'Scheduled',
   detTitle: 'HEARING DETAILS',
-  registry: 'Official Registry',
+  registry: 'Added by your advocate',
   dateLabel: 'Date',
   date: '25 Oct\n2026',
   dateSub: 'Sunday Session',

@@ -272,7 +272,7 @@ export const WALLET_WITHDRAW = {
   arrivalRail: ' (NEFT/IMPS)',
   recvLabel: 'You will receive',
   recvSub: 'Direct account credit',
-  note: 'Funds are transferred directly via Reserve Bank of India (RBI) compliant clearing network. Legalitt retains zero custody of escrowed client retainers.',
+  note: 'Paid to your bank account by Legalitt. You’ll see the UTR here once sent.',
   confirm: 'Confirm Withdrawal',
   cancel: 'Cancel and Return to Wallet',
 };
@@ -304,8 +304,8 @@ export function formatINR(n: number): string {
  */
 export const WALLET_BANK = {
   title: 'Manage Bank Account',
-  rbiTitle: 'RBI Regulated Payout Gateway',
-  rbiBody: 'Accounts linked here receive fee payouts via RBI-regulated NEFT/IMPS settlement channels.',
+  rbiTitle: 'Manual payouts',
+  rbiBody: 'Legalitt pays your earnings to this bank account manually and records the UTR. Bank verification is not available yet.',
   defaultCaps: 'DEFAULT PAYOUT METHOD',
   direct: 'Direct 1-Tap Active',
   secondaryCaps: 'SECONDARY ACCOUNTS',

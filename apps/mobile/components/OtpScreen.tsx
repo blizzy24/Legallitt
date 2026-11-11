@@ -183,7 +183,7 @@ export default function OtpScreen({ title, next, changeTo }: Props) {
         <View style={styles.foot}>
           <Lock size={t.footIcon} color={colors.textBody} />
           <Text style={styles.footText} {...shrinkToFit(0.75)}>
-            END-TO-END ENCRYPTED SESSION
+            ONE-TIME CODE SIGN-IN
           </Text>
         </View>
         <Text style={styles.terms} {...shrinkToFit(0.75)}>
