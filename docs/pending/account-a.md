@@ -33,3 +33,22 @@ No new simulated capability. Receipts of simulated payments say so on their face
 - API: `GET/PATCH /api/v1/account/profile`, `GET /api/v1/account/documents[?case_id=]`, `GET /api/v1/account/payments`, `GET /api/v1/account/payments/:id`, `GET /api/v1/account/payments/:id/receipt` — client role only (advocate/admin 403); another client's ids return 404. Test: `apps/api/tests/account.cjs`.
 - Mobile: `/(tabs)/profile` (real active count), `/profile/edit`, `/requests`, `/requests/[id]`, `/documents`, `/documents/case?caseId=`, `/documents/[id]`, `/payments`, `/payments/[id]`.
 - Migration: `202611110030_profile_fields` (new table only).
+
+## Integrator action — architecture §4 table list
+
+`apps/api/tests/foundations.cjs` requires every migrated table to appear as a
+`CREATE TABLE` in the architecture document. This branch raises the count to 38;
+add this to §4.3 (it is the only missing table, so the test passes once added):
+
+```sql
+-- D-15: Edit Profile fields; email and mobile stay on users (Cognito-bound).
+CREATE TABLE client_profiles (
+  user_id       UUID PRIMARY KEY REFERENCES users(id),
+  date_of_birth DATE,
+  gender        TEXT,          -- female | male | other | prefer_not_to_say
+  city          TEXT,
+  state         TEXT,
+  country       TEXT,
+  updated_at    TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+```
