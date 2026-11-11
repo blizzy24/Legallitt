@@ -54,6 +54,12 @@ D-44 storage encryption is the only security claim · D-45 "Verified advocate" s
 - **Logs:** the full list is in `cleanup-dry-run-2.txt` and the row counts in `cleanup-applied.txt`.
 - **Not touched:** users, pricing and configuration. S3 objects of the deleted documents remain in the bucket but are unreachable.
 - **No seeded cases exist for the other services,** so their admin lists show only the cases created by today's regression.
+- **The 14:15 regression added about 22 TEST ONLY cases and 3 TEST ONLY support requests.** These are LN-2026-0026…0029, FIR_DRAFT-2026-0013…0016, LEGAL_ADVICE-2026-0005…0007, HIGH_COURT-2026-0005/0006, DISTRICT_COURT-2026-0005/0006, PROPERTY_SEARCH-2026-0006…0010 and DOCUMENT_FORENSIC-2026-0003/0004.
+- **I did not delete them.** A second deletion goes beyond the single pre-authorised cleanup, and it was blocked when I tried.
+- **A fresh snapshot is ready** if you want them removed before the demo: `legalitt-dev-pre-cleanup-20261111-1425`. Run the dry run, check the count, then apply with that count:
+  - dry run: `bash infra/scripts/dev-ops-task.sh cleanup-test-data`
+  - apply: `CLEANUP_EXPECT=<count> bash infra/scripts/dev-ops-task.sh cleanup-test-data`
+- **What removal would leave:** the seven keep-list Legal Notice cases, and empty, designed lists for the other services.
 
 ## 6. Regression (live sites)
 
@@ -78,7 +84,9 @@ Fixes made only in regression tooling: the Legal Notice script now skips the ide
 
 ## 7. Before showing the client
 
-- **Regression cases appear in the admin lists.** The regression creates TEST ONLY cases on the live site; see §6.
+- **TEST ONLY cases from the regression are visible** in the admin lists, the demo client's My Cases and Requests, and the demo advocate's Matters. See §5 to remove them.
+- **Design 22's small "SECURE" badge** on the Legal Notice detail page survived the D-01 sweep. It's a minor residual claim, not changed after the freeze.
+- **FIR's regression script exits non-zero** at its last step only, because it re-checks a 10 Nov case that the cleanup removed. Every FIR lifecycle check passed.
 - **Payments, refunds and payouts are simulated or manual.** Refunds are labelled "Simulated refunds — no money moved" in the panel.
 - **High Court and District Court** stop at the existing manual stages, because the drawn litigation stages (P1-4) aren't built.
 - **The dev API is throttled to 10 requests per second.** Several people clicking fast at once may see "Too Many Requests".
