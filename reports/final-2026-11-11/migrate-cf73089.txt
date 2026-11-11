@@ -1,0 +1,22 @@
+image tag cf73089 (one-off legalitt-dev-ops:35)
+task arn:aws:ecs:ap-south-1:026379630400:task/legalitt-dev-cluster/4fa6cbb61a4b4ababe2244f79738b8ef
+exit 0 (Essential container in task exited)
+2026-11-11T07:03:22 Loaded Prisma config from prisma.config.ts.
+2026-11-11T07:03:22 Prisma schema loaded from prisma/schema.prisma.
+2026-11-11T07:03:22 Datasource "db": PostgreSQL database "legalitt", schema "public" at "legalitt-dev-database.c1mu80ok42w3.ap-south-1.rds.amazonaws.com:5432"
+2026-11-11T07:03:23 23 migrations found in prisma/migrations
+2026-11-11T07:03:23 Applying migration `202611110010_cancellations_refunds`
+2026-11-11T07:03:23 Applying migration `202611110020_support_inbox`
+2026-11-11T07:03:23 Applying migration `202611110030_profile_fields`
+2026-11-11T07:03:23 Applying migration `202611110040_account_settings`
+2026-11-11T07:03:23 The following migration(s) have been applied:
+2026-11-11T07:03:23 migrations/
+2026-11-11T07:03:23   └─ 202611110010_cancellations_refunds/
+2026-11-11T07:03:23     └─ migration.sql
+2026-11-11T07:03:23   └─ 202611110020_support_inbox/
+2026-11-11T07:03:23     └─ migration.sql
+2026-11-11T07:03:23   └─ 202611110030_profile_fields/
+2026-11-11T07:03:23     └─ migration.sql
+2026-11-11T07:03:23   └─ 202611110040_account_settings/
+2026-11-11T07:03:23     └─ migration.sql
+2026-11-11T07:03:23 All migrations have been successfully applied.

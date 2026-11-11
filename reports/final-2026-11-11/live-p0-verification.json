@@ -1,0 +1,90 @@
+{
+  "checked_at": "2026-11-11T07:25:31.108Z",
+  "cases": {
+    "self_serve": "PROPERTY_SEARCH-2026-0004",
+    "admin_partial": "PROPERTY_SEARCH-2026-0005"
+  },
+  "support_ticket": "52ad5845-acdf-4a5e-8ff2-905049f33dfe",
+  "steps": [
+    {
+      "name": "profile",
+      "detail": "Demo client active="
+    },
+    {
+      "name": "my documents",
+      "detail": "88 documents"
+    },
+    {
+      "name": "payments",
+      "detail": "32 payments"
+    },
+    {
+      "name": "receipt pdf",
+      "detail": "Legalitt_Receipt_6334DCA0.pdf"
+    },
+    {
+      "name": "isolation: payment + receipt 404 for other client",
+      "detail": ""
+    },
+    {
+      "name": "isolation: document 404 for other client",
+      "detail": ""
+    },
+    {
+      "name": "preferences, security, saved advocates, deletion state, data export",
+      "detail": ""
+    },
+    {
+      "name": "messages inbox",
+      "detail": "31 conversations"
+    },
+    {
+      "name": "contact support ticket",
+      "detail": "52ad5845-acdf-4a5e-8ff2-905049f33dfe"
+    },
+    {
+      "name": "isolation: ticket 404 for other client and advocate",
+      "detail": ""
+    },
+    {
+      "name": "admin support inbox lists ticket",
+      "detail": "open=1"
+    },
+    {
+      "name": "client sees admin reply",
+      "detail": ""
+    },
+    {
+      "name": "admin closed ticket",
+      "detail": ""
+    },
+    {
+      "name": "paid case A",
+      "detail": "PROPERTY_SEARCH-2026-0004"
+    },
+    {
+      "name": "isolation: cancellation 404/403 for other client and advocate",
+      "detail": ""
+    },
+    {
+      "name": "self-serve cancel before acceptance → full simulated refund",
+      "detail": "refunded"
+    },
+    {
+      "name": "paid case B assigned and accepted",
+      "detail": "PROPERTY_SEARCH-2026-0005"
+    },
+    {
+      "name": "cancellation requested after acceptance",
+      "detail": "\"pending\""
+    },
+    {
+      "name": "admin partial refund recorded; client sees amount + reason",
+      "detail": "cancelled 184301 paise"
+    },
+    {
+      "name": "advocate released from cancelled case",
+      "detail": ""
+    }
+  ]
+}

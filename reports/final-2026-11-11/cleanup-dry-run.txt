@@ -1,0 +1,43 @@
+image tag 1d8913b (one-off legalitt-dev-ops:34)
+task arn:aws:ecs:ap-south-1:026379630400:task/legalitt-dev-cluster/fa48346e675e486785a5323c27384fd3
+exit 0 (Essential container in task exited)
+2026-11-11T05:54:36   FIR_DRAFT-2026-0002	fir_draft	draft	demo-client-isolation@legalitt.invalid	2026-11-10T05:21:56.166Z
+2026-11-11T05:54:36   FIR_DRAFT-2026-0003	fir_draft	payment_pending	demo-client@legalitt.invalid	2026-11-10T07:33:34.013Z	TEST ONLY
+2026-11-11T05:54:36   FIR_DRAFT-2026-0004	fir_draft	draft	demo-client-isolation@legalitt.invalid	2026-11-10T07:34:32.880Z
+2026-11-11T05:54:36   FIR_DRAFT-2026-0005	fir_draft	completed	demo-client@legalitt.invalid	2026-11-10T10:45:13.313Z	TEST ONLY
+2026-11-11T05:54:36   FIR_DRAFT-2026-0006	fir_draft	draft	demo-client-isolation@legalitt.invalid	2026-11-10T10:46:22.338Z
+2026-11-11T05:54:36   FIR_DRAFT-2026-0007	fir_draft	completed	demo-client@legalitt.invalid	2026-11-10T11:33:22.659Z	TEST ONLY
+2026-11-11T05:54:36   FIR_DRAFT-2026-0008	fir_draft	draft	demo-client-isolation@legalitt.invalid	2026-11-10T11:34:48.349Z
+2026-11-11T05:54:36   FIR_DRAFT-2026-0009	fir_draft	completed	demo-client@legalitt.invalid	2026-11-10T17:12:07.125Z	TEST ONLY
+2026-11-11T05:54:36   FIR_DRAFT-2026-0010	fir_draft	draft	demo-client-isolation@legalitt.invalid	2026-11-10T17:13:19.206Z
+2026-11-11T05:54:36   FIR_DRAFT-2026-0011	fir_draft	completed	demo-client@legalitt.invalid	2026-11-10T20:40:16.484Z	TEST ONLY
+2026-11-11T05:54:36   FIR_DRAFT-2026-0012	fir_draft	draft	demo-client-isolation@legalitt.invalid	2026-11-10T20:41:23.178Z
+2026-11-11T05:54:36   HIGH_COURT-2026-0001	high_court	completed	demo-client@legalitt.invalid	2026-11-10T17:40:23.967Z	TEST ONLY
+2026-11-11T05:54:36   HIGH_COURT-2026-0002	high_court	draft	demo-client-isolation@legalitt.invalid	2026-11-10T17:42:06.891Z
+2026-11-11T05:54:36   HIGH_COURT-2026-0003	high_court	completed	demo-client@legalitt.invalid	2026-11-10T20:50:55.229Z	TEST ONLY
+2026-11-11T05:54:36   HIGH_COURT-2026-0004	high_court	draft	demo-client-isolation@legalitt.invalid	2026-11-10T20:53:07.497Z
+2026-11-11T05:54:36   LEGAL_ADVICE-2026-0001	legal_advice	completed	demo-client@legalitt.invalid	2026-11-10T17:16:14.512Z	TEST ONLY
+2026-11-11T05:54:36   LEGAL_ADVICE-2026-0002	legal_advice	payment_pending	demo-client-isolation@legalitt.invalid	2026-11-10T17:38:35.732Z	TEST ONLY
+2026-11-11T05:54:36   LEGAL_ADVICE-2026-0003	legal_advice	completed	demo-client@legalitt.invalid	2026-11-10T20:41:22.858Z	TEST ONLY
+2026-11-11T05:54:36   LEGAL_ADVICE-2026-0004	legal_advice	draft	demo-client-isolation@legalitt.invalid	2026-11-10T20:48:35.889Z
+2026-11-11T05:54:36   LN-2026-0007	legal_notice	completed	demo-client@legalitt.invalid	2026-11-03T08:00:56.435Z
+2026-11-11T05:54:36   LN-2026-0008	legal_notice	completed	demo-client@legalitt.invalid	2026-11-03T08:58:12.510Z	TEST ONLY
+2026-11-11T05:54:36   LN-2026-0009	legal_notice	draft	demo-client@legalitt.invalid	2026-11-03T09:41:59.012Z	TEST ONLY
+2026-11-11T05:54:36   LN-2026-0010	legal_notice	draft	demo-client@legalitt.invalid	2026-11-03T11:18:22.793Z	TEST ONLY
+2026-11-11T05:54:36   LN-2026-0011	legal_notice	draft	demo-client@legalitt.invalid	2026-11-03T11:50:53.512Z	TEST ONLY
+2026-11-11T05:54:36   LN-2026-0012	legal_notice	completed	demo-client@legalitt.invalid	2026-11-03T11:56:03.648Z	TEST ONLY
+2026-11-11T05:54:36   LN-2026-0013	legal_notice	dispatched	demo-client@legalitt.invalid	2026-11-03T12:38:30.486Z	TEST ONLY
+2026-11-11T05:54:36   LN-2026-0014	legal_notice	in_progress	demo-client@legalitt.invalid	2026-11-03T13:14:27.675Z
+2026-11-11T05:54:36   LN-2026-0015	legal_notice	completed	demo-client@legalitt.invalid	2026-11-03T13:43:36.430Z	TEST ONLY
+2026-11-11T05:54:36   LN-2026-0016	legal_notice	completed	demo-client@legalitt.invalid	2026-11-03T21:30:58.309Z
+2026-11-11T05:54:36   LN-2026-0017	legal_notice	approved	demo-client@legalitt.invalid	2026-11-03T23:42:43.943Z	TEST ONLY
+2026-11-11T05:54:36   LN-2026-0018	legal_notice	paid	demo-client@legalitt.invalid	2026-11-04T00:10:57.151Z	TEST ONLY
+2026-11-11T05:54:36   LN-2026-0019	legal_notice	completed	demo-client@legalitt.invalid	2026-11-04T00:20:53.364Z
+2026-11-11T05:54:36   LN-2026-0021	legal_notice	completed	demo-client@legalitt.invalid	2026-11-08T20:27:44.727Z	TEST ONLY
+2026-11-11T05:54:36   LN-2026-0022	legal_notice	draft	demo-client@legalitt.invalid	2026-11-09T15:35:09.507Z
+2026-11-11T05:54:36   LN-2026-0023	legal_notice	paid	demo-client@legalitt.invalid	2026-11-09T18:41:02.186Z	TEST ONLY
+2026-11-11T05:54:36   LN-2026-0024	legal_notice	completed	demo-client@legalitt.invalid	2026-11-10T17:23:17.561Z	TEST ONLY
+2026-11-11T05:54:36   LN-2026-0025	legal_notice	completed	demo-client@legalitt.invalid	2026-11-10T20:38:48.256Z	TEST ONLY
+2026-11-11T05:54:36   PROPERTY_SEARCH-2026-0001	property_search	completed	demo-client@legalitt.invalid	2026-11-10T20:31:57.153Z	TEST ONLY
+2026-11-11T05:54:36   PROPERTY_SEARCH-2026-0002	property_search	draft	demo-client-isolation@legalitt.invalid	2026-11-10T20:32:57.515Z
+2026-11-11T05:54:36 DRY RUN — nothing deleted.
