@@ -8,13 +8,16 @@
 set -euo pipefail
 STACK=LegalittDev-Compute-DevelopmentOnly
 REGION=ap-south-1
+[[ -z "${CLEANUP_EXPECT:-}" || "$CLEANUP_EXPECT" =~ ^[0-9]+$ ]] || { echo "bad CLEANUP_EXPECT" >&2; exit 2; }
 case "${1:-}" in
   migrate)   CMD='["node","scripts/migrate-deploy.cjs"]' ;;
   seed)      CMD='["node","dist/prisma/seed.js"]' ;;
   seed-pricing) CMD='["node","dist/prisma/seed-pricing.js"]' ;;
   seed-demo) CMD='["node","dist/prisma/seed-demo.js"]' ;;
   seed-client-isolation) CMD='["node","dist/prisma/seed-demo.js","--client-isolation-only"]' ;;
-  *) echo "usage: $0 migrate|seed|seed-pricing|seed-demo|seed-client-isolation [IMAGE_TAG]" >&2; exit 2 ;;
+  # P0-7 (owner pre-authorised): dry run unless CLEANUP_EXPECT=<count> is set.
+  cleanup-test-data) CMD='["node","dist/prisma/cleanup-test-data.js"'"${CLEANUP_EXPECT:+,\"--apply\",\"--expect=$CLEANUP_EXPECT\"}"']' ;;
+  *) echo "usage: $0 migrate|seed|seed-pricing|seed-demo|seed-client-isolation|cleanup-test-data [IMAGE_TAG]" >&2; exit 2 ;;
 esac
 out() { aws cloudformation describe-stacks --region "$REGION" --stack-name "$STACK" --query "Stacks[0].Outputs[?OutputKey=='$1'].OutputValue" --output text; }
 CLUSTER=$(out ClusterName); TASKDEF=$(out OpsTaskDefinitionArn); SUBNETS=$(out TaskSubnetIds); SG=$(out TaskSecurityGroupId)
