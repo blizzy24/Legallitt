@@ -21,7 +21,7 @@ import { ADVOCATES_EMPTY, ADVOCATES_HEADER, SAVED_ADVOCATES, type SavedAdvocate 
 // View Profile routes to app/advocates/[id].tsx (design/81). Book Consultation is
 // still inert: no booking flow exists in any design delivered so far. Reported.
 
-export default function AdvocatesScreen() {
+function FixtureAdvocatesScreen() {
   const insets = useSafeAreaInsets();
   const [saved, setSaved] = useState<string[]>(SAVED_ADVOCATES.map((a) => a.id));
 
@@ -537,3 +537,8 @@ const styles = StyleSheet.create({
     opacity: 0.85,
   },
 });
+
+import SavedAdvocatesLive from '../../features/account/SavedAdvocates';
+import { DATA_SOURCE } from '../../lib/data-source';
+// D-27: the API-backed screen replaces the design-preview fixture at the same route.
+export default function AdvocatesScreen() { return DATA_SOURCE === 'api' ? <SavedAdvocatesLive /> : <FixtureAdvocatesScreen />; }
