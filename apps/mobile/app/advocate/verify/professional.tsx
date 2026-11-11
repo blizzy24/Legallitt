@@ -73,7 +73,7 @@ function Chips({ chips }: { chips: readonly { label: string; state: string }[] }
   );
 }
 
-export default function AdvocateVerifyProfessionalScreen() {
+function AdvocateVerifyProfessionalScreen() {
   const d = AV_PROFESSIONAL;
 
   return (
@@ -274,3 +274,6 @@ const styles = StyleSheet.create({
   meta: { marginTop: t.metaTop, flexDirection: 'row', justifyContent: 'space-between' },
   metaText: { fontFamily: font.appBody, fontSize: t.metaSize, color: colors.textBody },
 });
+import VerifyFlow from '../../../features/advocate-verification/VerifyFlow';
+import {DATA_SOURCE} from '../../../lib/data-source';
+export default function LiveVerifyScreen() { return DATA_SOURCE === 'api' ? <VerifyFlow/> : <AdvocateVerifyProfessionalScreen/>; }

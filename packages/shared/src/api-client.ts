@@ -42,6 +42,18 @@ export class ApiClient {
   cancelCase(id: string, input: {reason?: import('./cancellations').CancellationReasonCode | null; note?: string; confirm: true}) {return this.request<import('./cancellations').CaseCancellation>(`/cases/${encodeURIComponent(id)}/cancellation`, input);}
   adminCancellations(status: 'pending' | 'decided' = 'pending') {return this.request<{items: import('./cancellations').AdminCancellationRow[]; status: string}>(`/admin/cancellations?status=${status}`);}
   decideCancellation(id: string, input: {decision: 'approve' | 'decline'; refund_amount_paise?: string; reason: string; advocate_entitlement_paise?: string | null}) {return this.request<import('./cancellations').CaseCancellation>(`/admin/cancellations/${encodeURIComponent(id)}/decide`, input);}
+  // D-35 advocate verification and the admin approvals queue (D-42).
+  verification() {return this.request<import('./advocate-verification').VerificationState>('/advocate/verification');}
+  saveVerification(details: import('./advocate-verification').VerificationDetails) {return this.request<import('./advocate-verification').VerificationState>('/advocate/verification', {details}, 'PATCH');}
+  presignVerificationDocument(input: {kind: string; filename: string; mime: string}) {return this.request<import('./notice-api').UploadTicket>('/advocate/verification/documents/presign', input);}
+  completeVerificationDocument(id: string) {return this.request<import('./advocate-verification').VerificationDocument>(`/advocate/verification/documents/${encodeURIComponent(id)}/complete`, {});}
+  removeVerificationDocument(id: string) {return this.request<{deleted: true}>(`/advocate/verification/documents/${encodeURIComponent(id)}`, undefined, 'DELETE');}
+  verificationDocumentUrl(id: string) {return this.request<{url: string; expires_in: number}>(`/advocate/verification/documents/${encodeURIComponent(id)}/url`);}
+  submitVerification() {return this.request<import('./advocate-verification').VerificationState>('/advocate/verification/submit', {});}
+  adminAdvocateApprovals(status: 'waiting' | 'decided' = 'waiting') {return this.request<{items: import('./advocate-verification').AdvocateApprovalRow[]}>(`/admin/advocate-approvals?status=${status}`);}
+  adminAdvocateApproval(id: string) {return this.request<import('./advocate-verification').AdvocateApprovalDetail>(`/admin/advocate-approvals/${encodeURIComponent(id)}`);}
+  adminVerificationDocumentUrl(id: string) {return this.request<{url: string; expires_in: number}>(`/admin/advocate-approvals/documents/${encodeURIComponent(id)}/url`);}
+  decideAdvocateApproval(id: string, input: {decision: 'approved' | 'needs_update' | 'rejected'; reason?: string}) {return this.request<import('./advocate-verification').AdvocateApprovalDetail>(`/admin/advocate-approvals/${encodeURIComponent(id)}/decide`, input);}
   // Report services: Property Search, Document Forensic, Court Marriage.
   reportPricing(code: import('./service-reports').ReportServiceCode) {return this.request<import('./service-reports').ReportPricing>(`/service-reports/pricing/${code}`);}
   saveReportIntake(id: string, input: {tier?: 'ordinary'|'urgent'|null; details: Record<string, unknown>; expected_updated_at?: string}) {return this.request<ApiCase>(`/service-reports/${id}/intake`,input,'PATCH');}

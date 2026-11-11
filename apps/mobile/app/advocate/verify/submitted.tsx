@@ -27,7 +27,7 @@ import {
 // STATIC, NOT WIRED: nothing was submitted, the reference copies nothing, and
 // the workflow is a drawing, not a status feed.
 
-export default function AdvocateVerifySubmittedScreen() {
+function AdvocateVerifySubmittedScreen() {
   const insets = useSafeAreaInsets();
   const d = AV_SUBMITTED;
 
@@ -391,3 +391,6 @@ const styles = StyleSheet.create({
     color: colors.textBody,
   },
 });
+import VerifyFlow from '../../../features/advocate-verification/VerifyFlow';
+import {DATA_SOURCE} from '../../../lib/data-source';
+export default function LiveVerifyScreen() { return DATA_SOURCE === 'api' ? <VerifyFlow/> : <AdvocateVerifySubmittedScreen/>; }

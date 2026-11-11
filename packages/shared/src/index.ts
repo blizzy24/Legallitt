@@ -29,3 +29,4 @@ export * from './cancellations';
 export * from './support';
 export * from './account-data';
 export * from './account';
+export * from './advocate-verification';

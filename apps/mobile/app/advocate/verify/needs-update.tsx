@@ -31,7 +31,7 @@ import {
 // STATIC, NOT WIRED: "Replace Document" opens nothing, and nothing is
 // resubmitted. There is still no upload anywhere in this project.
 
-export default function AdvocateVerifyNeedsUpdateScreen() {
+function AdvocateVerifyNeedsUpdateScreen() {
   const insets = useSafeAreaInsets();
   const d = AV_NEEDS_UPDATE;
 
@@ -409,3 +409,6 @@ const styles = StyleSheet.create({
     color: ink.accent,
   },
 });
+import VerifyFlow from '../../../features/advocate-verification/VerifyFlow';
+import {DATA_SOURCE} from '../../../lib/data-source';
+export default function LiveVerifyScreen() { return DATA_SOURCE === 'api' ? <VerifyFlow/> : <AdvocateVerifyNeedsUpdateScreen/>; }

@@ -90,7 +90,7 @@ function Field({
   );
 }
 
-export default function AdvocateVerifyBarCouncilScreen() {
+function AdvocateVerifyBarCouncilScreen() {
   const insets = useSafeAreaInsets();
   const d = AV_BAR_COUNCIL;
 
@@ -399,3 +399,6 @@ const styles = StyleSheet.create({
     color: colors.textBody,
   },
 });
+import VerifyFlow from '../../../features/advocate-verification/VerifyFlow';
+import {DATA_SOURCE} from '../../../lib/data-source';
+export default function LiveVerifyScreen() { return DATA_SOURCE === 'api' ? <VerifyFlow/> : <AdvocateVerifyBarCouncilScreen/>; }

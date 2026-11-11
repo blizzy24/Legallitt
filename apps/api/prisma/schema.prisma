@@ -905,3 +905,19 @@ model ClientProfile {
   updated_at    DateTime  @default(now()) @db.Timestamptz(6)
   @@map("client_profiles")
 }
+
+// D-35: an advocate's verification submission. Status lives on
+// advocate_profiles.verification; user FKs exist in SQL (no back-relations).
+model AdvocateVerification {
+  user_id         String    @id @db.Uuid
+  details         Json      @default("{}") @db.JsonB
+  submitted_at    DateTime? @db.Timestamptz(6)
+  decided_at      DateTime? @db.Timestamptz(6)
+  decided_by      String?   @db.Uuid
+  decision        String?
+  decision_reason String?
+  updated_at      DateTime  @default(now()) @db.Timestamptz(6)
+
+  @@index([submitted_at], map: "advocate_verifications_submitted_idx")
+  @@map("advocate_verifications")
+}

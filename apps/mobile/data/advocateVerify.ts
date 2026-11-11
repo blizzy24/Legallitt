@@ -406,8 +406,8 @@ export const AV_REVIEW = {
   },
 
   bci: {
-    lead: 'BCI Compliance & Data Privacy:',
-    body: ' Information submitted is encrypted and strictly maintained for professional verification.',
+    lead: 'Who sees this:',
+    body: ' Your details and documents are visible only to you and Legalitt’s review team.',
   },
 
   cta: 'Submit for Verification',
@@ -498,7 +498,7 @@ export const AV_INCOMPLETE = {
 
   draft: {
     title: 'Draft Automatically Saved',
-    body: 'You can step away anytime and pick up right where you left off. All uploaded documentation remains encrypted.',
+    body: 'You can step away anytime and pick up right where you left off. Uploaded documents stay saved with your draft.',
   },
 
   cta: 'Complete Verification',

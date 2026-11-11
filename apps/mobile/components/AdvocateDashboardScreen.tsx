@@ -19,6 +19,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import DevPreviewLinks from './DevPreviewLinks';
+import VerificationBanner from '../features/advocate-verification/VerificationBanner';
 import { shrinkToFit } from '../constants/textFit';
 import {
   ADV_AVAILABILITY_DEFAULT,
@@ -96,6 +97,7 @@ export default function AdvocateDashboardScreen({self, stats, events, dateLine, 
         <Text style={styles.date}>
           {dateLine}
         </Text>
+        <VerificationBanner/>
 
         {availability && <View style={styles.card}>
           <View style={styles.availHead}>

@@ -66,7 +66,7 @@ function VerifiedPill({ label }: { label: string }) {
   );
 }
 
-export default function AdvocateVerifyPersonalScreen() {
+function AdvocateVerifyPersonalScreen() {
   const d = AV_PERSONAL;
 
   return (
@@ -315,3 +315,6 @@ const styles = StyleSheet.create({
   cols: { flexDirection: 'row' },
   col: { flex: 1 },
 });
+import VerifyFlow from '../../../features/advocate-verification/VerifyFlow';
+import {DATA_SOURCE} from '../../../lib/data-source';
+export default function LiveVerifyScreen() { return DATA_SOURCE === 'api' ? <VerifyFlow/> : <AdvocateVerifyPersonalScreen/>; }
