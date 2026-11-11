@@ -31,6 +31,11 @@ async function main() {
     console.log(`KEEP ${kept.length} seeded: ${kept.map(k => k.reference).join(', ')}`);
     console.log(`DELETE candidates ${candidates.length}:`);
     for (const c of candidates) console.log(`  ${c.reference}\t${c.service_code}\t${c.status}\t${c.email}\t${c.created_at.toISOString()}\t${c.marked ? 'TEST ONLY' : ''}`);
+    // Verification runs also open support requests; only those marked TEST ONLY.
+    const tickets = await db.$queryRawUnsafe<{id: string}[]>(`SELECT t.id::text AS id FROM support_tickets t
+      WHERE COALESCE(t.description,'') ILIKE '%TEST ONLY%' OR COALESCE(t.subject,'') ILIKE '%TEST ONLY%'
+        OR EXISTS (SELECT 1 FROM support_messages m WHERE m.ticket_id = t.id AND m.body ILIKE '%TEST ONLY%')`).catch(() => []);
+    console.log(`DELETE TEST ONLY support requests ${tickets.length}`);
     if (!apply) { console.log('DRY RUN — nothing deleted.'); return; }
     if (expect !== candidates.length) throw new Error(`Expected ${expect} candidates, found ${candidates.length}; refusing to delete.`);
     const fks = await db.$queryRawUnsafe<Fk[]>(`SELECT conrelid::regclass::text AS child, a.attname AS col, NOT a.attnotnull AS nullable,
@@ -83,6 +88,12 @@ async function main() {
       if (pending.size) throw new Error(`Could not order deletion for: ${[...pending.keys()].join(', ')}`);
       const actions = await tx.$executeRawUnsafe(`DELETE FROM admin_actions WHERE subject_type = 'case' AND subject_id::text = ANY($1::text[])`, candidates.map(c => c.id));
       console.log(`deleted ${actions} from admin_actions`);
+      if (tickets.length) {
+        const ids = tickets.map(t => t.id);
+        console.log(`deleted ${await tx.$executeRawUnsafe(`DELETE FROM support_messages WHERE ticket_id::text = ANY($1::text[])`, ids)} from support_messages`);
+        console.log(`deleted ${await tx.$executeRawUnsafe(`DELETE FROM admin_actions WHERE subject_id::text = ANY($1::text[])`, ids)} support admin_actions`);
+        console.log(`deleted ${await tx.$executeRawUnsafe(`DELETE FROM support_tickets WHERE id::text = ANY($1::text[])`, ids)} from support_tickets`);
+      }
     }, {timeout: 600_000, maxWait: 60_000});
     console.log(`APPLIED — ${candidates.length} cases removed.`);
   } finally { await db.$disconnect(); }

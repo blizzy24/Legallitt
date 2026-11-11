@@ -1,0 +1,362 @@
+{
+  "checked_at": "2026-11-11T07:38:11.669Z",
+  "results": [
+    {
+      "role": "client",
+      "route": "/home",
+      "ok": true,
+      "errors": [],
+      "head": "Hello, Demo How can we help you today? 2 DC Popular Services TOP View All Legal Advice Get guidance from a qualified advocate Legal Notice Prepare and send a pr"
+    },
+    {
+      "role": "client",
+      "route": "/profile",
+      "ok": true,
+      "errors": [],
+      "head": "Profile DC Demo client Client Account demo-client@legalitt.invalid Edit Profile ACCOUNT My Cases 6 Active View and manage your active legal matters My Requests "
+    },
+    {
+      "role": "client",
+      "route": "/profile/edit",
+      "ok": true,
+      "errors": [],
+      "head": "Edit Profile Save DC Profile photos are not available yet PERSONAL INFORMATION Full Name Email Address Mobile Number Date of Birth Gender Select LOCATION City S"
+    },
+    {
+      "role": "client",
+      "route": "/requests",
+      "ok": true,
+      "errors": [],
+      "head": "My Requests Track your consultation and representation requests. All 6 Pending 2 Accepted 4 Completed 0 SERVICE TYPE Legal Notice Finding an advocate Requested "
+    },
+    {
+      "role": "client",
+      "route": "/documents",
+      "ok": true,
+      "errors": [],
+      "head": "My Documents No documents yet Files you upload when requesting a service, and files your advocate or Legalitt share with you, will appear here. Browse services"
+    },
+    {
+      "role": "client",
+      "route": "/payments",
+      "ok": true,
+      "errors": [],
+      "head": "Payments Your payment history No payments yet When you pay for a service, the payment and its receipt appear here. Browse services"
+    },
+    {
+      "role": "client",
+      "route": "/notifications",
+      "ok": true,
+      "errors": [],
+      "head": "Notifications Mark all as read All 2 Cases Consultations Payments TODAY 2 Unread Legalitt Support replied • 12:55 pm Payment or refund question Legalitt Support"
+    },
+    {
+      "role": "client",
+      "route": "/notification-preferences",
+      "ok": true,
+      "errors": [],
+      "head": "Notification Preferences Choose which updates alert you in the app. IN-APP ALERTS Case updates Advocate assignment, drafts, approvals and delivery Consultations"
+    },
+    {
+      "role": "client",
+      "route": "/privacy",
+      "ok": true,
+      "errors": [],
+      "head": "Privacy & Security ACCOUNT SECURITY Change Password Update your account password Login & Security Manage account sign-in settings Active Sessions Review recent "
+    },
+    {
+      "role": "client",
+      "route": "/account/security",
+      "ok": true,
+      "errors": [],
+      "head": "Login & Security Manage how you sign in. LOGIN demo-client@legalitt.invalid Verified Your login email SIGN-IN METHODS Password Demo account — managed by Legalit"
+    },
+    {
+      "role": "client",
+      "route": "/account/sessions",
+      "ok": true,
+      "errors": [],
+      "head": "Active Sessions Recent sign-ins to your account SIGN-INS 10 recent Signed in with password Latest 11 Nov 2026, 1:04 pm Signed in with password 11 Nov 2026, 12:5"
+    },
+    {
+      "role": "client",
+      "route": "/account/password",
+      "ok": true,
+      "errors": [],
+      "head": "Change Password Demo account This demonstration account’s password is managed by Legalitt and can’t be changed in the app."
+    },
+    {
+      "role": "client",
+      "route": "/language",
+      "ok": true,
+      "errors": [],
+      "head": "Language Choose the language for the Legalitt app. APP LANGUAGE English Hindi हिन्दी Coming soon Marathi मराठी Coming soon Gujarati ગુજરાતી Coming soon Bengali "
+    },
+    {
+      "role": "client",
+      "route": "/account/privacy-settings",
+      "ok": true,
+      "errors": [],
+      "head": "Privacy Settings Who can see the information you share with Legalitt. WHO CAN SEE WHAT You Your profile, every case you open, your documents, payments and messa"
+    },
+    {
+      "role": "client",
+      "route": "/account/data",
+      "ok": true,
+      "errors": [],
+      "head": "Data & Documents Your personal information and documents stored in your Legalitt account. YOUR DATA Personal Information View and edit the information linked to"
+    },
+    {
+      "role": "client",
+      "route": "/account/delete",
+      "ok": true,
+      "errors": [],
+      "head": "Delete Account You have a paid case in progress Your account can’t be deleted while paid work is under way. Cancel the case or wait until it completes, then ret"
+    },
+    {
+      "role": "client",
+      "route": "/help",
+      "ok": true,
+      "errors": [],
+      "head": "Help Center Support & FAQs All FAQs Advocates Consultations Cases Billing Documents Account FREQUENTLY ASKED QUESTIONS 17 Topics GETTING STARTED Which services "
+    },
+    {
+      "role": "client",
+      "route": "/advocates",
+      "ok": true,
+      "errors": [],
+      "head": "Saved Advocates Your saved advocates No Saved Advocates Save advocates you may want to contact later. Find Advocates"
+    },
+    {
+      "role": "client",
+      "route": "/messages",
+      "ok": true,
+      "errors": [],
+      "head": "Messages Chat with your advocates All Chats Unread (2) Advocates Support Legalitt Support 12:55 pm Payment or refund question TEST ONLY reply from Legalitt supp"
+    },
+    {
+      "role": "client",
+      "route": "/support",
+      "ok": true,
+      "errors": [],
+      "head": "Contact Support Tell us how we can help. Submit your request below. Our support team typically responds within 2 business hours. SUBJECT Select an issue RELATED"
+    },
+    {
+      "role": "client",
+      "route": "/callback",
+      "ok": true,
+      "errors": [],
+      "head": "Request a Callback Get assistance from our Legal Support Team. Need a little help? Our Legal Support Team will contact you to understand your requirement and gu"
+    },
+    {
+      "role": "client",
+      "route": "/support-chat",
+      "ok": true,
+      "errors": [],
+      "head": "Support Chat Legalitt Support How can we help? A member of the Legalitt support team will reply here. Messages are private to you, your advocate and Legalitt su"
+    },
+    {
+      "role": "client",
+      "route": "/services",
+      "ok": true,
+      "errors": [],
+      "head": "All Services Legal Notice Prepare and send a professional legal notice Property Search Get property records reviewed and obtain report FIR Draft Get assistance "
+    },
+    {
+      "role": "client",
+      "route": "/privacy-policy",
+      "ok": true,
+      "errors": [],
+      "head": "Privacy Policy Being finalised Legalitt’s Privacy Policy is being finalised and will appear here. For any question about your information in the meantime, conta"
+    },
+    {
+      "role": "client-isolation",
+      "route": "/home",
+      "ok": true,
+      "errors": [],
+      "head": "Hello, TEST How can we help you today? TO Popular Services TOP View All Legal Advice Get guidance from a qualified advocate Legal Notice Prepare and send a prof"
+    },
+    {
+      "role": "client-isolation",
+      "route": "/profile",
+      "ok": true,
+      "errors": [],
+      "head": "Profile TO TEST ONLY Client Isolation Client Account demo-client-isolation@legalitt.invalid Edit Profile ACCOUNT My Cases View and manage your active legal matt"
+    },
+    {
+      "role": "client-isolation",
+      "route": "/profile/edit",
+      "ok": true,
+      "errors": [],
+      "head": "Edit Profile Save TO Profile photos are not available yet PERSONAL INFORMATION Full Name Email Address Mobile Number Date of Birth Gender Select LOCATION City S"
+    },
+    {
+      "role": "client-isolation",
+      "route": "/requests",
+      "ok": true,
+      "errors": [],
+      "head": "My Requests Track your consultation and representation requests. All 1 Pending 1 Accepted 0 Completed 0 SERVICE TYPE Legal Notice Draft Requested date 09 Nov 20"
+    },
+    {
+      "role": "client-isolation",
+      "route": "/documents",
+      "ok": true,
+      "errors": [],
+      "head": "My Documents No documents yet Files you upload when requesting a service, and files your advocate or Legalitt share with you, will appear here. Browse services"
+    },
+    {
+      "role": "client-isolation",
+      "route": "/payments",
+      "ok": true,
+      "errors": [],
+      "head": "Payments Your payment history No payments yet When you pay for a service, the payment and its receipt appear here. Browse services"
+    },
+    {
+      "role": "client-isolation",
+      "route": "/notifications",
+      "ok": true,
+      "errors": [],
+      "head": "Notifications Mark all as read All Cases Consultations Payments No notifications yet Updates about your cases, consultations and payments appear here as they ha"
+    },
+    {
+      "role": "client-isolation",
+      "route": "/notification-preferences",
+      "ok": true,
+      "errors": [],
+      "head": "Notification Preferences Choose which updates alert you in the app. IN-APP ALERTS Case updates Advocate assignment, drafts, approvals and delivery Consultations"
+    },
+    {
+      "role": "client-isolation",
+      "route": "/privacy",
+      "ok": true,
+      "errors": [],
+      "head": "Privacy & Security ACCOUNT SECURITY Change Password Update your account password Login & Security Manage account sign-in settings Active Sessions Review recent "
+    },
+    {
+      "role": "client-isolation",
+      "route": "/account/security",
+      "ok": true,
+      "errors": [],
+      "head": "Login & Security Manage how you sign in. LOGIN demo-client-isolation@legalitt.invalid Verified Your login email SIGN-IN METHODS Password Demo account — managed "
+    },
+    {
+      "role": "client-isolation",
+      "route": "/account/sessions",
+      "ok": true,
+      "errors": [],
+      "head": "Active Sessions Recent sign-ins to your account SIGN-INS 10 recent Signed in with password Latest 11 Nov 2026, 1:06 pm Signed in with password 11 Nov 2026, 12:5"
+    },
+    {
+      "role": "client-isolation",
+      "route": "/account/password",
+      "ok": true,
+      "errors": [],
+      "head": "Change Password Demo account This demonstration account’s password is managed by Legalitt and can’t be changed in the app."
+    },
+    {
+      "role": "client-isolation",
+      "route": "/language",
+      "ok": true,
+      "errors": [],
+      "head": "Language Choose the language for the Legalitt app. APP LANGUAGE English Hindi हिन्दी Coming soon Marathi मराठी Coming soon Gujarati ગુજરાતી Coming soon Bengali "
+    },
+    {
+      "role": "client-isolation",
+      "route": "/account/privacy-settings",
+      "ok": true,
+      "errors": [],
+      "head": "Privacy Settings Who can see the information you share with Legalitt. WHO CAN SEE WHAT You Your profile, every case you open, your documents, payments and messa"
+    },
+    {
+      "role": "client-isolation",
+      "route": "/account/data",
+      "ok": true,
+      "errors": [],
+      "head": "Data & Documents Your personal information and documents stored in your Legalitt account. YOUR DATA Personal Information View and edit the information linked to"
+    },
+    {
+      "role": "client-isolation",
+      "route": "/account/delete",
+      "ok": true,
+      "errors": [],
+      "head": "Delete Account What happens Your account is deactivated immediately and signed out on every device. Legalitt’s team then completes the deletion. How long record"
+    },
+    {
+      "role": "client-isolation",
+      "route": "/help",
+      "ok": true,
+      "errors": [],
+      "head": "Help Center Support & FAQs All FAQs Advocates Consultations Cases Billing Documents Account FREQUENTLY ASKED QUESTIONS 17 Topics GETTING STARTED Which services "
+    },
+    {
+      "role": "client-isolation",
+      "route": "/advocates",
+      "ok": true,
+      "errors": [],
+      "head": "Saved Advocates Your saved advocates No Saved Advocates Save advocates you may want to contact later. Find Advocates"
+    },
+    {
+      "role": "client-isolation",
+      "route": "/messages",
+      "ok": true,
+      "errors": [],
+      "head": "Messages Chat with your advocates All Chats Unread (0) Advocates Support No conversations yet Conversations appear here once an advocate is assigned to one of y"
+    },
+    {
+      "role": "client-isolation",
+      "route": "/support",
+      "ok": true,
+      "errors": [],
+      "head": "Contact Support Tell us how we can help. Submit your request below. Our support team typically responds within 2 business hours. SUBJECT Select an issue RELATED"
+    },
+    {
+      "role": "client-isolation",
+      "route": "/callback",
+      "ok": true,
+      "errors": [],
+      "head": "Request a Callback Get assistance from our Legal Support Team. Need a little help? Our Legal Support Team will contact you to understand your requirement and gu"
+    },
+    {
+      "role": "client-isolation",
+      "route": "/support-chat",
+      "ok": true,
+      "errors": [],
+      "head": "Support Chat Legalitt Support How can we help? A member of the Legalitt support team will reply here. Messages are private to you, your advocate and Legalitt su"
+    },
+    {
+      "role": "client-isolation",
+      "route": "/services",
+      "ok": true,
+      "errors": [],
+      "head": "All Services Legal Notice Prepare and send a professional legal notice Property Search Get property records reviewed and obtain report FIR Draft Get assistance "
+    },
+    {
+      "role": "client-isolation",
+      "route": "/privacy-policy",
+      "ok": true,
+      "errors": [],
+      "head": "Privacy Policy Being finalised Legalitt’s Privacy Policy is being finalised and will appear here. For any question about your information in the meantime, conta"
+    },
+    {
+      "role": "admin",
+      "route": "/support",
+      "ok": true,
+      "errors": [],
+      "head": "LEGALITT ADMIN ▤ Legal Notices ▤ FIR Drafts ▤ Legal Advice ▤ District Court Representation ▤ High Court Representation ▤ Property Search Report ▤ Document Foren"
+    },
+    {
+      "role": "admin",
+      "route": "/cancellations",
+      "ok": true,
+      "errors": [],
+      "head": "LEGALITT ADMIN ▤ Legal Notices ▤ FIR Drafts ▤ Legal Advice ▤ District Court Representation ▤ High Court Representation ▤ Property Search Report ▤ Document Foren"
+    },
+    {
+      "role": "admin",
+      "route": "/legal-notices",
+      "ok": true,
+      "errors": [],
+      "head": "LEGALITT ADMIN ▤ Legal Notices ▤ FIR Drafts ▤ Legal Advice ▤ District Court Representation ▤ High Court Representation ▤ Property Search Report ▤ Document Foren"
+    }
+  ]
+}
