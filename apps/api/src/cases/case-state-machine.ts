@@ -690,6 +690,24 @@ export function appendCaseEvent(tx: Prisma.TransactionClient, data: Prisma.CaseE
 
 /** Consultation orchestration validates action, role and revision under this same
  * lock. Keep private notes/review reasons in their own tables, never in events. */
+/** D-12/D-13/D-14: the only writer of cancellation outcomes. Any service, any
+ *  in-flight sub-status (FIR/report reviews included) is closed here, with
+ *  case_events rows in the caller's locked transaction. The cancellation service
+ *  decides eligibility; this writer only refuses states nobody may cancel. */
+export async function writeCaseCancelled(tx:Prisma.TransactionClient,actor:CaseActor,id:string,
+  input:{refunded:boolean;payload:Prisma.InputJsonObject}) {
+  const before=await lockedCase(tx,actor,id);
+  if(['dispatching','dispatched','completed','cancelled','refunded'].includes(before.status))throw new ConflictException('This case can no longer be cancelled.');
+  if(actor.role==='advocate')throw new ForbiddenException('Advocates cannot cancel cases');
+  const now=new Date();
+  await tx.case.update({where:{id},data:{status:'cancelled',sub_status:null,updated_at:now}});
+  await appendCaseEvent(tx,{case_id:id,type:'case_cancelled',actor_id:actor.id,actor_role:actor.role,from_status:before.status,to_status:'cancelled',payload:input.payload});
+  if(!input.refunded)return tx.case.findUniqueOrThrow({where:{id}});
+  const updated=await tx.case.update({where:{id},data:{status:'refunded',updated_at:new Date(now.getTime()+1)}});
+  await appendCaseEvent(tx,{case_id:id,type:'refund_recorded',actor_id:actor.id,actor_role:actor.role,source:'simulated',from_status:'cancelled',to_status:'refunded',payload:input.payload});
+  return updated;
+}
+
 export async function writeConsultationCase(tx:Prisma.TransactionClient,actor:CaseActor,id:string,
   data:Pick<Prisma.CaseUncheckedUpdateInput,'status'|'sub_status'|'title'|'details'|'matter_type'|'pricing_id'|'completed_at'>,
   type:string,payload:Prisma.InputJsonObject={}) {
