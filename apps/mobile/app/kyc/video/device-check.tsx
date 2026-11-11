@@ -42,7 +42,7 @@ export default function VideoKycDeviceCheckScreen() {
 
   return (
     <View style={styles.screen}>
-      <KycHeader title="Device & Permission Check" sub="Encrypted Session" />
+      <KycHeader title="Device & Permission Check" sub="Not available yet" />
 
       <ScrollView
         contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + t.sectionGap }]}
@@ -197,7 +197,7 @@ export default function VideoKycDeviceCheckScreen() {
         <View style={styles.note}>
           <Lock size={t.noteIcon} color={colors.textBody} />
           <Text style={styles.noteText}>
-            Your video stream is private, compliant, and encrypted end-to-end.
+            Video KYC is not available yet.
           </Text>
         </View>
 

@@ -171,7 +171,7 @@ export default function KycChooseScreen() {
         <View style={styles.foot}>
           <ShieldCheck size={t.footIcon} color={ink.accent} />
           <Text style={styles.footText}>
-            256-bit encryption protects all your records • Official legal compliance
+            Identity verification is not available yet.
           </Text>
         </View>
 

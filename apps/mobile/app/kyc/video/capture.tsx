@@ -207,7 +207,7 @@ export default function VideoKycCaptureScreen() {
         <View style={styles.foot}>
           <ShieldCheck size={t.footIcon} color={d.accent} />
           <Text style={styles.footText} {...shrinkToFit(0.8)}>
-            Your video is securely encrypted.
+            Video KYC is not available yet.
           </Text>
         </View>
 

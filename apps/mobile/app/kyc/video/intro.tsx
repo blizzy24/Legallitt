@@ -32,7 +32,7 @@ export default function VideoKycIntroScreen() {
 
   return (
     <View style={styles.screen}>
-      <KycHeader title="Device & Permission Check" sub="Encrypted Session" />
+      <KycHeader title="Device & Permission Check" sub="Not available yet" />
 
       <ScrollView
         contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + t.cardGap }]}
@@ -99,7 +99,7 @@ export default function VideoKycIntroScreen() {
         <View style={styles.foot}>
           <Lock size={t.footIcon} color={colors.textBody} />
           <Text style={styles.footText} {...shrinkToFit(0.75)}>
-            High-assurance encrypted identity pipeline
+            Video KYC is not available yet
           </Text>
         </View>
 

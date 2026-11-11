@@ -82,7 +82,7 @@ const WHEN = [
 const WHY = [
   { icon: ShieldCheck, title: 'Verified Advocates', body: 'Connect with experienced, verified legal counsel.' },
   { icon: MessageSquare, title: 'Personalised Guidance', body: 'Advice tailored specifically to your situation.' },
-  { icon: Lock, title: 'Secure & Confidential', body: 'Protected private consultation environment.' },
+  { icon: Lock, title: 'Private Consultations', body: 'Your chat is visible only to you, your advocate and Legalitt’s team.' },
 ];
 
 export default function LegalAdviceInfoScreen() {
@@ -179,7 +179,7 @@ export default function LegalAdviceInfoScreen() {
         <View style={styles.strip}>
           <ShieldCheck size={t.stripIcon} color={colors.brandDark} />
           <Text style={styles.stripText} {...shrinkToFit(0.75)}>
-            Verified Advocates • Secure &amp; Confidential
+            Verified Advocates • Private Consultations
           </Text>
         </View>
 
@@ -202,7 +202,7 @@ export default function LegalAdviceInfoScreen() {
           <View style={styles.lock}>
             <Lock size={t.lockIcon} color={colors.textBody} />
             <Text style={styles.lockText} {...shrinkToFit(0.75)}>
-              Your information is secure and confidential.
+              Visible only to you, your advocate and Legalitt’s team.
             </Text>
           </View>
           <Text style={styles.foot} {...shrinkToFit(0.75)}>

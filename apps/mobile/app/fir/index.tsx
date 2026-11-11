@@ -102,7 +102,7 @@ function FixtureFirLandingScreen() {
 
         <View style={styles.footer}>
           <Lock size={l.footerIcon} color={ink.accent} />
-          <Text style={styles.footerText}>256-bit Encrypted • Confidential Legal Assistance</Text>
+          <Text style={styles.footerText}>Private to you, your advocate and Legalitt’s team</Text>
         </View>
       </ScrollView>
     </View>

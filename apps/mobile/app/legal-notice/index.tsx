@@ -162,9 +162,8 @@ export function LegalNoticeDetailScreenView({ model }: { model: NoticeIntakeMode
 
         <View style={styles.footerRow}>
           <Lock size={d.footerIcon} color={colors.textBody} />
-          <Text style={styles.footerText}>Your information stays secure and confidential.</Text>
+          <Text style={styles.footerText}>Visible only to you, your advocate and Legalitt’s team.</Text>
         </View>
-        <Text style={styles.footerNote}>IN COMPLIANCE WITH BAR COUNCIL OF INDIA STANDARDS</Text>
       </ScrollView>
     </View>
   );

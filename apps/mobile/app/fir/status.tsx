@@ -132,7 +132,7 @@ function FixtureFirStatusScreen() {
         <View style={styles.footer}>
           <Lock size={t.footerIcon} color={colors.textBody} />
           <Text style={styles.footerText} {...shrinkToFit(0.75)}>
-            256-BIT ENCRYPTED FOLIO · Bar Council Compliant
+            STORED ENCRYPTED · VISIBLE ONLY TO YOUR CASE TEAM
           </Text>
         </View>
         <Text style={styles.footerLine} {...shrinkToFit(0.75)}>

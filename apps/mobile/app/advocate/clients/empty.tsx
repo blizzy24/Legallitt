@@ -48,11 +48,11 @@ const FEATURES = [
   {
     icon: ShieldCheck,
     title: 'Direct Engagement',
-    body: 'Clients automatically sync once digital vakalatnama or escrow is verified.',
+    body: 'Clients appear here from the cases assigned to you.',
   },
   {
     icon: BookOpen,
-    title: 'Privileged Ledger',
+    title: 'Client Ledger',
     body: 'Case proceedings, filings, hearing notices & invoices cleanly linked.',
   },
 ];

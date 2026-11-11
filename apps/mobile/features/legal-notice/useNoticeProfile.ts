@@ -20,7 +20,7 @@ export function useNoticeProfile():AdvocateProfileView|undefined{
   verified:p?.verification==='approved',photo:advocatePortrait(p?.photo_key),
   experience:p?.years_experience?`${p.years_experience}+ Years`:undefined,
   location:[p?.city,p?.state].filter(Boolean).join(', ')||undefined,
-  rating:p?.rating_avg??undefined,reviewCount:p?.rating_count||undefined,
+  rating:p?.rating_count?p.rating_avg??undefined:undefined,reviewCount:p?.rating_count||undefined,
   barCouncil:p?.bar_council_number??undefined,practiceAreas:p?.practice_areas.length?p.practice_areas:undefined,
   about:p?.bio??undefined,education:p?.education??undefined,courts:courts(p?.courts),languages:list(p?.languages)};
 }

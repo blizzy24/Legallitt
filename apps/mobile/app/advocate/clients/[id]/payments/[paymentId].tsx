@@ -212,7 +212,7 @@ export default function AdvocatePaymentDetailScreen() {
               value: `-${inr(fee.platformFacilitationFee)}`,
             },
             {
-              label: `Escrow Tech & Regulatory (${ADV_COMMISSION.escrowRegulatoryRate * 100}%)`,
+              label: `Regulatory Fee (${ADV_COMMISSION.escrowRegulatoryRate * 100}%)`,
               sub: 'Statutory transaction levy & GST',
               value: `-${inr(fee.escrowRegulatoryFee)}`,
             },

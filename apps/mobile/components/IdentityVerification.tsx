@@ -3,10 +3,13 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { ShieldCheck } from 'lucide-react-native';
 import { useKyc } from '../context/kyc';
 import { colors, font, ink } from '../constants/theme';
+import { DATA_SOURCE } from '../lib/data-source';
 
 /** Shared identity checkpoint: reuse the result; do not collect another Aadhaar copy. */
 export default function IdentityVerification({ returnTo }: { returnTo: Href }) {
   const { kyc, begin } = useKyc();
+  // D-40: DigiLocker and Video KYC are not built; the checkpoint is hidden wherever real data is used.
+  if (DATA_SOURCE === 'api') return null;
   return <View style={styles.card}>
     <ShieldCheck size={24} color={ink.accent} />
     <Text style={styles.title}>{kyc.completed ? 'Identity verified' : 'Identity verification required'}</Text>

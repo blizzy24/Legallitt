@@ -582,7 +582,7 @@ export const HC_SEND_DOCS = {
   },
   helpTitle: 'Need Help?',
   helpBody: 'Your advocate has shared the documents needed for your case. Contact your advocate anytime in chat if you have questions.',
-  secure: 'Safe & secure legal delivery \u2022 Tracking provided',
+  secure: 'Delivery tracked through your case updates',
   cta: 'Continue \u2192 Legalitt Delivery',
 };
 

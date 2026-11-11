@@ -260,7 +260,7 @@ export const CO_PAYMENT = {
 
   methodLabel: 'SELECT PAYMENT METHOD',
   methodNote: 'Fast & Secure',
-  secure: 'Your payment is processed securely through our payment provider.',
+  secure: 'Demo payment — no money moves until online payments are connected.',
 
   barLabel: 'Amount to pay',
   /** The sticky bar's amount. Drawn separately from `total`; they diverge on

@@ -114,7 +114,7 @@ function FirStep1Screen() {
           <ShieldCheck size={s.headingIcon} color={ink.accent} />
         </View>
         <Text style={styles.footerText}>
-          Your details are encrypted and shared only with authorized legal drafting counsel.
+          Your details are stored encrypted and shared only with your assigned advocate and Legalitt’s team.
         </Text>
       </View>
     </FirShell>

@@ -105,7 +105,7 @@ export default function AdvocateClientPaymentsScreen() {
               </Text>
               <View style={styles.escrowChip}>
                 <Text style={styles.escrowChipText} {...shrinkToFit(0.7)}>
-                  ADVOCATE ESCROW
+                  ADVOCATE PAYMENTS
                 </Text>
               </View>
             </View>
@@ -152,7 +152,7 @@ export default function AdvocateClientPaymentsScreen() {
               ₹{ADV_PAYMENT_SUMMARY.pending.toLocaleString('en-IN')}
             </Text>
             <Text style={styles.cellSub} {...shrinkToFit(0.75)}>
-              Escrow Due in 2 d
+              Due in 2 d
             </Text>
           </View>
           <View style={styles.cell}>

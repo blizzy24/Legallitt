@@ -84,7 +84,7 @@ function FixtureFirSubmittedScreen() {
         <View style={styles.footer}>
           <Lock size={t.footerIcon} color={colors.textBody} />
           <Text style={styles.footerText} {...shrinkToFit(0.75)}>
-            Your information is encrypted • Bar Council Compliant
+            Stored encrypted • Visible to your advocate and Legalitt’s team
           </Text>
         </View>
       </ScrollView>

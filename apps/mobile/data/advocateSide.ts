@@ -752,7 +752,7 @@ export const ADV_PAYMENTS: AdvPayment[] = [
     status: 'received',
     matter: 'Special Writ Appeal • HC-2026-1048',
     transaction: 'NEFT Bank Transfer • Ref: TXN-3424  24 Sep, 11:30 AM',
-    counterparty: 'ABC Enterprises Settlement Escrow',
+    counterparty: 'ABC Enterprises Settlement',
     action: 'View Docket Receipt',
   },
   {
@@ -761,7 +761,7 @@ export const ADV_PAYMENTS: AdvPayment[] = [
     amount: 20000,
     status: 'pending',
     matter: 'Injunction Suit • DC-2026-1042',
-    transaction: 'Escrow Invoice Raised • Due in 2 d  16 Sep, 03:15 PM',
+    transaction: 'Invoice Raised • Due in 2 d  16 Sep, 03:15 PM',
     counterparty: 'Verma Enterprises Counter-Claim',
     action: 'Send Reminder',
   },
@@ -781,7 +781,7 @@ export const ADV_PAYMENTS: AdvPayment[] = [
     amount: 15000,
     status: 'received',
     matter: 'Signature Sampling • DF-2026-0199',
-    transaction: 'Online Card Escrow • Certified  28 Aug, 02:40 PM',
+    transaction: 'Online Card Payment  28 Aug, 02:40 PM',
     counterparty: 'Expert Forensic Witness Deposit',
     action: 'View Invoice',
   },
@@ -801,7 +801,7 @@ export const ADV_PAYMENTS: AdvPayment[] = [
     amount: 2500,
     status: 'refunded',
     matter: 'Amicable Settlement • LN-2026-0182',
-    transaction: 'Reversal to Client Escrow Account  02 Aug, 04:00 PM',
+    transaction: 'Refund to Client  02 Aug, 04:00 PM',
     counterparty: 'Mediation Closed with Compromise',
     action: 'Audit Voucher',
   },
@@ -810,7 +810,7 @@ export const ADV_PAYMENTS: AdvPayment[] = [
 export const ADV_PAYMENT_SUMMARY = {
   totalReceived: 65000,
   totalChip: 'Settled',
-  escrowLine: 'Escrow Released • Settled',
+  escrowLine: 'Payout recorded',
   pending: 20000,
   pendingChip: '1 Due',
   records: '8',
@@ -836,7 +836,7 @@ export const ADV_PAYMENT_DETAIL = {
   id: 'hc-2026-1048',
   ref: 'PAY-HC-2026-1048',
   chip: 'PAYMENT RECEIVED',
-  verified: 'Escrow Verified',
+  verified: 'Payment recorded',
   totalLabel: 'TOTAL CLIENT PAYMENT',
   grossFee: 35000,
   depositLine: 'Deposited via NEFT on 22 September 2026',
@@ -846,10 +846,10 @@ export const ADV_PAYMENT_DETAIL = {
   clientRef: 'CLI-2026-0148',
   service: 'High Court Writ',
   filed: '22 Sep 2026, 11:30 AM',
-  protection: 'Protected under Advocate Client Escrow Protocol',
+  protection: 'Payouts are paid manually by Legalitt with a UTR reference.',
   payoutDate: 'Payout Scheduled for 25 Sep 2026',
   payoutNote:
-    'Escrow clearance holds funds for 72 hours per High Court mediation window rules. Disbursement will trigger via direct RTGS.',
+    'Paid to your bank account by Legalitt. You’ll see the UTR here once sent.',
   bank: {
     name: 'HDFC Bank Ltd',
     type: 'Advocate Current Account',
@@ -864,7 +864,7 @@ export const ADV_PAYMENT_DETAIL = {
     beneficiary: 'Adv. Priya Sharma Chambers',
   },
   receipts: [
-    { id: 'escrow', name: 'Official Escrow Receipt', meta: 'RCT-2026-8819.pdf • 340 KB' },
+    { id: 'escrow', name: 'Payment Receipt', meta: 'RCT-2026-8819.pdf • 340 KB' },
     { id: 'gst', name: 'GST Tax Invoice', meta: 'INV-2026-1048.pdf • 420 KB' },
   ],
 };
@@ -1179,7 +1179,7 @@ export const ADV_AI_ACTIONS: {
     n: '03',
     state: 'not-started',
     stateLabel: 'NOT STARTED',
-    title: 'Clarify Minimum Escrow & Execution Terms',
+    title: 'Clarify Payment & Execution Terms',
     body: 'Confirm the payment, escrow and execution conditions that apply to the proposed arrangement.',
     source: 'IP_Licensing_Draft_v3.2.pdf • Page 54',
     button: 'add-note',
@@ -1264,7 +1264,7 @@ export const ADV_SCHEDULE = {
     {
       icon: 'clock' as const,
       label: 'Allocated Session',
-      value: '45 Minutes (Confidential Encrypted Line)',
+      value: '45 Minutes',
     },
     {
       icon: 'shield' as const,
@@ -1274,7 +1274,7 @@ export const ADV_SCHEDULE = {
       link: 'view more',
     },
   ],
-  escrowChip: 'Escrow Guaranteed',
+  escrowChip: 'Recorded payment',
   grossFee: 28500,
   grossSub: '45 min session billing',
   /** Drawn as two further rows in the same column; see the reconciliation note above. */
@@ -1397,7 +1397,7 @@ export const ADV_PROPOSE = {
 
 export const ADV_CONFIRMED = {
   title: 'Consultation Confirmed',
-  docket: 'Docket #2024-88C • Escrow Secured',
+  docket: 'Docket #2024-88C',
   /** The chip counts down from here. */
   countdownSeconds: 18 * 60,
   client: {
@@ -1406,11 +1406,11 @@ export const ADV_CONFIRMED = {
     title: 'Managing Director, Finova Technologies',
   },
   escrowAmount: 25650,
-  escrowLabel: 'Escrow Funded',
+  escrowLabel: 'Client paid',
   matterLabel: 'MATTER',
   practice: 'Corporate & Commercial IP',
   matter: 'Cross-Border IP Licensing & Exclusive Jurisdiction Structuring',
-  chips: ['End-to-End Encrypted', '45 Minutes'],
+  chips: ['45 Minutes'],
   date: { label: 'Date', value: 'Today, 24 Sep 2026' },
   time: { label: 'Scheduled Time', value: '4:00 PM – 4:45 PM IST' },
 
@@ -1475,7 +1475,7 @@ export const ADV_ROOM = {
   /** 05:41 in design/167; counts down. */
   countdownSeconds: 5 * 60 + 41,
   countdownNote: 'until admittance window',
-  encrypted: 'End-to-End Encrypted Room Active',
+  encrypted: 'Chat consultation',
   cleared: '2/2 Pre-Cleared',
 
   summaryLabel: 'CASE SUMMARY',
@@ -1544,7 +1544,7 @@ export const ADV_CHAT = {
     name: 'Ananya Deshmukh',
     company: 'Finova Tech India',
   },
-  encrypted: 'Encrypted',
+  encrypted: '',
   timer: '18:40',
   /** Inferred — design/168 clips this chip to "M". */
   matterChip: 'Matter',
@@ -1594,7 +1594,7 @@ export const ADV_CHAT = {
     },
   ] as AdvChatMessage[],
 
-  typing: 'Ananya is reviewing draft notes',
+  typing: '',
   placeholder: 'Type legal advice or cite section...',
 
   notesPanel: {
@@ -1683,7 +1683,7 @@ export const ADV_AI_CHAT = {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const ADV_VIDEO = {
-  encrypted: 'ENCRYPTED',
+  encrypted: '',
   /** 28:13 in design/173; counts down. */
   remainingSeconds: 28 * 60 + 13,
   remainingSuffix: 'rem.',
@@ -1823,7 +1823,7 @@ export const ADV_END = {
   title: 'End Consultation?',
   body: [
     'Are you sure you want to end this consultation?',
-    'Your consultation summary, encrypted transcript, and billable docket notes will be automatically saved to your vault.',
+    'Your consultation summary and notes are saved to the case.',
   ],
   summary: {
     clientLabel: 'Client',
@@ -1833,9 +1833,9 @@ export const ADV_END = {
     matterRef: 'Matter #2024-88C',
     cells: [
       { label: 'Time', value: '16m 48s', note: 'of 45:00 scheduled' },
-      { label: 'Disbursement', value: 'Pro-Rata', note: 'Via Chamber Escrow' },
+      { label: 'Disbursement', value: 'Pro-Rata', note: 'Paid manually by Legalitt' },
     ],
-    footnote: 'Escrow payout calculated pro-rata per Legalitt Chamber protocol in ₹ (INR).',
+    footnote: 'Payouts are recorded by Legalitt and paid manually with a UTR reference.',
   },
   confirm: 'End Consultation',
   cancel: 'Continue Consultation',
@@ -1897,7 +1897,7 @@ export const ADV_DOCKET = {
   dictate: 'Dictate',
   citeChip: '+ Cite Indian Contract Act (1872)',
   note: ADV_DOCKET_NOTE,
-  notesFooter: 'Encrypted with Chamber 256-bit HSM',
+  notesFooter: 'Saved to this case',
   /** design/180 prints "382 chars"; the drawn text is this long. Both are reported. */
   notesDrawnCount: '382 chars',
   notesActualCount: ADV_DOCKET_NOTE.length,
@@ -1950,10 +1950,10 @@ export const ADV_COMPLETED = {
   cells: [
     { label: 'Session Date', value: 'Today, Sep 24' },
     { label: 'Duration', value: '45m (Billed)' },
-    { label: 'Chamber', value: 'Encrypted P2P' },
+    { label: 'Mode', value: 'In-app chat' },
   ],
   settlementLabel: 'FINANCIAL SETTLEMENT',
-  escrowChip: 'Escrow Cleared',
+  escrowChip: 'Payment recorded',
   feeLabel: 'Consultation Fee (45 mins)',
   grossFee: 32000,
   netLabel: 'NET DISBURSEMENT',
@@ -2029,7 +2029,7 @@ export const ADV_NOTICE = {
     method: { label: 'Payout Method', value: 'Bank ••••4821' },
     window: { label: 'Disbursement Window', value: 'Released after settlement' },
     notes: [
-      'Client payment is securely pre-authorized in Legalitt Escrow. Transfer occurs automatically upon matter completion.',
+      'Your payout is paid to your bank account by Legalitt after the matter completes. You’ll see the UTR once sent.',
       'Platform fees and applicable charges are deducted before your net earnings are paid out. Breakdown percentages are configured according to your advocate chamber agreement.',
     ],
   },
@@ -2105,7 +2105,7 @@ export const ADV_NOTICE_DRAFTING = {
   /** design/187 clips this behind the avatar ("…pose how you want to prepare your dra"). */
   sub: 'Choose how you want to prepare your draft.',
   docket: 'DOCKET LN-2026-1048',
-  heroLabel: 'Secured Workflow',
+  heroLabel: 'Drafting Workflow',
   heading: 'Choose Drafting Method',
   headingSub: 'Select how you want to compile and format this document.',
   methods: [
@@ -2130,7 +2130,7 @@ export const ADV_NOTICE_DRAFTING = {
     },
   ],
   confidentiality:
-    "Drafts remain strictly confidential within your firm's encrypted workspace.",
+    "Drafts are visible only to you and Legalitt's team until you send them.",
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -2376,7 +2376,7 @@ export const ADV_NOTICE_FINAL = {
   clientName: 'Rahul Sharma',
   signOff: 'Client Sign-off complete • Approved today, 11:20 AM',
   sendToLabel: 'SEND NOTICE TO',
-  sendToChip: 'Official Delivery Address',
+  sendToChip: 'Delivery Address',
   docLabel: 'LEGAL NOTICE DOCUMENT',
   docChip: 'Approved',
   doc: { name: 'Legal_Notice_Final.pdf', meta: '4 Pages • Signed by Client' },
@@ -2594,7 +2594,7 @@ export const ADV_NOTICE_PAYMENT = {
   totalAmount: withGst18(250),
   totalNote: 'Inclusive of all legal taxes',
   methodsLabel: 'SELECT PAYMENT METHOD',
-  methodsMeta: 'Fast & Secure',
+  methodsMeta: '',
   secureNote: 'Your payment is processed securely through our payment provider.',
   barLabel: 'Amount to pay',
   pay: 'Pay',
@@ -2803,7 +2803,7 @@ export const ADV_NOTICE_REPORT = {
   title: 'Send Report',
   docChip: 'DOC-742',
   summaryLabel: 'PAYMENT SUMMARY',
-  escrowChip: 'Escrow Protected',
+  escrowChip: 'Payment recorded',
   payoutLabel: 'Advocate Payout',
   /** ⚠ The gross client fee, not the net. See above. */
   payout: '₹3,500/-',
@@ -2834,7 +2834,7 @@ export const ADV_LA_REPORT = {
   /** ⚠ As drawn — design/288 keeps design/203's document number. */
   docChip: 'DOC-742',
   summaryLabel: 'PAYMENT SUMMARY',
-  escrowChip: 'Escrow Protected',
+  escrowChip: 'Payment recorded',
   payoutLabel: 'Advocate Payout',
   /** design/164's net: 28,500 gross − 10%. */
   payout: `₹${advNetAt10(ADV_SCHEDULE.grossFee).net.toLocaleString('en-IN')}/-`,
@@ -3065,7 +3065,7 @@ export const ADV_CASES: AdvCaseMatter[] = [
     status: 'Upcoming',
     body: 'Date: 24 Sep 2026 · 05:00 PM (Voice/Video Call)',
     bodyIcon: 'video',
-    footer: 'Mode: Secured In-App Call',
+    footer: 'Mode: In-app chat',
     bucket: 'Upcoming',
   },
 ];
@@ -3153,9 +3153,9 @@ export const ADV_PSR_REQUEST = {
   statusPending: 'Request Pending',
   statusAccepted: 'Accepted',
   briefPending:
-    'Review client facts and certified documents below to conduct off-platform registry search.',
+    'Review the client’s facts and documents below to conduct the search at the registry office.',
   briefAccepted:
-    'Request accepted on 23 Sep 2026. Review client facts and certified documents below to conduct off-platform registry search.',
+    'Request accepted on 23 Sep 2026. Review the client’s facts and documents below to conduct the search at the registry office.',
   acceptedOn: '23 Sep 2026',
   client: {
     label: 'CLIENT INFORMATION',
@@ -3167,7 +3167,7 @@ export const ADV_PSR_REQUEST = {
     phone: '+91 98260 •••••',
     phoneChip: 'Verified',
     email: 'rahul.shar***@example.com',
-    emailChip: 'Secured',
+    emailChip: '',
   },
   propertyLabel: 'PROPERTY DETAILS',
   ownerLabel: 'OWNER DETAILS',
@@ -3180,7 +3180,7 @@ export const ADV_PSR_REQUEST = {
   },
   documents: {
     label: 'DOCUMENTS PROVIDED (3)',
-    vault: 'Encrypted Vault',
+    vault: '',
     /** ⚠ Names and sources are clipped in design/207; completions are INFERRED. */
     rows: [
       { name: 'Sale_Deed_Singhania.pdf', meta: '24 Pages • 4.8 MB • Certified Copy' },
@@ -3191,13 +3191,13 @@ export const ADV_PSR_REQUEST = {
   },
   payment: {
     label: 'PAYMENT SUMMARY',
-    chip: 'Escrow Secured',
+    chip: 'Payment recorded',
     paidLabel: 'Client Paid',
     paid: '₹4,500',
     payoutLabel: 'Your Payout',
     /** ⚠ As drawn. NOT computed — no established rate produces it. */
     payout: '₹3,800',
-    note: 'Held securely in Legalitt Escrow. Released automatically to your registered bank account upon client dispatch and title report approval.',
+    note: 'Paid to your bank account by Legalitt after the report is delivered. You’ll see the UTR here once sent.',
   },
   accept: 'Accept',
   reject: 'Reject',
@@ -3362,7 +3362,7 @@ export const ADV_PSR_EDITOR = {
     disclaimer: 'AI assists with grammar and tone only. AI never modifies dates, names, registry numbers, or factual legal findings.',
   },
   compliance: {
-    line1: 'Draft Created via Legalitt Advocate Platform • Bar Council Compliant Workflow',
+    line1: 'Draft created on the Legalitt advocate platform',
     line2: 'Advocate must review and approve all sections before court filing or client handoff.',
   },
   saveDraft: 'Save Draft',
@@ -3468,11 +3468,11 @@ export const ADV_PSR_UPLOAD = {
 
   payment: {
     label: 'YOUR PAYMENT',
-    chip: 'Escrow Secured',
+    chip: 'Payment recorded',
     receiveLabel: 'You will receive:',
     /** As drawn, and matching design/206's stated payout. NOT computed. */
     amount: '₹3,800',
-    note: 'The payout is held safely in Legalitt Escrow and will be released to your registered bank account upon client dispatch.',
+    note: 'Paid to your bank account by Legalitt after the report is delivered. You’ll see the UTR here once sent.',
   },
 
   note: {
@@ -3529,7 +3529,7 @@ export const ADV_PSR_SEND = {
 
   client: {
     label: 'CLIENT',
-    verified: 'Verified Identity',
+    verified: '',
     name: 'Rahul Sharma',
     /** ⚠ A fifth description of this client across the batch. */
     role: 'Individual Buyer & Requester',
@@ -3551,7 +3551,7 @@ export const ADV_PSR_SEND = {
     chip: 'Ready to Send',
     /** ⚠ Clipped to "Property_Search_Rep" in design/211. Wrapped here. */
     file: 'Property_Search_Report_Singhania.pdf',
-    meta: '4.8 MB • Digitally Signed',
+    meta: '4.8 MB',
     view: 'View',
   },
 
@@ -3571,7 +3571,7 @@ export const ADV_PSR_SEND = {
         key: 'app',
         title: 'Legalitt App',
         chip: 'Instant',
-        body: 'Client will receive the report instantly in the Legalitt app with notification and encrypted download access.',
+        body: 'The client receives the report in the Legalitt app with an in-app notification.',
       },
       {
         key: 'email',
@@ -3585,7 +3585,7 @@ export const ADV_PSR_SEND = {
 
   payment: {
     label: 'PAYMENT SUMMARY',
-    chip: 'Escrow Protected',
+    chip: 'Payment recorded',
     payoutLabel: 'Advocate Payout',
     payout: '₹3,800',
     note: 'Payment will be automatically credited to your registered bank account after the report is sent to the client.',
@@ -3623,7 +3623,7 @@ export const ADV_PSR_SENT = {
   title: 'Send Report',
   docChip: 'DOC-742',
   summaryLabel: 'PAYMENT SUMMARY',
-  escrowChip: 'Escrow Protected',
+  escrowChip: 'Payment recorded',
   payoutLabel: 'Advocate Payout',
   /** The one changed value — and the correct one. */
   payout: '₹3,800',

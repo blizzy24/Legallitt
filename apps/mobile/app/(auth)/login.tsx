@@ -101,7 +101,7 @@ export default function LoginScreen() {
         keyboardShouldPersistTaps="handled"
       >
         <Text style={styles.heading}>Welcome Back</Text>
-        <Text style={styles.sub}>Login to your verified Legalitt client account</Text>
+        <Text style={styles.sub}>Login to your Legalitt account</Text>
 
         <Text style={styles.label}>Email or Mobile Number</Text>
         <View style={styles.field}>

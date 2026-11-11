@@ -32,7 +32,7 @@ export default function NoticeChatScreen({
   messages,
   placeholder,
   valid,
-  validTime, onSend, onAttach, onBack, onOpenDocument, verified=true, online=true, typing=true, state,
+  validTime, onSend, onAttach, onBack, onOpenDocument, verified=false, online=false, typing=false, state,
 }: {
   onBack?:()=>void; onSend?:(text:string)=>Promise<boolean>; onAttach?:()=>void; onOpenDocument?:(id:string)=>void; verified?:boolean;online?:boolean;typing?:boolean;
   state?:{loading:boolean;error:string;ready:boolean;onRetry:()=>void};

@@ -435,7 +435,7 @@ export const COURT_CALL = {
   title: 'Call With Client',
   switchLabel: 'PREVIEW STATE:',
   states: ['Active Call', 'Call Ended'],
-  encrypted: '256-Bit Encrypted Audio',
+  encrypted: '',
   matter: `${CASE.hcRep} • ${CASE.hcr}`,
   initials: CASE.initials,
   role: 'ADVOCATE CLIENT',
@@ -2777,7 +2777,7 @@ export const COURT_REVIEW_UPDATE: CourtSpec = {
           top: 'innerTop',
           blocks: [
             { k: 'text', t: 'Need to discuss the property papers before the next hearing.', size: 'noteSize' },
-            { k: 'footRow', icon: 'shieldCheck', t: 'Encrypted and strictly hidden from client tracking, client app, and exports.', top: 'footTop' },
+            { k: 'footRow', icon: 'shieldCheck', t: 'Visible only to you and Legalitt’s team; never shown to the client.', top: 'footTop' },
           ],
         },
       ],

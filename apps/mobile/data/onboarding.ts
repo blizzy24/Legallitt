@@ -31,9 +31,9 @@ export type OnboardingSlide = {
 export const ONBOARDING_SLIDES: OnboardingSlide[] = [
   {
     id: 'advocates',
-    title: 'Find Verified Advocates Nearby',
+    title: 'Find Verified Advocates',
     tagline: 'Find  •  Connect  •  Consult  •  Resolve',
-    body: 'Connect with trusted, verified advocates around you. Chat, call, or book consultations easily.',
+    body: 'Connect with verified advocates and book chat consultations easily.',
   },
   {
     id: 'notice',
@@ -66,7 +66,7 @@ export const ONBOARDING_SLIDES: OnboardingSlide[] = [
     id: 'property',
     title: 'Verify the Property Before You Buy',
     tagline: 'Buy Property Not Litigation',
-    body: 'Get the property title and revenue records searched and verified by a verified advocate before you buy. Identify potential encumbrances, disputes and title issues and receive a detailed Property Search & Title Verification Certificate.',
+    body: 'Get the property title and revenue records searched by a verified advocate before you buy. Identify potential encumbrances, disputes and title issues and receive a detailed Property Search Report.',
     image: require('../assets/onboarding-05.png'),
   },
 ];

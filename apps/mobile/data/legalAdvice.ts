@@ -98,7 +98,7 @@ export const LA_CONSULT_TYPES: LaConsultType[] = [
     uploadNote: ['Up to 25 pages — FREE Upload', 'Additional pages: ₹25 per page'],
     // design/104 gives chat SEVEN DAYS where the landing's detail card says a 30-minute
     // session. Two different units for the same product; both rendered as drawn.
-    strip: ['Up to 7 days', 'Private & Secure'],
+    strip: ['Up to 7 days', 'Private'],
     popular: true,
   },
   {
@@ -111,7 +111,7 @@ export const LA_CONSULT_TYPES: LaConsultType[] = [
     chooseDescription: 'Speak directly with a legal expert and get legal solution',
     duration: '30 Mins Session',
     uploadNote: ['Up to 25 pages — FREE Upload', 'Additional pages: ₹25 per page'],
-    strip: ['Up to 30 mins', 'Private & Secure'],
+    strip: ['Up to 30 mins', 'Private'],
     popular: false,
   },
   {
@@ -124,7 +124,7 @@ export const LA_CONSULT_TYPES: LaConsultType[] = [
     chooseDescription: 'Face-to-face consultation with our legal experts from anywhere',
     duration: '30 Mins Session',
     uploadNote: ['Up to 25 pages — FREE Upload', 'Additional pages: ₹25 per page'],
-    strip: ['Up to 30 mins', 'Secure & Confidential'],
+    strip: ['Up to 30 mins', 'Private'],
     popular: false,
   },
 ];
@@ -178,7 +178,7 @@ export const LA_EXPERIENCE_TIERS: LaExperienceTier[] = [
     years: '15+ Years Experience',
     description: 'Get quick answer to your legal queries through secure',
     startingAt: 999,
-    strip: ['Up to 30 mins', 'Secure & Private'],
+    strip: ['Up to 30 mins', 'Private'],
     caption: 'Quick Easy Private',
   },
   {
@@ -188,7 +188,7 @@ export const LA_EXPERIENCE_TIERS: LaExperienceTier[] = [
     years: '10 - 15 Years Experience',
     description: 'Get quick answer to your legal queries through secure',
     startingAt: 799,
-    strip: ['Up to 30 mins', 'Secure & Private'],
+    strip: ['Up to 30 mins', 'Private'],
     caption: 'Quick Easy Private',
   },
   {
@@ -197,7 +197,7 @@ export const LA_EXPERIENCE_TIERS: LaExperienceTier[] = [
     years: '5 - 10 Years Experience',
     description: 'Get quick answer to your legal queries through secure',
     startingAt: 599,
-    strip: ['Up to 30 mins', 'Secure & Private'],
+    strip: ['Up to 30 mins', 'Private'],
     caption: 'Quick Easy Private',
   },
   {
@@ -206,7 +206,7 @@ export const LA_EXPERIENCE_TIERS: LaExperienceTier[] = [
     years: 'Experience of practice upto 5 years',
     description: 'Get quick answer to your legal queries through secure',
     startingAt: 499,
-    strip: ['Up to 30 mins', 'Secure & Private'],
+    strip: ['Up to 30 mins', 'Private'],
     caption: 'Quick Easy Private',
   },
 ];

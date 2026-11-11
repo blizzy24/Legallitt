@@ -75,8 +75,8 @@ const WHY = [
   },
   {
     icon: Lock,
-    title: 'Secure & Confidential',
-    body: 'Discuss your matter through a secure and confidential platform.',
+    title: 'Private Consultations',
+    body: 'Your chat is visible only to you, your advocate and Legalitt’s team.',
   },
 ];
 
@@ -158,7 +158,7 @@ export default function LegalAdviceIndexScreen() {
         <View style={styles.strip}>
           <ShieldCheck size={t.stripIcon} color={colors.brandDark} />
           <Text style={styles.stripText} {...shrinkToFit(0.75)}>
-            Verified Advocates • Secure &amp; Confidential
+            Verified Advocates • Private Consultations
           </Text>
         </View>
 
