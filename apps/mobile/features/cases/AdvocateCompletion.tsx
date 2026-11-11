@@ -2,13 +2,16 @@ import {useEffect, useState} from 'react';
 import {ScrollView, Text, View} from 'react-native';
 import {router, useLocalSearchParams} from 'expo-router';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {completionHeadline, formatPaise, type AdvocateCompletion} from '@legalitt/shared';
+import {CANCELLED_HEADLINE, completionHeadline, formatPaise, type AdvocateCompletion} from '@legalitt/shared';
 import {backend} from '../../lib/auth';
 import {Button, Card, ErrorBox, openDocument, s} from '../fir/shared';
 
-// D-07 / D-84: the advocate's completed-case view. No design exists; built from
+// D-07 / D-88: the advocate's completed-case view. No design exists; built from
 // the existing advocate card layout. Every row appears only when its value exists.
 const when = (iso: string | null) => iso ? new Date(iso).toLocaleString('en-IN', {day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit'}) : null;
+
+/** Statuses whose advocate screen shows this card: finished, or cancelled (D-53). */
+export const showsCompletion = (status: string) => ['completed', 'cancelled', 'refunded'].includes(status);
 
 export function AdvocateCompletionCard({caseId}: {caseId: string}) {
   const [data, setData] = useState<AdvocateCompletion | null>(null), [error, setError] = useState(''), [loading, setLoading] = useState(true), [attempt, setAttempt] = useState(0);
@@ -20,6 +23,7 @@ export function AdvocateCompletionCard({caseId}: {caseId: string}) {
   }, [caseId, attempt]);
   if (loading && !data) return <Card><Text role="status" style={s.body}>Loading completion details…</Text></Card>;
   if (error) return <ErrorBox error={`${error} Retry, or open My Cases.`} retry={() => setAttempt(n => n + 1)}/>;
+  if (data?.cancelled) return <Card title={CANCELLED_HEADLINE}><Text style={s.body}>{data.reference}</Text></Card>;
   if (!data || !data.completed) return null;
   const completed = when(data.completed_at), delivered = data.delivery ? when(data.delivery.delivered_at) : null;
   const rows: [string, string | null][] = [
@@ -50,7 +54,7 @@ export function AdvocateCompletionCard({caseId}: {caseId: string}) {
   </>;
 }
 
-/** Full screen used where the completed state has no other content (Legal Notice). */
+/** Full screen used where the completed or cancelled state has no other content (Legal Notice). */
 export function AdvocateCompletionScreen() {
   const params = useLocalSearchParams<{id?: string; caseId?: string}>(), id = params.caseId ?? params.id, insets = useSafeAreaInsets();
   return <ScrollView style={s.screen} contentContainerStyle={[s.content, {paddingTop: insets.top + 16}]}>

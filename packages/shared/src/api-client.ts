@@ -72,8 +72,8 @@ export class ApiClient {
   accountReceipt(id: string) {return this.request<{filename: string; pdf_base64: string}>(`/account/payments/${encodeURIComponent(id)}/receipt`,undefined,'GET',undefined,{},60000);}
   // D-07 advocate completion view; D-24/D-42 admin account deletion queue.
   advocateCompletion(id: string) {return this.request<import('./completion').AdvocateCompletion>(`/advocate/cases/${encodeURIComponent(id)}/completion`);}
-  adminAccountDeletions(status: 'pending' | 'decided' = 'pending') {return this.request<{items: import('./completion').AdminDeletionRow[]}>(`/admin/account-deletions?status=${status}`);}
-  decideAccountDeletion(id: string, input: {decision: 'complete' | 'reactivate'; note: string}) {return this.request<{id: string; status: string}>(`/admin/account-deletions/${encodeURIComponent(id)}/decide`, input);}
+  adminAccountDeletions(status: 'open' | 'decided' = 'open') {return this.request<{items: import('./completion').AdminDeletionRow[]}>(`/admin/account-deletions?status=${status}`);}
+  decideAccountDeletion(id: string, input: {decision: 'review' | 'complete' | 'reactivate'; note: string}) {return this.request<{id: string; status: string}>(`/admin/account-deletions/${encodeURIComponent(id)}/decide`, input);}
   private refreshing?: Promise<ApiTokens>;
   constructor(private readonly options: Options) {}
   private async transport(

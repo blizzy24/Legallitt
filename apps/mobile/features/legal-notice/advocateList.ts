@@ -23,8 +23,10 @@ export function advocateNoticeState(status: CaseStatus): Entry {
     // No drawn read-only advocate destination exists for these states. Do not
     // route back to the fee screen, which offers acceptance of a closed request.
     case CaseStatus.advocate_declined: return {bucket:'Resolved',status:'Declined',action:null};
-    case CaseStatus.cancelled: return {bucket:'Resolved',status:'Cancelled',action:null};
-    case CaseStatus.refunded: return {bucket:'Resolved',status:'Refunded',action:null};
+    // D-07/D-53: cancelled cases open the read-only completion view, which says
+    // "Cancelled — no further work" without the client's reason or refund.
+    case CaseStatus.cancelled: return {bucket:'Resolved',status:'Cancelled',action:'Open Case',screen:'report'};
+    case CaseStatus.refunded: return {bucket:'Resolved',status:'Refunded',action:'Open Case',screen:'report'};
     // Normally invisible through the advocate-scoped endpoint; still account
     // for them without granting an action if the backend supplies one.
     case CaseStatus.draft: return {bucket:'Needs Review',status:'Draft',action:null};

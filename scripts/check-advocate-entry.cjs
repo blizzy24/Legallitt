@@ -11,10 +11,10 @@ assert.deepEqual(state(CaseStatus.assigned),{bucket:'Needs Review',status:'Needs
 for(const [s,path] of [['advocate_accepted','drafting'],['in_progress','draft'],['changes_requested','drafting']]){
  assert.equal(state(s).action,'Continue Draft');assert.equal(state(s).screen,path);
 }
-for(const [s,path] of [['client_review','review'],['approved','final'],['dispatching','dispatch'],['dispatched','dispatch'],['completed','report']]){
+for(const [s,path] of [['client_review','review'],['approved','final'],['dispatching','dispatch'],['dispatched','dispatch'],['completed','report'],['cancelled','report'],['refunded','report']]){
  assert.equal(state(s).action,'Open Case');assert.equal(state(s).screen,path);
 }
-for(const s of ['advocate_declined','cancelled','refunded','draft','submitted','payment_pending','paid','assigning']){
+for(const s of ['advocate_declined','draft','submitted','payment_pending','paid','assigning']){
  assert.equal(state(s).action,null);assert.equal(matters([sample(s)])[0].href,undefined);
 }
 const realShape=matters([...Array.from({length:7},(_,i)=>sample('client_review','review-'+i)),...Array.from({length:13},(_,i)=>sample('completed','done-'+i)),sample('advocate_declined')]);

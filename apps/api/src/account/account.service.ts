@@ -147,7 +147,7 @@ export class AccountService {
       await tx.$queryRaw`SELECT id FROM users WHERE id = ${actor.id}::uuid FOR UPDATE`;
       if (await tx.case.count({where: {AND: [caseScope(actor), {status: {in: [...ACTIVE_PAID]}}]}}))
         throw new ConflictException('You have a paid case in progress. Cancel it or wait until it completes, then request deletion.');
-      if (await tx.accountDeletionRequest.findFirst({where: {user_id: actor.id, status: 'pending'}}))
+      if (await tx.accountDeletionRequest.findFirst({where: {user_id: actor.id, status: {in: ['pending', 'reviewed']}}}))
         throw new ConflictException('A deletion request is already pending for this account.');
       const row = await tx.accountDeletionRequest.create({data: {user_id: actor.id, reason: input.reason || null}});
       // Deactivated immediately: identity() refuses non-active users on every request.

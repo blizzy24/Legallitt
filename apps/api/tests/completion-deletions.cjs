@@ -5,7 +5,7 @@ const {AccountDeletionsAdminService}=require('../dist/src/account/account-deleti
 const {InAppNotifications}=require('../dist/src/notifications/in-app-notifications');
 const {SimulatedNotifications}=require('../dist/src/notifications/simulated-notifications');
 
-test('D-07 completion view and D-24 admin deletion queue: data, decisions and isolation',{skip:!process.env.LEGALITT_TEST_DATABASE_URL},async t=>{
+test('D-07/D-88 completion view and D-24/D-89 admin deletion queue: data, decisions and isolation',{skip:!process.env.LEGALITT_TEST_DATABASE_URL},async t=>{
   const db=new PrismaClient({adapter:new PrismaPg({connectionString:process.env.LEGALITT_TEST_DATABASE_URL})}),prisma={getClient:async()=>db};
   const users=['client','client','advocate','advocate','admin'].map(role=>({id:randomUUID(),role,cognito_sub:randomUUID(),full_name:'TEST H '+role}));
   const [client,other,adv,otherAdv,admin]=users,ids=[];
@@ -27,6 +27,15 @@ test('D-07 completion view and D-24 admin deletion queue: data, decisions and is
       assert.deepEqual(v.documents.map(d=>d.label),['Final notice','Proof of delivery']);assert.equal(v.delivery.received_by,'Recipient');
       assert.equal((await completion.completion(admin,id)).completed,true);
     });
+    await t.test('cancelled case: no further work, no reason, refund or entitlement (D-53)',async()=>{
+      const cid=randomUUID();ids.push(cid);
+      await db.case.create({data:{id:cid,reference:'COMPLETIONTEST-'+cid.slice(0,8),service_code:'fir_draft',client_id:client.id,advocate_id:adv.id,status:'cancelled'}});
+      const v=await completion.completion(adv,cid);
+      assert.equal(v.cancelled,true);assert.equal(v.completed,false);assert.equal(v.entitlement_paise,null);assert.deepEqual(v.documents,[]);
+      assert.ok(!('reason' in v)&&!('refund_amount_paise' in v));
+      await assert.rejects(completion.completion(otherAdv,cid),{status:404});
+      assert.equal((await completion.completion(adv,id)).cancelled,false);
+    });
     await t.test('isolation: other advocate 404, clients 403',async()=>{
       await assert.rejects(completion.completion(otherAdv,id),{status:404});
       await assert.rejects(completion.completion(client,id),{status:403});
@@ -40,8 +49,14 @@ test('D-07 completion view and D-24 admin deletion queue: data, decisions and is
       const list=await queue.list(admin);const mine=list.items.filter(i=>[other.id,client.id].includes(i.user.id));
       assert.equal(mine[0].id,first.id);assert.equal(mine[0].user.account_status,'deactivated');
       await assert.rejects(queue.decide(admin,first.id,{decision:'complete',note:''}),{status:400});
-      await queue.decide(admin,first.id,{decision:'complete',note:'TEST completed per request'});
+      assert.equal((await queue.decide(admin,first.id,{decision:'review',note:'TEST checked cases'})).status,'reviewed');
+      await assert.rejects(queue.decide(admin,first.id,{decision:'review',note:'TEST twice'}),{status:409});
+      assert.ok((await queue.list(admin)).items.some(i=>i.id===first.id&&i.status==='reviewed'),'reviewed stays in the open queue');
+      assert.equal((await queue.decide(admin,first.id,{decision:'complete',note:'TEST completed per request'})).status,'completed_pending_purge');
+      assert.equal((await db.accountDeletionRequest.findUnique({where:{id:first.id}})).status,'completed_pending_purge');
       assert.equal((await db.user.findUnique({where:{id:other.id}})).status,'deactivated');
+      const audit=await db.adminAction.findMany({where:{subject_id:first.id},orderBy:{id:'asc'}});
+      assert.deepEqual(audit.map(a=>a.action),['review_account_deletion','complete_account_deletion']);assert.equal(audit[1].payload.erased,false);
       assert.ok(await db.user.findUnique({where:{id:other.id}}),'user row kept');
       await assert.rejects(queue.decide(admin,first.id,{decision:'reactivate',note:'again'}),{status:409});
       const decided=(await queue.list(admin,'decided')).items.find(i=>i.id===first.id);assert.equal(decided.decision_note,'TEST completed per request');
