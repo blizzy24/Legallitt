@@ -6,7 +6,7 @@ import {
 import type {Prisma} from '../generated/prisma/client';
 import {PrismaService} from '../prisma.service';
 import {parse} from '../auth/auth.service';
-import {lockedCase, writeCaseCancelled} from '../cases/case-state-machine';
+import {appendCaseEvent, lockedCase, writeCaseCancelled} from '../cases/case-state-machine';
 import type {CaseActor} from '../cases/case-access';
 import {NOTIFICATIONS, type NotificationsPort} from '../notifications/notifications.port';
 
@@ -97,8 +97,8 @@ export class CancellationsService {
         status_at_request: record.status, refundable_paise: money.total};
       if (mode === 'request') {
         await tx.cancellationRequest.create({data: {...base, mode: 'admin_review', status: 'pending'}});
-        await tx.caseEvent.create({data: {case_id: id, type: 'cancellation_requested', actor_id: actor.id, actor_role: 'client',
-          from_status: record.status, to_status: record.status, payload: {reason: input.reason ?? null}}});
+        await appendCaseEvent(tx, {case_id: id, type: 'cancellation_requested', actor_id: actor.id, actor_role: 'client',
+          from_status: record.status, to_status: record.status, payload: {reason: input.reason ?? null}});
         for (const admin of await tx.user.findMany({where: {role: 'admin', status: 'active'}, select: {id: true}}))
           await this.notifications.send(tx, {user_id: admin.id, case_id: id, kind: 'cancellation_requested', title: 'A client asked to cancel a case', body: record.reference});
         return this.view(tx, await tx.case.findUniqueOrThrow({where: {id}}));
@@ -110,7 +110,8 @@ export class CancellationsService {
       const refunds = money.total > 0n ? await recordRefunds(tx, id, record.client_id, money.total, reason, request.id, null) : [];
       await writeCaseCancelled(tx, actor, id, {refunded: refunds.length > 0, payload: {cancellation_request_id: request.id, mode: 'self_serve',
         reason: input.reason ?? null, refund_paise: money.total.toString(), refund_ids: refunds.map(r => r.id), simulated_refund: refunds.length > 0}});
-      await this.notifyClosed(tx, record, money.total);
+      // A client closing their own unpaid draft needs no notification (no one else is involved).
+      if (mode !== 'unpaid') await this.notifyClosed(tx, record, money.total);
       return this.view(tx, await tx.case.findUniqueOrThrow({where: {id}}));
     });
   }
@@ -158,9 +159,9 @@ export class CancellationsService {
       const now = new Date();
       if (input.decision === 'decline') {
         await tx.cancellationRequest.update({where: {id: requestId}, data: {status: 'declined', decision_reason: input.reason, decided_by: actor.id, decided_at: now}});
-        await tx.caseEvent.create({data: {case_id: record.id, type: 'cancellation_declined', actor_id: actor.id, actor_role: 'admin',
-          from_status: record.status, to_status: record.status, payload: {cancellation_request_id: requestId, reason: input.reason}}});
-        await tx.adminAction.create({data: {admin_id: actor.id, action: 'decline_cancellation', subject_type: 'case', subject_id: record.id, payload: {cancellation_request_id: requestId, reason: input.reason}}});
+        await appendCaseEvent(tx, {case_id: record.id, type: 'cancellation_declined', actor_id: actor.id, actor_role: 'admin',
+          from_status: record.status, to_status: record.status, payload: {cancellation_request_id: requestId, reason: input.reason}});
+        await tx.adminAction.create({data: {admin_id: actor.id, action: 'decline_cancellation', subject_type: 'case', subject_id: record.id, payload: {cancellation_request_id: requestId, reason: input.reason}});
         await this.notifications.send(tx, {user_id: record.client_id, case_id: record.id, kind: 'cancellation_declined', title: 'Cancellation request declined', body: `${record.reference} · ${input.reason}`});
         return this.view(tx, record);
       }
