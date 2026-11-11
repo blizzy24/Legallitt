@@ -29,8 +29,10 @@ export class NoticeMessages {
   const {db}=await this.accessible(actor,id);
   const cursor=after?await db.message.findFirst({where:{id:parse(z.uuid(),after),thread_id:id}}):null;
   if(after&&!cursor)throw new BadRequestException('Invalid message cursor');
-  const items=await db.message.findMany({where:{thread_id:id,thread_id_relation:{is:{case_id_relation:{is:caseScope(actor)}}},...(cursor?{OR:[{created_at:{gt:cursor.created_at}},{created_at:cursor.created_at,id:{gt:cursor.id}}]}:{})},orderBy:[{created_at:'asc'},{id:'asc'}],take:100});
-  return {items,next_cursor:items.length===100?items.at(-1)!.id:null};
+  const items=await db.message.findMany({where:{thread_id:id,thread_id_relation:{is:{case_id_relation:{is:caseScope(actor)}}},...(cursor?{OR:[{created_at:{gt:cursor.created_at}},{created_at:cursor.created_at,id:{gt:cursor.id}}]}:{})},orderBy:[{created_at:'asc'},{id:'asc'}],take:100,
+   // D-28: attachments render as document cards; downloads still go through the document access rules.
+   include:{document_id_relation:{select:{id:true,filename:true,mime_type:true,size_bytes:true}}}});
+  return {items:items.map(({document_id_relation:document,...m})=>({...m,document:document?{...document,size_bytes:document.size_bytes.toString()}:null})),next_cursor:items.length===100?items.at(-1)!.id:null};
  }
  async send(actor:CaseActor,id:string,body:unknown){
   const value=parse(input,body),{db,thread}=await this.accessible(actor,id);

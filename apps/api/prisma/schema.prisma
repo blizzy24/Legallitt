@@ -823,3 +823,42 @@ model Refund {
   @@index([payment_id])
   @@map("refunds")
 }
+
+// D-26 / D-42 support inbox. user/case/closed_by FKs exist in SQL; no Prisma
+// back-relations, so other models stay untouched.
+model SupportTicket {
+  id             String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id        String           @db.Uuid
+  kind           String
+  status         String           @default("open")
+  subject        String?
+  related_to     String?
+  description    String?
+  contact_method String?
+  contact_name   String?
+  contact_phone  String?
+  case_id        String?          @db.Uuid
+  created_at     DateTime         @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime         @default(now()) @db.Timestamptz(6)
+  closed_at      DateTime?        @db.Timestamptz(6)
+  closed_by      String?          @db.Uuid
+  messages       SupportMessage[] @relation("support_messages_ticket_id_support_tickets")
+
+  @@index([status, created_at], map: "support_tickets_status_created_idx")
+  @@index([user_id, created_at], map: "support_tickets_user_created_idx")
+  @@map("support_tickets")
+}
+
+model SupportMessage {
+  id          String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  ticket_id   String        @db.Uuid
+  sender_id   String        @db.Uuid
+  sender_role String
+  body        String
+  created_at  DateTime      @default(now()) @db.Timestamptz(6)
+  read_at     DateTime?     @db.Timestamptz(6)
+  ticket      SupportTicket @relation("support_messages_ticket_id_support_tickets", fields: [ticket_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([ticket_id, created_at], map: "support_messages_ticket_created_idx")
+  @@map("support_messages")
+}

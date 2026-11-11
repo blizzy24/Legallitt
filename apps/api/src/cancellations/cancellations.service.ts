@@ -161,7 +161,7 @@ export class CancellationsService {
         await tx.cancellationRequest.update({where: {id: requestId}, data: {status: 'declined', decision_reason: input.reason, decided_by: actor.id, decided_at: now}});
         await appendCaseEvent(tx, {case_id: record.id, type: 'cancellation_declined', actor_id: actor.id, actor_role: 'admin',
           from_status: record.status, to_status: record.status, payload: {cancellation_request_id: requestId, reason: input.reason}});
-        await tx.adminAction.create({data: {admin_id: actor.id, action: 'decline_cancellation', subject_type: 'case', subject_id: record.id, payload: {cancellation_request_id: requestId, reason: input.reason}});
+        await tx.adminAction.create({data: {admin_id: actor.id, action: 'decline_cancellation', subject_type: 'case', subject_id: record.id, payload: {cancellation_request_id: requestId, reason: input.reason}}});
         await this.notifications.send(tx, {user_id: record.client_id, case_id: record.id, kind: 'cancellation_declined', title: 'Cancellation request declined', body: `${record.reference} · ${input.reason}`});
         return this.view(tx, record);
       }

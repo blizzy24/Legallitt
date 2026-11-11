@@ -29,7 +29,7 @@ import { colors, font, ink, messagesList as t } from '../../constants/theme';
 // contradiction flagged on design/50. The app's five-tab labelled bar is kept, as
 // instructed then.
 
-export default function MessagesScreen() {
+function FixtureMessagesScreen() {
   const insets = useSafeAreaInsets();
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState<ConversationFilter>('all');
@@ -365,3 +365,7 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
   },
 });
+
+import MessagesInbox from '../../features/messages/Inbox';
+import {DATA_SOURCE as LIVE_DATA_SOURCE} from '../../lib/data-source';
+export default function LiveScreen() { return LIVE_DATA_SOURCE === 'api' ? <MessagesInbox/> : <FixtureMessagesScreen/>; }

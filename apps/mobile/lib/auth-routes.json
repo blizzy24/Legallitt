@@ -255,6 +255,8 @@
     "legal-notice/success",
     "legal-notice/tracking",
     "messages/[id]",
+    "messages/support",
+    "messages/thread",
     "notifications",
     "payments",
     "privacy",

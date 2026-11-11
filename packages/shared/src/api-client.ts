@@ -297,6 +297,21 @@ export class ApiClient {
   events(id: string) {
     return this.request<ApiPage<ApiEvent>>(`/cases/${id}/events?limit=100`);
   }
+  // D-28 messages inbox and D-26 support.
+  messagesInbox(q?:string){return this.request<{items:import('./support').MessagesInboxItem[]}>(`/messages/inbox${q?'?q='+encodeURIComponent(q):''}`);}
+  threadMessages(id:string){return this.request<ApiPage<import('./support').ThreadMessage>>(`/threads/${id}/messages`);}
+  createSupportTicket(input:{subject:string;related_to:string;description:string;contact_method:string;case_id?:string|null}){return this.request<import('./support').SupportTicketView>('/support/tickets',input);}
+  supportTickets(){return this.request<import('./support').SupportTicketView[]>('/support/tickets');}
+  supportTicket(id:string){return this.request<import('./support').SupportTicketView>(`/support/tickets/${id}`);}
+  replySupport(id:string,body:string){return this.request<import('./support').SupportTicketView>(`/support/tickets/${id}/messages`,{body});}
+  readSupport(id:string){return this.request<{read:true}>(`/support/tickets/${id}/read`,{});}
+  requestCallback(input:{name:string;phone:string;note?:string}){return this.request<import('./support').SupportTicketView>('/support/callbacks',input);}
+  supportChat(){return this.request<{chat:import('./support').SupportTicketView|null}>('/support/chat');}
+  sendSupportChat(body:string){return this.request<import('./support').SupportTicketView>('/support/chat',{body});}
+  adminSupport(status:'open'|'closed'='open'){return this.request<{items:import('./support').SupportInboxRow[];counts:{open:number;closed:number}}>(`/admin/support?status=${status}`);}
+  adminSupportTicket(id:string){return this.request<import('./support').SupportAdminTicket>(`/admin/support/${id}`);}
+  adminSupportReply(id:string,body:string){return this.request<{replied:true}>(`/admin/support/${id}/messages`,{body});}
+  adminSupportClose(id:string){return this.request<{closed:true}>(`/admin/support/${id}/close`,{});}
   caseThread(id:string){return this.request<{id:string;case_id:string}>(`/cases/${id}/thread`);}
   messages(id:string,after?:string){return this.request<ApiPage<import('./notice-api').ApiMessage>>(`/threads/${id}/messages${after?'?after='+encodeURIComponent(after):''}`);}
   sendMessage(id:string,input:{body?:string;document_id?:string}){return this.request<import('./notice-api').ApiMessage>(`/threads/${id}/messages`,input);}
