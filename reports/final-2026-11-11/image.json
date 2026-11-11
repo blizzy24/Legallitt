@@ -3,12 +3,12 @@
         {
             "registryId": "026379630400",
             "repositoryName": "legalitt-dev-api",
-            "imageDigest": "sha256:c2599cd5479feae02dc1dd2f609c9e62cb833a63c4e450ca734ed05ac95c9278",
+            "imageDigest": "sha256:00c3492c29c2a3382ab92e5daea83bce6e12846ad1a0db49e1ab4d376337c3d9",
             "imageTags": [
-                "cf73089"
+                "c7eaa2a"
             ],
-            "imageSizeInBytes": 221642265,
-            "imagePushedAt": "2026-11-11T12:32:18.884000+05:30",
+            "imageSizeInBytes": 221678028,
+            "imagePushedAt": "2026-11-11T13:38:21.632000+05:30",
             "imageManifestMediaType": "application/vnd.oci.image.index.v1+json",
             "imageStatus": "ACTIVE"
         }

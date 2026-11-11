@@ -63,7 +63,7 @@ async function main(){
    await click(p,'Continue');await route(p,'/step4');
    await refresh();
    if(!record.documents.length){const[chooser]=await Promise.all([p.waitForFileChooser(),click(p,'Upload Agreement')]);await chooser.accept([proofFile]);for(let n=0;n<90;n++){await refresh();if(record.documents.length)break;await delay(1000);}assert.ok(record.documents.length,'Uploaded client document');}
-   if(!await p.evaluate(()=>document.body.innerText.includes('Identity verified'))){await click(p,'Verify identity');await route(p,'/kyc/choose');await click(p,'Continue');await route(p,'/kyc/digilocker/connect');await click(p,'Continue to DigiLocker');await route(p,'/kyc/digilocker/verified');await click(p,'Continue');await route(p,'/step4');}
+   if(await p.evaluate(()=>document.body.innerText.includes('Verify identity')))/* D-46: KYC card hidden in API mode */{await click(p,'Verify identity');await route(p,'/kyc/choose');await click(p,'Continue');await route(p,'/kyc/digilocker/connect');await click(p,'Continue to DigiLocker');await route(p,'/kyc/digilocker/verified');await click(p,'Continue');await route(p,'/step4');}
    await shot(p,'client-documents');await click(p,'Continue');await route(p,'/step4-review');await click(p,'Continue');await route(p,'/step5');await shot(p,'client-filing-review');await click(p,'Submit & Proceed to Pay');await route(p,'/step6');await refresh();
   }
   if(record.status==='payment_pending'){

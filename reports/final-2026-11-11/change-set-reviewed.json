@@ -31,7 +31,7 @@
                 "PolicyAction": "ReplaceAndDelete",
                 "Action": "Modify",
                 "LogicalResourceId": "OpsTask",
-                "PhysicalResourceId": "arn:aws:ecs:ap-south-1:026379630400:task-definition/legalitt-dev-ops:32",
+                "PhysicalResourceId": "arn:aws:ecs:ap-south-1:026379630400:task-definition/legalitt-dev-ops:36",
                 "ResourceType": "AWS::ECS::TaskDefinition",
                 "Replacement": "True",
                 "Scope": [
@@ -66,7 +66,7 @@
                 "PolicyAction": "ReplaceAndDelete",
                 "Action": "Modify",
                 "LogicalResourceId": "Task",
-                "PhysicalResourceId": "arn:aws:ecs:ap-south-1:026379630400:task-definition/legalitt-dev-api:19",
+                "PhysicalResourceId": "arn:aws:ecs:ap-south-1:026379630400:task-definition/legalitt-dev-api:20",
                 "ResourceType": "AWS::ECS::TaskDefinition",
                 "Replacement": "True",
                 "Scope": [
@@ -96,8 +96,8 @@
             }
         }
     ],
-    "ChangeSetName": "final-cf73089",
-    "ChangeSetId": "arn:aws:cloudformation:ap-south-1:026379630400:changeSet/final-cf73089/53f55005-c428-438b-9497-be98392c1d70",
+    "ChangeSetName": "final-c7eaa2a",
+    "ChangeSetId": "arn:aws:cloudformation:ap-south-1:026379630400:changeSet/final-c7eaa2a/c8c02d9d-c683-4ca6-9e44-1cbc648a05fa",
     "StackId": "arn:aws:cloudformation:ap-south-1:026379630400:stack/LegalittDev-Compute-DevelopmentOnly/6a722080-d717-11f1-acc7-0affd88faab9",
     "StackName": "LegalittDev-Compute-DevelopmentOnly",
     "Description": null,
@@ -169,14 +169,14 @@
         },
         {
             "ParameterKey": "ApiImageTag",
-            "ParameterValue": "cf73089"
+            "ParameterValue": "c7eaa2a"
         },
         {
             "ParameterKey": "DatabaseInstanceClass",
             "ParameterValue": "db.t4g.micro"
         }
     ],
-    "CreationTime": "2026-11-11T07:04:10.179000+00:00",
+    "CreationTime": "2026-11-11T08:09:47.365000+00:00",
     "ExecutionStatus": "AVAILABLE",
     "Status": "CREATE_COMPLETE",
     "StatusReason": null,

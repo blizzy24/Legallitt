@@ -3,7 +3,7 @@
         {
             "StackId": "arn:aws:cloudformation:ap-south-1:026379630400:stack/LegalittDev-Compute-DevelopmentOnly/6a722080-d717-11f1-acc7-0affd88faab9",
             "StackName": "LegalittDev-Compute-DevelopmentOnly",
-            "ChangeSetId": "arn:aws:cloudformation:ap-south-1:026379630400:changeSet/reports-febdde6/ad32dacb-c3a9-4ab1-8dca-5ee5fbbe8e9e",
+            "ChangeSetId": "arn:aws:cloudformation:ap-south-1:026379630400:changeSet/final-cf73089/53f55005-c428-438b-9497-be98392c1d70",
             "Description": "Legalitt DEVELOPMENT-ONLY compute (no NAT, no load balancer). Not for production.",
             "Parameters": [
                 {
@@ -73,7 +73,7 @@
                 },
                 {
                     "ParameterKey": "ApiImageTag",
-                    "ParameterValue": "febdde6"
+                    "ParameterValue": "cf73089"
                 },
                 {
                     "ParameterKey": "DatabaseInstanceClass",
@@ -81,7 +81,7 @@
                 }
             ],
             "CreationTime": "2026-11-02T23:44:59.761000+00:00",
-            "LastUpdatedTime": "2026-11-10T20:17:31.457000+00:00",
+            "LastUpdatedTime": "2026-11-11T07:04:55.259000+00:00",
             "RollbackConfiguration": {},
             "StackStatus": "UPDATE_COMPLETE",
             "DisableRollback": false,
@@ -121,7 +121,7 @@
                 },
                 {
                     "OutputKey": "OpsTaskDefinitionArn",
-                    "OutputValue": "arn:aws:ecs:ap-south-1:026379630400:task-definition/legalitt-dev-ops:32"
+                    "OutputValue": "arn:aws:ecs:ap-south-1:026379630400:task-definition/legalitt-dev-ops:36"
                 }
             ],
             "RoleARN": "arn:aws:iam::026379630400:role/cdk-hnb659fds-cfn-exec-role-026379630400-ap-south-1",
@@ -146,7 +146,7 @@
             "LastOperations": [
                 {
                     "OperationType": "UPDATE_STACK",
-                    "OperationId": "0cb65de6-157d-4704-85b4-d9fb58c5edfd"
+                    "OperationId": "836fa9ac-40dc-4ec2-866f-43bb279a0492"
                 }
             ]
         }
