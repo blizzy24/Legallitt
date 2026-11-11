@@ -84,7 +84,7 @@ function Card({
   );
 }
 
-export default function AdvocateVerifyReviewScreen() {
+function AdvocateVerifyReviewScreen() {
   const insets = useSafeAreaInsets();
   const d = AV_REVIEW;
   const [agreed, setAgreed] = useState(false);
@@ -478,3 +478,6 @@ const styles = StyleSheet.create({
     color: colors.textBody,
   },
 });
+import VerifyFlow from '../../../features/advocate-verification/VerifyFlow';
+import {DATA_SOURCE} from '../../../lib/data-source';
+export default function LiveVerifyScreen() { return DATA_SOURCE === 'api' ? <VerifyFlow/> : <AdvocateVerifyReviewScreen/>; }

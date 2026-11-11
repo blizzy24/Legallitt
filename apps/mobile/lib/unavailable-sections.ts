@@ -16,7 +16,7 @@ export function unavailableSection(name: string, params?: Readonly<Record<string
   if (route.startsWith('advocate/settings/')) return unavailable('Account Settings', copy.settings);
   if (route === 'advocate/reviews') return unavailable('Reviews');
   if (route === 'advocate/availability' || route.startsWith('advocate/calendar')) return unavailable('Calendar & Availability');
-  if (route.startsWith('advocate/verify/')) return unavailable('Advocate Verification');
+  if (route.startsWith('advocate/verify/')) return undefined; // D-35: advocate verification is API-backed.
   if (route.startsWith('advocate/documents/')) return unavailable('Documents');
   if (route.startsWith('advocate/') && !route.startsWith('advocate/notice/') && route !== 'advocate/notifications') return unavailable('Advocate Workspace');
   if (route === 'advocates/[id]' && typeof params?.caseId === 'string' && params.caseId) return undefined;

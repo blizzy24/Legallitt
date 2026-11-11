@@ -53,7 +53,7 @@ import {
 
 const ICONS = [IdCard, Award, Gavel, FileText];
 
-export default function AdvocateVerifyDocumentsScreen() {
+function AdvocateVerifyDocumentsScreen() {
   const insets = useSafeAreaInsets();
   const d = AV_DOCUMENTS;
 
@@ -503,3 +503,6 @@ const styles = StyleSheet.create({
     color: colors.textBody,
   },
 });
+import VerifyFlow from '../../../features/advocate-verification/VerifyFlow';
+import {DATA_SOURCE} from '../../../lib/data-source';
+export default function LiveVerifyScreen() { return DATA_SOURCE === 'api' ? <VerifyFlow/> : <AdvocateVerifyDocumentsScreen/>; }

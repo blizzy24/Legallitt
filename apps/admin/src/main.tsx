@@ -1,4 +1,5 @@
 import {AccountDeletions} from './account-deletions';
+import {AdvocateApprovals, AdvocateApprovalDetailPage} from './advocate-approvals';
 import {SupportInbox, SupportTicketDetail} from './support';
 import {NotificationsProvider, Notifications, NotificationBell} from './notifications';
 import { CaseDetail } from './case-detail';
@@ -47,7 +48,9 @@ function Shell() {
       {(['legal_advice','district_court','high_court','property_search','document_forensic','court_marriage'] as const).map(code=><NavLink key={code} to={`/services/${code}/cases`} onClick={()=>setDrawer(false)}><span aria-hidden="true">▤</span> {SERVICE_NAMES[code]}</NavLink>)}
       <NavLink to="/cancellations" onClick={()=>setDrawer(false)}><span aria-hidden="true">▤</span> Cancellations &amp; refunds</NavLink>
       <NavLink to="/support" onClick={()=>setDrawer(false)}><span aria-hidden="true">▤</span> Support inbox</NavLink>
-      <NavLink to="/account-deletions" onClick={()=>setDrawer(false)}><span aria-hidden="true">▤</span> Account deletions</NavLink></nav>
+      <NavLink to="/account-deletions" onClick={()=>setDrawer(false)}><span aria-hidden="true">▤</span> Account deletions</NavLink>
+
+      <NavLink to="/advocate-approvals" onClick={()=>setDrawer(false)}><span aria-hidden="true">▤</span> Advocate approvals</NavLink></nav>
       <div className="identity"><span>{user.name}</span><small>ADMIN</small><button onClick={logout}>Sign out</button></div>
     </aside>
     {drawer && <button className="scrim" aria-label="Close navigation" onClick={() => setDrawer(false)}/>}
@@ -60,6 +63,6 @@ function ServiceCases() {
 }
 createRoot(document.getElementById('root')!).render(<StrictMode><BrowserRouter><SessionProvider><NotificationsProvider><Routes>
   <Route path="/sign-in" element={<SignIn/>}/>
-  <Route element={<Shell/>}><Route path="/notifications" element={<Notifications/>}/><Route path="/cancellations" element={<Cancellations/>}/><Route path="/legal-notices" element={<Notices/>}/><Route path="/legal-notices/:id" element={<CaseDetail/>}/><Route path="/services/:service/cases" element={<ServiceCases/>}/><Route path="/services/:service/cases/:id" element={<CaseDetail/>}/><Route path="/support" element={<SupportInbox/>}/><Route path="/account-deletions" element={<AccountDeletions/>}/><Route path="/support/:id" element={<SupportTicketDetail/>}/></Route>
+  <Route element={<Shell/>}><Route path="/notifications" element={<Notifications/>}/><Route path="/cancellations" element={<Cancellations/>}/><Route path="/legal-notices" element={<Notices/>}/><Route path="/legal-notices/:id" element={<CaseDetail/>}/><Route path="/services/:service/cases" element={<ServiceCases/>}/><Route path="/services/:service/cases/:id" element={<CaseDetail/>}/><Route path="/support" element={<SupportInbox/>}/><Route path="/account-deletions" element={<AccountDeletions/>}/><Route path="/support/:id" element={<SupportTicketDetail/>}/><Route path="/advocate-approvals" element={<AdvocateApprovals/>}/><Route path="/advocate-approvals/:id" element={<AdvocateApprovalDetailPage/>}/></Route>
   <Route path="*" element={<Navigate to="/legal-notices" replace/>}/>
 </Routes></NotificationsProvider></SessionProvider></BrowserRouter></StrictMode>);

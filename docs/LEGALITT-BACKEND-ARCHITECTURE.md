@@ -1338,6 +1338,13 @@ CREATE TABLE client_profiles (
   gender TEXT,                   -- female | male | other | prefer_not_to_say
   city TEXT, state TEXT, country TEXT, updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+-- ---------- advocate verification (D-35, D-76..D-79) ----------
+CREATE TABLE advocate_verifications (
+  user_id UUID PRIMARY KEY REFERENCES users(id),
+  details JSONB NOT NULL DEFAULT '{}',   -- as entered; published to advocate_profiles on approval
+  submitted_at TIMESTAMPTZ, decided_at TIMESTAMPTZ, decided_by UUID REFERENCES users(id),
+  decision TEXT, decision_reason TEXT, updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
 -- ---------- account settings (D-20, D-22, D-24, D-27, D-68..D-75) ----------
 CREATE TABLE user_preferences (
   user_id UUID PRIMARY KEY REFERENCES users(id),

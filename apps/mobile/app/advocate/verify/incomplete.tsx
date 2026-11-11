@@ -39,7 +39,7 @@ import {
 //
 // STATIC, NOT WIRED: no upload, no progress, no draft being saved anywhere.
 
-export default function AdvocateVerifyIncompleteScreen() {
+function AdvocateVerifyIncompleteScreen() {
   const insets = useSafeAreaInsets();
   const d = AV_INCOMPLETE;
 
@@ -409,3 +409,6 @@ const styles = StyleSheet.create({
     color: '#4D463D',
   },
 });
+import VerifyFlow from '../../../features/advocate-verification/VerifyFlow';
+import {DATA_SOURCE} from '../../../lib/data-source';
+export default function LiveVerifyScreen() { return DATA_SOURCE === 'api' ? <VerifyFlow/> : <AdvocateVerifyIncompleteScreen/>; }

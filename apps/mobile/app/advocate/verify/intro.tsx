@@ -19,7 +19,7 @@ import { advVerifyIntro as t, colors, font, ink } from '../../../constants/theme
 // ⚠ The illustration frame is inset 16pt; every other block on the screen is on
 // the 20pt grid, and the stepper columns are on a 15pt inset. All three measured.
 
-export default function AdvocateVerifyIntroScreen() {
+function AdvocateVerifyIntroScreen() {
   const insets = useSafeAreaInsets();
   const d = AV_INTRO;
 
@@ -325,3 +325,6 @@ const styles = StyleSheet.create({
     color: colors.textBody,
   },
 });
+import VerifyFlow from '../../../features/advocate-verification/VerifyFlow';
+import {DATA_SOURCE} from '../../../lib/data-source';
+export default function LiveVerifyScreen() { return DATA_SOURCE === 'api' ? <VerifyFlow/> : <AdvocateVerifyIntroScreen/>; }

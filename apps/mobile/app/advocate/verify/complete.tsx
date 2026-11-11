@@ -29,7 +29,7 @@ import {
 // STATIC, NOT WIRED: nothing was verified, no badge is granted, and no
 // capability is unlocked by this screen.
 
-export default function AdvocateVerifyCompleteScreen() {
+function AdvocateVerifyCompleteScreen() {
   const insets = useSafeAreaInsets();
   const d = AV_COMPLETE;
 
@@ -405,3 +405,6 @@ const styles = StyleSheet.create({
     color: colors.textBody,
   },
 });
+import VerifyFlow from '../../../features/advocate-verification/VerifyFlow';
+import {DATA_SOURCE} from '../../../lib/data-source';
+export default function LiveVerifyScreen() { return DATA_SOURCE === 'api' ? <VerifyFlow/> : <AdvocateVerifyCompleteScreen/>; }

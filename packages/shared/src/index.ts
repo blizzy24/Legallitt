@@ -30,3 +30,4 @@ export * from './support';
 export * from './account-data';
 export * from './account';
 export * from './completion';
+export * from './advocate-verification';
