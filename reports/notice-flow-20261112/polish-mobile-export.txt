@@ -3,23 +3,9 @@ env: export LOCAL_API_PROXY_TARGET
 Expo Autolinking module resolution enabled
 Starting Metro Bundler
 
-| (node:41496) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (node:33568) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
 | (Use `node --trace-warnings ...` to show where the warning was created)
-| (node:41496) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
-| (Use `node --trace-warnings ...` to show where the warning was created)
-| (node:41496) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
-| (Use `node --trace-warnings ...` to show where the warning was created)
-| (node:41496) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
-| (Use `node --trace-warnings ...` to show where the warning was created)
-| (node:41496) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
-| (Use `node --trace-warnings ...` to show where the warning was created)
-| (node:41496) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
-| (Use `node --trace-warnings ...` to show where the warning was created)
-| (node:41496) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
-| (Use `node --trace-warnings ...` to show where the warning was created)
-| (node:41496) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
-| (Use `node --trace-warnings ...` to show where the warning was created)
-Web Bundled 5656ms node_modules\.pnpm\expo-router@57.0.21_d4d3468dbc9b324b440405f4eadac231\node_modules\expo-router\entry.js (3617 modules)
+Web Bundled 3707ms node_modules\.pnpm\expo-router@57.0.21_d4d3468dbc9b324b440405f4eadac231\node_modules\expo-router\entry.js (3617 modules)
 
 › Assets (69):
 ..\..\node_modules\.pnpm\@expo-google-fonts+inter@0.4.2\node_modules\@expo-google-fonts\inter\100Thin_Italic\Inter_100Thin_Italic.1b97f7df9b976cfe530c18c09598e6f6.ttf (347KB)
@@ -87,7 +73,7 @@ assets\onboarding-04.f748e78747ee5b775d6d238319b0565c.png (503KB)
 assets\onboarding-05.68f1fd535d9b13d298383f60b97fcbf2.png (672KB)
 
 › web bundles (2):
-_expo/static/js/web/entry-e1a46b9079bd34a3aea22b8c22b3982d.js (8.4MB)
+_expo/static/js/web/entry-d04c2c608968211168ba87fe2c4d4045.js (8.4MB)
 _expo/static/js/web/pdf-145b062310c8373b7f70cf1e219e288a.js (573KB)
 
 › Files (3):
