@@ -1,0 +1,55 @@
+{
+  "cases": [
+    {
+      "id": "d7c15112-96f6-457d-8a10-6726ee88168c",
+      "service": "property_search",
+      "speed": "ordinary",
+      "tag": "property_search-ordinary",
+      "paid": true
+    },
+    {
+      "id": "f7cbaaeb-ca29-4550-9318-306ef84db21e",
+      "service": "property_search",
+      "speed": "urgent",
+      "tag": "property_search-urgent",
+      "paid": true
+    },
+    {
+      "id": "03de1b18-dbee-433e-bf83-6a1f7e3a07ea",
+      "service": "document_forensic",
+      "speed": "ordinary",
+      "tag": "document_forensic-ordinary",
+      "paid": true
+    },
+    {
+      "id": "d6782d3b-0607-47ff-a207-ea9833b1ee26",
+      "service": "document_forensic",
+      "speed": "urgent",
+      "tag": "document_forensic-urgent",
+      "paid": true
+    }
+  ],
+  "results": [
+    {
+      "name": "property_search-ordinary intake persisted, exact quote paid, success and tracking",
+      "at": "2026-11-12T21:40:03.074Z"
+    },
+    {
+      "name": "property_search-urgent intake persisted, exact quote paid, success and tracking",
+      "at": "2026-11-12T21:40:36.865Z"
+    },
+    {
+      "name": "document_forensic-ordinary intake persisted, exact quote paid, success and tracking",
+      "at": "2026-11-12T21:41:04.239Z"
+    },
+    {
+      "name": "document_forensic-urgent intake persisted, exact quote paid, success and tracking",
+      "at": "2026-11-12T21:41:31.690Z"
+    }
+  ],
+  "last_check": {
+    "stage": "intakes",
+    "passed": true,
+    "at": "2026-11-12T21:41:31.691Z"
+  }
+}

@@ -167,6 +167,25 @@ async function main(){let browser;const pages={},api={},users={},errors=[];
    }
    for(const role of ['client','advocate'])for(const service of ['property_search','document_forensic']){await assert.rejects(api[role].request('/service-reports/settings/'+service),e=>e.status===403);await assert.rejects(api[role].request('/service-reports/settings/'+service,{}),e=>e.status===403);}pass('Workflow settings are admin-only');
   });
+  stage('save-race',async()=>{
+   state.save_races??=[];const p=await page('client');
+   for(const service of ['property_search','document_forensic']){
+    const created=await api.client.createCase({service_code:service});state.save_races.push({id:created.id,service});save();
+    const df=service==='document_forensic',label=df?'Instructions for the advocate':'Property Address',field=df?'instructions':'property_address',trigger=df?'Upload questioned document':'Upload property document';
+    await go(p,mobile+'/'+service.replaceAll('_','-')+(df?'/upload':'/request')+'?caseId='+created.id);
+    let release,intercepted;const ready=new Promise(resolve=>{intercepted=resolve;});
+    const handler=async request=>{if(request.method()==='GET'&&new URL(request.url()).pathname==='/api/v1/cases/'+created.id){const response=await fetch(request.url(),{headers:request.headers()}),body=await response.text();release=()=>request.respond({status:response.status,contentType:'application/json',headers:{'Access-Control-Allow-Origin':new URL(mobile).origin},body});intercepted();}else await request.continue();};
+    await p.setRequestInterception(true);p.on('request',handler);
+    try{
+     await chooseFile(p,trigger,await syntheticPdf('slow-upload-refresh'));await Promise.race([ready,delay(30000).then(()=>{throw Error('Upload did not refresh the case');})]);
+     const first='TEST ONLY: typed while the upload refresh was pending.';await fill(p,label,first);await release();
+     await p.waitForFunction(label=>[...document.querySelectorAll('[role="button"],button')].some(e=>e.textContent.trim()===label&&e.getAttribute('aria-disabled')!=='true'&&!e.disabled),{},trigger);
+     assert.equal(await p.$eval('[aria-label="'+label+'"]',e=>e.value),first,'Upload refresh preserves newer input');
+     p.off('request',handler);await p.setRequestInterception(false);
+     const final=first+' Further edits must use the same save queue.';await fill(p,label,final);await click(p,'Review request');await text(p,final);await p.reload({waitUntil:'networkidle0'});await text(p,final);assert.equal((await api.client.case(created.id)).details[field],final);await snap(p,service,'save-during-upload');pass(service+' delayed upload refresh preserves typing and subsequent saved edits');
+    }finally{p.off('request',handler);await p.setRequestInterception(false);}
+   }
+  });
   stage('legacy-payment',async()=>{
    state.legacy_pending??=[];
    for(const service of ['property_search','document_forensic']){
