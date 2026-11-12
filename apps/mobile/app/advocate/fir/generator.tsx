@@ -3,7 +3,7 @@ import { ArrowRight, CalendarDays, ChevronLeft, ChevronRight, FilePen, FolderOpe
 import { Fragment, useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { acceptedFirIdentity, answerText, FirDraftEditableSchema, firEditableContent, type FirDraftContext, firLetterStatement } from '@legalitt/shared';
+import { answerText, FirDraftEditableSchema, firEditableContent, type FirDraftContext, firLetterStatement } from '@legalitt/shared';
 
 import { shrinkToFit } from '../../../constants/textFit';
 import { FIR_GENERATOR as c } from '../../../data/advocateFir';
@@ -11,16 +11,16 @@ import { advFirGenerator as t, colors, font, ink, status } from '../../../consta
 import { backend } from '../../../lib/auth';
 import { backOr, useFirFlow } from '../../../features/fir/flow';
 import {
-  docSlot, firRoute, incidentDate, incidentTime, InlineError, MovedOn, StateCard, toCases, useAction, useAdvocateCaseId, useFirRecord, type FirDoc,
+  docSlot, draftListed, firRoute, incidentDate, incidentTime, InlineError, MovedOn, StateCard, toCases, useAction, useAdvocateCaseId, useFirRecord, withoutIdentity,
 } from '../../../features/fir/advocate/common';
 
 // FIR draft generator (design/217, flow A4), live in every data mode.
 // Everything is pre-filled from the client's filing. [DECIDE] Generate with AI is
 // disabled until FIR AI drafting (D-08) exists. Create Manually opens the proforma
 // (A5); edits to What Happened and Other Information are saved as the draft's
-// Statement of Facts first, so nothing typed here is lost.
+// Statement of Facts first, so nothing typed here is lost. No identity document is
+// listed or attached (ISHAAN-ANSWERS 2026-11-12 Q114).
 const EDITABLE = ['advocate_accepted', 'in_progress', 'changes_requested'];
-const LISTED = (d: FirDoc) => d.status === 'uploaded' && !['fir_draft', 'fir_police_receipt'].includes(d.kind);
 
 export default function AdvocateFirGeneratorScreen() {
   const insets = useSafeAreaInsets();
@@ -66,7 +66,7 @@ export default function AdvocateFirGeneratorScreen() {
     role: person.kind === 'complainant' ? c.people.complainantRole : person.kind === 'accused' ? c.people.accused : person.role?.trim() || c.people.witness,
     chip: person.kind === 'complainant' ? c.people.complainant : person.kind === 'accused' ? c.people.accused : c.people.witness,
   }));
-  const docs = useMemo(() => (rec.record?.documents ?? []).filter(LISTED), [rec.record]);
+  const docs = useMemo(() => (rec.record?.documents ?? []).filter(draftListed), [rec.record]);
   const slots = [...new Set(docs.map(docSlot).filter(Boolean))].join(', ');
   const changed = what.trim() !== seed.trim() || !!other.trim();
 
@@ -75,14 +75,10 @@ export default function AdvocateFirGeneratorScreen() {
     if (!changed) { router.push(firRoute(caseId, 'draft')); return; }
     const base = context.latest_content ? firEditableContent(context.latest_content) : context.initial_content;
     // A first version becomes the letter-style Statement of Facts (A5 section 6) around the advocate's edited text.
-    const draft = { ...base, statement_of_facts: context.latest_content ? [what.trim(), other.trim()].filter(Boolean).join('\n\n')
+    const text = { ...base, statement_of_facts: context.latest_content ? [what.trim(), other.trim()].filter(Boolean).join('\n\n')
       : firLetterStatement({ ...context.intake, incident: { ...context.intake.incident, description: what.trim(), additional: other.trim() } }) };
-    if (!context.latest_content) {
-      // A first version lists every upload and the accepted identity document, as the editor does.
-      const ids = docs.filter(d => acceptedFirIdentity(context.identity_policy, d));
-      draft.attachment_ids = docs.map(d => d.id);
-      if (!draft.identity_document_id && ids.length === 1) draft.identity_document_id = ids[0].id;
-    }
+    // A first version lists every upload, as the editor does; never an identity document.
+    const draft = withoutIdentity(context.latest_content ? text : { ...text, attachment_ids: docs.map(d => d.id) }, rec.record ? docs : null);
     const parsed = FirDraftEditableSchema.safeParse(draft);
     if (!parsed.success) throw new Error(parsed.error.issues.map(i => i.message).join('\n'));
     await backend.saveFirDraft(caseId, { base_draft_id: context.latest_draft_id, filing_hash: context.filing_hash, content: parsed.data });

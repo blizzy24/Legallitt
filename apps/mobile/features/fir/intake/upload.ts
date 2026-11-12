@@ -1,13 +1,13 @@
-// One-file upload for the FIR Step 4 slots (flow C6), including the Identity
-// Proof slot. Handles the slot's accepted types and size limit before anything
-// is sent, and passes the custom slot name or the identity's last four digits.
+// One-file upload for the FIR Step 4 slots (flow C6). Handles the slot's accepted
+// types and size limit before anything is sent, and passes the custom slot name.
+// FIR collects no identity proof (ISHAAN-ANSWERS 2026-11-12 Q114).
 import * as DocumentPicker from 'expo-document-picker';
 import {Platform} from 'react-native';
-import {documentMaxBytes, type ApiDocument, type IdentityUpload, type PresignInput} from '@legalitt/shared';
+import {documentMaxBytes, type ApiDocument, type PresignInput} from '@legalitt/shared';
 import {backend} from '../../../lib/auth';
 
-/** Documents as the API returns them for FIR (the shared type predates these columns). */
-export type FirDocument = ApiDocument & {slot_label?: string | null; identity_last4?: string | null};
+/** Documents as the API returns them for FIR (the shared type predates this column). */
+export type FirDocument = ApiDocument & {slot_label?: string | null};
 
 const BY_EXTENSION: Record<string, string> = {
   pdf: 'application/pdf', jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', mp4: 'video/mp4', mp3: 'audio/mpeg',
@@ -17,7 +17,7 @@ const LABELS: Record<string, string> = {
 };
 export const acceptLabel = (accept: readonly string[]) => accept.map(m => LABELS[m] ?? m).join(', ');
 
-// Same rule as the API: metadata never carries a full 12-digit identity number.
+// Same rule as the API: metadata never carries a full 12-digit ID number.
 const FULL_ID = /(?:^|[^\d])\d{4}[ -]?\d{4}[ -]?\d{4}(?!\d)/;
 function safeFilename(name: string, kind: string, ext: string) {
   let clean = name.replace(/[\x00-\x1f\x7f/\\]/g, '_').replace(/\.{2,}/g, '.').replace(/\$\{/g, '').trim();
@@ -31,8 +31,6 @@ export type UploadOptions = {
   kind: string;
   accept: readonly string[];
   slotLabel?: string;
-  identity?: IdentityUpload;
-  identityLast4?: string;
 };
 
 /** Lets the person choose one file and uploads it. Resolves null when they cancel. */
@@ -50,8 +48,6 @@ export async function pickAndUpload(o: UploadOptions): Promise<FirDocument | nul
     kind: o.kind,
     filename: safeFilename(file.name, o.kind, ext),
     mime: mime as PresignInput['mime'],
-    ...(o.identity ? {identity: o.identity} : {}),
-    ...(o.identityLast4 ? {identity_last4: o.identityLast4} : {}),
     ...(o.slotLabel ? {slot_label: o.slotLabel} : {}),
   });
   const webFile = (file as {file?: File}).file;

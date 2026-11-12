@@ -1,5 +1,5 @@
 import { router, useLocalSearchParams, type Href } from 'expo-router';
-import { ArrowRight, Check, ChevronLeft, Eye, FileText, IdCard, Image as ImageIcon, UserRound } from 'lucide-react-native';
+import { ArrowRight, Check, ChevronLeft, Eye, FileText, Image as ImageIcon, UserRound } from 'lucide-react-native';
 import { Fragment } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -9,7 +9,7 @@ import { FIR_DOCUMENTS as c } from '../../../data/advocateFir';
 import { advFirDocuments as t, colors, font, ink, status } from '../../../constants/theme';
 import { backOr, initials, useFirFlow, viewDocument } from '../../../features/fir/flow';
 import {
-  clientDocuments, docName, docPages, formatSize, incidentWhen, InlineError, intakeOf, isIdentity, joinDot, MovedOn,
+  clientDocuments, docName, docPages, formatSize, incidentWhen, InlineError, intakeOf, joinDot, MovedOn,
   peopleSummary, StateCard, toCases, useAction, useAdvocateCaseId, useFirRecord,
 } from '../../../features/fir/advocate/common';
 
@@ -78,7 +78,7 @@ export default function AdvocateFirDocumentsScreen() {
       </View>
       {!docs.length && <View style={[styles.card, styles.infoCard]}><Text style={styles.infoValue}>{c.documents.none}</Text></View>}
       {docs.map(row => {
-        const Icon = isIdentity(row) ? IdCard : row.mime_type.startsWith('image/') || row.mime_type.startsWith('video/') ? ImageIcon : FileText;
+        const Icon = row.mime_type.startsWith('image/') || row.mime_type.startsWith('video/') ? ImageIcon : FileText;
         return <View key={row.id} style={styles.doc}>
           <View style={styles.docIconBox}><Icon size={t.docIconGlyph} color={status.onRedContainer} /></View>
           <View style={styles.docText}>

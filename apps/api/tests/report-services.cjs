@@ -11,7 +11,10 @@ const {AdminCasesRepository}=require('../dist/src/admin-cases/admin-cases.reposi
 const {InAppNotifications}=require('../dist/src/notifications/in-app-notifications');
 const {SimulatedNotifications}=require('../dist/src/notifications/simulated-notifications');
 const {seedConfirmedPricing,seedProvisionalPricing}=require('../dist/prisma/seed-pricing');
-const {defaultAffidavitParagraphs,INDIA_JURISDICTIONS}=require('@legalitt/shared');
+const {defaultAffidavitParagraphs,INDIA_JURISDICTIONS,isServiceOffered}=require('@legalitt/shared');
+// Court Marriage is hidden (Q79/Q113): new cases are refused, so its dormant workflow
+// is still covered on directly seeded drafts (helpers/dormant-case.cjs).
+const {seedDormantCase,asIfOffered}=require('./helpers/dormant-case.cjs');
 const jurisdiction=(stateName,districtName)=>{const s=INDIA_JURISDICTIONS.find(s=>s.name===stateName),d=s.districts.find(d=>d.name===districtName);return {state_code:s.code,state:s.name,district_code:d.code,district:d.name};};
 const signature=[[{x:.1,y:.1},{x:.4,y:.8},{x:.8,y:.2}]];
 
@@ -43,14 +46,16 @@ test('Report services: provisional pricing, paid intake, assignment, advocate re
   const pdf=async()=>{const d=await PDFDocument.create();d.addPage();return d.save();};
   const upload=async(actor,caseId,kind,filename='TEST.pdf')=>{const ticket=await docs.presign(actor,{case_id:caseId,kind,filename,mime:'application/pdf'});
     objects.set(stagingKey(ticket.document.s3_key),await pdf());return docs.complete(actor,ticket.document.id);};
+  const draft=async code=>{const c=isServiceOffered(code)?await state.create(client,{service_code:code}):await seedDormantCase(db,client,code);ids.push(c.id);return c;};
   const paid=async(code)=>{
-    const c=await state.create(client,{service_code:code});ids.push(c.id);
+    const c=await draft(code);
     await reports.intake(client,c.id,intakes[code]);
     if(code!=='property_search')await assert.rejects(state.submitForPayment(client,c.id),{status:400},'required documents block submission');
     if(code==='document_forensic'){await upload(client,c.id,'questioned_document','Questioned.pdf');await upload(client,c.id,'reference_document','Reference.pdf');}
     if(code==='court_marriage'){await upload(client,c.id,'id_proof');await upload(client,c.id,'id_proof');}
     if(code==='property_search')await upload(client,c.id,'property_document','Sale_Deed.pdf');
-    await state.submitForPayment(client,c.id);
+    // A hidden service's dormant workflow is exercised as if re-enabled (its live refusal is in hidden-services.cjs).
+    if(isServiceOffered(code))await state.submitForPayment(client,c.id);else await asIfOffered(code,()=>state.submitForPayment(client,c.id));
     const q=await pay.quote(client,{case_id:c.id});assert.equal(q.status,'ready');assert.equal(q.breakdown.total_paise,totals[code]);
     await pay.intent(client,{case_id:c.id,purpose:'service_fee',quote_id:q.id},randomUUID());
     await state.assign(admin,c.id,{advocate_id:advocate.id});await state.transition(advocate,c.id,'advocate_accepted');
@@ -62,7 +67,9 @@ test('Report services: provisional pricing, paid intake, assignment, advocate re
     await t.test('provisional tariffs are unconfirmed and price as base + 25% platform + 18% GST',async()=>{
       const p=await reports.pricing('property_search');
       assert.equal(p.confirmed,false);assert.deepEqual(p.tiers.map(t=>[t.tier,t.total_paise]),[['ordinary','368603'],['urgent','589853']]);
-      assert.equal((await reports.pricing('court_marriage')).tiers[0].tier,null);
+      // Hidden service: no public price list. Its seeded tariff still prices dormant cases (paid('court_marriage')).
+      await assert.rejects(reports.pricing('court_marriage'),{status:404});
+      await assert.rejects(state.create(client,{service_code:'court_marriage'}),{status:400,message:"Court Marriage isn't offered right now."});
       await assert.rejects(reports.pricing('legal_notice'),{status:404});
     });
     await t.test('intake rules: client-only, draft-only, validated jurisdiction, no foreign kinds',async()=>{
@@ -78,10 +85,10 @@ test('Report services: provisional pricing, paid intake, assignment, advocate re
       assert.ok(!(await repo.read(admin,c.id)).documents.some(d=>d.id===pending.document.id),'unfinished content is not exposed to other members');
       await docs.delete(client,pending.document.id);
       assert.ok(!(await repo.read(client,c.id)).documents.some(d=>d.id===pending.document.id),'removed upload no longer blocks recovery');
-      const minor=await state.create(client,{service_code:'court_marriage'});ids.push(minor.id);
+      const minor=await draft('court_marriage');
       await reports.intake(client,minor.id,{details:{...intakes.court_marriage.details,party_two:{...intakes.court_marriage.details.party_two,date_of_birth:new Date().toISOString().slice(0,10)}}});
       await upload(client,minor.id,'id_proof');await upload(client,minor.id,'id_proof');
-      await assert.rejects(state.submitForPayment(client,minor.id),e=>e.status===400&&/at least 18/.test(e.message));
+      await assert.rejects(asIfOffered('court_marriage',()=>state.submitForPayment(client,minor.id)),e=>e.status===400&&/at least 18/.test(e.message));
     });
     await t.test('Property Search: advocate uploads the PDF and sends it straight to the client (design 211)',async()=>{
       const c=await paid('property_search');

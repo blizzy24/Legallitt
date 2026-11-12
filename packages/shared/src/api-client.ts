@@ -39,13 +39,12 @@ export class ApiClient {
   approveFirDraft(id: string, draft: string,token:import('./fir-lifecycle').FirLifecycleToken) {return this.request(`/fir/${id}/drafts/${draft}/approve`,token);}
   // docs/flows/FIR-DRAFT-FLOW.md: role-shaped view and the client / advocate / admin actions.
   firFlow(id:string){return this.request<import('./fir-flow').FirFlowView>(`/fir/${id}/flow`);}
+  /** Read-only: the promised turnaround (no police setting, Q119, Q120). */
   firSettings(){return this.request<import('./fir-flow').FirSettings>('/fir/settings');}
-  updateFirSettings(input:{police_submission_by_advocate:boolean}){return this.request<import('./fir-flow').FirSettings>('/fir/settings',input,'PATCH');}
   firClientApprove(id:string,draft_id:string){return this.request<import('./fir-flow').FirFlowView>(`/fir/${id}/client-approve`,{draft_id});}
   firClientChanges(id:string,input:{draft_id:string;sections:string[];comment:string;attachment_document_id?:string|null}){return this.request<import('./fir-flow').FirFlowView>(`/fir/${id}/client-changes`,input);}
   firReject(id:string,reason:string){return this.request<{rejected:true}>(`/fir/${id}/reject`,{reason});}
   firRemindClient(id:string){return this.request<import('./fir-flow').FirFlowView>(`/fir/${id}/remind-client`,{});}
-  firPoliceSubmission(id:string,input:{submitted_on:string;receipt_document_id:string}){return this.request<import('./fir-flow').FirFlowView>(`/fir/${id}/police-submission`,input);}
   reassignFir(id:string,input:import('./fir-lifecycle').FirLifecycleToken&{advocate_id:string;reason:string}){return this.request<import('./fir-lifecycle').FirLifecycleView>(`/fir/${id}/reassign`,input);}
   // D-12/D-13 cancellations and simulated refunds.
   caseCancellation(id: string) {return this.request<import('./cancellations').CaseCancellation>(`/cases/${encodeURIComponent(id)}/cancellation`);}

@@ -1,4 +1,4 @@
-import {acceptedFirIdentity,firIntakeErrors} from '@legalitt/shared';
+import {firIntakeErrors} from '@legalitt/shared';
 import {
   ChevronDown,
   ChevronUp,
@@ -16,7 +16,6 @@ import { shrinkToFit } from '../../constants/textFit';
 import { colors, firStep5 as t, font, ink } from '../../constants/theme';
 import { contactPhone, useFir } from '../../context/fir';
 import {designSubstitutions as copy} from '../../copy/substitutions';
-import {identityMask,identityTypeLabel,useFirIdentityPolicy} from '../../features/fir/IdentityEvidence';
 import {IntakeBoundary,IntakeStatus} from '../../features/fir/IntakeBoundary';
 import {formatSize} from '../../features/fir/flow';
 import {openDocument} from '../../features/fir/shared';
@@ -27,7 +26,8 @@ import {ContinueButton,InlineError} from '../../features/fir/intake/ui';
 // FIR step 5 — Review & Submit (design/46, flow C7). Each card's link edits that
 // step and Continue there comes straight back here (returnTo=review). Removed per
 // the flow: "Verified KYC", "Validated", "Legal Privilege Protected" and the
-// "SHA-256 Validated • End-to-End Encrypted" line.
+// "SHA-256 Validated • End-to-End Encrypted" line. No identity proof is collected
+// or listed (ISHAAN-ANSWERS 2026-11-12 Q114): only a primary document is needed.
 
 const TAGS: Record<string, { label: string; bg: string; text: string }> = {
   'application/pdf': { label: 'PDF', bg: t.pdfBg, text: t.pdfText },
@@ -48,15 +48,13 @@ function displayDate(value: string) {
 
 function FirStep5Screen() {
   const m = useFir(), { form } = m;
-  const docs = (m.record?.documents ?? []) as FirDocument[];
-  const identity = useFirIdentityPolicy();
+  const docs = ((m.record?.documents ?? []) as FirDocument[]).filter((d) => d.kind !== 'id_proof');
   const [expanded, setExpanded] = useState(false), [tried, setTried] = useState(false), [viewError, setViewError] = useState('');
 
   const issues = firIntakeErrors(form);
   const stepIssue = (step: 1 | 2 | 3) => Object.keys(issues).some((k) => firErrorStep(k) === step);
   const primaryOk = docs.some((d) => d.kind === 'fir_primary');
-  const idOk = docs.some((d) => d.kind === 'id_proof' && (!identity.policy || acceptedFirIdentity(identity.policy, d)));
-  const ready = !Object.keys(issues).length && primaryOk && idOk;
+  const ready = !Object.keys(issues).length && primaryOk;
   const edit = (step: number) => void m.go(step, { returnTo: 'review' });
   const proceed = () => { setTried(true); if (ready) void m.submit(); };
 
@@ -138,10 +136,10 @@ function FirStep5Screen() {
             <Text style={styles.label}>ATTACHED DOCUMENTS</Text>
             <Text style={styles.dossierText}>{plural(docs.length, 'File Attached', 'Files Attached')}</Text>
           </View>
-          {!docs.length ? <Text style={[styles.empty, styles.emptySpaced]}>No files yet. Tap Manage to upload your primary documents and identity proof.</Text> : null}
+          {!docs.length ? <Text style={[styles.empty, styles.emptySpaced]}>No files yet. Tap Manage to upload your primary documents.</Text> : null}
           {docs.map((d) => {
-            const isId = d.kind === 'id_proof', tag = TAGS[d.mime_type] ?? { label: 'DOC', bg: t.docBg, text: t.docText };
-            const name = isId ? [identityTypeLabel(identity.policy, d), identityMask(d)].filter(Boolean).join(' · ') : d.filename;
+            const tag = TAGS[d.mime_type] ?? { label: 'DOC', bg: t.docBg, text: t.docText };
+            const name = d.filename;
             return (
               <Pressable key={d.id} accessibilityRole="button" accessibilityLabel={`View ${name}`} onPress={() => { setViewError(''); void openDocument(d.id).catch(() => setViewError(`“${name}” couldn’t be opened. Check your connection and tap it again.`)); }} style={styles.file}>
                 <View style={[styles.tag, { backgroundColor: tag.bg }]}><Text style={[styles.tagText, { color: tag.text }]}>{tag.label}</Text></View>
@@ -152,8 +150,8 @@ function FirStep5Screen() {
           })}
         </View>
         <InlineError text={viewError} />
-        {!primaryOk || !idOk ? (
-          <InlineError text={`Still needed: ${[!primaryOk && 'a primary document', !idOk && 'your identity proof'].filter(Boolean).join(' and ')}. Tap Manage to upload.`} />
+        {!primaryOk ? (
+          <InlineError text="Still needed: a primary document. Tap Manage to upload." />
         ) : null}
       </Card>
 

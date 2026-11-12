@@ -9,6 +9,8 @@ export {message,when} from '../consultation/model';
 import {message} from '../consultation/model';
 export type ReportCase=ApiCase&{report:ReportState;client_name:string|null};
 export const reportPath=(service:ReportServiceCode,step:string,id?:string)=>({pathname:`${REPORT_SERVICE_CONFIG[service].clientPath}/${step}`,params:id?{caseId:id}:{}} as Href);
+/** Q3 payment success: the existing payment route with step=payment-success (no new route file). */
+export const reportSuccessPath=(service:ReportServiceCode,id:string)=>({pathname:`${REPORT_SERVICE_CONFIG[service].clientPath}/payment`,params:{caseId:id,step:'payment-success'}} as Href);
 export const advocateReportPath=(id:string,step='request')=>({pathname:'/advocate/service-report',params:{caseId:id,step}} as Href);
 export function useReport(id?:string,service?:ReportServiceCode){
  const {user,role}=useSession(),[record,setRecord]=useState<ReportCase>(),[form,setForm]=useState<Record<string,unknown>>({}),[tier,setTier]=useState<'ordinary'|'urgent'|null>(null),[loading,setLoading]=useState(!!id),[error,setError]=useState(''),[busy,setBusy]=useState(false),[saveState,setSaveState]=useState(''),[tick,setTick]=useState(0);

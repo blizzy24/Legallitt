@@ -1,10 +1,9 @@
 // C14 FIR Draft Approved (design/client/fir-draft/F9-draft-approved.png).
-// Who takes the draft to the police follows the one setting (flow C14 [DECIDE]):
-// advocate submits → Draft Authorization ✓ · Advocate Final Endorsement · Police
-// Station Submission (ticked, with the receipt, once the advocate records it);
-// client submits → the last two rows become "Download your approved draft" and
-// "Submit it at <police station>", and the notice says so. A case approved under
-// one setting keeps that path if the setting later changes.
+// The client always takes the approved draft to the police (ISHAAN-ANSWERS
+// 2026-11-12 Q119/Q120: the advocate's job ends at the draft; no police
+// submission by the advocate, no "within 24 hours"): Draft Authorization ✓ ·
+// Download your approved draft · Submit it at <police station>, and the notice
+// says the draft becomes an official FIR only when the SHO registers it.
 // Left out per flow C14 [REMOVE]: "Verification Confirmed", "recorded on the
 // ledger", "Signed & Certified", "E-SIGNED", "biometric sign-off", "affixing
 // statutory bar credentials", the online dot, and the verified tick unless the
@@ -15,12 +14,11 @@ import {ArrowRight,BadgeCheck,Check,CircleHelp,ClipboardList,Clock,Download,File
 import {useState} from 'react';
 import {Image,Pressable,ScrollView,StyleSheet,Text,View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import type {FirFlowView} from '@legalitt/shared';
 import FirResultHeader from '../../../components/FirResultHeader';
 import RequestIdCard from '../../../components/RequestIdCard';
 import {colors,font,ink} from '../../../constants/theme';
 import {advocatePortrait} from '../../../data/advocates';
-import {backOr,firHref,firPdfName,formatDate,formatSize,initials,useFirFlow,viewDocument} from '../flow';
+import {backOr,firHref,firPdfName,formatSize,initials,useFirFlow} from '../flow';
 import {downloadDocument} from './api';
 import {dayTime,errorText,goHome,hashRef} from './format';
 import {InlineError,LoadingState,StatePanel} from './ui';
@@ -29,8 +27,6 @@ import {firApproved as t,firInk} from './tokens';
 type Step={title:string;desc?:string;state:'done'|'active'|'pending';action?:{label:string;onPress():void}};
 
 const advocateName=(name:string)=>/^adv\.?\s/i.test(name)?name:`Adv. ${name}`;
-/** Whether the advocate takes this draft to the police (fixed at approval time). */
-const byAdvocate=(flow:FirFlowView)=>flow.status==='approved'||!!flow.police||(flow.status!=='completed'&&flow.settings.police_submission_by_advocate);
 
 export default function FirApprovedScreen(){
   const {caseId}=useLocalSearchParams<{caseId?:string}>();
@@ -57,24 +53,15 @@ export default function FirApprovedScreen(){
         :<StatePanel title="Your draft isn’t approved yet" body={`Request ${hashRef(flow.reference)} is ${flow.stage.client.status.toLowerCase()}.`} actions={[{label:'Track Request',onPress:()=>router.replace(firHref('status',flow.case_id)),primary:true}]}/>}
   </ScrollView></View>;
 
-  const advocate=flow.advocate,draft=flow.draft,police=flow.police;
+  const advocate=flow.advocate,draft=flow.draft;
   const portrait=advocatePortrait(advocate?.photo_key);
-  const advocateSubmits=byAdvocate(flow);
-  const station=flow.police_station;
-  const steps:Step[]=advocateSubmits?[
+  const station=flow.police_station?.trim()||null;
+  const steps:Step[]=[
     {title:'Draft Authorization',desc:'Completed by applicant',state:'done'},
-    {title:'Advocate Final Endorsement',desc:`${advocate?advocateName(advocate.name):'Your advocate'} is finalising your approved draft for submission.`,state:police?'done':'active'},
-    {title:'Police Station Submission',state:police?'done':'pending',
-      desc:police?`Submitted on ${formatDate(police.submitted_on)}`:station?`Formal registration at ${station}`:'Formal registration at your police station',
-      ...(police?{action:{label:'View receipt',onPress:()=>void open(()=>viewDocument(police.receipt.id),'The receipt couldn’t be opened.')}}:{})},
-  ]:[
-    {title:'Draft Authorization',desc:'Completed by applicant',state:'done'},
-    {title:'Download your approved draft',desc:'Use the download button above to save the PDF.',state:'active'},
+    {title:'Download your approved draft',desc:draft?'Use the download button above to save the PDF.':'Your approved draft will appear above once it’s ready to download.',state:'active'},
     {title:station?`Submit it at ${station}`:'Submit it at your police station',desc:'It becomes an official FIR once the Station House Officer (SHO) registers it.',state:'pending'},
   ];
-  const notice=advocateSubmits
-    ?'Approving this draft certifies your statement accuracy. Formal police registration will be carried out by your assigned advocate team within 24 hours.'
-    :`Approving this draft certifies your statement accuracy. You submit the approved draft at ${station??'your police station'} yourself; it becomes an official FIR only when the Station House Officer (SHO) registers it.`;
+  const notice=`Approving this draft certifies your statement accuracy. You submit the approved draft at ${station??'your police station'} yourself; it becomes an official FIR only when the Station House Officer (SHO) registers it.`;
   const name=draft?firPdfName(flow.reference,draft.version):'';
   const size=draft?formatSize(draft.document.size_bytes):'';
 

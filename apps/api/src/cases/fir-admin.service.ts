@@ -25,20 +25,20 @@ export class FirAdminService {
   return tx.firIdentityReturn.create({data:{case_id:id,submission_id:submissionId,document_id:doc.id,rejected_by:actor.id,purge_after:new Date(Date.now()+DOCUMENT_URL_SECONDS*1000)}});
  }
  async reject(actor:CaseActor,id:string,body:unknown){this.admin(actor);const input=parse(FirRejectSchema,body),db=await this.prisma.getClient();
+  // Q114: identity is not collected, so a return is always a draft correction with a reason.
+  if(input.identity_document_id)throw new BadRequestException('Identity documents aren’t collected for FIR Draft.');
+  const reason=input.draft_reason;if(!reason)throw new BadRequestException('Enter what the advocate must correct.');
   await db.$transaction(async tx=>{const c=await lockedCase(tx,actor,id,'fir_draft'),{life}=await ensureFirLifecycle(tx,c);checkFirToken(life,input);
    const sub=life.current_submission_id?await tx.firSubmission.findUnique({where:{id:life.current_submission_id}}):null;
    if(!sub||sub.state!=='pending'||c.sub_status!=='awaiting_admin_approval')throw new ConflictException('No current submission awaits review.');
-   if(input.identity_document_id)await this.invalidateIdentity(tx,actor,id,sub.id,input.identity_document_id);
-   await tx.firSubmission.update({where:{id:sub.id},data:{state:'returned',draft_reason:input.draft_reason??null,decided_by:actor.id,decided_at:new Date()}});
-   await tx.draftReview.create({data:{draft_id:sub.draft_id,reviewer_id:actor.id,reviewer_role:'admin',decision:input.draft_reason?'changes_requested':'identity_rejected',comment:input.draft_reason??'Unmasked Aadhaar; replacement required.'}});
+   await tx.firSubmission.update({where:{id:sub.id},data:{state:'returned',draft_reason:reason,decided_by:actor.id,decided_at:new Date()}});
+   await tx.draftReview.create({data:{draft_id:sub.draft_id,reviewer_id:actor.id,reviewer_role:'admin',decision:'changes_requested',comment:reason}});
    await tx.firLifecycle.update({where:{case_id:id},data:{revision:{increment:1}}});
    await writeFirReviewState(tx,actor,id,{status:'changes_requested',sub_status:await firCorrectionState(tx,id),updated_at:new Date()});
-   await this.event(tx,actor,id,'fir_admin_returned',{submission_id:sub.id,draft_id:sub.draft_id,version:sub.version,draft_reason:input.draft_reason??null,identity_rejected:!!input.identity_document_id});
-   if(input.draft_reason&&c.advocate_id)await this.notifications.send(tx,{user_id:c.advocate_id,case_id:id,kind:'fir_draft_returned',title:`FIR draft v${sub.version} returned`,body:input.draft_reason});
-   if(input.identity_document_id)await this.notifications.send(tx,{user_id:c.client_id,case_id:id,kind:'fir_identity_required',title:'Replace your identity document',body:'Full Aadhaar is not accepted. Upload the UIDAI masked version or another accepted identity document.'});
-   else await this.notifications.send(tx,{user_id:c.client_id,case_id:id,kind:'fir_revision_progress',title:'Your draft is being revised',body:'Your draft is being revised following our review. No action is needed from you.'});
+   await this.event(tx,actor,id,'fir_admin_returned',{submission_id:sub.id,draft_id:sub.draft_id,version:sub.version,draft_reason:reason,identity_rejected:false});
+   if(c.advocate_id)await this.notifications.send(tx,{user_id:c.advocate_id,case_id:id,kind:'fir_draft_returned',title:`FIR draft v${sub.version} returned`,body:reason});
+   await this.notifications.send(tx,{user_id:c.client_id,case_id:id,kind:'fir_revision_progress',title:'Your draft is being revised',body:'Your draft is being revised following our review. No action is needed from you.'});
   });
-  if(input.identity_document_id)await this.documents.purgeRejectedIdentity(input.identity_document_id);
   return this.read(actor,id);
  }
  async replaceIdentity(actor:CaseActor,id:string,body:unknown){if(actor.role!=='client')throw new ForbiddenException('Case client required');
@@ -101,9 +101,7 @@ export class FirAdminService {
    if(sub?.state==='approved'&&c.status!=='in_progress'&&sub.draft_id===draftId&&input.submission_id===sub.id)return c;
    checkFirToken(life,input);
    if(!sub||sub.state!=='pending'||sub.draft_id!==draftId||sub.assignment_id!==assignment?.id||c.sub_status!=='awaiting_admin_approval')throw new ConflictException('This is not the current submission. Reload.');
-   if(!sub.identity_checked_at||!sub.identity_document_id)throw new ConflictException('Review and accept the uploaded identity document first.');
-   await requireFirIdentity(tx,id,sub.identity_document_id);
-   if(await tx.firIdentityReturn.count({where:{case_id:id,state:{in:['replacement_required','review_pending']}}}))throw new ConflictException('Identity corrections remain outstanding.');
+   // Q114: no identity check; an older outstanding identity return blocks nothing.
    const doc=await tx.document.findFirst({where:{id:sub.document_id,case_id:id,status:'uploaded',kind:'fir_draft'}});if(!doc)throw new ConflictException('Submitted PDF unavailable.');
    const payment=await tx.payment.findFirst({where:{case_id:id,status:'captured',purpose:'service_fee'},include:{quote:true},orderBy:{captured_at:'asc'}});
    const breakdown=(payment?.quote?.snapshot as {breakdown?:{advocate_entitlement_paise?:string}}|undefined)?.breakdown;

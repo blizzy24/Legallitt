@@ -1,4 +1,4 @@
-import { firTurnaroundText, type FirSettings } from '@legalitt/shared';
+import { ApiError } from '@legalitt/shared';
 import { router, type Href } from 'expo-router';
 import { ArrowLeft, ArrowRight, Clock, FileText, Layers, Shield, SquarePen, Users, ZoomIn, type LucideIcon } from 'lucide-react-native';
 import { useCallback, useEffect, useState } from 'react';
@@ -6,6 +6,7 @@ import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { colors, firInfo as v, firLanding as l, font, ink } from '../../constants/theme';
+import type { FirTurnaround } from '../../features/fir/client/format';
 import { openFirDraftHref } from '../../features/fir/intake/draft';
 import { InlineError } from '../../features/fir/intake/ui';
 import { backend } from '../../lib/auth';
@@ -50,18 +51,31 @@ const STEPS = [
 // C2 — Why a proper FIR draft is important (design/41). That export is 226px wide
 // (0.58px per point), so its type sizes and insets could not be measured; the
 // structure and copy are as drawn, sizes are carried over from the landing page.
-// The turnaround comes from the FIR settings (flow [DECIDE]: one value, 24–48 h),
-// not the design's 12–24. The header shield is decorative, not a button.
+// The turnaround comes from the FIR policy (flow [DECIDE]: one value, 24–48 h),
+// not the design's 12–24. Only its turnaround is read: the police-submission
+// setting is retired (ISHAAN-ANSWERS 2026-11-12 Q119/Q120), and so is the
+// api-client's firSettings(). GET /fir/settings is read directly; when the API no
+// longer serves it (404) or sends no turnaround, the turnaround block is left out,
+// label and all (§1a), rather than showing a figure nobody set. Any other failure
+// says so next to the block, with Try again.
+// The header shield is decorative, not a button.
+const validTurnaround = (value: unknown): value is FirTurnaround => {
+  const t = (value as Partial<FirTurnaround> | null)?.turnaround;
+  return !!t && Number.isFinite(t.min_hours) && Number.isFinite(t.max_hours);
+};
+const turnaroundText = (s: FirTurnaround) => `${s.turnaround.min_hours}–${s.turnaround.max_hours} Hours`;
+
 export default function FirInfoScreen() {
   const insets = useSafeAreaInsets();
-  const [settings, setSettings] = useState<FirSettings | null>(null), [settingsError, setSettingsError] = useState(''), [loadingSettings, setLoadingSettings] = useState(true);
+  const [settings, setSettings] = useState<FirTurnaround | null>(null), [settingsError, setSettingsError] = useState(''), [loadingSettings, setLoadingSettings] = useState(true);
+  const [noTurnaround, setNoTurnaround] = useState(false);
   const [opening, setOpening] = useState(false), [openError, setOpenError] = useState('');
   const loadSettings = useCallback(() => {
     let alive = true;
-    setLoadingSettings(true); setSettingsError('');
-    backend.firSettings()
-      .then((value) => { if (alive) setSettings(value); })
-      .catch(() => { if (alive) setSettingsError('The turnaround time couldn’t be loaded.'); })
+    setLoadingSettings(true); setSettingsError(''); setNoTurnaround(false);
+    backend.request<unknown>('/fir/settings')
+      .then((value) => { if (!alive) return; if (validTurnaround(value)) setSettings(value); else setNoTurnaround(true); })
+      .catch((e) => { if (!alive) return; if (e instanceof ApiError && e.status === 404) setNoTurnaround(true); else setSettingsError('The turnaround time couldn’t be loaded.'); })
       .finally(() => { if (alive) setLoadingSettings(false); });
     return () => { alive = false; };
   }, []);
@@ -153,14 +167,14 @@ export default function FirInfoScreen() {
           </View>
         </View>
 
-        <View style={styles.turn}>
+        {noTurnaround ? null : <View style={styles.turn}>
           <View style={styles.turnLabelRow}>
             <Clock size={v.turnLabelSize + 3} color={colors.textBody} />
             <Text style={styles.turnLabel}>ESTIMATED TURNAROUND TIME</Text>
           </View>
           {settings ? (
             <View style={styles.turnValueRow}>
-              <Text style={styles.turnValue}>{firTurnaroundText(settings)}</Text>
+              <Text style={styles.turnValue}>{turnaroundText(settings)}</Text>
               <View style={styles.turnChip}>
                 <Text style={styles.turnChipText}>Standard Review</Text>
               </View>
@@ -181,7 +195,7 @@ export default function FirInfoScreen() {
           <Text style={styles.turnNote}>
             Estimated time for preparing the FIR draft after the required information has been received.
           </Text>
-        </View>
+        </View>}
 
         <Pressable
           accessibilityRole="button"

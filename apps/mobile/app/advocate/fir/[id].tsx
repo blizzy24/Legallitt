@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import {
-  CalendarDays, Check, ChevronLeft, Coins, Eye, FileText, Gavel, IdCard, Image as ImageIcon, Mail, MapPin,
+  CalendarDays, Check, ChevronLeft, Coins, Eye, FileText, Gavel, Image as ImageIcon, Mail, MapPin,
   Phone, Quote, Shield, ShieldCheck, TriangleAlert, UserRound, Wallet, X,
 } from 'lucide-react-native';
 import { useState } from 'react';
@@ -15,7 +15,7 @@ import { advFirRequest as t, colors, font, ink, status } from '../../../constant
 import { backend } from '../../../lib/auth';
 import { rupees, useFirFlow, viewDocument } from '../../../features/fir/flow';
 import {
-  clientDocuments, dayTime, docName, docType, firRoute, formatSize, incidentWhen, InlineError, intakeOf, isIdentity, joinDot,
+  clientDocuments, dayTime, docName, docType, firRoute, formatSize, incidentWhen, InlineError, intakeOf, joinDot,
   MovedOn, Sheet, SheetButton, StateCard, s as ui, toCases, useAction, useAdvocateCaseId, useFirRecord,
 } from '../../../features/fir/advocate/common';
 
@@ -121,7 +121,7 @@ export default function AdvocateFirRequestScreen() {
       </View>
       {!docs.length && <Text style={[styles.rowValue, { marginTop: 12, color: colors.textBody }]}>{c.documents.none}</Text>}
       {docs.map(d => {
-        const Icon = isIdentity(d) ? IdCard : d.mime_type.startsWith('image/') || d.mime_type.startsWith('video/') ? ImageIcon : FileText;
+        const Icon = d.mime_type.startsWith('image/') || d.mime_type.startsWith('video/') ? ImageIcon : FileText;
         return <View key={d.id} style={styles.docRow}>
           <View style={styles.docIconBox}><Icon size={t.docIconGlyph} color={colors.textPrimary} /></View>
           <View style={styles.docText}>

@@ -3,7 +3,9 @@ import {z} from 'zod';
 // docs/flows/FIR-DRAFT-FLOW.md. The C10 mapping below is the single source of
 // truth for the FIR state shown to client, advocate and admin.
 export const FIR_CLIENT_CHANGES = 'client_changes_requested';
-export const FIR_AWAITING_POLICE = 'awaiting_police_submission';
+// Q119, Q120 (docs/flows/ISHAAN-ANSWERS-2026-11-12.md): there is no police-submission
+// step. Client approval completes the case; migration 202611130010 completed the cases
+// that were left at 'approved' / 'awaiting_police_submission'.
 
 export const FIR_CLIENT_STAGES = ['Request Submitted', 'Information Review', 'Draft Preparation', 'Awaiting Your Approval', 'Draft Ready'] as const;
 export type FirAdvocateScreen = 'request' | 'documents' | 'draft' | 'status' | 'completed';
@@ -34,13 +36,13 @@ export function firStage(input: {status: string; sub_status?: string | null; adv
       return {client: client(3, 'Draft being prepared'), advocate: advocate('Draft Preparation', 'Continue Draft', 'draft'), admin: {label: 'Drafting'}};
     case 'changes_requested':
       if (sub === FIR_CLIENT_CHANGES) return {client: client(3, 'Draft being updated', 'Advocate is updating your draft'), advocate: advocate('Client Changes', 'Continue Draft', 'draft'), admin: {label: 'Client asked for changes'}};
-      if (sub === 'identity_replacement_required') return {client: client(3, 'Draft being prepared'), advocate: advocate('Identity Replacement', 'View Status', 'status'), admin: {label: 'Waiting for the client’s replacement ID'}};
-      if (sub === 'identity_review_pending') return {client: client(3, 'Draft being prepared'), advocate: advocate('Admin Returned', 'Continue Draft', 'draft'), admin: {label: 'Replacement ID awaits admin review'}};
-      if (sub === 'multiple_corrections_required') return {client: client(3, 'Draft being prepared'), advocate: advocate('Admin Returned', 'Continue Draft', 'draft'), admin: {label: 'Returned to advocate · identity correction outstanding'}};
+      // Q114: identity is no longer collected. Older identity-return sub-statuses
+      // (identity_replacement_required, identity_review_pending,
+      // multiple_corrections_required) block nothing and read as an ordinary return.
       return {client: client(3, 'Draft being prepared'), advocate: advocate('Admin Returned', 'Continue Draft', 'draft'), admin: {label: 'Returned to advocate'}};
     case 'client_review': return {client: client(4, 'Awaiting your approval', null, false, true), advocate: advocate('Waiting for Client', 'View Status', 'status'), admin: {label: 'Sent to client'}};
-    case 'approved': return {client: client(5, 'Approved', 'Police station submission by your advocate'), advocate: advocate('Client Approved', 'Mark Submitted', 'status'), admin: {label: 'Client approved · awaiting police submission'}};
-    case 'completed': return {client: client(5, 'Completed', null, true), advocate: advocate('Completed', 'View', 'completed'), admin: {label: 'Completed'}};
+    // Q119, Q120: 'approved' is no longer produced for FIR; any such case reads as completed.
+    case 'approved': case 'completed': return {client: client(5, 'Completed', null, true), advocate: advocate('Completed', 'View', 'completed'), admin: {label: 'Completed'}};
     case 'cancelled': case 'refunded': return {client: client(1, status === 'refunded' ? 'Cancelled and refunded' : 'Cancelled'), advocate: advocate('Cancelled', null, null), admin: {label: status === 'refunded' ? 'Cancelled · refunded' : 'Cancelled'}};
     default: return {client: client(1, 'Status unavailable'), advocate: advocate('Status unavailable', null, null), admin: {label: status}};
   }
@@ -67,12 +69,8 @@ export const FirClientChangesSchema = z.strictObject({
   attachment_document_id: z.uuid().nullable().optional(),
 });
 export const FirAdvocateRejectSchema = z.strictObject({reason: z.string().trim().min(1, 'Enter a reason').max(2000)});
-export const FirPoliceSubmissionSchema = z.strictObject({
-  submitted_on: z.iso.date(),
-  receipt_document_id: z.uuid(),
-});
-export const FirSettingsSchema = z.strictObject({police_submission_by_advocate: z.boolean()});
-export type FirSettings = {police_submission_by_advocate: boolean; turnaround: {min_hours: number; max_hours: number}};
+/** The promised turnaround, from the FIR policy. Nothing about the police: there is no police step (Q119, Q120). */
+export type FirSettings = {turnaround: {min_hours: number; max_hours: number}};
 export const firTurnaroundText = (s: Pick<FirSettings, 'turnaround'>) => `${s.turnaround.min_hours}–${s.turnaround.max_hours} Hours`;
 export const FIR_REMIND_HOURS = 24;
 
@@ -85,6 +83,7 @@ export const FIR_UPLOAD_SLOTS = [
 ] as const;
 export const FIR_CUSTOM_SLOT_KIND = 'fir_custom';
 export const FIR_CHANGE_ATTACHMENT_KIND = 'fir_change_attachment';
+/** Dormant (Q119, Q120): nobody can upload a police receipt any more, and stored ones are never shown to the client. */
 export const FIR_POLICE_RECEIPT_KIND = 'fir_police_receipt';
 export const FIR_CHANGE_ATTACHMENT_MAX_BYTES = 10_000_000;
 export const FIR_MEDIA_KINDS: Record<string, readonly string[]> = {fir_scene: ['video/mp4'], fir_other: ['audio/mpeg']};
@@ -134,7 +133,6 @@ export type FirFlowView = {
   /** Client: the latest admin-approved draft. Advocate/admin: the latest generated draft. */
   draft: {draft_id: string; version: number; document: FirFlowDocument; created_by: string; created_at: string; sections: number; files: number} | null;
   reviews: FirFlowReview[];
-  police: {submitted_on: string; receipt: FirFlowDocument; created_at: string} | null;
   remind: {allowed: boolean; next_at: string | null; last_at: string | null} | null;
   share_paise: string | null;
   events: FirFlowEvent[];

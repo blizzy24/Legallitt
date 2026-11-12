@@ -11,6 +11,8 @@
 // `title` is the full service name, printed on Home (design/11 + 12). All Services
 // (design/10) prints `shortTitle`.
 
+import { isServiceOffered, type ServiceCode } from '@legalitt/shared';
+
 export type ServiceId =
   | 'legal-advice'
   | 'legal-notice'
@@ -166,7 +168,9 @@ export const HOME_SERVICE_IDS: ServiceId[] = [
 /**
  * Order shown on the All Services screen (design/13, supersedes design/10).
  * D-05: Court Marriage is hidden from client entry points (no client design; not on
- * either drawn list). Its backend, admin handling and /court-marriage deep links stay.
+ * either drawn list). Q79/Q113 (12 Nov): it is not offered at all for now; the shared
+ * HIDDEN_SERVICES switch also filters it here, so it stays off even if re-listed.
+ * Its code and existing cases stay; /court-marriage takes no new requests.
  */
 export const ALL_SERVICE_IDS: ServiceId[] = [
   'legal-notice',
@@ -192,9 +196,27 @@ function byId(id: ServiceId): Service {
   return service;
 }
 
+/** The API service behind each catalogue entry (Cheque Bounce has none). */
+const SERVICE_CODE_BY_ID: Partial<Record<ServiceId, ServiceCode>> = {
+  'legal-advice': 'legal_advice',
+  'legal-notice': 'legal_notice',
+  'fir-draft': 'fir_draft',
+  'property-search': 'property_search',
+  'document-forensic': 'document_forensic',
+  'court-marriage': 'court_marriage',
+  'high-court-rep': 'high_court',
+  'district-court-rep': 'district_court',
+};
+
+/** Q79/Q113: a service in the shared HIDDEN_SERVICES switch is never listed or searchable. */
+export const isServiceIdOffered = (id: ServiceId) => {
+  const code = SERVICE_CODE_BY_ID[id];
+  return !code || isServiceOffered(code);
+};
+
 /** Services for a screen, in that screen's order and with its wording/icons. */
 export function servicesFor(screen: 'home' | 'all'): ResolvedService[] {
-  const ids = screen === 'home' ? HOME_SERVICE_IDS : ALL_SERVICE_IDS;
+  const ids = (screen === 'home' ? HOME_SERVICE_IDS : ALL_SERVICE_IDS).filter(isServiceIdOffered);
   return ids.map((id) => {
     const s = byId(id);
     return {

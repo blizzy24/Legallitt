@@ -58,9 +58,10 @@ test('FIR intake persists partial cases and parties atomically, with ownership a
    const keep=saved.details.people.slice(0,2);saved=await fir.intake(client,c.id,{...saved.details,people:keep,expected_updated_at:saved.updated_at.toISOString()});
    assert.deepEqual((await repo.read(client,c.id)).details.people.map(p=>p.id),keep.map(p=>p.id));assert.equal(await db.caseParty.count({where:{case_id:c.id}}),2);
   });
-  await t.test('submission requires classified identity evidence and locks further intake changes',async()=>{
-   assert.equal(await db.document.count({where:{case_id:c.id}}),0);await assert.rejects(sm.submitForPayment(client,c.id),{status:400});const id=await db.document.create({data:{case_id:c.id,owner_id:client.id,kind:'id_proof',filename:'TEST-identity.png',mime_type:'image/png',size_bytes:100n,status:'uploaded',s3_key:randomUUID()}});await assert.rejects(sm.submitForPayment(client,c.id),{status:400});await db.document.update({where:{id:id.id},data:{identity_evidence:{document_type:'voter_id',masked_copy:false,policy_version:1,declared_at:new Date().toISOString()}}});
-   await require('./helpers/fir.cjs').primary(db,c.id,client.id);await sm.submitForPayment(client,c.id);assert.equal((await repo.read(client,c.id)).status,'payment_pending');await assert.rejects(fir.intake(client,c.id,intake()),{status:409});
+  await t.test('submission requires a primary document, never an identity document (Q114), and locks further intake changes',async()=>{
+   assert.equal(await db.document.count({where:{case_id:c.id}}),0);await assert.rejects(sm.submitForPayment(client,c.id),e=>e.status===400&&/primary document/.test(e.message));
+   await require('./helpers/fir.cjs').primary(db,c.id,client.id);await sm.submitForPayment(client,c.id);assert.equal((await repo.read(client,c.id)).status,'payment_pending');
+   assert.equal(await db.document.count({where:{case_id:c.id,kind:'id_proof'}}),0);await assert.rejects(fir.intake(client,c.id,intake()),{status:409});
   });
  }finally{
   await db.document.deleteMany({where:{case_id:{in:ids}}});await db.caseParty.deleteMany({where:{case_id:{in:ids}}});await db.caseEvent.deleteMany({where:{case_id:{in:ids}}});await db.case.deleteMany({where:{id:{in:ids}}});await db.user.deleteMany({where:{id:{in:users.map(u=>u.id)}}});

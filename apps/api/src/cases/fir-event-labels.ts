@@ -7,7 +7,11 @@ export const FIR_EVENT_LABELS: Record<string, string> = {
   fir_client_changes_requested: 'Client requested changes', fir_client_reminded: 'Client reminded',
   // Team timelines only (A6 audit log); the client's own timeline leaves it out.
   fir_client_viewed: 'Client viewed the draft',
-  fir_police_submitted: 'Submitted to police', fir_advocate_reassigned: 'Advocate reassigned',
+  // History only: cases completed before the police step was removed (Q119, Q120).
+  fir_police_submitted: 'Submitted to police',
+  // Migration 202611130010: a case that waited for a police receipt completed on its client approval.
+  fir_completed_on_client_approval: 'Completed on client approval',
+  fir_advocate_reassigned: 'Advocate reassigned',
   fir_advocate_rejected: 'Advocate rejected · returned to admin', fir_released_to_client: 'Draft released to client · completed',
   fir_identity_reviewed: 'Identity document reviewed', fir_identity_replaced: 'Replacement identity uploaded',
   payment_captured: 'Payment received', case_cancelled: 'Request cancelled', refund_recorded: 'Refund recorded',

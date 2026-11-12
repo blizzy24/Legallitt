@@ -4,7 +4,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import PayHeader from './PayHeader';
 import { shrinkToFit } from '../constants/textFit';
-import type { CO_SUCCESS } from '../data/courier';
+import { CO_SUCCESS } from '../data/courier';
 import { courierSuccess as t, font, ink, status } from '../constants/theme';
 
 // The "Payment Successful" screen drawn after every Scan & Pay in the courier and
@@ -30,14 +30,38 @@ import { courierSuccess as t, font, ink, status } from '../constants/theme';
 //
 // Reused: components/PayHeader, the same header designs 28, 29 and 30 draw.
 //
-// STATIC, NOT WIRED: nothing was paid. The button advances.
+// Q3 (docs/flows/ISHAAN-ANSWERS-2026-11-12.md): the screen stays until the person
+// taps something. Two buttons: the drawn one ("Start Tracking", or 324's "View
+// Receipt") and Home under it. Nothing advances on a timer.
+//
+// The courier and court callers are fixture flows (nothing was paid). The
+// connected report and consultation flows pass real values via paymentSuccessCopy.
 export type PaymentSuccessCopy = typeof CO_SUCCESS;
+
+/** This payment's own copy on the drawn template (no ₹1377 / #PSR739482 / "forensic analysis"). */
+export function paymentSuccessCopy({ service, reference, total, submitted }: {
+  service: string;
+  reference: string;
+  /** Formatted amount; null when it is not known, so no empty amount is printed. */
+  total: string | null;
+  /** Replaces "Your <service> request has been submitted." */
+  submitted?: string;
+}): PaymentSuccessCopy {
+  return {
+    ...CO_SUCCESS,
+    refValue: reference.startsWith('#') ? reference : `#${reference}`,
+    successBody: total ? `Your payment of ${total} has been received.` : 'Your payment has been received.',
+    successBody2: submitted ?? `Your ${service} request has been submitted.`,
+  };
+}
 
 export default function PaymentSuccessScreen({
   d,
   ctaHref,
   tick = false,
   hero = false,
+  homeHref = '/(tabs)/home',
+  note,
 }: {
   d: PaymentSuccessCopy;
   /** Where the card's button goes. */
@@ -46,6 +70,10 @@ export default function PaymentSuccessScreen({
   tick?: boolean;
   /** The replacement design/298: a large disc on top, Request ID card below. */
   hero?: boolean;
+  /** Where Home goes: the client home unless the payer is an advocate. */
+  homeHref?: Href;
+  /** An honest label under the copy, e.g. a demo payment. */
+  note?: string;
 }) {
   const ref = (
     <View style={[styles.ref, hero && styles.refBelow]}>
@@ -92,6 +120,7 @@ export default function PaymentSuccessScreen({
             </View>
           </View>
           <Text style={[styles.body, styles.body2]}>{d.successBody2}</Text>
+          {note ? <Text style={[styles.body, styles.body2]}>{note}</Text> : null}
           <Pressable
             accessibilityRole="button"
             accessibilityLabel={d.cta}
@@ -102,6 +131,16 @@ export default function PaymentSuccessScreen({
               {d.cta}
             </Text>
             <ChevronRight size={t.btnGlyph} color={ink.onBrand} strokeWidth={2.4} />
+          </Pressable>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Home"
+            onPress={() => router.replace(homeHref)}
+            style={({ pressed }) => [styles.btn, styles.btnHome, pressed && styles.pressed]}
+          >
+            <Text style={[styles.btnText, styles.btnHomeText]} {...shrinkToFit(0.8)}>
+              Home
+            </Text>
           </Pressable>
         </View>
         {hero && ref}
@@ -195,4 +234,12 @@ const styles = StyleSheet.create({
     fontSize: t.btnSize,
     color: ink.onBrand,
   },
+  // Home: the same button, outlined, under the drawn one (Q3).
+  btnHome: {
+    marginTop: 8,
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: t.btnBg,
+  },
+  btnHomeText: { marginRight: 0, color: t.inkMuted },
 });

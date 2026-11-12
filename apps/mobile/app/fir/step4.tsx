@@ -1,4 +1,4 @@
-import {acceptedFirIdentity,FIR_CUSTOM_SLOT_KIND,FIR_UPLOAD_SLOTS} from '@legalitt/shared';
+import {FIR_CUSTOM_SLOT_KIND,FIR_UPLOAD_SLOTS} from '@legalitt/shared';
 import {
   Camera,
   Eye,
@@ -6,7 +6,6 @@ import {
   FileUp,
   FolderOpen,
   FolderPlus,
-  IdCard,
   ImagePlus,
   Images,
   MessageSquare,
@@ -27,7 +26,6 @@ import { shrinkToFit } from '../../constants/textFit';
 import { colors, firStep4 as t, font, ink } from '../../constants/theme';
 import {useFir} from '../../context/fir';
 import {designSubstitutions as copy} from '../../copy/substitutions';
-import {IdentityUpload,identityMask,identityTypeLabel,useFirIdentityPolicy} from '../../features/fir/IdentityEvidence';
 import {IntakeBoundary,IntakeStatus} from '../../features/fir/IntakeBoundary';
 import {formatSize} from '../../features/fir/flow';
 import {openDocument} from '../../features/fir/shared';
@@ -41,10 +39,12 @@ import { DATA_SOURCE } from '../../lib/data-source';
 // Removed per the flow: VERIFIED, SHA-256 / timestamp claims, the chain-of-custody
 // strip ("Compliant", "AES-256 Cipher") and the encrypted-session footer; the
 // subtitle drops only "verified" (copy[45].subtitle). The summary shows only the
-// file count and total size; file rows show the mask (IDs) and size, as drawn.
-// Identity Proof is slot 5 and uses the same card (flow [DECIDE]); custom
-// categories are named by the client. Continue always reads "Continue Draft",
-// also when opened from Review (Continue then returns there).
+// file count and total size; file rows show the size, as drawn.
+// No identity proof is collected (ISHAAN-ANSWERS 2026-11-12 Q114: no Aadhaar /
+// PAN at all), so Continue needs only a primary document and an older case's ID
+// upload is never listed. Custom categories follow the four slots (5, 6, …) and
+// are named by the client. Continue always reads "Continue Draft", also when
+// opened from Review (Continue then returns there).
 
 type SlotKind = (typeof FIR_UPLOAD_SLOTS)[number]['kind'];
 const SLOT_ART: Record<SlotKind, {icon: LucideIcon; description: string; action: string}> = {
@@ -60,15 +60,13 @@ const fileIcon = (mime: string): LucideIcon => mime === 'application/pdf' ? File
 
 /** Which card a stored document belongs to. Older "supporting_document" uploads sit in slot 4. */
 function slotOf(d: FirDocument): string {
-  if (d.kind === 'id_proof') return 'identity';
   if (d.kind === FIR_CUSTOM_SLOT_KIND) return `custom:${d.slot_label || 'Other category'}`;
   return FIR_UPLOAD_SLOTS.some((s) => s.kind === d.kind) ? d.kind : 'fir_other';
 }
 
 function FirStep4Screen() {
   const m = useFir();
-  const docs = (m.record?.documents ?? []) as FirDocument[];
-  const identity = useFirIdentityPolicy();
+  const docs = ((m.record?.documents ?? []) as FirDocument[]).filter((d) => d.kind !== 'id_proof');
   const [busySlot, setBusySlot] = useState<string | null>(null), [busyLabel, setBusyLabel] = useState(''), [slotErrors, setSlotErrors] = useState<Record<string, string>>({});
   const [deleting, setDeleting] = useState<FirDocument | null>(null);
   const [customNames, setCustomNames] = useState<string[]>([]), [naming, setNaming] = useState(false);
@@ -77,9 +75,7 @@ function FirStep4Screen() {
 
   const bySlot = (slot: string) => docs.filter((d) => slotOf(d) === slot);
   const customSlots = [...new Set([...docs.filter((d) => d.kind === FIR_CUSTOM_SLOT_KIND).map((d) => d.slot_label || 'Other category'), ...customNames])];
-  const identityDocs = bySlot('identity');
-  const acceptedIds = identity.policy ? identityDocs.filter((d) => acceptedFirIdentity(identity.policy!, d)) : [];
-  const primaryOk = bySlot('fir_primary').length > 0, identityOk = acceptedIds.length > 0;
+  const primaryOk = bySlot('fir_primary').length > 0;
   const totalBytes = docs.reduce((n, d) => n + Number(d.size_bytes ?? 0), 0);
 
   /** Runs one slot's upload / delete / view and keeps its error beside that slot. */
@@ -110,21 +106,18 @@ function FirStep4Screen() {
   };
   const cont = async () => {
     setTried(true);
-    if (!primaryOk || !identityOk) return;
+    if (!primaryOk) return;
     setContinuing(true);
     try { await m.next(4); } finally { setContinuing(false); }
   };
 
   const rows = (list: FirDocument[], slot: string) => list.map((d) => {
-    const isId = d.kind === 'id_proof', mask = isId ? identityMask(d) : null;
-    const name = isId ? identityTypeLabel(identity.policy, d) : d.filename;
-    const meta = [mask, formatSize(d.size_bytes)].filter(Boolean).join(' · ');
     return (
       <FileRow
         key={d.id}
-        icon={isId ? IdCard : fileIcon(d.mime_type)}
-        name={name}
-        meta={meta}
+        icon={fileIcon(d.mime_type)}
+        name={d.filename}
+        meta={formatSize(d.size_bytes)}
         disabled={!!busySlot}
         onView={() => void run(slot, () => openDocument(d.id), 'Opening the file…', false)}
         onRemove={() => setDeleting(d)}
@@ -166,24 +159,10 @@ function FirStep4Screen() {
         );
       })}
 
-      <Section icon={IdCard} number={5} title="Identity Proof (Aadhaar or other government ID)" description="Any one accepted ID. For Aadhaar, the masked copy only." state={{ text: 'Required', pill: true }}>
-        {rows(acceptedIds, 'identity')}
-        {identityDocs.some((d) => !acceptedIds.includes(d)) && identity.policy ? (
-          <>
-            {rows(identityDocs.filter((d) => !acceptedIds.includes(d)), 'identity')}
-            <InlineError text="This ID was uploaded without a document type, so it can’t be used. Delete it and upload it again below." />
-          </>
-        ) : null}
-        {tried && !identityOk ? <InlineError text="Upload your identity proof to continue." /> : null}
-        {busyLine('identity')}
-        <InlineError text={slotErrors.identity} />
-        {!identityOk ? <IdentityUpload state={identity} caseId={canUpload ? m.record!.id : ''} busy={busySlot === 'identity'} run={(fn) => run('identity', fn)} /> : null}
-      </Section>
-
       {customSlots.map((label, i) => {
         const key = `custom:${label}`, list = bySlot(key);
         return (
-          <Section key={key} icon={FolderPlus} number={6 + i} title={label} description="Your own category" state={list.length ? { text: files(list.length), pill: true } : { text: 'Optional', pill: false }}>
+          <Section key={key} icon={FolderPlus} number={FIR_UPLOAD_SLOTS.length + 1 + i} title={label} description="Your own category" state={list.length ? { text: files(list.length), pill: true } : { text: 'Optional', pill: false }}>
             {rows(list, key)}
             {busyLine(key)}
             <InlineError text={slotErrors[key]} />
@@ -214,8 +193,8 @@ function FirStep4Screen() {
         </View>
       </View>
 
-      {tried && (!primaryOk || !identityOk) ? (
-        <InlineError style={styles.blocked} text={`Before you continue, add ${[!primaryOk && 'a primary document', !identityOk && 'your identity proof'].filter(Boolean).join(' and ')}. The missing slots are marked above.`} />
+      {tried && !primaryOk ? (
+        <InlineError style={styles.blocked} text="Before you continue, add a primary document. The missing slot is marked above." />
       ) : null}
       <ContinueButton label="Continue Draft" busy={continuing} onPress={() => void cont()} style={styles.button} />
 
@@ -223,13 +202,13 @@ function FirStep4Screen() {
         visible={!!deleting}
         icon={Trash2}
         title="Delete this file?"
-        body={`“${deleting ? (deleting.kind === 'id_proof' ? identityTypeLabel(identity.policy, deleting) : deleting.filename) : ''}” will be removed from your request.`}
+        body={`“${deleting?.filename ?? ''}” will be removed from your request.`}
         confirmLabel="Delete"
         cancelLabel="Keep"
         onConfirm={() => void remove()}
         onCancel={() => setDeleting(null)}
       />
-      {naming ? <CustomSlotSheet existing={[...FIR_UPLOAD_SLOTS.map((s) => s.title), 'Identity Proof', ...customSlots]} onClose={() => setNaming(false)} onAdd={(label) => { setCustomNames((n) => [...n, label]); setNaming(false); }} /> : null}
+      {naming ? <CustomSlotSheet existing={[...FIR_UPLOAD_SLOTS.map((s) => s.title), ...customSlots]} onClose={() => setNaming(false)} onAdd={(label) => { setCustomNames((n) => [...n, label]); setNaming(false); }} /> : null}
     </FirShell>
   );
 }

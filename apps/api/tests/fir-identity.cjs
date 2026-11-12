@@ -1,49 +1,85 @@
+// Q114 (docs/flows/ISHAAN-ANSWERS-2026-11-12.md): FIR collects no Aadhaar / PAN or any
+// other identity document. New identity uploads are refused, nothing requires one, and
+// identity files stored on older cases stay stored but are shown only to the admin.
 const test=require('node:test'),assert=require('node:assert/strict'),{randomUUID}=require('node:crypto');
-const {FirIdentityPolicySchema,DocumentPresignSchema,acceptedFirIdentity,assembleFirDraft,firDraftProblems}=require('@legalitt/shared');
+const {DocumentPresignSchema,assembleFirDraft,firDraftProblems,firPdfSections}=require('@legalitt/shared');
 const {PrismaClient}=require('../dist/src/generated/prisma/client'),{PrismaPg}=require('@prisma/adapter-pg');
-const {DocumentService}=require('../dist/src/documents/document.service'),{FileInspector}=require('../dist/src/documents/file-inspector');
-const {firIdentityPolicy,requireFirIdentity}=require('../dist/src/documents/fir-identity');
-const fixture=require('./helpers/fir.cjs'),configured=require('../prisma/fir-identity-policy.json');
-const {renderFirPdf}=require('../dist/src/documents/fir-pdf');
-test('FIR policy accepts the four confirmed types and refuses full Aadhaar configuration or ID-number metadata',()=>{
- const policy=FirIdentityPolicySchema.parse(configured);assert.deepEqual(policy.accepted_documents.map(d=>d.code),['masked_aadhaar','passport','voter_id','driving_licence']);
- for(const type of policy.accepted_documents){const doc={kind:'id_proof',status:'uploaded',identity_evidence:{document_type:type.code,masked_copy:type.requires_masking,policy_version:policy.version,declared_at:new Date().toISOString()}};assert.ok(acceptedFirIdentity(policy,doc));assert.equal(acceptedFirIdentity(policy,{...doc,status:'pending'}),false);}
- assert.equal(FirIdentityPolicySchema.safeParse({...policy,accepted_documents:[{code:'full_aadhaar',label:'Aadhaar',requires_masking:false}]}).success,false);
- const input={case_id:randomUUID(),kind:'id_proof',filename:'Identity-proof.pdf',mime:'application/pdf',identity_last4:'4812',identity:{document_type:'passport',masked_copy:false,id_number:'TEST-NOT-A-REAL-NUMBER'}};
+const {DocumentService}=require('../dist/src/documents/document.service'),{CaseStateMachine}=require('../dist/src/cases/case-state-machine');
+const {CaseRepository}=require('../dist/src/cases/case-repository'),{AdminCaseDetailRepository}=require('../dist/src/admin-cases/admin-case-detail');
+const {FirService}=require('../dist/src/cases/fir.service');
+const {renderFirPdf}=require('../dist/src/documents/fir-pdf'),{readPdfText}=require('./helpers/pdf-text.cjs');
+const fixture=require('./helpers/fir.cjs');
+const REFUSED=/Identity documents aren’t collected for FIR Draft/;
+
+test('upload metadata still refuses full identity numbers',()=>{
+ const input={case_id:randomUUID(),kind:'fir_primary',filename:'TEST 1234 5678 9012.pdf',mime:'application/pdf'};
  assert.equal(DocumentPresignSchema.safeParse(input).success,false);
 });
-test('FIR PDF refuses a missing identity selection even with otherwise complete draft facts',async()=>{
- const i=fixture.intake(),draft=assembleFirDraft(randomUUID(),i,'a'.repeat(64),new Date().toISOString(),fixture.editable(i),[]);
- assert.ok(firDraftProblems(draft).some(p=>p.field==='Identity document'));await assert.rejects(renderFirPdf('TEST',draft),/Select one accepted identity document/);
+test('a complete FIR draft needs no identity document; the PDF has no identity row and never lists an identity file',async()=>{
+ const i=fixture.intake(),editable=fixture.editable(i),identity=randomUUID(),evidence=randomUUID();
+ const none=assembleFirDraft(randomUUID(),i,'a'.repeat(64),new Date().toISOString(),editable,[]);
+ assert.deepEqual(firDraftProblems(none),[],'nothing asks for an identity document');
+ // An older draft selected and attached an identity file: it is neither printed nor listed.
+ const old=assembleFirDraft(randomUUID(),i,'a'.repeat(64),new Date().toISOString(),{...editable,identity_document_id:identity,attachment_ids:[identity,evidence]},
+  [{document_id:identity,filename:'Identity-proof-old.pdf',mime_type:'application/pdf'},{document_id:evidence,filename:'TEST-evidence.pdf',mime_type:'application/pdf'}]);
+ const lines=firPdfSections(old).flatMap(s=>s.lines);
+ assert.equal(lines.some(l=>/identity/i.test(l.label)||/identity/i.test(l.value)),false);
+ assert.deepEqual(firPdfSections(old).find(s=>s.title==='8. Attached Documents').lines,[{label:'Attachment 1',value:'TEST-evidence.pdf'}]);
+ const {text}=await readPdfText(await renderFirPdf('TEST',old));
+ for(const gone of ['Identity document','Official ID','Identity proof','Identity-proof-old.pdf'])assert.equal(text.includes(gone),false,gone);
+ assert.ok(text.includes('TEST-evidence.pdf'));
+ assert.ok((await readPdfText(await renderFirPdf('TEST',none))).text.includes('Attachments: None included'));
 });
-test('FIR identity uploads use database policy, neutral filenames and structural inspection only',{skip:!process.env.LEGALITT_TEST_DATABASE_URL},async t=>{
+
+test('FIR identity uploads are refused at every stage; old stored identity files are shown only to the admin',{skip:!process.env.LEGALITT_TEST_DATABASE_URL},async t=>{
  const db=new PrismaClient({adapter:new PrismaPg({connectionString:process.env.LEGALITT_TEST_DATABASE_URL})}),prisma={getClient:async()=>db};
- const user={id:randomUUID(),role:'client',cognito_sub:randomUUID(),full_name:'TEST identity privacy'},caseId=randomUUID(),old=await db.service.findUniqueOrThrow({where:{code:'fir_draft'}});
- const bytes=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVR4AWP4DwQACfsD/c8LaHIAAAAASUVORK5CYII=','base64');let inspections=0;
- const storage={upload:async key=>({url:'https://storage.invalid',fields:{key}}),head:async()=>({mime:'image/png',size:bytes.length}),read:async()=>bytes,promote:async()=>{},discard:async()=>{}};
- const inspector=new FileInspector(),docs=new DocumentService(prisma,storage,{inspect:async data=>{inspections++;const result=await inspector.inspect(data);assert.deepEqual(Object.keys(result).sort(),['mime','pageCount']);return result;}});
- const input={case_id:caseId,kind:'id_proof',filename:'TEST-PASSPORT-NUMBER-IN-ORIGINAL-NAME.png',mime:'image/png'};
+ const users=['client','advocate','admin','advocate'].map(role=>({id:randomUUID(),role,cognito_sub:randomUUID(),full_name:'TEST no identity '+role})),[client,advocate,admin,stranger]=users,ids=[];
+ const storage={upload:async key=>({url:'https://storage.invalid',fields:{key}}),download:async key=>'https://storage.invalid/'+key};
+ const docs=new DocumentService(prisma,storage,{inspect:async()=>({mime:'application/pdf',pageCount:1})}),state=new CaseStateMachine(prisma,{send:async()=>{}});
+ const repo=new CaseRepository(prisma),detail=new AdminCaseDetailRepository(prisma),fir=new FirService(prisma,docs,{send:async()=>{}});
+ const before={};for(const model of ['servicePricing','commissionRate','feePolicy','pageOveragePolicy'])before[model]=await db[model].findMany({select:{id:true}});
+ const identity={identity_last4:'4812',identity:{document_type:'passport',masked_copy:false}};
  try{
-  await db.user.create({data:user});await db.case.create({data:{id:caseId,service_code:'fir_draft',client_id:user.id,reference:'TEST-IDENTITY-'+randomUUID(),status:'draft',details:{}}});
-  await t.test('missing type, unknown type and unmasked Aadhaar are blocked before storage is allocated',async()=>{
-   for(const identity of [undefined,{document_type:'pan',masked_copy:false},{document_type:'full_aadhaar',masked_copy:true},{document_type:'masked_aadhaar',masked_copy:false}])await assert.rejects(docs.presign(user,{...input,...(identity?{identity}:{})}),{status:400});
-   assert.equal(await db.document.count({where:{case_id:caseId}}),0);
+  await db.user.createMany({data:users});await require('../dist/prisma/seed-pricing').seedConfirmedPricing(db);
+  const draft=await state.create(client,{service_code:'fir_draft'});ids.push(draft.id);await fir.intake(client,draft.id,fixture.intake());
+  await t.test('the client cannot upload an identity document, with or without identity details, and no row is created',async()=>{
+   for(const extra of [{},identity,{identity_last4:'4812'}])
+    await assert.rejects(docs.presign(client,{case_id:draft.id,kind:'id_proof',filename:'TEST.pdf',mime:'application/pdf',...extra}),e=>e.status===400&&REFUSED.test(e.message));
+   assert.equal(await db.document.count({where:{case_id:draft.id}}),0);
   });
-  let first;
-  await t.test('each accepted type completes without reading or storing any identity number',async()=>{
-   for(const type of configured.accepted_documents){const ticket=await docs.presign(user,{...input,identity_last4:'4812',identity:{document_type:type.code,masked_copy:type.requires_masking}});
-    assert.ok(!JSON.stringify(ticket).includes('PASSPORT-NUMBER'));assert.match(ticket.document.filename,/^Identity-proof-/);assert.equal(ticket.document.identity_evidence.document_type,type.code);
-    await assert.rejects(requireFirIdentity(db,caseId,ticket.document.id),{status:400});
-    const doc=await docs.complete(user,ticket.document.id);assert.equal(doc.page_count,1);assert.equal(doc.identity_evidence.policy_version,1);assert.ok(acceptedFirIdentity(configured,doc));await requireFirIdentity(db,caseId,doc.id);first??=doc;
-    const stored=await db.document.findUnique({where:{id:doc.id}});assert.equal(stored.filename.includes('PASSPORT-NUMBER'),false);assert.deepEqual(Object.keys(stored.identity_evidence).sort(),['declared_at','document_type','masked_copy','policy_version']);
-   }assert.equal(inspections,4);
+  await t.test('identity details on any other upload are refused too',async()=>{
+   for(const extra of [identity,{identity_last4:'4812'},{identity:identity.identity}])
+    await assert.rejects(docs.presign(client,{case_id:draft.id,kind:'fir_primary',filename:'TEST.pdf',mime:'application/pdf',...extra}),{status:400});
+   assert.equal(await db.document.count({where:{case_id:draft.id}}),0);
   });
-  await t.test('operator configuration changes take effect without code or migration, and missing config fails closed',async()=>{
-   const policy={...configured,version:2,accepted_documents:[{code:'synthetic_test_id',label:'Synthetic test ID',requires_masking:false}]};
-   await db.service.update({where:{code:'fir_draft'},data:{config:{...old.config,fir_identity_policy:policy}}});
-   await assert.rejects(requireFirIdentity(db,caseId,first.id),{status:400});
-   const ticket=await docs.presign(user,{...input,identity_last4:'4812',identity:{document_type:'synthetic_test_id',masked_copy:false}});assert.equal(ticket.document.identity_evidence.policy_version,2);
-   await db.service.update({where:{code:'fir_draft'},data:{config:{}}});await assert.rejects(firIdentityPolicy(db),{status:503});await assert.rejects(docs.presign(user,{...input,identity_last4:'4812',identity:{document_type:'passport',masked_copy:false}}),{status:503});
+  await t.test('submission needs a primary document and no identity document',async()=>{
+   await assert.rejects(state.submitForPayment(client,draft.id),e=>e.status===400&&/primary document/.test(e.message));
+   await fixture.primary(db,draft.id,client.id);assert.equal((await state.submitForPayment(client,draft.id)).status,'payment_pending');
   });
- }finally{await db.service.update({where:{code:'fir_draft'},data:{config:old.config}});await db.document.deleteMany({where:{case_id:caseId}});await db.case.delete({where:{id:caseId}});await db.user.delete({where:{id:user.id}});await db.$disconnect();}
+  // An older case, as it was stored before Q114: the client's identity file is still there.
+  const old=randomUUID();ids.push(old);
+  await db.case.create({data:{id:old,service_code:'fir_draft',client_id:client.id,advocate_id:advocate.id,reference:'TEST-OLD-IDENTITY-'+old.slice(0,8),status:'in_progress',details:{}}});
+  const stored=await db.document.create({data:{case_id:old,owner_id:client.id,kind:'id_proof',filename:`Identity-proof-${randomUUID()}.pdf`,mime_type:'application/pdf',size_bytes:100n,page_count:1,status:'uploaded',s3_key:randomUUID(),identity_last4:'4812',identity_evidence:{document_type:'passport',masked_copy:false,policy_version:1,declared_at:new Date().toISOString()}}});
+  const evidence=await fixture.primary(db,old,client.id);
+  await t.test('an old identity file stays stored but is listed only for the admin',async()=>{
+   for(const actor of [client,advocate]){const listed=(await repo.read(actor,old)).documents.map(d=>d.id);assert.ok(listed.includes(evidence.id),actor.role);assert.equal(listed.includes(stored.id),false,actor.role);}
+   assert.ok((await repo.read(admin,old)).documents.some(d=>d.id===stored.id));
+   assert.ok((await detail.get(admin,old)).documents.some(d=>d.id===stored.id),'the admin case document list is unchanged');
+   assert.equal((await db.document.findUniqueOrThrow({where:{id:stored.id}})).status,'uploaded','never deleted');
+  });
+  await t.test('the advocate cannot open it; the admin can',async()=>{
+   await assert.rejects(docs.url(advocate,stored.id),{status:404});await assert.rejects(docs.url(stranger,stored.id),{status:404});
+   assert.ok((await docs.url(admin,stored.id)).url);assert.ok((await docs.url(advocate,evidence.id)).url);
+  });
+  await t.test('nobody can add an identity document to an older case either',async()=>{
+   await assert.rejects(docs.presign(advocate,{case_id:old,kind:'id_proof',filename:'TEST.pdf',mime:'application/pdf'}),e=>e.status===400&&REFUSED.test(e.message));
+   await assert.rejects(docs.presign(client,{case_id:old,kind:'id_proof',filename:'TEST.pdf',mime:'application/pdf',...identity}),e=>e.status===400&&REFUSED.test(e.message));
+   await assert.rejects(docs.presign(stranger,{case_id:old,kind:'id_proof',filename:'TEST.pdf',mime:'application/pdf'}),{status:404});
+   assert.equal(await db.document.count({where:{case_id:old,kind:'id_proof'}}),1);
+  });
+ }finally{
+  await db.caseEvent.deleteMany({where:{case_id:{in:ids}}});await db.document.deleteMany({where:{case_id:{in:ids}}});await db.caseParty.deleteMany({where:{case_id:{in:ids}}});await db.case.deleteMany({where:{id:{in:ids}}});await db.user.deleteMany({where:{id:{in:users.map(u=>u.id)}}});
+  await db.servicePricing.deleteMany({where:{id:{notIn:before.servicePricing.map(x=>x.id)},fee_policy_id:{not:null}}});await db.feePolicy.deleteMany({where:{id:{notIn:before.feePolicy.map(x=>x.id)}}});await db.servicePricing.deleteMany({where:{id:{notIn:before.servicePricing.map(x=>x.id)}}});await db.commissionRate.deleteMany({where:{id:{notIn:before.commissionRate.map(x=>x.id)}}});await db.pageOveragePolicy.deleteMany({where:{id:{notIn:before.pageOveragePolicy.map(x=>x.id)}}});
+  await db.$disconnect();
+ }
 });

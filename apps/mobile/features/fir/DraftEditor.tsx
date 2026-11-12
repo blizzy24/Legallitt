@@ -1,6 +1,6 @@
 import {Fragment,useRef,useState,type ReactNode} from 'react';
 import {Pressable,Text,TextInput,View} from 'react-native';
-import {CirclePlus,Eye,FileText,IdCard,Image as ImageIcon,Paperclip,Pencil,Shield,UserRoundPlus,UsersRound,X} from 'lucide-react-native';
+import {CirclePlus,Eye,FileText,Image as ImageIcon,Paperclip,Pencil,Shield,UserRoundPlus,UsersRound,X} from 'lucide-react-native';
 import {answerText,firFiledValues,type Answer,type FirAccused,type FirDraftContext,type FirDraftEditable,type FirDraftOverrideKey,type FirWitness} from '@legalitt/shared';
 import {advFirDraft as t,colors,ink} from '../../constants/theme';
 import {shrinkToFit} from '../../constants/textFit';
@@ -8,13 +8,13 @@ import {FIR_DRAFT as copy} from '../../data/advocateFir';
 import {styles as d} from './draftStyles';
 import {LegalSectionSheet} from './advocate/LegalSectionSheet';
 import {bnsLabel} from './advocate/bns';
-import {docName,docSlot,formatSize,joinDot,isIdentity,type FirDoc} from './advocate/common';
+import {docName,docSlot,formatSize,joinDot,type FirDoc} from './advocate/common';
 
 // The FIR proforma (design/218, flow A5). Every field is editable: the filed values in
 // sections 1-3 open pre-filled from the client's filing, and an edit is saved as the
 // advocate's override (the filing itself stays on record). The police-only boxes stay
-// empty and the identity document stays masked. Optional fields left empty are not
-// printed in the PDF.
+// empty. Optional fields left empty are not printed in the PDF. There is no "Official
+// ID Document" row and no identity attachment (ISHAAN-ANSWERS 2026-11-12 Q114).
 const newId=()=>globalThis.crypto?.randomUUID?.()??'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.floor(Math.random()*16);return(c==='x'?r:(r&3)|8).toString(16);});
 export const DRAFT_SECTIONS=[copy.sections.station,copy.sections.complainant,copy.sections.when,copy.sections.accused,copy.sections.legal,copy.sections.facts,copy.sections.witnesses,copy.sections.attached];
 const NOT_FILED='Not provided by the client';
@@ -49,16 +49,13 @@ function AlsoPrinted({items}:{items:[string,string][]}){
   const seen=new Set<string>(),shown=items.filter(([,v])=>{const k=v.trim();if(!k||seen.has(k))return false;seen.add(k);return true;});
   return shown.length?<Text style={[d.hint,d.full]}>Also in the PDF: {shown.map(([label,v])=>`${label}: ${v.trim()}`).join(' · ')}</Text>:null;
 }
-function Toggle({label,on,onPress}:{label:string;on:boolean;onPress():void}){
-  return <Pressable accessibilityRole="checkbox" accessibilityState={{checked:on}} onPress={onPress} hitSlop={6} style={[d.pill,on&&d.pillOn]}><Text style={[d.pillText,on&&d.pillTextOn]}>{label}</Text></Pressable>;
-}
 function Add({label,icon,onPress,disabled}:{label:string;icon?:ReactNode;onPress():void;disabled?:boolean}){
   return <Pressable onPress={onPress} disabled={disabled} accessibilityRole="button" accessibilityState={{disabled:!!disabled}} style={({pressed})=>[d.add,pressed&&d.pressed,disabled&&{opacity:0.5}]}>{icon}<Text style={d.addText} {...shrinkToFit(0.8)}>{label}</Text></Pressable>;
 }
 
-export function DraftEditor({context,value,onChange,documents,identityDocs,identityLabel,viewDocument,attach,attaching,onSectionLayout}:{
+export function DraftEditor({context,value,onChange,documents,viewDocument,attach,attaching,onSectionLayout}:{
   context:FirDraftContext;value:FirDraftEditable;onChange(patch:Partial<FirDraftEditable>):void;
-  documents:FirDoc[];identityDocs:FirDoc[];identityLabel(doc:FirDoc):string;viewDocument(id:string):void;
+  documents:FirDoc[];viewDocument(id:string):void;
   attach():void;attaching:boolean;onSectionLayout?(n:number,y:number):void;
 }){
   const i=context.intake,filed=firFiledValues(i),ov=value.overrides??{};
@@ -69,7 +66,6 @@ export function DraftEditor({context,value,onChange,documents,identityDocs,ident
   const setWitnesses=(items:FirWitness[])=>onChange({witnesses:items.length?{status:'listed',items}:null});
   const editAccused=(id:string,patch:Partial<FirAccused>)=>setAccused(accused.map(a=>a.id===id?{...a,...patch}:a));
   const editWitness=(id:string,patch:Partial<FirWitness>)=>setWitnesses(witnesses.map(w=>w.id===id?{...w,...patch}:w));
-  const identity=identityDocs.find(doc=>doc.id===value.identity_document_id);
   const toggleDoc=(id:string)=>onChange({attachment_ids:value.attachment_ids.includes(id)?value.attachment_ids.filter(x=>x!==id):[...value.attachment_ids,id]});
   const words=value.statement_of_facts.trim().split(/\s+/).filter(Boolean).length;
   const included=value.attachment_ids.filter(id=>documents.some(doc=>doc.id===id)).length;
@@ -126,11 +122,6 @@ export function DraftEditor({context,value,onChange,documents,identityDocs,ident
         {filedEdit('address','Home & Present Address',{multiline:true})}
         {showResidence&&filedEdit('residence','Registered Residence',{multiline:true})}
         {filedEdit('phone_email','Phone & Email')}
-        <View style={d.full}><Text style={d.fieldLabel}>Official ID Document</Text>
-          <View style={[d.fieldBox,d.fieldBoxTint]}><IdCard size={t.tintBoxIcon} color={colors.brandDark} style={d.tintIcon}/>
-            <Text style={[d.fieldValue,!identity&&d.missingStrong]}>{identity?identityLabel(identity):identityDocs.length?'Choose the identity document below':'No accepted identity document was uploaded'}</Text></View>
-          {identityDocs.length>1&&<View style={d.pills}>{identityDocs.map(doc=><Toggle key={doc.id} label={identityLabel(doc)} on={doc.id===value.identity_document_id} onPress={()=>onChange({identity_document_id:doc.id,attachment_ids:[...new Set([...value.attachment_ids,doc.id])]})}/>)}</View>}
-        </View>
       </View>
     </Section>
 
@@ -196,13 +187,13 @@ export function DraftEditor({context,value,onChange,documents,identityDocs,ident
     <Section n={8} note={copy.attached.included(included)} noteGreen onLayout={layout(8)}>
       {!documents.length&&<Text style={[d.hint,{marginTop:t.docGap}]}>No documents on this request yet.</Text>}
       {documents.map((doc,n)=>{
-        const checked=value.attachment_ids.includes(doc.id),required=doc.id===value.identity_document_id;
-        const Icon=isIdentity(doc)?IdCard:doc.mime_type.startsWith('image/')?ImageIcon:FileText;
+        const checked=value.attachment_ids.includes(doc.id);
+        const Icon=doc.mime_type.startsWith('image/')?ImageIcon:FileText;
         return <View key={doc.id} style={[d.doc,n===0&&d.docFirst]}>
-          <Pressable accessibilityRole="checkbox" accessibilityLabel={`Include ${docName(doc)}`} accessibilityState={{checked,disabled:required}} disabled={required} hitSlop={8} onPress={()=>toggleDoc(doc.id)}
+          <Pressable accessibilityRole="checkbox" accessibilityLabel={`Include ${docName(doc)}`} accessibilityState={{checked}} hitSlop={8} onPress={()=>toggleDoc(doc.id)}
             style={[d.docCheck,!checked&&d.docCheckOff]}/>
           <Icon size={t.docIcon} color={colors.textPrimary} style={d.docIcon}/>
-          <View style={d.docText}><Text style={d.docName}>{docName(doc)}</Text><Text style={d.docSub}>{joinDot(required?'Required':'',docSlot(doc),formatSize(doc.size_bytes))}</Text></View>
+          <View style={d.docText}><Text style={d.docName}>{docName(doc)}</Text><Text style={d.docSub}>{joinDot(docSlot(doc),formatSize(doc.size_bytes))}</Text></View>
           <Pressable accessibilityRole="button" accessibilityLabel={`View ${docName(doc)}`} hitSlop={8} onPress={()=>viewDocument(doc.id)}><Eye size={t.docEye} color={colors.textPrimary}/></Pressable>
         </View>;
       })}

@@ -10,7 +10,6 @@ import FirTimeline, { type TimelineItem } from '../../components/FirTimeline';
 import RequestIdCard from '../../components/RequestIdCard';
 import { shrinkToFit } from '../../constants/textFit';
 import { colors, firResult as t, font, ink } from '../../constants/theme';
-import { ClientIdentityReplacement } from '../../features/fir/Lifecycle';
 import { backOr, copyText, firHref, formatDate, shareStatus, useFirFlow } from '../../features/fir/flow';
 import { goHome, isPaid, requestSubmittedAt, turnaroundLong } from '../../features/fir/client/format';
 import { InlineError, LoadingState, StatePanel } from '../../features/fir/client/ui';
@@ -21,6 +20,9 @@ import { InlineError, LoadingState, StatePanel } from '../../features/fir/client
 // "Verified Draft", "SMS &" in the notice, the 256-bit encrypted-folio / Bar
 // Council footer line, and "IPC" in the Information Review line (BNS only). The
 // drawn "securely logged … institutional intake" line drops only "securely".
+// Stage 5 never says the advocate submits to the police (ISHAAN-ANSWERS
+// 2026-11-12 Q119/Q120): the client files the approved draft, so no stage note is
+// shown there. No identity proof is collected any more (Q114).
 
 // Row copy as drawn on design/48 (IPC removed).
 const STAGE_COPY = [
@@ -30,19 +32,17 @@ const STAGE_COPY = [
   'Review and approve the draft before dispatch.',
   'You will receive instant access to download, print, and file the draft at the designated police station.',
 ];
-const IDENTITY_SUBS = new Set(['identity_replacement_required', 'identity_review_pending', 'multiple_corrections_required']);
-
 function timeline(flow: FirFlowView): TimelineItem[] {
-  const c = flow.stage.client;
+  const c = flow.stage.client, done = c.done || flow.status === 'approved';
   return FIR_CLIENT_STAGES.map((title, i) => {
     const n = i + 1;
-    const tone = n < c.stage || (n === c.stage && c.done) ? 'done' : n === c.stage ? 'active' : 'pending';
+    const tone = n < c.stage || (n === c.stage && done) ? 'done' : n === c.stage ? 'active' : 'pending';
     return {
       title,
       description: STAGE_COPY[i]!,
       tone,
       state: tone === 'done' ? 'Completed' : tone === 'active' ? 'Active' : n === FIR_CLIENT_STAGES.length ? 'Upcoming' : 'Pending',
-      footnote: tone === 'active' ? c.note : null,
+      footnote: tone === 'active' && n < FIR_CLIENT_STAGES.length ? c.note : null,
     };
   });
 }
@@ -58,9 +58,9 @@ function headline(flow: FirFlowView): [string, string] {
       ? ['Your FIR Draft Is Being Updated', 'Your advocate is updating your draft with the changes you asked for.']
       : ['Your FIR Draft Is Being Prepared', 'Your advocate is preparing your FIR draft.'];
     case 4: return ['Your FIR Draft Is Ready', 'Review your draft, then approve it or request changes.'];
-    case 5: return c.done
+    case 5: return c.done || flow.status === 'approved'
       ? ['FIR Draft Completed', 'Your approved FIR draft is ready to download.']
-      : ['FIR Draft Approved', c.note ? `You approved your draft. ${c.note}.` : 'You approved your draft.'];
+      : ['FIR Draft Approved', 'You approved your draft.'];
     default: return ['FIR Draft Request Submitted', 'Your request has been logged and is currently under institutional intake review.'];
   }
 }
@@ -154,12 +154,6 @@ export default function FirStatusScreen() {
             <Text style={styles.buttonLabel}>{action.label}</Text>
             <ArrowRight size={t.buttonIcon} color={ink.onBrand} style={styles.buttonIcon} />
           </Pressable>
-        )}
-
-        {paid && !!flow.sub_status && IDENTITY_SUBS.has(flow.sub_status) && (
-          <View style={styles.identity}>
-            <ClientIdentityReplacement caseId={flow.case_id} revision={`${flow.status}:${flow.sub_status}`} />
-          </View>
         )}
 
         <View style={styles.card}>
@@ -305,9 +299,6 @@ const styles = StyleSheet.create({
     borderRadius: t.cardRadius,
     backgroundColor: colors.card,
     padding: t.cardPad,
-  },
-  identity: {
-    marginTop: t.cardGap,
   },
   pillRow: {
     flexDirection: 'row',

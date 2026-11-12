@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } fro
 import { Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
-  acceptedFirIdentity, assembleFirDraft, firDraftProblems, FirDraftContentSchema, FirDraftEditableSchema, firEditableContent, firSectionLabel, maskedIdentity,
+  assembleFirDraft, firDraftProblems, FirDraftContentSchema, FirDraftEditableSchema, firEditableContent, firSectionLabel,
   type FirDraftContext, type FirDraftEditable,
 } from '@legalitt/shared';
 
@@ -17,8 +17,8 @@ import { DraftEditor, DRAFT_SECTIONS } from '../../../features/fir/DraftEditor';
 import { useFirFlow, viewDocument } from '../../../features/fir/flow';
 import { hashRef } from '../../../features/fir/client/format';
 import {
-  compactReviewRoute, dayTime, InlineError, MovedOn, openPdf, pickAndUpload, Sheet, SheetButton, StateCard, toCases,
-  useAction, useAdvocateCaseId, useAgo, useFirRecord, type FirDoc,
+  compactReviewRoute, dayTime, draftListed, InlineError, MovedOn, openPdf, pickAndUpload, Sheet, SheetButton, StateCard, toCases,
+  useAction, useAdvocateCaseId, useAgo, useFirRecord, withoutIdentity,
 } from '../../../features/fir/advocate/common';
 
 // FIR proforma editor (design/218, flow A5), live in every data mode.
@@ -27,9 +27,10 @@ import {
 // version in place (a first draft, or the first edit after a sent version, is saved
 // as a new version), and never touches a version that was sent. Send for Review
 // validates, saves if needed, sends and opens A6. Leaving with unsaved edits asks first.
+// No identity document (ISHAAN-ANSWERS 2026-11-12 Q114): identity proofs are never
+// listed or attached, and the draft never sets identity_document_id.
 const EDITABLE = ['advocate_accepted', 'in_progress', 'changes_requested'];
 const AUTOSAVE_MS = 30_000;
-const LISTED = (d: FirDoc) => d.status === 'uploaded' && !['fir_draft', 'fir_police_receipt'].includes(d.kind);
 const issueText = (path: PropertyKey[], message: string) => `${path.map(String).join(' › ').replaceAll('_', ' ')}: ${message}`;
 
 export default function AdvocateFirDraftScreen() {
@@ -78,26 +79,15 @@ export default function AdvocateFirDraftScreen() {
     return () => globalThis.removeEventListener('beforeunload', warn);
   }, [dirty]);
 
-  const documents = useMemo(() => (rec.record?.documents ?? []).filter(LISTED), [rec.record]);
-  const identityDocs = useMemo(() => context ? documents.filter(d => acceptedFirIdentity(context.identity_policy, d)) : [], [context, documents]);
+  const documents = useMemo(() => (rec.record?.documents ?? []).filter(draftListed), [rec.record]);
   // A first draft lists every upload; the advocate unticks what stays out of the dossier.
   useEffect(() => {
     if (seeded.current || !context || !rec.record) return;
     seeded.current = true;
     setValue(v => v && !v.attachment_ids.length ? { ...v, attachment_ids: documents.map(d => d.id) } : v);
   }, [context, rec.record, documents]);
-  // The single accepted identity upload is the draft's ID; it is always attached.
-  const effective = useMemo(() => {
-    if (!value) return null;
-    let v = value;
-    if (!v.identity_document_id && identityDocs.length === 1) v = { ...v, identity_document_id: identityDocs[0].id };
-    if (v.identity_document_id && !v.attachment_ids.includes(v.identity_document_id)) v = { ...v, attachment_ids: [...v.attachment_ids, v.identity_document_id] };
-    return v;
-  }, [value, identityDocs]);
-  const identityLabel = useCallback((doc: FirDoc) => {
-    const type = context?.identity_policy.accepted_documents.find(x => x.code === doc.identity_evidence?.document_type)?.label ?? 'Identity Proof';
-    return `${type} (${maskedIdentity(doc.identity_last4) ?? 'masked'})`;
-  }, [context]);
+  // An older draft's identity reference and any attachment no longer listed are dropped.
+  const effective = useMemo(() => !value ? null : withoutIdentity(value, rec.record ? documents : null), [value, rec.record, documents]);
 
   const edit = (patch: Partial<FirDraftEditable>) => { edits.current++; setValue(v => v ? { ...v, ...patch } : v); setDirty(true); setProblems([]); };
 
@@ -112,8 +102,6 @@ export default function AdvocateFirDraftScreen() {
       return doc ? [{ document_id: doc.id, filename: doc.filename, mime_type: doc.mime_type as 'application/pdf' }] : [];
     });
     if (attachments.length !== parsed.data.attachment_ids.length) out.push('Untick documents that are no longer available.');
-    if (parsed.data.identity_document_id && !docs.some(d => d.id === parsed.data.identity_document_id && acceptedFirIdentity(context.identity_policy, d)))
-      out.push('The selected identity document isn’t an accepted identity upload.');
     try { out.push(...firDraftProblems(assembleFirDraft(caseId, context.intake, context.filing_hash, new Date().toISOString(), parsed.data, attachments)).map(p => p.message)); }
     catch (e) { out.push(e instanceof Error ? e.message : 'The draft couldn’t be checked.'); }
     return out;
@@ -216,7 +204,7 @@ export default function AdvocateFirDraftScreen() {
     </View>}
     {context.legacy_content !== null && <StateCard title="The previous draft uses an older format" body="Review it against the form below; saving creates a new version in the current format." />}
     <View onLayout={e => { cardY.current = e.nativeEvent.layout.y; }}>
-      <DraftEditor context={context} value={effective!} onChange={edit} documents={documents} identityDocs={identityDocs} identityLabel={identityLabel}
+      <DraftEditor context={context} value={effective!} onChange={edit} documents={documents}
         viewDocument={id => void act.run(() => viewDocument(id))} attach={attach} attaching={attaching} onSectionLayout={(n, y) => { sectionY.current[n] = y; }} />
     </View>
     {!!problems.length && <View style={styles.problems} accessibilityLiveRegion="polite">

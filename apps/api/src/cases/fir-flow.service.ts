@@ -1,7 +1,7 @@
 import {BadRequestException,ConflictException,ForbiddenException,Inject,Injectable} from '@nestjs/common';
 import {
-  FIR_AWAITING_POLICE,FIR_CLIENT_CHANGES,FIR_CHANGE_ATTACHMENT_KIND,FIR_POLICE_RECEIPT_KIND,FIR_REMIND_HOURS,
-  FirAdvocateRejectSchema,FirClientApproveSchema,FirClientChangesSchema,FirPoliceSubmissionSchema,FirSettingsSchema,
+  FIR_CLIENT_CHANGES,FIR_CHANGE_ATTACHMENT_KIND,FIR_REMIND_HOURS,
+  FirAdvocateRejectSchema,FirClientApproveSchema,FirClientChangesSchema,
   firIntakeDetails,firSectionLabel,firStage,firContactMasked,maskEmail,maskMobile,
   type FirFlowDocument,type FirFlowEvent,type FirFlowReview,type FirFlowView,type FirSettings,
 } from '@legalitt/shared';
@@ -19,30 +19,24 @@ const doc=(d:Document):FirFlowDocument=>({id:d.id,filename:d.filename,mime_type:
 const hours=(h:number)=>h*3600_000;
 
 // The client never sees the admin step or internal review events (C10).
+// `fir_police_submitted` appears only on cases completed before the police step was
+// removed (Q119, Q120); `fir_completed_on_client_approval` marks the cases that
+// migration 202611130010 completed when the step went.
 const LABELS=FIR_EVENT_LABELS;
-const CLIENT_EVENTS=new Set(['payment_captured','fir_sent_to_client','fir_released_to_client','fir_client_approved','fir_client_changes_requested','fir_police_submitted','case_cancelled','refund_recorded']);
+const CLIENT_EVENTS=new Set(['payment_captured','fir_sent_to_client','fir_released_to_client','fir_client_approved','fir_client_changes_requested','fir_police_submitted','fir_completed_on_client_approval','case_cancelled','refund_recorded']);
+const CLIENT_LABELS:Record<string,string>={fir_sent_to_client:'Draft ready for your review',fir_released_to_client:'Draft ready',fir_client_approved:'You approved the draft',fir_client_changes_requested:'You requested changes',fir_completed_on_client_approval:'Completed'};
 const CLIENT_STATUS_LABELS:Record<string,string>={submitted:'Request submitted',assigned:'Drafting team assigned',completed:'Completed'};
 
 @Injectable()
 export class FirFlowService {
   constructor(private readonly prisma:PrismaService,@Inject(NOTIFICATIONS) private readonly notifications:NotificationsPort){}
 
+  /** The promised turnaround from the FIR policy. The police-submission setting is gone (Q119, Q120). */
   async settings(tx?:Tx):Promise<FirSettings>{
     const db=tx??await this.prisma.getClient();
-    const row=await db.firSettings.findUnique({where:{id:1}});
     const policy=await db.firPolicy.findFirst({where:{effective_from:{lte:new Date()}},orderBy:{version:'desc'}});
     const config=(policy?.config??{}) as {turnaround_warning_hours?:number;turnaround_overdue_hours?:number};
-    return {police_submission_by_advocate:row?.police_submission_by_advocate??true,
-      turnaround:{min_hours:config.turnaround_warning_hours??24,max_hours:config.turnaround_overdue_hours??48}};
-  }
-  async updateSettings(actor:CaseActor,body:unknown){
-    if(actor.role!=='admin')throw new ForbiddenException('Admin required');
-    const input=parse(FirSettingsSchema,body),db=await this.prisma.getClient();
-    await db.$transaction(async tx=>{
-      await tx.firSettings.upsert({where:{id:1},create:{id:1,...input,updated_by:actor.id},update:{...input,updated_by:actor.id,updated_at:new Date()}});
-      await tx.adminAction.create({data:{admin_id:actor.id,action:'fir_settings_updated',subject_type:'fir_settings',subject_id:actor.id,payload:input}});
-    });
-    return this.settings();
+    return {turnaround:{min_hours:config.turnaround_warning_hours??24,max_hours:config.turnaround_overdue_hours??48}};
   }
 
   async view(actor:CaseActor,id:string){const db=await this.prisma.getClient();return db.$transaction(async tx=>this.build(tx,actor,await lockedCase(tx,actor,id,'fir_draft')));}
@@ -73,8 +67,6 @@ export class FirFlowService {
       const a=attachments.find(x=>x.id===r.attachment_document_id);
       return {role,decision:r.decision==='approved'?'approved':role==='client'?'changes_requested':'returned',comment:r.comment,sections:r.sections,attachment:a&&a.status==='uploaded'?doc(a):null,version:r.draft_id_relation.version,created_at:r.created_at.toISOString()} as FirFlowReview;
     }).filter(r=>!isClient||r.role==='client');
-    const police=await tx.firPoliceSubmission.findUnique({where:{case_id:c.id}});
-    const receipt=police?await tx.document.findUnique({where:{id:police.receipt_document_id}}):null;
     let advocate:FirFlowView['advocate']=null;
     if(c.advocate_id&&!isClient||c.advocate_id&&!['assigned'].includes(c.status)){
       const u=await tx.user.findUnique({where:{id:c.advocate_id!},select:{id:true,full_name:true,advocate_profiles_user_id_relations:{select:{verification:true,photo_key:true}}}});
@@ -87,7 +79,7 @@ export class FirFlowService {
       if(isClient){
         if(e.type==='status_changed'&&CLIENT_STATUS_LABELS[e.to_status??''])return {type:e.type,label:CLIENT_STATUS_LABELS[e.to_status!],actor:actorRole,created_at:e.created_at.toISOString()};
         if(!CLIENT_EVENTS.has(e.type))return null;
-        return {type:e.type,label:e.type==='fir_sent_to_client'?'Draft ready for your review':e.type==='fir_released_to_client'?'Draft ready':e.type==='fir_client_approved'?'You approved the draft':e.type==='fir_client_changes_requested'?'You requested changes':LABELS[e.type],actor:actorRole,created_at:e.created_at.toISOString()};
+        return {type:e.type,label:CLIENT_LABELS[e.type]??LABELS[e.type],actor:actorRole,created_at:e.created_at.toISOString()};
       }
       // Why an advocate left a case, or was replaced, is for the admin only.
       const label=firTeamEventLabel(e,actor.role==='admin');
@@ -102,7 +94,6 @@ export class FirFlowService {
       // A2: masked for the assigned advocate until they accept.
       client:isClient?null:{name:intake.contact?.fullName||'Client',mobile:firContactMasked(actor.role,c.status)?maskMobile(intake.contact?.mobile):intake.contact?.mobile||null,email:firContactMasked(actor.role,c.status)?maskEmail(intake.contact?.email):intake.contact?.email||null,city:intake.place?.city||null},
       advocate,draft,reviews,
-      police:police&&receipt?{submitted_on:police.submitted_on.toISOString().slice(0,10),receipt:doc(receipt),created_at:police.created_at.toISOString()}:null,
       remind:actor.role==='advocate'&&c.status==='client_review'?{allowed:!next||next.getTime()<=Date.now(),next_at:next?.toISOString()??null,last_at:reminded?.toISOString()??null}:null,
       share_paise:isClient?null:breakdown?.advocate_entitlement_paise??null,
       events:events.map(eventView).filter((e):e is FirFlowEvent=>!!e)};
@@ -117,7 +108,9 @@ export class FirFlowService {
     for(const admin of await tx.user.findMany({where:{role:'admin',status:'active'},select:{id:true}}))await this.notifications.send(tx,{user_id:admin.id,case_id:caseId,kind,title,body});
   }
 
-  /** C11 Approve → C14. With advocate police submission on, the case waits for the receipt (A6). */
+  /** C11 Approve → C14. Client approval always completes the case (Q119, Q120): the
+   *  client takes the approved draft to the police station. The completing advocate's
+   *  entitlement was pinned at admin approval, so the wallet credits it now. */
   async clientApprove(actor:CaseActor,id:string,body:unknown){
     if(actor.role!=='client')throw new ForbiddenException('Case client required');
     const input=parse(FirClientApproveSchema,body),db=await this.prisma.getClient();
@@ -125,13 +118,12 @@ export class FirFlowService {
       const c=await lockedCase(tx,actor,id,'fir_draft');
       if(c.status!=='client_review')throw new ConflictException('This draft is not waiting for your approval.');
       await this.currentApproved(tx,c,input.draft_id);
-      const {police_submission_by_advocate:byAdvocate}=await this.settings(tx);
       await tx.draftReview.create({data:{draft_id:input.draft_id,reviewer_id:actor.id,reviewer_role:'client',decision:'approved'}});
-      const done=await writeFirFlowTransition(tx,actor,id,byAdvocate?{to:'approved',sub_status:FIR_AWAITING_POLICE}:{to:'completed',sub_status:null},'fir_client_approved',{draft_id:input.draft_id,police_submission_by_advocate:byAdvocate});
+      const done=await writeFirFlowTransition(tx,actor,id,{to:'completed',sub_status:null},'fir_client_approved',{draft_id:input.draft_id});
       await tx.firLifecycle.update({where:{case_id:id},data:{revision:{increment:1}}});
       if(c.advocate_id)await this.notifications.send(tx,{user_id:c.advocate_id,case_id:id,kind:'fir_client_approved',title:'Client approved the FIR draft',
-        body:byAdvocate?`${c.reference}: submit it at the police station and upload the receipt.`:`${c.reference} is complete.`});
-      await this.notifyAdmins(tx,id,'fir_client_approved','Client approved an FIR draft',c.reference);
+        body:`${c.reference} is complete.`});
+      await this.notifyAdmins(tx,id,'fir_client_approved','Client approved an FIR draft',`${c.reference} is complete.`);
       return this.build(tx,actor,done);
     });
   }
@@ -184,27 +176,6 @@ export class FirFlowService {
       await appendCaseEvent(tx,{case_id:id,type:'fir_client_reminded',actor_id:actor.id,actor_role:actor.role,payload:{}});
       await this.notifications.send(tx,{user_id:c.client_id,case_id:id,kind:'fir_review_reminder',title:'Your FIR draft is waiting for you',body:`${c.reference}: please approve it or request changes.`});
       return this.build(tx,actor,c);
-    });
-  }
-  /** C14 / A6 Mark as submitted to police, with the receipt or acknowledgement. */
-  async policeSubmitted(actor:CaseActor,id:string,body:unknown){
-    if(actor.role!=='advocate')throw new ForbiddenException('Assigned advocate required');
-    const input=parse(FirPoliceSubmissionSchema,body),db=await this.prisma.getClient();
-    const today=new Date(Date.now()+330*60000).toISOString().slice(0,10);
-    if(input.submitted_on>today)throw new BadRequestException('The submission date can’t be in the future.');
-    return db.$transaction(async tx=>{
-      const c=await lockedCase(tx,actor,id,'fir_draft');
-      if(c.status!=='approved')throw new ConflictException('The client hasn’t approved this draft yet.');
-      const approvedAt=(await tx.caseEvent.findFirst({where:{case_id:id,type:'fir_client_approved'},orderBy:{id:'desc'}}))?.created_at;
-      if(approvedAt&&input.submitted_on<new Date(approvedAt.getTime()+330*60000).toISOString().slice(0,10))throw new BadRequestException('The submission date can’t be before the client approved the draft.');
-      const receipt=await tx.document.findFirst({where:{id:input.receipt_document_id,case_id:id,owner_id:actor.id,kind:FIR_POLICE_RECEIPT_KIND,status:'uploaded'}});
-      if(!receipt)throw new BadRequestException('Upload the police receipt or acknowledgement first.');
-      await tx.firPoliceSubmission.create({data:{case_id:id,submitted_on:new Date(input.submitted_on+'T00:00:00Z'),receipt_document_id:receipt.id,marked_by:actor.id}});
-      const done=await writeFirFlowTransition(tx,actor,id,{to:'completed',sub_status:null},'fir_police_submitted',{submitted_on:input.submitted_on,receipt_document_id:receipt.id});
-      await tx.firLifecycle.update({where:{case_id:id},data:{revision:{increment:1}}});
-      await this.notifications.send(tx,{user_id:c.client_id,case_id:id,kind:'fir_police_submitted',title:'Your FIR was submitted to the police',body:`${c.reference}: the police receipt is in your documents.`});
-      await this.notifyAdmins(tx,id,'fir_police_submitted','FIR submitted to police',c.reference);
-      return this.build(tx,actor,done);
     });
   }
 }

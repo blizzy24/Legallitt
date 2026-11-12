@@ -10,7 +10,7 @@ import { ADV_NOTICE_PAYMENT } from '../../../../data/advocateSide';
 // courier's design/279, so it is the same PaymentSuccessScreen. As there, the
 // drawn ₹1377 / #PSR739482 / "forensic analysis" are replaced by this payment's
 // own amount, reference and service (the entering flow's, 17 Oct). Start
-// Tracking opens the shipment (design/199).
+// Tracking opens the shipment (design/199); Home (Q3) returns to the dashboard.
 export default function AdvocateNoticePaidScreen() {
   const model = useAdvocateNoticeModel('paid');
   const payment = model.data.ADV_NOTICE_PAYMENT;
@@ -20,5 +20,5 @@ export default function AdvocateNoticePaidScreen() {
     successBody: CO_SUCCESS.successBody.replace(/₹[\d,]+/, payment.total.replace(/\/-$/, '')),
     successBody2: CO_SUCCESS.successBody2.replace('forensic analysis', 'document delivery'),
   };
-  return <NoticeScreenFeedback error={model.error} state={model.screenState}><PaymentSuccessScreen d={d} ctaHref={model.courierHref()} /></NoticeScreenFeedback>;
+  return <NoticeScreenFeedback error={model.error} state={model.screenState}><PaymentSuccessScreen d={d} ctaHref={model.courierHref()} homeHref="/(advocate)/dashboard" /></NoticeScreenFeedback>;
 }

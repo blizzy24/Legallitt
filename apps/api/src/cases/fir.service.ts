@@ -2,15 +2,26 @@ import {FirAdminService} from './fir-admin.service';
 import {ensureFirLifecycle} from './fir-lifecycle';
 import {BadRequestException, ConflictException, ForbiddenException, Inject, Injectable} from '@nestjs/common';
 import {createHash,randomUUID} from 'node:crypto';
-import {maskedIdentity, FIR_AWAITING_APPROVAL, FirDraftSaveSchema, FirDraftContentSchema, FirIntakeSchema, FirIntakeSaveSchema, firIntakeDetails, assembleFirDraft, seedFirDraft, firDraftProblems, type FirDraftContent, type FirIntake} from '@legalitt/shared';
+import {FIR_AWAITING_APPROVAL, FirDraftSaveSchema, FirDraftContentSchema, FirIntakeSchema, FirIntakeSaveSchema, firIntakeDetails, assembleFirDraft, seedFirDraft, firDraftProblems, type FirDraftContent, type FirIntake} from '@legalitt/shared';
+import type {Prisma} from '../generated/prisma/client';
 import {PrismaService} from '../prisma.service';
 import {parse} from '../auth/auth.service';
 import {lockedCase,writeFirIntake,writeFirDraftSaved,writeFirSubmitted} from './case-state-machine';
 import type {CaseActor} from './case-access';
 import {DocumentService} from '../documents/document.service';
 import {renderFirPdf} from '../documents/fir-pdf';
-import {firIdentityPolicy,requireFirIdentity} from '../documents/fir-identity';
+import {firIdentityPolicy} from '../documents/fir-identity';
 import {NOTIFICATIONS, type NotificationsPort} from '../notifications/notifications.port';
+
+// Q114: FIR collects no identity document. Identity files stored on older cases stay
+// stored but are never selected, attached, printed or shown to the advocate.
+const identityFiles=async(tx:Prisma.TransactionClient,caseId:string)=>
+  new Set((await tx.document.findMany({where:{case_id:caseId,kind:'id_proof'},select:{id:true}})).map(d=>d.id));
+/** An older draft without its identity selection and without any identity file it attached. */
+async function withoutIdentity(tx:Prisma.TransactionClient,caseId:string,content:FirDraftContent):Promise<FirDraftContent>{
+  const hidden=await identityFiles(tx,caseId);
+  return {...content,complainant:{...content.complainant,identity_document_id:null},attachments:content.attachments.filter(a=>!hidden.has(a.document_id))};
+}
 
 @Injectable()
 export class FirService {
@@ -54,13 +65,13 @@ export class FirService {
       if(hash!==input.filing_hash)throw new ConflictException('The client filing changed. Reload and review the filing before saving this draft.');
       for(const [kind,group]of [['accused',input.content.accused],['witness',input.content.witnesses]]as const)
         if(group?.status==='listed')for(const person of group.items)if(person.source_party_id&&!intake.people.some(p=>p.id===person.source_party_id&&p.kind===kind))throw new BadRequestException('A source person must belong to this case’s filing');
-      const docs=await tx.document.findMany({where:{id:{in:input.content.attachment_ids},case_id:id,status:'uploaded',kind:{not:'fir_draft'}}});
-      if(docs.length!==input.content.attachment_ids.length)throw new BadRequestException('Choose uploaded evidence from this case');
-      if(input.content.identity_document_id){
-        if(!docs.some(d=>d.id===input.content.identity_document_id&&d.kind==='id_proof'))throw new BadRequestException('Include the selected identity document from this case in attachments');
-        await requireFirIdentity(tx,id,input.content.identity_document_id);
-      }
-      const content=assembleFirDraft(id,intake,hash,new Date().toISOString(),input.content,input.content.attachment_ids.map(docId=>{const d=docs.find(d=>d.id===docId)!;return {document_id:d.id,filename:d.filename,mime_type:d.mime_type as FirDraftContent['attachments'][number]['mime_type']};}));
+      // Q114: an identity selection or identity file carried over from an older version
+      // is dropped, not refused: the advocate never sees those files.
+      const hidden=await identityFiles(tx,id);
+      const editable={...input.content,identity_document_id:null,attachment_ids:input.content.attachment_ids.filter(docId=>!hidden.has(docId))};
+      const docs=await tx.document.findMany({where:{id:{in:editable.attachment_ids},case_id:id,status:'uploaded',kind:{notIn:['fir_draft','id_proof']}}});
+      if(docs.length!==editable.attachment_ids.length)throw new BadRequestException('Choose uploaded evidence from this case');
+      const content=assembleFirDraft(id,intake,hash,new Date().toISOString(),editable,editable.attachment_ids.map(docId=>{const d=docs.find(d=>d.id===docId)!;return {document_id:d.id,filename:d.filename,mime_type:d.mime_type as FirDraftContent['attachments'][number]['mime_type']};}));
       if(input.autosave&&last){
         // Same validation and filing-hash check as a version; no new version and no event.
         // Only a first save still moves the case advocate_accepted → in_progress (through the writer).
@@ -85,7 +96,9 @@ export class FirService {
       const parsed=FirDraftContentSchema.safeParse(latest?.content);
       const {assignment}=await ensureFirLifecycle(tx,record);
       const requires_new_version=!!latest&&(latest.created_by!==actor.id||!!await tx.firSubmission.findUnique({where:{draft_id:latest.id}})||!!assignment&&latest.created_at<assignment.assigned_at);
-      return {requires_new_version,identity_policy:await firIdentityPolicy(tx),intake,filing_hash:filingHash(intake),latest_draft_id:latest?.id??null,latest_version:latest?.version??0,latest_content:parsed.success?parsed.data:null,legacy_content:latest&&!parsed.success?latest.content:null,initial_content:seedFirDraft(intake,randomUUID)};
+      // `identity_policy` stays in the response for compatibility only; nothing requires identity (Q114).
+      // The saved version comes back without an older identity selection or identity attachment.
+      return {requires_new_version,identity_policy:await firIdentityPolicy(tx),intake,filing_hash:filingHash(intake),latest_draft_id:latest?.id??null,latest_version:latest?.version??0,latest_content:parsed.success?await withoutIdentity(tx,id,parsed.data):null,legacy_content:latest&&!parsed.success?latest.content:null,initial_content:seedFirDraft(intake,randomUUID)};
     });
   }
   private async renderable(actor:CaseActor,id:string,draftId:string){
@@ -98,29 +111,24 @@ export class FirService {
       if(!draft||draft.id!==draftId)throw new ConflictException('Refresh to use the latest draft');
       const result=FirDraftContentSchema.safeParse(draft.content);
       if(!result.success)throw new ConflictException('This legacy draft must be reviewed and saved in the structured editor before generation.');
-      const content=result.data,intake=parse(FirIntakeSchema,firIntakeDetails(record.details,await tx.caseParty.findMany({where:{case_id:id}})));
+      // Q114: a version saved before identity was removed renders without it.
+      const content=await withoutIdentity(tx,id,result.data),intake=parse(FirIntakeSchema,firIntakeDetails(record.details,await tx.caseParty.findMany({where:{case_id:id}})));
       if(content.filing_snapshot.intake_hash!==filingHash(intake))throw new ConflictException('Client filing changed. Save a reviewed draft with the current filing before generation.');
       const {assignment}=await ensureFirLifecycle(tx,record);
       if(draft.created_by!==record.advocate_id||!assignment||draft.created_at<assignment.assigned_at)throw new ConflictException('Save your own reviewed version before generation.');
-      if(await tx.firIdentityReturn.count({where:{case_id:id,state:{in:['replacement_required','review_pending']}}}))throw new ConflictException('Identity replacement must be accepted by admin before generation.');
       if(await tx.firSubmission.findUnique({where:{draft_id:draftId}}))throw new ConflictException('Save a new draft version after a return before generating or sending.');
       const issues=firDraftProblems(content);
       if(issues.length)throw new BadRequestException({message:issues.map(i=>i.message).join('\n'),issues});
-      await requireFirIdentity(tx,id,content.complainant.identity_document_id!);
-      // Flow A5 §2: the identity document is printed by type and masked number, never its file name.
-      const identityDoc=await tx.document.findUnique({where:{id:content.complainant.identity_document_id!}}),policy=await firIdentityPolicy(tx);
-      const typeLabel=policy.accepted_documents.find(t=>t.code===(identityDoc?.identity_evidence as {document_type?:string}|null)?.document_type)?.label;
-      const identity=[typeLabel,maskedIdentity(identityDoc?.identity_last4)&&`(${maskedIdentity(identityDoc?.identity_last4)})`].filter(Boolean).join(' ')||null;
       const ids=content.attachments.map(d=>d.document_id);
       const evidence=await tx.document.findMany({where:{id:{in:ids},case_id:id,status:'uploaded',kind:{not:'fir_draft'}}});
       if(evidence.length!==ids.length||content.attachments.some(a=>!evidence.some(d=>d.id===a.document_id&&d.filename===a.filename&&d.mime_type===a.mime_type)))throw new ConflictException('An attached document changed or is unavailable. Review attachments and save a new version.');
-      return {record,draft,content,identity};
+      return {record,draft,content};
     });
   }
   async preview(actor:CaseActor,id:string,draftId:string){
     const input=await this.renderable(actor,id,draftId);
     let bytes:Uint8Array;
-    try{bytes=await renderFirPdf(input.record.reference,input.content,{identity:input.identity});}
+    try{bytes=await renderFirPdf(input.record.reference,input.content);}
     catch(e){throw new BadRequestException(e instanceof Error?e.message:'Unable to render FIR PDF');}
     await this.renderable(actor,id,draftId);
     return {filename:`FIR_Draft_${input.record.reference}_v${input.draft.version}.pdf`,pdf_base64:Buffer.from(bytes).toString('base64')};
@@ -130,7 +138,7 @@ export class FirService {
     const db = await this.prisma.getClient();
     const input = await this.renderable(actor,id,draftId);
     let bytes: Uint8Array;
-    try {bytes = await renderFirPdf(input.record.reference,input.content,{identity:input.identity});}
+    try {bytes = await renderFirPdf(input.record.reference,input.content);}
     catch(e) {throw new BadRequestException(e instanceof Error ? e.message : 'Unable to render FIR PDF');}
     const ticket = await this.documents.presign(actor,{case_id:id,kind:'fir_draft',filename:`FIR_Draft_${input.record.reference}_v${input.draft.version}.pdf`,mime:'application/pdf'});
     try {
@@ -150,7 +158,6 @@ export class FirService {
           throw new ConflictException('The draft was auto-saved while sending. Review it and send again.');
         const currentIntake=parse(FirIntakeSchema,firIntakeDetails(record.details,await tx.caseParty.findMany({where:{case_id:id}})));
         if(filingHash(currentIntake)!==input.content.filing_snapshot.intake_hash)throw new ConflictException('Client filing changed during generation. Review and save again.');
-        await requireFirIdentity(tx,id,input.content.complainant.identity_document_id!);
         if (await tx.document.count({where:{id:{in:input.content.attachments.map(d=>d.document_id)},case_id:id,status:'uploaded'}}) !== input.content.attachments.length)
           throw new ConflictException('Evidence changed. Refresh and review before sending.');
         await tx.draft.update({where:{id:draftId},data:{document_id:ticket.document.id}});

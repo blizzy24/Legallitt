@@ -96,18 +96,16 @@ module.exports=function stages(stage,{api,users,page,state,save,pdf,png,kit,S,pa
     const stored=await people();assert.ok(stored.some(x=>x.kind==='accused'&&x.unknown)&&stored.some(x=>x.kind==='witness'&&x.key),'accused and key witness stored');pass('C5 Step 3 saved: complainant, unknown accused, key witness');
     const documents=async()=>(await api.client.request(`/cases/${state.case_id}`)).documents??[];
     if(!(await documents()).length){
-      // Continue is blocked until Primary Documents and Identity Proof exist, with the reason beside each slot.
-      await click(p,'Continue Draft');await text(p,'Add at least one primary document to continue.');await text(p,'Upload your identity proof to continue.');assert.ok(new URL(p.url()).pathname.endsWith('/fir/step4'));
-      await shot(p,S('C6-step4-documents-blocked'));pass('C6 Continue is blocked with the reason beside each missing slot');
+      // Continue is blocked until a Primary Document exists, with the reason beside that slot (no Identity Proof slot, Q114).
+      await click(p,'Continue Draft');await text(p,'Add at least one primary document to continue.');assert.ok(new URL(p.url()).pathname.endsWith('/fir/step4'));
+      await shot(p,S('C6-step4-documents-blocked'));pass('C6 Continue is blocked until a primary document is added');
       await chooseFile(p,'Upload Document',await pdf('TEST-ONLY-receipt.pdf',['TEST ONLY synthetic receipt','Not a real document.'],2),{nth:0});await text(p,'TEST-ONLY-receipt.pdf');
       await chooseFile(p,'Add photo or incident media',png('TEST-ONLY-scene.png'));await text(p,'TEST-ONLY-scene.png');
-      await click(p,'Passport');await fill(p,'Last four digits of the ID number','4812');
-      await chooseFile(p,'Upload Identity Proof',await pdf('TEST-ONLY-identity.pdf',['TEST ONLY synthetic identity page','No real identity number.']));await text(p,'XXXX-XXXX-4812');
-      await click(p,'Add Custom Category Slot');await fill(p,'Category name','Medical Reports');await click(p,'Add Category');await text(p,'6. Medical Reports');
+      await click(p,'Add Custom Category Slot');await fill(p,'Category name','Medical Reports');await click(p,'Add Category');await text(p,'5. Medical Reports');
     }
-    await text(p,'XXXX-XXXX-4812');await shot(p,S('C6-step4-documents'));
-    const docs=await documents();assert.ok(docs.some(d=>d.kind==='fir_primary')&&docs.some(d=>d.kind==='fir_scene'));assert.equal(docs.find(d=>d.kind==='id_proof').identity_last4,'4812');
-    pass('C6 uploads stored by slot; identity shown masked','XXXX-XXXX-4812');
+    for(const gone of ['Identity Proof','Last four digits'])assert.equal(await has(p,gone),false,'no '+gone);await shot(p,S('C6-step4-documents'));
+    const docs=await documents();assert.ok(docs.some(d=>d.kind==='fir_primary')&&docs.some(d=>d.kind==='fir_scene'));assert.equal(docs.some(d=>d.kind==='id_proof'),false);
+    pass('C6 uploads stored by slot; no Identity Proof slot');
     await click(p,'Continue Draft');await at(p,'/fir/step5');await text(p,'STEP 5 OF 5');await text(p,'1 Complainant (Self)');await text(p,'1 Suspect / Accused');await shot(p,S('C7-step5-review'));
     // Editing a step from Review returns straight to Review.
     await click(p,'Edit Incident Details');await at(p,'/fir/step2');await click(p,'Continue to People Involved');await at(p,'/fir/step5');pass('C7 editing from Review returns straight to Review');
@@ -154,7 +152,7 @@ module.exports=function stages(stage,{api,users,page,state,save,pdf,png,kit,S,pa
       const {maskMobile,maskEmail}=require('../../packages/shared/dist'),full=(await api.admin.firFlow(state.case_id)).client;
       await text(adv,maskMobile(full.mobile));assert.equal(await has(adv,full.mobile),false,'mobile masked');
       if(full.email){await text(adv,maskEmail(full.email));assert.equal(await has(adv,full.email),false,'email masked');}else assert.equal(await has(adv,'EMAIL'),false,'no email cell when the client gave none');
-      pass('A2 masks the client’s mobile and email before acceptance',[maskMobile(full.mobile),full.email?maskEmail(full.email):'(no email given)'].join(' · '));await text(adv,'Identity Proof (masked) XXXX-XXXX-4812');await shot(adv,S('A2-request-details'));
+      pass('A2 masks the client’s mobile and email before acceptance',[maskMobile(full.mobile),full.email?maskEmail(full.email):'(no email given)'].join(' · '));assert.equal(await has(adv,'Identity Proof'),false,'no identity row (Q114)');await shot(adv,S('A2-request-details'));
       assert.equal(await has(adv,'KYC Verified'),false);assert.equal(await has(adv,'Escrow'),false);
       // Reject needs a reason; the case returns to admin and the advocate goes back to the list.
       await click(adv,'Reject');await text(adv,'Reject this request?');await click(adv,'Reject Request');await delay(900);assert.equal((await status()).status,'assigned','a reason is required');
@@ -203,7 +201,7 @@ module.exports=function stages(stage,{api,users,page,state,save,pdf,png,kit,S,pa
     await saveDraft(adv);await shot(adv,S('A5-proforma-editor'));
     assert.equal((await status()).status,'in_progress');pass('A5 Save Draft stores a version; status Draft Preparation');
     await sendForReview(adv);
-    await text(adv,'SENT TO ADMIN');await text(adv,'Awaiting Legalitt approval');await text(adv,'Submitted to Police');await shot(adv,S('A6-review-waiting-admin-449'));
+    await text(adv,'SENT TO ADMIN');await text(adv,'Awaiting Legalitt approval');assert.equal(await has(adv,'Submitted to Police'),false,'no police row (Q119)');await shot(adv,S('A6-review-waiting-admin-449'));
     const sent=await status();assert.equal(sent.status,'in_progress');assert.equal(sent.sub,'awaiting_admin_approval');pass('A5 Send for Review → awaiting admin approval → A6');
     await click(adv,'Continue');await at(adv,'/matters');await text(adv,'Sent to Admin');await text(adv,'View Status');await shot(adv,S('A1-cases-list-sent-to-admin'));
     await clickCard(adv,state.reference,'View Status');await at(adv,'/advocate/fir/review');await text(adv,'SENT TO ADMIN');await delay(1200);await shot(adv,S('A6-review-waiting-admin-219'));
@@ -218,7 +216,8 @@ module.exports=function stages(stage,{api,users,page,state,save,pdf,png,kit,S,pa
       await go(a,`${adminWeb}/services/fir_draft/cases/${state.case_id}`);await text(a,'Awaiting admin approval');await text(a,'Submitted draft · v');
       await shot(a,S('ADMIN-approval-queue'),{width:1440});
       await ensureIdentityAccepted(a);
-      await a.click('fieldset input[type="checkbox"]');await a.type('#fir-reason','TEST ONLY: add the exact time of the call to the statement.');await shot(a,S('ADMIN-return-for-correction'),{width:1440});
+      // A return is always a draft correction with a reason (no identity returns, Q114).
+      await a.type('#fir-reason','TEST ONLY: add the exact time of the call to the statement.');await shot(a,S('ADMIN-return-for-correction'),{width:1440});
       await click(a,'Return for correction');await text(a,'Returned to advocate');pass('admin §3.3 Return to advocate needs a reason');
     }
     assert.equal((await api.client.firFlow(state.case_id)).reviews.length,0,'client never sees the admin step');assert.equal((await api.client.firFlow(state.case_id)).stage.client.stage,3);
@@ -288,109 +287,43 @@ module.exports=function stages(stage,{api,users,page,state,save,pdf,png,kit,S,pa
     if((await caseStatus()).status==='client_review'){
       await go(p,`${mobile}/fir/ready?caseId=${state.case_id}`);await text(p,'Your FIR Draft Is Ready');
       await click(p,'Approve');await text(p,'Approve this FIR draft?');await text(p,'Your advocate will be notified.');await shot(p,S('C11-approve-confirm'));
-      await click(p,'Approve');await at(p,'/fir/approved');await text(p,'FIR Draft Approved Successfully');await delay(1000);await shot(p,S('C14-F9-draft-approved'));
-      const now=await caseStatus();assert.equal(now.status,'approved');assert.equal(now.sub,'awaiting_police_submission');pass('C11 Approve → C14; with the setting on the case waits for police submission');
+      await click(p,'Approve');await at(p,'/fir/approved');await text(p,'FIR Draft Approved Successfully');
+      // Q119/Q120: the client submits the approved draft at the station; nothing promises the advocate will.
+      await text(p,'Download your approved draft');await text(p,'Submit it at Vijay Nagar');
+      for(const gone of ['within 24 hours','carried out by your assigned advocate','Police Station Submission'])assert.equal(await has(p,gone),false,'no '+gone);
+      await delay(800);await shot(p,S('C14-F9-draft-approved'));
+      const now=await caseStatus();assert.equal(now.status,'completed');pass('C11 Approve → C14; the case completes on client approval (client-submits wording)');
       for(const claim of ['E-SIGNED','biometric','ledger','Verification Confirmed','Signed & Certified'])assert.equal(await has(p,claim),false,'no '+claim);
     }
   });
 
-  // ---------- C14 / A6: the advocate marks it submitted to police with the receipt → A7 → wallet ----------
-  stage('advocate-police',async()=>{
+  // ---------- A1 → A6 → A7 after completion; the advocate is credited on client approval ----------
+  stage('advocate-completed',async()=>{
     const adv=await page('advocate-2');
-    if((await caseStatus()).status==='approved'){
-      await go(adv,mobile+'/matters');await text(adv,'Client Approved');await text(adv,'Mark Submitted');await shot(adv,S('A1-cases-list-client-approved'));
-      await clickCard(adv,state.reference,'Mark Submitted');await at(adv,'/advocate/fir/review');await text(adv,'CLIENT APPROVED');await text(adv,'Upload the police receipt');await shot(adv,S('A6-review-client-approved'));
-      await click(adv,'Mark as submitted to police');await text(adv,'Police receipt or acknowledgement');
-      // The receipt is required.
-      await click(adv,'Confirm submission',{timeout:4000}).catch(()=>{});await delay(900);assert.equal((await caseStatus()).status,'approved','no completion without a receipt');
-      await chooseFile(adv,'Upload receipt',await pdf('TEST-ONLY-police-receipt.pdf',['TEST ONLY synthetic police acknowledgement','Not a real receipt.']));await text(adv,'TEST-ONLY-police-receipt.pdf');
-      await shot(adv,S('A6-mark-submitted-sheet'));
-      await click(adv,'Confirm submission');await at(adv,'/advocate/fir/completed',90000);await delay(1500);await shot(adv,S('A7-completed'));
-      assert.equal((await caseStatus()).status,'completed');pass('A6 Mark as submitted to police needs the receipt; the case completes');
-    }else await go(adv,`${mobile}/advocate/fir/completed?caseId=${state.case_id}`);
-    await text(adv,'FIR Draft Completed');
-    const flow=await api['advocate-2'].firFlow(state.case_id);assert.ok(flow.police?.receipt,'receipt recorded');
+    assert.equal((await caseStatus()).status,'completed');
+    await go(adv,mobile+'/matters');await text(adv,'Completed');await shot(adv,S('A1-cases-list-completed'));
+    await go(adv,`${mobile}/advocate/fir/review?caseId=${state.case_id}`);await text(adv,'COMPLETED');await text(adv,'Stage 5 of 5');
+    for(const gone of ['Submitted to Police','Mark as submitted to police','police receipt'])assert.equal(await has(adv,gone),false,'no '+gone);
+    await delay(800);await shot(adv,S('A6-review-completed'));pass('A6 timeline ends at Client Approved; no police step');
+    await go(adv,`${mobile}/advocate/fir/completed?caseId=${state.case_id}`);await text(adv,'FIR Draft Completed');assert.equal(await has(adv,'Submitted to police'),false);await delay(800);await shot(adv,S('A7-completed'));
+    const flow=await api['advocate-2'].firFlow(state.case_id);
     await click(adv,'View Earnings');await at(adv,'/earnings');await text(adv,'Your share');await delay(1200);await shot(adv,S('A7-wallet'));
     const wallet=await api['advocate-2'].wallet('all'),entry=wallet.entries.find(e=>e.case_id===state.case_id);
-    assert.ok(entry,'completed FIR is in the wallet');assert.equal(entry.share_paise,flow.share_paise);pass('wallet shows the advocate’s share',`₹${Number(entry.share_paise)/100}`);
+    assert.ok(entry,'completed FIR is in the wallet');assert.equal(entry.share_paise,flow.share_paise);pass('wallet shows the advocate’s share on client approval',`₹${Number(entry.share_paise)/100}`);
     assert.equal((await api.advocate.wallet('all')).entries.some(e=>e.case_id===state.case_id),false,'the advocate who rejected is not paid');
   });
 
-  // ---------- client after completion: C10 stage 5, design 49, F9 with the police step done ----------
+  // ---------- client after completion: C10 stage 5, design 49, the approved PDF ----------
   stage('client-final',async()=>{
     const p=await page('client');
     await go(p,`${mobile}/fir/status?caseId=${state.case_id}`);await text(p,'Stage 5 of 5');await delay(800);await shot(p,S('C10-status-stage5-completed'));
     await go(p,`${mobile}/fir/ready?caseId=${state.case_id}`);await text(p,'View FIR Draft');await text(p,'Back to Dashboard');await delay(800);await shot(p,S('C11-49-draft-ready-no-decision'));
-    await go(p,`${mobile}/fir/approved?caseId=${state.case_id}`);await text(p,'View receipt');await delay(800);await shot(p,S('C14-F9-draft-approved-police-done'));
-    const docs=(await api.client.request(`/cases/${state.case_id}`)).documents;assert.ok(docs.some(d=>d.kind==='fir_police_receipt'),'the police receipt is in the client’s documents');pass('client sees completion and the police receipt');
-    // The real files: the approved draft (as the client sees it) and the police receipt.
-    const flow=await api.client.firFlow(state.case_id);
-    for(const [name,doc]of [['approved-fir-draft.pdf',flow.draft.document],['police-receipt.pdf',flow.police.receipt]]){
-      const {url}=await api.client.documentUrl(doc.id),bytes=Buffer.from(await (await fetch(url)).arrayBuffer());
-      assert.equal(bytes.subarray(0,4).toString(),'%PDF',name);require('node:fs').writeFileSync(path.join(out,name),bytes);
-    }
-    pass('client downloads the approved draft PDF and the police receipt',flow.draft.document.filename);
+    // The approved draft as the client downloads it: no identity row (Q114).
+    const flow=await api.client.firFlow(state.case_id),{url}=await api.client.documentUrl(flow.draft.document.id);
+    const bytes=Buffer.from(await (await fetch(url)).arrayBuffer());assert.equal(bytes.subarray(0,4).toString(),'%PDF');require('node:fs').writeFileSync(path.join(out,'approved-fir-draft.pdf'),bytes);
+    const {text:pdfText}=await require('../../apps/api/tests/helpers/pdf-text.cjs').readPdfText(bytes);
+    assert.ok(pdfText.includes('FIR DRAFT — prepared for submission at'));for(const gone of ['Identity document','Official ID','Identity proof'])assert.equal(pdfText.includes(gone),false,'PDF has no '+gone);
+    pass('client downloads the approved draft PDF; no identity row',flow.draft.document.filename);
   });
 
-  // ---------- C14 with the setting off: the client submits to police; no code change ----------
-  stage('police-setting-off',async()=>{
-    const fs=require('node:fs'),{randomUUID}=require('node:crypto');
-    const a=await page('admin'),p=await page('client'),adv=await page('advocate-2');
-    const setSwitch=async on=>{
-      await go(a,`${adminWeb}/services/fir_draft/cases/${state.case_id}`);await text(a,'Who submits to police');await delay(1200);
-      if((await api.admin.firSettings()).police_submission_by_advocate!==on){await a.click('.fir-setting input[type="checkbox"]');await text(a,on?'On: after the client approves':'Off: the case completes when the client approves');}
-      assert.equal((await api.admin.firSettings()).police_submission_by_advocate,on);
-    };
-    await setSwitch(false);await shot(a,S('ADMIN-police-setting-off'),{width:1440});pass('admin switched "advocate submits to police" off in the panel');
-    try{
-      // A second request, taken through the API to the client's review (those screens were walked above).
-      const provided=value=>({status:'provided',value}),na={status:'not_applicable'},unknown={status:'unknown'};
-      const blob=file=>new Blob([fs.readFileSync(file)],{type:'application/pdf'});
-      const put=async(actor,input,file)=>{const ticket=await actor.presign(input);await actor.upload(ticket,blob(file));return actor.completeDocument(ticket.document.id);};
-      if(!state.case2_id){
-        const first=await api.client.request(`/cases/${state.case_id}`),c=await api.client.createCase({service_code:'fir_draft'});
-        const details={...first.details,people:first.details.people.map(({id,...person})=>person)};
-        await api.client.saveFirIntake(c.id,details);
-        await put(api.client,{case_id:c.id,kind:'id_proof',filename:'Identity-proof',mime:'application/pdf',identity_last4:'4812',identity:{document_type:'passport',masked_copy:false}},await pdf('TEST-ONLY-identity-2.pdf',['TEST ONLY synthetic identity page']));
-        await put(api.client,{case_id:c.id,kind:'fir_primary',filename:'TEST-ONLY-receipt-2.pdf',mime:'application/pdf'},await pdf('TEST-ONLY-receipt-2.pdf',['TEST ONLY synthetic receipt']));
-        await api.client.submit(c.id);const quote=await api.client.paymentQuote(c.id);assert.equal(quote.status,'ready',JSON.stringify(quote));
-        await api.client.pay(c.id,'service_fee',`fir-walk:${c.id}:${quote.id}`,quote.id);
-        state.case2_id=c.id;save();
-      }
-      const id=state.case2_id,read=()=>api.admin.adminCase(id);
-      if((await read()).status==='paid')await api.admin.assign(id,users['advocate-2'].id);
-      if((await read()).status==='assigned')await api['advocate-2'].accept(id);
-      if(['advocate_accepted','in_progress'].includes((await read()).status)&&(await read()).sub_status!=='awaiting_admin_approval'){
-        const context=await api['advocate-2'].firDraftContext(id),docs=(await api['advocate-2'].request(`/cases/${id}`)).documents,identity=docs.find(d=>d.kind==='id_proof');
-        const content={...context.initial_content,distance_and_direction_from_station:provided('2 km north'),
-          accused:{status:'listed',items:context.initial_content.accused.items.map(x=>({...x,alias:x.alias??unknown,phone:x.phone??unknown,other_details:x.other_details??na,vehicle_used:na,suspected_motive:provided('TEST ONLY financial gain')}))},
-          witnesses:{status:'listed',items:context.initial_content.witnesses.items.map(x=>({...x,phone:x.phone??unknown,role_or_relationship:x.role_or_relationship??unknown,when_present:provided('TEST ONLY during the call'),statement_note:x.statement_note??unknown}))},
-          legal_sections:[{id:randomUUID(),act:'Bharatiya Nyaya Sanhita, 2023',section:'318(4)',description:'Cheating and dishonestly inducing delivery of property'}],
-          identity_document_id:identity.id,attachment_ids:docs.filter(d=>d.kind!=='fir_draft').map(d=>d.id)};
-        const draft=await api['advocate-2'].saveFirDraft(id,{base_draft_id:context.latest_draft_id,filing_hash:context.filing_hash,content});
-        await api['advocate-2'].sendFirDraft(id,draft.id);
-      }
-      if((await read()).sub_status==='awaiting_admin_approval'){
-        let life=await api.admin.firLifecycle(id);const sub=life.submissions.find(x=>x.id===life.current_submission_id);
-        if(!sub.identity_checked_at){await api.admin.request(`/fir/${id}/identity-review`,{revision:life.revision,submission_id:life.current_submission_id,document_id:sub.identity_document_id,decision:'accepted'});life=await api.admin.firLifecycle(id);}
-        await api.admin.approveFirDraft(id,sub.draft_id,{revision:life.revision,submission_id:life.current_submission_id});
-      }
-      if((await read()).status==='client_review'){
-        await go(p,`${mobile}/fir/ready?caseId=${id}`);await text(p,'Your FIR Draft Is Ready');await click(p,'Approve');await text(p,'Approve this FIR draft?');await click(p,'Approve');
-        await at(p,'/fir/approved');await text(p,'FIR Draft Approved Successfully');
-      }else await go(p,`${mobile}/fir/approved?caseId=${id}`);
-      await text(p,'Download your approved draft');await text(p,'Submit it at Vijay Nagar');await delay(800);await shot(p,S('C14-F9-draft-approved-client-submits'));
-      assert.equal((await read()).status,'completed','with the setting off, client approval completes the case');
-      assert.equal(await has(p,'Formal police registration will be carried out by your assigned advocate'),false);pass('setting off: client approval completes the case; F9 shows the client-submits version');
-      await go(p,`${mobile}/fir/status?caseId=${id}`);await text(p,'Stage 5 of 5');await shot(p,S('C10-status-completed-client-submits'));
-      await go(adv,`${mobile}/advocate/fir/review?caseId=${id}`);await text(adv,'COMPLETED');await delay(1200);await shot(adv,S('A6-review-completed-client-submits'));
-      assert.equal(await has(adv,'Submitted to Police'),false,'no police row when the client submits');
-      await go(adv,`${mobile}/advocate/fir/completed?caseId=${id}`);await text(adv,'FIR Draft Completed');assert.equal(await has(adv,'Submitted to police'),false);await shot(adv,S('A7-completed-client-submits'));
-      assert.ok((await api['advocate-2'].wallet('all')).entries.some(e=>e.case_id===id),'the share is credited on completion');pass('setting off: advocate screens drop the police step and the share is credited');
-    }finally{
-      // Leave the setting as it was found: on (the default).
-      await setSwitch(true).catch(async()=>{await api.admin.updateFirSettings({police_submission_by_advocate:true});});
-    }
-    assert.equal((await api.admin.firSettings()).police_submission_by_advocate,true);pass('setting switched back on');
-  });
 };

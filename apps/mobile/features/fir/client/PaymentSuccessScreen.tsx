@@ -1,7 +1,7 @@
 // C8b Payment Successful (design/client/fir-draft/F5-payment-success.png). The real
 // FIR reference and amount; "Your FIR draft request has been submitted." (the
-// design's "forensic analysis" is a copy slip). Start Tracking → C9. Back → Home,
-// never back into payment.
+// design's "forensic analysis" is a copy slip). Start Tracking → C9. Home (Q3) and
+// Back → Home, never back into payment. Nothing advances on a timer.
 import {router,useLocalSearchParams} from 'expo-router';
 import {Check,ChevronRight,Copy,FileText} from 'lucide-react-native';
 import {Pressable,ScrollView,StyleSheet,Text,View} from 'react-native';
@@ -62,6 +62,10 @@ export default function FirPaymentSuccessScreen(){
           <Text style={styles.buttonText}>Start Tracking</Text>
           <ChevronRight size={s.buttonIcon} color={ink.onBrand}/>
         </Pressable>
+        {/* Q3: the screen stays until the client taps; Home sits under Start Tracking. */}
+        <Pressable accessibilityRole="button" onPress={goHome} style={({pressed})=>[styles.button,styles.homeButton,pressed&&styles.pressed]}>
+          <Text style={[styles.buttonText,styles.homeButtonText]}>Home</Text>
+        </Pressable>
       </View>
     </ScrollView>
   </View>;
@@ -87,4 +91,6 @@ const styles=StyleSheet.create({
   button:{marginTop:s.buttonGap,alignSelf:'center',height:s.buttonH,borderRadius:s.buttonRadius,paddingHorizontal:s.buttonPadX,backgroundColor:colors.brand,flexDirection:'row',alignItems:'center',gap:s.buttonIconGap},
   pressed:{opacity:0.85},
   buttonText:{fontFamily:font.appSemi,fontSize:s.buttonTextSize,color:ink.onBrand},
+  homeButton:{marginTop:8,backgroundColor:'transparent',borderWidth:1,borderColor:colors.brand},
+  homeButtonText:{color:colors.textPrimary},
 });

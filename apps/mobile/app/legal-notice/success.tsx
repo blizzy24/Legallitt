@@ -19,6 +19,8 @@ import { INVOICE, invoiceLines, invoiceTotal, rupees } from '../../data/legalNot
 export function PaymentSuccessScreenView({ service, total, amountText, requestId, nextHref, onBack }: {
   amountText?: string; onBack?: () => void; service: string; total: number | null; requestId: string; nextHref: Href;
 }) {
+  // Partial state: with no known amount, say so without printing an empty one.
+  const amount = amountText ?? (total === null ? '' : rupees(total, false));
   return (
     <View style={styles.screen}>
       <PayHeader
@@ -47,7 +49,7 @@ export function PaymentSuccessScreenView({ service, total, amountText, requestId
             </View>
             <View style={styles.headText}>
               <Text style={styles.title}>Payment Successful</Text>
-              <Text style={styles.sub}>Your payment of {amountText ?? (total === null ? '' : rupees(total, false))} has been received.</Text>
+              <Text style={styles.sub}>{amount ? `Your payment of ${amount} has been received.` : 'Your payment has been received.'}</Text>
             </View>
           </View>
           <Text style={styles.note}>Your {service} request has been submitted.</Text>
@@ -58,6 +60,14 @@ export function PaymentSuccessScreenView({ service, total, amountText, requestId
           >
             <Text style={styles.buttonText}>Start Tracking</Text>
             <ChevronRight size={s.buttonIcon} color={ink.onBrand} />
+          </Pressable>
+          {/* Q3: the screen stays until the client taps; Home sits under Start Tracking. */}
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => router.replace('/(tabs)/home')}
+            style={({ pressed }) => [styles.button, styles.homeButton, pressed && styles.pressed]}
+          >
+            <Text style={[styles.buttonText, styles.homeButtonText]}>Home</Text>
           </Pressable>
         </View>
       </View>
@@ -161,6 +171,16 @@ const styles = StyleSheet.create({
     fontFamily: font.appSemi,
     fontSize: s.buttonTextSize,
     color: ink.onBrand,
+  },
+  // Home: the same button, outlined, under Start Tracking (Q3).
+  homeButton: {
+    marginTop: 8,
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: colors.brand,
+  },
+  homeButtonText: {
+    color: colors.textPrimary,
   },
 });
 

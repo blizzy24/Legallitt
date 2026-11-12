@@ -4,19 +4,19 @@ SHOT C1-landing.png
 PASS C1 card tap selects without navigating 
 SHOT C1a-request-callback.png
 SHOT C1a-request-callback-submitted.png
-PASS Request Callback ticket tagged FIR Draft 1f1d1619-d966-4b66-b0f6-d00ac8927aa2
+PASS Request Callback ticket tagged FIR Draft 5248e9dc-73bc-47e3-9f4d-58c2b421af34
 SHOT C1b-support-chat.png
 SHOT C1b-support-chat-sent.png
-PASS Request Chat thread tagged FIR Draft 282f283a-2762-447a-bc2b-b2ea2379c56a
+PASS Request Chat thread tagged FIR Draft bfe81a5a-d91b-490b-91e4-7b65d1c09388
 SHOT ADMIN-support-inbox.png
 PASS both requests are in the admin Support inbox 
 
 === client-intake
 SHOT C2-why-fir.png
 PASS C2 turnaround comes from settings 24–48 Hours
-PASS C2 Send a FIR Draft opens Step 1 FIR-2026-0009
+PASS C2 Send a FIR Draft opens Step 1 FIR-2026-0012
 SHOT C3-step1-quick-submission.png
-PASS C3 Step 1 saved 03f5dfe6-d820-4a93-8c9b-e1c349f51015
+PASS C3 Step 1 saved 8b0ef11e-bc60-41a7-bc15-5bb252594ab3
 PASS C4 location and police station prefilled from Step 1 
 SHOT C4-step2-incident.png
 PASS C4 Step 2 saved 
@@ -28,9 +28,9 @@ SHOT C5-witness-sheet.png
 SHOT C5-step3-people.png
 PASS C5 Step 3 saved: complainant, unknown accused, key witness 
 SHOT C6-step4-documents-blocked.png
-PASS C6 Continue is blocked with the reason beside each missing slot 
+PASS C6 Continue is blocked until a primary document is added 
 SHOT C6-step4-documents.png
-PASS C6 uploads stored by slot; identity shown masked XXXX-XXXX-4812
+PASS C6 uploads stored by slot; no Identity Proof slot 
 SHOT C7-step5-review.png
 PASS C7 editing from Review returns straight to Review 
 PASS C7 Proceed To Pay opens payment 
@@ -53,7 +53,7 @@ PASS admin §3.1 new paid request shows in the queue with Assign
 SHOT A1-cases-list.png
 SHOT A1-cases-list-fir.png
 PASS A1 card shows FIR DRAFT, client · incident, fee and the status button 
-PASS A2 masks the client’s mobile and email before acceptance +91 90••••••00
+PASS A2 masks the client’s mobile and email before acceptance +91 90••••••00 · de••••@legalitt.invalid
 SHOT A2-request-details.png
 SHOT A2-reject-sheet.png
 PASS A2 Reject returns the case to admin; the advocate loses access 
@@ -116,33 +116,19 @@ PASS admin approved the revised draft
 === client-approve
 SHOT C11-approve-confirm.png
 SHOT C14-F9-draft-approved.png
-PASS C11 Approve → C14; with the setting on the case waits for police submission 
+PASS C11 Approve → C14; the case completes on client approval (client-submits wording) 
 
-=== advocate-police
-SHOT A1-cases-list-client-approved.png
-SHOT A6-review-client-approved.png
-SHOT A6-mark-submitted-sheet.png
+=== advocate-completed
+SHOT A1-cases-list-completed.png
+SHOT A6-review-completed.png
+PASS A6 timeline ends at Client Approved; no police step 
 SHOT A7-completed.png
-PASS A6 Mark as submitted to police needs the receipt; the case completes 
 SHOT A7-wallet.png
-PASS wallet shows the advocate’s share ₹999
+PASS wallet shows the advocate’s share on client approval ₹999
 
 === client-final
 SHOT C10-status-stage5-completed.png
 SHOT C11-49-draft-ready-no-decision.png
-SHOT C14-F9-draft-approved-police-done.png
-PASS client sees completion and the police receipt 
-PASS client downloads the approved draft PDF and the police receipt FIR_Draft_FIR-2026-0009_v3.pdf
+PASS client downloads the approved draft PDF; no identity row FIR_Draft_FIR-2026-0012_v3.pdf
 
-=== police-setting-off
-SHOT ADMIN-police-setting-off.png
-PASS admin switched "advocate submits to police" off in the panel 
-SHOT C14-F9-draft-approved-client-submits.png
-PASS setting off: client approval completes the case; F9 shows the client-submits version 
-SHOT C10-status-completed-client-submits.png
-SHOT A6-review-completed-client-submits.png
-SHOT A7-completed-client-submits.png
-PASS setting off: advocate screens drop the police step and the share is credited 
-PASS setting switched back on 
-
-ALL 49 FIR FLOW CHECKS PASSED
+ALL 44 FIR FLOW CHECKS PASSED

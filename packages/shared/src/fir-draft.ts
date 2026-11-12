@@ -143,8 +143,8 @@ const pick=(c:FirDraftContent,key:FirDraftOverrideKey,filed:string|null|undefine
 export const firDraftStation=(c:FirDraftContent)=>pick(c,'police_station',c.police_filing.jurisdiction.value.policeStation).trim();
 
 // Flow A5 Send for Review: only the fields the flow requires (name, police station,
-// date, place, a complete legal section, the statement), plus the identity document
-// the PDF prints and the personal details the client had to answer at filing.
+// date, place, a complete legal section, the statement), plus the personal details
+// the client had to answer at filing. No identity document (Q114).
 // Everything else is optional: an empty value is simply not printed.
 export function firDraftProblems(c:FirDraftContent):{field:string;message:string}[] {
   const issues:{field:string;message:string}[]=[];
@@ -164,19 +164,19 @@ export function firDraftProblems(c:FirDraftContent):{field:string;message:string
   // A listed person needs a name; an accused the client marked unknown is described instead.
   if(c.accused?.status==='listed')c.accused.items.forEach((a,n)=>{if(a.identity.status==='known')need(`Accused ${n+1}: name`,a.identity.name);});
   if(c.witnesses?.status==='listed')c.witnesses.items.forEach((w,n)=>need(`Witness ${n+1}: name`,w.name));
-  if(!c.complainant.identity_document_id||!c.attachments.some(d=>d.document_id===c.complainant.identity_document_id))issues.push({field:'Identity document',message:'Select one accepted identity document and include it in attachments before generating the PDF.'});
   return issues;
 }
 // One complete rendering contract, shared by preview, submission and PDF tests.
 // Empty optional labels are omitted; only typed station-use fields produce rules.
-/** `identity`: the identity document as printed, e.g. "Passport (XXXX-XXXX-4812)" (flow A5 §2: always masked). */
-export function firPdfSections(c:FirDraftContent,opts:{identity?:string|null}={}):{title:string;lines:{label:string;value:string}[]}[] {
+// Q114: no "Official ID Document" row, and an identity file an older draft selected
+// (`complainant.identity_document_id`) is never listed among the attachments.
+export function firPdfSections(c:FirDraftContent):{title:string;lines:{label:string;value:string}[]}[] {
   const j=c.police_filing.jurisdiction.value,p=c.complainant.filed.value,pd=p?.personal_details,i=c.incident.filed.value,ov=c.overrides??{};
   const line=(label:string,value:string|undefined|null)=>({label,value:value??''});
   const a=(label:string,value:Answer<string|number>|null|undefined)=>line(label,answerText(value));
   // An advocate's edit replaces the filed value; a composite box replaces all its parts.
   const filed=(key:FirDraftOverrideKey,label:string,parts:{label:string;value:string}[])=>ov[key]!==undefined?[line(label,ov[key])]:parts;
-  const identity=c.attachments.find(d=>d.document_id===c.complainant.identity_document_id);
+  const attachments=c.attachments.filter(d=>d.document_id!==c.complainant.identity_document_id);
   const accused=c.accused?.status==='listed'?c.accused.items.flatMap((p,n)=>[line(`Accused ${n+1}${p.primary?' (Primary)':''}`,p.identity.status==='known'?p.identity.name:'Unknown suspect'),...(p.identity.status==='unknown'?[line('Known description',p.identity.description)]:[]),a('Alias / identifying information',p.alias),a('Phone',p.phone),a('Other details',p.other_details),a('Vehicle used',p.vehicle_used),a('Suspected reason / motive',p.suspected_motive)]):[];
   const others=c.others_involved?.trim()?[line('Other people involved',c.others_involved)]:[];
   const sections=[
@@ -187,14 +187,13 @@ export function firPdfSections(c:FirDraftContent,opts:{identity?:string|null}={}
       ...filed('occupation',FIR_PERSONAL_LABELS.occupation,[a(FIR_PERSONAL_LABELS.occupation,pd?.occupation)]),
       ...filed('address',FIR_PERSONAL_LABELS.present_address,[a(FIR_PERSONAL_LABELS.present_address,pd?.present_address)]),
       line('Registered residence',pick(c,'residence',p?.residence)),
-      ...filed('phone_email','Phone & Email',[line('Phone',p?.phone),line('Email',c.complainant.email.value)]),
-      line('Identity document',opts.identity||identity?.filename)]},
+      ...filed('phone_email','Phone & Email',[line('Phone',p?.phone),line('Email',c.complainant.email.value)])]},
     {title:'3. When and Where It Happened',lines:[line('Incident type',firIncidentLabel(i.type)),line('Date of incident',pick(c,'incident_date',i.date)),line('Time of incident',pick(c,'incident_time',i.time)),line('Place of incident',pick(c,'place',i.location)),a('Distance / direction from police station',c.incident.distance_and_direction_from_station)]},
     {title:'4. Accused Person(s)',lines:accused.length||others.length?[...accused,...others]:[line('Accused','None reported')]},
     {title:'5. Applicable Legal Sections',lines:c.legal_sections.map((s,n)=>line(`${n+1}. ${s.act} — ${s.section}`,s.description))},
     {title:'6. Statement of Facts',lines:[line('',c.statement_of_facts)]},
     {title:'7. Witnesses',lines:c.witnesses?.status==='listed'?c.witnesses.items.flatMap((w,n)=>[line(`Witness ${n+1}`,w.name),a('Phone',w.phone),a('Role / relationship',w.role_or_relationship),a('When present',w.when_present),a('Statement note',w.statement_note)]):[line('Witnesses','None reported')]},
-    {title:'8. Attached Documents',lines:c.attachments.length?c.attachments.map((d,n)=>line(`Attachment ${n+1}`,d.document_id===c.complainant.identity_document_id&&opts.identity?`Identity proof — ${opts.identity}`:d.filename)):[line('Attachments','None included')]},
+    {title:'8. Attached Documents',lines:attachments.length?attachments.map((d,n)=>line(`Attachment ${n+1}`,d.filename)):[line('Attachments','None included')]},
   ];
   return sections.map(s=>({...s,lines:s.lines.filter(l=>l.value.trim())}));
 }

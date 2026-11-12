@@ -2,14 +2,15 @@ const test=require('node:test'),assert=require('node:assert/strict'),{randomUUID
 const {assembleFirDraft,firDraftProblems,firEditableContent,firLetterStatement,seedFirDraft,FirDraftSaveSchema}=require('@legalitt/shared');
 const {renderFirPdf}=require('../dist/src/documents/fir-pdf');
 const {readPdfText}=require('./helpers/pdf-text.cjs'),fixture=require('./helpers/fir.cjs');
-function content(){const intake=fixture.intake(),editable=fixture.editable(intake);const id=randomUUID();editable.identity_document_id=id;editable.attachment_ids=[id];return assembleFirDraft(randomUUID(),intake,'a'.repeat(64),'2026-11-10T12:00:00.000Z',editable,[{document_id:id,filename:'Identity-proof.pdf',mime_type:'application/pdf'}]);}
-test('FIR PDF prints all eight structured sections, repeatable records and edited values; ID evidence is referenced without an ID number',async()=>{
+// Q114: no identity document; the draft attaches ordinary evidence.
+function content(){const intake=fixture.intake(),editable=fixture.editable(intake);const id=randomUUID();editable.attachment_ids=[id];return assembleFirDraft(randomUUID(),intake,'a'.repeat(64),'2026-11-10T12:00:00.000Z',editable,[{document_id:id,filename:'TEST-evidence.pdf',mime_type:'application/pdf'}]);}
+test('FIR PDF prints all eight structured sections, repeatable records and edited values; no identity document row (Q114)',async()=>{
  const c=content();c.attachments=[{document_id:randomUUID(),filename:'TEST second upload chosen first.pdf',mime_type:'application/pdf'},{document_id:randomUUID(),filename:'TEST first upload chosen second.png',mime_type:'image/png'}];
- c.complainant.identity_document_id=c.attachments[0].document_id;assert.deepEqual(firDraftProblems(c),[]);const {text,pages}=await readPdfText(await renderFirPdf('FIR_DRAFT-2026-TEST',c));
+ assert.equal(c.complainant.identity_document_id,null);assert.deepEqual(firDraftProblems(c),[]);const {text,pages}=await readPdfText(await renderFirPdf('FIR_DRAFT-2026-TEST',c));
  for(const value of ['FIR DRAFT — prepared for submission at TEST Colaba Station, Maharashtra','FIRST INFORMATION REPORT','FORM I — POLICE INFORMATION PROFORMA','Police Station & Filing Time','Complainant / Reporter Info','When and Where It Happened','Accused Person(s)','Applicable Legal Sections','Statement of Facts','Witnesses','Attached Documents','Maharashtra','Mumbai','TEST Colaba Station','TEST Father Rao','37','Woman','TEST Teacher','TEST Present Street 22','TEST Registered Street 11','TEST Complainant Rao','2025550100','fir-test@example.invalid','Theft','2026-11-10','09:30','TEST Harbour Road','TEST 2 km north','TEST Known Suspect','TEST alias','TEST jacket','TEST accused 1 vehicle_used','TEST accused 1 suspected_motive','Unknown suspect','TEST unknown suspect blue coat','TEST accused 2 alias','TEST accused 2 suspected_motive','Unknown','Not applicable','TEST Act (synthetic)','TEST 123','TEST manually chosen provision','TEST ONLY advocate edited narrative.','TEST Witness One','TEST Witness Two','2025550102','2025550103','TEST passerby','TEST shopkeeper','TEST at start','TEST at end','TEST first note','TEST second note','For completion at the police station','FIR number','Date / time received at the station','Receiving officer’s signature'])assert.ok(text.includes(value),value);
  assert.ok(text.indexOf('second upload chosen first.pdf')<text.indexOf('first upload chosen second.png'));
  for(const wrong of ['Madhya Pradesh','Police State Command','LEGAL NOTICE','S/o Shri','Mr.','criminal complaint / FIR','disclaimer','________','original client narrative','Other people involved'])assert.ok(!text.includes(wrong),wrong);
- assert.ok(text.includes('Identity document:'));assert.ok(pages.length>=2);
+ for(const gone of ['Identity document','Official ID','Identity proof'])assert.ok(!text.includes(gone),gone);assert.ok(pages.length>=2);
 });
 test('Send for Review requires only the flow’s fields; optional facts may stay empty and are left out of the PDF',async()=>{
  // Distance, accused/witness attributes, an explicit "None reported", district/state, LGD codes, phone and residence are optional.
@@ -23,23 +24,24 @@ test('Send for Review requires only the flow’s fields; optional facts may stay
  c.accused=null;c.witnesses=null;assert.deepEqual(firDraftProblems(c),[]);
  const none=(await readPdfText(await renderFirPdf('TEST',c))).text;assert.ok(none.includes('Accused: None reported'));assert.ok(none.includes('Witnesses: None reported'));
  // The required ones, after the advocate's edits: name, station, a valid date and time, place, statement,
- // a complete legal section, names of listed people, the identity document and the client's personal details.
+ // a complete legal section, names of listed people and the client's personal details. Never an identity document (Q114).
  const r=content();r.complainant.filed.value.personal_details.age=null;r.legal_sections[0].act='';r.statement_of_facts=' ';
  r.overrides={complainant_name:' ',police_station:'',incident_date:'31/02/2026',incident_time:'25:00',place:'',father_name:''};
- r.accused.items[0].identity={status:'known',name:''};r.witnesses.items[1].name='';r.complainant.identity_document_id=null;
+ r.accused.items[0].identity={status:'known',name:''};r.witnesses.items[1].name='';
  const fields=firDraftProblems(r).map(p=>p.field);
- for(const f of ['Age','Legal section 1: act','Complainant name','Police station','Incident date','Incident time','Place of incident','Father’s name','Statement of facts','Accused 1: name','Witness 2: name','Identity document'])assert.ok(fields.includes(f),f);
+ for(const f of ['Age','Legal section 1: act','Complainant name','Police station','Incident date','Incident time','Place of incident','Father’s name','Statement of facts','Accused 1: name','Witness 2: name'])assert.ok(fields.includes(f),f);
+ assert.ok(!fields.includes('Identity document'),'no identity document is ever required');
  assert.ok(!fields.includes('Accused 2: name'),'an accused the client marked unknown needs no name');
  await assert.rejects(renderFirPdf('TEST',r),/Age must be answered by the client/);
  r.complainant.filed.value.personal_details.age={status:'unknown'};r.legal_sections[0].act='TEST Act';r.statement_of_facts='TEST facts';delete r.overrides;
- r.accused.items[0].identity={status:'known',name:'TEST Named'};r.witnesses.items[1].name='TEST Witness Two';r.complainant.identity_document_id=r.attachments[0].document_id;
+ r.accused.items[0].identity={status:'known',name:'TEST Named'};r.witnesses.items[1].name='TEST Witness Two';
  assert.deepEqual(firDraftProblems(r),[]);await renderFirPdf('TEST',r);
 });
 test('Advocate edits to filed fields print instead of the filing, which stays on record; Other People Involved prints when present',async()=>{
- const intake=fixture.intake(),editable=fixture.editable(intake),id=randomUUID();editable.identity_document_id=id;editable.attachment_ids=[id];
+ const intake=fixture.intake(),editable=fixture.editable(intake),id=randomUUID();editable.attachment_ids=[id];
  editable.overrides={police_station:'TEST Edited Station',district_state:'TEST Edited District, TEST Edited State',complainant_name:'TEST Edited Name',father_name:'TEST Edited Father',age_gender:'38 Years / Woman',occupation:'TEST Edited Occupation',address:'TEST Edited Address 9',residence:'TEST Edited Residence 7',phone_email:'',incident_date:'11/11/2026',incident_time:'10:15 AM',place:'TEST Edited Place'};
  editable.others_involved='  TEST two unidentified associates  ';
- const c=assembleFirDraft(randomUUID(),intake,'a'.repeat(64),'2026-11-10T12:00:00.000Z',editable,[{document_id:id,filename:'Identity-proof.pdf',mime_type:'application/pdf'}]);
+ const c=assembleFirDraft(randomUUID(),intake,'a'.repeat(64),'2026-11-10T12:00:00.000Z',editable,[{document_id:id,filename:'TEST-evidence.pdf',mime_type:'application/pdf'}]);
  assert.equal(c.complainant.filed.value.name,'TEST Complainant Rao','the client filing is kept as filed');assert.equal(c.police_filing.jurisdiction.value.policeStation,'TEST Colaba Station');
  assert.equal(c.others_involved,'TEST two unidentified associates');assert.deepEqual(firEditableContent(c).overrides,editable.overrides);assert.equal(firEditableContent(c).others_involved,'TEST two unidentified associates');
  assert.deepEqual(firDraftProblems(c),[]);

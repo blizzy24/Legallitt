@@ -1,6 +1,7 @@
 const test = require('node:test'), assert = require('node:assert/strict');
 const {randomUUID} = require('node:crypto');
-const {SERVICE_CODES, ApiClient} = require('@legalitt/shared');
+const {SERVICE_CODES, HIDDEN_SERVICES, isServiceOffered, ApiClient} = require('@legalitt/shared');
+const {seedDormantCase} = require('./helpers/dormant-case.cjs');
 const {PrismaClient} = require('../dist/src/generated/prisma/client');
 const {PrismaPg} = require('@prisma/adapter-pg');
 const {CaseRepository} = require('../dist/src/cases/case-repository');
@@ -31,7 +32,9 @@ test('multi-service spine: real DB ownership, references, locks, documents, inbo
   const [owner, stranger, advocate, otherAdvocate, admin] = users;
   const ids=[], docs=[];
   let app;
-  const create = async service => {const row=await machine.create(owner,{service_code:service});ids.push(row.id);return row;};
+  // Hidden services (Q79/Q113) take no new cases; their existing rows must keep the
+  // same ownership and access rules, so those are seeded directly.
+  const create = async service => {const row=isServiceOffered(service)?await machine.create(owner,{service_code:service}):await seedDormantCase(db,owner,service);ids.push(row.id);return row;};
   try {
     await db.user.createMany({data:users});
     await db.advocateProfile.create({data:{user_id:advocate.id,verification:'approved',city:'Test city'}});
@@ -66,6 +69,7 @@ test('multi-service spine: real DB ownership, references, locks, documents, inbo
       for(const body of [{service_code:'unknown'}, {service_code:'property_search',client_id:stranger.id}, {service_code:'property_search',status:'paid'}, {service_code:'property_search',details:{anything:'unvalidated intake'}}, {service_code:'legal_notice',tier:'invented'}])
         await assert.rejects(machine.create(owner,body),{status:400});
       for(const actor of [advocate,admin]) await assert.rejects(machine.create(actor,{service_code:'property_search'}),{status:403});
+      for(const service of HIDDEN_SERVICES) await assert.rejects(machine.create(owner,{service_code:service}),{status:400});
       await assert.rejects(cases.list(owner,{service_code:'unknown'}),{status:400});
       await db.service.update({where:{code:'courier'},data:{active:false}});
       try{await assert.rejects(machine.create(owner,{service_code:'courier'}),{status:400});}

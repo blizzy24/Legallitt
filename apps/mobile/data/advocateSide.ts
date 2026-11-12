@@ -1,5 +1,6 @@
 import { gst18, withGst18 } from './tax';
 import { designSubstitutions } from '../copy/substitutions';
+import { isServiceOffered, type ServiceCode } from '@legalitt/shared';
 
 // Advocate-side data (designs 148-159).
 //
@@ -2921,7 +2922,25 @@ export const ADV_CASES_STATS = [
 ];
 
 export const ADV_CASES_FILTERS = ['All', 'Active', 'Upcoming', 'Waiting for Client'];
-export const ADV_CASES_SERVICES = [
+
+/** serviceKey -> API service, so the shared HIDDEN_SERVICES switch can hide a service here. */
+const ADV_SERVICE_KEY_CODES: Partial<Record<AdvCaseMatter['serviceKey'], ServiceCode>> = {
+  'legal-notice': 'legal_notice',
+  fir: 'fir_draft',
+  'property-search': 'property_search',
+  forensic: 'document_forensic',
+  'legal-advice': 'legal_advice',
+  'high-court': 'high_court',
+  'district-court': 'district_court',
+  'court-marriage': 'court_marriage',
+};
+/** Q79/Q113: false for a service in HIDDEN_SERVICES (Court Marriage for now). */
+export const isAdvServiceKeyOffered = (key: AdvCaseMatter['serviceKey'] | undefined) => {
+  const code = key ? ADV_SERVICE_KEY_CODES[key] : undefined;
+  return !code || isServiceOffered(code);
+};
+
+const ALL_ADV_CASES_SERVICES = [
   'All Services',
   'Legal Notice',
   'FIR Draft',
@@ -2954,7 +2973,13 @@ export const ADV_CASES_SERVICE_KEYS: Record<string, AdvCaseMatter['serviceKey']>
   'Court Marriage': 'court-marriage',
 };
 
-export const ADV_CASES: AdvCaseMatter[] = [
+/** The service chips, without any service the shared switch hides (Q79/Q113). */
+export const ADV_CASES_SERVICES = ALL_ADV_CASES_SERVICES.filter(
+  (label) => label === 'All Services' || isAdvServiceKeyOffered(ADV_CASES_SERVICE_KEYS[label]),
+);
+
+/** Fixture matters; a hidden service's demo card is kept in code but never shown. */
+const ALL_ADV_CASES: AdvCaseMatter[] = [
   {
     id: 'ln-2026-1048',
     service: 'LEGAL NOTICE',
@@ -3069,6 +3094,7 @@ export const ADV_CASES: AdvCaseMatter[] = [
     bucket: 'Upcoming',
   },
 ];
+export const ADV_CASES: AdvCaseMatter[] = ALL_ADV_CASES.filter((m) => isAdvServiceKeyOffered(m.serviceKey));
 
 export const ADV_CASES_COPY = {
   headerTitle: 'Cases',

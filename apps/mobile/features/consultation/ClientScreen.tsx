@@ -1,10 +1,11 @@
 import {useState} from 'react';
 import {router,type Href} from 'expo-router';
 import {Image,Text,View} from 'react-native';
-import {ConsultationIntakeSchema,consultationIntakeProblems,consultationServiceName,INDIA_JURISDICTIONS,type ConsultationServiceCode,type ConsultationIntake} from '@legalitt/shared';
+import {ConsultationIntakeSchema,consultationIntakeProblems,consultationServiceName,formatPaise,INDIA_JURISDICTIONS,type ConsultationServiceCode,type ConsultationIntake} from '@legalitt/shared';
 import {backend} from '../../lib/auth';
 import {JurisdictionPicker} from '../fir/JurisdictionPicker';
 import StepIndicator5 from '../../components/StepIndicator5';
+import PaymentSuccessScreen,{paymentSuccessCopy} from '../../components/PaymentSuccessScreen';
 import {Button,Card,Choice,ErrorBox,Field,Screen,Value,s} from './ui';
 import {clientPath,message,useConsultation,when} from './model';
 import {Booking} from './Booking';
@@ -20,6 +21,9 @@ export function ConsultationClientScreen({service,step,caseId}:{service:Consulta
  if(!caseId)return <Screen title={title}><Card>{court&&<Image source={service==='high_court'?require('../../assets/hero-high-court.png'):require('../../assets/hero-district-court.png')} style={{width:'100%',height:180,resizeMode:'contain'}}/>}<Text style={s.title}>{court?'Start with a consultation':'Get expert legal advice'}</Text><Text style={s.body}>{court?'Discuss your matter with an advocate in a paid 30-minute chat consultation. After the consultation, review and pay a separate quote before representation begins. Court work takes place offline.':'Choose an advocate and a time for a paid 30-minute consultation through in-app chat.'}</Text><Text style={s.muted}>Voice and video calls are not available. Your booking and conversation stay with your case.</Text><ErrorBox message={startError} retry={()=>void start()}/><Button disabled={starting} onPress={()=>void start()}>{starting?'Creating your case…':'Book consultation'}</Button><Button secondary onPress={()=>router.navigate('/cases')}>Resume from My Cases</Button></Card></Screen>;
  if(m.loading&&!m.view)return <Screen title={title}><Text style={s.body}>Loading your saved case…</Text></Screen>;
  if(!m.view)return <Screen title={title}><ErrorBox message={m.error||'Your case could not be loaded.'} retry={()=>void m.load()}/><Button secondary onPress={()=>router.navigate('/cases')}>My Cases</Button></Screen>;
+ // Q3: after paying, the success screen stays until the client taps Start Tracking or Home.
+ const paidPurpose=step==='payment-success'?'service_fee':step==='quote-payment-success'?'representation':null,receipt=paidPurpose?m.view.payments.find(p=>p.purpose===paidPurpose):undefined;
+ if(receipt)return <PaymentSuccessScreen tick d={paymentSuccessCopy({service:title,reference:m.view.case.reference,total:formatPaise(receipt.total_paise),submitted:paidPurpose==='representation'?'Your representation payment is complete.':undefined})} note={receipt.simulated?'Demo payment · No money moved.':undefined} ctaHref={clientPath(service,'track',m.view.case.id)}/>;
  const editable=m.view.case.status==='draft',f=m.form,update=(key:keyof ConsultationIntake,value:string|boolean)=>m.update({[key]:value}),field=(key:keyof ConsultationIntake,label:string,required=false,multiline=false)=><Field key={key} label={label} required={required} value={String(f[key]??'')} onChange={v=>update(key,v)} multiline={multiline} onBlur={()=>void m.flush()}/>;
  const go=(next:string)=>void m.go(next),isTrack=['track','confirmed','completed','status','case-overview','case-completed','request-submitted','advocate-assigned','case-preparation','court-filing','first-hearing','next-hearing'].includes(step);
  const effective=m.view.case.status==='payment_pending'&&!['datetime','documents','payment','track'].includes(step)?'payment':!editable&&!['payment_pending'].includes(m.view.case.status)&&!['datetime','documents','payment','quote-payment'].includes(step)?'track':step;

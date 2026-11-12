@@ -41,7 +41,8 @@ function updatedLabel(iso: string) {
 }
 /** Design/214's FIR card, driven by the shared C10 mapping (firStage). */
 function firMatter(record: ApiCase, detail: FirCardDetail | undefined, bucket: AdvCaseMatter['bucket']): AdvCaseMatter {
-  const stage = firStage(record).advocate;
+  // No police submission (ISHAAN-ANSWERS 2026-11-12 Q119/Q120): the retired 'approved' state reads as completed.
+  const stage = firStage(record.status === 'approved' ? { ...record, status: 'completed' } : record).advocate;
   const d = (record.details ?? {}) as { contact?: { fullName?: string }; incident?: { type?: string } };
   // The filing stores the incident type's id ("fraud"); the card shows its label ("Fraud").
   const client = d.contact?.fullName?.trim() ?? '', type = d.incident?.type?.trim() ?? '', incident = incidentLabel(type) || type;

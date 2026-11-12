@@ -2,7 +2,7 @@ import {BadRequestException, ConflictException, ForbiddenException, Inject, Inje
 import {
   ChangeItemsSchema, ForensicReportSaveSchema, INDIA_JURISDICTIONS, REPORT_AWAITING_APPROVAL, REPORT_INTAKE_SCHEMAS,
   REPORT_SERVICE_CONFIG, ReportIntakeSaveSchema, UploadReportSaveSchema, FORENSIC_DOCUMENT_TYPES, PROPERTY_TYPES,
-  isReportService, labelOf, reportIntakeProblems, type QuoteBreakdown, type ReportDraftContent, type ReportPricing,
+  isReportService, isServiceOffered, labelOf, reportIntakeProblems, type QuoteBreakdown, type ReportDraftContent, type ReportPricing,
   type ReportServiceCode,
   PropertyReportSaveSchema,
 } from '@legalitt/shared';
@@ -59,7 +59,8 @@ export class ServiceReportsService {
 
   /** Current provisional tariffs and their exact client totals before any page overage. */
   async pricing(code: string): Promise<ReportPricing> {
-    if (!isReportService(code)) throw new NotFoundException('Service not found');
+    // Q79/Q113: a hidden service (HIDDEN_SERVICES) publishes no price list.
+    if (!isReportService(code) || !isServiceOffered(code)) throw new NotFoundException('Service not found');
     const db = await this.prisma.getClient(), now = new Date();
     const rows = await db.servicePricing.findMany({where: {service_code: code, variant: null, fee_policy_id: {not: null}, ...activeAt(now)},
       orderBy: [{confirmed:'desc'},...newest], include: {fee_policy: {include: {page_overage_policy: true}}}});

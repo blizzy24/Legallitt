@@ -1,7 +1,7 @@
 // Display helpers for the client FIR screens (C8–C14). Everything shown comes from
 // the API; these only format it the way the designs print it.
 import {router,type Href} from 'expo-router';
-import type {FirFlowView,FirSettings} from '@legalitt/shared';
+import type {FirFlowView} from '@legalitt/shared';
 import {formatDate,formatTime} from '../flow';
 
 const IST='Asia/Kolkata';
@@ -28,9 +28,11 @@ export function dayTime(iso:string|null|undefined){
   return `${label}, ${formatTime(iso)}`;
 }
 
+/** The FIR turnaround window (fir_policies), e.g. flow.settings. */
+export type FirTurnaround={turnaround:{min_hours:number;max_hours:number}};
 /** Turnaround from the FIR policy (fir_policies via flow.settings). */
-export const turnaroundShort=(s:FirSettings)=>`Within ${s.turnaround.min_hours}–${s.turnaround.max_hours} hrs`;
-export const turnaroundLong=(s:FirSettings)=>`Within ${s.turnaround.min_hours}–${s.turnaround.max_hours} Hours`;
+export const turnaroundShort=(s:FirTurnaround)=>`Within ${s.turnaround.min_hours}–${s.turnaround.max_hours} hrs`;
+export const turnaroundLong=(s:FirTurnaround)=>`Within ${s.turnaround.min_hours}–${s.turnaround.max_hours} Hours`;
 
 /** When the request entered the drafting queue: payment, else the submit step. */
 export const requestSubmittedAt=(flow:Pick<FirFlowView,'paid_at'|'submitted_at'>)=>flow.paid_at??flow.submitted_at;

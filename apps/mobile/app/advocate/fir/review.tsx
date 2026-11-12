@@ -14,14 +14,15 @@ import { FIR_REVIEW as c } from '../../../data/advocateFir';
 import { advFirReview as t, colors, font, ink } from '../../../constants/theme';
 import { backend } from '../../../lib/auth';
 import { formatDate, formatTime, initials, useFirFlow, viewDocument } from '../../../features/fir/flow';
-import { PoliceSubmissionSheet } from '../../../features/fir/advocate/PoliceSubmissionSheet';
 import { hashRef } from '../../../features/fir/client/format';
 import { dayTime, firRoute, InlineError, MovedOn, StateCard, toCases, useAction, useAdvocateCaseId } from '../../../features/fir/advocate/common';
 
 // FIR review & status (designs 219 and 449, flow A6), live in every data mode.
-// [DECIDE] The Filing Timeline adds the admin step; "Submitted to Police" follows the
-// case: shown once the client approved into police submission, when a submission is
-// recorded, or (case not completed yet) while the advocate-submits setting is on.
+// [DECIDE] The Filing Timeline adds the admin step: Draft Created · Sent to Admin ·
+// Admin Approved · Sent to Client · Client Approved (Stage N of 5). The advocate's
+// job ends when the client approves (ISHAAN-ANSWERS 2026-11-12 Q119/Q120): there is
+// no "Submitted to Police" step and no police submission; a case left in the old
+// 'approved' state reads as completed.
 // [REMOVE] Verified Complainant, Resend Review Link, SMS and the Preview Switcher.
 // 449 is the compact layout opened right after sending: no status panel while
 // nobody needs the advocate, and Continue returns to Cases.
@@ -32,8 +33,10 @@ type Row = { title: string; sub: string; tone: Tone; icon: LucideIcon };
 type Panel = { icon: LucideIcon; title: string; body?: string; note?: string; review?: FirFlowView['reviews'][number]; actionable: boolean };
 
 const latest = (flow: FirFlowView, type: string) => [...flow.events].reverse().find(e => e.type === type)?.created_at ?? null;
+/** The client approved: the case is complete for the advocate ('approved' is the retired police-pending state). */
+const isDone = (flow: FirFlowView) => flow.status === 'completed' || flow.status === 'approved';
 const station = (value: string | null) => !value ? '' : /^(ps|police station)\b/i.test(value) ? value : `PS ${value}`;
-/** "PS <station>, <district>" (design 219), named the same in the header, the status panel and the police sheet. */
+/** "PS <station>, <district>" (design 219), named the same in the header. */
 const stationName = (flow: FirFlowView) => {
   const name = station(flow.police_station?.trim() || null), district = flow.district?.trim();
   return name && district && !name.toLowerCase().includes(district.toLowerCase()) ? `${name}, ${district}` : name;
@@ -50,21 +53,16 @@ const mobileLabel = (value: string) => {
 };
 
 function timeline(flow: FirFlowView) {
-  // Follows the case, not today's setting: a case completed with the setting on keeps
-  // its police row (it has a submission); one completed with it off never had one.
-  const police = flow.status === 'approved' || !!flow.police || (flow.status !== 'completed' && flow.settings.police_submission_by_advocate);
   const steps: { title: string; icon: LucideIcon; done: string; active?: string; todo?: string }[] = [
     { title: 'Draft Created', icon: FileText, done: [flow.draft ? `v${flow.draft.version}` : '', dayTime(latest(flow, 'fir_draft_saved') ?? flow.draft?.created_at)].filter(Boolean).join(' • ') },
     { title: 'Sent to Admin', icon: Send, done: dayTime(latest(flow, 'fir_draft_submitted')) },
     { title: 'Admin Approved', icon: ShieldCheck, done: dayTime(latest(flow, 'fir_draft_approved')), active: 'Active step • Awaiting Legalitt approval' },
     { title: 'Sent to Client', icon: Mail, done: dayTime(latest(flow, 'fir_sent_to_client') ?? latest(flow, 'fir_draft_approved')) },
     { title: 'Client Approved', icon: CheckCheck, done: dayTime(latest(flow, 'fir_client_approved')), active: 'Active step • Awaiting sign-off', todo: 'Client formal consent' },
-    ...(police ? [{ title: 'Submitted to Police', icon: Send, done: flow.police ? `Submitted ${formatDate(flow.police.submitted_on)}` : dayTime(latest(flow, 'fir_police_submitted')), active: 'Active step • Upload the police receipt', todo: 'Final dispatch & receipt' }] : []),
   ];
   const review = flow.reviews[flow.reviews.length - 1];
   const drafting = review && review.decision !== 'approved' ? review.role === 'client' ? 'Active step • Client requested changes' : 'Active step • Returned by admin' : 'Active step • In progress';
-  const active = flow.status === 'completed' ? steps.length
-    : flow.status === 'approved' ? 5
+  const active = isDone(flow) ? steps.length
     : flow.status === 'client_review' ? 4
     : flow.status === 'in_progress' && flow.sub_status === 'awaiting_admin_approval' ? 2 : 0;
   const rows: Row[] = steps.map((step, i) => {
@@ -86,9 +84,7 @@ function panelFor(flow: FirFlowView): Panel | null {
     return { icon: FileText, title: 'Draft in progress', body: 'No draft has been sent for review yet.', actionable: true };
   }
   if (flow.status === 'client_review') return { icon: Mail, title: c.waitingClient.title, body: c.waitingClient.body(client), note: c.waitingClient.note, actionable: false };
-  if (flow.status === 'approved') return { icon: CheckCheck, title: 'Client Approved',
-    body: `Submit the FIR${stationName(flow) ? ` at ${stationName(flow)}` : ''} and upload the police receipt.`, actionable: true };
-  if (flow.status === 'completed') return { icon: Check, title: 'FIR Draft Completed', body: 'The client approved your draft.', actionable: true };
+  if (isDone(flow)) return { icon: Check, title: 'FIR Draft Completed', body: 'The client approved your draft.', actionable: true };
   if (flow.status === 'cancelled' || flow.status === 'refunded') return { icon: Info, title: flow.stage.advocate.chip, body: 'This request was cancelled. No further work is needed.', actionable: false };
   return null;
 }
@@ -98,7 +94,7 @@ export default function AdvocateFirReviewScreen({ compact = false }: { compact?:
   const caseId = useAdvocateCaseId();
   const f = useFirFlow(caseId);
   const act = useAction();
-  const [police, setPolice] = useState(false), [allEvents, setAllEvents] = useState(false), [reminded, setReminded] = useState(false);
+  const [allEvents, setAllEvents] = useState(false), [reminded, setReminded] = useState(false);
   const flow = f.flow;
   const allowed = !!flow && ACCESS.includes(flow.status);
 
@@ -222,10 +218,7 @@ export default function AdvocateFirReviewScreen({ compact = false }: { compact?:
             {[reminded ? 'Reminder sent to the client in the app.' : remind.last_at ? `Last reminded ${dayTime(remind.last_at)}.` : '', !remind.allowed && remind.next_at ? `You can remind again ${dayTime(remind.next_at)}.` : ''].filter(Boolean).join(' ')}
           </Text>}
         </>}
-        {flow.status === 'approved' && <Pressable accessibilityRole="button" onPress={() => setPolice(true)} style={({ pressed }) => [styles.remind, pressed && styles.pressed]}>
-          <Send size={t.remindIcon} color={ink.onBrand} /><Text style={styles.remindText} {...shrinkToFit(0.8)}>Mark as submitted to police</Text>
-        </Pressable>}
-        {flow.status === 'completed' && <Pressable accessibilityRole="button" onPress={() => router.push(firRoute(caseId, 'completed'))} style={({ pressed }) => [styles.remind, pressed && styles.pressed]}>
+        {isDone(flow) && <Pressable accessibilityRole="button" onPress={() => router.push(firRoute(caseId, 'completed'))} style={({ pressed }) => [styles.remind, pressed && styles.pressed]}>
           <Text style={styles.remindText}>View</Text>
         </Pressable>}
       </View>}
@@ -247,9 +240,6 @@ export default function AdvocateFirReviewScreen({ compact = false }: { compact?:
         style={({ pressed }) => [styles.remind, { marginTop: compactTokens.continueTop, minHeight: compactTokens.continueH, borderRadius: compactTokens.continueRadius }, pressed && styles.pressed]}>
         <Text style={styles.remindText}>{c.continue}</Text>
       </Pressable>}
-
-      {flow.status === 'approved' && <PoliceSubmissionSheet visible={police} caseId={caseId} station={stationLine || null} approvedAt={latest(flow, 'fir_client_approved')}
-        onClose={() => setPolice(false)} onDone={view => { f.setFlow(view); setPolice(false); router.replace(firRoute(caseId, 'completed')); }} />}
     </>;
   }
 

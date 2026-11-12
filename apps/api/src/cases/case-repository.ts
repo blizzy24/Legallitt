@@ -53,9 +53,9 @@ function firEventsFor<T extends {type: string; payload: unknown}>(role: string, 
   if (role === 'advocate') return events.map(e => FIR_ADVOCATE_PRIVATE_EVENTS.includes(e.type) ? {...e, payload: {}} : e);
   return events;
 }
-/** The police receipt the advocate recorded (C14); other receipt uploads stay private. */
-const firReceiptId = (events: {type: string; payload: unknown}[]) =>
-  ([...events].reverse().find(e => e.type === 'fir_police_submitted')?.payload as {receipt_document_id?: string} | undefined)?.receipt_document_id ?? null;
+/** Q114: identity files stored on older FIR cases are never listed for the client or advocate (admin only). */
+const firVisibleDocuments = <T extends {kind: string}>(role: string, documents: T[]) =>
+  role === 'admin' ? documents : documents.filter(d => d.kind !== 'id_proof');
 
 @Injectable()
 export class CaseRepository {
@@ -131,7 +131,7 @@ export class CaseRepository {
       // A2: until the assigned advocate accepts, the client's mobile and email are masked,
       // and earlier draft versions (which print them) are withheld.
       if (firContactMasked(actor.role, record.status)) {
-        const shown = documents.filter(d => d.kind !== 'fir_draft');
+        const shown = firVisibleDocuments(actor.role, documents).filter(d => d.kind !== 'fir_draft');
         return {...caseRecord,details:maskFirContact(firIntakeDetails(record.details,parties)),
           parties:parties.map(p=>p.kind==='complainant'?{...p,details:maskFirContact({people:[{...(p.details as object),kind:'complainant'}]}).people![0]}:p),
           pricing,advocate:advocate?{...advocateUser,profile}:null,events:firEventsFor(actor.role,events),drafts:[],reviews:[],shipments,approval:null,documents:shown,
@@ -139,7 +139,9 @@ export class CaseRepository {
       }
       return {...caseRecord,details:firIntakeDetails(record.details,parties),parties,pricing,advocate:advocate?{...advocateUser,profile}:null,
         events:firEventsFor(actor.role,events), drafts, reviews:actor.role==='client'?reviews.filter(r=>r.reviewer_id===actor.id):reviews, shipments, approval:actor.role==='client'&&!approval?.approved_at?null:approval,
-        documents: actor.role==='client'?documents.filter(d=>d.owner_id===record.client_id || drafts.some(x=>x.document_id===d.id) || d.id===firReceiptId(events)):documents,
+        // The client sees their own uploads and the drafts released to them; no police
+        // receipt (the police step is gone, Q119, Q120) and no identity file (Q114).
+        documents: actor.role==='client'?firVisibleDocuments(actor.role,documents).filter(d=>d.owner_id===record.client_id || drafts.some(x=>x.document_id===d.id)):firVisibleDocuments(actor.role,documents),
         client_fees:snapshot?{...snapshot.breakdown,breakdown_complete:true,simulated:captured.simulated}:null};
     }
     if(isConsultationService(record.service_code)){

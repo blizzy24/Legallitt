@@ -14,12 +14,15 @@ const {InAppNotifications}=require('../dist/src/notifications/in-app-notificatio
 const {SimulatedNotifications}=require('../dist/src/notifications/simulated-notifications');
 const {seedConfirmedPricing}=require('../dist/prisma/seed-pricing');
 const {waitingDuration}=require('@legalitt/shared');
+const {readPdfText}=require('./helpers/pdf-text.cjs');
 
 test('FIR: paid intake, advocate version freeze, admin-only approval, oldest-first stalled queue, private PDF and atomic release',
  {skip:!process.env.LEGALITT_TEST_DATABASE_URL},async t=>{
   const db=new PrismaClient({adapter:new PrismaPg({connectionString:process.env.LEGALITT_TEST_DATABASE_URL})}),prisma={getClient:async()=>db};
   const users=['client','client','advocate','advocate','admin'].map(role=>({id:randomUUID(),role,cognito_sub:randomUUID(),full_name:'TEST FIR '+role}));
   const [client,other,advocate,otherAdvocate,admin]=users,ids=[];
+  // Pays without any identity document (Q114); named apart so its paid case stays out of the queue searches below.
+  const payer={id:randomUUID(),role:'client',cognito_sub:randomUUID(),full_name:'TEST payer without identity'};users.push(payer);
   const inbox=new InAppNotifications(new SimulatedNotifications()),state=new CaseStateMachine(prisma,inbox),repo=new CaseRepository(prisma);
   const objects=new Map(),originalFetch=global.fetch;
   const storage={upload:async key=>({url:'https://fir-storage.invalid',fields:{key:stagingKey(key)}}),
@@ -34,20 +37,21 @@ test('FIR: paid intake, advocate version freeze, admin-only approval, oldest-fir
   const pay=new PaymentsService(prisma,state,{capture:async()=>{captures++;return {paymentId:randomUUID(),simulated:true,source:'simulated'};}},inbox);
   const before={};for(const model of ['servicePricing','commissionRate','feePolicy','pageOveragePolicy'])before[model]=await db[model].findMany({select:{id:true}});
   const fixture=require('./helpers/fir.cjs'),intake=fixture.intake(),content=fixture.editable(intake);
-  const saveInput=async id=>{const c=await fir.context(advocate,id),doc=await db.document.findFirst({where:{case_id:id,kind:'id_proof',status:'uploaded'}}),content=fixture.editable(c.intake);content.identity_document_id=doc.id;content.attachment_ids=[doc.id];return {base_draft_id:c.latest_draft_id,filing_hash:c.filing_hash,content};};
+  // Q114: no identity document; the draft attaches the client's primary document.
+  const saveInput=async id=>{const c=await fir.context(advocate,id),doc=await db.document.findFirst({where:{case_id:id,kind:'fir_primary',status:'uploaded'}}),content=fixture.editable(c.intake);content.attachment_ids=[doc.id];return {base_draft_id:c.latest_draft_id,filing_hash:c.filing_hash,content};};
   const save=async(id,patch={})=>{const input=await saveInput(id);return fir.save(advocate,id,{...input,content:{...input.content,...patch}});};
   const working=async(owner=client)=>{const c=await state.create(owner,{service_code:'fir_draft'});ids.push(c.id);await fir.intake(owner,c.id,fixture.intake());
-    assert.equal(await db.document.count({where:{case_id:c.id}}),0);await assert.rejects(state.submitForPayment(owner,c.id),{status:400});await db.document.create({data:{case_id:c.id,owner_id:owner.id,kind:'id_proof',filename:'TEST-identity.pdf',mime_type:'application/pdf',size_bytes:100n,page_count:1,status:'uploaded',s3_key:randomUUID(),identity_evidence:{document_type:'passport',masked_copy:false,policy_version:1,declared_at:new Date().toISOString()}}});
+    assert.equal(await db.document.count({where:{case_id:c.id}}),0);await assert.rejects(state.submitForPayment(owner,c.id),{status:400});
     await fixture.primary(db,c.id,owner.id);await state.submitForPayment(owner,c.id);const q=await pay.quote(owner,{case_id:c.id});assert.equal(q.status,'ready');assert.equal(q.breakdown.total_paise,'147353');await pay.intent(owner,{case_id:c.id,purpose:'service_fee',quote_id:q.id},randomUUID());await state.assign(admin,c.id,{advocate_id:advocate.id});await state.transition(advocate,c.id,'advocate_accepted');return c;};
   try{
     await db.user.createMany({data:users});await db.advocateProfile.create({data:{user_id:advocate.id,verification:'approved',city:'Mumbai'}});await seedConfirmedPricing(db);
-    await t.test('identity removed after submission blocks payment before gateway capture',async()=>{
-      const c=await state.create(client,{service_code:'fir_draft'});ids.push(c.id);await fir.intake(client,c.id,fixture.intake());
-      const doc=await db.document.create({data:{case_id:c.id,owner_id:client.id,kind:'id_proof',filename:'TEST-identity.pdf',mime_type:'application/pdf',size_bytes:100n,page_count:1,status:'uploaded',s3_key:randomUUID(),identity_evidence:{document_type:'passport',masked_copy:false,policy_version:1,declared_at:new Date().toISOString()}}});
-      await fixture.primary(db,c.id,client.id);await state.submitForPayment(client,c.id);await db.document.update({where:{id:doc.id},data:{status:'deleted'}});
-      const q=await pay.quote(client,{case_id:c.id}),before=captures;
-      await assert.rejects(pay.intent(client,{case_id:c.id,purpose:'service_fee',quote_id:q.id},randomUUID()),e=>e.status===400&&e.message.includes('identity document'));
-      assert.equal(captures,before);assert.equal(await db.payment.count({where:{case_id:c.id,status:'captured'}}),0);
+    await t.test('Q114: submission and payment capture need no identity document',async()=>{
+      const c=await state.create(payer,{service_code:'fir_draft'});ids.push(c.id);await fir.intake(payer,c.id,fixture.intake());
+      await fixture.primary(db,c.id,payer.id);await state.submitForPayment(payer,c.id);
+      const q=await pay.quote(payer,{case_id:c.id}),before=captures;
+      await pay.intent(payer,{case_id:c.id,purpose:'service_fee',quote_id:q.id},randomUUID());
+      assert.equal(captures,before+1);assert.equal(await db.payment.count({where:{case_id:c.id,status:'captured'}}),1);assert.equal((await db.case.findUnique({where:{id:c.id}})).status,'paid');
+      assert.equal(await db.document.count({where:{case_id:c.id,kind:'id_proof'}}),0);
     });
     const c=await working();
     await t.test('partial drafts save, complete errors block PDF, and stale concurrent saves cannot replace current work',async()=>{
@@ -71,6 +75,20 @@ test('FIR: paid intake, advocate version freeze, admin-only approval, oldest-fir
       await assert.rejects(fir.preview(advocate,c.id,latest.id),{status:409});
       await assert.rejects(fir.save(advocate,c.id,{...current,base_draft_id:latest.id}),{status:409});
       await db.caseParty.update({where:{id:person.id},data:{name:person.name}});
+    });
+    await t.test('Q114: an identity file stored on an older case is never selected, attached, printed or shown to the advocate',async()=>{
+      const old=await db.document.create({data:{case_id:c.id,owner_id:client.id,kind:'id_proof',filename:`Identity-proof-${randomUUID()}.pdf`,mime_type:'application/pdf',size_bytes:100n,page_count:1,status:'uploaded',s3_key:randomUUID(),identity_last4:'4812',identity_evidence:{document_type:'passport',masked_copy:false,policy_version:1,declared_at:new Date().toISOString()}}});
+      const input=await saveInput(c.id);
+      const saved=await fir.save(advocate,c.id,{...input,content:{...input.content,identity_document_id:old.id,attachment_ids:[...input.content.attachment_ids,old.id]}});
+      assert.equal(saved.content.complainant.identity_document_id,null);assert.deepEqual(saved.content.attachments.map(a=>a.document_id),input.content.attachment_ids,'an identity selection carried over is dropped, not refused');
+      // A version saved before Q114, with the identity file selected and attached.
+      await db.draft.update({where:{id:saved.id},data:{content:{...saved.content,complainant:{...saved.content.complainant,identity_document_id:old.id},attachments:[...saved.content.attachments,{document_id:old.id,filename:old.filename,mime_type:'application/pdf'}]}}});
+      const ctx=await fir.context(advocate,c.id);assert.equal(ctx.latest_content.complainant.identity_document_id,null);assert.equal(ctx.latest_content.attachments.some(a=>a.document_id===old.id),false);
+      assert.deepEqual(ctx.initial_content.attachment_ids,[]);assert.equal(ctx.initial_content.identity_document_id,null);
+      const {text}=await readPdfText(Buffer.from((await fir.preview(advocate,c.id,saved.id)).pdf_base64,'base64'));
+      for(const gone of ['Identity',old.filename,'XXXX-XXXX'])assert.equal(text.includes(gone),false,gone);
+      assert.equal((await repo.read(advocate,c.id)).documents.some(d=>d.id===old.id),false);assert.equal((await repo.read(client,c.id)).documents.some(d=>d.id===old.id),false);
+      await assert.rejects(docs.url(advocate,old.id),{status:404});
     });
     await t.test('auto-save updates the advocate’s own unsent version in place, with the same checks; stale sessions are refused',async()=>{
       const input=await saveInput(c.id),ctx=await fir.context(advocate,c.id);assert.equal(ctx.requires_new_version,false);
@@ -134,8 +152,8 @@ test('FIR: paid intake, advocate version freeze, admin-only approval, oldest-fir
     });
     await t.test('approval pins reviewed PDF and closes once; client can read only approved version',async()=>{
       const doc=await db.document.findUniqueOrThrow({where:{id:submitted.document_id}}),bytes=objects.get(doc.s3_key);
-      const life=await review.read(admin,c.id),sub=life.submissions.find(s=>s.id===life.current_submission_id);
-      await review.identityReview(admin,c.id,{...await token(c.id),document_id:sub.identity_document_id,decision:'accepted'});
+      // Q114: approval needs no identity check.
+      const life=await review.read(admin,c.id),sub=life.submissions.find(s=>s.id===life.current_submission_id);assert.equal(sub.identity_document_id,null);
       const approvalToken=await token(c.id);await Promise.all([fir.approve(admin,c.id,submitted.draft_id,approvalToken),fir.approve(admin,c.id,submitted.draft_id,approvalToken)]);
       const done=await repo.read(client,c.id);assert.equal(done.status,'client_review');assert.equal(done.drafts.length,1);assert.equal(done.drafts[0].id,submitted.draft_id);assert.equal(done.approval.document_id,doc.id);
       assert.ok((await docs.url(client,doc.id)).url);assert.deepEqual(objects.get(doc.s3_key),bytes);

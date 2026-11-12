@@ -6,13 +6,13 @@ import {ActivityIndicator,KeyboardAvoidingView,Linking,Modal,Platform,Pressable,
 import {router,useLocalSearchParams,type Href} from 'expo-router';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import * as DocumentPicker from 'expo-document-picker';
-import {advocateFirPath,DOCUMENT_MAX_BYTES,FIR_UPLOAD_SLOTS,FirIntakeSchema,maskedIdentity,type ApiCase,type ApiDocument,type FirAdvocateScreen,type FirIntake,type FirStageView} from '@legalitt/shared';
+import {advocateFirPath,DOCUMENT_MAX_BYTES,FIR_UPLOAD_SLOTS,FirIntakeSchema,type ApiCase,type ApiDocument,type FirAdvocateScreen,type FirIntake,type FirStageView} from '@legalitt/shared';
 import {backend} from '../../../lib/auth';
 import {colors,font,ink,status} from '../../../constants/theme';
 import {formatDate,formatTime,formatSize} from '../flow';
 
-/** Documents carry the FIR slot label and the identity's last four digits (flow C6). */
-export type FirDoc = ApiDocument & {identity_last4?: string | null; slot_label?: string | null};
+/** Documents carry the FIR custom slot label (flow C6). */
+export type FirDoc = ApiDocument & {slot_label?: string | null};
 export type FirRecord = Omit<ApiCase,'documents'> & {documents?: FirDoc[]};
 
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -65,17 +65,35 @@ export function incidentTime(value:string|undefined){
 }
 export const incidentWhen=(i:FirIntake['incident']|undefined)=>[incidentDate(i?.date),incidentTime(i?.time)].filter(Boolean).join(', ');
 export const docType=(mime:string)=>mime==='application/pdf'?'PDF':mime.startsWith('image/')?'Image':mime.startsWith('video/')?'Video':mime.startsWith('audio/')?'Audio':'File';
-export const isIdentity=(d:FirDoc)=>d.kind==='id_proof';
-/** The ID is never named by its file: "Identity Proof (masked) XXXX-XXXX-1234". */
-export const docName=(d:FirDoc)=>isIdentity(d)?['Identity Proof (masked)',maskedIdentity(d.identity_last4)].filter(Boolean).join(' '):d.filename;
-const SLOT_TITLES:Record<string,string>={...Object.fromEntries(FIR_UPLOAD_SLOTS.map(s=>[s.kind,s.title])),id_proof:'Identity Proof',supporting_document:'Added by you',fir_change_attachment:'Client’s change request'};
+/**
+ * No identity proof in FIR (ISHAAN-ANSWERS 2026-11-12 Q114): an older case's
+ * `id_proof` upload stays stored but is never listed, attached or required.
+ */
+export const isIdentityProof=(d:Pick<ApiDocument,'kind'>)=>d.kind==='id_proof';
+export const docName=(d:FirDoc)=>d.filename;
+const SLOT_TITLES:Record<string,string>={...Object.fromEntries(FIR_UPLOAD_SLOTS.map(s=>[s.kind,s.title])),supporting_document:'Added by you',fir_change_attachment:'Client’s change request'};
 export const docSlot=(d:FirDoc)=>d.kind==='fir_custom'?d.slot_label?.trim()||'Other':SLOT_TITLES[d.kind]??'';
 /** Pages are counted for PDFs only; a photo, clip or recording shows its size alone. */
 export const docPages=(d:FirDoc)=>d.mime_type==='application/pdf'&&d.page_count?`${d.page_count} ${d.page_count===1?'Page':'Pages'}`:'';
 export const joinDot=(...parts:(string|null|undefined|false)[])=>parts.filter(Boolean).join(' • ');
 export {formatSize};
-/** The client's own uploads, in upload order (not drafts, receipts or advocate uploads). */
-export const clientDocuments=(r:FirRecord|null)=>(r?.documents??[]).filter(d=>d.status==='uploaded'&&d.owner_id===r!.client_id&&!['fir_draft','fir_police_receipt','fir_change_attachment'].includes(d.kind));
+/** The client's own uploads, in upload order (not drafts, receipts, identity proofs or advocate uploads). */
+export const clientDocuments=(r:FirRecord|null)=>(r?.documents??[]).filter(d=>d.status==='uploaded'&&d.owner_id===r!.client_id&&!isIdentityProof(d)&&!['fir_draft','fir_police_receipt','fir_change_attachment'].includes(d.kind));
+/** The documents the A4/A5 attachment list offers: every upload except drafts, receipts and identity proofs. */
+export const draftListed=(d:FirDoc)=>d.status==='uploaded'&&!isIdentityProof(d)&&!['fir_draft','fir_police_receipt'].includes(d.kind);
+/**
+ * A draft never names an identity document (Q114). An older draft's reference is
+ * cleared (kept as null while the schema still has the field) and, once the
+ * case's documents are loaded (`listed`), the draft keeps only attachments that are
+ * still listed, so nothing hidden blocks sending.
+ */
+export function withoutIdentity<T extends {attachment_ids:string[]}>(value:T,listed?:readonly {id:string}[]|null):T{
+  const legacy=(value as {identity_document_id?:string|null}).identity_document_id;
+  const keep=listed?new Set(listed.map(d=>d.id)):null;
+  const attachment_ids=value.attachment_ids.filter(id=>id!==legacy&&(!keep||keep.has(id)));
+  if(!legacy&&attachment_ids.length===value.attachment_ids.length)return value;
+  return {...value,...(legacy?{identity_document_id:null}:{}),attachment_ids} as T;
+}
 
 /** A3: "Rahul Sharma (Complainant), Vikram Singh & 2 others (Accused)". */
 export function peopleSummary(intake:FirIntake|null){

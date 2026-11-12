@@ -1,5 +1,5 @@
 import {ensureFirLifecycle,firCorrectionState} from './fir-lifecycle';
-import {isConsultationService} from '@legalitt/shared';
+import {isConsultationService,isServiceOffered,serviceNotOfferedMessage} from '@legalitt/shared';
 import { NOTIFICATIONS, type NotificationsPort } from '../notifications/notifications.port';
 import { notifyCaseTransition } from '../notifications/case-notifications';
 import { requireDemoMode } from '../auth/demo';
@@ -40,7 +40,6 @@ import { PrismaService } from "../prisma.service";
 import { Prisma, type PrismaClient } from "../generated/prisma/client";
 import { caseScope, type CaseActor } from "./case-access";
 import { caseReference } from './case-reference';
-import {requireFirIdentity} from '../documents/fir-identity';
 import {isReportService,REPORT_AWAITING_APPROVAL,REPORT_CHANGES_REQUESTED,type ChangeItem,type ReportServiceCode} from '@legalitt/shared';
 import {assertReportSubmittable} from '../service-reports/report-submission';
 
@@ -171,6 +170,9 @@ export class CaseStateMachine {
     if (actor.role !== "client")
       throw new ForbiddenException("Only clients create cases");
     const input = parse(createCaseSchema, body);
+    // Q79/Q113: a hidden service keeps its code and existing cases, but takes no new ones.
+    if (!isServiceOffered(input.service_code))
+      throw new BadRequestException(serviceNotOfferedMessage(input.service_code));
     const notice = input.service_code === 'legal_notice' ? input : null;
     if (notice && notice.matter_type !== undefined && notice.details.issueType !== undefined && notice.matter_type !== noticeMatterType(notice.details.issueType))
       throw new BadRequestException('Matter type must match the selected issue');
@@ -340,8 +342,7 @@ export class CaseStateMachine {
     if (to === CaseStatus.submitted) await assertReportSubmittable(tx, record);
     if (to === CaseStatus.submitted && record.service_code === 'fir_draft') {
       parse(FirSubmissionSchema,firIntakeDetails(record.details,await tx.caseParty.findMany({where:{case_id:record.id}})));
-      await requireFirIdentity(tx,record.id);
-      // Flow C6: Primary Documents is a required slot alongside Identity Proof.
+      // Flow C6: Primary Documents is the one required slot. No identity document (Q114).
       if(!await tx.document.count({where:{case_id:record.id,kind:'fir_primary',status:'uploaded'}}))throw new BadRequestException('Upload at least one primary document (agreement, notice, receipt or stamp paper).');
     }
     if (to === CaseStatus.submitted && record.service_code === 'legal_notice') {
@@ -388,6 +389,9 @@ export class CaseStateMachine {
       if (!['legal_notice','fir_draft'].includes(record.service_code) && !isReportService(record.service_code)) throw new NotFoundException('Case not found');
       if (actor.role !== "client")
         throw new ForbiddenException("Only clients submit");
+      // A hidden service (Court Marriage, Q79/Q113) takes no new submissions, even from an older draft.
+      if (record.status === "draft" && !isServiceOffered(record.service_code))
+        throw new BadRequestException(serviceNotOfferedMessage(record.service_code as ServiceCode));
       if (record.status === "payment_pending") return record;
       if (record.status === "draft") {
         const now = new Date();
@@ -742,13 +746,12 @@ export async function writeFirReviewState(tx:Prisma.TransactionClient,actor:Case
 }
 // docs/flows/FIR-DRAFT-FLOW.md transitions that sit outside the admin review
 // writer. Each (role, from, to) pair is listed explicitly; nothing else passes.
+// There is no police-submission step (Q119, Q120): client approval completes the case.
 const FIR_FLOW_MOVES: {role: CaseActor['role']; from: string; to: string}[] = [
   {role: 'admin', from: 'in_progress', to: 'client_review'},        // admin approves → sent to client
-  {role: 'client', from: 'client_review', to: 'approved'},          // client approves, advocate submits to police
-  {role: 'client', from: 'client_review', to: 'completed'},         // client approves, client submits to police
+  {role: 'client', from: 'client_review', to: 'completed'},         // client approves → completed
   {role: 'client', from: 'client_review', to: 'changes_requested'}, // client asks for changes
   {role: 'advocate', from: 'assigned', to: 'advocate_declined'},    // advocate rejects → returns to admin
-  {role: 'advocate', from: 'approved', to: 'completed'},            // advocate marks submitted to police
 ];
 export async function writeFirFlowTransition(tx:Prisma.TransactionClient,actor:CaseActor,id:string,
   move:{to:string;sub_status:string|null;advocate_id?:null},type:string,payload:Prisma.InputJsonObject={}){
@@ -816,9 +819,8 @@ export async function writeFirSubmitted(tx: Prisma.TransactionClient,actor: Case
   const latest=await tx.draft.findFirst({where:{case_id:id,kind:'fir_proforma'},orderBy:{version:'desc'}});
   if(latest?.id!==payload.draft_id||latest.document_id!==payload.document_id)throw new ConflictException('Refresh to use the submitted version');
   const {life,assignment}=await ensureFirLifecycle(tx,record);if(!assignment)throw new ConflictException('Assignment required');
-  if(await tx.firIdentityReturn.count({where:{case_id:id,state:{in:['replacement_required','review_pending']}}}))throw new ConflictException('Identity correction remains outstanding');
-  const content=latest.content as {complainant:{identity_document_id:string}};
-  const sub=await tx.firSubmission.create({data:{case_id:id,assignment_id:assignment.id,draft_id:latest.id,version:latest.version,document_id:payload.document_id,identity_document_id:content.complainant.identity_document_id,supersedes_submission_id:life.current_submission_id}});
+  // Q114: no identity document is submitted or reviewed; an older outstanding identity return blocks nothing.
+  const sub=await tx.firSubmission.create({data:{case_id:id,assignment_id:assignment.id,draft_id:latest.id,version:latest.version,document_id:payload.document_id,identity_document_id:null,supersedes_submission_id:life.current_submission_id}});
   await tx.firLifecycle.update({where:{case_id:id},data:{current_submission_id:sub.id,revision:{increment:1}}});
   const updated=await tx.case.update({where:{id},data:{sub_status:FIR_AWAITING_APPROVAL,updated_at:new Date()}});
   await appendCaseEvent(tx,{case_id:id,type:'fir_draft_submitted',actor_id:actor.id,actor_role:actor.role,from_status:'in_progress',to_status:'in_progress',payload});

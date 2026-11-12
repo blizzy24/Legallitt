@@ -16,7 +16,6 @@ import {
   DocumentPresignSchema,
   ID_PROOF_NOTICE,
   FIR_ID_NOTICE,
-  IdentityEvidenceSchema,
 } from "@legalitt/shared";
 import type { Prisma, Document } from "../generated/prisma/client";
 import { parse } from "../auth/auth.service";
@@ -25,7 +24,6 @@ import { caseScope, type CaseActor } from "../cases/case-access";
 import { appendCaseEvent, lockedCase } from "../cases/case-state-machine";
 import { DocumentStorage, stagingKey } from "./document-storage";
 import { FileInspector } from "./file-inspector";
-import {firIdentityPolicy} from './fir-identity';
 import {isConsultationService} from '@legalitt/shared';
 import {consultationDocumentVisible} from '../consultations/consultation-documents';
 import {assertReportDocumentDeletable,assertReportDocumentReadable,assertReportUploadAllowed} from '../service-reports/report-access';
@@ -87,14 +85,16 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
       if(input.kind==='consultation_report'&&(!internal?.consultationReport||actor.role!=='advocate'||!isConsultationService(record.service_code)))
         throw new BadRequestException('Consultation briefs must be generated from the report editor.');
       if(isConsultationService(record.service_code)&&['completed','cancelled','refunded'].includes(record.status))throw new ConflictException('This case is closed; documents cannot be added.');
-      const replacingIdentity=record.service_code==='fir_draft'&&['assigned','advocate_accepted','in_progress','changes_requested'].includes(record.status)&&actor.role==='client'&&input.kind==='id_proof'&&!!await tx.firIdentityReturn.findFirst({where:{case_id:record.id,state:'replacement_required'}});
+      // Q114: FIR collects no identity document at any stage. Files stored on older
+      // cases stay stored, but no new one is accepted.
+      if (record.service_code === 'fir_draft' && input.kind === 'id_proof')
+        throw new BadRequestException('Identity documents aren’t collected for FIR Draft.');
+      // The police receipt is dormant (Q119, Q120): nobody uploads one any more.
       const firSpecial=[FIR_CHANGE_ATTACHMENT_KIND,FIR_POLICE_RECEIPT_KIND].includes(input.kind);
       if (record.service_code === 'fir_draft' && !(
-        replacingIdentity || actor.role === 'client' && ['draft','payment_pending'].includes(record.status) && !firSpecial && input.kind !== 'fir_draft' ||
+        actor.role === 'client' && ['draft','payment_pending'].includes(record.status) && !firSpecial && input.kind !== 'fir_draft' ||
         // C12: one optional attachment with a client change request.
         actor.role === 'client' && record.status === 'client_review' && input.kind === FIR_CHANGE_ATTACHMENT_KIND ||
-        // C14: the police receipt, once the client has approved.
-        actor.role === 'advocate' && record.status === 'approved' && input.kind === FIR_POLICE_RECEIPT_KIND ||
         actor.role === 'advocate' && ['advocate_accepted','in_progress','changes_requested'].includes(record.status) && record.sub_status!=='awaiting_admin_approval' && !firSpecial
       )) throw new ConflictException('FIR documents are frozen at this stage');
       // Video and audio are accepted only in the FIR slots drawn for them (flow C6).
@@ -108,20 +108,12 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
         throw new BadRequestException(`${slot.title} holds up to ${slot.max} files. Remove one to add another.`);
       if (input.kind === FIR_CUSTOM_SLOT_KIND && (record.service_code !== 'fir_draft' || !input.slot_label))
         throw new BadRequestException('Name the custom category before uploading.');
-      if (input.identity_last4 && (record.service_code !== 'fir_draft' || input.kind !== 'id_proof'))
-        throw new BadRequestException('Identity digits belong only to FIR identity uploads');
-      if (record.service_code === 'fir_draft' && input.kind === 'id_proof' && !input.identity_last4)
-        throw new BadRequestException('Enter the last four digits of the identity document.');
+      // The optional identity fields stay in the schema for compatibility only (Q114):
+      // they were accepted solely on FIR identity uploads, which are refused above.
+      if (input.identity_last4 || input.identity)
+        throw new BadRequestException('Identity details aren’t collected with uploads.');
       assertReportUploadAllowed(actor, record, input.kind, internal?.serviceReport);
       const id = randomUUID();
-      if(input.identity&&(record.service_code!=='fir_draft'||input.kind!=='id_proof'))throw new BadRequestException('Identity declarations belong only to FIR identity uploads');
-      let identity:ReturnType<typeof IdentityEvidenceSchema.parse>|undefined;
-      if(record.service_code==='fir_draft'&&input.kind==='id_proof'){
-        const policy=await firIdentityPolicy(tx),type=policy.accepted_documents.find(t=>t.code===input.identity?.document_type);
-        if(!input.identity||!type)throw new BadRequestException('Choose one accepted identity document type before uploading.');
-        if(type.requires_masking&&!input.identity.masked_copy)throw new BadRequestException('Full Aadhaar is not accepted. Download and confirm a masked copy showing only the last four digits.');
-        identity={...input.identity,policy_version:policy.version,declared_at:new Date().toISOString()};
-      }
       // Original identity filenames may contain ID numbers. Never persist them,
       // including in object keys, download headers, the draft or PDF manifest.
       const filename=input.kind==='id_proof'?`Identity-proof-${id}.${input.mime==='application/pdf'?'pdf':input.mime==='image/png'?'png':'jpg'}`:input.filename;
@@ -134,8 +126,6 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
           simulated: actor.source === "simulated",
           kind: input.kind,
           filename,
-          ...(identity?{identity_evidence:identity}:{}),
-          ...(input.identity_last4?{identity_last4:input.identity_last4}:{}),
           ...(input.kind===FIR_CUSTOM_SLOT_KIND&&input.slot_label?{slot_label:input.slot_label}:{}),
           s3_key: key,
           mime_type: input.mime,
@@ -223,13 +213,16 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
       // A2: earlier draft PDFs print the client's contact details; they open once the advocate accepts.
       if (record.service_code === 'fir_draft' && actor.role === 'advocate' && record.status === 'assigned' && doc.kind === 'fir_draft')
         throw new NotFoundException('Document not found');
+      // Q114: an identity file stored on an older FIR case is never shown to the advocate (admin only).
+      if (record.service_code === 'fir_draft' && actor.role === 'advocate' && doc.kind === 'id_proof')
+        throw new NotFoundException('Document not found');
       if (record.service_code === 'fir_draft' && actor.role === 'client' && doc.owner_id !== record.client_id) {
-        // The client sees a draft PDF once the admin approved it (sent to client),
-        // and the advocate's police receipt (C14). Nothing else the team uploaded.
+        // The client sees a draft PDF once the admin approved it (sent to client).
+        // Nothing else the team uploaded, including any police receipt recorded
+        // before the police step was removed (Q119, Q120).
         const approved = doc.kind === 'fir_draft' && await tx.draft.findFirst({where:{case_id:record.id,document_id:doc.id,
           draft_reviews_draft_id_relations:{some:{decision:'approved',reviewer_id_relation:{role:'admin'}}}}});
-        const receipt = doc.kind === FIR_POLICE_RECEIPT_KIND && await tx.firPoliceSubmission.findFirst({where:{case_id:record.id,receipt_document_id:doc.id}});
-        if (['cancelled','refunded'].includes(record.status) || !(approved || receipt)) throw new NotFoundException('Document not found');
+        if (['cancelled','refunded'].includes(record.status) || !approved) throw new NotFoundException('Document not found');
       }
       await assertReportDocumentReadable(tx, actor, record, doc);
       if (record.service_code === 'fir_draft' && actor.role === 'client' && doc.kind === 'fir_draft' && record.status === 'client_review') {

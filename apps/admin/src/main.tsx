@@ -7,7 +7,7 @@ import { CaseDetail } from './case-detail';
 import { StrictMode, useState, type FormEvent } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Navigate, Route, Routes, NavLink, Outlet, useParams } from 'react-router';
-import {ServiceCodeSchema, SERVICE_NAMES} from '@legalitt/shared';
+import {ServiceCodeSchema, SERVICE_NAMES, isServiceOffered} from '@legalitt/shared';
 import { SessionProvider, useSession } from './session';
 import { Notices } from './notices';
 import { Cancellations } from './cancellations';
@@ -46,7 +46,7 @@ function Shell() {
     <aside className={drawer ? 'sidebar open' : 'sidebar'}>
       <div className="wordmark">LEGALITT<span>ADMIN</span></div>
       <nav aria-label="Admin navigation"><NavLink to="/legal-notices" onClick={() => setDrawer(false)}><span aria-hidden="true">▤</span> Legal Notices</NavLink><NavLink to="/services/fir_draft/cases?queue=approval" onClick={()=>setDrawer(false)}><span aria-hidden="true">▤</span> FIR Drafts</NavLink>
-      {(['legal_advice','district_court','high_court','property_search','document_forensic','court_marriage'] as const).map(code=><NavLink key={code} to={`/services/${code}/cases`} onClick={()=>setDrawer(false)}><span aria-hidden="true">▤</span> {SERVICE_NAMES[code]}</NavLink>)}
+      {(['legal_advice','district_court','high_court','property_search','document_forensic','court_marriage'] as const).filter(isServiceOffered).map(code=><NavLink key={code} to={`/services/${code}/cases`} onClick={()=>setDrawer(false)}><span aria-hidden="true">▤</span> {SERVICE_NAMES[code]}</NavLink>)}
       <NavLink to="/cancellations" onClick={()=>setDrawer(false)}><span aria-hidden="true">▤</span> Cancellations &amp; refunds</NavLink>
       <NavLink to="/support" onClick={()=>setDrawer(false)}><span aria-hidden="true">▤</span> Support inbox</NavLink>
       <NavLink to="/account-deletions" onClick={()=>setDrawer(false)}><span aria-hidden="true">▤</span> Account deletions</NavLink>

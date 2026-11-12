@@ -11,15 +11,16 @@ const json = async (p:Promise<unknown>) => JSON.parse(JSON.stringify(await p,(_,
 export class FirController {
   constructor(private readonly fir: FirService,private readonly review: FirAdminService,private readonly flow: FirFlowService) {}
   // docs/flows/FIR-DRAFT-FLOW.md: one role-shaped view, the C10 stage, and the new actions.
+  // Read-only: the promised turnaround, which C2 "Why FIR" shows before any case exists.
+  // There is no police-submission step or switch (Q119, Q120): PATCH /fir/settings and
+  // POST /fir/:id/police-submission are gone. PATCH, not PUT, below: the API's
+  // cross-origin policy allows GET, POST, PATCH and DELETE only.
   @Get('settings') settings(){return this.flow.settings();}
-  // PATCH, not PUT: the API's cross-origin policy allows GET, POST, PATCH and DELETE only.
-  @Patch('settings') updateSettings(@Req() req:AuthRequest,@Body() body:unknown){return this.flow.updateSettings(req.user!,body);}
   @Get(':id/flow') view(@Req() req:AuthRequest,@Param('id') value:string){return json(this.flow.view(req.user!,id(value)));}
   @Post(':id/client-approve') clientApprove(@Req() req:AuthRequest,@Param('id') value:string,@Body() body:unknown){return json(this.flow.clientApprove(req.user!,id(value),body));}
   @Post(':id/client-changes') clientChanges(@Req() req:AuthRequest,@Param('id') value:string,@Body() body:unknown){return json(this.flow.clientChanges(req.user!,id(value),body));}
   @Post(':id/reject') advocateReject(@Req() req:AuthRequest,@Param('id') value:string,@Body() body:unknown){return json(this.flow.advocateReject(req.user!,id(value),body));}
   @Post(':id/remind-client') remind(@Req() req:AuthRequest,@Param('id') value:string,@Body() body:unknown){parse(z.strictObject({}),body??{});return json(this.flow.remindClient(req.user!,id(value)));}
-  @Post(':id/police-submission') police(@Req() req:AuthRequest,@Param('id') value:string,@Body() body:unknown){return json(this.flow.policeSubmitted(req.user!,id(value),body));}
   @Get(':id/lifecycle') lifecycle(@Req() req:AuthRequest,@Param('id') value:string){return json(this.review.read(req.user!,id(value)));}
   @Post(':id/return') reject(@Req() req:AuthRequest,@Param('id') value:string,@Body() body:unknown){return json(this.review.reject(req.user!,id(value),body));}
   @Post(':id/reassign') reassign(@Req() req:AuthRequest,@Param('id') value:string,@Body() body:unknown){return json(this.review.reassign(req.user!,id(value),body));}

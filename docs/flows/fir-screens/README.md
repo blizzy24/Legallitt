@@ -33,17 +33,13 @@ Each image shows the design on the left and the built screen on the right, at ph
 | C12 | Request Changes | `design/client/fir-draft/F7-request-changes.png` | [C12-F7-request-changes.png](C12-F7-request-changes.png) |  |
 | C12 | Request Changes: nothing chosen yet | none | [C12-F7-request-changes-validation.png](C12-F7-request-changes-validation.png) | State; no design. |
 | C13 | Change Request Submitted | `design/client/fir-draft/F8-change-request-submitted.png` | [C13-F8-change-request-submitted.png](C13-F8-change-request-submitted.png) |  |
-| C14 | FIR Draft Approved: advocate submits to police (setting on) | `design/client/fir-draft/F9-draft-approved.png` | [C14-F9-draft-approved.png](C14-F9-draft-approved.png) |  |
-| C14 | FIR Draft Approved: after the police receipt is recorded | `design/client/fir-draft/F9-draft-approved.png` | [C14-F9-draft-approved-police-done.png](C14-F9-draft-approved-police-done.png) | Same design, later state. |
-| C14 | FIR Draft Approved: client submits to police (setting off) | `design/client/fir-draft/F9-draft-approved.png` | [C14-F9-draft-approved-client-submits.png](C14-F9-draft-approved-client-submits.png) | Same design, setting off. |
-| C10 | FIR Draft Status: completed (setting off) | `design/48-fir-status.jpeg` | [C10-status-completed-client-submits.png](C10-status-completed-client-submits.png) | Same design, setting off. |
+| C14 | FIR Draft Approved (client submits at the police station, Q119/Q120) | `design/client/fir-draft/F9-draft-approved.png` | [C14-F9-draft-approved.png](C14-F9-draft-approved.png) |  |
 | A1 | Advocate: Cases list | `design/213-adv-cases-full.png` | [A1-cases-list.png](A1-cases-list.png) |  |
 | A1 | Advocate: Cases list, FIR Draft filter | `design/214-adv-cases-fir.png` | [A1-cases-list-fir.png](A1-cases-list-fir.png) |  |
 | A1 | Advocate: Cases list after rejecting the request | none | [A1-cases-list-empty.png](A1-cases-list-empty.png) | Empty state; no design. |
 | A1 | Advocate: FIR card, Sent to Admin | `design/214-adv-cases-fir.png` | [A1-cases-list-sent-to-admin.png](A1-cases-list-sent-to-admin.png) | Same design, later state. |
 | A1 | Advocate: FIR card, Admin Returned | `design/214-adv-cases-fir.png` | [A1-cases-list-admin-returned.png](A1-cases-list-admin-returned.png) | Same design, later state. |
 | A1 | Advocate: FIR card, Client Changes | `design/214-adv-cases-fir.png` | [A1-cases-list-client-changes.png](A1-cases-list-client-changes.png) | Same design, later state. |
-| A1 | Advocate: FIR card, Client Approved | `design/214-adv-cases-fir.png` | [A1-cases-list-client-approved.png](A1-cases-list-client-approved.png) | Same design, later state. |
 | A2 | Advocate: FIR Request Details | `design/215-adv-fir-request.png` | [A2-request-details.png](A2-request-details.png) |  |
 | A2 | Advocate: Reject reason pop-up | none | [A2-reject-sheet.png](A2-reject-sheet.png) | No design (§9.2). |
 | A2 | Advocate: Accept confirmation | none | [A2-accept-confirm.png](A2-accept-confirm.png) | No design (§9.2). |
@@ -58,11 +54,9 @@ Each image shows the design on the left and the built screen on the right, at ph
 | A6 | Advocate: FIR Review, waiting for admin | `design/219-adv-fir-review.png` | [A6-review-waiting-admin-219.png](A6-review-waiting-admin-219.png) |  |
 | A6 | Advocate: FIR Review, admin returned | `design/219-adv-fir-review.png` | [A6-review-admin-returned.png](A6-review-admin-returned.png) | Same design, other state. |
 | A6 | Advocate: FIR Review, client requested changes | `design/219-adv-fir-review.png` | [A6-review-client-changes.png](A6-review-client-changes.png) | Same design, other state. |
-| A6 | Advocate: FIR Review, client approved | `design/219-adv-fir-review.png` | [A6-review-client-approved.png](A6-review-client-approved.png) | Same design, other state. |
-| A6 / C14 | Advocate: Mark as submitted to police | none | [A6-mark-submitted-sheet.png](A6-mark-submitted-sheet.png) | No design (§9.2). |
-| A6 | Advocate: FIR Review, completed (setting off) | `design/219-adv-fir-review.png` | [A6-review-completed-client-submits.png](A6-review-completed-client-submits.png) | Same design, setting off. |
+| A6 | Advocate: FIR Review, completed on client approval | `design/219-adv-fir-review.png` | [A6-review-completed.png](A6-review-completed.png) | Same design, final state. |
+| A1 | Advocate: FIR card, Completed | `design/214-adv-cases-fir.png` | [A1-cases-list-completed.png](A1-cases-list-completed.png) | Same design, later state. |
 | A7 | Advocate: FIR Completed | `design/220-adv-fir-completed.png` | [A7-completed.png](A7-completed.png) |  |
-| A7 | Advocate: FIR Completed (setting off) | `design/220-adv-fir-completed.png` | [A7-completed-client-submits.png](A7-completed-client-submits.png) | Same design, setting off. |
 | A7 | Advocate: Wallet showing the FIR share | none | [A7-wallet.png](A7-wallet.png) | Existing wallet screen. |
 | §3 / C1 | Admin: Support inbox with the FIR Draft callback and chat | none | [ADMIN-support-inbox.png](ADMIN-support-inbox.png) | Awaiting Figma admin designs (§9.2). |
 | §3.1 | Admin: FIR Drafts list | none | [ADMIN-fir-list.png](ADMIN-fir-list.png) | Awaiting Figma admin designs (§9.2). |
@@ -72,4 +66,3 @@ Each image shows the design on the left and the built screen on the right, at ph
 | §3.3 | Admin: return to advocate with a reason | none | [ADMIN-return-for-correction.png](ADMIN-return-for-correction.png) | Awaiting Figma admin designs (§9.2). |
 | §3.3 | Admin: approve and send to client | none | [ADMIN-approve.png](ADMIN-approve.png) | Awaiting Figma admin designs (§9.2). |
 | §3.3 | Admin: sent to client | none | [ADMIN-sent-to-client.png](ADMIN-sent-to-client.png) | Awaiting Figma admin designs (§9.2). |
-| C14 | Admin: police submission setting switched off | none | [ADMIN-police-setting-off.png](ADMIN-police-setting-off.png) | Awaiting Figma admin designs (§9.2). |

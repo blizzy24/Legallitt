@@ -1377,18 +1377,39 @@ CREATE TABLE account_deletion_requests (
 ### 4.3b FIR Draft full flow (12 November 2026, `docs/flows/FIR-DRAFT-FLOW.md` §4)
 
 Additive only. New columns: `documents.slot_label` (a client-named custom upload slot) and
-`documents.identity_last4` (the only identity digits ever stored, shown as XXXX-XXXX-1234);
+`documents.identity_last4` (dormant since Q114 below: no longer written or required);
 `drafts.ai_used` (false until D-08); `draft_reviews.reviewer_role`, `sections TEXT[]` and
 `attachment_document_id` (client change requests, C12); `support_tickets.service_code`
 (Request Chat / Request Callback raised from a service screen).
 
-Status flow: admin approval moves the case to `client_review`; the client approves
-(`approved` with sub-status `awaiting_police_submission` when the advocate submits to
-police, otherwise `completed`) or asks for changes (`changes_requested` /
-`client_changes_requested`, back to the advocate and then the admin). The advocate's
-police receipt completes the case. An advocate's rejection ends the assignment and
+Status flow (as changed by Ishaan sir's answers of 12 Nov 2026, Q119/Q120,
+`docs/flows/ISHAAN-ANSWERS-2026-11-12.md`): admin approval moves the case to
+`client_review`; the client approves, which always completes the case (`completed`,
+no sub-status; the completing advocate's entitlement was pinned at admin approval, so the
+wallet credits it then and the advocate is notified), or asks for changes
+(`changes_requested` / `client_changes_requested`, back to the advocate and then the
+admin). There is no police-submission step: the client takes the approved draft to the
+police station. FIR no longer produces `approved`; `firStage()` reads any such case as
+completed. Migration `202611130010_fir_police_step_removed` completed the cases left at
+`approved` / `awaiting_police_submission`, each with a `fir_completed_on_client_approval`
+event (actor null, payload reason). An advocate's rejection ends the assignment and
 returns the case to admin (`advocate_declined`, no advocate). `firStage()` in
 `packages/shared/src/fir-flow.ts` maps every status to the client, advocate and admin view.
+
+Identity (Q114): FIR collects no Aadhaar, PAN or other identity document. The API refuses
+new FIR `id_proof` uploads (400) and the identity fields on any upload; submission,
+payment, PDF generation, sending and admin approval never require one; the proforma/PDF
+has no identity row and never lists an identity file. Identity files stored on older
+cases stay stored, are excluded from the client's and advocate's document lists and are
+refused to the advocate by URL; the admin's case document list is unchanged. The
+identity-return records (`fir_identity_returns`) stay dormant and block nothing.
+
+The two tables below are dormant since Q119/Q120: nothing writes them (the only read
+left stops a receipt recorded before then from being deleted), and they are kept rather
+than dropped so migrations stay safe for the running image.
+`GET /fir/settings` remains, read-only, returning only `{turnaround:{min_hours,max_hours}}`
+from the FIR policy (C2 "Why FIR" shows it before a case exists); `PATCH /fir/settings` and
+`POST /fir/:id/police-submission` are removed.
 
 ```sql
 CREATE TABLE fir_police_submissions (
@@ -1396,7 +1417,7 @@ CREATE TABLE fir_police_submissions (
   submitted_on DATE NOT NULL, receipt_document_id UUID NOT NULL REFERENCES documents(id),
   marked_by UUID NOT NULL REFERENCES users(id), created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
-CREATE TABLE fir_settings ( -- single row: who takes the approved draft to the police (C14)
+CREATE TABLE fir_settings ( -- dormant single row; was: who takes the approved draft to the police (C14)
   id INTEGER PRIMARY KEY DEFAULT 1 CHECK (id = 1),
   police_submission_by_advocate BOOLEAN NOT NULL DEFAULT true,
   updated_by UUID REFERENCES users(id), updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
@@ -2003,7 +2024,11 @@ a refusal, not a URL.
 
 **6d — Identity documents.**
 
-FIR identity evidence is **required**, confirmed by the client on
+**Superseded 12 November 2026 (Q114, D-116): FIR collects no identity document.** The
+api refuses new FIR identity uploads and never requires one; old stored files stay
+stored and are not shown. The history below is kept for the record.
+
+FIR identity evidence was **required**, confirmed by the client on
 10 November 2026, superseding the earlier optional-ID instruction that day.
 Choose any one: **masked Aadhaar, passport, voter ID or driving licence**.
 Intake submission, service payment and PDF generation require an uploaded,
@@ -2267,7 +2292,7 @@ is re-litigated mid-build.
 | Payout on reassignment | **Confirmed by the client.** The advocate who completes the case receives the full **80% advocate share**. A replaced advocate receives **nothing**, regardless of the stage reached. The FIR admin-rejection chunk implements this as a versioned policy row, pinned entitlement and assignment history (§4.5). Every advocate who worked on the case remains attributable for quality tracking even though only the completer is paid. | 2026-11-10 |
 | Advocate's courier payment (196–198) | A **payment**, not a lifecycle step. Writes `payments` with `purpose='courier'` and `payer_id` = the advocate, writes a `case_events` row, and **leaves `case_status` unchanged**. `payment_pending → paid` belongs to the service fee alone | 2026-10-26 |
 | Admin panel | Built **after** the backend, because it consumes the API. Designs requested from the client | 2026-10-26 |
-| FIR identity evidence | **Client confirmed:** required at intake and draft generation; choose any one of masked Aadhaar, passport, voter ID or driving licence. Store the accepted list in configuration, with policy version recorded on uploads. Aadhaar must show only the last four digits; never accept the full card. No ID-number extraction, reading or recording from any of the four uploads; all remain excluded from content extraction. Supersedes the earlier optional-ID instruction. Q15 answered for FIR only; personal intake facts remain confirmed. | 2026-11-10 |
+| FIR identity evidence | **Superseded 12 Nov 2026 (Q114, D-116): no identity document is collected for FIR.** Earlier: **Client confirmed:** required at intake and draft generation; choose any one of masked Aadhaar, passport, voter ID or driving licence. Store the accepted list in configuration, with policy version recorded on uploads. Aadhaar must show only the last four digits; never accept the full card. No ID-number extraction, reading or recording from any of the four uploads; all remain excluded from content extraction. Supersedes the earlier optional-ID instruction. Q15 answered for FIR only; personal intake facts remain confirmed. | 2026-11-10 |
 | FIR admin rejection, reassignment and turnaround | **Client confirmed:** one shared submission/supersession model for draft and identity returns plus reassignment. Required reasons are visible to every advocate assigned to the case. Reassign optionally after two draft rejections per assignment; preserve history and reset the new assignment count. Notify the replaced advocate and use the approved neutral client message. Purge rejected unmasked Aadhaar including all S3 versions. Warn after 24 hours from captured payment; mark overdue after 48 hours, without resetting on returns. Versioned policy gives the completing advocate the full captured advocate share and replaced advocates zero. | 2026-11-10 |
 
 | Consultation services | **Client instruction:** Legal Advice is a paid 30-minute chat consultation; District Court/High Court have their own paid consultation and a separate representation quote/payment. Weekly advocate hours, client selection, admin assignment and report approval, offline court updates. Booking/review/payment assumptions are explicitly awaiting client confirmation in §4.6 and the linked implementation record. | 2026-11-10 |
@@ -2313,7 +2338,13 @@ empty, or explicitly accepted in writing by the client, before production.
 | FIR police-station list (flow C3, D-100) | No flag; data in `packages/shared/src/fir-police-stations.ts` | Indore and Bhopal stations are commonly published names, not yet checked against MP Police's official list; every other district uses "Type police station name" | MP Police's list is supplied and checked, or another state's list is added |
 | FIR "Use current location" (flow C3) | No flag | Attaches the browser's coordinates only; no reverse-geocoding provider is chosen, so address, city and PIN are still typed. Hidden on native (no location package) | A geocoding provider is chosen (cost decision) |
 | FIR Generate with AI (flow A4, D-08) | No flag | Disabled with "AI drafting is coming soon. Use Create Manually."; every draft records `ai_used=false` | D-08 is built |
-| FIR police submission (flow C14) | `fir_settings.police_submission_by_advocate` (default **on**), admin switch on the FIR case page | The client has not yet confirmed who takes the approved draft to the police. On: the advocate uploads the receipt and the case completes. Off: client approval completes the case and the client submits it | The client confirms; the unused variant can then be retired |
+
+**FIR — 12 Nov 2026 (Q114, Q119, Q120).** The FIR police-submission row is removed: the
+client confirmed there is no police step, so nothing stands in for one. Client approval
+completes the case and the client submits the draft at the station; the switch, the
+receipt upload and "Mark Submitted" are gone (dormant tables kept). FIR identity is no
+longer collected: no identity upload, check or PDF row exists, so no identity capability
+is simulated either.
 
 **In-app notifications are real (3 Nov 2026).** Each notification is a real row,
 created in the same transaction as its case action. `NOTIFY_MODE` affects only
@@ -2347,7 +2378,6 @@ Built without a design, from existing components and the app's style:
 | Complainant details sheet | C5 | Full name, father's/husband's name, age, gender (Male / Female / Other), occupation, address; all required |
 | Add Accused / Opposite Party sheet | C5 | Name or "Unknown", phone, alias/description, address, primary; "Remove this person?" confirmation |
 | Add Witness sheet | C5 | Name, relation, phone, statement note, Key Witness |
-| Identity Proof slot form | C6 | Accepted ID type, last four digits only (shown XXXX-XXXX-1234), masked-Aadhaar confirmation |
 | Custom category sheet; "Delete this file?" confirmation | C6 | Client names the slot; empty custom slots can be removed |
 | "Save as draft and leave?" dialog | C3 | Save draft / Discard / Stay |
 | Request Callback submitted state; Support Chat (i) note | C1a, C1b | Existing states; the drawn chat attachment button is shown disabled with "not available yet", because support threads cannot carry files (D-58) |
@@ -2356,22 +2386,22 @@ Built without a design, from existing components and the app's style:
 | Approve confirmation | C11 | "Approve this FIR draft? Your advocate will be notified." |
 | "Being updated" variant of design 49 | C11 | Shown while the advocate revises after a change request |
 | Discard dialog and validation | C12 | "Discard your changes?" when text was typed |
-| F9 client-submits variant | C14 | With the police setting off: "Download your approved draft" / "Submit it at <police station>" |
+| F9 wording | C14 | Always the client-submits wording (Q119, Q120): "Download your approved draft" / "Submit it at <police station>"; never that the advocate submits, no "within 24 hours" |
 | Accept confirmation; Reject reason sheet | A2 | Reason required; the case returns to admin |
 | BNS legal-section search sheet | A5 | Curated BNS list (no IPC) plus custom entry |
 | Save changes? sheet; outline list; "Complete these before sending" card | A5 | Auto-save about 30 s after the last edit updates the advocate's own unsent version in place ("Auto-saved N min ago"); Save Draft creates a new version; Send for Review goes straight to A6 |
 | "Also in the PDF" line under each accused and witness | A5 | Client-filed details (alias, phone, relationship) that print but have no box on design 218 |
 | Editable filed values (sections 1–3) | A5 | Stored as advocate overrides beside the untouched client filing; the PDF prints the override |
-| A6 status panels other than "Waiting for Client Review" | A6 | Waiting for admin, admin returned (+ Edit Draft), client changes (sections, text, attachment), client approved, completed |
-| "Mark as submitted to police" sheet | A6 / C14 | Receipt upload required, date not in the future nor before client approval |
-| Admin FIR progress panel, police-submission switch, client-review history, police receipt, reassignment reason, rejection reason | §3 | **Awaiting Figma admin designs**; existing admin panel style |
+| A6 status panels other than "Waiting for Client Review" | A6 | Waiting for admin, admin returned (+ Edit Draft), client changes (sections, text, attachment), completed (on client approval); the timeline has no "Submitted to Police" step |
+| Admin FIR progress panel, client-review history, reassignment reason, rejection reason | §3 | **Awaiting Figma admin designs**; existing admin panel style. No police-submission switch or receipt, and no identity review (Q114, Q119, Q120) |
 | Admin Support inbox "FIR Draft" tag | §3 / C1 | **Awaiting Figma admin designs** |
 | Loading, error, empty, "at another step" panels on every FIR screen | all | Five states |
 
 Copy changes on drawn screens (false or unsupported claims): F6/49 "compiled and
 certified" → "prepared", "BNSS / IPC" → "BNS"; F8 "logged securely" → "sent"; F7 "Choose
-file or drag & drop" → "Choose file"; F9 drops "VERIFICATION CONFIRMED" and "e-Filing" (its "within 24 hours" promise is
-kept in the advocate-submits variant, which the police setting controls); A7 "Payment
+file or drag & drop" → "Choose file"; F9 drops "VERIFICATION CONFIRMED" and "e-Filing", and always uses the
+client-submits wording without "within 24 hours" (Q119, Q120: the advocate-submits variant and the police setting are
+retired); C6 has no Identity Proof slot (Q114); A7 "Payment
 Received" → "Added to Wallet" (payouts are manual, D-36); design 219's "Advocate
 Preview Switcher" is left out (design-only demo aid). The (?) opens Help filtered to
 the FIR questions (the Help Center has one FIR question). Not built: the verified tick beside the complainant's
@@ -2474,7 +2504,7 @@ No upload is identity verification. If Aadhaar is uploaded, it must be masked
 blocks submission, preview or send. Selected ID evidence must belong to this
 case and be included in the attachment list.
 
-**Current FIR identity substitution — client confirmed 10 November 2026.**
+**FIR identity substitution — client confirmed 10 November 2026; superseded 12 November 2026 (Q114, D-116): the Identity Proof slot is removed.**
 Restore required-ID copy in designs 45/46 and required selection in 447. Replace
 the drawn fixed Aadhaar example with the configured four-document choice and
 actual uploaded evidence. Add masked-Aadhaar download guidance and explicit

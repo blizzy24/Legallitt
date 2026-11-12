@@ -14,6 +14,10 @@ import { dayTime, InlineError, MovedOn, StateCard, toCases, useAction, useAdvoca
 // advocate's share from the price snapshot; the wallet lists it by the request ID
 // (there is no separate ledger row), so that is the wallet reference. The drawn
 // "Payment Received" chip would claim a payout; it reads "Added to Wallet".
+// The advocate's work ends at the client's approval (ISHAAN-ANSWERS 2026-11-12
+// Q119/Q120): no police submission step. A case left in the retired 'approved'
+// (police-pending) state reads as completed, but the wallet is only claimed once
+// the case is actually completed, because that is when the share is credited.
 
 export default function AdvocateFirCompletedScreen() {
   const insets = useSafeAreaInsets();
@@ -21,9 +25,9 @@ export default function AdvocateFirCompletedScreen() {
   const f = useFirFlow(caseId);
   const act = useAction();
   const flow = f.flow;
-  const done = flow?.status === 'completed';
-  const police = !!flow && (!!flow.police || flow.settings.police_submission_by_advocate && flow.events.some(e => e.type === 'fir_police_submitted'));
-  const steps = ['Draft created', 'Sent to admin', 'Admin approved', 'Sent to client', 'Client approved', ...(police ? ['Submitted to police'] : []), ...(flow?.share_paise ? ['Payment added to wallet'] : [])];
+  const done = flow?.status === 'completed' || flow?.status === 'approved';
+  const credited = flow?.status === 'completed' && !!flow.share_paise;
+  const steps = ['Draft created', 'Sent to admin', 'Admin approved', 'Sent to client', 'Client approved', ...(credited ? ['Payment added to wallet'] : [])];
   const fir = flow?.draft?.document;
 
   let content;
@@ -51,9 +55,15 @@ export default function AdvocateFirCompletedScreen() {
     <View style={styles.card}>
       <View style={styles.row}>
         <Text style={styles.label} {...shrinkToFit(0.8)}>{c.payment.label}</Text>
-        {!!flow.share_paise && <View style={styles.chip}><Check size={t.chipIcon} color={t.chipColour} strokeWidth={3} /><Text style={styles.chipText} {...shrinkToFit(0.75)}>{c.payment.chip}</Text></View>}
+        {credited && <View style={styles.chip}><Check size={t.chipIcon} color={t.chipColour} strokeWidth={3} /><Text style={styles.chipText} {...shrinkToFit(0.75)}>{c.payment.chip}</Text></View>}
       </View>
-      {flow.share_paise ? <>
+      {flow.share_paise && !credited ? <>
+        <View style={styles.amountRow}>
+          <Text style={styles.amount} {...shrinkToFit(0.7)}>{rupees(flow.share_paise)}</Text>
+          <Text style={styles.amountUnit} {...shrinkToFit(0.8)}>{c.payment.unit}</Text>
+        </View>
+        <Text style={styles.payBody}>{c.payment.pending}</Text>
+      </> : flow.share_paise ? <>
         <View style={styles.amountRow}>
           <Text style={styles.amount} {...shrinkToFit(0.7)}>{rupees(flow.share_paise)}</Text>
           <Text style={styles.amountUnit} {...shrinkToFit(0.8)}>{c.payment.unit}</Text>

@@ -39,10 +39,11 @@ export const DocumentPresignSchema = z.strictObject({
       !value.includes("${"),
   ),
   mime: DocumentMimeSchema,
+  // Kept for compatibility only: FIR no longer collects identity documents (Q114),
+  // so the API refuses both fields on every upload. Never required.
   identity: IdentityUploadSchema.optional(),
-  // FIR only: the last four digits of an identity document (shown XXXX-XXXX-1234)
-  // and the client's name for a custom upload slot.
   identity_last4: z.string().regex(/^\d{4}$/, "Enter the last four digits").optional(),
+  // FIR only: the client's name for a custom upload slot.
   slot_label: metadata.refine((value) => value.length <= 60, "Use up to 60 characters").optional(),
 });
 // General guidance from §6d, not a per-service acceptance policy. The client

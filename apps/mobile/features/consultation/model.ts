@@ -7,7 +7,8 @@ import {backend} from '../../lib/auth';
 import {useSession} from '../../context/session';
 export const rootPath=(service:ConsultationServiceCode)=>service==='legal_advice'?'/legal-advice':`/services/${service.replaceAll('_','-')}`;
 export const clientPath=(service:ConsultationServiceCode,step:string,id?:string)=>{
- const route=service==='legal_advice'?({documents:'details','quote-payment':'payment',chat:'session/chat'} as Record<string,string>)[step]??step:({details:'case-details',datetime:'case-details',track:service==='district_court'?'case-overview':'case-details',review:service==='district_court'?'review':'case-details','quote-payment':'payment'} as Record<string,string>)[step]??step;
+ // Q3: the payment-success steps reuse the existing payment route (?step= selects the screen).
+ const route=service==='legal_advice'?({documents:'details','quote-payment':'payment','payment-success':'payment',chat:'session/chat'} as Record<string,string>)[step]??step:({details:'case-details',datetime:'case-details',track:service==='district_court'?'case-overview':'case-details',review:service==='district_court'?'review':'case-details','quote-payment':'payment','payment-success':'payment','quote-payment-success':'payment'} as Record<string,string>)[step]??step;
  return `${rootPath(service)}/${route}?step=${step}${id?'&caseId='+id:''}` as Href;
 };
 export const when=(v:string)=>new Date(v).toLocaleString('en-IN',{timeZone:'Asia/Kolkata',day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})+' IST';

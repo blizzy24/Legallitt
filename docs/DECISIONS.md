@@ -1139,3 +1139,25 @@ the PDF during review. It appears in the advocate's and admin's audit logs only.
 accept** (owner, 12 Nov 2026). A2 shows "+91 90••••••00" and "de••••@domain"; every API
 response the advocate receives before acceptance masks them, the drafting context is
 refused and earlier draft PDFs (which print them) are withheld. Admin always sees them.
+
+## 15. Hotfix from Ishaan sir's answers — 12 November 2026 (`docs/flows/ISHAAN-ANSWERS-2026-11-12.md` §A)
+
+**D-115. FIR has no police-submission step** (Q119, Q120). The advocate's job ends at
+preparing and delivering the draft. The FIR completes when the client approves, and
+the advocate is credited then. "Mark as submitted to police", its receipt upload and
+the admin switch are removed (D-101's setting and the C14 "advocate submits" variant
+are retired). F9 always says "Download your approved draft · Submit it at <police
+station>", with no "within 24 hours". Cases that were waiting for a police receipt are
+completed by migration, with an event recording why. The dormant tables stay.
+
+**D-116. FIR collects no identity document** (Q114, supersedes D-101 and flow C6's slot
+5). Step 4 has no Identity Proof slot, the API refuses new FIR identity uploads and never
+requires one, and the proforma/PDF have no "Official ID Document" row. Old stored files
+stay stored but are not shown to client or advocate.
+
+**D-117. Court Marriage is not offered** (Q79, Q113). Hidden from clients, advocate
+filters, the admin sidebar and lists, and pricing, through one shared switch; the API
+refuses new Court Marriage cases. Code and data are kept dormant.
+
+**D-118. Every payment-success screen has Start Tracking and Home** (Q3); nothing moves
+on by itself.

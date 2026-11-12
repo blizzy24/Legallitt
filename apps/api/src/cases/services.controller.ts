@@ -8,17 +8,22 @@ import {
 import { AuthGuard } from "../auth/auth.controller";
 import { PrismaService } from "../prisma.service";
 import {activeAt, newest} from '../payments/price-quotes';
+import {isServiceOffered} from '@legalitt/shared';
+// Q79/Q113: hidden services (HIDDEN_SERVICES) are omitted from the list and their
+// price lookup, like an inactive service. Their existing cases are unaffected.
 @Controller("api/v1/services")
 @UseGuards(AuthGuard)
 export class ServicesController {
   constructor(private readonly prisma: PrismaService) {}
   @Get() async list() {
-    return (await this.prisma.getClient()).service.findMany({
+    const services = await (await this.prisma.getClient()).service.findMany({
       where: { active: true },
       orderBy: { code: "asc" },
     });
+    return services.filter((s) => isServiceOffered(s.code));
   }
   @Get(":code") async one(@Param("code") code: string) {
+    if (!isServiceOffered(code)) throw new NotFoundException("Service not found");
     const db = await this.prisma.getClient();
     const service = await db.service.findFirst({
       where: { code, active: true },

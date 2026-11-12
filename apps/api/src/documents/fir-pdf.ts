@@ -3,11 +3,12 @@ import {FirDraftContentSchema,firDraftProblems,firDraftStation,firPdfSections,ty
 import {PdfText,embedTextFonts,needsPage,unsupportedCharacters} from './pdf-text';
 
 // Design447's eight numbered sections, with neutral jurisdiction branding.
-// Only the three typed station-use fields are left for handwriting.
-export async function renderFirPdf(reference:string,input:FirDraftContent,opts:{identity?:string|null}={}){
+// Only the three typed station-use fields are left for handwriting. No identity
+// document is printed or listed (Q114).
+export async function renderFirPdf(reference:string,input:FirDraftContent){
  const content=FirDraftContentSchema.parse(input),problems=firDraftProblems(content);
  if(problems.length)throw new Error(problems.map(p=>p.message).join('\n'));
- const sections=firPdfSections(content,opts);
+ const sections=firPdfSections(content);
  for(const section of sections)for(const line of section.lines){
   const unsupported=unsupportedCharacters(line.value);
   if(unsupported.length)throw new Error(`${section.title}${line.label?` — ${line.label}`:''}: unsupported characters (${unsupported.join(' ')}). Use supported Latin or Devanagari text before generating the PDF.`);

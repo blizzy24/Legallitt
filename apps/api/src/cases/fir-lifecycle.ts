@@ -29,11 +29,11 @@ export async function ensureFirLifecycle(tx:Prisma.TransactionClient,c:Case){
  return {life,assignment,policy:FirPolicyConfig.parse((await tx.firPolicy.findUniqueOrThrow({where:{id:life.policy_id}})).config)};
 }
 export function checkFirToken(life:{revision:number;current_submission_id:string|null},token:FirLifecycleToken){if(life.revision!==token.revision||life.current_submission_id!==token.submission_id)throw new ConflictException('This FIR review changed. Reload before acting.');}
+// Q114: identity is no longer collected. Identity returns recorded on older cases stay
+// on record (and in the lifecycle view) but never hold a case in a correction state.
 export async function firCorrectionState(tx:Prisma.TransactionClient,id:string){
- const returns=await tx.firIdentityReturn.findMany({where:{case_id:id,state:{in:['replacement_required','review_pending']}}});
  const life=await tx.firLifecycle.findUniqueOrThrow({where:{case_id:id}}),sub=life.current_submission_id?await tx.firSubmission.findUnique({where:{id:life.current_submission_id}}):null;
- const draft=!!sub?.draft_reason&&sub.state==='returned';
- return returns.length?(draft?'multiple_corrections_required':returns.some(r=>r.state==='replacement_required')?'identity_replacement_required':'identity_review_pending'):draft?'advocate_revision_required':null;
+ return sub?.draft_reason&&sub.state==='returned'?'advocate_revision_required':null;
 }
 export async function firLifecycleView(tx:Prisma.TransactionClient,c:Case,client=false):Promise<FirLifecycleView>{
  const {life,assignment,policy}=await ensureFirLifecycle(tx,c),assignments=await tx.caseAssignment.findMany({where:{case_id:c.id},orderBy:{assigned_at:'asc'}}),submissions=await tx.firSubmission.findMany({where:{case_id:c.id},orderBy:{submitted_at:'asc'}}),returns=await tx.firIdentityReturn.findMany({where:{case_id:c.id},orderBy:{rejected_at:'asc'}});

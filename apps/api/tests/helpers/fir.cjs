@@ -21,6 +21,6 @@ function editable(input=intake()){
  draft.statement_of_facts='TEST ONLY advocate edited narrative. No real offence or police filing.';
  return draft;
 }
-// Flow C6: Primary Documents is required at submission alongside identity.
+// Flow C6: Primary Documents is the one slot required at submission (no identity document, Q114).
 const primary=(db,caseId,ownerId)=>db.document.create({data:{case_id:caseId,owner_id:ownerId,kind:'fir_primary',filename:'TEST-primary-receipt.pdf',mime_type:'application/pdf',size_bytes:100n,page_count:1,status:'uploaded',s3_key:randomUUID()}});
 module.exports={intake,personal,editable,provided,unknown,primary};

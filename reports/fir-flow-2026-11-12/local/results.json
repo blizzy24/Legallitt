@@ -1,12 +1,11 @@
 {
-  "checked_at": "2026-11-12T08:46:37.258Z",
+  "checked_at": "2026-11-12T11:34:44.027Z",
   "target": "local",
   "case": {
-    "callback_id": "1f1d1619-d966-4b66-b0f6-d00ac8927aa2",
-    "chat_id": "282f283a-2762-447a-bc2b-b2ea2379c56a",
-    "case_id": "03f5dfe6-d820-4a93-8c9b-e1c349f51015",
-    "reference": "FIR-2026-0009",
-    "case2_id": "16964e2d-8351-40bf-91f0-bf066c3868cc"
+    "callback_id": "5248e9dc-73bc-47e3-9f4d-58c2b421af34",
+    "chat_id": "bfe81a5a-d91b-490b-91e4-7b65d1c09388",
+    "case_id": "8b0ef11e-bc60-41a7-bc15-5bb252594ab3",
+    "reference": "FIR-2026-0012"
   },
   "page_errors": [],
   "results": [
@@ -16,11 +15,11 @@
     },
     {
       "name": "Request Callback ticket tagged FIR Draft",
-      "detail": "1f1d1619-d966-4b66-b0f6-d00ac8927aa2"
+      "detail": "5248e9dc-73bc-47e3-9f4d-58c2b421af34"
     },
     {
       "name": "Request Chat thread tagged FIR Draft",
-      "detail": "282f283a-2762-447a-bc2b-b2ea2379c56a"
+      "detail": "bfe81a5a-d91b-490b-91e4-7b65d1c09388"
     },
     {
       "name": "both requests are in the admin Support inbox",
@@ -32,11 +31,11 @@
     },
     {
       "name": "C2 Send a FIR Draft opens Step 1",
-      "detail": "FIR-2026-0009"
+      "detail": "FIR-2026-0012"
     },
     {
       "name": "C3 Step 1 saved",
-      "detail": "03f5dfe6-d820-4a93-8c9b-e1c349f51015"
+      "detail": "8b0ef11e-bc60-41a7-bc15-5bb252594ab3"
     },
     {
       "name": "C4 location and police station prefilled from Step 1",
@@ -59,12 +58,12 @@
       "detail": ""
     },
     {
-      "name": "C6 Continue is blocked with the reason beside each missing slot",
+      "name": "C6 Continue is blocked until a primary document is added",
       "detail": ""
     },
     {
-      "name": "C6 uploads stored by slot; identity shown masked",
-      "detail": "XXXX-XXXX-4812"
+      "name": "C6 uploads stored by slot; no Identity Proof slot",
+      "detail": ""
     },
     {
       "name": "C7 editing from Review returns straight to Review",
@@ -100,7 +99,7 @@
     },
     {
       "name": "A2 masks the client’s mobile and email before acceptance",
-      "detail": "+91 90••••••00"
+      "detail": "+91 90••••••00 · de••••@legalitt.invalid"
     },
     {
       "name": "A2 Reject returns the case to admin; the advocate loses access",
@@ -171,40 +170,20 @@
       "detail": ""
     },
     {
-      "name": "C11 Approve → C14; with the setting on the case waits for police submission",
+      "name": "C11 Approve → C14; the case completes on client approval (client-submits wording)",
       "detail": ""
     },
     {
-      "name": "A6 Mark as submitted to police needs the receipt; the case completes",
+      "name": "A6 timeline ends at Client Approved; no police step",
       "detail": ""
     },
     {
-      "name": "wallet shows the advocate’s share",
+      "name": "wallet shows the advocate’s share on client approval",
       "detail": "₹999"
     },
     {
-      "name": "client sees completion and the police receipt",
-      "detail": ""
-    },
-    {
-      "name": "client downloads the approved draft PDF and the police receipt",
-      "detail": "FIR_Draft_FIR-2026-0009_v3.pdf"
-    },
-    {
-      "name": "admin switched \"advocate submits to police\" off in the panel",
-      "detail": ""
-    },
-    {
-      "name": "setting off: client approval completes the case; F9 shows the client-submits version",
-      "detail": ""
-    },
-    {
-      "name": "setting off: advocate screens drop the police step and the share is credited",
-      "detail": ""
-    },
-    {
-      "name": "setting switched back on",
-      "detail": ""
+      "name": "client downloads the approved draft PDF; no identity row",
+      "detail": "FIR_Draft_FIR-2026-0012_v3.pdf"
     }
   ]
 }

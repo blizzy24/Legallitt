@@ -1,10 +1,11 @@
 import {useEffect,useRef,useState} from 'react';
 import {Text} from 'react-native';
-import {formatPaise,type PaymentQuote} from '@legalitt/shared';
+import {router} from 'expo-router';
+import {formatPaise,isConsultationService,type PaymentQuote} from '@legalitt/shared';
 import {backend} from '../../lib/auth';
 import {newFirPersonId} from '../../context/fir';
 import {Button,Card,ErrorBox,Value,s} from './ui';
-import {message,when,type ConsultationModel} from './model';
+import {clientPath,message,when,type ConsultationModel} from './model';
 export function Checkout({model:m,representation=false}:{model:ConsultationModel;representation?:boolean}){
  const [quote,setQuote]=useState<PaymentQuote>(),[loading,setLoading]=useState(true),[error,setError]=useState(''),[attempt,setAttempt]=useState(0),key=useRef(newFirPersonId());
  const court=m.view?.quotes.find(q=>q.status==='offered'),purpose=representation?'representation':'service_fee';
@@ -14,5 +15,5 @@ export function Checkout({model:m,representation=false}:{model:ConsultationModel
  {loading?<Text style={s.body}>Calculating your full price…</Text>:quote?.status==='blocked'?<><ErrorBox message={quote.message}/>{quote.documents.map(d=><Text key={d.id} style={s.body}>{d.filename}: {d.reason}</Text>)}<Button secondary onPress={()=>void m.go(quote.code==='booking_expired'?'datetime':quote.code==='document_pages_unresolved'?'documents':'track')}>{quote.code==='booking_expired'?'Choose another time':quote.code==='document_pages_unresolved'?'Review documents':'Return to case'}</Button><Button secondary onPress={()=>setAttempt(n=>n+1)}>Retry price calculation</Button></>:quote?.status==='ready'?<>
  <Value label="Service fee (advocate’s share)" value={formatPaise(quote.breakdown.service_fee_paise)}/><Value label="Platform fee" value={formatPaise(quote.breakdown.platform_fee_paise)}/><Value label="GST on service + platform fee" value={formatPaise(quote.breakdown.gst_paise)}/><Value label={`Additional PDF pages (${quote.breakdown.charged_pages} × ${formatPaise(quote.breakdown.page_unit_paise)}, no GST)`} value={formatPaise(quote.breakdown.page_overage_paise)}/><Text style={s.muted}>{quote.breakdown.total_pages} PDF pages across the case. {representation?'Previously charged pages are credited in this calculation.':'The included allowance applies to the case, not each file.'}</Text><Value label="Total amount to pay" value={formatPaise(quote.breakdown.total_paise)}/>
  {!representation&&m.view?.session?.reserved_until&&<Text style={s.muted}>This slot is held until {when(m.view.session.reserved_until)}. If the hold expires, choose an available time again.</Text>}
- <Button disabled={m.busy} onPress={()=>void m.run(async()=>{await backend.request(`/consultations/${m.id}/pay`,{purpose,quote_id:quote.id,...(representation?{court_quote_id:court?.id}:{})},'POST',undefined,{'Idempotency-Key':key.current});await m.go('track');})}>{m.busy?'Processing…':representation?'Accept quote & pay (demo)':'Pay now (demo)'}</Button><Button secondary disabled={m.busy} onPress={()=>{m.setError('');setAttempt(n=>n+1);}}>Refresh fee breakdown</Button>{!representation&&<Button secondary onPress={()=>void m.go('datetime')}>Choose another time</Button>}</>:null}</Card>;
+ <Button disabled={m.busy} onPress={()=>void m.run(async()=>{await backend.request(`/consultations/${m.id}/pay`,{purpose,quote_id:quote.id,...(representation?{court_quote_id:court?.id}:{})},'POST',undefined,{'Idempotency-Key':key.current});const service=m.view?.case.service_code;if(service&&isConsultationService(service))router.replace(clientPath(service,representation?'quote-payment-success':'payment-success',m.id));})}>{m.busy?'Processing…':representation?'Accept quote & pay (demo)':'Pay now (demo)'}</Button><Button secondary disabled={m.busy} onPress={()=>{m.setError('');setAttempt(n=>n+1);}}>Refresh fee breakdown</Button>{!representation&&<Button secondary onPress={()=>void m.go('datetime')}>Choose another time</Button>}</>:null}</Card>;
 }

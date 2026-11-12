@@ -180,3 +180,12 @@ Every gap above is closed in code except the items under "Still open". Each fix 
 - "Use current location" attaches coordinates only; there is no geocoding.
 - The Help Center has no FIR section.
 - The A1 "Upcoming" counter is always 0.
+
+## Hotfix after Ishaan sir's answers (12 November 2026)
+
+[`ISHAAN-ANSWERS-2026-11-12.md`](ISHAAN-ANSWERS-2026-11-12.md) §A overrides the flow on two FIR points:
+
+- **No police step (Q119, Q120).** The client's approval completes the case and credits the advocate. "Mark as submitted to police", its receipt upload and the admin switch are gone, and F9 uses the client-submits wording.
+- **No identity document (Q114).** The Identity Proof slot, the ID-digits requirement and the "Official ID Document" row are gone.
+
+The built screens in `fir-screens/` were recaptured after the hotfix.

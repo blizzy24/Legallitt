@@ -127,7 +127,9 @@ export const FIR_COMPLETED = {
   headline: 'FIR Draft Completed',
   body: 'The client approved your draft.',
   caseCard: {label: 'CASE', chip: 'Completed', client: 'Client', request: 'Request ID', service: 'Service', serviceName: 'FIR Draft'},
+  // Not drawn: `pending` is for a case still in the retired 'approved' state, before the share is credited.
   payment: {label: 'YOUR PAYMENT', chip: 'Added to Wallet', unit: 'INR', body: 'This amount has been added to your Legalitt wallet.',
+    pending: 'This amount is added to your Legalitt wallet when Legalitt closes the request.',
     date: 'Payment Date', addedTo: 'Added To', wallet: (reference: string) => `Wallet (${reference})`},
   steps: {label: 'COMPLETED STEPS'},
   primary: 'View Earnings',
