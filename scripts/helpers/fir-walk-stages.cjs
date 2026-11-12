@@ -143,7 +143,7 @@ module.exports=function stages(stage,{api,users,page,state,save,pdf,png,kit,S,pa
     await go(a,`${adminWeb}/services/fir_draft/cases/${state.case_id}`);await text(a,'Client sees: Stage 2 of 5');
     if((await status()).status==='paid'){
       await text(a,'New request · assign an advocate');await shot(a,S('ADMIN-new-request'),{width:1440});pass('admin §3.1 new paid request shows in the queue with Assign');
-      await click(a,'+ Assign');await click(a,'Assign to Demo advocate');await text(a,'Assigned · awaiting advocate');
+      await click(a,'+ Assign');await click(a,`Assign to ${users.advocate.name}`);await text(a,'Assigned · awaiting advocate');
     }
     if((await status()).advocate===users.advocate.id){
       const adv=await page('advocate');
@@ -151,8 +151,10 @@ module.exports=function stages(stage,{api,users,page,state,save,pdf,png,kit,S,pa
       await click(adv,'FIR Draft');await delay(900);await shot(adv,S('A1-cases-list-fir'));pass('A1 card shows FIR DRAFT, client · incident, fee and the status button');
       await clickCard(adv,state.reference,'Review Request');await text(adv,'YOU WILL RECEIVE');
       // A2: the client's mobile and email stay masked until the advocate accepts.
-      await text(adv,'+91 90••••••00');await text(adv,'de••••@legalitt.invalid');assert.equal(await has(adv,'9000000000'),false);assert.equal(await has(adv,'demo-client@legalitt.invalid'),false);
-      pass('A2 masks the client’s mobile and email before acceptance','+91 90••••••00');await text(adv,'Identity Proof (masked) XXXX-XXXX-4812');await shot(adv,S('A2-request-details'));
+      const {maskMobile,maskEmail}=require('../../packages/shared/dist'),full=(await api.admin.firFlow(state.case_id)).client;
+      await text(adv,maskMobile(full.mobile));assert.equal(await has(adv,full.mobile),false,'mobile masked');
+      if(full.email){await text(adv,maskEmail(full.email));assert.equal(await has(adv,full.email),false,'email masked');}else assert.equal(await has(adv,'EMAIL'),false,'no email cell when the client gave none');
+      pass('A2 masks the client’s mobile and email before acceptance',[maskMobile(full.mobile),full.email?maskEmail(full.email):'(no email given)'].join(' · '));await text(adv,'Identity Proof (masked) XXXX-XXXX-4812');await shot(adv,S('A2-request-details'));
       assert.equal(await has(adv,'KYC Verified'),false);assert.equal(await has(adv,'Escrow'),false);
       // Reject needs a reason; the case returns to admin and the advocate goes back to the list.
       await click(adv,'Reject');await text(adv,'Reject this request?');await click(adv,'Reject Request');await delay(900);assert.equal((await status()).status,'assigned','a reason is required');
@@ -165,7 +167,7 @@ module.exports=function stages(stage,{api,users,page,state,save,pdf,png,kit,S,pa
     if((await status()).status==='advocate_declined'){
       await go(a,`${adminWeb}/services/fir_draft/cases/${state.case_id}`);await text(a,'Advocate rejected · reassign');await text(a,'TEST ONLY: outside my practice area');await shot(a,S('ADMIN-advocate-rejected'),{width:1440});
       pass('admin §3.2 sees the rejection reason and can reassign');
-      await click(a,'+ Assign');await click(a,'Assign to Demo Advocate Asha');await text(a,'Assigned · awaiting advocate');
+      await click(a,'+ Assign');await click(a,`Assign to ${users['advocate-2'].name}`);await text(a,'Assigned · awaiting advocate');
     }
     assert.equal((await status()).advocate,users['advocate-2'].id);
     const flow=await api.client.firFlow(state.case_id);assert.equal(flow.stage.client.stage,2);assert.equal(JSON.stringify(flow).includes('outside my practice area'),false,'the client never sees the rejection');
@@ -178,7 +180,7 @@ module.exports=function stages(stage,{api,users,page,state,save,pdf,png,kit,S,pa
     const status=async()=>{const c=await api.admin.adminCase(state.case_id);return {status:c.status,sub:c.sub_status};};
     const now=await status();if(!(['assigned','advocate_accepted'].includes(now.status)||(now.status==='in_progress'&&!now.sub))){console.log('already past first drafting:',now.status,now.sub??'');return;}
     if((await status()).status==='assigned'){
-      await go(adv,mobile+'/matters');await clickCard(adv,state.reference,'Review Request');await text(adv,'YOU WILL RECEIVE');await text(adv,'+91 90••••••00');
+      await go(adv,mobile+'/matters');await clickCard(adv,state.reference,'Review Request');await text(adv,'YOU WILL RECEIVE');await text(adv,'+91 90••••••00');assert.equal(await has(adv,'9000000000'),false);
       assert.equal(await has(adv,'outside my practice area'),false,'the next advocate never sees why the first left');
       await click(adv,'Accept Request');await text(adv,'Accept this request?');await shot(adv,S('A2-accept-confirm'));
       await click(adv,'Accept Request');await at(adv,'/advocate/fir/documents');pass('A2 Accept asks to confirm, then opens Review Documents');

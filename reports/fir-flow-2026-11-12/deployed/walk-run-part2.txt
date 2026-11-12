@@ -1,0 +1,21 @@
+
+=== advocate-reject
+SHOT ADMIN-fir-list.png
+SHOT ADMIN-new-request.png
+PASS admin §3.1 new paid request shows in the queue with Assign 
+SHOT A1-cases-list.png
+SHOT A1-cases-list-fir.png
+PASS A1 card shows FIR DRAFT, client · incident, fee and the status button 
+FAIL at stage advocate-reject: Text "de••••@legalitt.invalid" never appeared on https://legalitt-5.vercel.app/advocate/fir/8f5fadcb-5725-424b-afd5-a3f3c9cae8ae?caseId=8f5fadcb-5725-424b-afd5-a3f3c9cae8ae
+--- admin at failure /services/fir_draft/cases/8f5fadcb-5725-424b-afd5-a3f3c9cae8ae
+BUTTONS: ▤ Legal Notices ¦ ▤ FIR Drafts ¦ ▤ Legal Advice ¦ ▤ District Court Representation ¦ ▤ High Court Representation ¦ ▤ Property Search Report ¦ ▤ Document Forensic ¦ ▤ Court Marriage ¦ ▤ Cancellations & refunds ¦ ▤ Support inbox ¦ ▤ Account deletions ¦ ▤ Advocate approvals ¦ ▤ Payouts ¦ Sign out ¦ Notifications, 34 unread ¦ ← FIR Draft ¦ Timeline 10 ¦ Documents 3 ¦ Payments 1 ¦ Identity-proof-89fef12d-8659-413e-b848-9f651f764a73.pdf ↗ ¦ TEST-ONLY-scene.png ↗ ¦ TEST-ONLY-receipt.pdf ↗
+FIELDS: ||checkbox=on
+TEXT: LEGALITT ADMIN ▤ Legal Notices ▤ FIR Drafts ▤ Legal Advice ▤ District Court Representation ▤ High Court Representation ▤ Property Search Report ▤ Document Forensic ▤ Court Marriage ▤ Cancellations & refunds ▤ Support inbox ▤ Account deletions ▤ Advocate approvals ▤ Payouts Demo admin ADMIN Sign out FIR Draft 34 ADMIN ← FIR Draft FIR DRAFT FIR_DRAFT-2026-0018demo Demo client Assigned Matter Fraud Service fee ₹999.00 Additional fees ₹249.75 Charged before GST ₹1,248.75 GST paid ₹224.78 Total paid ₹1,473.53 GST rate 18% exclusive Created 11 Nov 2026, 06:46 pm FIR progress Assigned · awaiting advocate Client sees: Stage 2 of 5 · Information Review (Drafting team assigned). Advocate sees: New Request. Advocate’s share from the price snapshot: ₹999.00. Paid to the advocate who completes the case. Who submits to police The advocate submits the approved FIR at the police station and uploads the receipt On: after the client approves, the case waits for the advocate’s police receipt before it completes. Applies to approvals from now on. Turnaround shown to clients: 24–48 hours. Timeline Request submitted client · 12/11/2026, 2:43:53 pm IST Payment received client · 12/11/2026, 2:44:10 pm IST Advocate assigned admin · 12/11/2026, 2:46:37 pm IST FIR review and corrections 0h since payment · 24–48h turnaround Waiting less than a minute Since 12/11/2026, 2:46:37 pm IST 0 draft rejections for the current advocate. Reassignment becomes available after 2. Review history No draft has been submitted yet. Adv. Arjun Sharma: 0 draft rejections · Current assignment Original intake Place Pin 452001 City Indore Address TEST ONLY 12 Synthetic Market Road, near Clock Tower Contact Mobile 9000000000 Full Name TEST ONLY Demo Client Dial code +91 Country code IN Incident Date 10/11/2026 Time 04:30 
+---
+--- advocate at failure /advocate/fir/8f5fadcb-5725-424b-afd5-a3f3c9cae8ae?caseId=8f5fadcb-5725-424b-afd5-a3f3c9cae8ae
+BUTTONS: Back ¦ View TEST-ONLY-receipt.pdf ¦ View TEST-ONLY-scene.png ¦ View Identity Proof (masked) XXXX-XXXX-4812 ¦ Reject ¦ Accept Request
+FIELDS: 
+TEXT: Fir Request Details New Request Recv: Today, 02:46 PM FIR Request ID: FIR_DRAFT-2026-0018 Police Station: Vijay Nagar Client Details CLIENT NAME TEST ONLY Demo Client CITY Indore MOBILE +91 90••••••00 Incident Overview Incident Type Fraud Date & Time 10 Nov 2026, 04:30 PM Incident Location TEST ONLY 12 Synthetic Market Road, near Clock Tower, Indore, 452001 Client's Statement “TEST ONLY: synthetic statement for the FIR full-flow check. A caller claiming to be from the bank asked for an OTP and Rs 25,000 was debited. TEST ONLY: transaction reference SYNTH-0001.” Fee Structure YOU WILL RECEIVE ₹999.00 Documents 3 Files TEST-ONLY-receipt.pdf 1 KB • PDF TEST-ONLY-scene.png 1 KB • Image Identity Proof (masked) XXXX-XXXX-4812 1 KB • PDF Review documents thoroughly before accepting this request. Reject Accept Request Reject → Returns to Admin Accept → Review & Draft
+---
+FAIL Text "de••••@legalitt.invalid" never appeared on https://legalitt-5.vercel.app/advocate/fir/8f5fadcb-5725-424b-afd5-a3f3c9cae8ae?caseId=8f5fadcb-5725-424b-afd5-a3f3c9cae8ae
+EXIT 1

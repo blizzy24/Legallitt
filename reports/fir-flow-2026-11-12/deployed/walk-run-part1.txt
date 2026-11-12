@@ -1,0 +1,65 @@
+
+=== client-assistance
+SHOT C1-landing.png
+PASS C1 card tap selects without navigating 
+SHOT C1a-request-callback.png
+SHOT C1a-request-callback-submitted.png
+PASS Request Callback ticket tagged FIR Draft 74642494-bc71-4fde-9c87-1610321ec6cf
+SHOT C1b-support-chat.png
+SHOT C1b-support-chat-sent.png
+PASS Request Chat thread tagged FIR Draft 3a77e81d-6ef2-41c6-8e65-acc644d61f69
+SHOT ADMIN-support-inbox.png
+PASS both requests are in the admin Support inbox 
+
+=== client-intake
+SHOT C2-why-fir.png
+PASS C2 turnaround comes from settings 24–48 Hours
+PASS C2 Send a FIR Draft opens Step 1 FIR_DRAFT-2026-0018
+SHOT C3-step1-quick-submission.png
+PASS C3 Step 1 saved 8f5fadcb-5725-424b-afd5-a3f3c9cae8ae
+PASS C4 location and police station prefilled from Step 1 
+SHOT C4-step2-incident.png
+PASS C4 Step 2 saved 
+SHOT C5-complainant-sheet.png
+PASS C5 complainant sheet saves the extra fields 
+PASS C5 requires at least one accused 
+SHOT C5-accused-sheet.png
+SHOT C5-witness-sheet.png
+SHOT C5-step3-people.png
+PASS C5 Step 3 saved: complainant, unknown accused, key witness 
+SHOT C6-step4-documents-blocked.png
+PASS C6 Continue is blocked with the reason beside each missing slot 
+SHOT C6-step4-documents.png
+PASS C6 uploads stored by slot; identity shown masked XXXX-XXXX-4812
+SHOT C7-step5-review.png
+PASS C7 editing from Review returns straight to Review 
+PASS C7 Proceed To Pay opens payment 
+
+=== client-payment
+SHOT C8-F3-complete-payment.png
+PASS C8 fee rows come from the price quote total ₹1,473.53
+SHOT C8a-F4-scan-pay.png
+PASS C8a Scan & Pay never advances on a timer 
+SHOT C8b-F5-payment-success.png
+PASS C8b payment captured (simulated) ₹1,473.53
+SHOT C9-request-submitted.png
+SHOT C10-status-stage2.png
+PASS C9 → C10 by tap; client sees Stage 2 of 5 
+
+=== advocate-reject
+SHOT ADMIN-fir-list.png
+SHOT ADMIN-new-request.png
+PASS admin §3.1 new paid request shows in the queue with Assign 
+FAIL at stage advocate-reject: No clickable "Assign to Demo advocate" on https://legalitt-admin-panel.vercel.app/services/fir_draft/cases/8f5fadcb-5725-424b-afd5-a3f3c9cae8ae
+--- client at failure /fir/status?caseId=8f5fadcb-5725-424b-afd5-a3f3c9cae8ae
+BUTTONS: Back ¦ Share status ¦ Copy request id ¦ Contact Legalitt Support
+FIELDS: 
+TEXT: Fir Draft Status UNDER REVIEW FIR Draft Request Submitted Your request has been logged and is currently under institutional intake review. REQUEST ID #FIR_DRAFT-2026-0018 Copy REQUEST DETAILS Request Type FIR Draft Submitted On 12 Nov 2026 Current Status Under Review Estimated Turnaround Within 24–48 Hours Standard legal verification window REQUEST STATUS What happens next? Stage 2 of 5 Request Submitted Completed Your FIR Draft request and submitted incident synopsis have been received. Information Review Active Our legal documentation team is examining the facts, jurisdiction clauses, and applicable BNS provisions. Draft Preparation Pending Your FIR draft will be formulated as per police jurisdictional requirements once verification finishes. Awaiting Your Approval Pending Review and approve the draft before dispatch. Draft Ready Upcoming You will receive instant access to download, print, and file the draft at the designated police station. We'll notify you in the app the moment your FIR draft is compiled and ready for download. Need to update something? Forgot to mention a witness or critical detail? Contact Legalitt desk before drafting initiates. Contact Legalitt Support Drafts strictly curated under legal tech advisory protocols.
+---
+--- admin at failure /services/fir_draft/cases/8f5fadcb-5725-424b-afd5-a3f3c9cae8ae
+BUTTONS: ▤ Legal Notices ¦ ▤ FIR Drafts ¦ ▤ Legal Advice ¦ ▤ District Court Representation ¦ ▤ High Court Representation ¦ ▤ Property Search Report ¦ ▤ Document Forensic ¦ ▤ Court Marriage ¦ ▤ Cancellations & refunds ¦ ▤ Support inbox ¦ ▤ Account deletions ¦ ▤ Advocate approvals ¦ ▤ Payouts ¦ Sign out ¦ Notifications, 34 unread ¦ ← FIR Draft ¦ + Assign ¦ Timeline 6 ¦ Documents 3 ¦ Payments 1 ¦ Identity-proof-89fef12d-8659-413e-b848-9f651f764a73.pdf ↗ ¦ TEST-ONLY-scene.png ↗ ¦ TEST-ONLY-receipt.pdf ↗ ¦ Close advocate picker ¦ Assign to Demo Advocate Asha ¦ Assign to Demo Advocate Kabir ¦ Assign to Adv. Arjun Sharma ¦ Assign to Demo Advocate Meera
+FIELDS: ||checkbox=on
+TEXT: LEGALITT ADMIN ▤ Legal Notices ▤ FIR Drafts ▤ Legal Advice ▤ District Court Representation ▤ High Court Representation ▤ Property Search Report ▤ Document Forensic ▤ Court Marriage ▤ Cancellations & refunds ▤ Support inbox ▤ Account deletions ▤ Advocate approvals ▤ Payouts Demo admin ADMIN Sign out FIR Draft 34 ADMIN ← FIR Draft FIR DRAFT FIR_DRAFT-2026-0018demo Demo client Paid Matter Fraud Service fee ₹999.00 Additional fees ₹249.75 Charged before GST ₹1,248.75 GST paid ₹224.78 Total paid ₹1,473.53 GST rate 18% exclusive Created 11 Nov 2026, 06:46 pm NEEDS ADMIN Assign an advocate + Assign FIR progress New request · assign an advocate Client sees: Stage 2 of 5 · Information Review. Advocate sees: New Request. Advocate’s share from the price snapshot: ₹999.00. Paid to the advocate who completes the case. Who submits to police The advocate submits the approved FIR at the police station and uploads the receipt On: after the client approves, the case waits for the advocate’s police receipt before it completes. Applies to approvals from now on. Turnaround shown to clients: 24–48 hours. Timeline Request submitted client · 12/11/2026, 2:43:53 pm IST Payment received client · 12/11/2026, 2:44:10 pm IST FIR review and corrections 0h since payment · 24–48h turnaround Waiting less than a minute Since 12/11/2026, 2:44:10 pm IST 0 draft rejections for the current advocate. Reassignment becomes available after 2. Review history No draft has been submitted yet. Original intake Place Pin 452001 City Indore Address TEST ONLY 12 Synthetic Market Road, near Clock Tower Contact Mobile 9000000000 Full Name TEST ONLY Demo Client Dial code +91 Country code IN Incident Date 10/11/2026 Time 04:30 PM Type fraud Location TEST ONLY 12 Synthetic Market Road, near Clock Tower, Indore, 452001 Addit
+---
+FAIL No clickable "Assign to Demo advocate" on https://legalitt-admin-panel.vercel.app/services/fir_draft/cases/8f5fadcb-5725-424b-afd5-a3f3c9cae8ae
+EXIT 1
