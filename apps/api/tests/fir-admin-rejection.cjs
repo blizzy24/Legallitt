@@ -63,6 +63,10 @@ test('FIR admin rejection: mixed returns, purge retry, replacement, two draft re
    const inbox=await notifications.list(advocate,{}),notice=inbox.items.find(n=>n.kind==='fir_reassigned_away');assert.ok(notice);assert.equal(notice.case_id,null);await notifications.read(advocate,notice.id);
    const clientInbox=await notifications.list(client,{});assert.ok(clientInbox.items.some(n=>n.body==='We’ve assigned a new advocate to your case to make sure your draft meets our standards'));
    assert.ok((await review.read(next,id)).submissions.some(s=>s.draft_reason==='TEST explain the applicable section'));
+   // A2: the newly assigned advocate sees no unmasked contact and no earlier draft (which prints it) before accepting.
+   const json=value=>JSON.stringify(value,(_,v)=>typeof v==='bigint'?v.toString():v),pre=await repo.read(next,id),drafted=(await review.read(admin,id)).submissions[0];
+   assert.equal(json(pre).includes('2025550100'),false);assert.equal(json(pre).includes('fir-test@example.invalid'),false);assert.equal(pre.drafts.length,0);assert.equal(pre.documents.some(d=>d.kind==='fir_draft'),false);
+   await assert.rejects(docs.url(next,drafted.document_id),{status:404});await assert.rejects(fir.context(next,id),{status:409});
   });
   await t.test('new advocate must create a new version; only that current reviewed package can complete and receive the full entitlement',async()=>{
    await state.transition(next,id,'advocate_accepted');await assert.rejects(fir.preview(next,id,first.id),{status:409});

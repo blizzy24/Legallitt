@@ -220,6 +220,9 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
         throw new NotFoundException("Document not found");
       const record = await tx.case.findUniqueOrThrow({where:{id:doc.case_id!}});
       if(!await consultationDocumentVisible(tx,actor,record,doc))throw new NotFoundException('Document not found');
+      // A2: earlier draft PDFs print the client's contact details; they open once the advocate accepts.
+      if (record.service_code === 'fir_draft' && actor.role === 'advocate' && record.status === 'assigned' && doc.kind === 'fir_draft')
+        throw new NotFoundException('Document not found');
       if (record.service_code === 'fir_draft' && actor.role === 'client' && doc.owner_id !== record.client_id) {
         // The client sees a draft PDF once the admin approved it (sent to client),
         // and the advocate's police receipt (C14). Nothing else the team uploaded.

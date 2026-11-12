@@ -6,6 +6,7 @@
 // docs/flows/fir-screens/built/.
 //
 //   node scripts/verify-fir-full-flow.cjs --fresh         full walk on a new request
+//   FIR_DEPLOYED=1 node scripts/verify-fir-full-flow.cjs --fresh   the same walk on the live sites (deployed dev)
 //   node scripts/verify-fir-full-flow.cjs --from=<stage>  resume at a stage (state.json keeps the case ids)
 //   node scripts/verify-fir-full-flow.cjs --explore=client:/fir  print what a screen shows
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
@@ -14,8 +15,11 @@ const {ApiClient}=require('../packages/shared/dist');
 const {PDFDocument,StandardFonts}=require('../apps/api/node_modules/pdf-lib');
 const kit=require('./helpers/fir-walk-kit.cjs'),{delay,click,fill,text,noText,has,at,dump,shot,chooseFile,go}=kit;
 process.loadEnvFile('apps/api/.env.local');
-const base='http://127.0.0.1:3003',mobile='http://localhost:8083',adminWeb='http://localhost:5174';
-const out=path.resolve('reports/fir-flow-2026-11-12/local'),shots=path.resolve('docs/flows/fir-screens/built');
+// Deployed mode drives the live sites and API; it never touches a database directly.
+const deployed=process.env.FIR_DEPLOYED==='1';
+const base=deployed?'https://gvycg0n3u8.execute-api.ap-south-1.amazonaws.com':'http://127.0.0.1:3003';
+const mobile=deployed?'https://legalitt-5.vercel.app':'http://localhost:8083',adminWeb=deployed?'https://legalitt-admin-panel.vercel.app':'http://localhost:5174';
+const out=path.resolve('reports/fir-flow-2026-11-12',deployed?'deployed':'local'),shots=deployed?path.join(out,'screens'):path.resolve('docs/flows/fir-screens/built');
 fs.mkdirSync(out,{recursive:true});fs.mkdirSync(shots,{recursive:true});
 const arg=name=>process.argv.find(a=>a.startsWith(`--${name}=`))?.split('=').slice(1).join('=');
 const statePath=path.join(out,'state.json'),state=fs.existsSync(statePath)?JSON.parse(fs.readFileSync(statePath,'utf8')):{};
@@ -44,8 +48,8 @@ const STAGES=[];
 const stage=(name,run)=>STAGES.push({name,run});
 
 async function main(){
-  assert.ok(['localhost','127.0.0.1'].includes(new URL(process.env.DATABASE_URL).hostname),'local database only');
-  const env=await require('./helpers/local-walkthrough.cjs')();
+  if(!deployed)assert.ok(['localhost','127.0.0.1'].includes(new URL(process.env.DATABASE_URL).hostname),'local database only');
+  const env=deployed?null:await require('./helpers/local-walkthrough.cjs')();
   let browser;const errors=[],pages={};
   try{
     const password=await require('../apps/api/dist/src/auth/demo').demoPassword(),api={},users={};
@@ -56,9 +60,11 @@ async function main(){
     }
     // Local fixture only: sign-in does not run the profile seed, so both demo
     // advocates get an approved local profile. Deployed profiles are never touched.
-    const db=await require('../apps/api/dist/src/database').createDatabaseClient();
-    try{for(const role of ['advocate','advocate-2'])await db.advocateProfile.upsert({where:{user_id:users[role].id},create:{user_id:users[role].id,verification:'approved',city:'Indore'},update:{verification:'approved',city:'Indore'}});
-      await require('../apps/api/dist/prisma/seed-pricing').seedConfirmedPricing(db);}finally{await db.$disconnect();}
+    if(!deployed){
+      const db=await require('../apps/api/dist/src/database').createDatabaseClient();
+      try{for(const role of ['advocate','advocate-2'])await db.advocateProfile.upsert({where:{user_id:users[role].id},create:{user_id:users[role].id,verification:'approved',city:'Indore'},update:{verification:'approved',city:'Indore'}});
+        await require('../apps/api/dist/prisma/seed-pricing').seedConfirmedPricing(db);}finally{await db.$disconnect();}
+    }
     browser=await puppeteer.launch({executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe',headless:true,protocolTimeout:120000,args:['--use-fake-ui-for-media-stream']});
     const page=async role=>pages[role]??=await kit.signIn(browser,env,{role,email:`demo-${role}@legalitt.invalid`,password,mobile,adminWeb,errors});
     const ctx={api,users,page,env,state,save,pdf,png};
@@ -80,9 +86,9 @@ async function main(){
         throw e;}
     }
     const pageErrors=errors.filter(e=>!/ResizeObserver/.test(e.message));
-    fs.writeFileSync(path.join(out,'results.json'),JSON.stringify({checked_at:new Date().toISOString(),case:state,page_errors:pageErrors,results},null,2)+'\n');
+    fs.writeFileSync(path.join(out,'results.json'),JSON.stringify({checked_at:new Date().toISOString(),target:deployed?{api:base,mobile,admin:adminWeb}:'local',case:state,page_errors:pageErrors,results},null,2)+'\n');
     assert.deepEqual(pageErrors,[],'no uncaught page errors');
     console.log(`\nALL ${results.length} FIR FLOW CHECKS PASSED`);
-  }finally{await browser?.close().catch(()=>{});env.close();}
+  }finally{await browser?.close().catch(()=>{});env?.close();}
 }
 main().catch(e=>{console.error('FAIL',e.message);process.exitCode=1;});

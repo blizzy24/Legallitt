@@ -2,7 +2,7 @@ import {BadRequestException,ConflictException,ForbiddenException,Inject,Injectab
 import {
   FIR_AWAITING_POLICE,FIR_CLIENT_CHANGES,FIR_CHANGE_ATTACHMENT_KIND,FIR_POLICE_RECEIPT_KIND,FIR_REMIND_HOURS,
   FirAdvocateRejectSchema,FirClientApproveSchema,FirClientChangesSchema,FirPoliceSubmissionSchema,FirSettingsSchema,
-  firIntakeDetails,firSectionLabel,firStage,
+  firIntakeDetails,firSectionLabel,firStage,firContactMasked,maskEmail,maskMobile,
   type FirFlowDocument,type FirFlowEvent,type FirFlowReview,type FirFlowView,type FirSettings,
 } from '@legalitt/shared';
 import type {Prisma,Case,Document} from '../generated/prisma/client';
@@ -99,7 +99,8 @@ export class FirFlowService {
       intake_step:c.status==='draft'?Math.max(1,Math.min(5,Number((c.details as {intake_step?:unknown}|null)?.intake_step)||1)):null,
       incident_type:intake.incident?.type||null,police_station:intake.jurisdiction?.policeStation||null,city:intake.place?.city||null,
       district:intake.jurisdiction?.district||null,state:intake.jurisdiction?.state||null,
-      client:isClient?null:{name:intake.contact?.fullName||'Client',mobile:intake.contact?.mobile||null,email:intake.contact?.email||null,city:intake.place?.city||null},
+      // A2: masked for the assigned advocate until they accept.
+      client:isClient?null:{name:intake.contact?.fullName||'Client',mobile:firContactMasked(actor.role,c.status)?maskMobile(intake.contact?.mobile):intake.contact?.mobile||null,email:firContactMasked(actor.role,c.status)?maskEmail(intake.contact?.email):intake.contact?.email||null,city:intake.place?.city||null},
       advocate,draft,reviews,
       police:police&&receipt?{submitted_on:police.submitted_on.toISOString().slice(0,10),receipt:doc(receipt),created_at:police.created_at.toISOString()}:null,
       remind:actor.role==='advocate'&&c.status==='client_review'?{allowed:!next||next.getTime()<=Date.now(),next_at:next?.toISOString()??null,last_at:reminded?.toISOString()??null}:null,

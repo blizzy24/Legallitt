@@ -1,2 +1,2 @@
-// Approval is exercised by the current full structured FIR walkthrough.
-require('./verify-fir-draft.cjs');
+// Approval is exercised by the full FIR flow walk (docs/flows/FIR-DRAFT-FLOW.md).
+require('./verify-fir-full-flow.cjs');

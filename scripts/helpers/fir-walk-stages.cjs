@@ -2,7 +2,7 @@
 // order of docs/flows/FIR-DRAFT-FLOW.md. Each stage drives the real UI.
 const path=require('node:path');
 module.exports=function stages(stage,{api,users,page,state,save,pdf,png,kit,S,pass,mobile,adminWeb,out,assert}){
-  const {delay,click,fill,text,noText,has,at,dump,shot,chooseFile,go}=kit;
+  const {delay,click,clickCard,fill,text,noText,has,at,dump,shot,chooseFile,go}=kit;
   void noText;void has;void users;void adminWeb;
   // A5 answer pills toggle; the field's placeholder shows the chosen answer, so set each only once.
   const answer=async(p,label,choice,nth=0)=>{
@@ -52,7 +52,8 @@ module.exports=function stages(stage,{api,users,page,state,save,pdf,png,kit,S,pa
     await go(p,mobile+'/fir');await click(p,'Learn more');await at(p,'/fir/info');await text(p,'24–48 Hours');await shot(p,S('C2-why-fir'));pass('C2 turnaround comes from settings','24–48 Hours');
     // Creates the draft, or reopens the newest unsubmitted one, at Step 1 (flow C2).
     await click(p,'Send a FIR Draft');await at(p,'/fir/step1');await text(p,'STEP 1 OF 5');
-    state.case_id=new URL(p.url()).searchParams.get('caseId');save();assert.ok(state.case_id,'draft case created');pass('C2 Send a FIR Draft opens Step 1');
+    state.case_id=new URL(p.url()).searchParams.get('caseId');assert.ok(state.case_id,'draft case created');
+    state.reference=(await api.client.request(`/cases/${state.case_id}`)).reference;save();pass('C2 Send a FIR Draft opens Step 1',state.reference);
     await fill(p,'Full Name','TEST ONLY Demo Client');await fill(p,'Mobile Number','9000000000');
     await click(p,'Fraud',{last:true}); // the chip, not the dropdown showing the same value
     await fill(p,'Address or place of the incident','TEST ONLY 12 Synthetic Market Road, near Clock Tower');
@@ -148,7 +149,10 @@ module.exports=function stages(stage,{api,users,page,state,save,pdf,png,kit,S,pa
       const adv=await page('advocate');
       await go(adv,mobile+'/matters');await text(adv,'Review Request');await text(adv,'Fee: ₹999');await shot(adv,S('A1-cases-list'));
       await click(adv,'FIR Draft');await delay(900);await shot(adv,S('A1-cases-list-fir'));pass('A1 card shows FIR DRAFT, client · incident, fee and the status button');
-      await click(adv,'Review Request');await text(adv,'YOU WILL RECEIVE');await text(adv,'Identity Proof (masked) XXXX-XXXX-4812');await shot(adv,S('A2-request-details'));
+      await clickCard(adv,state.reference,'Review Request');await text(adv,'YOU WILL RECEIVE');
+      // A2: the client's mobile and email stay masked until the advocate accepts.
+      await text(adv,'+91 90••••••00');await text(adv,'de••••@legalitt.invalid');assert.equal(await has(adv,'9000000000'),false);assert.equal(await has(adv,'demo-client@legalitt.invalid'),false);
+      pass('A2 masks the client’s mobile and email before acceptance','+91 90••••••00');await text(adv,'Identity Proof (masked) XXXX-XXXX-4812');await shot(adv,S('A2-request-details'));
       assert.equal(await has(adv,'KYC Verified'),false);assert.equal(await has(adv,'Escrow'),false);
       // Reject needs a reason; the case returns to admin and the advocate goes back to the list.
       await click(adv,'Reject');await text(adv,'Reject this request?');await click(adv,'Reject Request');await delay(900);assert.equal((await status()).status,'assigned','a reason is required');
@@ -174,12 +178,13 @@ module.exports=function stages(stage,{api,users,page,state,save,pdf,png,kit,S,pa
     const status=async()=>{const c=await api.admin.adminCase(state.case_id);return {status:c.status,sub:c.sub_status};};
     const now=await status();if(!(['assigned','advocate_accepted'].includes(now.status)||(now.status==='in_progress'&&!now.sub))){console.log('already past first drafting:',now.status,now.sub??'');return;}
     if((await status()).status==='assigned'){
-      await go(adv,mobile+'/matters');await click(adv,'Review Request');await text(adv,'YOU WILL RECEIVE');
+      await go(adv,mobile+'/matters');await clickCard(adv,state.reference,'Review Request');await text(adv,'YOU WILL RECEIVE');await text(adv,'+91 90••••••00');
       assert.equal(await has(adv,'outside my practice area'),false,'the next advocate never sees why the first left');
       await click(adv,'Accept Request');await text(adv,'Accept this request?');await shot(adv,S('A2-accept-confirm'));
       await click(adv,'Accept Request');await at(adv,'/advocate/fir/documents');pass('A2 Accept asks to confirm, then opens Review Documents');
     }else await go(adv,`${mobile}/advocate/fir/documents?caseId=${state.case_id}`);
     await text(adv,'Request Accepted');await text(adv,'2 Pages');await text(adv,'Original text from client');await shot(adv,S('A3-review-documents'));
+    await text(adv,'9000000000');pass('after acceptance the advocate sees the client’s mobile in full');
     assert.equal(await has(adv,'Verified Client'),false);
     await click(adv,'Continue to FIR Draft');await at(adv,'/advocate/fir/generator');await text(adv,'AI drafting is coming soon. Use Create Manually.');await shot(adv,S('A4-draft-generator'));
     // Generate with AI is disabled until D-08 is built.
@@ -199,7 +204,7 @@ module.exports=function stages(stage,{api,users,page,state,save,pdf,png,kit,S,pa
     await text(adv,'SENT TO ADMIN');await text(adv,'Awaiting Legalitt approval');await text(adv,'Submitted to Police');await shot(adv,S('A6-review-waiting-admin-449'));
     const sent=await status();assert.equal(sent.status,'in_progress');assert.equal(sent.sub,'awaiting_admin_approval');pass('A5 Send for Review → awaiting admin approval → A6');
     await click(adv,'Continue');await at(adv,'/matters');await text(adv,'Sent to Admin');await text(adv,'View Status');await shot(adv,S('A1-cases-list-sent-to-admin'));
-    await click(adv,'View Status');await at(adv,'/advocate/fir/review');await text(adv,'SENT TO ADMIN');await delay(1200);await shot(adv,S('A6-review-waiting-admin-219'));
+    await clickCard(adv,state.reference,'View Status');await at(adv,'/advocate/fir/review');await text(adv,'SENT TO ADMIN');await delay(1200);await shot(adv,S('A6-review-waiting-admin-219'));
     assert.equal((await api.client.firFlow(state.case_id)).stage.client.stage,3,'client sees Draft Preparation while admin reviews');
   });
 
@@ -292,7 +297,7 @@ module.exports=function stages(stage,{api,users,page,state,save,pdf,png,kit,S,pa
     const adv=await page('advocate-2');
     if((await caseStatus()).status==='approved'){
       await go(adv,mobile+'/matters');await text(adv,'Client Approved');await text(adv,'Mark Submitted');await shot(adv,S('A1-cases-list-client-approved'));
-      await click(adv,'Mark Submitted');await at(adv,'/advocate/fir/review');await text(adv,'CLIENT APPROVED');await text(adv,'Upload the police receipt');await shot(adv,S('A6-review-client-approved'));
+      await clickCard(adv,state.reference,'Mark Submitted');await at(adv,'/advocate/fir/review');await text(adv,'CLIENT APPROVED');await text(adv,'Upload the police receipt');await shot(adv,S('A6-review-client-approved'));
       await click(adv,'Mark as submitted to police');await text(adv,'Police receipt or acknowledgement');
       // The receipt is required.
       await click(adv,'Confirm submission',{timeout:4000}).catch(()=>{});await delay(900);assert.equal((await caseStatus()).status,'approved','no completion without a receipt');

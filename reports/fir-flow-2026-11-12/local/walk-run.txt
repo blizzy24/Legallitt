@@ -4,19 +4,19 @@ SHOT C1-landing.png
 PASS C1 card tap selects without navigating 
 SHOT C1a-request-callback.png
 SHOT C1a-request-callback-submitted.png
-PASS Request Callback ticket tagged FIR Draft 9706ecf6-a0f9-4b6f-900c-53a0feff28f6
+PASS Request Callback ticket tagged FIR Draft 1f1d1619-d966-4b66-b0f6-d00ac8927aa2
 SHOT C1b-support-chat.png
 SHOT C1b-support-chat-sent.png
-PASS Request Chat thread tagged FIR Draft 34b1218e-65e5-4d99-888b-c1be6c2afbea
+PASS Request Chat thread tagged FIR Draft 282f283a-2762-447a-bc2b-b2ea2379c56a
 SHOT ADMIN-support-inbox.png
 PASS both requests are in the admin Support inbox 
 
 === client-intake
 SHOT C2-why-fir.png
 PASS C2 turnaround comes from settings 24–48 Hours
-PASS C2 Send a FIR Draft opens Step 1 
+PASS C2 Send a FIR Draft opens Step 1 FIR-2026-0009
 SHOT C3-step1-quick-submission.png
-PASS C3 Step 1 saved e5b6cfd9-8c61-4401-969e-0b50ad7b5d36
+PASS C3 Step 1 saved 03f5dfe6-d820-4a93-8c9b-e1c349f51015
 PASS C4 location and police station prefilled from Step 1 
 SHOT C4-step2-incident.png
 PASS C4 Step 2 saved 
@@ -53,6 +53,7 @@ PASS admin §3.1 new paid request shows in the queue with Assign
 SHOT A1-cases-list.png
 SHOT A1-cases-list-fir.png
 PASS A1 card shows FIR DRAFT, client · incident, fee and the status button 
+PASS A2 masks the client’s mobile and email before acceptance +91 90••••••00
 SHOT A2-request-details.png
 SHOT A2-reject-sheet.png
 PASS A2 Reject returns the case to admin; the advocate loses access 
@@ -65,6 +66,7 @@ PASS admin reassigned to the second advocate; client still at stage 2
 SHOT A2-accept-confirm.png
 PASS A2 Accept asks to confirm, then opens Review Documents 
 SHOT A3-review-documents.png
+PASS after acceptance the advocate sees the client’s mobile in full 
 SHOT A4-draft-generator.png
 PASS A4 Generate with AI is disabled with the coming-soon line 
 SHOT A5-proforma-editor-initial.png
@@ -130,7 +132,7 @@ SHOT C10-status-stage5-completed.png
 SHOT C11-49-draft-ready-no-decision.png
 SHOT C14-F9-draft-approved-police-done.png
 PASS client sees completion and the police receipt 
-PASS client downloads the approved draft PDF and the police receipt FIR_Draft_FIR-2026-0007_v3.pdf
+PASS client downloads the approved draft PDF and the police receipt FIR_Draft_FIR-2026-0009_v3.pdf
 
 === police-setting-off
 SHOT ADMIN-police-setting-off.png
@@ -143,4 +145,4 @@ SHOT A7-completed-client-submits.png
 PASS setting off: advocate screens drop the police step and the share is credited 
 PASS setting switched back on 
 
-ALL 47 FIR FLOW CHECKS PASSED
+ALL 49 FIR FLOW CHECKS PASSED

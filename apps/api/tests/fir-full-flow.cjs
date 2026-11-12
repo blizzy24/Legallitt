@@ -80,6 +80,12 @@ test('FIR full flow',{skip:!process.env.LEGALITT_TEST_DATABASE_URL},async t=>{
     });
     await t.test('advocate rejects with a reason; the case returns to admin, who assigns another advocate',async()=>{
       await state.assign(admin,c.id,{advocate_id:first.id});
+      // A2: before accepting, the advocate never receives the client's mobile or email unmasked.
+      const MOBILE='2025550100',EMAIL='fir-test@example.invalid',leaks=v=>{const s=json(v);return s.includes(MOBILE)||s.includes(EMAIL);};
+      const masked=await flow.view(first,c.id);assert.equal(masked.client.mobile,'+91 20••••••00');assert.equal(masked.client.email,'fi••••@example.invalid');assert.equal(leaks(masked),false,'flow view');
+      assert.equal(leaks(await repo.read(first,c.id)),false,'case detail');assert.equal(leaks((await repo.list(first,{})).items.find(i=>i.id===c.id)),false,'case list');
+      assert.equal(leaks(await repo.events(first,c.id,{})),false,'case events');await assert.rejects(fir.context(first,c.id),{status:409},'drafting context opens after acceptance');
+      assert.ok(leaks(await flow.view(admin,c.id)),'admin still sees the contact');
       await assert.rejects(state.decline(first,c.id,{}),{status:409});
       await assert.rejects(flow.advocateReject(first,c.id,{reason:' '}),{status:400});
       await assert.rejects(flow.advocateReject(stranger,c.id,{reason:'TEST'}),{status:404});
@@ -89,7 +95,11 @@ test('FIR full flow',{skip:!process.env.LEGALITT_TEST_DATABASE_URL},async t=>{
       await assert.rejects(flow.view(first,c.id),{status:404});
       const adminView=await flow.view(admin,c.id);assert.ok(adminView.events.some(e=>e.label.includes('TEST conflict of interest')));assert.equal(adminView.stage.admin.label,'Advocate rejected · reassign');
       assert.equal((await flow.view(client,c.id)).events.some(e=>e.label.includes('conflict')),false);
-      await state.assign(admin,c.id,{advocate_id:advocate.id});await state.transition(advocate,c.id,'advocate_accepted');
+      await state.assign(admin,c.id,{advocate_id:advocate.id});assert.equal((await flow.view(advocate,c.id)).client.mobile,'+91 20••••••00');
+      await state.transition(advocate,c.id,'advocate_accepted');
+      // After acceptance the advocate sees the contact in full.
+      const accepted=await flow.view(advocate,c.id);assert.equal(accepted.client.mobile,'2025550100');assert.equal(accepted.client.email,'fir-test@example.invalid');
+      assert.equal((await repo.read(advocate,c.id)).details.contact.mobile,'2025550100');
       assert.equal((await flow.view(client,c.id)).stage.client.note,'Drafting team assigned');
       assert.equal(json(await flow.view(advocate,c.id)).includes('TEST conflict of interest'),false,'the next advocate never sees why the first left');
       assert.equal(json(await repo.read(advocate,c.id)).includes('TEST conflict of interest'),false);assert.equal(json(await repo.events(advocate,c.id,{})).includes('TEST conflict of interest'),false);

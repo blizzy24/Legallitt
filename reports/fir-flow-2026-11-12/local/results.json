@@ -1,10 +1,12 @@
 {
-  "checked_at": "2026-11-12T07:31:58.365Z",
+  "checked_at": "2026-11-12T08:46:37.258Z",
+  "target": "local",
   "case": {
-    "callback_id": "9706ecf6-a0f9-4b6f-900c-53a0feff28f6",
-    "chat_id": "34b1218e-65e5-4d99-888b-c1be6c2afbea",
-    "case_id": "e5b6cfd9-8c61-4401-969e-0b50ad7b5d36",
-    "case2_id": "1e2dfc97-be52-47ca-a448-5b74e9687eb0"
+    "callback_id": "1f1d1619-d966-4b66-b0f6-d00ac8927aa2",
+    "chat_id": "282f283a-2762-447a-bc2b-b2ea2379c56a",
+    "case_id": "03f5dfe6-d820-4a93-8c9b-e1c349f51015",
+    "reference": "FIR-2026-0009",
+    "case2_id": "16964e2d-8351-40bf-91f0-bf066c3868cc"
   },
   "page_errors": [],
   "results": [
@@ -14,11 +16,11 @@
     },
     {
       "name": "Request Callback ticket tagged FIR Draft",
-      "detail": "9706ecf6-a0f9-4b6f-900c-53a0feff28f6"
+      "detail": "1f1d1619-d966-4b66-b0f6-d00ac8927aa2"
     },
     {
       "name": "Request Chat thread tagged FIR Draft",
-      "detail": "34b1218e-65e5-4d99-888b-c1be6c2afbea"
+      "detail": "282f283a-2762-447a-bc2b-b2ea2379c56a"
     },
     {
       "name": "both requests are in the admin Support inbox",
@@ -30,11 +32,11 @@
     },
     {
       "name": "C2 Send a FIR Draft opens Step 1",
-      "detail": ""
+      "detail": "FIR-2026-0009"
     },
     {
       "name": "C3 Step 1 saved",
-      "detail": "e5b6cfd9-8c61-4401-969e-0b50ad7b5d36"
+      "detail": "03f5dfe6-d820-4a93-8c9b-e1c349f51015"
     },
     {
       "name": "C4 location and police station prefilled from Step 1",
@@ -97,6 +99,10 @@
       "detail": ""
     },
     {
+      "name": "A2 masks the client’s mobile and email before acceptance",
+      "detail": "+91 90••••••00"
+    },
+    {
       "name": "A2 Reject returns the case to admin; the advocate loses access",
       "detail": ""
     },
@@ -110,6 +116,10 @@
     },
     {
       "name": "A2 Accept asks to confirm, then opens Review Documents",
+      "detail": ""
+    },
+    {
+      "name": "after acceptance the advocate sees the client’s mobile in full",
       "detail": ""
     },
     {
@@ -178,7 +188,7 @@
     },
     {
       "name": "client downloads the approved draft PDF and the police receipt",
-      "detail": "FIR_Draft_FIR-2026-0007_v3.pdf"
+      "detail": "FIR_Draft_FIR-2026-0009_v3.pdf"
     },
     {
       "name": "admin switched \"advocate submits to police\" off in the panel",

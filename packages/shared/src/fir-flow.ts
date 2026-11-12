@@ -89,6 +89,29 @@ export const FIR_POLICE_RECEIPT_KIND = 'fir_police_receipt';
 export const FIR_CHANGE_ATTACHMENT_MAX_BYTES = 10_000_000;
 export const FIR_MEDIA_KINDS: Record<string, readonly string[]> = {fir_scene: ['video/mp4'], fir_other: ['audio/mpeg']};
 export const maskedIdentity = (last4: string | null | undefined) => last4 ? `XXXX-XXXX-${last4}` : null;
+// A2: an assigned advocate sees the client's mobile and email masked until they
+// accept the request ("+91 90••••••00", "de••••@legalitt.invalid"); in full afterwards.
+export const firContactMasked = (role: string, status: string) => role === 'advocate' && status === 'assigned';
+export function maskMobile(value: string | null | undefined): string | null {
+  if (!value?.trim()) return null;
+  const digits = value.replace(/\D/g, ''), national = digits.length > 10 ? digits.slice(-10) : digits;
+  if (national.length < 4) return '••••';
+  const middle = '•'.repeat(national.length - 4);
+  return national.length === 10 ? `+91 ${national.slice(0, 2)}${middle}${national.slice(-2)}` : `${national.slice(0, 2)}${middle}${national.slice(-2)}`;
+}
+export function maskEmail(value: string | null | undefined): string | null {
+  if (!value?.trim()) return null;
+  const at = value.lastIndexOf('@');
+  return at > 0 ? `${value.slice(0, Math.min(2, at))}••••${value.slice(at)}` : '••••';
+}
+/** The FIR filing with the client's mobile and email masked (contact and the complainant's own phone). */
+export function maskFirContact<T>(details: T): T {
+  const d = (details ?? {}) as {contact?: {mobile?: string; email?: string}; people?: {kind?: string; phone?: string}[]};
+  return {...d,
+    ...(d.contact ? {contact: {...d.contact, ...(d.contact.mobile !== undefined ? {mobile: maskMobile(d.contact.mobile) ?? ''} : {}), ...(d.contact.email !== undefined ? {email: maskEmail(d.contact.email) ?? ''} : {})}} : {}),
+    ...(Array.isArray(d.people) ? {people: d.people.map(p => p.kind === 'complainant' && p.phone ? {...p, phone: maskMobile(p.phone) ?? ''} : p)} : {}),
+  } as T;
+}
 // Step 1 incident-type chips: the filing stores the id, documents show the label.
 export const FIR_INCIDENT_LABELS: Record<string, string> = {theft: 'Theft', fraud: 'Fraud', assault: 'Assault', harassment: 'Harassment', 'property-dispute': 'Property Dispute', 'cyber-crime': 'Cyber Crime', other: 'Other'};
 export const firIncidentLabel = (type: string | null | undefined) => (type && FIR_INCIDENT_LABELS[type]) || type || '';

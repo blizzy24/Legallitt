@@ -1,3 +1,4 @@
+import {firContactMasked,maskFirContact} from '@legalitt/shared';
 import {FIR_EVENT_LABELS,FIR_STATUS_LABELS,firTeamEventLabel} from './fir-event-labels';
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { z } from "zod";
@@ -127,6 +128,15 @@ export class CaseRepository {
     if (record.service_code === 'fir_draft') {
       const captured = payments[0];
       const snapshot = captured?.quote?.snapshot as unknown as {breakdown: import('@legalitt/shared').QuoteBreakdown} | undefined;
+      // A2: until the assigned advocate accepts, the client's mobile and email are masked,
+      // and earlier draft versions (which print them) are withheld.
+      if (firContactMasked(actor.role, record.status)) {
+        const shown = documents.filter(d => d.kind !== 'fir_draft');
+        return {...caseRecord,details:maskFirContact(firIntakeDetails(record.details,parties)),
+          parties:parties.map(p=>p.kind==='complainant'?{...p,details:maskFirContact({people:[{...(p.details as object),kind:'complainant'}]}).people![0]}:p),
+          pricing,advocate:advocate?{...advocateUser,profile}:null,events:firEventsFor(actor.role,events),drafts:[],reviews:[],shipments,approval:null,documents:shown,
+          client_fees:snapshot?{...snapshot.breakdown,breakdown_complete:true,simulated:captured.simulated}:null};
+      }
       return {...caseRecord,details:firIntakeDetails(record.details,parties),parties,pricing,advocate:advocate?{...advocateUser,profile}:null,
         events:firEventsFor(actor.role,events), drafts, reviews:actor.role==='client'?reviews.filter(r=>r.reviewer_id===actor.id):reviews, shipments, approval:actor.role==='client'&&!approval?.approved_at?null:approval,
         documents: actor.role==='client'?documents.filter(d=>d.owner_id===record.client_id || drafts.some(x=>x.document_id===d.id) || d.id===firReceiptId(events)):documents,
@@ -206,7 +216,10 @@ export class CaseRepository {
         firCards.set(id, {share_paise: snapshot?.breakdown?.advocate_entitlement_paise ?? null, note: event ? firTeamEventLabel(event, false) : null});
       }
     }
-    const items = rows.slice(0, input.limit).map(({ advocate_id_relation: advocate, ...record }) => ({ ...record, advocate, ...(firCards.has(record.id) ? {fir_card: firCards.get(record.id)} : {}) }));
+    const items = rows.slice(0, input.limit).map(({ advocate_id_relation: advocate, ...record }) => ({ ...record,
+      // A2: the assigned advocate's list masks the client's mobile and email until they accept.
+      ...(record.service_code === 'fir_draft' && firContactMasked(actor.role, record.status) ? {details: maskFirContact(record.details)} : {}),
+      advocate, ...(firCards.has(record.id) ? {fir_card: firCards.get(record.id)} : {}) }));
     const last = items.at(-1);
     return {
       items,

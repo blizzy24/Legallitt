@@ -78,4 +78,13 @@ async function signIn(browser,env,{role,email,password,mobile,adminWeb,errors}){
   return page;
 }
 const go=async(page,url)=>{await page.goto(url,{waitUntil:'networkidle2',timeout:90000});await delay(900);};
-module.exports={delay,click,fill,text,noText,has,at,dump,shot,chooseFile,signIn,go};
+/** Taps `button` inside the list card that shows `reference` (other cases may carry the same button). */
+async function clickCard(page,reference,button,{timeout=60000}={}){
+  const find=(sel,reference,button)=>{const norm=s=>(s??'').replace(/\s+/g,' ').trim();
+    const buttons=[...document.querySelectorAll(sel)].filter(e=>e.getClientRects().length&&norm(e.textContent)===button);
+    let best=null,size=Infinity;for(const b of buttons){let n=b.parentElement;while(n&&n!==document.body){if(norm(n.textContent).includes(reference)){const t=norm(n.textContent).length;if(t<size){best=b;size=t;}break;}n=n.parentElement;}}return best;};
+  await page.waitForFunction(find,{timeout},CLICKABLE,reference,button).catch(()=>{throw new Error(`No "${button}" on the card for ${reference} at ${page.url()}`);});
+  const h=await page.evaluateHandle(find,CLICKABLE,reference,button);await h.asElement().evaluate(e=>e.scrollIntoView({block:'center'}));await delay(250);
+  try{await h.asElement().click();}catch{await h.asElement().evaluate(e=>e.click());}await h.dispose();await delay(350);
+}
+module.exports={delay,click,clickCard,fill,text,noText,has,at,dump,shot,chooseFile,signIn,go};

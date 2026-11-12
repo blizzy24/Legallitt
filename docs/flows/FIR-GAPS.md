@@ -171,10 +171,12 @@ Every gap above is closed in code except the items under "Still open". Each fix 
   - API suite 190/190, including a new `fir-full-flow.cjs` with an isolation check for every new endpoint.
   - The mobile and admin typechecks have no new errors.
 
+- **A2 contact masking (approved 12 Nov):** until the advocate accepts, the client's mobile and email are masked ("+91 90••••••00") in every API response the advocate receives, the drafting context is refused and earlier draft PDFs are withheld; in full after acceptance. Isolation-tested.
+- **Old scripts:** `verify-fir-draft.cjs`, `verify-fir-admin-rejection.cjs` and `helpers/fir-admin-return-walk.cjs` were deleted; `verify-fir-full-flow.cjs` replaces them (`FIR_DEPLOYED=1` runs it on the live sites).
+
 **Still open**
 
 - The police-station list is unverified (D-100, §9.1).
 - "Use current location" attaches coordinates only; there is no geocoding.
 - The Help Center has no FIR section.
 - The A1 "Upcoming" counter is always 0.
-- The old browser scripts `verify-fir-draft.cjs`, `verify-fir-admin-rejection.cjs` and `helpers/fir-admin-return-walk.cjs` drive the retired screens; `verify-fir-full-flow.cjs` replaces them.

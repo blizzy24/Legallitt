@@ -1134,3 +1134,8 @@ auto-save changed the draft after its PDF was rendered.
 
 **D-113. "Client viewed the draft" is recorded once per version** when the client opens
 the PDF during review. It appears in the advocate's and admin's audit logs only.
+
+**D-114. The client's mobile and email are masked for the assigned advocate until they
+accept** (owner, 12 Nov 2026). A2 shows "+91 90••••••00" and "de••••@domain"; every API
+response the advocate receives before acceptance masks them, the drafting context is
+refused and earlier draft PDFs (which print them) are withheld. Admin always sees them.

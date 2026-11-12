@@ -78,6 +78,8 @@ export class FirService {
     const db=await this.prisma.getClient();
     return db.$transaction(async tx=>{
       const record=await lockedCase(tx,actor,id,'fir_draft');
+      // The drafting context carries the full filing; it opens once the advocate has accepted (A2).
+      if(record.status==='assigned')throw new ConflictException('Accept the request to start drafting.');
       const intake=parse(FirIntakeSchema,firIntakeDetails(record.details,await tx.caseParty.findMany({where:{case_id:id}})));
       const latest=await tx.draft.findFirst({where:{case_id:id,kind:'fir_proforma'},orderBy:{version:'desc'}});
       const parsed=FirDraftContentSchema.safeParse(latest?.content);
