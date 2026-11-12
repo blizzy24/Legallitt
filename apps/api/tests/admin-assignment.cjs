@@ -51,7 +51,9 @@ test('picker eligibility/load, real assignment event, and stale timer cannot ove
   assert.equal((await db.case.findUnique({where:{id}})).advocate_id,approved.id);
   assert.equal(await db.caseEvent.count({where:{case_id:id,to_status:'assigned'}}),1);
   const declined=await makeCase('advocate_declined',approved.id);
-  await assert.rejects(state.assign(admin,declined,{advocate_id:other.id}),{status:409});
+  const reassigned=await state.assign(admin,declined,{advocate_id:other.id});
+  assert.equal(reassigned.advocate_id,other.id);assert.equal(reassigned.status,'assigned');
+  assert.equal(await db.caseAssignment.count({where:{case_id:declined,advocate_id:other.id,ended_at:null}}),1);
   const race=await makeCase('paid');
   const outcomes=await Promise.allSettled([state.assign(admin,race,{advocate_id:approved.id}),state.assign({...admin,trigger:'system',source:'simulated'},race,{advocate_id:other.id})]);
   assert.equal(outcomes.filter(r=>r.status==='fulfilled').length,1);

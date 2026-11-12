@@ -150,7 +150,7 @@ test('multi-service spine: real DB ownership, references, locks, documents, inbo
       await assert.rejects(machine.startDrafting(advocate,row.id),{status:404});
       await assert.rejects(machine.dispatch(advocate,row.id,{}),{status:404});
       const {NoticePdfService}=require('../dist/src/cases/notice-pdf.service');
-      await assert.rejects(new NoticePdfService(prisma,{}).preview(advocate,row.id,randomUUID()),{status:409,message:'Case not found'});
+      await assert.rejects(new NoticePdfService(prisma,{}).preview(advocate,row.id,randomUUID()),{status:404,message:'Case not found'});
       const {PaymentsService}=require('../dist/src/payments/payments.service');
       const payments=new PaymentsService(prisma,machine,{capture:()=>{throw Error('Must not capture');}},{});
       await assert.rejects(payments.intent(owner,{case_id:row.id,purpose:'service_fee'},randomUUID()),{status:409});

@@ -34,3 +34,5 @@ export * from './account';
 export * from './completion';
 export * from './advocate-verification';
 export * from './wallet';
+export * from './notice-flow';
+export * from './notice-presentation';

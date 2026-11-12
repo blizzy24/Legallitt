@@ -184,6 +184,8 @@ model CommissionRate {
 }
 
 model Case {
+  notice_lifecycle NoticeLifecycle?
+  notice_deliveries NoticeDelivery[]
   fir_lifecycle FirLifecycle?
   assignments CaseAssignment[]
   fir_submissions FirSubmission[]
@@ -232,6 +234,70 @@ model Case {
   notice_document_id_relation       Document?       @relation("cases_notice_document_id_documents", fields: [notice_document_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@map("cases")
+}
+
+model NoticeWorkflowPolicy {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  version Int @unique
+  config Json @db.JsonB
+  effective_from DateTime @default(now()) @db.Timestamptz(6)
+  lifecycles NoticeLifecycle[]
+  @@map("notice_workflow_policies")
+}
+model NoticeLifecycle {
+  case_id String @id @db.Uuid
+  policy_id String @db.Uuid
+  revision Int @default(0)
+  approved_draft_id String? @db.Uuid
+  approved_document_id String? @db.Uuid
+  handed_to_admin_at DateTime? @db.Timestamptz(6)
+  address_checked_at DateTime? @db.Timestamptz(6)
+  notice_checked_at DateTime? @db.Timestamptz(6)
+  test_esigned_at DateTime? @db.Timestamptz(6)
+  deadline_at DateTime? @db.Timestamptz(6)
+  contacts Json @default("{}") @db.JsonB
+  case Case @relation(fields:[case_id],references:[id],onDelete:NoAction)
+  policy NoticeWorkflowPolicy @relation(fields:[policy_id],references:[id],onDelete:NoAction)
+  @@map("notice_lifecycles")
+}
+model NoticeDelivery {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  case_id String @db.Uuid
+  method String
+  attempt Int
+  status String @default("pending")
+  recipient Json @db.JsonB
+  document_id String? @db.Uuid
+  carrier String?
+  waybill String?
+  dispatch_date DateTime? @db.Date
+  receipt_document_id String? @db.Uuid
+  provider_message_id String?
+  source String @default("manual")
+  sent_at DateTime? @db.Timestamptz(6)
+  delivered_at DateTime? @db.Timestamptz(6)
+  received_by String?
+  proof_document_id String? @db.Uuid
+  failure_reason String?
+  retry_payment_id String? @db.Uuid
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  case Case @relation(fields:[case_id],references:[id],onDelete:NoAction)
+  tracking NoticeDeliveryEvent[]
+  @@unique([case_id,method,attempt])
+  @@index([case_id,status])
+  @@map("notice_deliveries")
+}
+model NoticeDeliveryEvent {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  delivery_id String @db.Uuid
+  actor_id String? @db.Uuid
+  occurred_at DateTime @db.Timestamptz(6)
+  place String?
+  text String
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  delivery NoticeDelivery @relation(fields:[delivery_id],references:[id],onDelete:NoAction)
+  @@index([delivery_id,occurred_at])
+  @@map("notice_delivery_events")
 }
 
 model FirPolicy {

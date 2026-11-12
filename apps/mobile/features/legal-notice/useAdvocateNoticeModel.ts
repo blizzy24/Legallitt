@@ -25,7 +25,7 @@ export function useAdvocateNoticeModel(stage: string) {
   // Design 192's sign-off line: "Approved today, 11:20 AM", or the date when it was not today.
   const signOff=approvedAt?(()=>{const d=new Date(approvedAt),now=new Date();const day=d.toDateString()===now.toDateString()?'today':d.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
     return `Client Sign-off complete • Approved ${day}, ${d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})}`;})():'';
-  const finalMeta=notice?.page_count ? `${notice.page_count} Pages • Signed by Client` : '';
+  const finalMeta=notice?.page_count ? `${notice.page_count} Pages • Approved by Client` : '';
   const [pricing,setPricing]=useState<Awaited<ReturnType<typeof c.repository.service>>['pricing']>([]);
   const needsCourierPrice=['delivery','payment','scan-pay','paid'].includes(stage);
   useEffect(()=>{if(api&&needsCourierPrice)void c.run(async()=>setPricing((await c.repository.service('courier')).pricing));},[api,needsCourierPrice]);
@@ -58,7 +58,7 @@ export function useAdvocateNoticeModel(stage: string) {
     const policyChanged=(Object.keys(policy) as Array<keyof typeof policy>)
       .some(key=>c.latest?.closing_policy?.[key]!==policy[key]);
     if(!c.dirty.current && !policyChanged && c.latest?.compliance_period_days)return c.latest;
-    const draft=await c.repository.saveDraft(c.id,c.content,validDays.data);
+    const draft=await c.repository.saveDraft(c.id,c.content,validDays.data,c.latest?.version??0);
     c.dirty.current=false;await c.load();return draft;
   };
   const renderDraft=async()=>{
@@ -139,7 +139,7 @@ export function useAdvocateNoticeModel(stage: string) {
       files:documents.map(d=>({id:d.id,name:d.filename,meta:d.page_count===null?'':`${d.page_count} pages`})),
     }:fixture.ADV_NOTICE_DOCS,
     ADV_NOTICE_DRAFTING: api?{...fixture.ADV_NOTICE_DRAFTING,docket:r?.reference??''}:fixture.ADV_NOTICE_DRAFTING,
-    ADV_NOTICE_DRAFT:api?{...fixture.ADV_NOTICE_DRAFT,parties:{client,opponent:recipient},sections:fixture.ADV_NOTICE_DRAFT.sections.map((s,i)=>({...s,body:draftKeys[i]==='closing'?fixedClosing:c.content[draftKeys[i]]}))}:fixture.ADV_NOTICE_DRAFT,
+    ADV_NOTICE_DRAFT:api?{...fixture.ADV_NOTICE_DRAFT,parties:{client,opponent:recipient},sections:fixture.ADV_NOTICE_DRAFT.sections.map((s,i)=>({...s,body:c.content[draftKeys[i]]}))}:fixture.ADV_NOTICE_DRAFT,
     ADV_NOTICE_RECIPIENT:api?{name:recipient,address}:fixture.ADV_NOTICE_RECIPIENT,
     ADV_NOTICE_REVIEW:api?{...fixture.ADV_NOTICE_REVIEW,ref:r?.reference??'',
       cells:fixture.ADV_NOTICE_REVIEW.cells.map(cell=>({...cell,verified:false,value:cell.label==='CLIENT'?client:cell.label==='AGAINST'?recipient:cell.label==='FILING TYPE'?matter.label:cell.label==='STATUS'&&r?.status==='client_review'?'In Client Queue':''})),

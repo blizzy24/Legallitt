@@ -5,7 +5,7 @@ import { font, wizardBubble as b } from '../constants/theme';
 type Props = {
   /** Omit for the bare timestamp used on step 3 (design/26 has no bubble there). */
   title?: string;
-  time: string;
+  time?: string;
 };
 
 // The wizard's chat-style prompt (design/24, 25, 27): a fixed-width beige bubble with
@@ -14,7 +14,7 @@ export default function ChatBubble({ title, time }: Props) {
   return (
     <View style={[styles.bubble, !title && styles.bare]}>
       {title && <Text style={styles.title}>{title}</Text>}
-      <Text style={styles.time}>{time}</Text>
+      {!!time && <Text style={styles.time}>{time}</Text>}
     </View>
   );
 }

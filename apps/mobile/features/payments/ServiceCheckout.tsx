@@ -1,0 +1,73 @@
+import {useEffect,useState} from 'react';
+import {router,useLocalSearchParams,type Href} from 'expo-router';
+import {Pressable,ScrollView,StyleSheet,Text,View} from 'react-native';
+import {Check,ChevronRight,Clock,FileText} from 'lucide-react-native';
+import {backend} from '../../lib/auth';
+import PaymentMethods,{DEFAULT_PAYMENT_SELECTION,type PaymentSelection} from '../../components/PaymentMethods';
+import PayHeader from '../../components/PayHeader';
+import WizardShell from '../../components/WizardShell';
+import QrGlyph from '../../components/QrGlyph';
+import {colors,font} from '../../constants/theme';
+import {useCaseRecord,useFirQuote} from '../fir/client/api';
+import {money} from '../fir/client/format';
+import {TestPaymentLabel,useCopy} from '../fir/client/ui';
+import type {QuoteBreakdown} from '@legalitt/shared';
+
+type Config={name:string;code:'legal_notice'|'fir_draft';payment:string;scan:string;success:string;tracking:string;review:string;documents:string;steps:number};
+export const NOTICE_CHECKOUT:Config={name:'Legal Notice',code:'legal_notice',payment:'/legal-notice/step6',scan:'/legal-notice/scan-pay',success:'/legal-notice/success',tracking:'/legal-notice/tracking',review:'/legal-notice/step5',documents:'/legal-notice/step4',steps:6};
+export const FIR_CHECKOUT:Config={name:'FIR Draft',code:'fir_draft',payment:'/fir/payment',scan:'/fir/scan-pay',success:'/fir/payment-success',tracking:'/fir/status',review:'/fir/step5',documents:'/fir/step4',steps:6};
+type Checkout={id:string;quote_id:string;expires_at:string;server_time:string;total_paise:string;status:string;simulated:boolean;test_actions:boolean};
+const path=(base:string,id?:string,checkout?:string)=>(base+'?'+new URLSearchParams({...id?{caseId:id}:{},...checkout?{checkoutId:checkout}:{}}).toString()) as Href;
+function Action({label,onPress,disabled=false,primary=false}:{label:string;onPress():void;disabled?:boolean;primary?:boolean}){return <Pressable accessibilityRole="button" accessibilityLabel={label} disabled={disabled} onPress={onPress} style={[s.button,!primary&&{backgroundColor:'transparent',borderWidth:1,borderColor:'#BAA990'},disabled&&{opacity:.45}]}><Text style={[s.buttonText,!primary&&{color:'#806646'}]}>{label}</Text></Pressable>;}
+function Rows({breakdown:b}:{breakdown:QuoteBreakdown}){
+  const rows:[string,string][]=[['Service Fee',b.service_fee_paise],...(BigInt(b.delivery_fee_paise)>0n?[['Delivery Fee',b.delivery_fee_paise] as [string,string]]:[]),['Platform Fee',b.platform_fee_paise],['Goods & Services Tax (GST 18%)',b.gst_paise],...(b.charged_pages?[['Extra pages ('+b.charged_pages+' × '+money(b.page_unit_paise)+', no GST)',b.page_overage_paise] as [string,string]]:[])];
+  return <>{rows.map(([label,value])=><View key={label} style={s.row}><Text style={[s.body,{flex:1}]}>{label}</Text><Text style={s.body}>{money(value)}</Text></View>)}<View style={[s.row,s.total]}><Text style={s.title}>Total Payable</Text><Text style={s.title}>{money(b.total_paise)}</Text></View><Text style={s.muted}>GST applies to the service and platform fees only.</Text></>;
+}
+export function ServicePayment({config:c}:{config:Config}){
+  const {caseId}=useLocalSearchParams<{caseId?:string}>(),f=useCaseRecord(caseId),record=f.record,q=useFirQuote(caseId,record?.status==='payment_pending');
+  const [selection,setSelection]=useState<PaymentSelection>(DEFAULT_PAYMENT_SELECTION),[busy,setBusy]=useState(false),[error,setError]=useState('');
+  const ready=q.quote?.status==='ready'?q.quote:null;
+  const next=async()=>{if(!caseId||!ready||busy)return;setBusy(true);setError('');try{const session=await backend.request<Checkout>('/payments/checkouts',{case_id:caseId,quote_id:ready.id});
+    if(selection.method==='upi'&&selection.upiMode==='qr'){router.push(path(c.scan,caseId,session.id));return;}
+    if(!session.simulated||!session.test_actions)throw new Error('This payment method is not available. Please contact Support.');
+    try{await backend.request(`/payments/checkouts/${session.id}/simulate`,{});router.replace(path(c.success,caseId));}
+    catch{router.push(path(c.scan,caseId,session.id));}
+  }catch(e){setError(e instanceof Error?e.message:'Couldn’t open payment. Retry.');}finally{setBusy(false);}};
+  return <WizardShell step={c.steps} totalSteps={c.steps} header="leading" title="Complete Payment" subtitle="" align="top" background="tinted" busy={busy} hideButton buttonLabel="Pay" onContinue={()=>void next()} onBack={()=>router.replace(path(c.review,caseId))}>
+    {f.loading?<Text style={s.body}>Loading payment details…</Text>:!record?<View style={s.card}><Text style={s.error}>{f.error||'Choose a request to pay.'}</Text><Action label="Retry" onPress={f.reload}/></View>:record.service_code!==c.code?<Text style={s.error}>This link is for a different service. Open the request from My Requests.</Text>:record.status!=='payment_pending'?<View style={s.card}><Text style={s.body}>{record.status==='draft'?'Submit your request from Review before paying.':'This case is not awaiting a payment. Check its current status before proceeding.'}</Text><Action label={record.status==='draft'?'Go to Review':'View request'} onPress={()=>router.replace(path(record.status==='draft'?c.review:c.tracking,caseId))}/></View>:<>
+      <View style={s.card}><FileText size={22} color="#9A8263"/><Text style={s.large}>{c.name}</Text><Text style={s.muted}>Ref ID: {record.reference}</Text><View style={s.rule}/>
+        {q.loading?<Text style={s.body}>Calculating your fee…</Text>:q.error?<><Text style={s.error}>{q.error}</Text><Action label="Recalculate" onPress={q.reload}/></>:q.quote?.status==='blocked'?<><Text accessibilityRole="alert" style={s.error}>{q.quote.message}</Text>{q.quote.documents.map(d=><View key={d.id}><Text style={s.body}>{d.filename}</Text><Text style={s.error}>{d.reason}</Text></View>)}<Text style={s.body}>Replace or finish these uploads before paying. No payment has been taken.</Text><Action label="Open Documents" onPress={()=>router.push(path(c.documents,caseId))}/><Action label="Recalculate" onPress={q.reload}/></>:ready?<Rows breakdown={ready.breakdown}/>:<Text style={s.body}>No price is available yet. Recalculate to retry.</Text>}
+      </View><Text style={[s.muted,{marginVertical:18}]}>SELECT PAYMENT METHOD</Text><PaymentMethods value={selection} onChange={setSelection} disabled={busy}/>
+      {ready&&<View style={s.card}><View style={s.row}><Text style={s.body}>Amount to pay</Text><Text style={s.title}>{money(ready.breakdown.total_paise)}</Text></View><Action primary label={busy?'Opening payment…':'Pay →'} disabled={busy} onPress={()=>void next()}/></View>}
+      {ready?.simulated&&<TestPaymentLabel text="Test payment only. No money will be charged."/>}
+      {!!error&&<Text accessibilityRole="alert" style={s.error}>{error}</Text>}
+    </>}
+  </WizardShell>;
+}
+export function ServiceScanPay({config:c}:{config:Config}){
+  const {caseId,checkoutId}=useLocalSearchParams<{caseId?:string;checkoutId?:string}>(),[session,setSession]=useState<Checkout|null>(null),[error,setError]=useState(''),[busy,setBusy]=useState(false),[pending,setPending]=useState(false),[time,setTime]=useState(Date.now()),[offset,setOffset]=useState(0),[attempt,setAttempt]=useState(0);
+  const load=async()=>{if(!checkoutId)return;const value=await backend.request<Checkout>(`/payments/checkouts/${checkoutId}`);setSession(value);setOffset(Date.parse(value.server_time)-Date.now());if(['captured','waiting','expired'].includes(value.status))setPending(false);return value;};
+  useEffect(()=>{let alive=true;if(!checkoutId){setError('Open Complete Payment to create a payment session.');return;}void backend.request<Checkout>(`/payments/checkouts/${checkoutId}`).then(value=>{if(alive){setSession(value);setOffset(Date.parse(value.server_time)-Date.now());setError('');}}).catch(e=>{if(alive)setError(e.message);});return()=>{alive=false;};},[checkoutId,attempt]);
+  useEffect(()=>{const timer=setInterval(()=>setTime(Date.now()),1000);return()=>clearInterval(timer);},[]);
+  useEffect(()=>{if(!checkoutId||session?.status==='captured')return;const timer=setInterval(()=>{void load().catch(()=>setError('Couldn’t check payment status. Retry before making another payment.'));},5000);return()=>clearInterval(timer);},[checkoutId,session?.status]);
+  const left=session?Math.max(0,Math.ceil((Date.parse(session.expires_at)-time-offset)/1000)):0,expired=!!session&&left===0&&session.status!=='captured';
+  const simulate=async()=>{if(!session||busy||expired)return;setBusy(true);setError('');try{await backend.request(`/payments/checkouts/${session.id}/simulate`,{});await load();router.replace(path(c.success,caseId));}catch(e){setPending(true);setError('Payment status pending. We’ll check the existing attempt before allowing another payment.');try{const latest=await load();if(latest?.status==='waiting'||latest?.status==='expired'){setPending(false);setError(e instanceof Error?e.message:'Payment didn’t go through. No payment was captured. Retry.');}}catch{}}finally{setBusy(false);}};
+  return <View style={s.screen}><PayHeader title="Scan & Pay" subtitle={session?.simulated?'Test payment session':'UPI Dynamic QR'} onBack={()=>router.replace(path(c.payment,caseId))}/><ScrollView contentContainerStyle={s.content}>
+    {!session?<View style={s.card}><Text style={s.body}>{error||'Loading payment session…'}</Text>{!!error&&<Action label="Retry" onPress={()=>setAttempt(n=>n+1)}/>}<Action label="Complete Payment" onPress={()=>router.replace(path(c.payment,caseId))}/></View>:<><View style={[s.card,{alignItems:'center'}]}><View style={s.row}><Text style={s.title}>Scan to Pay</Text><Clock color="#9A8263" size={18}/><Text style={s.body}>{expired?'Expired':`${Math.floor(left/60).toString().padStart(2,'0')}:${(left%60).toString().padStart(2,'0')}`}</Text></View>
+      {session.test_actions&&session.simulated?<><View style={{marginVertical:24,opacity:expired?.3:1}}><QrGlyph/></View><TestPaymentLabel/><Text style={[s.muted,{textAlign:'center'}]}>Test QR only. Do not send money using a banking app.</Text></>:<Text style={s.body}>Online payment is not available yet. Please contact Support.</Text>}
+      <Text style={s.amount}>{money(session.total_paise)}</Text><Text style={s.title}>{c.name}</Text><View style={s.wait}><Text style={s.body}>{session.status==='captured'?'Payment received':pending?'Payment status pending':expired?'Payment session expired':'Waiting for payment…'}</Text></View>
+      {session.status==='captured'?<Action primary label="View payment result" onPress={()=>router.replace(path(c.success,caseId))}/>:expired&&!pending?<Action primary label="Generate new QR" onPress={()=>router.replace(path(c.payment,caseId))}/>:session.test_actions&&session.simulated?<Action primary label={busy?'Checking payment…':'Simulate successful payment'} disabled={busy||pending||expired} onPress={()=>void simulate()}/>:null}
+      {!!error&&<><Text accessibilityRole="alert" style={s.error}>{error}</Text><Action label="Check payment status" onPress={()=>void load().catch(e=>setError(e.message))}/></>}
+      </View>{session.test_actions&&session.simulated&&<View style={s.card}><Text style={s.body}>Prefer another method?</Text><Action label="Pay using UPI App (test)" disabled={busy||pending||expired||session.status==='captured'} onPress={()=>void simulate()}/></View>}</>}
+  </ScrollView></View>;
+}
+export function ServicePaymentSuccess({config:c}:{config:Config}){
+  const {caseId}=useLocalSearchParams<{caseId?:string}>(),f=useCaseRecord(caseId),copy=useCopy(),record=f.record,paid=record?.client_fees;
+  return <View style={s.screen}><PayHeader title="Payment" subtitle="" onBack={()=>router.replace('/(tabs)/home')}/><ScrollView contentContainerStyle={s.content}>
+    {f.loading?<Text style={s.body}>Confirming payment…</Text>:!record?<View style={s.card}><Text style={s.error}>{f.error||'Choose a request to view its payment.'}</Text><Action label="Retry" onPress={f.reload}/></View>:!paid||['draft','submitted','payment_pending'].includes(record.status)?<View style={s.card}><Text style={s.body}>Payment has not been confirmed. Check its status before paying again.</Text><Action label="Check payment" onPress={()=>router.replace(path(c.payment,caseId))}/></View>:<>
+      <View style={s.card}><View style={s.row}><FileText color="#9A8263"/><Text style={s.body}>Request ID: {record.reference}</Text><Pressable accessibilityLabel="Copy request ID" onPress={()=>void copy.copy(record.reference)}><Text style={s.link}>Copy</Text></Pressable></View>{copy.state!=='idle'&&<Text style={s.muted}>{copy.label}</Text>}</View>
+      <View style={s.card}><Check color="#5D865D" size={36}/><Text style={s.large}>Payment Successful · {money(paid.total_paise)}</Text><Text style={s.body}>Your {c.name.toLowerCase()} request has been submitted. Legalitt will assign an advocate to review your filing.</Text>{paid.simulated&&<TestPaymentLabel text="Test payment, no money was charged"/>}<Action primary label="Start Tracking →" onPress={()=>router.replace(path(c.tracking,caseId))}/><Action label="Home" onPress={()=>router.replace('/(tabs)/home')}/></View>
+    </>}
+  </ScrollView></View>;
+}
+const s=StyleSheet.create({screen:{flex:1,backgroundColor:colors.appBg},content:{padding:20,paddingBottom:40,gap:18},card:{backgroundColor:'#fff',borderColor:'#E6E0D8',borderWidth:1,borderRadius:20,padding:20,gap:16,marginTop:16},title:{fontFamily:font.appHeading,fontSize:17,color:colors.textPrimary},large:{fontFamily:font.appHeading,fontSize:23,color:colors.textPrimary},body:{fontFamily:font.appBody,fontSize:14,lineHeight:22,color:colors.textBody},muted:{fontFamily:font.appBody,fontSize:12,lineHeight:19,color:colors.textBody},row:{flexDirection:'row',justifyContent:'space-between',alignItems:'center',gap:14},total:{borderTopWidth:1,borderTopColor:'#E6E0D8',paddingTop:20,marginTop:8},rule:{height:1,backgroundColor:'#E6E0D8'},button:{paddingVertical:16,paddingHorizontal:20,borderRadius:14,backgroundColor:colors.brand,alignItems:'center',alignSelf:'stretch'},buttonText:{fontFamily:font.appSemi,fontSize:16,color:'#fff'},error:{fontFamily:font.appBody,color:'#9C2929',lineHeight:22},link:{fontFamily:font.appSemi,color:'#8C7050'},amount:{fontFamily:font.appHeading,fontSize:36,color:colors.textPrimary,marginTop:16},wait:{padding:16,backgroundColor:'#F8F6F2',borderRadius:12,alignSelf:'stretch',alignItems:'center'}});

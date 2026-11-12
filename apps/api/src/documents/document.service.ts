@@ -126,7 +126,7 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
           simulated: actor.source === "simulated",
           kind: input.kind,
           filename,
-          ...(input.kind===FIR_CUSTOM_SLOT_KIND&&input.slot_label?{slot_label:input.slot_label}:{}),
+          ...((input.kind===FIR_CUSTOM_SLOT_KIND||record.service_code==='legal_notice'&&input.kind.startsWith('notice_support'))&&input.slot_label?{slot_label:input.slot_label}:{}),
           s3_key: key,
           mime_type: input.mime,
           size_bytes: 0n,
@@ -152,6 +152,7 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
       const doc = await this.locked(tx, actor, id);
       if (doc.status === "uploaded") return this.publicRecord(doc);
       const record = await tx.case.findUniqueOrThrow({where:{id:doc.case_id!}});
+      if(!await noticeDocumentVisible(tx,actor,record,doc))throw new NotFoundException('Document not found');
       assertReportUploadAllowed(actor, record, doc.kind, true);
       if(!await consultationDocumentVisible(tx,actor,record,doc))throw new NotFoundException('Document not found');
       if (record.service_code === 'fir_draft' && (record.sub_status === 'awaiting_admin_approval' || record.status === 'completed'))
@@ -209,6 +210,7 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
       if (doc.status !== "uploaded")
         throw new NotFoundException("Document not found");
       const record = await tx.case.findUniqueOrThrow({where:{id:doc.case_id!}});
+      if(!await noticeDocumentVisible(tx,actor,record,doc))throw new NotFoundException('Document not found');
       if(!await consultationDocumentVisible(tx,actor,record,doc))throw new NotFoundException('Document not found');
       // A2: earlier draft PDFs print the client's contact details; they open once the advocate accepts.
       if (record.service_code === 'fir_draft' && actor.role === 'advocate' && record.status === 'assigned' && doc.kind === 'fir_draft')
@@ -236,17 +238,32 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
       }
       return {
         url: await this.storage.download(doc.s3_key, doc.filename,
-          preview && actor.role === 'admin' && ['application/pdf', 'image/png', 'image/jpeg'].includes(doc.mime_type)),
+          preview && ['application/pdf', 'image/png', 'image/jpeg'].includes(doc.mime_type)),
         ...(doc.simulated ? {simulated: true} : {}),
         expires_in: DOCUMENT_URL_SECONDS,
       };
     }, transactionOptions);
+  }
+  async view(actor: CaseActor, id: string) {
+    // Reuse the same service-specific release rules as download. A guessed ID
+    // cannot reveal either the file bytes or metadata of a withheld document.
+    const ticket = await this.url(actor, id, true);
+    const db = await this.prisma.getClient();
+    const doc = await db.document.findFirst({where: {id, status: 'uploaded', case_id_relation: {is: caseScope(actor)}},
+      include: {case_id_relation: {select: {id: true, reference: true, service_code: true, client_id_relation: {select: {full_name: true}}}}}});
+    if (!doc) throw new NotFoundException('Document not found');
+    return {...ticket, document: {id: doc.id, case_id: doc.case_id, kind: doc.kind, slot_label: doc.slot_label, filename: doc.filename, mime_type: doc.mime_type, page_count: doc.page_count, size_bytes: doc.size_bytes.toString()},
+      case: doc.case_id_relation ? {id: doc.case_id_relation.id, reference: doc.case_id_relation.reference, service_code: doc.case_id_relation.service_code, client_name: doc.case_id_relation.client_id_relation.full_name} : null};
   }
   async delete(actor: CaseActor, id: string) {
     const db = await this.prisma.getClient();
     const doc = await db.$transaction(async (tx) => {
       const record = await this.locked(tx, actor, id);
       const parent = await tx.case.findUniqueOrThrow({where:{id:record.case_id!}});
+      if(parent.service_code==='legal_notice'){
+        const linked=await tx.draft.findFirst({where:{case_id:parent.id,document_id:id}})||await tx.draftReview.findFirst({where:{attachment_document_id:id}})||await tx.noticeDelivery.findFirst({where:{case_id:parent.id,OR:[{document_id:id},{proof_document_id:id},{receipt_document_id:id}]}});
+        if(linked||parent.notice_document_id===id||!['draft','submitted','payment_pending'].includes(parent.status)&&['id_proof','notice_cheque','notice_return_memo'].includes(record.kind)||!['draft','submitted','payment_pending'].includes(parent.status)&&record.kind.startsWith('notice_support'))throw new ConflictException('Filed notice evidence, review versions and delivery proof are retained with the case.');
+      }
       if(isConsultationService(parent.service_code)){
         const reports=await tx.consultationReport.findMany({where:{case_id:parent.id,status:{in:['submitted','approved']}}});
         if(reports.some(r=>r.document_id===id||((r.content as {attachment_ids?:string[]}).attachment_ids??[]).includes(id))||await tx.courtProgress.findFirst({where:{case_id:parent.id,document_ids:{has:id}}}))
@@ -345,3 +362,4 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
     }
   }
 }
+import {noticeDocumentVisible} from '../cases/notice-access';

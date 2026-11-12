@@ -88,8 +88,10 @@ for (const [stage, environment] of [
               "prod",
         ),
       );
-    for (const [name, p] of Object.entries(json.Parameters))
-      if (name !== "BootstrapVersion") assert.equal(p.Default, undefined, name);
+    for (const [name, p] of Object.entries(json.Parameters)) {
+      if (["NoticeSesFromEmail","NoticeSesIdentityArn","NoticeSesConfigurationSet"].includes(name)) assert.equal(p.Default,"",name+' is opt-in only');
+      else if (name !== "BootstrapVersion") assert.equal(p.Default, undefined, name);
+    }
   });
   test(`${stage}: template parses through CDK CloudFormation resource schemas`, () => {
     const folder = fs.mkdtempSync(

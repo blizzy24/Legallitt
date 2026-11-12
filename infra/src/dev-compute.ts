@@ -3,6 +3,7 @@ import {
   CfnResource,
   CfnParameter,
   CfnOutput,
+  CfnCondition,
   Fn,
   RemovalPolicy,
   type StackProps,
@@ -87,6 +88,12 @@ export class DevComputeStack extends Stack {
       allowedPattern: "ap-south-1_[A-Za-z0-9]+",
     });
     const corsOrigins = parameter("CorsOrigins", "Comma-separated browser origins the API admits; may be empty.");
+    // No SES identity/account is provisioned here. Deployment must supply an
+    // already verified sender and its exact identity ARN after provider setup.
+    const noticeSender = parameter("NoticeSesFromEmail", "Verified SES sender for Legal Notice; empty disables sending.", {default:""});
+    const noticeIdentity = parameter("NoticeSesIdentityArn", "Exact verified SES identity ARN in ap-south-1; no wildcard.", {default:"",allowedPattern:"^$|arn:aws:ses:ap-south-1:[0-9]{12}:identity/[^*]+"});
+    const noticeSet = parameter("NoticeSesConfigurationSet", "Optional existing SES configuration set.", {default:""});
+    const noticeEmailEnabled = new CfnCondition(this,"NoticeEmailEnabled",{expression:Fn.conditionAnd(Fn.conditionNot(Fn.conditionEquals(noticeSender.valueAsString,"")),Fn.conditionNot(Fn.conditionEquals(noticeIdentity.valueAsString,"")))});
     // Provision the credential directly in Secrets Manager, never as a CFN value.
     // ECS resolves this ARN at task startup; the existing adapter reads its env.
     const geminiSecret = parameter("GeminiSecretArn", "ARN of the dev Gemini API key secret (raw string); never the credential itself.", {
@@ -231,6 +238,7 @@ export class DevComputeStack extends Stack {
       allow(["kms:Decrypt", "kms:Encrypt", "kms:GenerateDataKey", "kms:DescribeKey"], [arn(key)]),
       allow(["secretsmanager:GetSecretValue", "secretsmanager:DescribeSecret"], secretArns),
     ];
+    const noticeEmailStatement=Fn.conditionIf(noticeEmailEnabled.logicalId,{Effect:"Allow",Action:["ses:SendEmail"],Resource:[noticeIdentity.valueAsString],Condition:{StringEquals:{"ses:FromAddress":noticeSender.valueAsString}}}, {Ref:"AWS::NoValue"});
     const userPoolArn = Fn.sub("arn:${AWS::Partition}:cognito-idp:ap-south-1:${AWS::AccountId}:userpool/${Pool}", {
       Pool: userPoolId.valueAsString,
     });
@@ -256,6 +264,7 @@ export class DevComputeStack extends Stack {
         Statement: [
           ...opsStatements,
           ...executionStatements,
+          noticeEmailStatement,
           { Effect: "Deny", Action: "*", Resource: "*", Condition: { StringEquals: { "aws:ResourceTag/environment": "prod" } } },
           {
             Effect: "Deny",
@@ -283,7 +292,7 @@ export class DevComputeStack extends Stack {
         },
         Policies: [{ PolicyName: `${prefix}-${id.toLowerCase()}`, PolicyDocument: { Version: "2012-10-17", Statement: statements } }],
       });
-    const taskRole = role("ApiRole", runtimeStatements);
+    const taskRole = role("ApiRole", [...runtimeStatements,noticeEmailStatement]);
     const opsRole = role("OpsRole", opsStatements);
     const executionRole = role("ExecutionRole", executionStatements);
 
@@ -326,6 +335,8 @@ export class DevComputeStack extends Stack {
             { Name: "PORT", Value: port.valueAsString },
             { Name: "PHONE_AUTH_MODE", Value: "demo" },
             { Name: "CORS_ORIGINS", Value: corsOrigins.valueAsString },
+            { Name: "NOTICE_SES_FROM_EMAIL", Value: noticeSender.valueAsString },
+            { Name: "NOTICE_SES_CONFIGURATION_SET", Value: noticeSet.valueAsString },
             // Owner-approved testing deployment only; module defaults stay simulated.
             { Name: "AI_MODE", Value: "gemini" },
             { Name: "GEMINI_MODEL", Value: "gemini-3.5-flash-lite" },

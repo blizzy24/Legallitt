@@ -29,6 +29,7 @@ export const NoticeDraftInputSchema = z.strictObject({
   kind: z.literal("legal_notice"),
   content: NoticeDraftContentSchema,
   generated_by: z.literal("manual"),
+  base_version: z.number().int().nonnegative().default(0),
   compliance_period_days: CompliancePeriodSchema.optional(),
 });
 export const NoticeCommentSchema = z.strictObject({

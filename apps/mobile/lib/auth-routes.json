@@ -199,6 +199,7 @@
     "document-forensic/submitted",
     "document-forensic/track",
     "document-forensic/upload",
+    "document-viewer",
     "documents/[id]",
     "documents/case",
     "documents/index",

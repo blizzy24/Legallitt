@@ -1,3 +1,4 @@
+import {noticeDate} from '@legalitt/shared';
 import {useCallback, useEffect, useState} from 'react';
 import {Pressable, ScrollView, StyleSheet, Text, TextInput, View} from 'react-native';
 import {router, useLocalSearchParams, type Href} from 'expo-router';
@@ -90,7 +91,7 @@ export default function CancelRequestScreen() {
           <Text style={s.body}>{pending ? 'Your request is with Legalitt. They will decide the refund and tell you why. Your advocate may continue until a decision is made.'
             : view.request.status === 'approved' ? `Refund: ${formatPaise(view.request.refund_amount_paise ?? '0')}` : 'Your request continues as before.'}</Text>
           {view.request.decision_reason && <Text style={s.body}>Reason from Legalitt: {view.request.decision_reason}</Text>}
-          <Text style={s.muted}>Requested {new Date(view.request.requested_at).toLocaleString('en-IN')}</Text></View>}
+          <Text style={s.muted}>Requested {noticeDate(view.request.requested_at)}</Text></View>}
 
         {view.mode === 'ended' && <View style={s.card}><XCircle size={24} color={colors.textBody}/><Text style={s.cardTitle}>This request is cancelled</Text>
           <Text style={s.body}>{view.status === 'refunded' ? 'The full amount paid has been refunded.' : view.refunds.length ? 'A partial refund was recorded.' : 'No refund was due.'}</Text>

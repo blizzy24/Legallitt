@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { ChevronLeft, Lock } from 'lucide-react-native';
-import type { ReactNode } from 'react';
+import { Fragment, type ReactNode } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -71,7 +71,7 @@ export default function WizardShell({
               <ChevronLeft size={w.chevronSize} color={colors.textPrimary} />
             </Pressable>
             <Text style={styles.title}>{title}</Text>
-            <Text style={styles.subtitle}>{subtitle}</Text>
+            {!!subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
           </View>
           <Stepper step={step} totalSteps={totalSteps} />
           <Text style={styles.stepLabel}>
@@ -126,14 +126,14 @@ function Stepper({ step, totalSteps }: { step: number; totalSteps: number }) {
         // file fades it dark-to-beige; drawn solid here).
         const lineDone = n <= step + 1;
         return (
-          <View key={n} style={styles.stepItem}>
+          <Fragment key={n}>
             {i > 0 && (
               <View style={[styles.line, { backgroundColor: lineDone ? w.lineDone : w.lineTodo }]} />
             )}
             <View style={[styles.circle, { backgroundColor: done ? w.circleDone : w.circleTodo }]}>
               <Text style={styles.circleText}>{n}</Text>
             </View>
-          </View>
+          </Fragment>
         );
       })}
     </View>

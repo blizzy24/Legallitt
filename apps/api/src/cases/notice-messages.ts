@@ -1,6 +1,6 @@
-import {BadRequestException,Body,Controller,Get,Injectable,NotFoundException,Param,Post,Query,Req,UseGuards} from '@nestjs/common';
+import {BadRequestException,ConflictException,Body,Controller,Get,Injectable,NotFoundException,Param,Post,Query,Req,UseGuards} from '@nestjs/common';
 import {z} from 'zod';
-import {NoticeCommentSchema} from '@legalitt/shared';
+import {NoticeCommentSchema, noticeChatWritable} from '@legalitt/shared';
 import {PrismaService} from '../prisma.service';
 import {AuthGuard,type AuthRequest} from '../auth/auth.controller';
 import {parse} from '../auth/auth.service';
@@ -8,6 +8,7 @@ import {caseScope,type CaseActor} from './case-access';
 import {lockedCase} from './case-state-machine';
 import {isConsultationService} from '@legalitt/shared';
 import {assertReportDocumentReadable} from '../service-reports/report-access';
+import {noticeDocumentVisible} from './notice-access';
 const input=z.strictObject({body:NoticeCommentSchema.shape.comment.optional(),document_id:z.uuid().optional()}).refine(v=>v.body||v.document_id,'Enter a message or attach a document');
 @Injectable()
 export class NoticeMessages {
@@ -39,10 +40,16 @@ export class NoticeMessages {
   return db.$transaction(async tx=>{
    // Recheck membership under the case lock; assignment may change between calls.
    const record=await lockedCase(tx,actor,thread.case_id!);
+   if(record.service_code==='legal_notice'){
+    const life=await tx.noticeLifecycle.findUnique({where:{case_id:record.id}});
+    const handedOver=!!life?.handed_to_admin_at||!!await tx.caseEvent.findFirst({where:{case_id:record.id,to_status:'approved'}});
+    if(!noticeChatWritable(record,handedOver))throw new ConflictException(handedOver?'This notice has gone to Legalitt. Chat is now read-only.':'Chat is available after advocate acceptance and before approval.');
+   }
    if(value.document_id&&!await tx.document.findFirst({where:{id:value.document_id,case_id:thread.case_id,status:'uploaded'}}))throw new BadRequestException('Attach an uploaded document from this case');
    if(value.document_id){
     const doc=await tx.document.findUniqueOrThrow({where:{id:value.document_id}});
     await assertReportDocumentReadable(tx,{id:record.client_id,role:'client'},record,doc);
+    if(!await noticeDocumentVisible(tx,{id:record.client_id,role:'client'},record,doc))throw new BadRequestException('Send the draft through review before sharing it with the client.');
    }
    if(value.document_id&&isConsultationService(record.service_code)){
     const doc=await tx.document.findUniqueOrThrow({where:{id:value.document_id}});

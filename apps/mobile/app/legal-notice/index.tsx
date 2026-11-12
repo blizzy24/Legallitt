@@ -2,8 +2,9 @@ import NoticeScreenFeedback from '../../components/NoticeScreenFeedback';
 import type { NoticeIntakeModel } from "../../features/legal-notice/screen-model";
 import { useIntakeModel } from "../../features/legal-notice/useIntakeModel";
 import { router } from 'expo-router';
-import { ArrowRight, Check, ChevronRight, Clock, FileSearch, Lock, MapPin, MessageCircle, ShieldCheck, Zap, type LucideIcon } from 'lucide-react-native';
-import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import {useState} from 'react';
+import { ArrowRight, Check, ChevronRight, Clock, FileSearch, Lock, MapPin, MessageCircle, PhoneCall, ShieldCheck, Zap, type LucideIcon } from 'lucide-react-native';
+import { Image, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import ServiceHeader from '../../components/ServiceHeader';
@@ -22,7 +23,7 @@ const BULLETS = [
 const REASONS: { icon: LucideIcon; title: string; caption: string; tint: string }[] = [
   { icon: FileSearch, title: 'Preview', caption: 'Before You Send', tint: '#F6E9DC' },
   { icon: MapPin, title: 'Track Postal', caption: 'Acknowledgment', tint: '#F7DFDF' },
-  { icon: MessageCircle, title: 'Get Reply', caption: 'Update', tint: '#E1F0E4' },
+  { icon: MessageCircle, title: 'Upload the reply', caption: 'you receive', tint: '#E1F0E4' },
 ];
 
 // Legal Notice detail / pricing (design/22). Prices come from data/legalNotice.ts so
@@ -36,10 +37,11 @@ export function LegalNoticeDetailScreenView({ model }: { model: NoticeIntakeMode
   const { form, update } = model;
   const tierId = form.tier;
   const tier = model.tiers.find(t => t.id === tierId)!;
+  const [method,setMethod]=useState<'quick'|'assistance'>('quick');
 
   return (
     <View style={styles.screen}>
-      <ServiceHeader title="Legal Notice Detail" onBack={model.back} />
+      <ServiceHeader share={false} title="Legal Notice Detail" onBack={model.back} />
       <ScrollView contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + d.cardGap }]} showsVerticalScrollIndicator={false}>
         <View style={[styles.card, styles.hero]}>
           <View style={styles.heroText}>
@@ -49,8 +51,7 @@ export function LegalNoticeDetailScreenView({ model }: { model: NoticeIntakeMode
             <Text style={styles.heroTitle}>Send a Legal Notice</Text>
             <Text style={styles.heroSub}>Legally drafted. Professionally reviewed. Hassle-free.</Text>
           </View>
-          {/* Illustration placeholder — the file uses a bespoke drawing. */}
-          <View style={styles.heroArt} />
+          <Image source={require('../../assets/notice-hero.png')} accessibilityLabel="Legal notice document and paper plane" resizeMode="contain" style={styles.heroArt} />
         </View>
 
         <View style={styles.card}>
@@ -71,9 +72,9 @@ export function LegalNoticeDetailScreenView({ model }: { model: NoticeIntakeMode
               </View>
             ))}
           </View>
-          <Text style={styles.link}>Is a legal notice always required?</Text>
+          <Text accessibilityRole="link" onPress={()=>model.navigate('/legal-notice/detail')} style={styles.link}>Is a legal notice always required?</Text>
           <View style={styles.linkRow}>
-            <Text style={styles.link}>What should it contain?</Text>
+            <Text accessibilityRole="link" onPress={()=>model.navigate('/legal-notice/detail')} style={styles.link}>What should it contain?</Text>
             <View style={styles.spacer} />
             <Text accessibilityRole="link" onPress={() => model.navigate("/legal-notice/detail")} style={styles.learn}>Learn more</Text>
             <ChevronRight size={d.linkSize} color={colors.textBody} />
@@ -82,10 +83,8 @@ export function LegalNoticeDetailScreenView({ model }: { model: NoticeIntakeMode
 
         <View style={styles.trust}>
           <ShieldCheck size={d.trustIcon} color={ink.accent} />
-          <Text style={styles.trustText}>Drafted &amp; reviewed by Verified Advocates</Text>
+          <Text style={styles.trustText}>Drafted &amp; reviewed by advocates on Legalitt</Text>
           <View style={styles.spacer} />
-          <Lock size={d.trustIcon - 2} color={ink.accent} />
-          <Text style={styles.trustTag}>SECURE</Text>
         </View>
 
         <Text style={styles.section}>Why choose Legalitt?</Text>
@@ -104,7 +103,16 @@ export function LegalNoticeDetailScreenView({ model }: { model: NoticeIntakeMode
           })}
         </View>
 
+        <Text style={styles.section}>Choose how you’d like to proceed</Text>
+        <Pressable accessibilityRole="radio" accessibilityState={{checked:method==='quick'}} onPress={()=>setMethod('quick')} style={[styles.card,{marginTop:16},method==='quick'&&{borderColor:colors.brand}]}>
+          <View style={styles.optionTop}><Text style={styles.trustTag}>DO IT YOURSELF</Text><View style={[styles.optionRadio,method==='quick'&&styles.optionRadioSelected]}>{method==='quick'&&<View style={styles.optionRadioDot}/>}</View></View><Text style={styles.cardTitle}>Quick Submission</Text><Text style={styles.para}>Enter your details and submit your legal notice request.</Text><Text accessibilityRole="button" onPress={()=>{setMethod('quick');model.continue();}} style={styles.link}>Continue with Quick Submission →</Text>
+        </Pressable>
+        <Pressable accessibilityRole="radio" accessibilityState={{checked:method==='assistance'}} onPress={()=>setMethod('assistance')} style={[styles.card,{marginTop:16},method==='assistance'&&{borderColor:colors.brand}]}>
+          <View style={styles.optionTop}><Text style={styles.trustTag}>GET EXPERT HELP</Text><View style={[styles.optionRadio,method==='assistance'&&styles.optionRadioSelected]}>{method==='assistance'&&<View style={styles.optionRadioDot}/>}</View></View><Text style={styles.cardTitle}>Assistance Service</Text><Text style={styles.para}>Get guidance from our team through the legal notice process.</Text><View style={styles.helpButtons}><Pressable accessibilityRole="button" style={styles.helpButton} onPress={()=>router.push('/support-chat?service=legal_notice')}><MessageCircle size={19} color="#806646"/><Text style={styles.helpText}>Request Chat</Text></Pressable><Pressable accessibilityRole="button" style={styles.helpButton} onPress={()=>router.push('/callback?service=legal_notice')}><PhoneCall size={19} color="#806646"/><Text style={styles.helpText}>Request Callback</Text></Pressable></View>
+        </Pressable>
         <Text style={[styles.section, styles.pickSection]}>Choose Your Service</Text>
+        {model.busy&&<Text style={styles.para}>Loading service prices…</Text>}
+        {!model.busy&&model.tiers.every(t=>t.price===null)&&<Text style={styles.para}>Service prices are unavailable. Please retry before starting a request.</Text>}
         <Text style={styles.pickSub}>Select the priority that suits your requirement.</Text>
         <View style={styles.tiers}>
           {model.tiers.map((t) => {
@@ -153,12 +161,14 @@ export function LegalNoticeDetailScreenView({ model }: { model: NoticeIntakeMode
 
         <Pressable
           accessibilityRole="button"
+          disabled={model.busy||tier.price===null||method!=='quick'}
           onPress={() => model.continue()}
           style={({ pressed }) => [styles.button, pressed && styles.pressed]}
         >
           <Text style={styles.buttonText}>Get Started</Text>
           <ArrowRight size={d.buttonIcon} color={ink.onBrand} />
         </Pressable>
+        {method==='assistance'&&<Text style={styles.para}>Use Request Chat or Request Callback above, or select Quick Submission to continue yourself.</Text>}
 
         <View style={styles.footerRow}>
           <Lock size={d.footerIcon} color={colors.textBody} />
@@ -221,15 +231,19 @@ const styles = StyleSheet.create({
     lineHeight: d.heroSubLineHeight,
     color: colors.textBody,
   },
+  optionTop:{flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginBottom:12},
+  optionRadio:{width:22,height:22,borderRadius:11,backgroundColor:'#E5E3E0',alignItems:'center',justifyContent:'center'},
+  optionRadioSelected:{backgroundColor:'#806E53'},optionRadioDot:{width:8,height:8,borderRadius:4,backgroundColor:'#fff'},
+  helpButtons:{flexDirection:'row',gap:10,marginTop:18},helpButton:{flex:1,flexDirection:'row',gap:8,justifyContent:'center',alignItems:'center',paddingVertical:17,paddingHorizontal:10,borderWidth:1,borderColor:'#E5E0D9',borderRadius:12,backgroundColor:'#F3F1ED'},helpText:{fontFamily:font.appSemi,fontSize:14,color:'#806646',flexShrink:1,textAlign:'center'},
   heroArt: {
     // Placeholder for the document/paper-plane illustration, sized and positioned to
     // design/22's artwork box so the real asset drops in without a layout change.
     width: d.heroArtW,
     height: d.heroArtH,
     borderRadius: 12,
-    backgroundColor: d.artBg,
+    backgroundColor: '#fff',
     marginLeft: 8,
-    marginRight: -d.cardPad,
+    marginRight: 0,
   },
   titleRow: {
     flexDirection: 'row',

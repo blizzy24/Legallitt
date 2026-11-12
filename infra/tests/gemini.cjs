@@ -21,7 +21,7 @@ test('Gemini is dev-only, injected by ECS from one secret, with no Bedrock grant
   assert.equal(ops.Secrets, undefined);
   for (const resource of Object.values(dev.Resources).filter(r => r.Type === 'AWS::IAM::Role')) {
     const statements = resource.Properties.Policies.flatMap(p => p.PolicyDocument.Statement);
-    const grants = statements.filter(s => JSON.stringify(s.Resource).includes('GeminiSecretArn'));
+    const grants = statements.filter(s => JSON.stringify(s).includes('GeminiSecretArn'));
     if (resource.Properties.RoleName === 'legalitt-dev-executionrole')
       assert.deepEqual(grants, [{ Effect: 'Allow', Action: ['secretsmanager:GetSecretValue'], Resource: [ref] }]);
     else assert.deepEqual(grants, []);

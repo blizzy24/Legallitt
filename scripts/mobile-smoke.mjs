@@ -22,9 +22,14 @@ function routesIn(dir, base = '') {
   });
 }
 const routes = [...new Set(routesIn(app))].sort().map(route => route.replace(/\[[^\]]+\]/g, '1'));
-assert.equal(routes.length, 346, 'Every route is enumerated, including the five FIR client screens added by docs/flows/FIR-DRAFT-FLOW.md (scan-pay, payment-success, request-changes, changes-submitted, approved), report-service documents/chat, Court Marriage and the messages/support threads (D-28), cancellation (D-12), account settings (D-20..D-27) and Payment Details (D-18)');
+assert.equal(routes.length, 347, 'Every route is enumerated, including the shared Document Viewer and the five FIR client screens added by docs/flows/FIR-DRAFT-FLOW.md, report services, messages/support, cancellation, account settings and Payment Details');
 const fixtureMode = process.env.SMOKE_DATA_SOURCE === 'fixtures';
 const sessions = fixtureMode ? {} : Object.fromEntries(['client', 'advocate'].map(role => {
+  if (process.env.SMOKE_SESSIONS_JSON) {
+    const session = JSON.parse(process.env.SMOKE_SESSIONS_JSON)[role];
+    assert.equal(session.user.role, role);
+    return [role, session];
+  }
   const file = process.env[`SMOKE_${role.toUpperCase()}_SESSION`];
   assert.ok(file, `SMOKE_${role.toUpperCase()}_SESSION must point to a private file containing a real dev auth session`);
   const session = JSON.parse(readFileSync(file, 'utf8'));

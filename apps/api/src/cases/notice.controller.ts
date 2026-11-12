@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  ConflictException,
   Get,
   Param,
   Post,
@@ -91,10 +92,15 @@ export class NoticeController {
     @Param("draftId") draft: string,
     @Body() body: unknown,
   ) {
-    empty(body);
+    const review=parse(z.strictObject({base_version:z.number().int().nonnegative().optional(),review_checks:z.object({names:z.literal(true),amount:z.literal(true),demand_days:z.literal(true)}).optional(),message:z.string().trim().max(600).optional()}),body??{});
+    const record=await this.cases.read(req.user!,id(value),'legal_notice');
+    if((record.details as {intake_version?:number}).intake_version===2){
+      parse(z.object({base_version:z.number().int().nonnegative(),review_checks:z.object({names:z.literal(true),amount:z.literal(true),demand_days:z.literal(true)})}),review);
+      if(record.drafts?.at(-1)?.version!==review.base_version)throw new ConflictException('The draft changed. Review the latest version before sending.');
+    }
     const document = await this.pdf.draft(req.user!, id(value), id(draft));
     try {
-      return await json(this.state.sendNoticeDraft(req.user!, id(value), id(draft)));
+      return await json(this.state.sendNoticeDraft(req.user!, id(value), id(draft),review,document.id));
     } catch (error) {
       await this.pdf.discard(req.user!, document.id);
       throw error;

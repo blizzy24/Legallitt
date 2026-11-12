@@ -6,6 +6,11 @@ import { decodeResponse, validateRequest } from './ai-response';
 export class SimulatedAi implements AiPort {
   async generate<T extends AiTask>(request:AiRequest<T>):Promise<AiResults[T]> {
     validateRequest(request);
+    if(request.task==='notice'&&request.response_format==='notice_sections'){
+      const source=JSON.parse(request.prompt.split('\n').at(-1)??'{}');
+      const text=JSON.stringify(Object.fromEntries(['sender','recipient','subject','facts','demand','closing'].map(key=>[key,String(source.current?.[key]??'')])));
+      return decodeResponse(request.task,text,true);
+    }
     // Reuse the existing honest placeholder, not invented legal facts/remedies.
     // The demo timer continues using simulatedDraft directly, unchanged.
     const text=request.task==='subject' ? SIMULATED_NOTICE_SUBJECT

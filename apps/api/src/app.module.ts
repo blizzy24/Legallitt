@@ -56,6 +56,11 @@ import { PrismaService } from "./prisma.service";
 import { CaseController } from "./cases/case.controller";
 import { CaseRepository } from "./cases/case-repository";
 import { CaseStateMachine } from "./cases/case-state-machine";
+import {NoticeFlowController} from './cases/notice-flow.controller';
+import {NoticeFlowService} from './cases/notice-flow.service';
+import {NOTICE_EMAIL, SesNoticeEmail} from './cases/notice-email';
+import {NoticeDraftAiController} from './cases/notice-draft-ai';
+import {NoticeReminders} from './cases/notice-reminders';
 
 @Controller("health")
 export class HealthController {
@@ -79,12 +84,17 @@ import {ACCOUNT_COGNITO, CognitoAccountAdapter} from './account/account-cognito'
     MeController,
     CaseController,
     NoticeController,
+    NoticeFlowController,
+    NoticeDraftAiController,
     ServicesController,
     DocumentController,
   ],
   providers: [WalletService, AdvocateVerificationService, AdvocateCompletionService, AccountDeletionsAdminService, AccountService, AccountDataService, {provide: ACCOUNT_COGNITO, useClass: CognitoAccountAdapter}, SupportService, ConsultationService, ConsultationPayments, ConsultationReports, FirAdminService, FirFlowService, FirService, NotificationRepository, AdminCaseDetailRepository, AdminAdvocatesRepository, AdminCasesRepository, NoticeMessages,
     ShipmentService,
     NoticePdfService,
+    NoticeFlowService,
+    NoticeReminders,
+    {provide: NOTICE_EMAIL, useClass: SesNoticeEmail},
     PaymentsService, ServiceReportsService, CancellationsService,
     AuthService,
     AuthGuard,

@@ -20,10 +20,8 @@ const editableSections = sectionKeys.map((key, index) => NOTICE_EDITABLE_DRAFT_F
  * the whole body identical — same six sections, same copy, same card geometry —
  * and only the AI pill and the footer different. Extracted rather than copied.
  *
- * Editor values and callbacks come from the controller. Only Background & Facts
- * and Offences are editable text; Closing also has a structured days input.
- * The other sections show
- * the filing/template sources used by the PDF.
+ * All six editable sections are persisted and reach the PDF. Closing also has
+ * the structured compliance-period input. No Offences section is rendered.
  */
 export default function NoticeDraftSections({ sections = ADV_NOTICE_DRAFT.sections, onEdit, onChange, offences, onChangeOffences, intakeSections = [], complianceDays, onChangeComplianceDays }: {
   complianceDays?: string; onChangeComplianceDays?: (value: string) => void;
@@ -48,7 +46,6 @@ export default function NoticeDraftSections({ sections = ADV_NOTICE_DRAFT.sectio
             </Pressable>}
           </View>
           {filingSections.includes(index) ? <Text style={styles.intakeNote}>{instructedCopy.legalNoticeDraft.fromFiling}</Text>
-            : sectionKeys[index] === 'closing' ? <Text style={styles.intakeNote}>{instructedCopy.legalNoticeDraft.fixedTemplate}</Text>
             : intakeSections.includes(index) && <Text style={styles.intakeNote}>{instructedCopy.legalNoticeDraft.fromIntake}</Text>}
           {sectionKeys[index] === 'closing' && complianceDays !== undefined && <>
             <Text style={styles.intakeNote}>{instructedCopy.legalNoticeDraft.complianceDays}</Text>
@@ -63,14 +60,6 @@ export default function NoticeDraftSections({ sections = ADV_NOTICE_DRAFT.sectio
           </View>
         </View>
       ))}
-      {offences !== undefined && <View style={styles.card}>
-        <Text style={styles.secTitle}>{instructedCopy.legalNoticeDraft.offences}</Text>
-        <View style={styles.body}>
-          <TextInput accessibilityLabel={instructedCopy.legalNoticeDraft.offences}
-            multiline value={offences} onChangeText={onChangeOffences}
-            style={[styles.bodyText, {padding: 0}]} />
-        </View>
-      </View>}
     </>
   );
 }

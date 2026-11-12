@@ -11,6 +11,7 @@ import { useFixtureIntakeModel } from './useFixtureIntakeModel';
 import { useNoticeController, type NoticeStage } from './useNoticeController';
 import type { NoticeIntakeModel } from './screen-model';
 import { useCheckoutQuote } from './useCheckoutQuote';
+import {backend} from '../../lib/auth';
 
 /** Select the data adapter here, never inside a designed view. */
 export function useIntakeModel(stage: string) {
@@ -112,7 +113,9 @@ export function useIntakeModel(stage: string) {
           if(existing.status === 'draft') await c.repository.saveIntake(c.id,{tier:c.tier});
           c.go(destination); return;
         }
+        const profile=await backend.accountProfile();
         const created = await c.repository.createCase({service_code:'legal_notice',tier:c.tier});
+        await backend.request(`/notices/${created.id}/filing`,{intake_version:2,step:1,client:{fullName:profile.name,...(profile.email?{email:profile.email}:{}),...(profile.phone?{mobile:profile.phone}:{})},noticee:{methods:[]}},'PUT');
         c.go(destination,created.id);
       } else if (stage === 'step5') {
         if (c.record?.status === 'payment_pending') { c.go(destination); return; }

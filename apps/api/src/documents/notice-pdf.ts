@@ -117,24 +117,25 @@ class Letter {
     if(this.width(this.runs(reference),X(14))<X(423))this.text(date,X(455),this.top-Y(21),X(14));
     else this.paragraph(date,0,X(14),Y(21));
     this.gap(18);this.paragraph('To,',0,X(14),Y(21));
-    const recipient=[i.recipient?.name,i.recipient?.address].filter(Boolean).flatMap(v=>paragraphs(v!));
+    const recipient=paragraphs(i.content.recipient);
     recipient.forEach(s=>this.paragraph(s,X(21)));
     this.gap(20);
-    this.paragraph([{text:'Subject: ',weight:'bold'},{text:i.subject!.trim()}]);this.gap(17);
-    this.paragraph(noticeSenderIntroduction(i.sender!));
+    this.paragraph([{text:'Subject: ',weight:'bold'},{text:i.content.subject.trim()}]);this.gap(17);
+    this.paragraph('Under instructions and authority from my client:');
+    paragraphs(i.content.sender).forEach(line=>this.paragraph(line));
+    this.paragraph('I hereby serve upon you this Legal Notice as under:');
     this.gap(8);
     paragraphs(i.content.facts).forEach((fact,n)=>this.numbered(`${n+1}.`,fact.replace(/^\d+[.)]\s+/,'')));
     this.gap(7);this.ensure(2*LEAD);
     this.paragraph('Therefore, Through this Legal Notice, I call upon you to:');this.gap(4);
-    (i.demands??[]).filter(d=>d.trim()).forEach((d,n)=>{
+    paragraphs(i.content.demand).forEach((d,n)=>{
       let k=n+1,label='';while(k){k--;label=String.fromCharCode(65+k%26)+label;k=Math.floor(k/26);}
       this.numbered(`${label}.`,d);
     });
     this.gap(16);
-    const closing=noticeClosing(i.closingPolicy??DEFAULT_NOTICE_POLICY,i.compliancePeriodDays??null,i.content.offences);
+    const closing=noticeClosing(i.closingPolicy??DEFAULT_NOTICE_POLICY,i.compliancePeriodDays??null);
     if(closing.compliance){this.paragraph(closing.compliance);this.gap(7);}
-    this.paragraph(closing.consequence.split(/(civil proceedings(?: and)?|criminal complaint \/ FIR)/g)
-      .map((text,index)=>({text,weight:index%2?'bold' as const:'regular' as const})));
+    paragraphs(i.content.closing).forEach(line=>this.paragraph(line));
     this.gap(7);
     const fee=`₹${(Number(i.serviceFeePaise)/100).toLocaleString('en-IN',{maximumFractionDigits:0})}`;
     this.paragraph(`Further you are hereby called to pay ${fee} as the cost of this legal notice.`);

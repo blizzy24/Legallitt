@@ -5,6 +5,7 @@ export const halfUp = (numerator: bigint, denominator: bigint) =>
 export function calculateQuote(input: {
   base: bigint; commissionBps: number; gstBps: number; delivery: bigint;
   pages: number; includedPages: number; pagePrice: bigint; pageGstBps: number;
+  deliveryRecipient?: 'advocate' | 'platform';
 }) {
   const {base, commissionBps, gstBps, delivery, pages, includedPages, pagePrice, pageGstBps} = input;
   if (base < 0n || delivery < 0n || pagePrice < 0n ||
@@ -25,7 +26,7 @@ export function calculateQuote(input: {
     page_overage_paise: overage.toString(), total_pages: pages, included_pages: includedPages,
     charged_pages: chargedPages, page_unit_paise: pagePrice.toString(),
     total_paise: (taxable + delivery + gst + overage + overageGst).toString(),
-    advocate_entitlement_paise: (base + delivery).toString(),
-    platform_revenue_paise: (platform + overage).toString(),
+    advocate_entitlement_paise: (base + (input.deliveryRecipient === 'platform' ? 0n : delivery)).toString(),
+    platform_revenue_paise: (platform + overage + (input.deliveryRecipient === 'platform' ? delivery : 0n)).toString(),
   };
 }

@@ -3,6 +3,7 @@ import { ConflictException } from '@nestjs/common';
 import type { PaymentQuote, QuoteBreakdown } from '@legalitt/shared';
 import type { Prisma, Case } from '../generated/prisma/client';
 import { calculateQuote, halfUp } from './quote-math';
+import {ensureNoticeLifecycle, NoticeWorkflowPolicySchema} from '../cases/notice-lifecycle';
 
 export type QuoteSnapshot = {breakdown: QuoteBreakdown; documents: unknown[]; rules: unknown};
 export const activeAt = (now: Date) => ({effective_from: {lte: now}, OR: [{effective_to: null}, {effective_to: {gt: now}}]});
@@ -14,7 +15,10 @@ export async function quoteDocuments(tx: Prisma.TransactionClient, caseId: strin
   const documents = await tx.document.findMany({where: {case_id: caseId, status: {not: 'deleted'}, ...(excludeGeneratedConsultation ? {kind:{not:'consultation_report'}} : {})}, orderBy: {id: 'asc'},
     select: {id: true, filename: true, mime_type: true, status: true, page_count: true, size_bytes: true}});
   const snapshot = documents.map(d => ({...d, size_bytes: d.size_bytes.toString()}));
-  const fingerprint = createHash('sha256').update(JSON.stringify(snapshot)).digest('hex');
+  const record = await tx.case.findUniqueOrThrow({where: {id: caseId}, select: {service_code: true, details: true}});
+  const filing = record.details as {intake_version?: number; noticee?: {methods?: string[]}};
+  const noticeMethods = record.service_code === 'legal_notice' && filing.intake_version === 2 ? [...(filing.noticee?.methods ?? [])].sort() : null;
+  const fingerprint = createHash('sha256').update(JSON.stringify(noticeMethods ? {documents: snapshot, methods: noticeMethods} : snapshot)).digest('hex');
   const unresolved = documents.filter(d => d.status !== 'uploaded' ||
     (d.mime_type === 'application/pdf' && (!d.page_count || d.page_count < 1)))
     .map(d => ({id: d.id, filename: d.filename, reason: d.status !== 'uploaded'
@@ -49,13 +53,17 @@ export async function createPriceQuote(tx: Prisma.TransactionClient, record: Cas
       policy.gst_basis !== 'base_plus_platform' || policy.delivery_recipient !== 'advocate' || policy.rounding !== 'half_up_paise' ||
       page.aggregation !== 'case' || page.page_basis !== 'verified_pdf_pages' || page.revenue_recipient !== 'platform')
       return blockedQuote('policy_unavailable', 'The payment rules need review. Please contact support before paying.');
-    const delivery = policy.delivery_pricing_id ? await tx.servicePricing.findUniqueOrThrow({where: {id: policy.delivery_pricing_id}}) : null;
+    const filing = record.details as {intake_version?: number; noticee?: {methods?: string[]}};
+    const newNotice = record.service_code === 'legal_notice' && filing.intake_version === 2;
+    const workflow = newNotice ? await ensureNoticeLifecycle(tx, record) : null;
+    const workflowPolicy = workflow ? NoticeWorkflowPolicySchema.parse(workflow.policy.config) : null;
+    const delivery = policy.delivery_pricing_id && (!newNotice || filing.noticee?.methods?.includes('courier')) ? await tx.servicePricing.findUniqueOrThrow({where: {id: policy.delivery_pricing_id}}) : null;
     if (delivery && delivery.gst_bps !== 0) throw new ConflictException('Delivery policy must exclude GST');
     commissionId = commission.id; pageId = page.id; deliveryId = delivery?.id ?? null;
     breakdown = calculateQuote({base: base.base_amount_paise, commissionBps: commission.rate_bps, gstBps: base.gst_bps,
       delivery: delivery?.base_amount_paise ?? 0n, pages: docs.pages, includedPages: page.included_pages,
-      pagePrice: page.unit_amount_paise, pageGstBps: page.gst_bps});
-    rules = {policy, commission, page, base, delivery};
+      pagePrice: page.unit_amount_paise, pageGstBps: page.gst_bps, deliveryRecipient: workflowPolicy?.delivery_recipient ?? 'advocate'});
+    rules = {policy, commission, page, base, delivery, ...(workflow ? {notice_workflow_policy: workflow.policy} : {})};
   } else {
     // Already submitted legacy cases keep their pinned tariff. No historical
     // commission or page charge is invented. New submissions select confirmed rows.

@@ -1,6 +1,6 @@
 export const AI = Symbol('AI');
 export type AiTask = 'subject' | 'demands' | 'notice';
-export type AiRequest<T extends AiTask = AiTask> = { task: T; prompt: string };
+export type AiRequest<T extends AiTask = AiTask> = { task: T; prompt: string; response_format?: 'notice_sections' };
 export type AiResults = {
   subject: { text: string; simulated: boolean };
   demands: { options: string[]; simulated: boolean };

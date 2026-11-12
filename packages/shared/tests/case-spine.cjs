@@ -21,9 +21,14 @@ test('case and inbox destinations keep notice URLs stable and never send other s
     const row={case_id:'case-1',case:{service_code:service,status:'assigned'}};
     assert.equal(notificationDestination(row,'admin'),adminCasePath(service,'case-1'));
     for(const role of ['client','advocate']){
-      const path=unbuiltCasePath(service,'case-1',role);
+      const path=unbuiltCasePath(service,'case-1',role,row.case);
       assert.equal(notificationDestination(row,role),path);
-      assert.ok(path.includes(`service=${service}`)&&path.includes('caseId=case-1'));
+      const destination=new URL(path,'https://legalitt.invalid');
+      assert.equal(destination.searchParams.get('caseId'),'case-1');
+      // Dedicated service screens encode their service in the path. Only the
+      // generic case shell needs the service query parameter.
+      if(destination.pathname.startsWith('/cases/')||destination.pathname.startsWith('/advocate/requests/'))
+        assert.equal(destination.searchParams.get('service'),service);
       assert.ok(!path.includes('/notice/')&&!path.includes('/legal-notice/'));
     }
   }

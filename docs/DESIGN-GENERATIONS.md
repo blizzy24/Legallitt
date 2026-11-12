@@ -146,3 +146,13 @@ built, and nothing in the process asked the question.
 **Added to §1a:** where two designs cover the same screen, the newer supersedes
 the older, and the older is not built. Where it is unclear which is newer, stop
 and ask — do not build both.
+
+## Legal Notice override — 12 November 2026
+
+For Legal Notice use `design/figma-2026-11-12/Legal-Notice-Client-Side`,
+`Legal-Notice-Advocate-Side`, and `Document-Viewer`, with the corrections in
+`Legal-Notice-Changes`. `docs/flows/ISHAAN-ANSWERS-2026-11-12.md` overrides
+`docs/flows/LEGAL-NOTICE-FLOW.md`, which maps the generic export filenames to
+screens. The `Documents Forensic 16/17/30` files in the Legal Notice folder are
+Legal Notice payment, Scan & Pay and success. Retire older numbered designs
+where they conflict, particularly advocate dispatch and the Offences editor.

@@ -7,7 +7,7 @@ import { useKyc } from '../../context/kyc';
 import { previewNotice } from '../../components/PreviewNotice';
 import { clientDocHref } from '../../data/docLinks';
 import { useIntakeModel } from './useIntakeModel';
-import type { Doc } from '../../app/legal-notice/step4-review';
+type Doc = {id?: string; title: string; subtitle: string; icon: import('lucide-react-native').LucideIcon};
 
 const categories = [
   {kind:'property_papers',title:'Property Papers',subtitle:'Sales Deed, Khata, etc',icon:File},

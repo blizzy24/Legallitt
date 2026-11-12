@@ -1,4 +1,6 @@
 import {ensureFirLifecycle,firCorrectionState} from './fir-lifecycle';
+import {ensureNoticeLifecycle} from './notice-lifecycle';
+import {NoticeFilingSchema, NoticeFilingSubmissionSchema, NoticeClientChangesSchema, type NoticeFiling} from '@legalitt/shared';
 import {isConsultationService,isServiceOffered,serviceNotOfferedMessage} from '@legalitt/shared';
 import { NOTIFICATIONS, type NotificationsPort } from '../notifications/notifications.port';
 import { notifyCaseTransition } from '../notifications/case-notifications';
@@ -346,11 +348,20 @@ export class CaseStateMachine {
       if(!await tx.document.count({where:{case_id:record.id,kind:'fir_primary',status:'uploaded'}}))throw new BadRequestException('Upload at least one primary document (agreement, notice, receipt or stamp paper).');
     }
     if (to === CaseStatus.submitted && record.service_code === 'legal_notice') {
-      parse(LegalNoticeSubmissionSchema, record.details);
+      const modern = (record.details as {intake_version?: number}).intake_version === 2;
+      if (modern) {
+        const filing = parse(NoticeFilingSubmissionSchema, record.details);
+        const documents = await tx.document.findMany({where: {case_id: record.id, status: 'uploaded'}});
+        if (!documents.some(d => d.kind === 'id_proof')) throw new BadRequestException('Upload the requested masked identity document. This is not KYC verification.');
+        if(filing.identity_kind==='masked_aadhaar'&&documents.filter(d=>d.kind==='id_proof').length<2)throw new BadRequestException('Upload both the front and back of your masked Aadhaar.');
+        if (!documents.some(d => d.kind.startsWith('notice_support') || ['notice_cheque', 'notice_return_memo'].includes(d.kind))) throw new BadRequestException('Upload at least one supporting document.');
+        if (filing.issueType === 'cheque-bounce' && (!documents.some(d => d.kind === 'notice_cheque') || !documents.some(d => d.kind === 'notice_return_memo'))) throw new BadRequestException('Upload the cheque copy and bank return memo.');
+        await ensureNoticeLifecycle(tx, record);
+      } else parse(LegalNoticeSubmissionSchema, record.details);
       parse(LegalNoticeTierSchema, record.tier);
       const intake = await tx.case.findUniqueOrThrow({where: {id: record.id},
         select: {subject_matter: true, subject_line: true, legal_demand: true}});
-      parse(NoticeReadySchema, intake);
+      if (!modern) parse(NoticeReadySchema, intake);
     }
     const updated = await tx.case.update({
       where: { id: record.id },
@@ -409,7 +420,9 @@ export class CaseStateMachine {
     paymentId: string, source: 'real' | 'simulated') {
     const payment = await tx.payment.findFirst({where: {id: paymentId, case_id: record.id, payer_id: actor.id, purpose: 'service_fee', status: 'captured'}});
     if (!payment) throw new ConflictException('A captured service payment is required');
-    return this.advance(tx, actor, record, CaseStatus.paid, {payment_id: paymentId}, true, source);
+    const updated=await this.advance(tx, actor, record, CaseStatus.paid, {payment_id: paymentId}, true, source);
+    if(record.service_code==='legal_notice')await ensureNoticeLifecycle(tx,record);
+    return updated;
   }
   async assign(actor: CaseActor, id: string, body: unknown) {
     if (actor.role !== "admin") throw new ForbiddenException("Admin required");
@@ -424,7 +437,7 @@ export class CaseStateMachine {
       // needs a separately approved reassignment flow, not this action.
       // FIR declines recorded before the reason-based rejection kept the advocate
       // on the case; returning it to admin means the admin can assign again (flow §3.2).
-      if (record.service_code === 'fir_draft' && record.status === 'advocate_declined' && record.advocate_id) {
+      if (['fir_draft','legal_notice'].includes(record.service_code) && record.status === 'advocate_declined' && record.advocate_id) {
         await tx.caseAssignment.updateMany({where: {case_id: id, ended_at: null}, data: {ended_at: new Date(), end_reason: 'advocate_declined'}});
         record = await tx.case.update({where: {id}, data: {advocate_id: null}});
       }
@@ -448,10 +461,10 @@ export class CaseStateMachine {
       if (record.status !== "assigning")
         throw new ConflictException("Case is not awaiting assignment");
       record = await tx.case.update({ where: { id }, data: { advocate_id } });
-      if(record.service_code==='fir_draft'){
+      if(['fir_draft','legal_notice'].includes(record.service_code)){
         // Recorded as this admin's assignment, now; never inferred from an earlier 'assigned' event.
         if(!await tx.caseAssignment.findFirst({where:{case_id:id,ended_at:null}}))await tx.caseAssignment.create({data:{case_id:id,advocate_id,assigned_by:actor.id}});
-        await ensureFirLifecycle(tx,record);
+        if(record.service_code==='fir_draft')await ensureFirLifecycle(tx,record);
       }
       const updated = await this.advance(
         tx,
@@ -491,13 +504,19 @@ export class CaseStateMachine {
       const record = await lockedCase(tx, actor, id);
       // FIR rejection needs a reason and returns the case to admin (POST /fir/:id/reject).
       if (record.service_code === 'fir_draft') throw new ConflictException('Reject this FIR request with a reason.');
-      return this.advance(
+      if (record.service_code === 'legal_notice' && !input.reason?.trim()) throw new BadRequestException('Enter a reason for declining this request.');
+      const updated = await this.advance(
         tx,
         actor,
         record,
         CaseStatus.advocate_declined,
         {reason: input.reason ?? null},
       );
+      if (record.service_code === 'legal_notice') {
+        await tx.caseAssignment.updateMany({where: {case_id: id, ended_at: null}, data: {ended_at: new Date(), end_reason: input.reason}});
+        return tx.case.update({where: {id}, data: {advocate_id: null}});
+      }
+      return updated;
     });
   }
   async saveNoticeDraft(actor: CaseActor, id: string, body: unknown) {
@@ -519,16 +538,16 @@ export class CaseStateMachine {
         orderBy: { version: "desc" },
       });
       const service = await tx.service.findUniqueOrThrow({where: {code: 'legal_notice'}});
+      if (input.base_version !== undefined && input.base_version !== (previous?.version ?? 0)) throw new ConflictException('A newer draft exists. Refresh before saving.');
       const policy = parse(NoticePolicySchema, (service.config as {notice_policy?: unknown}).notice_policy ?? {});
       const days = input.compliance_period_days ?? record.compliance_period_days ?? policy.default_compliance_period_days;
-      if (policy.criminal_clause === 'required' && !input.content.offences?.trim())
-        throw new BadRequestException('Enter offences before generating this notice.');
+      const {offences: _retired, ...authoredContent} = input.content;
       await tx.case.update({where: {id}, data: {compliance_period_days: days, updated_at: new Date()}});
       const draft = await tx.draft.create({
         data: {
           case_id: id,
           kind: input.kind,
-          content: input.content,
+          content: authoredContent,
           generated_by: input.generated_by,
           created_by: actor.id,
           version: (previous?.version ?? 0) + 1,
@@ -565,23 +584,38 @@ export class CaseStateMachine {
       throw new ConflictException("Refresh to use the latest draft");
     return latest;
   }
-  async sendNoticeDraft(actor: CaseActor, id: string, draftId: string) {
+  async sendNoticeDraft(actor: CaseActor, id: string, draftId: string,review?:{base_version?:number;review_checks?:{names:true;amount:true;demand_days:true};message?:string},documentId?:string) {
     if (actor.role !== "advocate")
       throw new ForbiddenException("Assigned advocate required");
     const db = await this.prisma.getClient();
     return db.$transaction(async (tx) => {
       const record = await lockedNoticeCase(tx, actor, id);
-      const draft = await this.latestDraft(tx, id, draftId);
+      let draft = await this.latestDraft(tx, id, draftId);
+      if(review?.base_version!==undefined&&review.base_version!==draft.version)throw new ConflictException('Review the latest draft version before sending.');
+      if(documentId){
+        if(record.status!=='in_progress')throw new ConflictException('This draft is no longer open for sending.');
+        if(!await tx.document.findFirst({where:{id:documentId,case_id:id,owner_id:actor.id,kind:'legal_notice',status:'uploaded'}}))throw new BadRequestException('The generated draft PDF is unavailable.');
+        draft=await tx.draft.update({where:{id:draftId},data:{document_id:documentId}});
+      }
       const content = parse(
         NoticeDraftInputSchema.shape.content,
         draft.content,
       );
       if (!Object.values(content).some((v) => v.trim()))
         throw new BadRequestException("Enter the draft before sending it");
-      return this.advance(tx, actor, record, CaseStatus.client_review, {
+      if (record.sub_status === 'notice_admin_advocate_correction') {
+        const life = await ensureNoticeLifecycle(tx, record);
+        if (!draft.document_id) throw new ConflictException('Generate the corrected PDF before sending.');
+        await tx.noticeLifecycle.update({where: {case_id: id}, data: {approved_draft_id: draftId, approved_document_id: draft.document_id, notice_checked_at: null, test_esigned_at: null, revision: {increment: 1}}});
+        return writeNoticeFlowState(tx, actor, id, {status: 'approved', sub_status: 'notice_admin_notice_check'}, 'notice_returned_to_admin', {draft_id: draftId, version: draft.version});
+      }
+      const updated=await this.advance(tx, actor, record, CaseStatus.client_review, {
         draft_id: draftId,
         version: draft.version,
+        ...(review?.review_checks?{review_checks:review.review_checks}:{}),
       });
+      if(review?.message){const thread=await tx.messageThread.findFirst({where:{case_id:id,kind:'client_advocate'}})??await tx.messageThread.create({data:{case_id:id,kind:'client_advocate'}});await tx.message.create({data:{thread_id:thread.id,sender_id:actor.id,body:review.message}});}
+      return updated;
     });
   }
   async reviewNoticeDraft(
@@ -596,14 +630,16 @@ export class CaseStateMachine {
   ) {
     if (actor.role !== "client")
       throw new ForbiddenException("Case client required");
+    const changes = decision === 'changes_requested' ? parse(NoticeClientChangesSchema, body) : null;
     const comment =
       decision === "changes_requested"
-        ? parse(NoticeCommentSchema, body).comment
+        ? changes!.comment
         : (parse(z.strictObject({}), body), null);
     const db = await this.prisma.getClient();
     return db.$transaction(async (tx) => {
       const record = await lockedNoticeCase(tx, actor, id);
       await this.latestDraft(tx, id, draftId);
+      if (changes?.attachment_document_id && !await tx.document.findFirst({where: {id: changes.attachment_document_id, case_id: id, owner_id: actor.id, status: 'uploaded'}})) throw new BadRequestException('Attach an uploaded file from this case.');
       let updated = await this.advance(
         tx,
         actor,
@@ -613,10 +649,13 @@ export class CaseStateMachine {
           : CaseStatus.changes_requested,
         { draft_id: draftId, ...(approval ? { notice_document_id: approval.noticeDocumentId } : {}) },
       );
-      if (approval)
-        updated = await tx.case.update({ where: { id }, data: { notice_document_id: approval.noticeDocumentId } });
+      if (approval) {
+        await ensureNoticeLifecycle(tx, record);
+        await tx.noticeLifecycle.update({where: {case_id: id}, data: {approved_draft_id: draftId, approved_document_id: approval.noticeDocumentId, handed_to_admin_at: approval.approvedAt, revision: {increment: 1}}});
+        updated = await tx.case.update({ where: { id }, data: { notice_document_id: approval.noticeDocumentId, sub_status: 'notice_admin_address_check' } });
+      }
       await tx.draftReview.create({
-        data: { draft_id: draftId, reviewer_id: actor.id, decision, comment, ...(approval ? { created_at: approval.approvedAt } : {}) },
+        data: { draft_id: draftId, reviewer_id: actor.id, reviewer_role: 'client', decision, comment, sections: changes?.sections ?? [], attachment_document_id: changes?.attachment_document_id ?? null, ...(approval ? { created_at: approval.approvedAt } : {}) },
       });
       return updated;
     });
@@ -628,6 +667,7 @@ export class CaseStateMachine {
     const db = await this.prisma.getClient();
     return db.$transaction(async (tx) => {
       let record = await lockedNoticeCase(tx, actor, id);
+      if (await tx.noticeLifecycle.findUnique({where: {case_id: id}})) throw new ConflictException('Legalitt admin dispatches this notice. Open its dispatch status.');
       if (record.status === "approved")
         record = await this.advance(tx, actor, record, CaseStatus.dispatching);
       if (record.status !== "dispatching")
@@ -654,6 +694,7 @@ export class CaseStateMachine {
     const db = await this.prisma.getClient();
     return db.$transaction(async (tx) => {
       const record = await lockedNoticeCase(tx, actor, id);
+      if (await tx.noticeLifecycle.findUnique({where: {case_id: id}})) throw new ConflictException('Confirm each selected method through the Legal Notice delivery panel.');
       if (record.status !== 'dispatched') throw new ConflictException('Only a dispatched case can be confirmed delivered');
       const proof = await tx.document.findFirst({
         where: { id: pod_document_id, case_id: id, status: "uploaded" },
@@ -705,6 +746,37 @@ export class CaseStateMachine {
 /** Append-only non-lifecycle events share the case event writer. */
 export function appendCaseEvent(tx: Prisma.TransactionClient, data: Prisma.CaseEventUncheckedCreateInput) {
   return tx.caseEvent.create({data});
+}
+
+/** Service orchestration holds the case lock and validates the current revision.
+ * Only these role/edge pairs can write the Legal Notice admin lifecycle. */
+export async function writeNoticeFlowState(tx: Prisma.TransactionClient, actor: CaseActor, id: string,
+  change: {status: import('../generated/prisma/client').Case['status']; sub_status: string | null; notice_document_id?: string}, type: string, payload: Prisma.InputJsonObject = {}) {
+  const before = await lockedNoticeCase(tx, actor, id);
+  const same = change.status === before.status;
+  const allowed = actor.role === 'admin' && (
+    (same && ['approved', 'dispatching', 'dispatched'].includes(before.status)) ||
+    (['approved', 'dispatching'].includes(before.status) && ['changes_requested', 'dispatched'].includes(change.status)) ||
+    (before.status === 'dispatched' && change.status === 'completed')) ||
+    actor.role === 'advocate' && ((before.status === 'in_progress' && before.sub_status === 'notice_admin_advocate_correction' && change.status === 'approved') ||
+      (same && ['approved', 'dispatching'].includes(before.status) && before.sub_status === 'notice_admin_awaiting_test_esign' && change.sub_status === 'notice_admin_ready_for_dispatch'));
+  if (!allowed) throw new ConflictException('This notice has moved on. Refresh before continuing.');
+  const updated = await tx.case.update({where: {id}, data: {...change, updated_at: new Date(), ...(change.status === 'completed' ? {completed_at: new Date()} : {})}});
+  await appendCaseEvent(tx, {case_id: id, type, actor_id: actor.id, actor_role: actor.role, source: actor.source ?? 'real', from_status: before.status, to_status: change.status, payload});
+  return updated;
+}
+
+export async function writeNoticeFiling(tx: Prisma.TransactionClient, actor: CaseActor, id: string, value: NoticeFiling) {
+  const before = await lockedNoticeCase(tx, actor, id);
+  if (actor.role !== 'client') throw new ForbiddenException('Only the client edits intake.');
+  if (before.status !== 'draft') throw new ConflictException('This filing has already been submitted.');
+  const filing = parse(NoticeFilingSchema, value);
+  await tx.noticeLifecycle.updateMany({where:{case_id:id,handed_to_admin_at:null},data:{contacts:filing.noticee,revision:{increment:1}}});
+  const party = await tx.caseParty.findFirst({where: {case_id: id, kind: 'sender'}});
+  const values = {name: filing.client.fullName ?? '', age: filing.client.age ?? null, relative_name: filing.client.relativeName ?? null, details: filing.client};
+  if (party) await tx.caseParty.update({where: {id: party.id}, data: values});
+  else await tx.caseParty.create({data: {case_id: id, kind: 'sender', ...values}});
+  return tx.case.update({where: {id}, data: {details: filing, subject_matter: filing.narrative ?? null, matter_type: noticeMatterType(filing.issueType), updated_at: new Date()}});
 }
 
 /** Consultation orchestration validates action, role and revision under this same
@@ -922,6 +994,22 @@ export async function syncDevelopmentSeedSender(db: PrismaClient, seedKey: strin
 }
 
 // Report-service state writers share this canonical ownership boundary.
+export async function writeNoticeReassignment(tx:Prisma.TransactionClient,actor:CaseActor,id:string,advocateId:string,reason:string,revision:number){
+  if(actor.role!=='admin')throw new ForbiddenException('Admin reassignment required');
+  const c=await lockedNoticeCase(tx,actor,id),life=await ensureNoticeLifecycle(tx,c);
+  if(life.revision!==revision)throw new ConflictException('This case changed. Refresh before reassigning.');
+  if(life.handed_to_admin_at||!life.deadline_at||life.deadline_at>new Date()||!['assigned','advocate_accepted','in_progress','changes_requested'].includes(c.status))throw new ConflictException('Reassignment here is available only for overdue advocate work before client approval.');
+  if(c.advocate_id===advocateId)throw new BadRequestException('Choose a different advocate.');
+  const advocate=await tx.user.findFirst({where:{id:advocateId,role:'advocate',status:'active',advocate_profiles_user_id_relations:{is:{verification:'approved'}}},include:{advocate_profiles_user_id_relations:true}});
+  if(!advocate?.advocate_profiles_user_id_relations?.city?.trim())throw new BadRequestException('Choose an active approved advocate with a city on their profile.');
+  await tx.caseAssignment.updateMany({where:{case_id:id,ended_at:null},data:{ended_at:new Date(),end_reason:reason}});
+  await tx.caseAssignment.create({data:{case_id:id,advocate_id:advocateId,assigned_by:actor.id}});
+  const updated=await tx.case.update({where:{id},data:{advocate_id:advocateId,status:'assigned',sub_status:null,updated_at:new Date()}});
+  await tx.noticeLifecycle.update({where:{case_id:id},data:{revision:{increment:1}}});
+  await appendCaseEvent(tx,{case_id:id,actor_id:actor.id,actor_role:'admin',type:'notice_admin_reassigned',from_status:c.status,to_status:'assigned',payload:{previous_advocate_id:c.advocate_id,advocate_id:advocateId,reason}});
+  return {record:updated,previous_advocate_id:c.advocate_id};
+}
+
 type ReportSubmission = {draft_id: string; version: number; document_ids: string[]};
 
 export async function writeReportSaved(tx: Prisma.TransactionClient, actor: CaseActor, id: string, service: ReportServiceCode,

@@ -9,6 +9,7 @@ import type { Prisma } from '../generated/prisma/client';
 import {firApproval} from '../cases/fir-approval';
 import {FirPolicyConfig} from '../cases/fir-lifecycle';
 import {isConsultationService} from '@legalitt/shared';
+import {NoticeWorkflowPolicySchema} from '../cases/notice-lifecycle';
 
 export const adminCaseQuerySchema = z.strictObject({
   service: z.enum(SERVICE_CODES).default('legal_notice'),
@@ -47,7 +48,8 @@ export class AdminCasesRepository {
     ]};
     const consultation=isConsultationService(input.service);
     const report=isReportService(input.service);
-    const waiting: Prisma.CaseWhereInput = consultation||report?{status:'in_progress',sub_status:'awaiting_admin_approval'}:{service_code:'fir_draft',OR:[{status:'in_progress',sub_status:'awaiting_admin_approval'},{status:{in:['assigned','advocate_accepted','in_progress','changes_requested']},sub_status:{in:['identity_review_pending','multiple_corrections_required']}}]};
+    const notice=input.service==='legal_notice';
+    const waiting: Prisma.CaseWhereInput = notice?{OR:[{status:{in:['approved','dispatching','dispatched']}},{sub_status:'notice_admin_advocate_correction'}]}:consultation||report?{status:'in_progress',sub_status:'awaiting_admin_approval'}:{service_code:'fir_draft',OR:[{status:'in_progress',sub_status:'awaiting_admin_approval'},{status:{in:['assigned','advocate_accepted','in_progress','changes_requested']},sub_status:{in:['identity_review_pending','multiple_corrections_required']}}]};
     const ordinaryBucket:Prisma.CaseWhereInput={status:{in:eligible.filter(s=>adminBucketFor(s,input.service)===input.bucket)}};
     const bucketWhere: Prisma.CaseWhereInput = (consultation||report)&&input.bucket==='open'?{OR:[ordinaryBucket,waiting]}:(consultation||report)&&input.bucket==='in_progress'?{AND:[ordinaryBucket,{NOT:waiting}]}:ordinaryBucket;
     const filtered: Prisma.CaseWhereInput = {AND:[base,
@@ -66,21 +68,22 @@ export class AdminCasesRepository {
       }
       const total = Object.values(counts).reduce((sum, n) => sum + n, 0);
       const rows = await tx.case.findMany({
-        where: {AND: [filtered, ...(cursor ? [{OR: [
+        where: {AND: [filtered, ...(cursor&&!notice ? [{OR: [
           ...(input.queue ? [{updated_at:{gt:new Date(cursor.created_at)}},{updated_at:new Date(cursor.created_at),id:{gt:cursor.id}}] :
             [{created_at:{lt:new Date(cursor.created_at)}},{created_at:new Date(cursor.created_at),id:{lt:cursor.id}}]),
         ]}] : [])]},
-        orderBy: input.queue ? [{updated_at:'asc'},{id:'asc'}] : [{created_at:'desc'},{id:'desc'}], take: input.limit + 1,
+        ...(notice&&cursor?{cursor:{id:cursor.id},skip:1}:{}),
+        orderBy: notice?[{tier:{sort:'desc',nulls:'last'}},{notice_lifecycle:{deadline_at:{sort:'asc',nulls:'last'}}},{id:'asc'}]:input.queue ? [{updated_at:'asc'},{id:'asc'}] : [{created_at:'desc'},{id:'desc'}], take: input.limit + 1,
         select: {
           id: true, reference: true, service_code: true, status: true, matter_type: true, created_at: true,
           details: true, notice_document_id: true, sub_status:true, updated_at:true,
-          fir_lifecycle:{include:{policy:true}},payments_case_id_relations:{where:{purpose:'service_fee',status:'captured'},orderBy:{captured_at:'asc'},take:1,select:{captured_at:true}},
-          case_events_case_id_relations: {where: {OR:[{source:'simulated'},{type:{in:['fir_draft_submitted','fir_draft_approved','service_report_submitted']}}]}, orderBy:{id:'asc'}, select: {id:true,type:true,payload:true,created_at:true,source:true}},
+          notice_lifecycle:{include:{policy:true}},fir_lifecycle:{include:{policy:true}},payments_case_id_relations:{where:{purpose:'service_fee',status:'captured'},orderBy:{captured_at:'asc'},take:1,select:{captured_at:true}},
+          case_events_case_id_relations: {where: {OR:[{source:'simulated'},{to_status:'client_review'},{type:{in:['fir_draft_submitted','fir_draft_approved','service_report_submitted']}}]}, orderBy:{id:'asc'}, select: {id:true,type:true,payload:true,created_at:true,source:true,to_status:true}},
           client_id_relation: {select: {id: true, full_name: true}},
           advocate_id_relation: {select: {id: true, full_name: true}},
           pricing_id_relation: {select: {base_amount_paise: true}},
           case_parties_case_id_relations: {select: {kind: true, name: true}},
-          drafts_case_id_relations: {select: {document_id: true}},
+          drafts_case_id_relations: {select: {document_id: true,draft_reviews_draft_id_relations:{where:{reviewer_role:'client',decision:'changes_requested'},select:{id:true}}}},
           documents_case_id_relations: {where: {status: 'uploaded'}, select: {id: true, simulated: true, owner_id_relation: {select: {role: true}}}},
         },
       });
@@ -103,8 +106,16 @@ export class AdminCasesRepository {
           documents[origin]++;
           if (doc.simulated) simulated_documents[origin]++;
         }
+        const noticePolicy=row.notice_lifecycle?NoticeWorkflowPolicySchema.parse(row.notice_lifecycle.policy.config):null;
+        const clientSince=row.status==='client_review'?row.case_events_case_id_relations.filter(e=>e.to_status==='client_review').at(-1)?.created_at:null;
+        const rounds=row.drafts_case_id_relations.reduce((sum,d)=>sum+d.draft_reviews_draft_id_relations.length,0);
         return {
           service_code: input.service,
+          ...(notice?{sub_status:row.sub_status,notice_deadline:{at:row.notice_lifecycle?.deadline_at?.toISOString()??null,
+            warning:!!row.notice_lifecycle?.deadline_at&&!['completed','cancelled','refunded'].includes(row.status)&&row.notice_lifecycle.deadline_at.getTime()-Date.now()<=NoticeWorkflowPolicySchema.parse(row.notice_lifecycle.policy.config).deadline_alert_hours*3600000,
+            overdue:!!row.notice_lifecycle?.deadline_at&&!['completed','cancelled','refunded'].includes(row.status)&&row.notice_lifecycle.deadline_at.getTime()<Date.now(),
+            awaiting_client_since:row.status==='client_review'?row.case_events_case_id_relations.filter(e=>e.to_status==='client_review').at(-1)?.created_at.toISOString()??null:null,
+            change_rounds:rounds,warning_hours:noticePolicy?.deadline_alert_hours,idle_alert:!!clientSince&&!!noticePolicy&&Date.now()-clientSince.getTime()>=noticePolicy.client_idle_admin_hours*3600000,change_alert:!!noticePolicy&&rounds>noticePolicy.change_round_alert}}:{}),
           ...(consultation?{sub_status:row.sub_status,review_submitted_at:pendingReports.find(r=>r.case_id===row.id)?.submitted_at?.toISOString()??null,
             consultation:sessions.find(s=>s.case_id===row.id)?{scheduled_at:sessions.find(s=>s.case_id===row.id)!.scheduled_at.toISOString(),status:sessions.find(s=>s.case_id===row.id)!.status}:null}:{}),
           ...(input.service==='fir_draft'?{turnaround:!['client_review','approved','completed','cancelled','refunded'].includes(row.status)&&policy?{paid_at:(row.fir_lifecycle?.paid_at??row.payments_case_id_relations[0]?.captured_at)?.toISOString()??null,warning_hours:policy.turnaround_warning_hours,overdue_hours:policy.turnaround_overdue_hours}:null}:{}),

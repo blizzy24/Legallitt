@@ -112,6 +112,7 @@ test('quotes pin rows, reject unresolved/changed documents, preserve receipts, a
     assert.equal((await db.casePriceQuote.findUnique({where:{id:quote.id}})).snapshot.breakdown.total_paise,'177753');
   } finally {
     await db.notification.deleteMany({where:{case_id:{in:ids}}});
+    await db.noticeLifecycle.deleteMany({where:{case_id:{in:ids}}});
     await db.payment.deleteMany({where:{case_id:{in:ids}}});
     await db.caseEvent.deleteMany({where:{case_id:{in:ids}}});
     await db.document.deleteMany({where:{case_id:{in:ids}}});

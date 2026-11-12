@@ -40,7 +40,7 @@ test('admin list filters, counts, paginates, groups documents and exposes only t
     assert.deepEqual(all.counts,{open:3,pending:2,in_progress:6,completed:1,closed:2});
     for (const row of all.items) {
       assert.ok(adminBucketFor(row.status)); assert.equal(row.amount_paise,'99900');
-      assert.deepEqual(Object.keys(row).sort(),['service_code','id','reference','client','matter_type','parties','advocate','documents','simulated_documents','simulated','status','bucket','amount_paise','created_at'].sort());
+      assert.deepEqual(Object.keys(row).sort(),['service_code','id','reference','client','matter_type','parties','advocate','documents','simulated_documents','simulated','status','sub_status','notice_deadline','bucket','amount_paise','created_at'].sort());
       assert.ok(!JSON.stringify(row).includes('PRIVATE')); assert.ok(!JSON.stringify(row).includes('s3_key'));
     }
     const assigned=all.items.find(r=>r.id===caseId);

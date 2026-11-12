@@ -1,0 +1,9 @@
+1.) Once the notice is approved from client side, it will directly appear on admin panel on advocate side flow, nothing is required to be done. But in case where suggestion are made from client then it will appear on advocate side. Only upon confirmation from client the final notice will appear in admin panel. The notice which is to be sent by admin will be authenticated through aadhar based e-signature of advocate.
+
+2.) In client flow, the client has to mandatorily provide details of address of noticee or email address or WhatsApp mobile number on which the service of notice can be effected. In Client flow, according to the option selected the steps will be formulated.
+
+3.) In client flow, the details of relationship are irrelevant and need to be removed.
+
+4.) Uploaded pdf are not properly shown in client flow. That needs to be rectified.
+
+5.) In client flow steps, the yellow line showing steps from 1-6 are not properly fixed at their places. Their is huge gap between step-1 and step-2. The yellow line is also missing. 

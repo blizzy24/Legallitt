@@ -15,7 +15,7 @@ export function notificationDestination(row: ApiNotification, role: 'client' | '
   const id = encodeURIComponent(row.case_id), status = row.case.status;
   const service = row.case.service_code ?? 'legal_notice';
   if (role === 'admin') return adminCasePath(service, row.case_id);
-  if (service !== 'legal_notice') return unbuiltCasePath(service, row.case_id, role);
+  if (service !== 'legal_notice') return unbuiltCasePath(service, row.case_id, role, row.case);
   if (role === 'client') return `/legal-notice/${['dispatched','completed'].includes(status) ? 'delivery' : 'tracking'}?caseId=${id}`;
   const screen = ({assigned: 'fee', advocate_accepted: 'drafting', in_progress: 'draft',
     changes_requested: 'drafting', client_review: 'review', approved: 'final',

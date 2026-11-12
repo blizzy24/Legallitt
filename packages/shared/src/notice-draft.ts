@@ -1,48 +1,50 @@
 import type { ApiNoticeCase as ApiCase, NoticeDraftContent } from './notice-api';
+import { DEFAULT_NOTICE_POLICY } from './notice-policy';
 import { noticeSenderDescription } from './notice-pdf-fields';
 
 type NoticeIntakeSource = Pick<ApiCase, 'details' | 'parties' | 'subject_matter' | 'subject_line' | 'legal_demand'>;
 export const NOTICE_INTAKE_DRAFT_FIELDS = ['sender', 'recipient', 'subject', 'facts', 'demand'] as const;
-export const NOTICE_FILING_DRAFT_FIELDS = ['sender', 'recipient', 'subject', 'demand'] as const;
-// Only these fields currently affect the letterhead. Do not offer an input
-// whose saved value the PDF ignores (owner decision, 3 November 2026).
-export const NOTICE_EDITABLE_DRAFT_FIELDS = ['facts', 'offences'] as const;
+export const NOTICE_FILING_DRAFT_FIELDS = [] as const;
+// Flow A5: all six advocate-authored sections reach the document verbatim.
+export const NOTICE_EDITABLE_DRAFT_FIELDS = ['sender', 'recipient', 'subject', 'facts', 'demand', 'closing'] as const;
 
 const lines = (values: (string | undefined | null)[]) => values
   .map(value => value?.trim() ?? '').filter(Boolean).join('\n');
 
-/** An editable starting point containing only this case's supplied intake.
- * No legal prose, deadlines or offences are generated here. */
+/** This case's supplied intake plus the approved closing template (flow A5).
+ * No missing personal facts, deadlines or offences are invented here. */
 export function seedNoticeDraft(record: NoticeIntakeSource): NoticeDraftContent {
   const sender = record.details.client;
   const senderParty = record.parties?.find(party => party.kind === 'sender');
   const recipient = record.details.noticee;
+  const filing = record.details as unknown as Partial<import('./notice-flow').NoticeFiling>;
   return {
     sender: lines([
       // Same rule as the letterhead: a part prints only when it was supplied.
       sender?.fullName?.trim() ? noticeSenderDescription({name: sender.fullName, salutation: senderParty?.salutation,
         relation: senderParty?.relation, relative: senderParty?.relative_name}) : '',
       senderParty?.age != null ? `Age ${senderParty.age}` : '',
+      filing.intake_version===2 && filing.client?.relativeName ? `Father’s/Husband’s name: ${filing.client.relativeName}` : '',
       sender?.address, sender?.mobile, sender?.email,
     ]),
-    recipient: lines([recipient?.fullName, recipient?.address, recipient?.mobile, recipient?.email]),
+    recipient: filing.intake_version===2 ? lines([filing.noticee?.fullName,filing.noticee?.throughDesignation,
+      ...(filing.noticee?.methods.includes('courier')?[filing.noticee.address,filing.noticee.pin]:[]),
+      filing.noticee?.methods.includes('email')?filing.noticee.email:null,
+      filing.noticee?.methods.includes('whatsapp')?filing.noticee.whatsapp:null]) : lines([recipient?.fullName, recipient?.address, recipient?.mobile, recipient?.email]),
     subject: record.subject_line ?? '',
     facts: record.subject_matter ?? '',
     demand: lines([...(record.legal_demand?.selected ?? []), record.legal_demand?.custom]),
-    closing: '',
-    offences: '',
+    closing: DEFAULT_NOTICE_POLICY.civil_consequence,
   };
 }
 
 /** Advocate-authored saved values always win, including intentional blanks.
- * Filing fields reflect the same intake used by the PDF and are read-only.
  * Opening creates no database version; the normal save path does. */
 export function noticeDraftOnOpen(record: NoticeIntakeSource & Pick<ApiCase, 'drafts'>): NoticeDraftContent {
   const seed = seedNoticeDraft(record);
   const saved = record.drafts?.at(-1)?.content;
   if (!saved) return seed;
-  const content = { ...saved };
-  for (const key of NOTICE_FILING_DRAFT_FIELDS) content[key] = seed[key];
+  const {offences: _retired, ...content} = saved;
   return content;
 }
 

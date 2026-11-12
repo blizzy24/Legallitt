@@ -38,3 +38,11 @@ small.block{display:block;margin-top:4px;color:#8f95a6}
 .fir-review-body input[type=radio]{width:auto}
 
 .fir-flow .pill{font-size:11px;padding:4px 10px;border-radius:999px;border:1px solid var(--accent);color:var(--accent)}.fir-timeline{margin:8px 0 0;padding-left:18px}.fir-timeline li{margin:6px 0;line-height:1.5}.fir-timeline small{color:var(--muted);margin-left:6px}
+/* Legal Notice admin preparation/dispatch: uses the existing panel palette. */
+.notice-flow label { display: block; margin: 12px 0; }
+.notice-flow input:not([type=checkbox]), .notice-flow textarea, .notice-flow select { display: block; width: min(100%, 620px); margin-top: 6px; padding: 10px; border: 1px solid #d9d5cd; border-radius: 7px; font: inherit; }
+.notice-flow textarea { min-height: 85px; }
+.notice-flow button { margin: 6px 10px 6px 0; }
+.notice-flow details { margin: 22px 0; }
+.notice-delivery-method { border-top: 1px solid #e5e1da; margin-top: 26px; padding-top: 16px; }
+.notice-flow dd { white-space: pre-wrap; margin-bottom: 12px; }

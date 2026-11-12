@@ -30,6 +30,9 @@ export class DocumentController {
   @Get(":id/url") url(@Req() req: AuthRequest, @Param("id") id: string) {
     return this.documents.url(req.user!, parse(z.uuid(), id));
   }
+  @Get(":id/view") view(@Req() req: AuthRequest, @Param("id") id: string) {
+    return this.documents.view(req.user!, parse(z.uuid(), id));
+  }
   @Delete(":id") delete(@Req() req: AuthRequest, @Param("id") id: string) {
     return this.documents.delete(req.user!, parse(z.uuid(), id));
   }

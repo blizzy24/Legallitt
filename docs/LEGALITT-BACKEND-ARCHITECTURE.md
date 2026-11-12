@@ -2271,6 +2271,8 @@ is re-litigated mid-build.
 
 | Decision | Resolution | Date |
 |---|---|---|
+| Legal Notice admin dispatch rebuild | Ishaan's answers and `docs/flows/LEGAL-NOTICE-FLOW.md` supersede the old advocate-dispatch decisions below. Client approval hands the exact draft/PDF to admin; internal returns go back to admin after correction, without reopening client chat. Admin verifies contacts and notice, requests a labelled test e-sign, then dispatches only the client's chosen courier/email/WhatsApp methods. At least one method is required. No noticee relationship or Offences section/sentence. New quotes charge courier only when selected; the flow's proposed answer assigns that courier fee to Legalitt. Existing captured amounts/entitlements and stored PDFs remain unchanged. Workflow rules are pinned versioned `notice_workflow_policies` rows; review actions check a revision token. Implemented and checked locally; no deployment authorised in this chunk. Local acceptance evidence: `docs/flows/LEGAL-NOTICE-GAPS.md` and `docs/flows/ln-screens/`. | 2026-11-12 |
+| Multiple delivery methods and admin corrections | Assumption applying the flow's proposals: all selected delivery methods must have their latest attempt confirmed delivered before completion/wallet credit; courier needs POD. A failed method remains actionable. Corrections returned by admin are rechecked by admin, not sent through another client approval. The original approval remains in history and chat stays read-only. Pending client confirmation if a different partial-delivery completion rule is wanted. | 2026-11-12 |
 | Scope and price for this phase | Agreed with the client | 2026-10-19 |
 | AWS accounts | One account, two CDK stages (§2.6) | 2026-10-19 |
 | Repo layout | Monorepo, pnpm + Turborepo (§2.7) | 2026-10-19 |
@@ -2300,6 +2302,13 @@ is re-litigated mid-build.
 
 ### 9.1 Register of simulated capabilities
 
+**Legal Notice deployment follow-up — 12 November 2026:** visual polish and deployment
+are now authorised. Read-only SES inspection returned no verified identities in
+`ap-south-1`. Email remains an explicit blocked action until a verified sender is
+configured; do not substitute a successful simulation on the deployed site. The
+local walkthrough uses its labelled adapter. WhatsApp and e-sign retain their
+manual/test labels. Deployment evidence is in `reports/notice-polish-20261112/`.
+
 **Report services — 11 November 2026:** intake, uploads, chat, assignment,
 version history, PDF production, admin review, release and inbox notifications
 are real application paths. Payment and external notification delivery reuse the
@@ -2320,6 +2329,9 @@ empty, or explicitly accepted in writing by the client, before production.
 
 | Capability | Flag | Standing in because | Clears when |
 |---|---|---|---|
+| Legal Notice email dispatch | Real `SesNoticeEmail` adapter; `NOTICE_SES_FROM_EMAIL`, optional `NOTICE_SES_CONFIGURATION_SET`. Local tests inject `TestNoticeEmail`, explicitly simulated. | SES sender/IAM/provider delivery have not been activated or verified by this local-only chunk. The adapter attaches the pinned PDF and records SES message ID. SDK retries are disabled; an uncertain outcome is an admin reconciliation task, not an automatic duplicate send. SES acceptance means Sent, not Delivered. | Verified sender and SES permissions configured, delivery/bounce reporting verified. Optional Dev Compute parameters and sender/identity-scoped IAM are prepared and tested in source only; no infrastructure was deployed |
+| Legal Notice WhatsApp dispatch | Pinned workflow policy `whatsapp_mode=manual` | No provider selected. Admin sends manually and records Sent/Delivered/Failed; UI must label the manual action. | WhatsApp provider chosen and integrated |
+| Legal Notice Aadhaar e-sign | Pinned workflow policy `esign_mode=test` | No provider selected. Assigned advocate confirms an explicitly labelled test step; it records an event against the exact PDF and does not modify its bytes or apply any digital signature. No Aadhaar number is requested or stored. | Provider selected and actual signature verification/file pipeline implemented |
 | Payments | `PAYMENTS_MODE=simulated` | No Razorpay test keys yet | Client supplies test keys with Route enabled |
 | Phone OTP | `PHONE_AUTH_MODE=demo` | DLT registration not started (1–2 week lead) | DLT template approved |
 | Push, SMS and email | `NOTIFY_MODE=simulated` | No SNS/FCM/SMS/email integration yet; only outside delivery is simulated | Providers configured |
@@ -2364,6 +2376,32 @@ client without an advocate in between. If one does, it needs either an advocate
 gate or explicit framing that it is not legal advice.
 
 ### 9.2 Register of design substitutions
+
+**Legal Notice rebuild — 12 November 2026.** Current exports in
+`design/figma-2026-11-12/` and Ishaan's answers supersede numbered notice designs.
+The following additions use the existing screen components and admin panel style:
+
+| Piece | Flow section | Reason and behaviour |
+|---|---|---|
+| Admin contact check, notice checklist and return | §4 | No admin design was supplied. Shows the exact pinned PDF and revision, selected contact methods, required internal return reason and review history. A return stays internal and goes back to admin after correction. |
+| Admin per-method dispatch, tracking, POD, failed-contact task and verification | §4 | No admin design supplied. SES sends the PDF; WhatsApp is recorded manually; courier requires proof and received-by. Unknown email outcomes cannot be retried blindly. |
+| Deadline extension and overdue reassignment | §4 | No admin design supplied. Keeps the deadline visible, records reasons and assignment history, notifies the replaced and new advocates, and sends neutral client wording. No automatic reassignment. |
+| Review-before-send checklist and PDF preview | A6 | No separate design. Reuses the shared PDF surface with names/addresses, amount, and demand/days confirmations. Each send checks the saved base version. |
+| Test Aadhaar e-sign task | A8 | Provider unselected. Clearly labelled test acknowledgement; no identity number collected, no PDF bytes transformed, no claim of a digital signature. |
+| Upload removal, draft leave confirmation, stale edit and quote-blocked states | C3–C8 | Designs show the ideal path only. Existing modal/card language provides explicit errors and recovery beside the blocked action. |
+| Shared document viewer report-problem action | C15 / shared viewer | Connects the drawn action to Support with case/document identifiers, without copying file contents or identity numbers into the ticket. |
+
+Notice checkout sessions are immutable `payment_checkout_created` event rows with
+an explicit server expiry and quote ID; retries reuse the same capture key. The
+countdown never navigates. Background reminders use each case's pinned workflow
+policy and append a unique reminder key under the case lock: client review at
+24/72 hours, admin escalation after seven days, deadline warning/overdue and more
+than three change rounds. They notify people and never perform their decisions.
+
+The local acceptance harness swaps storage and email at their adapter boundaries,
+keeps authentication and all case/PDF/upload handlers real, and uses only synthetic
+files in the dedicated notice database. This does not prove live SES delivery or
+native device rendering; evidence records exactly which runtimes were exercised.
 
 **FIR Draft rebuild — 12 November 2026** (`docs/flows/FIR-DRAFT-FLOW.md`, gap table
 `docs/flows/FIR-GAPS.md`, screens beside designs in `docs/flows/fir-screens/`). Every

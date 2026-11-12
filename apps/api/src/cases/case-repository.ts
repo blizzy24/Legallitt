@@ -166,10 +166,15 @@ export class CaseRepository {
     const client_fees = caseClientFees(pricing, payments[0], feeVersions);
     const breakdown = (payments[0]?.quote?.snapshot as unknown as {breakdown?: import('@legalitt/shared').QuoteBreakdown} | undefined)?.breakdown;
     const advocate_payout = breakdown?.advocate_entitlement_paise == null ? null : {
-      service_share_paise: breakdown.service_fee_paise, delivery_reimbursement_paise: breakdown.delivery_fee_paise,
+      service_share_paise: breakdown.service_fee_paise, delivery_reimbursement_paise: (BigInt(breakdown.advocate_entitlement_paise)-BigInt(breakdown.service_fee_paise)).toString(),
       net_paise: breakdown.advocate_entitlement_paise,
     };
-    return { ...caseRecord, notice_policy, parties, pricing, client_fees, advocate_payout, advocate: advocate ? {...advocateUser, profile} : advocate, events, documents, drafts, reviews, shipments };
+    const visibleDocuments = (await Promise.all(documents.map(async d => await noticeDocumentVisible(db, actor, record, d) ? d : null))).filter(Boolean);
+    const pendingNoticeDocuments=await db.document.findMany({where:{case_id:record.id,owner_id:actor.id,status:'pending'},orderBy:[{created_at:'asc'},{id:'asc'}]});
+    const visibleDrafts = drafts.map(({draft_reviews_draft_id_relations, ...draft}) => ({...draft, draft_reviews_draft_id_relations: actor.role === 'client' ? draft_reviews_draft_id_relations.filter(r => r.reviewer_id === actor.id) : draft_reviews_draft_id_relations}));
+    return { ...caseRecord, notice_policy, parties, pricing, client_fees, advocate_payout, advocate: advocate ? {...advocateUser, profile} : advocate,
+      events: actor.role === 'client' ? noticeClientEvents(events) : events, documents: [...visibleDocuments,...pendingNoticeDocuments], drafts: visibleDrafts,
+      reviews: actor.role === 'client' ? reviews.filter(r => r.reviewer_id === actor.id) : reviews, shipments };
   }
 
   async list(actor: CaseActor, query: unknown) {
@@ -263,7 +268,7 @@ export class CaseRepository {
     const page=rows.slice(0,input.limit);
     const clientReport=actor.role==='client'&&isReportService(caseRow.service_code);
     const items=clientFir?firEventsFor('client',page):actor.role==='advocate'&&caseRow.service_code==='fir_draft'?firEventsFor('advocate',page):
-      clientReport?page.filter(e=>e.from_status!==e.to_status||e.type==='service_report_released').map(e=>e.type==='service_report_released'?e:{...e,payload:{}}):page;
+      clientReport?page.filter(e=>e.from_status!==e.to_status||e.type==='service_report_released').map(e=>e.type==='service_report_released'?e:{...e,payload:{}}):actor.role==='client'&&caseRow.service_code==='legal_notice'?noticeClientEvents(page):page;
     return {
       items,
       next_cursor:
@@ -271,3 +276,4 @@ export class CaseRepository {
     };
   }
 }
+import {noticeDocumentVisible, noticeClientEvents} from './notice-access';

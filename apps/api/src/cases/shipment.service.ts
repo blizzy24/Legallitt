@@ -76,6 +76,7 @@ export class ShipmentService {
     return db.$transaction(async tx => {
       const record = await lockedCase(tx, actor, caseId);
       if (!['approved', 'dispatching'].includes(record.status)) throw new ConflictException('Courier details can only be saved before dispatch');
+      if (await tx.noticeLifecycle.findUnique({where: {case_id: caseId}})) throw new ConflictException('Legalitt admin handles dispatch. You can view progress on the notice status screen.');
       const prior = await tx.shipment.findFirst({where: {case_id: caseId, direction: 'to_recipient'}, orderBy: [{booked_at: 'desc'}, {id: 'desc'}]});
       if (prior && !['draft', 'booked'].includes(prior.status)) throw new ConflictException('Shipment already dispatched');
       const before = prior ? shipmentDetails(prior) : emptyDetails();

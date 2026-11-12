@@ -10,6 +10,9 @@ export const NOTICE_PDF_FIELD_LABELS = {
   recipient_address: 'Recipient address',
   service_fee: 'Service fee',
   place: 'Place (advocate’s city)',
+  facts: 'Background and facts',
+  demand: 'Demand',
+  closing: 'Response and closing',
 } as const;
 export const NoticePdfFieldSchema = z.enum(Object.keys(NOTICE_PDF_FIELD_LABELS) as [keyof typeof NOTICE_PDF_FIELD_LABELS, ...(keyof typeof NOTICE_PDF_FIELD_LABELS)[]]);
 export type NoticePdfField = z.infer<typeof NoticePdfFieldSchema>;
@@ -24,17 +27,23 @@ export type NoticePdfRequiredValues = {
   recipient?: {name?: string | null; address?: string | null};
   serviceFeePaise?: bigint | string | null;
   place?: string | null;
+  content?: {sender: string; recipient: string; subject: string; facts: string; demand: string; closing: string};
 };
 export function noticePdfProblem(input: NoticePdfRequiredValues) {
   const present: Record<NoticePdfField, boolean> = {
-    subject: Boolean(input.subject?.trim()),
-    sender_name: Boolean(input.sender?.name?.trim()),
-    sender_address: Boolean(input.sender?.address?.trim()),
-    recipient_name: Boolean(input.recipient?.name?.trim()),
-    recipient_address: Boolean(input.recipient?.address?.trim()),
+    subject: Boolean((input.content?.subject ?? input.subject)?.trim()),
+    sender_name: Boolean((input.content?.sender ?? input.sender?.name)?.trim()),
+    sender_address: Boolean((input.content?.sender ?? input.sender?.address)?.trim()),
+    recipient_name: Boolean((input.content?.recipient ?? input.recipient?.name)?.trim()),
+    // An email-only notice does not invent a postal address. The authored
+    // recipient section carries the selected delivery contact instead.
+    recipient_address: Boolean((input.content?.recipient ?? input.recipient?.address)?.trim()),
     // Zero is an amount, not an absent pricing row.
     service_fee: input.serviceFeePaise != null && String(input.serviceFeePaise).trim() !== '',
     place: Boolean(input.place?.trim()),
+    facts: !input.content || Boolean(input.content.facts.trim()),
+    demand: !input.content || Boolean(input.content.demand.trim()),
+    closing: !input.content || Boolean(input.content.closing.trim()),
   };
   const missing_fields = (Object.keys(present) as NoticePdfField[]).filter(key => !present[key]);
   return missing_fields.length ? {

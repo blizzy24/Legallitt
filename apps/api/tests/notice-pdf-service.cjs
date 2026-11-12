@@ -26,7 +26,7 @@ function harness() {
     queries: () => ({caseQuery, draftQuery})};
 }
 
-test('letterhead preview binds intake, assigned profile and the case historical base fee; editor supplies facts/offences only', async () => {
+test('letterhead preview binds the assigned profile and historical fee, while preserving all authored sections', async () => {
   const h = harness(), original = pdfModule.renderNoticePdf;
   let supplied;
   pdfModule.renderNoticePdf = async input => {supplied = input; return Uint8Array.from([37,80,68,70]);};
@@ -49,6 +49,7 @@ test('letterhead preview binds intake, assigned profile and the case historical 
     assert.equal(supplied.place, 'Mumbai');
     assert.equal(supplied.content.facts, 'Advocate facts');
     assert.equal(supplied.content.offences, 'Advocate offences');
+    assert.deepEqual(supplied.content,content,'renderer receives all authored sections; it ignores the retired offences property');
     const {caseQuery, draftQuery} = h.queries();
     assert.deepEqual(caseQuery.where.AND, [{service_code: 'legal_notice', advocate_id: actor.id}, {id: 'case-id'}]);
     assert.ok(caseQuery.include.pricing_id_relation);
@@ -60,7 +61,7 @@ test('letterhead preview binds intake, assigned profile and the case historical 
 test('render-only preview refuses clients, admins, another advocate, stale drafts and non-editable states', async () => {
   const h = harness();
   for (const role of ['client', 'admin']) await assert.rejects(h.service.preview({id: 'other', role}, 'case-id', 'latest-draft'), {status: 403});
-  await assert.rejects(h.service.preview({id: 'other-advocate', role: 'advocate'}, 'case-id', 'latest-draft'), {status: 409});
+  await assert.rejects(h.service.preview({id: 'other-advocate', role: 'advocate'}, 'case-id', 'latest-draft'), {status: 404});
   await assert.rejects(h.service.preview(actor, 'case-id', 'old-draft'), {status: 409});
   for (const status of ['assigned', 'client_review', 'approved', 'dispatched', 'completed']) {
     h.record.status = status;
@@ -74,13 +75,14 @@ test('preview, send and final reject every missing field before rendering or tou
     const h=harness();
     h.record.details={client:{fullName:' ',address:''}};
     h.record.subject_line=null; h.record.pricing_id_relation=null;
+    h.draft.content={sender:'',recipient:'',subject:'',facts:'',demand:'',closing:''};
     h.record.advocate_id_relation.advocate_profiles_user_id_relations.city=null;
     if(operation==='final')h.record.status='client_review';
     await assert.rejects(h.service[operation](operation==='final'?{id:'client-id',role:'client'}:actor,'case-id','latest-draft',new Date()), error=>{
       assert.equal(error.status,400);
       const response=error.getResponse();
       assert.equal(response.code,'notice_fields_missing');
-      assert.deepEqual(response.missing_fields,['subject','sender_name','sender_address','recipient_name','recipient_address','service_fee','place']);
+      assert.deepEqual(response.missing_fields,['subject','sender_name','sender_address','recipient_name','recipient_address','service_fee','place','facts','demand','closing']);
       for(const label of ['Subject line','Sender name','Sender address','Recipient name','Recipient address','Service fee','Place'])assert.ok(response.message.includes(label));
       return true;
     });

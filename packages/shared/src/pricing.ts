@@ -6,7 +6,7 @@ export type QuoteBreakdown = {
   advocate_entitlement_paise: string | null; platform_revenue_paise: string | null;
 };
 export type PaymentQuote =
-  | {status: 'ready'; id: string; breakdown: QuoteBreakdown}
+  | {status: 'ready'; id: string; breakdown: QuoteBreakdown; simulated?:boolean}
   | {status: 'blocked'; code: string; message: string;
       documents: {id: string; filename: string; reason: string}[]};
 /** Exact display of integer paise, including values beyond Number's safe range. */

@@ -48,6 +48,8 @@ test('mobile source contains no blocking browser alert calls', () => {
   function inspect(dir) {
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
       if (['node_modules', 'dist', '.expo', 'assets'].includes(entry.name)) continue;
+      // Generated upstream PDF.js runtime is not application source.
+      if (path.resolve(dir,entry.name)===path.join(root,'public','pdfjs')) continue;
       const file = path.join(dir, entry.name);
       if (entry.isDirectory()) inspect(file);
       else if (/\.[cm]?[jt]sx?$/.test(entry.name) && /\b(?:window\.|globalThis\.)?alert\s*\(/.test(fs.readFileSync(file, 'utf8')))

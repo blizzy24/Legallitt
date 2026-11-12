@@ -32,10 +32,11 @@ export default function NoticeChatScreen({
   messages,
   placeholder,
   valid,
-  validTime, onSend, onAttach, onBack, onOpenDocument, verified=false, online=false, typing=false, state,
+  validTime, onSend, onAttach, onBack, onOpenDocument, verified=false, online=false, typing=false, state,readOnlyReason,
 }: {
   onBack?:()=>void; onSend?:(text:string)=>Promise<boolean>; onAttach?:()=>void; onOpenDocument?:(id:string)=>void; verified?:boolean;online?:boolean;typing?:boolean;
   state?:{loading:boolean;error:string;ready:boolean;onRetry:()=>void};
+  readOnlyReason?:string;
   variant: 'client' | 'advocate';
   name: string;
   messages: ChatMessage[];
@@ -108,7 +109,7 @@ export default function NoticeChatScreen({
       </ScrollView>
 
       {!!state?.error && <View style={styles.bubble}><Text accessibilityRole="alert" style={styles.text}>{state.error}</Text><Pressable accessibilityRole="button" onPress={state.onRetry}><Text style={styles.text}>{instructedCopy.advocateWork.retry}</Text></Pressable></View>}
-      <View style={[styles.input, { marginBottom: insets.bottom + t.inputBottom }]}>
+      {readOnlyReason?<View style={styles.bubble}><Text accessibilityLiveRegion="polite" style={styles.text}>{readOnlyReason}</Text></View>:<View style={[styles.input, { marginBottom: insets.bottom + t.inputBottom }]}>
         <Pressable accessibilityRole="button" accessibilityLabel="Attach" disabled={state&&!state.ready} onPress={onAttach??(()=>previewNotice('Attach'))} style={styles.plus}>
           <Plus size={t.plusIcon} color={t.white} strokeWidth={2.2} />
         </Pressable>
@@ -117,7 +118,7 @@ export default function NoticeChatScreen({
         <Pressable accessibilityRole="button" accessibilityLabel="Send" disabled={state&&!state.ready} onPress={async () => { if (draft.trim()) { if(onSend){if(await onSend(draft.trim()))setDraft('');}else{setThread([...thread, {from: 'me', text: draft.trim()}]);setDraft('');} } }}>
           <Send size={t.send} color={t.brand} fill={t.brand} strokeWidth={1.6} />
         </Pressable>
-      </View>
+      </View>}
     </View>
   );
 }

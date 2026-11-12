@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, ForbiddenException, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { NoticeDraftInputSchema, NoticePolicySchema, noticeClosing, noticePdfProblem, type LegalNoticeIntake, type LegalDemand } from '@legalitt/shared';
 import { parse } from '../auth/auth.service';
 import { PrismaService } from '../prisma.service';
@@ -20,11 +20,10 @@ export class NoticePdfService {
     if (actor.role !== 'advocate') throw new ForbiddenException('Assigned advocate required');
     const { record, draft, content } = await this.load(actor, caseId, draftId);
     if (record.status !== 'in_progress') throw new ConflictException('Draft cannot be sent in this state');
-    if (!Object.values(content).some(v => v?.trim())) throw new BadRequestException('Enter the draft before sending it');
     const bytes = await renderNoticePdf(this.template(record, content, draft.created_at, draft));
     const document = await this.file(actor, caseId, `Legal_Notice_Draft_v${draft.version}.pdf`, bytes);
-    const db = await this.prisma.getClient();
-    await db.draft.update({ where: { id: draftId }, data: { document_id: document.id } });
+    // The state writer links this PDF atomically with send. A competing send
+    // must never replace a published version's document before checking state.
     return document;
   }
 
@@ -42,8 +41,6 @@ export class NoticePdfService {
   /** Undo a filing whose lifecycle step then failed: the document is deleted and no draft points at it. */
   async discard(actor: CaseActor, documentId: string) {
     try {
-      const db = await this.prisma.getClient();
-      await db.draft.updateMany({ where: { document_id: documentId }, data: { document_id: null } });
       await this.documents.delete(actor, documentId);
     } catch {
       this.logger.warn(`Notice PDF ${documentId} could not be discarded; cleanup will not retry an uploaded file`);
@@ -59,7 +56,7 @@ export class NoticePdfService {
         select: {education: true, bar_council_number: true, city: true},
       }}},
     }});
-    if (!record) throw new ConflictException('Case not found');
+    if (!record) throw new NotFoundException('Case not found');
     const draft = await db.draft.findFirst({ where: { case_id: caseId, kind: 'legal_notice' }, orderBy: { version: 'desc' } });
     if (!draft || draft.id !== draftId) throw new ConflictException('Refresh to use the latest draft');
     return { record, draft, content: parse(NoticeDraftInputSchema.shape.content, draft.content) };

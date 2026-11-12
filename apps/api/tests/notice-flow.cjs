@@ -133,9 +133,10 @@ test(
       assert.equal(receiptNotifications[0].simulated,false);
       const declinedCase = await db.case.create({data: {reference:'TEST-DECLINE-'+randomUUID(), service_code:'legal_notice', client_id:client.id, advocate_id:advocate.id, status:'assigned'}});
       ids.push(declinedCase.id);
-      await state.decline(advocate, declinedCase.id, {});
+      await assert.rejects(state.decline(advocate,declinedCase.id,{}),{status:400});
+      await state.decline(advocate,declinedCase.id,{reason:'TEST unavailability'});
       const declineEvent = await db.caseEvent.findFirst({where:{case_id:declinedCase.id,to_status:'advocate_declined'}});
-      assert.equal(declineEvent.payload.reason, null);
+      assert.equal(declineEvent.payload.reason,'TEST unavailability');
       assert.equal(declineEvent.actor_id, advocate.id);
       assert.equal(declineEvent.actor_role, 'advocate');
       // Beginning drafting is the advocate's own action; repeating it is harmless.
@@ -152,7 +153,7 @@ test(
         generated_by: "manual",
       });
       assert.equal(draft1.compliance_period_days,15);
-      assert.equal(draft1.closing_policy.criminal_clause,'when_offences');
+      assert.equal(draft1.closing_policy.criminal_clause,'omit');
       assert.equal((await repo.read(advocate,c.id)).compliance_period_days,15);
       const periodEvent=await db.caseEvent.findFirst({where:{case_id:c.id,type:'draft_saved'}});
       assert.equal(periodEvent.payload.compliance_period_days,15);
@@ -172,11 +173,12 @@ test(
         c.id,
         draft1.id,
         "changes_requested",
-        { comment: "Test revision request" },
+        { comment: "Test revision request",sections:["facts"] },
       );
       const draft2 = await state.saveNoticeDraft(advocate, c.id, {
         kind: "legal_notice",
         content: { ...content, facts: "Revised test facts" },
+        base_version:draft1.version,
         compliance_period_days: 7,
         generated_by: "manual",
       });
@@ -197,191 +199,42 @@ test(
         state.reviewNoticeDraft(client, c.id, draft1.id, "approved", {}),
         { status: 409 },
       );
-      await state.reviewNoticeDraft(client, c.id, draft2.id, "approved", {});
-      await assert.rejects(payments.intent(client, {case_id: c.id, purpose: 'courier'}, randomUUID()), {status: 403});
-      const courierKey = randomUUID();
-      const [courier1, courier2] = await Promise.all([1,2].map(() => payments.intent(advocate, {case_id: c.id, purpose: 'courier'}, courierKey)));
-      assert.equal(courier1.id, courier2.id);
-      assert.equal(courier1.payer_id, advocate.id);
-      assert.equal(courier1.total_paise, 29500n);
-      assert.equal((await repo.read(client, c.id)).status, 'approved');
-      const simulatedEvents = await db.caseEvent.findMany({where: {case_id: c.id, source: 'simulated'}});
-      assert.deepEqual(simulatedEvents.map(e => e.type).sort(), ['courier_payment_captured','payment_captured','subject_generated']);
-      assert.equal(await db.notification.count({where: {case_id: c.id, simulated: true}}), 0);
-      await assert.rejects(
-        state.saveNoticeDraft(advocate, c.id, {
-          kind: "legal_notice",
-          content,
-          generated_by: "manual",
-        }),
-        { status: 409 },
-      );
-      await assert.rejects(shipmentService.save(otherAdvocate, c.id, {carrier: 'Forbidden'}), {status: 404});
-      await assert.rejects(state.dispatch(admin, c.id, {}), {status: 403});
-      await assert.rejects(state.dispatch(advocate, c.id, {}), {status: 400});
-      // An empty save before any details exist creates no shipment and no event.
-      for (const empty of [{}, {carrier: '   '}]) await assert.rejects(shipmentService.save(advocate, c.id, empty), {status: 400});
-      assert.equal(await db.shipment.count({where: {case_id: c.id, direction: 'to_recipient'}}), 0);
-      assert.equal(await db.caseEvent.count({where: {case_id: c.id, type: {in: ['shipment_details_saved', 'shipment_booked']}}}), 0);
-      const saved = await shipmentService.save(advocate, c.id, {carrier: 'Test carrier'});
-      assert.equal(saved.status, 'draft');
-      assert.equal((await repo.read(client, c.id)).status, 'approved');
-      assert.equal((await repo.read(advocate, c.id)).shipments.find(s=>s.direction==='to_recipient').carrier, 'Test carrier');
-      await assert.rejects(shipmentService.save(advocate, c.id, {}, true), {status: 400});
-      await assert.rejects(shipmentService.save(advocate, c.id, {receipt_document_id: randomUUID()}), {status: 400});
-      const completeShipment = await shipmentService.save(advocate, c.id, {
-        waybill: 'Test waybill', dispatch_date: '2020-01-02', courier_office: 'Test office',
-        courier_phone: '2025550101', tracking_url: 'https://example.invalid/typed-exactly?q=1', expected_delivery: '2030-12-31',
-      }, true);
-      assert.equal(completeShipment.id, saved.id);
-      assert.equal(completeShipment.status, 'booked');
-      assert.equal(completeShipment.booked_at.getTime(), saved.booked_at.getTime());
-      assert.equal(completeShipment.dispatch_date.toISOString().slice(0,10), '2020-01-02');
-      assert.equal(completeShipment.expected_delivery.toISOString().slice(0,10), '2030-12-31');
-      assert.equal(completeShipment.tracking_url, 'https://example.invalid/typed-exactly?q=1');
-      assert.equal(completeShipment.pod_document_id, null);
-      assert.equal(completeShipment.dispatched_at, null);
-      assert.equal((await repo.read(client, c.id)).status, 'approved');
-      // Owner decision, 4 Nov 2026: a save after booking never returns the shipment to
-      // draft (the form's Back and autosave did, which blocked dispatch); a save that
-      // changes nothing writes nothing; complete details book on a plain save; blanking
-      // a required field un-books, and dispatch then refuses.
-      const shipmentEvents = () => db.caseEvent.count({where: {case_id: c.id, type: {in: ['shipment_details_saved', 'shipment_booked']}}});
-      const beforeNoop = await shipmentEvents();
-      assert.equal((await shipmentService.save(advocate, c.id, {carrier: 'Test carrier', waybill: 'Test waybill', dispatch_date: '2020-01-02'})).status, 'booked');
-      assert.equal((await shipmentService.save(advocate, c.id, {})).status, 'booked');
-      assert.equal(await shipmentEvents(), beforeNoop, 'unchanged saves write no event');
-      assert.equal((await shipmentService.save(advocate, c.id, {courier_office: 'Edited office'})).status, 'booked');
-      const edited = await db.caseEvent.findFirst({where: {case_id: c.id, type: 'shipment_details_saved'}, orderBy: {id: 'desc'}});
-      assert.deepEqual(edited.payload.changed, ['courier_office']);
-      assert.equal(edited.payload.shipment_status, 'booked');
-      assert.equal((await shipmentService.save(advocate, c.id, {waybill: ''})).status, 'draft');
-      await assert.rejects(state.dispatch(advocate, c.id, {}), {status: 400});
-      assert.equal((await repo.read(client, c.id)).status, 'approved');
-      const rebooked = await shipmentService.save(advocate, c.id, {waybill: 'Test waybill'});
-      assert.equal(rebooked.status, 'booked');
-      assert.equal((await db.caseEvent.findFirst({where: {case_id: c.id}, orderBy: {id: 'desc'}})).type, 'shipment_booked');
-      assert.equal(rebooked.courier_office, 'Edited office', 'fields not sent keep their saved value');
-      await state.dispatch(advocate, c.id, {});
-      const dispatched = await db.shipment.findUnique({where: {id: saved.id}});
-      assert.ok(dispatched.dispatched_at);
-      assert.equal(dispatched.status, 'dispatched');
-      // Courier milestones (design 440): admin only, one step at a time, case unchanged.
-      await assert.rejects(shipmentService.advance(advocate, c.id, {status: 'pickup_booked'}), {status: 403});
-      await assert.rejects(shipmentService.advance(admin, c.id, {status: 'picked_up'}), {status: 409});
-      await assert.rejects(shipmentService.advance(admin, c.id, {status: 'delivered'}), {status: 400});
-      assert.equal((await shipmentService.advance(admin, c.id, {status: 'pickup_booked'})).status, 'pickup_booked');
-      assert.equal((await shipmentService.advance(admin, c.id, {status: 'picked_up'})).status, 'picked_up');
-      await assert.rejects(shipmentService.advance(admin, c.id, {status: 'picked_up'}), {status: 409});
-      const milestone = await db.caseEvent.findFirst({where: {case_id: c.id, type: 'shipment_status_changed'}, orderBy: {id: 'desc'}});
-      assert.deepEqual([milestone.payload.from, milestone.payload.to, milestone.from_status, milestone.to_status], ['pickup_booked', 'picked_up', 'dispatched', 'dispatched']);
-      assert.equal(await db.adminAction.count({where: {subject_id: c.id, action: 'shipment_status'}}), 2);
-      await assert.rejects(shipmentService.save(advocate, c.id, {carrier: 'Changed'}), {status: 409});
-      await assert.rejects(
-        state.deliver(advocate, c.id, { pod_document_id: randomUUID() }),
-        { status: 403 },
-      );
-      await assert.rejects(
-        state.deliver(admin, c.id, { pod_document_id: randomUUID() }),
-        { status: 400 },
-      );
-      assert.equal((await repo.read(client, c.id)).status, "dispatched");
-      const otherCase = await state.create(other, {
-        service_code: "legal_notice",
-      });
-      ids.push(otherCase.id);
-      const proof = await db.document.create({
-        data: {
-          case_id: otherCase.id,
-          owner_id: admin.id,
-          kind: "delivery_proof",
-          filename: "test-proof.pdf",
-          s3_key: "test-only",
-          mime_type: "application/pdf",
-          size_bytes: 10n,
-          page_count: 1,
-          status: "uploaded",
-        },
-      });
-      await assert.rejects(
-        state.deliver(admin, c.id, { pod_document_id: proof.id }),
-        { status: 400 },
-      );
-      await db.document.update({
-        where: { id: proof.id },
-        data: { case_id: c.id, status: "pending" },
-      });
-      await assert.rejects(
-        state.deliver(admin, c.id, { pod_document_id: proof.id }),
-        { status: 400 },
-      );
-      await db.document.update({
-        where: { id: proof.id },
-        data: { status: "uploaded", simulated: true },
-      });
-      const automaticAdmin = {...admin, trigger: 'system', source: 'simulated'};
-      await assert.rejects(state.deliver(automaticAdmin, c.id, {pod_document_id: randomUUID()}), {status: 400});
-      await state.deliver(automaticAdmin, c.id, { pod_document_id: proof.id });
-      const deliveredEvent = await db.caseEvent.findFirst({where: {case_id: c.id, to_status: 'completed'}});
-      assert.equal(deliveredEvent.actor_id, null);
-      assert.equal(deliveredEvent.actor_role, null);
-      assert.equal(deliveredEvent.payload.actor, 'system');
-      assert.equal(deliveredEvent.source, 'simulated');
-      const complete = await repo.read(client, c.id);
-      assert.equal(complete.status, "completed");
-      assert.ok(complete.completed_at);
-      assert.equal(complete.shipments.find(s=>s.direction==='to_recipient').pod_document_id, proof.id);
-      const events = await db.caseEvent.findMany({
-        where: { case_id: c.id },
-        orderBy: { id: "asc" },
-      });
-      assert.deepEqual(
-        events.filter(e => !['subject_generated','notification_created','courier_payment_captured','shipment_details_saved','shipment_booked','shipment_status_changed','documents_received'].includes(e.type)).map((e) =>
-          e.type === "draft_saved" ? "draft_saved" : e.to_status,
-        ),
-        [
-          "draft",
-          "submitted",
-          "payment_pending",
-          "paid",
-          "assigning",
-          "assigned",
-          "advocate_accepted",
-          "in_progress",
-          "draft_saved",
-          "client_review",
-          "changes_requested",
-          "in_progress",
-          "draft_saved",
-          "client_review",
-          "approved",
-          "dispatching",
-          "dispatched",
-          "completed",
-        ],
-      );
-      assert.equal(
-        await db.draftReview.count({
-          where: { draft_id: { in: [draft1.id, draft2.id] } },
-        }),
-        2,
-      );
-      assert.equal(await db.payment.count({ where: { case_id: c.id } }), 2);
-      assert.equal(await db.ledgerEntry.count({ where: { case_id: c.id } }), 0);
-      await assert.rejects(
-        state.deliver(admin, c.id, { pod_document_id: proof.id }),
-        { status: 409 },
-      );
+      const final=await db.document.create({data:{case_id:c.id,owner_id:advocate.id,kind:'legal_notice',filename:'test-final.pdf',s3_key:'test-only-final',mime_type:'application/pdf',size_bytes:4n,status:'uploaded',page_count:1}});
+      await db.draft.update({where:{id:draft2.id},data:{document_id:final.id}});
+      await state.reviewNoticeDraft(client,c.id,draft2.id,'approved',{}, {noticeDocumentId:final.id,approvedAt:new Date()});
+      await assert.rejects(payments.intent(advocate,{case_id:c.id,purpose:'courier'},randomUUID()),{status:409});
+      await assert.rejects(state.dispatch(advocate,c.id,{}),{status:409});
+      await assert.rejects(shipmentService.save(advocate,c.id,{carrier:'Retired route'}),{status:409});
+      const {NoticeFlowService}=require('../dist/src/cases/notice-flow.service'),flow=new NoticeFlowService(prisma,{}, {},inbox());
+      let view=await flow.view(admin,c.id);
+      // Legacy clients need not repay or re-enter the entire filing. A missing
+      // postal PIN is corrected through the scoped delivery-contact task.
+      await flow.requestTask(admin,c.id,{revision:view.revision,kind:'contact',method:'courier',reason:'Please add the postal PIN'});view=await flow.view(client,c.id);
+      await flow.replyTask(client,c.id,{revision:view.revision,task_id:view.tasks[0].id,contact:{address:'Test address',pin:'452001'}});view=await flow.view(admin,c.id);
+      await flow.resolveTask(admin,c.id,{revision:view.revision,task_id:view.tasks[0].id,confirmed:true});view=await flow.view(admin,c.id);
+      await flow.check(admin,c.id,'address',{revision:view.revision,confirmed:true});view=await flow.view(admin,c.id);
+      await flow.check(admin,c.id,'notice',{revision:view.revision,confirmed:true});view=await flow.view(admin,c.id);
+      await flow.testEsign(advocate,c.id,{revision:view.revision,confirmed:true});view=await flow.view(admin,c.id);
+      await flow.dispatch(admin,c.id,{revision:view.revision,method:'courier',carrier:'Test carrier',waybill:'Test waybill',dispatch_date:'2026-11-12'});view=await flow.view(admin,c.id);
+      const proof=await db.document.create({data:{case_id:c.id,owner_id:admin.id,kind:'notice_delivery_proof',filename:'test-proof.pdf',s3_key:'test-proof',mime_type:'application/pdf',size_bytes:4n,status:'uploaded',page_count:1}});
+      await flow.result(admin,c.id,{revision:view.revision,attempt_id:view.attempts[0].id,result:'delivered',occurred_at:new Date().toISOString(),proof_document_id:proof.id,received_by:'Test recipient'});
+      assert.equal((await repo.read(client,c.id)).status,'completed');
+      assert.equal(await db.payment.count({where:{case_id:c.id}}),1,'legacy captured service payment retained; no advocate courier charge');
+      assert.equal(await db.draftReview.count({where:{draft_id:{in:[draft1.id,draft2.id]}}}),2);
     } finally {
       if (oldEnv === undefined) delete process.env.ENVIRONMENT;
       else process.env.ENVIRONMENT = oldEnv;
       if (oldNode === undefined) delete process.env.NODE_ENV;
       else process.env.NODE_ENV = oldNode;
+      await db.noticeDeliveryEvent.deleteMany({where:{delivery:{case_id:{in:ids}}}});
+      await db.noticeDelivery.deleteMany({where:{case_id:{in:ids}}});
+      await db.noticeLifecycle.deleteMany({where:{case_id:{in:ids}}});
       await db.shipment.deleteMany({ where: { case_id: { in: ids } } });
       await db.draftReview.deleteMany({
         where: { draft_id_relation: { case_id: { in: ids } } },
       });
       await db.draft.deleteMany({ where: { case_id: { in: ids } } });
+      await db.case.updateMany({where:{id:{in:ids}},data:{notice_document_id:null}});
       await db.document.deleteMany({ where: { case_id: { in: ids } } });
       await db.notification.deleteMany({where: {case_id: {in: ids}}});
       await db.payment.deleteMany({where: {case_id: {in: ids}}});

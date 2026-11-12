@@ -1,6 +1,7 @@
 import {useEffect,useState,type ReactNode} from 'react';
 import {Linking,Platform,Pressable,StyleSheet,Text,TextInput,View} from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
+import {router,type Href} from 'expo-router';
 import type {ApiCase,ApiDraft,FirApproval,FirDraftContent,FirIntake} from '@legalitt/shared';
 import {backend} from '../../lib/auth';
 import {colors,font} from '../../constants/theme';
@@ -22,7 +23,7 @@ export function Card({title,children}:{title?:string;children:ReactNode}) {retur
 export function Button({title,onPress,disabled=false}:{title:string;onPress():void;disabled?:boolean}) {return <Pressable accessibilityRole="button" accessibilityState={{disabled}} disabled={disabled} onPress={onPress} style={[s.button,disabled&&{opacity:0.5}]}><Text style={s.buttonText}>{title}</Text></Pressable>;}
 export function Field({label,value,onChange,multiline=false}:{label:string;value:string;onChange(v:string):void;multiline?:boolean}) {return <View style={{gap:7,marginVertical:8}}><Text style={s.label}>{label}</Text><TextInput accessibilityLabel={label} value={value} onChangeText={onChange} multiline={multiline} style={[s.input,multiline&&{minHeight:100,textAlignVertical:'top'}]}/></View>;}
 export function ErrorBox({error,retry}:{error:string;retry():void}) {return error?<Card><Text accessibilityRole="alert" style={s.error}>{error}</Text><Button title="Retry" onPress={retry}/></Card>:null;}
-export async function openDocument(id:string) {const r=await backend.documentUrl(id);await Linking.openURL(r.url);}
+export async function openDocument(id:string) {router.push(`/document-viewer?documentId=${encodeURIComponent(id)}` as Href);}
 export async function uploadEvidence(id:string,kind='supporting_document') {
   const picked=await DocumentPicker.getDocumentAsync({type:['application/pdf','image/png','image/jpeg'],copyToCacheDirectory:true});
   if(picked.canceled)return;const file=picked.assets[0];
