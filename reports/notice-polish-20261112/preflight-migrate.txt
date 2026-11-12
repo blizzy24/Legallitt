@@ -1,0 +1,8 @@
+image tag 733af89 (one-off legalitt-dev-ops:45)
+task arn:aws:ecs:ap-south-1:026379630400:task/legalitt-dev-cluster/5622d7ba31554c97aeaa3ddc151cbdf6
+exit 0 (Essential container in task exited)
+2026-11-12T17:52:20 Loaded Prisma config from prisma.config.ts.
+2026-11-12T17:52:21 Prisma schema loaded from prisma/schema.prisma.
+2026-11-12T17:52:21 Datasource "db": PostgreSQL database "legalitt", schema "public" at "legalitt-dev-database.c1mu80ok42w3.ap-south-1.rds.amazonaws.com:5432"
+2026-11-12T17:52:21 29 migrations found in prisma/migrations
+2026-11-12T17:52:22 No pending migrations to apply.

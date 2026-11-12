@@ -1,0 +1,54 @@
+ID						RECLAIMABLE	SIZE		LAST ACCESSED
+xbiak0yql237q9hl8er5q4ijq*              	true 		180.2kB   	About a minute ago
+nya42vjzzw9w9xnpwh10xzaau*              	true 	36.86kB   	About a minute ago
+lsiuykbf5mmtzwrvwkq2ydth4*              	true 	8.192kB   	About a minute ago
+c4t3l5hvdcwzogpih6vpq07mx*              	true 	9.691MB   	About a minute ago
+gbfnlr6p6irhmzf85aep0ogmv*              	true 	8.192kB   	About a minute ago
+k3aqix2dgu6qkk7eyaclrgami               	true 	4.128kB   	About a minute ago
+je2ixfeyoe47lpnlneqztl4f1               	true 	695.3MB   	About a minute ago
+3t4qdxchaxwldalreq2mh3hra               	true 	9.204MB   	About a minute ago
+bmmx1x1sx7819czaavqdp5rbg               	true 	8.942MB   	About a minute ago
+4vwqsjoc2unu394397unsh6ic               	true 	8.286kB   	About a minute ago
+q2d81ux9rccvv22us4soskfn7               	true 	33.92kB   	About a minute ago
+ooou5jfjtx18wvttjpjhxliy2               	true 	389.1kB   	About a minute ago
+nc1wmgc9wrjoeb5lfgh45ff6h               	true 	12.29kB   	About a minute ago
+p40tesd2frg59iia4ed8ghvsk               	true 	286.3kB   	About a minute ago
+d3rnjspw2xrnbsl6rhgmp6t52               	true 	648.8MB   	About a minute ago
+lcz5g4xbgc56qrcn4myp1yl6z               	true 	278.1kB   	About a minute ago
+wi7t9q329aisfigr3hrh7elvn               	true 	20.48kB   	About a minute ago
+y1rwtxraznficrng07yxj7viq               	true 	20.48kB   	About a minute ago
+qi5nrlelt7jf8293vg1fpzjkw               	true 	393.2kB   	About a minute ago
+s1jlekbr10sx29ggnn3a6tlar               	true 	8.192kB   	About a minute ago
+r0bclvmu05uo82ktzsmdtfuj3               	true 	24.04MB   	About a minute ago
+m46nd5sctaw4mcwcahpak7thb               	true 	13.92MB   	About a minute ago
+fu41krywtdvf81dwcyscwpwfh               	true 	24.06kB   	About a minute ago
+obrf2255xysd87b1t1acj6xsh               	true 	14.55MB   	16 minutes ago
+oakvknlao3ej6t75adewst25c               	true 	295.7MB   	16 minutes ago
+cz7zq6j8b5nvech9s2pds8pmq               	true 	91.14kB   	16 minutes ago
+ryjxtaszqh9lun70an1zef6iw               	true 	208.1MB   	16 minutes ago
+Total:	1.93GB
+Deleted Images:
+untagged: 026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api:733af89
+deleted: sha256:b00cf5874656be16e4ef8710e5350cd2bb096d898828b2a02000d7600fc2c7c5
+deleted: sha256:58157f0d8cefd01e5572fb872e8ca57f29ff6b3e30352fa67d793af93b041bcb
+deleted: sha256:30db091950a565353d9bf6932322a1db7a7e5d209ed695fa355979b96a774123
+deleted: sha256:0ebbfc08620cbac17702f1ae3b714e56e8441857253dd3c627672c94d151ad5a
+deleted: sha256:ae899559eb86c3d4fd3c48380cac687548505031b238e4fe1207e42bcc4dfad5
+deleted: sha256:fa02d1c83ba563a43f1f6df4cd4d2f80d141681da9f2f572c41a05db611378ff
+deleted: sha256:b21c81bea62050426748593857c6e54ce2fb7b8eb07462330740120a210a3085
+deleted: sha256:67cedb0439799f994c9bfe1baff4d9e263948d9c25778026df02f84d06637ba9
+deleted: sha256:8ab1065c9a12bed484c546d8e4642236ec6c3e643e5ca1e8fe4cf64e8b0d1b85
+deleted: sha256:4f4fb700ef54461cfa02571ae0db9a0dc1e0cdb5577484a6d75e68dc38e8acc1
+deleted: sha256:cc5ae64eb79492120d4e48f337f4b198cff7041a0374361062deccfdeb01670a
+deleted: sha256:f06a6c206ebad0a5cb4728359b69532ca5b9429de12027dd43f280dcd2326860
+deleted: sha256:67cd88436e846ed6b29b38376015d0b9916f5f9090ccf61da61c4357e32d7aa2
+untagged: node:22-bookworm-slim
+deleted: sha256:f5edcaefce9e3505c53e917deda2f7999b3065f8d6462f5096db91342e498b36
+deleted: sha256:b06790a7ce8f827fd695d4a148ba260b351d658af126b6deb27af3823a1675a1
+deleted: sha256:c96c411090da09187c55ab267826b3903b542b5c03f1cafa912d60e060e7850c
+deleted: sha256:3a7b14f3e09ef4928f727883ab5693d524797e3833c2f4c6bc1f0d0791330a42
+deleted: sha256:9d7b1405876470cc4eb0c1eb2811037931a1a1e02767a4f514909ed3c50ad6a8
+deleted: sha256:d76d856751feaaeaf5bc9b5c40d4b8b78fdcb19c7dd79d67aaa9bb2d7d1c60c1
+deleted: sha256:6009fa0b728ada85ec401c99a280269ab76f1f5ee7edb64dc7ec40c306c1107a
+
+Total reclaimed space: 394.3MB

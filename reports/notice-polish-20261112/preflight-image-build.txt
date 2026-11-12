@@ -1,0 +1,366 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 2.72kB 0.0s done
+#1 DONE 0.1s
+
+#2 [internal] load metadata for docker.io/library/node:22-bookworm-slim
+#2 DONE 0.1s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 253B 0.0s done
+#3 DONE 0.0s
+
+#4 [internal] load build context
+#4 DONE 0.0s
+
+#5 [build  1/13] FROM docker.io/library/node:22-bookworm-slim@sha256:f5edcaefce9e3505c53e917deda2f7999b3065f8d6462f5096db91342e498b36
+#5 resolve docker.io/library/node:22-bookworm-slim@sha256:f5edcaefce9e3505c53e917deda2f7999b3065f8d6462f5096db91342e498b36
+#5 resolve docker.io/library/node:22-bookworm-slim@sha256:f5edcaefce9e3505c53e917deda2f7999b3065f8d6462f5096db91342e498b36 0.0s done
+#5 extracting sha256:c96c411090da09187c55ab267826b3903b542b5c03f1cafa912d60e060e7850c
+#5 ...
+
+#4 [internal] load build context
+#4 transferring context: 8.75MB 0.5s done
+#4 DONE 0.5s
+
+#6 [stage-1 3/8] ADD https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem /etc/ssl/rds/global-bundle.pem
+#6 DONE 1.1s
+
+#5 [build  1/13] FROM docker.io/library/node:22-bookworm-slim@sha256:f5edcaefce9e3505c53e917deda2f7999b3065f8d6462f5096db91342e498b36
+#5 ...
+
+#6 [stage-1 3/8] ADD https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem /etc/ssl/rds/global-bundle.pem
+#6 DONE 1.1s
+
+#5 [build  1/13] FROM docker.io/library/node:22-bookworm-slim@sha256:f5edcaefce9e3505c53e917deda2f7999b3065f8d6462f5096db91342e498b36
+#5 extracting sha256:c96c411090da09187c55ab267826b3903b542b5c03f1cafa912d60e060e7850c 1.3s done
+#5 DONE 1.5s
+
+#5 [build  1/13] FROM docker.io/library/node:22-bookworm-slim@sha256:f5edcaefce9e3505c53e917deda2f7999b3065f8d6462f5096db91342e498b36
+#5 extracting sha256:3a7b14f3e09ef4928f727883ab5693d524797e3833c2f4c6bc1f0d0791330a42 0.0s done
+#5 extracting sha256:9d7b1405876470cc4eb0c1eb2811037931a1a1e02767a4f514909ed3c50ad6a8
+#5 extracting sha256:9d7b1405876470cc4eb0c1eb2811037931a1a1e02767a4f514909ed3c50ad6a8 1.1s done
+#5 DONE 2.7s
+
+#5 [build  1/13] FROM docker.io/library/node:22-bookworm-slim@sha256:f5edcaefce9e3505c53e917deda2f7999b3065f8d6462f5096db91342e498b36
+#5 extracting sha256:d76d856751feaaeaf5bc9b5c40d4b8b78fdcb19c7dd79d67aaa9bb2d7d1c60c1 0.1s done
+#5 extracting sha256:6009fa0b728ada85ec401c99a280269ab76f1f5ee7edb64dc7ec40c306c1107a 0.0s done
+#5 DONE 2.8s
+
+#7 [build  2/13] RUN apt-get update && apt-get install -y --no-install-recommends openssl ca-certificates && rm -rf /var/lib/apt/lists/*
+#7 1.745 Get:1 http://deb.debian.org/debian bookworm InRelease [151 kB]
+#7 2.191 Get:2 http://deb.debian.org/debian bookworm-updates InRelease [55.4 kB]
+#7 2.373 Get:3 http://deb.debian.org/debian-security bookworm-security InRelease [34.8 kB]
+#7 4.228 Get:4 http://deb.debian.org/debian bookworm/main arm64 Packages [8689 kB]
+#7 102.4 Get:5 http://deb.debian.org/debian bookworm-updates/main arm64 Packages [6936 B]
+#7 102.5 Get:6 http://deb.debian.org/debian-security bookworm-security/main arm64 Packages [367 kB]
+#7 110.3 Fetched 9304 kB in 1min 49s (85.5 kB/s)
+#7 110.3 Reading package lists...
+#7 118.3 Reading package lists...
+#7 125.2 Building dependency tree...
+#7 126.1 Reading state information...
+#7 127.3 The following additional packages will be installed:
+#7 127.3   libssl3
+#7 127.6 The following NEW packages will be installed:
+#7 127.6   ca-certificates libssl3 openssl
+#7 128.0 0 upgraded, 3 newly installed, 0 to remove and 0 not upgraded.
+#7 128.0 Need to get 3400 kB of archives.
+#7 128.0 After this operation, 8942 kB of additional disk space will be used.
+#7 128.0 Get:1 http://deb.debian.org/debian-security bookworm-security/main arm64 libssl3 arm64 3.0.22-1~deb12u2 [1829 kB]
+#7 142.8 Get:2 http://deb.debian.org/debian-security bookworm-security/main arm64 openssl arm64 3.0.22-1~deb12u2 [1410 kB]
+#7 162.7 Get:3 http://deb.debian.org/debian-security bookworm-security/main arm64 ca-certificates all 20250419~deb12u2 [161 kB]
+#7 164.7 debconf: delaying package configuration, since apt-utils is not installed
+#7 165.1 Fetched 3400 kB in 35s (96.0 kB/s)
+#7 165.5 Selecting previously unselected package libssl3:arm64.
+#7 165.5 (Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 6090 files and directories currently installed.)
+#7 165.5 Preparing to unpack .../libssl3_3.0.22-1~deb12u2_arm64.deb ...
+#7 165.6 Unpacking libssl3:arm64 (3.0.22-1~deb12u2) ...
+#7 167.1 Selecting previously unselected package openssl.
+#7 167.1 Preparing to unpack .../openssl_3.0.22-1~deb12u2_arm64.deb ...
+#7 167.1 Unpacking openssl (3.0.22-1~deb12u2) ...
+#7 168.0 Selecting previously unselected package ca-certificates.
+#7 168.0 Preparing to unpack .../ca-certificates_20250419~deb12u2_all.deb ...
+#7 168.0 Unpacking ca-certificates (20250419~deb12u2) ...
+#7 168.6 Setting up libssl3:arm64 (3.0.22-1~deb12u2) ...
+#7 168.6 Setting up openssl (3.0.22-1~deb12u2) ...
+#7 168.7 Setting up ca-certificates (20250419~deb12u2) ...
+#7 170.8 debconf: unable to initialize frontend: Dialog
+#7 170.8 debconf: (TERM is not set, so the dialog frontend is not usable.)
+#7 170.8 debconf: falling back to frontend: Readline
+#7 170.8 debconf: unable to initialize frontend: Readline
+#7 170.8 debconf: (Can't locate Term/ReadLine.pm in @INC (you may need to install the Term::ReadLine module) (@INC contains: /etc/perl /usr/local/lib/aarch64-linux-gnu/perl/5.36.0 /usr/local/share/perl/5.36.0 /usr/lib/aarch64-linux-gnu/perl5/5.36 /usr/share/perl5 /usr/lib/aarch64-linux-gnu/perl-base /usr/lib/aarch64-linux-gnu/perl/5.36 /usr/share/perl/5.36 /usr/local/lib/site_perl) at /usr/share/perl5/Debconf/FrontEnd/Readline.pm line 7.)
+#7 170.8 debconf: falling back to frontend: Teletype
+#7 193.0 Updating certificates in /etc/ssl/certs...
+#7 227.5 148 added, 0 removed; done.
+#7 227.9 Processing triggers for libc-bin (2.36-9+deb12u14) ...
+#7 228.1 Processing triggers for ca-certificates (20250419~deb12u2) ...
+#7 228.3 Updating certificates in /etc/ssl/certs...
+#7 256.4 0 added, 0 removed; done.
+#7 256.4 Running hooks in /etc/ca-certificates/update.d...
+#7 256.5 done.
+#7 DONE 257.0s
+
+#8 [stage-1 3/8] ADD https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem /etc/ssl/rds/global-bundle.pem
+#8 DONE 0.1s
+
+#9 [stage-1 4/8] RUN chmod 0755 /etc/ssl/rds && chmod 0644 /etc/ssl/rds/global-bundle.pem
+#9 DONE 0.6s
+
+#10 [build  3/13] RUN corepack enable && corepack prepare pnpm@10.34.7 --activate
+#10 6.232 Preparing pnpm@10.34.7 for immediate activation...
+#10 ...
+
+#11 [stage-1 5/8] RUN cd /tmp && awk '/BEGIN CERT/{n++} {print > ("cert-" n ".pem")}' /etc/ssl/rds/global-bundle.pem  && for f in cert-*.pem; do if openssl x509 -noout -subject -in "$f" | grep -q "ap-south-1 Root CA RSA2048 G1"; then cp "$f" /etc/ssl/rds/ap-south-1-rsa2048-g1.pem; fi; done  && rm -f cert-*.pem && test -s /etc/ssl/rds/ap-south-1-rsa2048-g1.pem && chmod 0644 /etc/ssl/rds/ap-south-1-rsa2048-g1.pem
+#11 ...
+
+#10 [build  3/13] RUN corepack enable && corepack prepare pnpm@10.34.7 --activate
+#10 DONE 22.9s
+
+#12 [build  4/13] WORKDIR /repo
+#12 DONE 0.1s
+
+#13 [build  5/13] COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+#13 DONE 0.1s
+
+#11 [stage-1 5/8] RUN cd /tmp && awk '/BEGIN CERT/{n++} {print > ("cert-" n ".pem")}' /etc/ssl/rds/global-bundle.pem  && for f in cert-*.pem; do if openssl x509 -noout -subject -in "$f" | grep -q "ap-south-1 Root CA RSA2048 G1"; then cp "$f" /etc/ssl/rds/ap-south-1-rsa2048-g1.pem; fi; done  && rm -f cert-*.pem && test -s /etc/ssl/rds/ap-south-1-rsa2048-g1.pem && chmod 0644 /etc/ssl/rds/ap-south-1-rsa2048-g1.pem
+#11 ...
+
+#14 [build  6/13] COPY packages/shared/package.json packages/shared/
+#14 DONE 0.1s
+
+#15 [build  7/13] COPY apps/api/package.json apps/api/
+#15 DONE 0.1s
+
+#16 [build  8/13] RUN pnpm install --frozen-lockfile --filter @legalitt/api... --config.only-built-dependencies=prisma --config.only-built-dependencies=@prisma/engines
+#16 12.55 Scope: 2 of 3 workspace projects
+#16 14.75 Lockfile is up to date, resolution step is skipped
+#16 16.22 Progress: resolved 1, reused 0, downloaded 0, added 0
+#16 23.44 .                                        | +378 ++++++++++++++++++++++++++++++++
+#16 24.50 Progress: resolved 378, reused 0, downloaded 0, added 0
+#16 30.20  WARN  Request took 17467ms: https://registry.npmjs.org/pnpm
+#16 30.96 
+#16 30.96    ╭──────────────────────────────────────────────────────────────────────╮
+#16 30.96    │                                                                      │
+#16 30.96    │                 Update available! 10.34.7 → 12.18.0.                 │
+#16 30.96    │                 Changelog: https://pnpm.io/v/12.18.0                 │
+#16 30.96    │   To update, run: curl -fsSL https://get.pnpm.io/install.sh | sh -   │
+#16 30.96    │                                                                      │
+#16 30.96    ╰──────────────────────────────────────────────────────────────────────╯
+#16 30.96 
+#16 31.17 Progress: resolved 378, reused 0, downloaded 1, added 0
+#16 32.22 Progress: resolved 378, reused 0, downloaded 19, added 0
+#16 37.98 Progress: resolved 378, reused 0, downloaded 22, added 0
+#16 39.05 Progress: resolved 378, reused 0, downloaded 32, added 0
+#16 40.57 Progress: resolved 378, reused 0, downloaded 38, added 13
+#16 42.19 Progress: resolved 378, reused 0, downloaded 49, added 27
+#16 43.28 Progress: resolved 378, reused 0, downloaded 58, added 44
+#16 44.35 Progress: resolved 378, reused 0, downloaded 68, added 61
+#16 45.43 Progress: resolved 378, reused 0, downloaded 81, added 77
+#16 46.75 Progress: resolved 378, reused 0, downloaded 94, added 92
+#16 47.87 Progress: resolved 378, reused 0, downloaded 108, added 106
+#16 48.93 Progress: resolved 378, reused 0, downloaded 120, added 119
+#16 50.19 Progress: resolved 378, reused 0, downloaded 129, added 129
+#16 51.50 Progress: resolved 378, reused 0, downloaded 140, added 139
+#16 52.81 Progress: resolved 378, reused 0, downloaded 151, added 148
+#16 54.35 Progress: resolved 378, reused 0, downloaded 156, added 154
+#16 55.93 Progress: resolved 378, reused 0, downloaded 165, added 164
+#16 57.18 Progress: resolved 378, reused 0, downloaded 172, added 169
+#16 58.59 Progress: resolved 378, reused 0, downloaded 175, added 174
+#16 59.69 Progress: resolved 378, reused 0, downloaded 177, added 176
+#16 61.67 Progress: resolved 378, reused 0, downloaded 184, added 181
+#16 63.46 Progress: resolved 378, reused 0, downloaded 194, added 189
+#16 67.32 Progress: resolved 378, reused 0, downloaded 194, added 193
+#16 68.88 Progress: resolved 378, reused 0, downloaded 199, added 194
+#16 70.39 Progress: resolved 378, reused 0, downloaded 204, added 200
+#16 ...
+
+#11 [stage-1 5/8] RUN cd /tmp && awk '/BEGIN CERT/{n++} {print > ("cert-" n ".pem")}' /etc/ssl/rds/global-bundle.pem  && for f in cert-*.pem; do if openssl x509 -noout -subject -in "$f" | grep -q "ap-south-1 Root CA RSA2048 G1"; then cp "$f" /etc/ssl/rds/ap-south-1-rsa2048-g1.pem; fi; done  && rm -f cert-*.pem && test -s /etc/ssl/rds/ap-south-1-rsa2048-g1.pem && chmod 0644 /etc/ssl/rds/ap-south-1-rsa2048-g1.pem
+#11 DONE 93.4s
+
+#17 [stage-1 6/8] WORKDIR /repo
+#17 DONE 0.1s
+
+#16 [build  8/13] RUN pnpm install --frozen-lockfile --filter @legalitt/api... --config.only-built-dependencies=prisma --config.only-built-dependencies=@prisma/engines
+#16 71.61 Progress: resolved 378, reused 0, downloaded 209, added 206
+#16 72.94 Progress: resolved 378, reused 0, downloaded 219, added 213
+#16 74.36 Progress: resolved 378, reused 0, downloaded 224, added 223
+#16 75.69 Progress: resolved 378, reused 0, downloaded 229, added 225
+#16 76.93 Progress: resolved 378, reused 0, downloaded 240, added 239
+#16 78.55 Progress: resolved 378, reused 0, downloaded 249, added 245
+#16 80.03 Progress: resolved 378, reused 0, downloaded 259, added 258
+#16 81.38 Progress: resolved 378, reused 0, downloaded 267, added 263
+#16 82.45 Progress: resolved 378, reused 0, downloaded 273, added 272
+#16 83.97 Progress: resolved 378, reused 0, downloaded 280, added 276
+#16 85.80 Progress: resolved 378, reused 0, downloaded 288, added 287
+#16 87.03 Progress: resolved 378, reused 0, downloaded 294, added 292
+#16 88.40 Progress: resolved 378, reused 0, downloaded 298, added 297
+#16 89.61 Progress: resolved 378, reused 0, downloaded 307, added 302
+#16 90.88 Progress: resolved 378, reused 0, downloaded 318, added 316
+#16 92.21 Progress: resolved 378, reused 0, downloaded 329, added 327
+#16 93.83 Progress: resolved 378, reused 0, downloaded 339, added 337
+#16 94.91 Progress: resolved 378, reused 0, downloaded 347, added 345
+#16 96.16 Progress: resolved 378, reused 0, downloaded 357, added 355
+#16 97.31 Progress: resolved 378, reused 0, downloaded 366, added 363
+#16 98.47 Progress: resolved 378, reused 0, downloaded 370, added 368
+#16 99.47 Progress: resolved 378, reused 0, downloaded 376, added 375
+#16 100.5 Progress: resolved 378, reused 0, downloaded 376, added 376
+#16 101.5 Progress: resolved 378, reused 0, downloaded 377, added 376
+#16 102.8 Progress: resolved 378, reused 0, downloaded 377, added 377
+#16 110.4 Progress: resolved 378, reused 0, downloaded 378, added 377
+#16 110.5 Progress: resolved 378, reused 0, downloaded 378, added 378, done
+#16 115.4 .../node_modules/@prisma/engines postinstall$ node scripts/postinstall.js
+#16 130.1 .../node_modules/@prisma/engines postinstall: Done
+#16 130.9 .../node_modules/prisma preinstall$ node scripts/preinstall-entry.js
+#16 133.2 .../node_modules/prisma preinstall: Done
+#16 137.9 ╭ Warning ─────────────────────────────────────────────────────────────────────╮
+#16 137.9 │                                                                              │
+#16 137.9 │   Ignored build scripts: esbuild@0.28.2.                                     │
+#16 137.9 │   Run "pnpm approve-builds" to pick which dependencies should be allowed     │
+#16 137.9 │   to run scripts.                                                            │
+#16 137.9 │                                                                              │
+#16 137.9 ╰──────────────────────────────────────────────────────────────────────────────╯
+#16 139.0 Done in 2m 16.1s using pnpm v10.34.7
+#16 DONE 140.3s
+
+#18 [build  9/13] COPY tsconfig.json ./
+#18 DONE 1.0s
+
+#19 [build 10/13] COPY packages/shared packages/shared
+#19 DONE 0.4s
+
+#20 [build 11/13] COPY apps/api apps/api
+#20 DONE 0.7s
+
+#21 [build 12/13] RUN pnpm --filter @legalitt/shared build && pnpm --filter @legalitt/api build
+#21 12.59 
+#21 12.59 > @legalitt/shared@0.0.0 build /repo/packages/shared
+#21 12.59 > tsc
+#21 12.59 
+#21 90.78 
+#21 90.78 > @legalitt/api@0.0.0 build /repo/apps/api
+#21 90.78 > prisma generate && tsc
+#21 90.78 
+#21 112.0 Loaded Prisma config from prisma.config.ts.
+#21 112.0 
+#21 114.7 Prisma schema loaded from prisma/schema.prisma.
+#21 136.1 
+#21 136.1 ✔ Generated Prisma Client (7.10.1) to ./src/generated/prisma in 12.82s
+#21 136.1 
+#21 DONE 394.4s
+
+#22 [build 13/13] RUN cd apps/api && pnpm exec prisma version >/dev/null
+#22 30.21 Loaded Prisma config from prisma.config.ts.
+#22 30.21 
+#22 38.29 Prisma schema loaded from prisma/schema.prisma.
+#22 38.47 ┌─────────────────────────────────────────────────────────┐
+#22 38.47 │  Update available 7.10.1 -> 8.0.0-rc.33                 │
+#22 38.47 │                                                         │
+#22 38.47 │  This is a major update - please follow the guide at    │
+#22 38.47 │  https://pris.ly/d/major-version-upgrade                │
+#22 38.47 │                                                         │
+#22 38.47 │  Run the following to update                            │
+#22 38.47 │    npm i --save-dev prisma@latest                       │
+#22 38.47 │    npm i @prisma/client@latest                          │
+#22 38.47 └─────────────────────────────────────────────────────────┘
+#22 DONE 39.0s
+
+#23 [stage-1 7/8] COPY --from=build /repo /repo
+#23 DONE 6.3s
+
+#24 [stage-1 8/8] WORKDIR /repo/apps/api
+#24 DONE 0.4s
+
+#25 exporting to image
+#25 exporting layers
+#25 exporting layers 31.3s done
+#25 exporting manifest sha256:58157f0d8cefd01e5572fb872e8ca57f29ff6b3e30352fa67d793af93b041bcb 0.0s done
+#25 exporting config sha256:30db091950a565353d9bf6932322a1db7a7e5d209ed695fa355979b96a774123 0.0s done
+#25 exporting attestation manifest sha256:cc5ae64eb79492120d4e48f337f4b198cff7041a0374361062deccfdeb01670a 0.0s done
+#25 exporting manifest list sha256:b00cf5874656be16e4ef8710e5350cd2bb096d898828b2a02000d7600fc2c7c5 0.0s done
+#25 naming to 026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api:733af89 done
+#25 DONE 31.5s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/rmvhz5bbpbqb3q5b4lkzinv6e
+Login Succeeded
+The push refers to repository [026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api]
+ae899559eb86: Waiting
+b21c81bea620: Waiting
+67cedb043979: Waiting
+8ab1065c9a12: Waiting
+67cd88436e84: Waiting
+3a7b14f3e09e: Waiting
+9d7b14058764: Waiting
+d76d856751fe: Waiting
+c96c411090da: Waiting
+4f4fb700ef54: Waiting
+fa02d1c83ba5: Waiting
+6009fa0b728a: Waiting
+0ebbfc08620c: Waiting
+0ebbfc08620c: Waiting
+ae899559eb86: Waiting
+b21c81bea620: Waiting
+67cedb043979: Waiting
+8ab1065c9a12: Waiting
+67cd88436e84: Waiting
+3a7b14f3e09e: Waiting
+9d7b14058764: Waiting
+d76d856751fe: Waiting
+c96c411090da: Waiting
+4f4fb700ef54: Waiting
+fa02d1c83ba5: Waiting
+6009fa0b728a: Waiting
+67cd88436e84: Waiting
+3a7b14f3e09e: Waiting
+9d7b14058764: Waiting
+d76d856751fe: Waiting
+c96c411090da: Waiting
+4f4fb700ef54: Waiting
+fa02d1c83ba5: Waiting
+6009fa0b728a: Waiting
+0ebbfc08620c: Waiting
+ae899559eb86: Waiting
+b21c81bea620: Waiting
+67cedb043979: Waiting
+8ab1065c9a12: Waiting
+67cd88436e84: Waiting
+3a7b14f3e09e: Waiting
+9d7b14058764: Waiting
+d76d856751fe: Waiting
+c96c411090da: Waiting
+4f4fb700ef54: Waiting
+fa02d1c83ba5: Waiting
+6009fa0b728a: Layer already exists
+0ebbfc08620c: Waiting
+ae899559eb86: Waiting
+b21c81bea620: Waiting
+67cedb043979: Waiting
+8ab1065c9a12: Waiting
+0ebbfc08620c: Waiting
+ae899559eb86: Waiting
+b21c81bea620: Waiting
+67cedb043979: Waiting
+8ab1065c9a12: Waiting
+67cd88436e84: Waiting
+3a7b14f3e09e: Waiting
+9d7b14058764: Layer already exists
+d76d856751fe: Layer already exists
+c96c411090da: Waiting
+4f4fb700ef54: Layer already exists
+fa02d1c83ba5: Waiting
+3a7b14f3e09e: Layer already exists
+c96c411090da: Layer already exists
+0ebbfc08620c: Waiting
+ae899559eb86: Waiting
+b21c81bea620: Waiting
+8ab1065c9a12: Waiting
+ae899559eb86: Waiting
+ae899559eb86: Waiting
+67cedb043979: Pushed
+fa02d1c83ba5: Pushed
+b21c81bea620: Pushed
+67cd88436e84: Pushed
+ae899559eb86: Pushed
+0ebbfc08620c: Pushed
+8ab1065c9a12: Pushed
+733af89: digest: sha256:b00cf5874656be16e4ef8710e5350cd2bb096d898828b2a02000d7600fc2c7c5 size: 856

@@ -1,0 +1,17 @@
+STAGE drafts
+SHOT advocate-decline.png
+HTTP advocate 404 GET /api/v1/notices/8d7a1854-330b-466c-bef1-4d6f4d2b9b2d/flow
+HTTP advocate 404 GET /api/v1/cases/8d7a1854-330b-466c-bef1-4d6f4d2b9b2d
+SHOT advocate-fee-courier.png
+SHOT advocate-documents-courier.png
+SHOT advocate-drafting-method.png
+SHOT advocate-editor-courier.png
+SHOT advocate-preview-courier.png
+SHOT client-draft-ready-courier.png
+SHOT client-document-viewer.png
+SHOT client-request-changes.png
+SHOT advocate-editor-courier-revised.png
+SHOT advocate-preview-courier.png
+SHOT client-admin-handoff-courier.png
+SHOT client-chat-readonly-courier.png
+PASS Advocate draft/client approval courier

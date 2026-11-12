@@ -1,0 +1,52 @@
+{
+  "checked_at": "2026-11-12T18:05:45.233Z",
+  "environment": "deployed dev",
+  "simulated": [
+    "payments",
+    "test e-sign",
+    "synthetic courier records; no parcel sent"
+  ],
+  "cases": [
+    {
+      "id": "8d7a1854-330b-466c-bef1-4d6f4d2b9b2d",
+      "methods": [
+        "courier"
+      ],
+      "tag": "courier",
+      "total": "165253",
+      "advocate": "advocate-2",
+      "declined": true,
+      "client_changed": true,
+      "admin_returned": true,
+      "failed": true,
+      "recovered": true
+    }
+  ],
+  "results": [
+    {
+      "name": "Client intake/payment courier",
+      "at": "2026-11-12T17:58:25.860Z"
+    },
+    {
+      "name": "Advocate draft/client approval courier",
+      "at": "2026-11-12T18:01:16.405Z"
+    },
+    {
+      "name": "Admin verification/test e-sign courier",
+      "at": "2026-11-12T18:03:06.773Z"
+    },
+    {
+      "name": "Dispatch, delivery and advocate credit courier",
+      "at": "2026-11-12T18:04:35.326Z"
+    },
+    {
+      "name": "Completed case has exactly one advocate ledger credit of ₹999",
+      "at": "2026-11-12T18:05:17.486Z"
+    },
+    {
+      "name": "Polish: hero, selectable cards, button hierarchy, safe document labels, timeline dates/details and PDF viewer",
+      "at": "2026-11-12T18:05:45.232Z"
+    }
+  ],
+  "page_errors": []
+}

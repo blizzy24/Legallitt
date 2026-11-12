@@ -1,0 +1,405 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 2.72kB 0.0s done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/node:22-bookworm-slim
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 253B done
+#3 DONE 0.0s
+
+#4 [build  1/13] FROM docker.io/library/node:22-bookworm-slim@sha256:f5edcaefce9e3505c53e917deda2f7999b3065f8d6462f5096db91342e498b36
+#4 resolve docker.io/library/node:22-bookworm-slim@sha256:f5edcaefce9e3505c53e917deda2f7999b3065f8d6462f5096db91342e498b36 0.0s done
+#4 DONE 0.2s
+
+#5 [internal] load build context
+#5 transferring context: 8.74MB 0.3s done
+#5 DONE 0.4s
+
+#4 [build  1/13] FROM docker.io/library/node:22-bookworm-slim@sha256:f5edcaefce9e3505c53e917deda2f7999b3065f8d6462f5096db91342e498b36
+#4 extracting sha256:c96c411090da09187c55ab267826b3903b542b5c03f1cafa912d60e060e7850c
+#4 extracting sha256:c96c411090da09187c55ab267826b3903b542b5c03f1cafa912d60e060e7850c 0.6s done
+#4 DONE 0.8s
+
+#6 [stage-1 3/8] ADD https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem /etc/ssl/rds/global-bundle.pem
+#6 DONE 1.5s
+
+#4 [build  1/13] FROM docker.io/library/node:22-bookworm-slim@sha256:f5edcaefce9e3505c53e917deda2f7999b3065f8d6462f5096db91342e498b36
+#4 extracting sha256:3a7b14f3e09ef4928f727883ab5693d524797e3833c2f4c6bc1f0d0791330a42 0.0s done
+#4 extracting sha256:9d7b1405876470cc4eb0c1eb2811037931a1a1e02767a4f514909ed3c50ad6a8
+#4 ...
+
+#6 [stage-1 3/8] ADD https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem /etc/ssl/rds/global-bundle.pem
+#6 DONE 1.5s
+
+#4 [build  1/13] FROM docker.io/library/node:22-bookworm-slim@sha256:f5edcaefce9e3505c53e917deda2f7999b3065f8d6462f5096db91342e498b36
+#4 extracting sha256:9d7b1405876470cc4eb0c1eb2811037931a1a1e02767a4f514909ed3c50ad6a8 0.9s done
+#4 DONE 1.7s
+
+#4 [build  1/13] FROM docker.io/library/node:22-bookworm-slim@sha256:f5edcaefce9e3505c53e917deda2f7999b3065f8d6462f5096db91342e498b36
+#4 extracting sha256:d76d856751feaaeaf5bc9b5c40d4b8b78fdcb19c7dd79d67aaa9bb2d7d1c60c1 0.0s done
+#4 extracting sha256:6009fa0b728ada85ec401c99a280269ab76f1f5ee7edb64dc7ec40c306c1107a 0.0s done
+#4 DONE 1.7s
+
+#7 [build  2/13] RUN apt-get update && apt-get install -y --no-install-recommends openssl ca-certificates && rm -rf /var/lib/apt/lists/*
+#7 1.056 Get:1 http://deb.debian.org/debian bookworm InRelease [151 kB]
+#7 1.565 Get:2 http://deb.debian.org/debian bookworm-updates InRelease [55.4 kB]
+#7 1.961 Get:3 http://deb.debian.org/debian-security bookworm-security InRelease [34.8 kB]
+#7 3.250 Get:4 http://deb.debian.org/debian bookworm/main arm64 Packages [8689 kB]
+#7 317.6 Get:5 http://deb.debian.org/debian bookworm-updates/main arm64 Packages [6936 B]
+#7 317.8 Get:6 http://deb.debian.org/debian-security bookworm-security/main arm64 Packages [367 kB]
+#7 322.4 Fetched 9304 kB in 5min 22s (28.9 kB/s)
+#7 322.4 Reading package lists...
+#7 327.6 Reading package lists...
+#7 332.5 Building dependency tree...
+#7 333.3 Reading state information...
+#7 334.2 The following additional packages will be installed:
+#7 334.2   libssl3
+#7 334.3 The following NEW packages will be installed:
+#7 334.3   ca-certificates libssl3 openssl
+#7 334.9 0 upgraded, 3 newly installed, 0 to remove and 0 not upgraded.
+#7 334.9 Need to get 3400 kB of archives.
+#7 334.9 After this operation, 8942 kB of additional disk space will be used.
+#7 334.9 Get:1 http://deb.debian.org/debian-security bookworm-security/main arm64 libssl3 arm64 3.0.22-1~deb12u2 [1829 kB]
+#7 402.4 Get:2 http://deb.debian.org/debian-security bookworm-security/main arm64 openssl arm64 3.0.22-1~deb12u2 [1410 kB]
+#7 413.6 Get:3 http://deb.debian.org/debian-security bookworm-security/main arm64 ca-certificates all 20250419~deb12u2 [161 kB]
+#7 415.9 debconf: delaying package configuration, since apt-utils is not installed
+#7 416.2 Fetched 3400 kB in 1min 20s (42.2 kB/s)
+#7 416.4 Selecting previously unselected package libssl3:arm64.
+#7 416.4 (Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 6090 files and directories currently installed.)
+#7 416.5 Preparing to unpack .../libssl3_3.0.22-1~deb12u2_arm64.deb ...
+#7 416.5 Unpacking libssl3:arm64 (3.0.22-1~deb12u2) ...
+#7 417.4 Selecting previously unselected package openssl.
+#7 417.4 Preparing to unpack .../openssl_3.0.22-1~deb12u2_arm64.deb ...
+#7 417.4 Unpacking openssl (3.0.22-1~deb12u2) ...
+#7 418.1 Selecting previously unselected package ca-certificates.
+#7 418.1 Preparing to unpack .../ca-certificates_20250419~deb12u2_all.deb ...
+#7 418.1 Unpacking ca-certificates (20250419~deb12u2) ...
+#7 418.4 Setting up libssl3:arm64 (3.0.22-1~deb12u2) ...
+#7 418.4 Setting up openssl (3.0.22-1~deb12u2) ...
+#7 418.4 Setting up ca-certificates (20250419~deb12u2) ...
+#7 419.8 debconf: unable to initialize frontend: Dialog
+#7 419.8 debconf: (TERM is not set, so the dialog frontend is not usable.)
+#7 419.8 debconf: falling back to frontend: Readline
+#7 419.8 debconf: unable to initialize frontend: Readline
+#7 419.8 debconf: (Can't locate Term/ReadLine.pm in @INC (you may need to install the Term::ReadLine module) (@INC contains: /etc/perl /usr/local/lib/aarch64-linux-gnu/perl/5.36.0 /usr/local/share/perl/5.36.0 /usr/lib/aarch64-linux-gnu/perl5/5.36 /usr/share/perl5 /usr/lib/aarch64-linux-gnu/perl-base /usr/lib/aarch64-linux-gnu/perl/5.36 /usr/share/perl/5.36 /usr/local/lib/site_perl) at /usr/share/perl5/Debconf/FrontEnd/Readline.pm line 7.)
+#7 419.8 debconf: falling back to frontend: Teletype
+#7 434.3 Updating certificates in /etc/ssl/certs...
+#7 459.8 148 added, 0 removed; done.
+#7 460.1 Processing triggers for libc-bin (2.36-9+deb12u14) ...
+#7 460.2 Processing triggers for ca-certificates (20250419~deb12u2) ...
+#7 460.3 Updating certificates in /etc/ssl/certs...
+#7 478.6 0 added, 0 removed; done.
+#7 478.6 Running hooks in /etc/ca-certificates/update.d...
+#7 478.7 done.
+#7 DONE 479.0s
+
+#8 [stage-1 3/8] ADD https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem /etc/ssl/rds/global-bundle.pem
+#8 DONE 0.1s
+
+#9 [stage-1 4/8] RUN chmod 0755 /etc/ssl/rds && chmod 0644 /etc/ssl/rds/global-bundle.pem
+#9 DONE 0.5s
+
+#10 [build  3/13] RUN corepack enable && corepack prepare pnpm@10.34.7 --activate
+#10 3.794 Preparing pnpm@10.34.7 for immediate activation...
+#10 ...
+
+#11 [stage-1 5/8] RUN cd /tmp && awk '/BEGIN CERT/{n++} {print > ("cert-" n ".pem")}' /etc/ssl/rds/global-bundle.pem  && for f in cert-*.pem; do if openssl x509 -noout -subject -in "$f" | grep -q "ap-south-1 Root CA RSA2048 G1"; then cp "$f" /etc/ssl/rds/ap-south-1-rsa2048-g1.pem; fi; done  && rm -f cert-*.pem && test -s /etc/ssl/rds/ap-south-1-rsa2048-g1.pem && chmod 0644 /etc/ssl/rds/ap-south-1-rsa2048-g1.pem
+#11 ...
+
+#10 [build  3/13] RUN corepack enable && corepack prepare pnpm@10.34.7 --activate
+#10 DONE 16.9s
+
+#12 [build  4/13] WORKDIR /repo
+#12 DONE 0.1s
+
+#13 [build  5/13] COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+#13 DONE 0.1s
+
+#11 [stage-1 5/8] RUN cd /tmp && awk '/BEGIN CERT/{n++} {print > ("cert-" n ".pem")}' /etc/ssl/rds/global-bundle.pem  && for f in cert-*.pem; do if openssl x509 -noout -subject -in "$f" | grep -q "ap-south-1 Root CA RSA2048 G1"; then cp "$f" /etc/ssl/rds/ap-south-1-rsa2048-g1.pem; fi; done  && rm -f cert-*.pem && test -s /etc/ssl/rds/ap-south-1-rsa2048-g1.pem && chmod 0644 /etc/ssl/rds/ap-south-1-rsa2048-g1.pem
+#11 ...
+
+#14 [build  6/13] COPY packages/shared/package.json packages/shared/
+#14 DONE 0.0s
+
+#15 [build  7/13] COPY apps/api/package.json apps/api/
+#15 DONE 0.0s
+
+#16 [build  8/13] RUN pnpm install --frozen-lockfile --filter @legalitt/api... --config.only-built-dependencies=prisma --config.only-built-dependencies=@prisma/engines
+#16 8.717 Scope: 2 of 3 workspace projects
+#16 9.962 Lockfile is up to date, resolution step is skipped
+#16 10.83 Progress: resolved 1, reused 0, downloaded 0, added 0
+#16 15.72 .                                        | +378 ++++++++++++++++++++++++++++++++
+#16 16.32 Progress: resolved 378, reused 0, downloaded 0, added 0
+#16 21.45  WARN  Request took 12610ms: https://registry.npmjs.org/pnpm
+#16 21.94 
+#16 21.94    ╭──────────────────────────────────────────────────────────────────────╮
+#16 21.94    │                                                                      │
+#16 21.94    │                 Update available! 10.34.7 → 12.18.0.                 │
+#16 21.94    │                 Changelog: https://pnpm.io/v/12.18.0                 │
+#16 21.94    │   To update, run: curl -fsSL https://get.pnpm.io/install.sh | sh -   │
+#16 21.94    │                                                                      │
+#16 21.94    ╰──────────────────────────────────────────────────────────────────────╯
+#16 21.94 
+#16 22.08 Progress: resolved 378, reused 0, downloaded 1, added 0
+#16 23.19 Progress: resolved 378, reused 0, downloaded 18, added 0
+#16 24.83 Progress: resolved 378, reused 0, downloaded 25, added 1
+#16 29.54 Progress: resolved 378, reused 0, downloaded 35, added 10
+#16 30.37  WARN  Tarball download average speed 13 KiB/s (size 62 KiB) is below 50 KiB/s: https://registry.npmjs.org/bowser/-/bowser-2.14.1.tgz (GET)
+#16 30.70 Progress: resolved 378, reused 0, downloaded 42, added 14
+#16 31.78 Progress: resolved 378, reused 0, downloaded 52, added 31
+#16 33.03 Progress: resolved 378, reused 0, downloaded 57, added 45
+#16 34.06 Progress: resolved 378, reused 0, downloaded 73, added 58
+#16 35.10 Progress: resolved 378, reused 0, downloaded 83, added 81
+#16 36.18 Progress: resolved 378, reused 0, downloaded 97, added 97
+#16 37.37 Progress: resolved 378, reused 0, downloaded 109, added 107
+#16 38.65 Progress: resolved 378, reused 0, downloaded 124, added 121
+#16 39.67 Progress: resolved 378, reused 0, downloaded 137, added 136
+#16 40.80 Progress: resolved 378, reused 0, downloaded 151, added 146
+#16 41.94 Progress: resolved 378, reused 0, downloaded 162, added 161
+#16 43.24 Progress: resolved 378, reused 0, downloaded 171, added 170
+#16 44.33 Progress: resolved 378, reused 0, downloaded 176, added 175
+#16 45.34 Progress: resolved 378, reused 0, downloaded 182, added 182
+#16 46.34  WARN  Tarball download average speed 2 KiB/s (size 5 KiB) is below 50 KiB/s: https://registry.npmjs.org/empathic/-/empathic-2.0.0.tgz (GET)
+#16 46.50 Progress: resolved 378, reused 0, downloaded 194, added 191
+#16 47.67 Progress: resolved 378, reused 0, downloaded 203, added 203
+#16 48.81 Progress: resolved 378, reused 0, downloaded 213, added 213
+#16 49.66  WARN  Tarball download average speed 7 KiB/s (size 9 KiB) is below 50 KiB/s: https://registry.npmjs.org/scheduler/-/scheduler-0.27.0.tgz (GET)
+#16 49.67  WARN  Tarball download average speed 5 KiB/s (size 6 KiB) is below 50 KiB/s: https://registry.npmjs.org/@radix-ui/react-use-controllable-state/-/react-use-controllable-state-1.2.2.tgz (GET)
+#16 50.01  WARN  Tarball download average speed 12 KiB/s (size 24 KiB) is below 50 KiB/s: https://registry.npmjs.org/react/-/react-19.2.3.tgz (GET)
+#16 50.06 Progress: resolved 378, reused 0, downloaded 223, added 220
+#16 51.14 Progress: resolved 378, reused 0, downloaded 235, added 234
+#16 52.45 Progress: resolved 378, reused 0, downloaded 242, added 241
+#16 ...
+
+#11 [stage-1 5/8] RUN cd /tmp && awk '/BEGIN CERT/{n++} {print > ("cert-" n ".pem")}' /etc/ssl/rds/global-bundle.pem  && for f in cert-*.pem; do if openssl x509 -noout -subject -in "$f" | grep -q "ap-south-1 Root CA RSA2048 G1"; then cp "$f" /etc/ssl/rds/ap-south-1-rsa2048-g1.pem; fi; done  && rm -f cert-*.pem && test -s /etc/ssl/rds/ap-south-1-rsa2048-g1.pem && chmod 0644 /etc/ssl/rds/ap-south-1-rsa2048-g1.pem
+#11 DONE 69.6s
+
+#17 [stage-1 6/8] WORKDIR /repo
+#17 DONE 0.1s
+
+#16 [build  8/13] RUN pnpm install --frozen-lockfile --filter @legalitt/api... --config.only-built-dependencies=prisma --config.only-built-dependencies=@prisma/engines
+#16 53.54 Progress: resolved 378, reused 0, downloaded 256, added 255
+#16 55.23 Progress: resolved 378, reused 0, downloaded 268, added 260
+#16 56.31 Progress: resolved 378, reused 0, downloaded 273, added 270
+#16 57.37 Progress: resolved 378, reused 0, downloaded 279, added 279
+#16 58.77 Progress: resolved 378, reused 0, downloaded 282, added 281
+#16 61.37  WARN  Tarball download average speed 37 KiB/s (size 139 KiB) is below 50 KiB/s: https://registry.npmjs.org/tsx/-/tsx-4.23.15.tgz (GET)
+#16 61.52 Progress: resolved 378, reused 0, downloaded 283, added 282
+#16 62.86 Progress: resolved 378, reused 0, downloaded 293, added 287
+#16 63.99 Progress: resolved 378, reused 0, downloaded 305, added 301
+#16 65.05 Progress: resolved 378, reused 0, downloaded 309, added 306
+#16 65.91  WARN  Tarball download average speed 16 KiB/s (size 17 KiB) is below 50 KiB/s: https://registry.npmjs.org/pac-resolver/-/pac-resolver-7.0.1.tgz (GET)
+#16 66.21 Progress: resolved 378, reused 0, downloaded 324, added 317
+#16 67.30 Progress: resolved 378, reused 0, downloaded 333, added 331
+#16 68.53 Progress: resolved 378, reused 0, downloaded 351, added 350
+#16 69.60 Progress: resolved 378, reused 0, downloaded 360, added 358
+#16 70.63 Progress: resolved 378, reused 0, downloaded 372, added 370
+#16 71.63 Progress: resolved 378, reused 0, downloaded 375, added 374
+#16 72.67 Progress: resolved 378, reused 0, downloaded 375, added 375
+#16 74.26 Progress: resolved 378, reused 0, downloaded 376, added 375
+#16 75.27 Progress: resolved 378, reused 0, downloaded 376, added 376
+#16 76.36 Progress: resolved 378, reused 0, downloaded 377, added 376
+#16 77.36 Progress: resolved 378, reused 0, downloaded 377, added 377
+#16 78.63 Progress: resolved 378, reused 0, downloaded 378, added 377
+#16 78.64 Progress: resolved 378, reused 0, downloaded 378, added 378, done
+#16 81.63 .../node_modules/@prisma/engines postinstall$ node scripts/postinstall.js
+#16 95.17 .../node_modules/@prisma/engines postinstall: Done
+#16 95.77 .../node_modules/prisma preinstall$ node scripts/preinstall-entry.js
+#16 97.21 .../node_modules/prisma preinstall: Done
+#16 99.97 ╭ Warning ─────────────────────────────────────────────────────────────────────╮
+#16 99.97 │                                                                              │
+#16 99.97 │   Ignored build scripts: esbuild@0.28.2.                                     │
+#16 99.97 │   Run "pnpm approve-builds" to pick which dependencies should be allowed     │
+#16 99.97 │   to run scripts.                                                            │
+#16 99.97 │                                                                              │
+#16 99.97 ╰──────────────────────────────────────────────────────────────────────────────╯
+#16 100.5 Done in 1m 38.6s using pnpm v10.34.7
+#16 DONE 101.1s
+
+#18 [build  9/13] COPY tsconfig.json ./
+#18 DONE 0.6s
+
+#19 [build 10/13] COPY packages/shared packages/shared
+#19 DONE 0.2s
+
+#20 [build 11/13] COPY apps/api apps/api
+#20 DONE 0.6s
+
+#21 [build 12/13] RUN pnpm --filter @legalitt/shared build && pnpm --filter @legalitt/api build
+#21 10.38 
+#21 10.38 > @legalitt/shared@0.0.0 build /repo/packages/shared
+#21 10.38 > tsc
+#21 10.38 
+#21 67.61 
+#21 67.61 > @legalitt/api@0.0.0 build /repo/apps/api
+#21 67.61 > prisma generate && tsc
+#21 67.61 
+#21 83.89 Loaded Prisma config from prisma.config.ts.
+#21 83.89 
+#21 85.82 Prisma schema loaded from prisma/schema.prisma.
+#21 99.04 
+#21 99.04 ✔ Generated Prisma Client (7.10.1) to ./src/generated/prisma in 7.19s
+#21 99.04 
+#21 DONE 288.7s
+
+#22 [build 13/13] RUN cd apps/api && pnpm exec prisma version >/dev/null
+#22 23.93 Loaded Prisma config from prisma.config.ts.
+#22 23.93 
+#22 31.28 Prisma schema loaded from prisma/schema.prisma.
+#22 31.54 ┌─────────────────────────────────────────────────────────┐
+#22 31.54 │  Update available 7.10.1 -> 8.0.0-rc.33                 │
+#22 31.54 │                                                         │
+#22 31.54 │  This is a major update - please follow the guide at    │
+#22 31.54 │  https://pris.ly/d/major-version-upgrade                │
+#22 31.54 │                                                         │
+#22 31.54 │  Run the following to update                            │
+#22 31.54 │    npm i --save-dev prisma@latest                       │
+#22 31.54 │    npm i @prisma/client@latest                          │
+#22 31.54 └─────────────────────────────────────────────────────────┘
+#22 DONE 32.0s
+
+#23 [stage-1 7/8] COPY --from=build /repo /repo
+#23 DONE 5.4s
+
+#24 [stage-1 8/8] WORKDIR /repo/apps/api
+#24 DONE 0.3s
+
+#25 exporting to image
+#25 exporting layers
+#25 exporting layers 23.1s done
+#25 exporting manifest sha256:25cc703d23acbd5c7fb2a7d2c76f2bc28bd7eadf2ec8d7fb37de192cfc0ba63c 0.0s done
+#25 exporting config sha256:f067bff7606b668864a029a158316eca86c4a9c23d63f0998357af21e26b8fa2 0.0s done
+#25 exporting attestation manifest sha256:d4160c79ef1062bb2a9433cb409763575a98936cd136abc8f0918b439d5c2d4f 0.0s done
+#25 exporting manifest list sha256:34737ccc298887b0c8b179d817e9fb1e367ea349fc0c21936a256e56ea27baab 0.0s done
+#25 naming to 026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api:94d8836 done
+#25 DONE 23.2s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/bhj1ziemk0joqgy5ach0incd0
+Login Succeeded
+The push refers to repository [026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api]
+d76d856751fe: Waiting
+048a6fd06df4: Waiting
+01240cf60790: Waiting
+6009fa0b728a: Waiting
+fc5e0e12d0f5: Waiting
+5e70de358459: Waiting
+9c17d12e54d8: Waiting
+3a7b14f3e09e: Waiting
+c96c411090da: Waiting
+4f4fb700ef54: Waiting
+a745c97b1c21: Waiting
+95db54d112a7: Waiting
+9d7b14058764: Waiting
+3a7b14f3e09e: Waiting
+c96c411090da: Waiting
+4f4fb700ef54: Waiting
+a745c97b1c21: Waiting
+95db54d112a7: Waiting
+9d7b14058764: Waiting
+d76d856751fe: Waiting
+048a6fd06df4: Waiting
+01240cf60790: Waiting
+6009fa0b728a: Waiting
+fc5e0e12d0f5: Waiting
+5e70de358459: Waiting
+9c17d12e54d8: Waiting
+4f4fb700ef54: Waiting
+a745c97b1c21: Waiting
+95db54d112a7: Waiting
+9d7b14058764: Waiting
+d76d856751fe: Waiting
+048a6fd06df4: Waiting
+01240cf60790: Waiting
+6009fa0b728a: Waiting
+fc5e0e12d0f5: Waiting
+5e70de358459: Waiting
+9c17d12e54d8: Waiting
+3a7b14f3e09e: Waiting
+c96c411090da: Waiting
+01240cf60790: Waiting
+6009fa0b728a: Waiting
+fc5e0e12d0f5: Waiting
+5e70de358459: Waiting
+9c17d12e54d8: Waiting
+3a7b14f3e09e: Waiting
+c96c411090da: Waiting
+4f4fb700ef54: Waiting
+a745c97b1c21: Waiting
+95db54d112a7: Waiting
+9d7b14058764: Waiting
+d76d856751fe: Waiting
+048a6fd06df4: Waiting
+c96c411090da: Waiting
+4f4fb700ef54: Waiting
+a745c97b1c21: Waiting
+95db54d112a7: Waiting
+9d7b14058764: Waiting
+d76d856751fe: Waiting
+048a6fd06df4: Waiting
+01240cf60790: Waiting
+6009fa0b728a: Waiting
+fc5e0e12d0f5: Waiting
+5e70de358459: Waiting
+9c17d12e54d8: Waiting
+3a7b14f3e09e: Waiting
+01240cf60790: Waiting
+6009fa0b728a: Waiting
+fc5e0e12d0f5: Waiting
+5e70de358459: Waiting
+9c17d12e54d8: Waiting
+3a7b14f3e09e: Waiting
+c96c411090da: Waiting
+4f4fb700ef54: Waiting
+a745c97b1c21: Waiting
+95db54d112a7: Waiting
+9d7b14058764: Waiting
+d76d856751fe: Waiting
+048a6fd06df4: Waiting
+9c17d12e54d8: Waiting
+3a7b14f3e09e: Waiting
+c96c411090da: Waiting
+4f4fb700ef54: Layer already exists
+a745c97b1c21: Waiting
+95db54d112a7: Waiting
+9d7b14058764: Waiting
+d76d856751fe: Waiting
+048a6fd06df4: Waiting
+01240cf60790: Waiting
+6009fa0b728a: Waiting
+fc5e0e12d0f5: Waiting
+5e70de358459: Waiting
+9d7b14058764: Waiting
+d76d856751fe: Waiting
+048a6fd06df4: Waiting
+01240cf60790: Waiting
+6009fa0b728a: Waiting
+fc5e0e12d0f5: Waiting
+5e70de358459: Waiting
+9c17d12e54d8: Waiting
+3a7b14f3e09e: Waiting
+c96c411090da: Waiting
+a745c97b1c21: Waiting
+01240cf60790: Waiting
+5e70de358459: Waiting
+3a7b14f3e09e: Waiting
+c96c411090da: Waiting
+d76d856751fe: Waiting
+3a7b14f3e09e: Waiting
+fc5e0e12d0f5: Pushed
+3a7b14f3e09e: Waiting
+6009fa0b728a: Pushed
+a745c97b1c21: Pushed
+01240cf60790: Pushed
+5e70de358459: Pushed
+9c17d12e54d8: Pushed
+3a7b14f3e09e: Pushed
+95db54d112a7: Pushed
+d76d856751fe: Pushed
+c96c411090da: Pushed
+9d7b14058764: Pushed
+048a6fd06df4: Pushed
+94d8836: digest: sha256:34737ccc298887b0c8b179d817e9fb1e367ea349fc0c21936a256e56ea27baab size: 856

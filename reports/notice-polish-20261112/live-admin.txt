@@ -1,0 +1,9 @@
+STAGE admin
+SHOT admin-address-check-courier.png
+SHOT admin-return.png
+SHOT advocate-editor-courier-revised.png
+SHOT advocate-preview-courier.png
+SHOT admin-notice-check-courier.png
+SHOT advocate-test-esign-courier.png
+SHOT admin-dispatch-ready-courier.png
+PASS Admin verification/test e-sign courier

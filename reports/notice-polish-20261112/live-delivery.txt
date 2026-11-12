@@ -1,0 +1,10 @@
+STAGE delivery
+SHOT admin-sent-courier-courier.png
+SHOT admin-failed-delivery.png
+SHOT client-address-correction.png
+SHOT admin-retry.png
+SHOT admin-tracking-proof-courier.png
+SHOT admin-completed-courier.png
+SHOT client-delivered-courier.png
+SHOT advocate-credit-courier.png
+PASS Dispatch, delivery and advocate credit courier

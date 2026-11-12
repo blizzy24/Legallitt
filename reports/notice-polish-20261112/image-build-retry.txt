@@ -1,0 +1,63 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 2.72kB 0.0s done
+#1 DONE 0.1s
+
+#2 [internal] load metadata for docker.io/library/node:22-bookworm-slim
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context:
+#3 transferring context: 253B done
+#3 DONE 0.0s
+
+#4 [internal] load build context
+#4 DONE 0.0s
+
+#5 [build  1/13] FROM docker.io/library/node:22-bookworm-slim@sha256:f5edcaefce9e3505c53e917deda2f7999b3065f8d6462f5096db91342e498b36
+#5 resolve docker.io/library/node:22-bookworm-slim@sha256:f5edcaefce9e3505c53e917deda2f7999b3065f8d6462f5096db91342e498b36 0.0s done
+#5 DONE 0.0s
+
+#6 [stage-1 3/8] ADD https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem /etc/ssl/rds/global-bundle.pem
+#6 ...
+
+#5 [build  1/13] FROM docker.io/library/node:22-bookworm-slim@sha256:f5edcaefce9e3505c53e917deda2f7999b3065f8d6462f5096db91342e498b36
+#5 DONE 0.1s
+
+#4 [internal] load build context
+#4 transferring context: 8.74MB 0.5s done
+#4 DONE 0.6s
+
+#5 [build  1/13] FROM docker.io/library/node:22-bookworm-slim@sha256:f5edcaefce9e3505c53e917deda2f7999b3065f8d6462f5096db91342e498b36
+#5 extracting sha256:c96c411090da09187c55ab267826b3903b542b5c03f1cafa912d60e060e7850c
+#5 extracting sha256:c96c411090da09187c55ab267826b3903b542b5c03f1cafa912d60e060e7850c 0.9s done
+#5 DONE 1.1s
+
+#6 [stage-1 3/8] ADD https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem /etc/ssl/rds/global-bundle.pem
+#6 ...
+
+#5 [build  1/13] FROM docker.io/library/node:22-bookworm-slim@sha256:f5edcaefce9e3505c53e917deda2f7999b3065f8d6462f5096db91342e498b36
+#5 extracting sha256:3a7b14f3e09ef4928f727883ab5693d524797e3833c2f4c6bc1f0d0791330a42 0.0s done
+#5 extracting sha256:9d7b1405876470cc4eb0c1eb2811037931a1a1e02767a4f514909ed3c50ad6a8 1.0s done
+#5 DONE 2.1s
+
+#5 [build  1/13] FROM docker.io/library/node:22-bookworm-slim@sha256:f5edcaefce9e3505c53e917deda2f7999b3065f8d6462f5096db91342e498b36
+#5 extracting sha256:d76d856751feaaeaf5bc9b5c40d4b8b78fdcb19c7dd79d67aaa9bb2d7d1c60c1 0.0s done
+#5 extracting sha256:6009fa0b728ada85ec401c99a280269ab76f1f5ee7edb64dc7ec40c306c1107a 0.0s done
+#5 DONE 2.2s
+
+#6 [stage-1 3/8] ADD https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem /etc/ssl/rds/global-bundle.pem
+#6 DONE 2.2s
+
+#7 [build  2/13] RUN apt-get update && apt-get install -y --no-install-recommends openssl ca-certificates && rm -rf /var/lib/apt/lists/*
+#7 ...
+
+#6 [stage-1 3/8] ADD https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem /etc/ssl/rds/global-bundle.pem
+#6 DONE 2.2s
+
+#7 [build  2/13] RUN apt-get update && apt-get install -y --no-install-recommends openssl ca-certificates && rm -rf /var/lib/apt/lists/*
+#7 1.738 Get:1 http://deb.debian.org/debian bookworm InRelease [151 kB]
+#7 2.644 Get:2 http://deb.debian.org/debian bookworm-updates InRelease [55.4 kB]
+#7 3.125 Get:3 http://deb.debian.org/debian-security bookworm-security InRelease [34.8 kB]
+#7 4.146 Get:4 http://deb.debian.org/debian bookworm/main arm64 Packages [8689 kB]

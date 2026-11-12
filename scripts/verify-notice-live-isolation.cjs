@@ -5,8 +5,9 @@ const base='https://gvycg0n3u8.execute-api.ap-south-1.amazonaws.com',mobile='htt
 async function main(){
  const password=await require('../apps/api/dist/src/auth/demo').demoPassword(),sessions={},api={};
  for(const name of ['client','client-isolation','advocate']){const r=await fetch(base+'/api/v1/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:`demo-${name}@legalitt.invalid`,password})});assert.equal(r.status,201);sessions[name]=await r.json();api[name]=new ApiClient({baseUrl:base,getTokens:async()=>sessions[name].tokens});}
- const primary=JSON.parse(fs.readFileSync(path.join(out,'state.json'))).cases[0];assert.ok(primary?.id);
- const isolation=(await api['client-isolation'].request('/cases?limit=100')).items.find(c=>c.service_code==='legal_notice');assert.ok(isolation?.id);
+ const primaryState=JSON.parse(fs.readFileSync(path.join(out,'state.json'))).cases[0];assert.ok(primaryState?.id);
+ const primary=await api.client.case(primaryState.id);assert.ok(primary.reference,'Primary case reference is required for browser leak assertion');
+ const isolation=(await api['client-isolation'].request('/cases?limit=100')).items.find(c=>c.service_code==='legal_notice');assert.ok(isolation?.id);assert.ok(isolation.reference,'Other client case reference is required for browser leak assertion');
  const get=(role,suffix)=>fetch(base+'/api/v1'+suffix,{headers:{Authorization:'Bearer '+sessions[role].tokens.idToken}}),results=[],errors=[];
  const browser=await puppeteer.launch({executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe',headless:true});
  try{

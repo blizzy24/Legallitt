@@ -1,0 +1,10 @@
+
+> @legalitt/api@0.0.0 build D:\Legalitt\Legallitt\apps\api
+> prisma generate && tsc
+
+Loaded Prisma config from prisma.config.ts.
+
+Prisma schema loaded from prisma\schema.prisma.
+
+✔ Generated Prisma Client (7.10.1) to .\src\generated\prisma in 1.26s
+

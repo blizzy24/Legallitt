@@ -1,0 +1,6 @@
+{
+  "status": 204,
+  "origin": "https://legalitt-5.vercel.app",
+  "methods": "GET,POST,PUT,PATCH,DELETE,OPTIONS",
+  "headers": "Authorization,Content-Type,Idempotency-Key"
+}

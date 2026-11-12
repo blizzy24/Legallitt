@@ -1,0 +1,12 @@
+STAGE intakes
+SHOT client-landing.png
+SHOT client-step1-courier.png
+SHOT client-methods-courier.png
+SHOT client-issue-courier.png
+SHOT client-uploads-courier.png
+SHOT client-review-files-courier.png
+SHOT client-summary-courier.png
+SHOT client-payment-courier.png
+SHOT client-scan-courier.png
+SHOT client-success-courier.png
+PASS Client intake/payment courier

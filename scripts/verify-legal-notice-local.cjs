@@ -175,6 +175,9 @@ async function main(){
    });
    stage('polish',async()=>{
      const client=await page('client'),c=state.cases[0],adv=await page(c.advocate??'advocate-2');
+     const wallet=await api[c.advocate??'advocate-2'].wallet('all'),credits=wallet.entries.filter(e=>e.case_id===c.id);
+     assert.equal(credits.length,1,'Completed case credited exactly once');assert.equal(credits[0].share_paise,'99900','Urgent advocate share');
+     pass('Completed case has exactly one advocate ledger credit of ₹999');
      await go(client,mobile+'/legal-notice');await text(client,'Choose Your Service');await client.waitForSelector('img[src*=notice-hero]');
      assert.ok(await client.$eval('img[src*=notice-hero]',e=>e.complete&&e.naturalWidth>0),'Supplied hero loaded');
      await snap(client,'client-landing');

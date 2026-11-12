@@ -1,0 +1,40 @@
+{
+  "checked_at": "2026-11-12T18:02:44.631Z",
+  "bidirectional": true,
+  "legacy_dispatch_cases_opened": 3,
+  "results": [
+    {
+      "role": "client",
+      "path": "/cases/28e9dbf2-0e04-4a6d-8c54-03fe9e58da61",
+      "status": 404
+    },
+    {
+      "role": "client",
+      "path": "/notices/28e9dbf2-0e04-4a6d-8c54-03fe9e58da61/flow",
+      "status": 404
+    },
+    {
+      "role": "client",
+      "browser": "foreign case refused without reference or case details"
+    },
+    {
+      "role": "client-isolation",
+      "path": "/cases/8d7a1854-330b-466c-bef1-4d6f4d2b9b2d",
+      "status": 404
+    },
+    {
+      "role": "client-isolation",
+      "path": "/notices/8d7a1854-330b-466c-bef1-4d6f4d2b9b2d/flow",
+      "status": 404
+    },
+    {
+      "role": "client-isolation",
+      "browser": "foreign case refused without reference or case details"
+    },
+    {
+      "role": "replaced advocate",
+      "status": 404
+    }
+  ],
+  "page_errors": []
+}

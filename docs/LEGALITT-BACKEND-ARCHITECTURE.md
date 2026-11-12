@@ -2309,6 +2309,11 @@ configured; do not substitute a successful simulation on the deployed site. The
 local walkthrough uses its labelled adapter. WhatsApp and e-sign retain their
 manual/test labels. Deployment evidence is in `reports/notice-polish-20261112/`.
 
+The follow-up deployed API `733af89` (including the browser filing preflight fix)
+after migrations, with both Vercel sites rebuilt successfully. Production and
+local browser acceptance now use the same configured-origin CORS factory;
+`PUT` filing requests are covered by an HTTP preflight regression test.
+
 **Report services — 11 November 2026:** intake, uploads, chat, assignment,
 version history, PDF production, admin review, release and inbox notifications
 are real application paths. Payment and external notification delivery reuse the
@@ -2329,7 +2334,7 @@ empty, or explicitly accepted in writing by the client, before production.
 
 | Capability | Flag | Standing in because | Clears when |
 |---|---|---|---|
-| Legal Notice email dispatch | Real `SesNoticeEmail` adapter; `NOTICE_SES_FROM_EMAIL`, optional `NOTICE_SES_CONFIGURATION_SET`. Local tests inject `TestNoticeEmail`, explicitly simulated. | SES sender/IAM/provider delivery have not been activated or verified by this local-only chunk. The adapter attaches the pinned PDF and records SES message ID. SDK retries are disabled; an uncertain outcome is an admin reconciliation task, not an automatic duplicate send. SES acceptance means Sent, not Delivered. | Verified sender and SES permissions configured, delivery/bounce reporting verified. Optional Dev Compute parameters and sender/identity-scoped IAM are prepared and tested in source only; no infrastructure was deployed |
+| Legal Notice email dispatch | Real `SesNoticeEmail` adapter; `NOTICE_SES_FROM_EMAIL`, optional `NOTICE_SES_CONFIGURATION_SET`. Local tests inject `TestNoticeEmail`, explicitly simulated. | Dev API image `94d8836` and optional SES configuration parameters deployed in the authorised 12 November follow-up. No verified SES identity exists in `ap-south-1`; sender settings remain blank and email dispatch fails visibly without sending. The adapter attaches the pinned PDF and records SES message ID. SDK retries are disabled; an uncertain outcome is an admin reconciliation task, not an automatic duplicate send. SES acceptance means Sent, not Delivered. | Configure a verified sender and sender-scoped SES permissions, then verify delivery/bounce reporting. No sender, credentials or effective IAM permissions were changed by this rollout. |
 | Legal Notice WhatsApp dispatch | Pinned workflow policy `whatsapp_mode=manual` | No provider selected. Admin sends manually and records Sent/Delivered/Failed; UI must label the manual action. | WhatsApp provider chosen and integrated |
 | Legal Notice Aadhaar e-sign | Pinned workflow policy `esign_mode=test` | No provider selected. Assigned advocate confirms an explicitly labelled test step; it records an event against the exact PDF and does not modify its bytes or apply any digital signature. No Aadhaar number is requested or stored. | Provider selected and actual signature verification/file pipeline implemented |
 | Payments | `PAYMENTS_MODE=simulated` | No Razorpay test keys yet | Client supplies test keys with Route enabled |

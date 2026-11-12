@@ -1,0 +1,7 @@
+{
+  "status": 204,
+  "origin": "https://legalitt-5.vercel.app",
+  "methods": "GET,POST,PATCH,DELETE,OPTIONS",
+  "headers": "Authorization,Content-Type,Idempotency-Key"
+}
+Filing PUT must be allowed by browser preflight

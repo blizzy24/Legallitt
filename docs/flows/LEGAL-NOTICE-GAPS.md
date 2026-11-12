@@ -149,3 +149,12 @@ cancellation is a small bottom link. Missing historical timestamps are not inven
 The follow-up verification and deployment record is in
 [`reports/notice-polish-20261112`](../../reports/notice-polish-20261112/).
 The original local-only results above describe the earlier acceptance pass.
+
+The authorised follow-up is deployed: API `733af89`, both Vercel sites rebuilt.
+The live check found and fixed production's missing CORS `PUT` method; local
+acceptance now uses the same CORS configuration and an HTTP regression covers it.
+The live courier walkthrough, failed-delivery correction, exactly-once advocate
+credit, PDF viewer and visual assertions passed. Both client-isolation directions
+returned 404, and three existing dispatch/completed cases opened successfully.
+SES remains explicitly blocked until a verified sender is configured; no live
+email-delivery success is claimed. See the linked rollout record for logs and screenshots.

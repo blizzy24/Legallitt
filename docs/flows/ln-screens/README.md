@@ -2,6 +2,8 @@
 
 Local visual polish verification on 12 November 2026. Deployment and live-site results are recorded separately in reports/notice-polish-20261112/. These are actual synthetic-case browser captures, compared with the current supplied exports. The original images are unchanged.
 
+The polished screens are now deployed. See the [live rollout report](../../../reports/notice-polish-20261112/README.md) and [live browser captures](../../../reports/notice-polish-20261112/live/screens/). The comparisons below use the same frontend implementation verified on the live sites.
+
 - [landing](comparisons/landing.png) ([interactive comparison](comparisons/landing.html))
 - [client-details](comparisons/client-details.png) ([interactive comparison](comparisons/client-details.html))
 - [delivery-methods](comparisons/delivery-methods.png) ([interactive comparison](comparisons/delivery-methods.html))
