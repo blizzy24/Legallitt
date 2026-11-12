@@ -62,8 +62,11 @@ test('D-35 advocate verification: owner-scoped documents, submit, admin decision
       const c=await state.create(client,{service_code:'property_search'});
       try{
         await db.case.update({where:{id:c.id},data:{status:'paid'}});
+        const {ReportWorkflowService}=require('../dist/src/service-reports/report-workflow.service');
+        const workflow=new ReportWorkflowService(prisma,new InAppNotifications(new SimulatedNotifications()));
+        await workflow.action(admin,c.id,'verify',{revision:(await workflow.view(admin,c.id)).revision});
         await assert.rejects(state.assign(admin,c.id,{advocate_id:other.id}),{status:400});
-      }finally{await db.caseEvent.deleteMany({where:{case_id:c.id}});await db.case.delete({where:{id:c.id}});}
+      }finally{await db.reportWorkflow.deleteMany({where:{case_id:c.id}});await db.caseEvent.deleteMany({where:{case_id:c.id}});await db.case.delete({where:{id:c.id}});}
     });
   }finally{
     const ids=users.map(u=>u.id);

@@ -27,6 +27,7 @@ export * from './fir-police-stations';
 export * from './consultation';
 export * from './consultation-api';
 export * from './service-reports';
+export * from './report-workflow';
 export * from './cancellations';
 export * from './support';
 export * from './account-data';

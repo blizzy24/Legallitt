@@ -1,0 +1,67 @@
+TAP version 13
+# Subtest: Report services: provisional pricing, paid intake, assignment, advocate report, admin gate, private release
+    # Subtest: provisional tariffs are unconfirmed and price as base + 25% platform + 18% GST
+    ok 1 - provisional tariffs are unconfirmed and price as base + 25% platform + 18% GST
+      ---
+      duration_ms: 44.4895
+      type: 'test'
+      ...
+    # Subtest: intake rules: client-only, draft-only, validated jurisdiction, no foreign kinds
+    ok 2 - intake rules: client-only, draft-only, validated jurisdiction, no foreign kinds
+      ---
+      duration_ms: 414.5565
+      type: 'test'
+      ...
+    # Subtest: Property Search: advocate uploads the PDF and sends it straight to the client (design 211)
+    ok 3 - Property Search: advocate uploads the PDF and sends it straight to the client (design 211)
+      ---
+      duration_ms: 1883.1261
+      type: 'test'
+      ...
+# (node:43004) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+# (Use `node --trace-deprecation ...` to show where the warning was created)
+    # Subtest: Document Forensic: rendered report + affidavit, admin changes, resubmit, approve, release
+    ok 4 - Document Forensic: rendered report + affidavit, admin changes, resubmit, approve, release
+      ---
+      duration_ms: 4933.9052
+      type: 'test'
+      ...
+    # Subtest: Court Marriage: uploaded application goes through admin approval
+    ok 5 - Court Marriage: uploaded application goes through admin approval
+      ---
+      duration_ms: 738.7156
+      type: 'test'
+      ...
+    # Subtest: Workflow actions isolate other clients and advocates, pause deadlines and release the editor PDF directly
+    ok 6 - Workflow actions isolate other clients and advocates, pause deadlines and release the editor PDF directly
+      ---
+      duration_ms: 2605.3131
+      type: 'test'
+      ...
+    # Subtest: overdue reassignment retains work, removes former access and requires fresh authorship
+    ok 7 - overdue reassignment retains work, removes former access and requires fresh authorship
+      ---
+      duration_ms: 591.2411
+      type: 'test'
+      ...
+    # Subtest: upload limits are versioned per service and enforced on storage completion
+    ok 8 - upload limits are versioned per service and enforced on storage completion
+      ---
+      duration_ms: 150.5242
+      type: 'test'
+      ...
+    1..8
+ok 1 - Report services: provisional pricing, paid intake, assignment, advocate report, admin gate, private release
+  ---
+  duration_ms: 12732.7327
+  type: 'test'
+  ...
+1..1
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 14009.9858

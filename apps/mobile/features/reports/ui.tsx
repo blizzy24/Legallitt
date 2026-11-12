@@ -5,14 +5,18 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {ArrowLeft,Mail,Phone,ShieldCheck,UserRound,type LucideIcon} from 'lucide-react-native';
 import type {ReportServiceCode} from '@legalitt/shared';
 import {colors,font,ink} from '../../constants/theme';
-import {s} from '../consultation/ui';
-export {Button,Card,Choice,ErrorBox,Field,Value,s} from '../consultation/ui';
+import {s as sharedStyles} from '../consultation/ui';
+export {ErrorBox,Field,Value} from '../consultation/ui';
+export const s={...sharedStyles,content:{...sharedStyles.content,gap:14},title:{...sharedStyles.title,fontSize:20},heading:{...sharedStyles.heading,fontSize:17},card:{...sharedStyles.card,borderRadius:14,padding:16,gap:12,borderWidth:1,borderColor:'#E8E3DD'},button:{...sharedStyles.button,borderRadius:10},body:{...sharedStyles.body,fontSize:14,lineHeight:21}};
+export function Card({title,children}:{title?:string;children:ReactNode}){return <View style={s.card}>{title&&<Text style={s.heading}>{title}</Text>}{children}</View>;}
+export function Choice({label,selected,onPress,disabled=false}:{label:string;selected:boolean;onPress:()=>void;disabled?:boolean}){return <Pressable accessibilityRole="radio" accessibilityLabel={label} accessibilityState={{checked:selected,disabled}} disabled={disabled} onPress={onPress} style={{flexDirection:'row',alignItems:'center',gap:10,padding:12,borderWidth:1,borderColor:selected?'#AD9879':'#E5DFD6',borderRadius:10,backgroundColor:selected?'#FCF5EA':'#fff',opacity:disabled?.5:1}}><View style={{width:19,height:19,borderRadius:10,borderWidth:1,borderColor:selected?'#8D795D':'#CFC6B9',backgroundColor:selected?'#8D795D':'#fff',alignItems:'center',justifyContent:'center'}}>{selected&&<Text style={{color:'#fff',fontSize:12}}>✓</Text>}</View><Text style={[s.body,{flex:1}]}>{label}</Text></Pressable>;}
+export function Button({children,onPress,disabled=false,secondary=false}:{children:ReactNode;onPress:()=>void;disabled?:boolean;secondary?:boolean}){return <Pressable accessibilityRole="button" accessibilityState={{disabled}} disabled={disabled} onPress={onPress} style={[s.button,secondary&&{backgroundColor:'transparent',borderWidth:1,borderColor:'#B6A78F'},disabled&&{opacity:.5}]}><Text style={[s.buttonText,secondary&&{color:colors.brandDark}]}>{children}</Text></Pressable>;}
 
-/** The distinct headers and form groups in designs 74 and 84, using live data. */
+/** Current report-flow headers, with shared loading/error treatment. */
 export function Screen({title,subtitle,children,back,service,step}:{title:string;subtitle?:string;children:ReactNode;back?:()=>void;service?:ReportServiceCode;step?:string}){
  const inset=useSafeAreaInsets(),ps=service==='property_search',df=service==='document_forensic';
  const intake=['request','upload','review','payment'].includes(step??'');
- return <View style={[s.screen,ps&&{backgroundColor:'#fff'}]}>
+ return <View style={[s.screen,ps&&{backgroundColor:'#FAF8F5'}]}>
   <View style={[s.header,{paddingTop:inset.top+16}]}>
    <Pressable accessibilityRole="button" accessibilityLabel="Back" onPress={back??(()=>router.canGoBack()?router.back():router.navigate('/home'))}><ArrowLeft color={colors.textPrimary}/></Pressable>
    <View style={{flex:1}}>{df&&<Text style={styles.eyebrow}>FORENSIC WORKFLOW</Text>}<Text style={[s.title,ps&&intake&&styles.propertyHeader]}>{ps&&intake?'PROPERTY SEARCH REPORT':df&&step==='upload'?'Upload Document':title}</Text>{subtitle&&<Text style={s.muted}>{subtitle}</Text>}</View>

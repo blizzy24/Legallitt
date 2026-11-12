@@ -10,7 +10,7 @@ import { caseClientFees } from './client-fees';
 import {firApproval} from './fir-approval';
 import {isConsultationService} from '@legalitt/shared';
 import {consultationDocumentVisible} from '../consultations/consultation-documents';
-import {isReportService} from '@legalitt/shared';
+import {isReportService,isFlowReportService,reportStage,type ReportWorkflowData} from '@legalitt/shared';
 import {reportCaseView} from '../service-reports/report-access';
 
 const cursorSchema = z.strictObject({
@@ -206,7 +206,7 @@ export class CaseRepository {
         ],
       },
       orderBy: [{ created_at: "asc" }, { id: "asc" }],
-      include: { advocate_id_relation: { select: { id: true, full_name: true } } },
+      include: { advocate_id_relation: { select: { id: true, full_name: true } },client_id_relation:{select:{full_name:true}},report_workflow:{select:{data:true}} },
       take: input.limit + 1,
     });
     // A1 (design 214): the advocate's FIR card shows their share and the latest note.
@@ -223,7 +223,9 @@ export class CaseRepository {
         firCards.set(id, {share_paise: snapshot?.breakdown?.advocate_entitlement_paise ?? null, note: event ? firTeamEventLabel(event, false) : null});
       }
     }
-    const items = rows.slice(0, input.limit).map(({ advocate_id_relation: advocate, ...record }) => ({ ...record,
+    const items = rows.slice(0, input.limit).map(({ advocate_id_relation: advocate,client_id_relation:client,report_workflow:workflow, ...record }) => ({ ...record,
+      ...(isFlowReportService(record.service_code)?{report_card:{stage:reportStage(record,(workflow?.data??{}) as ReportWorkflowData),deadline_at:(workflow?.data as ReportWorkflowData|null)?.deadline_at??null,client_name:client.full_name}}:{}),
+      ...(isFlowReportService(record.service_code)&&actor.role==='advocate'&&record.status==='assigned'&&(record.details as {contact?:object}).contact?{details:{...(record.details as object),contact:{...(record.details as {contact:object}).contact,mobile:undefined,email:undefined}}}:{}),
       // A2: the assigned advocate's list masks the client's mobile and email until they accept.
       ...(record.service_code === 'fir_draft' && firContactMasked(actor.role, record.status) ? {details: maskFirContact(record.details)} : {}),
       advocate, ...(firCards.has(record.id) ? {fir_card: firCards.get(record.id)} : {}) }));
@@ -268,7 +270,7 @@ export class CaseRepository {
     const page=rows.slice(0,input.limit);
     const clientReport=actor.role==='client'&&isReportService(caseRow.service_code);
     const items=clientFir?firEventsFor('client',page):actor.role==='advocate'&&caseRow.service_code==='fir_draft'?firEventsFor('advocate',page):
-      clientReport?page.filter(e=>e.from_status!==e.to_status||e.type==='service_report_released').map(e=>e.type==='service_report_released'?e:{...e,payload:{}}):actor.role==='client'&&caseRow.service_code==='legal_notice'?noticeClientEvents(page):page;
+      clientReport?page.filter(e=>e.from_status!==e.to_status||['service_report_released','report_document_uploaded'].includes(e.type)).map(e=>e.type==='service_report_released'?e:{...e,payload:{}}):actor.role==='client'&&caseRow.service_code==='legal_notice'?noticeClientEvents(page):page;
     return {
       items,
       next_cursor:

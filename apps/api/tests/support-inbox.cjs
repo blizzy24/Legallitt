@@ -73,6 +73,7 @@ test('D-26/D-28/D-42: support tickets, callbacks, chat, admin inbox and unified 
     const ths=await db.messageThread.findMany({where:{case_id:{in:caseIds}},select:{id:true}});
     await db.message.deleteMany({where:{thread_id:{in:ths.map(t=>t.id)}}});await db.messageThread.deleteMany({where:{case_id:{in:caseIds}}});
     await db.notification.deleteMany({where:{user_id:{in:users.map(u=>u.id)}}});
+    await db.reportWorkflow.deleteMany({where:{case_id:{in:caseIds}}});
     await db.caseEvent.deleteMany({where:{case_id:{in:caseIds}}});await db.case.deleteMany({where:{id:{in:caseIds}}});
     await db.advocateProfile.deleteMany({where:{user_id:{in:users.map(u=>u.id)}}});await db.user.deleteMany({where:{id:{in:users.map(u=>u.id)}}});
     await db.$disconnect();

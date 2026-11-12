@@ -2,11 +2,13 @@
 // upload inspection; explicit in-memory object-storage and email test adapters.
 // Existing demo authentication is used unchanged. Never contacts SES or S3.
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),{createServer}=require('node:http'),{randomUUID,createHash}=require('node:crypto');
-module.exports=async function start(){
- const url=new URL(process.env.DATABASE_URL);assert.ok(['127.0.0.1','localhost'].includes(url.hostname));assert.equal(url.pathname,'/legalitt_notice_local');assert.ok(!process.env.DATABASE_SECRET_ARN);
+module.exports=async function start(options={}){
+ const database=options.database??'legalitt_notice_local';assert.ok(['legalitt_notice_local','legalitt_report_local'].includes(database));
+ const url=new URL(process.env.DATABASE_URL);assert.ok(['127.0.0.1','localhost'].includes(url.hostname));assert.equal(url.pathname,'/'+database);assert.ok(!process.env.DATABASE_SECRET_ARN);
  process.env.AI_MODE='simulated';process.env.PAYMENTS_MODE='simulated';process.env.ENVIRONMENT='dev';process.env.DEMO_PROGRESSION='off';
- const origins=['http://localhost:8083','http://localhost:5174'],servers=[],objects=new Map(),caps=new Map(),sent=[];
- const cache='reports/notice-flow-20261112/local/storage-cache.json';
+ const mobilePort=options.mobilePort??8083,adminPort=options.adminPort??5174,apiPort=options.apiPort??3003;
+ const origins=[`http://localhost:${mobilePort}`,`http://localhost:${adminPort}`],servers=[],objects=new Map(),caps=new Map(),sent=[];
+ const cache=options.cache??'reports/notice-flow-20261112/local/storage-cache.json';
  if(fs.existsSync(cache))for(const entry of JSON.parse(fs.readFileSync(cache,'utf8'))){const bytes=Buffer.from(entry.bytes,'base64');objects.set(entry.key,{bytes,mime:entry.mime,version:randomUUID(),etag:createHash('sha256').update(bytes).digest('hex')});}
  const blob=createServer(async(req,res)=>{try{
    if(req.headers.origin&&!origins.includes(req.headers.origin)){res.writeHead(403).end();return;}
@@ -32,10 +34,12 @@ module.exports=async function start(){
  storage.discard=async(key,info)=>{if(objects.get(key)?.version===info.version)objects.delete(key);};storage.remove=async key=>{objects.delete(key);};
  app.get(NOTICE_EMAIL).assertReady=()=>{};
  app.get(NOTICE_EMAIL).send=async input=>{assert.ok(input.to.endsWith('.invalid'),'Only synthetic recipients in local walkthrough');sent.push({to:input.to,reference:input.reference,attemptId:input.attemptId,pdfBytes:input.pdf.length});return {messageId:'local-test-'+randomUUID(),simulated:true};};
- app.enableCors(require('../../apps/api/dist/src/http-cors').httpCorsOptions(origins));await app.listen(3003,'127.0.0.1');
- for(const [folder,port]of [['apps/mobile/dist/notice-verification',8083],['apps/admin/dist/notice-verification',5174]]){
+ app.enableCors(require('../../apps/api/dist/src/http-cors').httpCorsOptions(origins));await app.listen(apiPort,'127.0.0.1');
+ for(const [folder,port]of [[options.mobileFolder??'apps/mobile/dist/notice-verification',mobilePort],[options.adminFolder??'apps/admin/dist/notice-verification',adminPort]]){
    const root=path.resolve(folder),server=createServer((req,res)=>{let file=path.resolve(root,'.'+decodeURIComponent(new URL(req.url,'http://localhost').pathname));if(!file.startsWith(root+path.sep)||!fs.existsSync(file)||!fs.statSync(file).isFile())file=path.join(root,'index.html');res.setHeader('Content-Type',({'.js':'text/javascript','.mjs':'text/javascript','.html':'text/html','.css':'text/css','.png':'image/png','.ttf':'font/ttf','.wasm':'application/wasm'})[path.extname(file)]??'application/octet-stream');res.end(fs.readFileSync(file));});
    await new Promise(resolve=>server.listen(port,'127.0.0.1',resolve));servers.push(server);
  }
- return {app,sent,objects,attach:async()=>{},async close(){await app.close();for(const server of servers)await new Promise(resolve=>server.close(resolve));}};
+ const persist=()=>{if(options.persist){fs.mkdirSync(path.dirname(cache),{recursive:true});fs.writeFileSync(cache,JSON.stringify([...objects].map(([key,o])=>({key,mime:o.mime,bytes:o.bytes.toString('base64')}))));}};
+ const timer=options.persist?setInterval(persist,10000):null;
+ return {app,sent,objects,attach:async()=>{},async close(){if(timer)clearInterval(timer);persist();await app.close();for(const server of servers)await new Promise(resolve=>server.close(resolve));}};
 };

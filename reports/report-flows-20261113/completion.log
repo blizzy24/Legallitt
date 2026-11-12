@@ -1,0 +1,8 @@
+SHOT advocate-completed-ordinary.png
+PASS property_search-ordinary advocate completion uses human file labels and wallet confirmation
+SHOT advocate-completed-urgent.png
+PASS property_search-urgent advocate completion uses human file labels and wallet confirmation
+SHOT advocate-completed-ordinary.png
+PASS document_forensic-ordinary advocate completion uses human file labels and wallet confirmation
+SHOT advocate-completed-urgent.png
+PASS document_forensic-urgent advocate completion uses human file labels and wallet confirmation

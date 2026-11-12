@@ -184,6 +184,7 @@ model CommissionRate {
 }
 
 model Case {
+  report_workflow ReportWorkflow?
   notice_lifecycle NoticeLifecycle?
   notice_deliveries NoticeDelivery[]
   fir_lifecycle FirLifecycle?
@@ -234,6 +235,26 @@ model Case {
   notice_document_id_relation       Document?       @relation("cases_notice_document_id_documents", fields: [notice_document_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@map("cases")
+}
+
+model ReportWorkflowPolicy {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  service_code String
+  version Int
+  config Json @db.JsonB
+  effective_from DateTime @default(now()) @db.Timestamptz(6)
+  workflows ReportWorkflow[]
+  @@unique([service_code, version])
+  @@map("report_workflow_policies")
+}
+model ReportWorkflow {
+  case_id String @id @db.Uuid
+  policy_id String @db.Uuid
+  revision Int @default(0)
+  data Json @default("{}") @db.JsonB
+  case Case @relation(fields:[case_id],references:[id],onDelete:NoAction)
+  policy ReportWorkflowPolicy @relation(fields:[policy_id],references:[id],onDelete:NoAction)
+  @@map("report_workflows")
 }
 
 model NoticeWorkflowPolicy {

@@ -32,7 +32,15 @@
         }
       ],
       "expo-font",
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow Legalitt to select document images you choose to upload.",
+          "cameraPermission": "Allow Legalitt to photograph documents you choose to upload.",
+          "microphonePermission": false
+        }
+      ]
     ],
     "scheme": "app14",
     "experiments": {

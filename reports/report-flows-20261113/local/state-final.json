@@ -1,0 +1,191 @@
+{
+  "cases": [
+    {
+      "id": "f6448f1c-2b83-47db-bfd2-0b4eb45358eb",
+      "service": "property_search",
+      "speed": "ordinary",
+      "tag": "property_search-ordinary",
+      "paid": true,
+      "advocate": "advocate-2"
+    },
+    {
+      "id": "f6ae908a-dbdc-4942-8c07-2ce51b5ec37e",
+      "service": "property_search",
+      "speed": "urgent",
+      "tag": "property_search-urgent",
+      "paid": true,
+      "advocate": "advocate-2"
+    },
+    {
+      "id": "6d1fb49b-5bf4-48d5-8fdb-d3e0ee16eb8a",
+      "service": "document_forensic",
+      "speed": "ordinary",
+      "tag": "document_forensic-ordinary",
+      "paid": true,
+      "advocate": "advocate",
+      "returned": true
+    },
+    {
+      "id": "cf3821c8-5fc4-439c-93bb-6c17fb34a5e3",
+      "service": "document_forensic",
+      "speed": "urgent",
+      "tag": "document_forensic-urgent",
+      "paid": true,
+      "advocate": "advocate"
+    },
+    {
+      "id": "1e7e66df-c811-4422-8fd2-f627377f9da0",
+      "service": "property_search",
+      "speed": "ordinary",
+      "tag": "property_search-cancellation",
+      "cancel": true,
+      "paid": true
+    },
+    {
+      "id": "402d2244-bd88-4d0a-b593-d8797d1a5975",
+      "service": "document_forensic",
+      "speed": "ordinary",
+      "tag": "document_forensic-cancellation",
+      "cancel": true,
+      "paid": true
+    }
+  ],
+  "results": [
+    {
+      "name": "property_search-ordinary intake persisted, exact quote paid, success and tracking",
+      "at": "2026-11-12T20:31:53.455Z"
+    },
+    {
+      "name": "property_search-urgent intake persisted, exact quote paid, success and tracking",
+      "at": "2026-11-12T20:32:27.377Z"
+    },
+    {
+      "name": "document_forensic-ordinary intake persisted, exact quote paid, success and tracking",
+      "at": "2026-11-12T20:32:54.714Z"
+    },
+    {
+      "name": "document_forensic-urgent intake persisted, exact quote paid, success and tracking",
+      "at": "2026-11-12T20:33:23.052Z"
+    },
+    {
+      "name": "property_search-ordinary assigned, request reviewed and accepted",
+      "at": "2026-11-12T20:34:02.264Z"
+    },
+    {
+      "name": "property_search-urgent assigned, request reviewed and accepted",
+      "at": "2026-11-12T20:34:22.740Z"
+    },
+    {
+      "name": "document_forensic-ordinary assigned, request reviewed and accepted",
+      "at": "2026-11-12T20:34:44.796Z"
+    },
+    {
+      "name": "document_forensic-urgent assigned, request reviewed and accepted",
+      "at": "2026-11-12T20:34:57.142Z"
+    },
+    {
+      "name": "property_search-ordinary report delivered directly to client",
+      "at": "2026-11-12T20:35:45.270Z"
+    },
+    {
+      "name": "property_search-urgent report delivered directly to client",
+      "at": "2026-11-12T20:35:56.974Z"
+    },
+    {
+      "name": "document_forensic-ordinary report and affidavit approved and released after correction",
+      "at": "2026-11-12T20:37:19.300Z"
+    },
+    {
+      "name": "document_forensic-urgent report and affidavit approved and released",
+      "at": "2026-11-12T20:38:03.333Z"
+    },
+    {
+      "name": "property_search-ordinary client viewer/download, isolation and one wallet credit",
+      "at": "2026-11-12T20:38:11.819Z"
+    },
+    {
+      "name": "property_search-urgent client viewer/download, isolation and one wallet credit",
+      "at": "2026-11-12T20:38:20.133Z"
+    },
+    {
+      "name": "document_forensic-ordinary client viewer/download, isolation and one wallet credit",
+      "at": "2026-11-12T20:38:33.860Z"
+    },
+    {
+      "name": "document_forensic-urgent client viewer/download, isolation and one wallet credit",
+      "at": "2026-11-12T20:38:46.955Z"
+    },
+    {
+      "name": "property_search-cancellation intake persisted, exact quote paid, success and tracking",
+      "at": "2026-11-12T20:38:58.818Z"
+    },
+    {
+      "name": "property_search cancellation before acceptance records full simulated refund",
+      "at": "2026-11-12T20:39:07.430Z"
+    },
+    {
+      "name": "document_forensic-cancellation intake persisted, exact quote paid, success and tracking",
+      "at": "2026-11-12T20:39:19.714Z"
+    },
+    {
+      "name": "document_forensic cancellation before acceptance records full simulated refund",
+      "at": "2026-11-12T20:39:28.436Z"
+    },
+    {
+      "name": "property_search loading, error and retry states",
+      "at": "2026-11-12T20:39:43.774Z"
+    },
+    {
+      "name": "document_forensic loading, error and retry states",
+      "at": "2026-11-12T20:39:59.296Z"
+    },
+    {
+      "name": "property_search-ordinary advocate completion uses human file labels and wallet confirmation",
+      "at": "2026-11-12T20:40:47.305Z"
+    },
+    {
+      "name": "property_search-urgent advocate completion uses human file labels and wallet confirmation",
+      "at": "2026-11-12T20:40:50.756Z"
+    },
+    {
+      "name": "document_forensic-ordinary advocate completion uses human file labels and wallet confirmation",
+      "at": "2026-11-12T20:40:57.477Z"
+    },
+    {
+      "name": "document_forensic-urgent advocate completion uses human file labels and wallet confirmation",
+      "at": "2026-11-12T20:41:00.880Z"
+    },
+    {
+      "name": "Document Forensic Gallery selection persists an image through the document pipeline",
+      "at": "2026-11-12T20:41:14.203Z"
+    },
+    {
+      "name": "property_search admin upload settings visible and versioned changes apply only to new cases",
+      "at": "2026-11-12T20:56:19.972Z"
+    },
+    {
+      "name": "document_forensic admin upload settings visible and versioned changes apply only to new cases",
+      "at": "2026-11-12T20:56:24.560Z"
+    },
+    {
+      "name": "Document Forensic Gallery selection persists an image through the document pipeline",
+      "at": "2026-11-12T20:56:39.238Z"
+    }
+  ],
+  "visuals": [
+    {
+      "id": "47aebfc5-ef32-4a4f-b468-18c858e8b67b",
+      "service": "property_search"
+    },
+    {
+      "id": "38a2a149-4802-41f3-b258-afccc93bc1b6",
+      "service": "document_forensic"
+    }
+  ],
+  "last_check": {
+    "stage": "gallery",
+    "passed": true,
+    "at": "2026-11-12T20:56:39.239Z"
+  },
+  "gallery_case_id": "c9af3f2a-6912-4804-aa79-a0db94554243"
+}

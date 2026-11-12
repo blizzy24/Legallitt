@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import type { AiRequest, AiResults, AiTask } from './ai.port';
 
-const requestSchema = z.strictObject({task:z.enum(['subject','demands','notice']),prompt:z.string().trim().min(1),response_format:z.literal('notice_sections').optional()});
+const requestSchema = z.strictObject({task:z.enum(['subject','demands','notice']),prompt:z.string().trim().min(1),response_format:z.enum(['notice_sections','property_wording']).optional()});
 const optionsSchema = z.strictObject({options:z.array(z.string().trim().min(1)).min(2)});
 export const demandsJsonSchema = {
   type:'object', properties:{options:{type:'array',items:{type:'string'},minItems:2}},

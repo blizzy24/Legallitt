@@ -2,7 +2,7 @@ import {useMemo,useRef,useState} from 'react';
 import {PanResponder,Text,View} from 'react-native';
 import Svg,{Path} from 'react-native-svg';
 import type {ReportSignature} from '@legalitt/shared';
-import {Button,s} from '../consultation/ui';
+import {Button,s} from './ui';
 export function SignaturePad({value,onChange}:{value:ReportSignature;onChange:(v:ReportSignature)=>void}){
  const [width,setWidth]=useState(300),[drawing,setDrawing]=useState<{x:number;y:number}[]>([]),ref=useRef({value,onChange,width});ref.current={value,onChange,width};const stroke=useRef<{x:number;y:number}[]>([]);
  const responder=useMemo(()=>PanResponder.create({onStartShouldSetPanResponder:()=>true,onMoveShouldSetPanResponder:()=>true,onPanResponderGrant:e=>{stroke.current=[{x:Math.max(0,Math.min(1,e.nativeEvent.locationX/ref.current.width)),y:Math.max(0,Math.min(1,e.nativeEvent.locationY/130))}];setDrawing([...stroke.current]);},onPanResponderMove:e=>{if(stroke.current.length>=1000)return;stroke.current.push({x:Math.max(0,Math.min(1,e.nativeEvent.locationX/ref.current.width)),y:Math.max(0,Math.min(1,e.nativeEvent.locationY/130))});setDrawing([...stroke.current]);},onPanResponderRelease:()=>{if(stroke.current.length>1)ref.current.onChange([...ref.current.value.slice(-29),stroke.current]);stroke.current=[];setDrawing([]);},onPanResponderTerminationRequest:()=>false}),[]);

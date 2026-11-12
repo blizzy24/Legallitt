@@ -11,20 +11,21 @@ import {colors,font} from '../../constants/theme';
 import {useCaseRecord,useFirQuote} from '../fir/client/api';
 import {money} from '../fir/client/format';
 import {TestPaymentLabel,useCopy} from '../fir/client/ui';
-import {noticeDocumentLabel,type QuoteBreakdown} from '@legalitt/shared';
+import {noticeDocumentLabel,reportFileLabel,type QuoteBreakdown} from '@legalitt/shared';
 
-type Config={name:string;code:'legal_notice'|'fir_draft';payment:string;scan:string;success:string;tracking:string;review:string;documents:string;steps:number};
+export type CheckoutConfig={name:string;code:'legal_notice'|'fir_draft'|'property_search'|'document_forensic';payment:string;scan:string;success:string;tracking:string;review:string;documents:string;steps:number};
+type Config=CheckoutConfig;
 export const NOTICE_CHECKOUT:Config={name:'Legal Notice',code:'legal_notice',payment:'/legal-notice/step6',scan:'/legal-notice/scan-pay',success:'/legal-notice/success',tracking:'/legal-notice/tracking',review:'/legal-notice/step5',documents:'/legal-notice/step4',steps:6};
 export const FIR_CHECKOUT:Config={name:'FIR Draft',code:'fir_draft',payment:'/fir/payment',scan:'/fir/scan-pay',success:'/fir/payment-success',tracking:'/fir/status',review:'/fir/step5',documents:'/fir/step4',steps:6};
 type Checkout={id:string;quote_id:string;expires_at:string;server_time:string;total_paise:string;status:string;simulated:boolean;test_actions:boolean};
-const path=(base:string,id?:string,checkout?:string)=>(base+'?'+new URLSearchParams({...id?{caseId:id}:{},...checkout?{checkoutId:checkout}:{}}).toString()) as Href;
+const path=(base:string,id?:string,checkout?:string)=>(base+(base.includes('?')?'&':'?')+new URLSearchParams({...id?{caseId:id}:{},...checkout?{checkoutId:checkout}:{}}).toString()) as Href;
 function Action({label,onPress,disabled=false,primary=false}:{label:string;onPress():void;disabled?:boolean;primary?:boolean}){return <Pressable accessibilityRole="button" accessibilityLabel={label} disabled={disabled} onPress={onPress} style={[s.button,!primary&&{backgroundColor:'transparent',borderWidth:1,borderColor:'#BAA990'},disabled&&{opacity:.45}]}><Text style={[s.buttonText,!primary&&{color:'#806646'}]}>{label}</Text></Pressable>;}
 function Rows({breakdown:b}:{breakdown:QuoteBreakdown}){
   const rows:[string,string][]=[['Service Fee',b.service_fee_paise],...(BigInt(b.delivery_fee_paise)>0n?[['Delivery Fee',b.delivery_fee_paise] as [string,string]]:[]),['Platform Fee',b.platform_fee_paise],['Goods & Services Tax (GST 18%)',b.gst_paise],...(b.charged_pages?[['Extra pages ('+b.charged_pages+' × '+money(b.page_unit_paise)+', no GST)',b.page_overage_paise] as [string,string]]:[])];
   return <>{rows.map(([label,value])=><View key={label} style={s.row}><Text style={[s.body,{flex:1}]}>{label}</Text><Text style={s.body}>{money(value)}</Text></View>)}<View style={[s.row,s.total]}><Text style={s.title}>Total Payable</Text><Text style={s.title}>{money(b.total_paise)}</Text></View><Text style={s.muted}>GST applies to the service and platform fees only.</Text></>;
 }
-export function ServicePayment({config:c}:{config:Config}){
-  const {caseId}=useLocalSearchParams<{caseId?:string}>(),f=useCaseRecord(caseId),record=f.record,q=useFirQuote(caseId,record?.status==='payment_pending');
+export function ServicePayment({config:c,caseId:providedId}:{config:Config;caseId?:string}){
+  const params=useLocalSearchParams<{caseId?:string}>(),caseId=providedId??params.caseId,f=useCaseRecord(caseId),record=f.record,q=useFirQuote(caseId,record?.status==='payment_pending');
   const [selection,setSelection]=useState<PaymentSelection>(DEFAULT_PAYMENT_SELECTION),[busy,setBusy]=useState(false),[error,setError]=useState('');
   const ready=q.quote?.status==='ready'?q.quote:null;
   const next=async()=>{if(!caseId||!ready||busy)return;setBusy(true);setError('');try{const session=await backend.request<Checkout>('/payments/checkouts',{case_id:caseId,quote_id:ready.id});
@@ -36,7 +37,7 @@ export function ServicePayment({config:c}:{config:Config}){
   return <WizardShell step={c.steps} totalSteps={c.steps} header="leading" title="Complete Payment" subtitle="" align="top" background="tinted" busy={busy} hideButton buttonLabel="Pay" onContinue={()=>void next()} onBack={()=>router.replace(path(c.review,caseId))}>
     {f.loading?<Text style={s.body}>Loading payment details…</Text>:!record?<View style={s.card}><Text style={s.error}>{f.error||'Choose a request to pay.'}</Text><Action label="Retry" onPress={f.reload}/></View>:record.service_code!==c.code?<Text style={s.error}>This link is for a different service. Open the request from My Requests.</Text>:record.status!=='payment_pending'?<View style={s.card}><Text style={s.body}>{record.status==='draft'?'Submit your request from Review before paying.':'This case is not awaiting a payment. Check its current status before proceeding.'}</Text><Action label={record.status==='draft'?'Go to Review':'View request'} onPress={()=>router.replace(path(record.status==='draft'?c.review:c.tracking,caseId))}/></View>:<>
       <View style={s.card}><FileText size={22} color="#9A8263"/><Text style={s.large}>{c.name}</Text><Text style={s.muted}>Ref ID: {record.reference}</Text><View style={s.rule}/>
-        {q.loading?<Text style={s.body}>Calculating your fee…</Text>:q.error?<><Text style={s.error}>{q.error}</Text><Action label="Recalculate" onPress={q.reload}/></>:q.quote?.status==='blocked'?<><Text accessibilityRole="alert" style={s.error}>{q.quote.message}</Text>{q.quote.documents.map(d=><View key={d.id}><Text style={s.body}>{c.code==='legal_notice'?noticeDocumentLabel(d):d.filename}</Text><Text style={s.error}>{d.reason}</Text></View>)}<Text style={s.body}>Replace or finish these uploads before paying. No payment has been taken.</Text><Action label="Open Documents" onPress={()=>router.push(path(c.documents,caseId))}/><Action label="Recalculate" onPress={q.reload}/></>:ready?<Rows breakdown={ready.breakdown}/>:<Text style={s.body}>No price is available yet. Recalculate to retry.</Text>}
+        {q.loading?<Text style={s.body}>Calculating your fee…</Text>:q.error?<><Text style={s.error}>{q.error}</Text><Action label="Recalculate" onPress={q.reload}/></>:q.quote?.status==='blocked'?<><Text accessibilityRole="alert" style={s.error}>{q.quote.message}</Text>{q.quote.documents.map(d=><View key={d.id}><Text style={s.body}>{c.code==='legal_notice'?noticeDocumentLabel(d):['property_search','document_forensic'].includes(c.code)?reportFileLabel(record.documents?.find(file=>file.id===d.id)??{}):d.filename}</Text><Text style={s.error}>{d.reason}</Text></View>)}<Text style={s.body}>Replace or finish these uploads before paying. No payment has been taken.</Text><Action label="Open Documents" onPress={()=>router.push(path(c.documents,caseId))}/><Action label="Recalculate" onPress={q.reload}/></>:ready?<Rows breakdown={ready.breakdown}/>:<Text style={s.body}>No price is available yet. Recalculate to retry.</Text>}
       </View><Text style={[s.muted,{marginVertical:18}]}>SELECT PAYMENT METHOD</Text><PaymentMethods value={selection} onChange={setSelection} disabled={busy}/>
       {ready&&<View style={s.card}><View style={s.row}><Text style={s.body}>Amount to pay</Text><Text style={s.title}>{money(ready.breakdown.total_paise)}</Text></View><Action primary label={busy?'Opening payment…':'Pay →'} disabled={busy} onPress={()=>void next()}/></View>}
       {ready?.simulated&&<TestPaymentLabel text="Test payment only. No money will be charged."/>}
@@ -44,8 +45,8 @@ export function ServicePayment({config:c}:{config:Config}){
     </>}
   </WizardShell>;
 }
-export function ServiceScanPay({config:c}:{config:Config}){
-  const {caseId,checkoutId}=useLocalSearchParams<{caseId?:string;checkoutId?:string}>(),[session,setSession]=useState<Checkout|null>(null),[error,setError]=useState(''),[busy,setBusy]=useState(false),[pending,setPending]=useState(false),[time,setTime]=useState(Date.now()),[offset,setOffset]=useState(0),[attempt,setAttempt]=useState(0);
+export function ServiceScanPay({config:c,caseId:providedId,checkoutId:providedCheckout}:{config:Config;caseId?:string;checkoutId?:string}){
+  const params=useLocalSearchParams<{caseId?:string;checkoutId?:string}>(),caseId=providedId??params.caseId,checkoutId=providedCheckout??params.checkoutId,[session,setSession]=useState<Checkout|null>(null),[error,setError]=useState(''),[busy,setBusy]=useState(false),[pending,setPending]=useState(false),[time,setTime]=useState(Date.now()),[offset,setOffset]=useState(0),[attempt,setAttempt]=useState(0);
   const load=async()=>{if(!checkoutId)return;const value=await backend.request<Checkout>(`/payments/checkouts/${checkoutId}`);setSession(value);setOffset(Date.parse(value.server_time)-Date.now());if(['captured','waiting','expired'].includes(value.status))setPending(false);return value;};
   useEffect(()=>{let alive=true;if(!checkoutId){setError('Open Complete Payment to create a payment session.');return;}void backend.request<Checkout>(`/payments/checkouts/${checkoutId}`).then(value=>{if(alive){setSession(value);setOffset(Date.parse(value.server_time)-Date.now());setError('');}}).catch(e=>{if(alive)setError(e.message);});return()=>{alive=false;};},[checkoutId,attempt]);
   useEffect(()=>{const timer=setInterval(()=>setTime(Date.now()),1000);return()=>clearInterval(timer);},[]);
@@ -61,8 +62,8 @@ export function ServiceScanPay({config:c}:{config:Config}){
       </View>{session.test_actions&&session.simulated&&<View style={s.card}><Text style={s.body}>Prefer another method?</Text><Action label="Pay using UPI App (test)" disabled={busy||pending||expired||session.status==='captured'} onPress={()=>void simulate()}/></View>}</>}
   </ScrollView></View>;
 }
-export function ServicePaymentSuccess({config:c}:{config:Config}){
-  const {caseId}=useLocalSearchParams<{caseId?:string}>(),f=useCaseRecord(caseId),copy=useCopy(),record=f.record,paid=record?.client_fees;
+export function ServicePaymentSuccess({config:c,caseId:providedId}:{config:Config;caseId?:string}){
+  const params=useLocalSearchParams<{caseId?:string}>(),caseId=providedId??params.caseId,f=useCaseRecord(caseId),copy=useCopy(),record=f.record,paid=record?.client_fees;
   return <View style={s.screen}><PayHeader title="Payment" subtitle="" onBack={()=>router.replace('/(tabs)/home')}/><ScrollView contentContainerStyle={s.content}>
     {f.loading?<Text style={s.body}>Confirming payment…</Text>:!record?<View style={s.card}><Text style={s.error}>{f.error||'Choose a request to view its payment.'}</Text><Action label="Retry" onPress={f.reload}/></View>:!paid||['draft','submitted','payment_pending'].includes(record.status)?<View style={s.card}><Text style={s.body}>Payment has not been confirmed. Check its status before paying again.</Text><Action label="Check payment" onPress={()=>router.replace(path(c.payment,caseId))}/></View>:<>
       <View style={s.card}><View style={s.row}><FileText color="#9A8263"/><Text style={s.body}>Request ID: {record.reference}</Text><Pressable accessibilityLabel="Copy request ID" onPress={()=>void copy.copy(record.reference)}><Text style={s.link}>Copy</Text></Pressable></View>{copy.state!=='idle'&&<Text style={s.muted}>{copy.label}</Text>}</View>

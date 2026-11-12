@@ -9,7 +9,7 @@ import {PdfText, embedTextFonts, needsPage, unsupportedCharacters} from '../docu
 
 export type ForensicPdfInput = {
   reference: string; client: string; documentName: string; documentType: string | null;
-  report: ForensicReport; affidavit: Affidavit; signature?:ReportSignature; signedAt: string | null; generatedAt: Date;
+  report: ForensicReport; affidavit: Affidavit; signature?:ReportSignature; typedSignature?:string; signedAt: string | null; generatedAt: Date;
 };
 
 function check(label: string, value: string) {
@@ -49,8 +49,8 @@ async function layout(title: string, subtitle: string, reference: string, at: Da
   return pdf.save();
 }
 
-export async function renderForensicPdfs(input: ForensicPdfInput) {
-  const problems = forensicProblems({report: input.report, affidavit: input.affidavit, signature:input.signature,signed_at: input.signedAt});
+export async function renderForensicPdfs(input: ForensicPdfInput, reportOnly=false) {
+  const problems = forensicProblems({report: input.report, affidavit: input.affidavit, signature:input.signature,typed_signature:input.typedSignature,signed_at: input.signedAt}).filter(p=>!reportOnly||p.field.startsWith('report.'));
   if (problems.length) throw new Error(problems.map(p => p.message).join('\n'));
   for (const s of FORENSIC_SECTIONS) check(s.title, input.report[s.key]);
   for (const [i, p] of input.affidavit.paragraphs.entries()) check(`Affidavit statement ${i + 1}`, p);
@@ -62,12 +62,16 @@ export async function renderForensicPdfs(input: ForensicPdfInput) {
     h.para(`Client: ${input.client}`); h.para('Case type: Document Forensic');
     h.heading('Submitted Document');
     h.para(input.documentType ? `${input.documentName} · ${input.documentType}` : input.documentName);
+    if(input.report.overall_status){h.heading('Examination Summary');h.para(({likely_genuine:'Likely genuine',likely_not_genuine:'Likely not genuine',inconclusive:'Inconclusive'} as Record<string,string>)[input.report.overall_status]??'Inconclusive');}
+    if(input.report.risk_level)h.para(`Risk level: ${input.report.risk_level[0].toUpperCase()}${input.report.risk_level.slice(1)}`);
+    if(input.report.authenticity)h.para(input.report.authenticity);
     for (const s of FORENSIC_SECTIONS) { h.heading(`${s.title} (${s.tag})`); h.para(input.report[s.key]); }
     h.gap();
     h.heading('Advocate Examination Notice');
     h.para('This preliminary evaluation was prepared by the advocate named below using the materials and methods stated in this report. An uploaded copy does not establish examination of the original. This is not a laboratory (FSL) report.', true);
     h.para(`Prepared by ${input.affidavit.deponent_name}, Advocate (Enrolment ${input.affidavit.enrolment_number}) · ${day(input.generatedAt)}`);
   });
+  if(reportOnly)return [{filename:'Forensic_Report.pdf',kind:'forensic_report',bytes:report}];
   const affidavit = await layout('Affidavit of Forensic Examination', 'Before the competent legal authority · proforma verification', input.reference, input.generatedAt, h => {
     const a = input.affidavit;
     h.para(`Deponent Identity: I, Adv. ${a.deponent_name}, Advocate enrolled with State Bar Council (Enr: ${a.enrolment_number})${a.age ? `, aged ${a.age} years` : ''}, having my office at ${a.office_address}, do hereby solemnly affirm and state on oath as under:`);
@@ -75,10 +79,10 @@ export async function renderForensicPdfs(input: ForensicPdfInput) {
     a.paragraphs.filter(p => p.trim()).forEach((p, i) => { h.para(`${i + 1}. ${p}`); h.gap(6); });
     h.gap(14);
     h.heading('Advocate Signature');
-    h.signature(input.signature!);
+    if(input.typedSignature?.trim()){check('Typed signature',input.typedSignature);h.para(input.typedSignature.trim());}else h.signature(input.signature!);
     h.para(`Declaration confirmed in app by Adv. ${a.deponent_name} (Enr: ${a.enrolment_number})`);
-    h.para(`Signed: ${new Date(input.signedAt!).toLocaleString('en-IN', {timeZone: 'Asia/Kolkata'})} IST`);
-    h.para('This is a proforma for formal execution before the appropriate authority. The signature was drawn in the Legalitt app; it is not a digital-certificate signature, notarisation or administration of an oath.', true);
+    h.para(`Signed: ${new Date(input.signedAt!).toLocaleString('en-IN', {timeZone: 'Asia/Kolkata',day:'numeric',month:'short',year:'numeric',hour:'numeric',minute:'2-digit'})} IST`);
+    h.para(`This is a proforma for formal execution before the appropriate authority. The signature was ${input.typedSignature?.trim()?'typed':'drawn'} in the Legalitt app; it is not a digital-certificate signature, notarisation or administration of an oath.`, true);
   });
   return [
     {filename: 'Forensic_Report.pdf', kind: 'forensic_report', bytes: report},
@@ -92,12 +96,12 @@ export async function renderPropertyPdf(input:{reference:string;intake:unknown;r
  for(const value of [JSON.stringify(f),JSON.stringify(r)])check('Property report',value);
  return layout('Property Search Report','Advocate research · client filing identified below',input.reference,input.generatedAt,h=>{
    const value=(label:string,v:string|null|undefined)=>{if(v?.trim())h.para(`${label}: ${v}`);};
-   h.heading('1. Client Details — From client’s filing');value('Name',f.contact.fullName);value('Mobile',f.contact.mobile);value('Email',f.contact.email);
-   h.heading('2. Property Details — From client’s filing');value('Type',labelOf(PROPERTY_TYPES,f.property_type));value('Address',f.property_address);value('State',f.jurisdiction.state);value('District',f.jurisdiction.district);value('Ward',f.jurisdiction.ward);value('Tehsil / village',f.jurisdiction.tehsil);value('Colony',f.jurisdiction.colony);value('Survey / plot / khata number',f.survey_number);value('Requested search duration',labelOf(SEARCH_DURATIONS,f.search_duration));value('Purpose / requirement',f.requirement);
+   h.heading('1. Client Details');if(r.client_details?.trim())h.para(r.client_details);else{value('Name',f.contact.fullName);value('Mobile',f.contact.mobile);value('Email',f.contact.email);}
+   h.heading('2. Property Details');if(r.property_details?.trim())h.para(r.property_details);else{value('Type',labelOf(PROPERTY_TYPES,f.property_type));value('Address',f.property_address);value('State',f.jurisdiction.state);value('District',f.jurisdiction.district);value('Ward',f.jurisdiction.ward);value('Tehsil / village',f.jurisdiction.tehsil);value('Colony',f.jurisdiction.colony);value('Survey / plot / khata number',f.survey_number);value('Requested search duration',labelOf(SEARCH_DURATIONS,f.search_duration));value('Purpose / requirement',f.requirement);}value('Total area',r.total_area);
    h.heading('3. Owner Details');h.para(r.owner_details);
-   h.heading('4. Documents Checked');for(const [i,d]of r.documents_checked.entries())h.para(`${i+1}. ${d.description}${d.reference?` — ${d.reference}`:''}`);
+   h.heading('4. Documents Checked');for(const [i,d]of r.documents_checked.entries())h.para(`${i+1}. ${d.description}${d.reference?` — ${d.reference}`:''}${d.office?` · ${d.office}`:''}${d.checked===undefined?'':d.checked?' · Checked':' · Not checked'}`);
    h.heading('5. Search Details');value('Search date',r.search_date);value('Search period',r.search_period);value('Records inspected',r.records_inspected);value('Place / registry office',r.registry_office);value('Additional search notes',r.search_notes);
-   h.heading('6. Ownership History');h.para(r.ownership_history);h.heading('7. Search Findings');h.para(r.findings);h.heading('8. Search Conclusion');h.para(r.conclusion);
-   h.gap();h.para('Prepared from the client’s filing and the advocate’s recorded research. The advocate must verify and sign the final report before uploading it for delivery.',true);
+   h.heading('6. Ownership History');h.para(r.ownership_history);h.heading('7. Search Findings');h.para(r.findings);if(r.findings_detail){value('Ownership',r.findings_detail.ownership);value('Charges / encumbrances',r.findings_detail.charges);value('Court cases',r.findings_detail.court_case);value('Property tax',r.findings_detail.property_tax);}h.heading('8. Search Conclusion');h.para(r.conclusion);
+   h.gap();h.para(r.personally_checked?'The advocate confirmed that they personally checked this report.':'Draft preview — personal verification is required before delivery.',true);
  });
 }

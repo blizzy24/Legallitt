@@ -51,4 +51,5 @@ apps/mobile/public/pdfjs/
 apps/mobile/features/documents/pdf-runtime.generated.json
 # Local acceptance adapter cache: synthetic bytes, not a production document store.
 reports/notice-flow-20261112/local/storage-cache.json
+reports/report-flows-20261113/local/storage-cache.json
 reports/notice-polish-20261112/host-node/

@@ -1666,6 +1666,85 @@ Legal process reference checked 11 November 2026: the official
 sections 4, 5 and 7, sets eligibility, residence/notice and the objection period.
 Application delivery cannot promise a marriage in the app's preparation window.
 
+### 4.7a Property Search and Document Forensic flow rebuild — 13 November 2026
+
+This supersedes §4.7's numbered-design assumptions for PS/DF only. Ishaan's
+answers override the current flow files and Figma exports. Court Marriage is
+unchanged and hidden. Acceptance status is in `docs/flows/PROPERTY-SEARCH-GAPS.md`
+and `docs/flows/DOCUMENT-FORENSIC-GAPS.md`; this is not a deployment claim.
+
+```sql
+CREATE TABLE report_workflow_policies (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(), service_code TEXT NOT NULL,
+  version INTEGER NOT NULL CHECK (version > 0), config JSONB NOT NULL,
+  effective_from TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE (service_code, version)
+);
+CREATE TABLE report_workflows (
+  case_id UUID PRIMARY KEY REFERENCES cases(id),
+  policy_id UUID NOT NULL REFERENCES report_workflow_policies(id),
+  revision INTEGER NOT NULL DEFAULT 0 CHECK (revision >= 0),
+  data JSONB NOT NULL DEFAULT '{}'
+);
+```
+
+Case locks and revision tokens protect workflow actions. Shared `reportStage`
+supplies role-specific labels over the existing statuses. Policies pin turnaround,
+weekly calendar, follow-up interval, review target, upload limit and chat windows.
+Admin settings append versions; existing cases keep their policy. Flow defaults:
+PS Ordinary 3–5 working days/Urgent 1–2; DF Ordinary 3–5 working days/Urgent 24–48
+hours. Working days initially mean Monday–Friday, IST, with no supplied holiday
+calendar. Deadlines start at captured payment and pause while requested client
+information is supplied and checked. Chat runs from acceptance until delivery
++7 calendar days, with audited, reasoned admin reopening.
+
+PS requires intake verification before assignment. Client corrections retain
+the original paid filing. All eight editor sections reach the PDF; editor output
+or an uploaded final PDF goes directly to the client. Corrections create a new
+version without changing original completion or crediting the wallet twice.
+DF accepts multiple files for one questioned document, analysis type and per-file
+focus. Signature/Handwriting require a reference or explicit no-reference warning.
+The assigned advocate checks files and conducts examination: no outside-specialist
+hand-off. Four report sections and advocate-authored result/risk/authenticity feed
+the PDF. Drawn/typed affidavit marks belong to the exact version and are not
+notarisation or certificate signatures. Admin checks format, signature,
+conclusion/findings and client question, then releases that version or returns
+action items to Waiting for Specialist Report. Unapproved output/reasons stay
+internal. Release exposes only the approved summary and files.
+
+Migration preserves old statuses, prices, paid amounts and PDFs. Existing
+assignments are explicitly marked as the earlier assignment route, not a new
+human check. Existing pending submissions remain reviewable with the new admin
+checklist. Old released files without structured summaries do not get invented
+findings. New references use PSR/DF; existing reference strings remain valid.
+
+Assumptions awaiting client confirmation: Full Record costs the same as 15/30
+years; no-records refunds are admin decisions; requested supplemental files do
+not retroactively change the captured quote; public holidays are not deducted.
+Existing provisional tariffs remain `confirmed=false`, with exact integer-paisa
+totals. Optional property email needs a configured sender and cannot claim success
+while unavailable.
+
+Overdue advocate work can be reassigned by admin with a reason and the current
+workflow revision. Reassignment preserves assignment/report history, resets the
+new advocate's file checks and personal/signature attestations, and requires a
+new version authored by that advocate before submission. It does not create a
+second wallet credit. The replaced advocate is notified and loses case access.
+Admin checks district coverage and professional suitability when choosing an
+approved advocate; the current profile does not have structured district or
+forensic accreditation coverage, so the picker does not claim to verify either.
+This manual suitability check is an assumption awaiting client confirmation.
+
+The report and affidavit have separate scoped PDF previews; a complete report
+can be previewed before the affidavit is written, but final submission requires
+both. Camera/Gallery/Files use device pickers and the same document pipeline;
+camera denial explains how to enable permission or use Files. Physical-device
+camera verification is separate from the browser acceptance evidence.
+The initial upload limit is 25,000,000 bytes (Q65), editable per report service
+in the versioned settings. Presigned storage policy and completion-time byte
+inspection enforce the case's pinned limit. The uploader displays that limit,
+explains failures and distinguishes image counts from PDF page counts (Q66).
+
 ## 5. API surface
 
 Conventions: `/api/v1`, JWT bearer from Cognito, cursor pagination,
@@ -2271,6 +2350,7 @@ is re-litigated mid-build.
 
 | Decision | Resolution | Date |
 |---|---|---|
+| PS/DF current flows | Owner authorised the flow defaults: PS intake verification and requested-details loop, direct editor/PDF delivery; DF advocate file checks, report/affidavit and exact-version admin approval or return to Waiting for Specialist Report. Both use versioned turnaround/chat policies. No external specialist hand-off or changed tariffs. | 2026-11-13 |
 | Legal Notice admin dispatch rebuild | Ishaan's answers and `docs/flows/LEGAL-NOTICE-FLOW.md` supersede the old advocate-dispatch decisions below. Client approval hands the exact draft/PDF to admin; internal returns go back to admin after correction, without reopening client chat. Admin verifies contacts and notice, requests a labelled test e-sign, then dispatches only the client's chosen courier/email/WhatsApp methods. At least one method is required. No noticee relationship or Offences section/sentence. New quotes charge courier only when selected; the flow's proposed answer assigns that courier fee to Legalitt. Existing captured amounts/entitlements and stored PDFs remain unchanged. Workflow rules are pinned versioned `notice_workflow_policies` rows; review actions check a revision token. Implemented and checked locally; no deployment authorised in this chunk. Local acceptance evidence: `docs/flows/LEGAL-NOTICE-GAPS.md` and `docs/flows/ln-screens/`. | 2026-11-12 |
 | Multiple delivery methods and admin corrections | Assumption applying the flow's proposals: all selected delivery methods must have their latest attempt confirmed delivered before completion/wallet credit; courier needs POD. A failed method remains actionable. Corrections returned by admin are rechecked by admin, not sent through another client approval. The original approval remains in history and chat stays read-only. Pending client confirmation if a different partial-delivery completion rule is wanted. | 2026-11-12 |
 | Scope and price for this phase | Agreed with the client | 2026-10-19 |
@@ -2301,6 +2381,13 @@ is re-litigated mid-build.
 | Property Search, Document Forensic, Court Marriage | **Owner authorised:** take over `6b33341`, preserve the consultation mainline and complete all roles. PS releases directly per 211; DF/CM require exact-version admin approval or correction. Keep provisional tariffs `confirmed=false`, with comparisons and limitations in §2.5b. Typed property research, forensic report/affidavit and privacy safeguards are in §4.7; all unconfirmed product assumptions remain explicit there. | 2026-11-11 |
 
 ### 9.1 Register of simulated capabilities
+
+**PS/DF rebuild — 13 November 2026:** shared checkout is labelled test-only when
+the adapter is simulated. Wallet credit is an application entitlement, not a bank
+transfer. Local acceptance uses isolated PostgreSQL, real handlers/renderers and
+test storage/AI/email adapters. Property writing assistance uses the existing AI
+port/model configuration; its simulated adapter returns original text with a test
+label. It does not perform registry searches or establish title.
 
 **Legal Notice deployment follow-up — 12 November 2026:** visual polish and deployment
 are now authorised. Read-only SES inspection returned no verified identities in
@@ -2381,6 +2468,15 @@ client without an advocate in between. If one does, it needs either an advocate
 gate or explicit framing that it is not legal advice.
 
 ### 9.2 Register of design substitutions
+
+**PS/DF rebuild — 13 November 2026:** undesigned admin verification, information
+requests/resolution, deadline/follow-up warnings, overdue reassignment, settings, chat reopening and
+four-item forensic review use the existing admin style. The flows require them
+but no admin designs were supplied. PS gains the missing Continue and Decline
+actions. DF gains analysis/per-file focus and client summary fields. File checks
+are human ticks, replacing automatic claims. Unsupported court fields and
+verification/digital-signature badges stay out. Non-ideal states supplement the
+drawn screens. Evidence belongs in the two gap documents and screenshot folders.
 
 **Legal Notice rebuild — 12 November 2026.** Current exports in
 `design/figma-2026-11-12/` and Ishaan's answers supersede numbered notice designs.

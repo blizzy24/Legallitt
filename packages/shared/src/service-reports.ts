@@ -65,11 +65,16 @@ export const SEARCH_DURATIONS = [
 const propertyType = z.enum(PROPERTY_TYPES.map(p => p.code) as [string, ...string[]]);
 const duration = z.enum(SEARCH_DURATIONS.map(p => p.code) as [string, ...string[]]);
 export const PropertySearchIntakeSchema = z.strictObject({
+  intake_version:z.number().int().optional(),
   contact: z.strictObject({fullName: opt(120), mobile: opt(20), email: opt(200)}).default({}),
   jurisdiction: z.strictObject({state_code: opt(10), state: opt(80), district_code: opt(10), district: opt(80),
     ward: opt(80), tehsil: opt(120), colony: opt(160)}).default({}),
   property_address: opt(500),
   property_type: propertyType.optional(),
+  property_type_other:opt(160),
+  purpose:z.enum(['buying','selling','loan','investment','other']).optional(),
+  purpose_other:opt(300),
+  owner_names:z.array(text(160)).max(20).optional(),
   survey_number: opt(120),
   search_duration: duration.optional(),
   requirement: opt(2000),
@@ -81,12 +86,17 @@ export const FORENSIC_DOCUMENT_TYPES = [
   {code: 'agreement_contract', label: 'Agreement / Contract'}, {code: 'property_deed', label: 'Property Deed'},
   {code: 'will_testament', label: 'Will / Testament'}, {code: 'cheque', label: 'Cheque'},
   {code: 'affidavit', label: 'Affidavit'}, {code: 'government_document', label: 'Government Document'},
-  {code: 'letter', label: 'Letter / Correspondence'}, {code: 'other', label: 'Other'},
+  {code: 'letter', label: 'Letter / Correspondence'}, {code:'digital_document',label:'Digital document (screenshot / PDF)'}, {code: 'other', label: 'Other'},
 ] as const;
+export const FORENSIC_ANALYSES=[{code:'signature',label:'Signature verification'},{code:'handwriting',label:'Handwriting'},{code:'alteration',label:'Alteration / tampering'},{code:'digital',label:'Digital document authenticity'},{code:'comprehensive',label:'Comprehensive'}] as const;
+export const PROPERTY_PURPOSES=[{code:'buying',label:'Buying'},{code:'selling',label:'Selling'},{code:'loan',label:'Loan'},{code:'investment',label:'Investment'},{code:'other',label:'Other'}] as const;
 export const DocumentForensicIntakeSchema = z.strictObject({
+  intake_version:z.number().int().optional(),
   document_type: z.enum(FORENSIC_DOCUMENT_TYPES.map(p => p.code) as [string, ...string[]]).optional(),
   questioned_description: opt(200),
   no_reference_sample: z.boolean().optional(),
+  analysis_type:z.enum(['signature','handwriting','alteration','digital','comprehensive']).optional(),
+  document_focus:z.record(z.uuid(),text(200)).optional(),
   instructions: opt(2000),
 });
 export type DocumentForensicIntake = z.infer<typeof DocumentForensicIntakeSchema>;
@@ -157,13 +167,17 @@ export function reportIntakeProblems(code: ReportServiceCode, details: unknown, 
     need(!blank(v.jurisdiction.state) && !blank(v.jurisdiction.district), 'jurisdiction', 'Choose the state and district.');
     need(!blank(v.property_address), 'property_address', 'Enter the property address.');
     need(!!v.property_type, 'property_type', 'Choose the property type.');
+    need(v.property_type!=='other'||!blank(v.property_type_other),'property_type_other','Specify the property type.');
+    need(!!v.purpose,'purpose','Choose the purpose of the report.');
+    need(v.purpose!=='other'||!blank(v.purpose_other),'purpose_other','Specify the purpose of the report.');
     need(!!v.search_duration, 'search_duration', 'Choose the search duration.');
   } else if (code === 'document_forensic') {
     const v = parsed.data as DocumentForensicIntake;
     need(kinds.includes('questioned_document'), 'questioned_document', 'Upload the document to examine.');
-    need(kinds.filter(k => k === 'questioned_document').length <= 1, 'questioned_document', 'Upload only one questioned document. Remove the extra file.');
     need(!!v.document_type, 'document_type', 'Choose the document type.');
-    need(kinds.includes('reference_document') || v.no_reference_sample === true, 'reference_document',
+    need(!!v.analysis_type,'analysis_type','Choose the requested analysis.');
+    need(!v.instructions||v.instructions.length<=1000,'instructions','Keep specific instructions within 1,000 characters.');
+    need(!['signature','handwriting'].includes(v.analysis_type??'')||kinds.includes('reference_document') || v.no_reference_sample === true, 'reference_document',
       'Upload a reference document or confirm you do not have a reference sample.');
   } else {
     const v = parsed.data as CourtMarriageIntake;
@@ -194,10 +208,13 @@ export const ReportNoteSchema = z.string().trim().max(300);
 /** Design 208. Client and property facts come from the frozen filing; only
  * research fields are editable. Every field below is rendered in the preview. */
 export const PropertyReportSchema = z.strictObject({
+  client_details:opt(2000),property_details:opt(3000),total_area:opt(160),
   owner_details: text(2000),
-  documents_checked: z.array(z.strictObject({description:text(500),reference:text(200)})).max(30),
+  documents_checked: z.array(z.strictObject({description:text(500),reference:text(200),office:opt(300),checked:z.boolean().optional()})).max(30),
   search_date:text(10), search_period:text(120), records_inspected:text(2000), registry_office:text(500), search_notes:text(3000),
   ownership_history:text(4000), findings:text(6000), conclusion:text(4000),
+  findings_detail:z.strictObject({ownership:text(2000),charges:text(2000),court_case:text(2000),property_tax:text(2000)}).optional(),
+  personally_checked:z.boolean().optional(),
 });
 export type PropertyReport = z.infer<typeof PropertyReportSchema>;
 export const PropertyReportSaveSchema=z.strictObject({production:z.literal('property'),base_draft_id:z.uuid().nullable(),report:PropertyReportSchema,note:ReportNoteSchema.default('')});
@@ -217,6 +234,8 @@ export const UploadReportSaveSchema = z.strictObject({
 const section = z.string().trim().max(4000);
 export const ForensicReportSchema = z.strictObject({
   what_checked: section, how_checked: section, findings: section, final_result: section,
+  overall_status:z.enum(['likely_genuine','likely_not_genuine','inconclusive']).optional(),
+  risk_level:z.enum(['low','medium','high']).optional(),authenticity:opt(600),
 });
 export const AffidavitSchema = z.strictObject({
   deponent_name: text(120), enrolment_number: text(60), age: z.number().int().min(21).max(100).nullable(),
@@ -233,6 +252,7 @@ export const ForensicReportSaveSchema = z.strictObject({
   affidavit: AffidavitSchema,
   signed: z.boolean(),
   signature: ReportSignatureSchema.optional(),
+  typed_signature:text(160).optional(),
   note: ReportNoteSchema.default(''),
 });
 export type ForensicReport = z.infer<typeof ForensicReportSchema>;
@@ -240,15 +260,15 @@ export type Affidavit = z.infer<typeof AffidavitSchema>;
 export type ReportDraftContent =
   | {production: 'upload'; report_document_id: string; note: string}
   | {production: 'property'; report:PropertyReport; note:string}
-  | {production: 'forensic'; report: ForensicReport; affidavit: Affidavit; signature?:ReportSignature; signed_at: string | null; note: string};
+  | {production: 'forensic'; report: ForensicReport; affidavit: Affidavit; signature?:ReportSignature; typed_signature?:string; signed_at: string | null; note: string};
 
-export const FORENSIC_SECTIONS: {key: keyof ForensicReport; title: string; tag: string}[] = [
+export const FORENSIC_SECTIONS: {key: 'what_checked'|'how_checked'|'findings'|'final_result'; title: string; tag: string}[] = [
   {key: 'what_checked', title: 'What Was Checked?', tag: 'Scope'},
   {key: 'how_checked', title: 'How Was It Checked?', tag: 'Method'},
   {key: 'findings', title: 'Findings', tag: 'Observations'},
   {key: 'final_result', title: 'Final Result', tag: 'Conclusion'},
 ];
-export function forensicProblems(content: {report: ForensicReport; affidavit: Affidavit; signature?:ReportSignature; signed_at: string | null}): ReportProblem[] {
+export function forensicProblems(content: {report: ForensicReport; affidavit: Affidavit; signature?:ReportSignature; typed_signature?:string; signed_at: string | null}): ReportProblem[] {
   const out: ReportProblem[] = [];
   for (const s of FORENSIC_SECTIONS) if (blank(content.report[s.key])) out.push({field: `report.${s.key}`, message: `Complete “${s.title}”.`});
   const a = content.affidavit;
@@ -257,7 +277,7 @@ export function forensicProblems(content: {report: ForensicReport; affidavit: Af
   if (blank(a.office_address)) out.push({field: 'affidavit.office_address', message: 'Enter the office address.'});
   if (!a.paragraphs.some(p => !blank(p))) out.push({field: 'affidavit.paragraphs', message: 'The affidavit needs at least one statement.'});
   if (!content.signed_at) out.push({field: 'signed', message: 'Sign the affidavit declaration before submitting.'});
-  if (!content.signature?.some(stroke=>stroke.length>1)) out.push({field:'signature',message:'Draw your signature on the affidavit before submitting.'});
+  if (!content.signature?.some(stroke=>stroke.length>1)&&!content.typed_signature?.trim()) out.push({field:'signature',message:'Draw or type your signature on the affidavit before submitting.'});
   return out;
 }
 /** Design 227's four statements, with the case's own values bound in. */
@@ -285,10 +305,12 @@ export type ReportState = {
   submission: {draft_id: string; version: number; document_ids: string[]; submitted_at: string} | null;
   changes: {items: ChangeItem[]; requested_at: string} | null;
   released: {document_ids: string[]; note: string; released_at: string} | null;
+  summary?:{overall_status?:ForensicReport['overall_status'];risk_level?:ForensicReport['risk_level'];authenticity?:string;reviewed_at:string}|null;
 };
 
 /** Provisional tariffs with their computed client totals (no documents yet). */
 export type ReportPricing = {
+  workflow?:{id:string;version:number;config:import('./report-workflow').ReportWorkflowPolicy};
   service_code: ReportServiceCode; confirmed: boolean;
   tiers: {tier: 'ordinary' | 'urgent' | null; pricing_id: string; base_amount_paise: string; platform_fee_paise: string;
     gst_paise: string; total_paise: string; included_pages: number; page_unit_paise: string}[];

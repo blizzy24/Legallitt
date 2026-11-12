@@ -6,7 +6,8 @@ import {AuthGuard,type AuthRequest} from '../auth/auth.controller';
 import {parse} from '../auth/auth.service';
 import {caseScope,type CaseActor} from './case-access';
 import {lockedCase} from './case-state-machine';
-import {isConsultationService} from '@legalitt/shared';
+import {isConsultationService,isFlowReportService} from '@legalitt/shared';
+import {ensureReportWorkflow,reportChat} from '../service-reports/report-workflow';
 import {assertReportDocumentReadable} from '../service-reports/report-access';
 import {noticeDocumentVisible} from './notice-access';
 const input=z.strictObject({body:NoticeCommentSchema.shape.comment.optional(),document_id:z.uuid().optional()}).refine(v=>v.body||v.document_id,'Enter a message or attach a document');
@@ -40,6 +41,10 @@ export class NoticeMessages {
   return db.$transaction(async tx=>{
    // Recheck membership under the case lock; assignment may change between calls.
    const record=await lockedCase(tx,actor,thread.case_id!);
+   if(isFlowReportService(record.service_code)){
+    const workflow=await ensureReportWorkflow(tx,record),chat=reportChat(record,workflow.data,workflow.policy);
+    if(!chat.writable)throw new ConflictException(chat.reason);
+   }
    if(record.service_code==='legal_notice'){
     const life=await tx.noticeLifecycle.findUnique({where:{case_id:record.id}});
     const handedOver=!!life?.handed_to_admin_at||!!await tx.caseEvent.findFirst({where:{case_id:record.id,to_status:'approved'}});

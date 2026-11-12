@@ -1,10 +1,11 @@
-import {noticeDate,noticeDocumentLabel,noticeMethodLabel,noticeStage} from '@legalitt/shared';
+import {reportFileLabel,isFlowReportService,noticeDate,noticeDocumentLabel,noticeMethodLabel,noticeStage} from '@legalitt/shared';
 import { ConfirmDelivery } from './confirm-delivery';
 import {NoticeFlowPanel} from './notice-flow-panel';
 import {FirApprovalPanel} from './fir-approval';
 import {FirFlowPanel} from './fir-flow-panel';
 import {ConsultationPanel} from './consultation-panel';
 import {isConsultationService,isReportService} from '@legalitt/shared';
+import {ReportIntake} from './report-intake';
 import {ReportPanel} from './report-panel';
 import {CaseRefunds} from './cancellations';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
@@ -19,16 +20,18 @@ const eventTitle = (e: AdminCaseDetail['events'][number]) => e.type === 'shipmen
 const present = (v: unknown): boolean => v !== null && v !== undefined && v !== '' && (typeof v !== 'object' || Object.values(v).some(present));
 function Demo({show}: {show: boolean}) {return show ? <small className="demo">demo</small> : null;}
 function Field({name, value}: {name: string; value: ReactNode}) {return value !== null && value !== undefined && value !== '' ? <div className="detail-field"><dt>{name}</dt><dd>{value}</dd></div> : null;}
-function Values({value,notice=false}: {value: Record<string, unknown>;notice?:boolean}) {
-  return <dl className="event-values">{Object.entries(value).filter(([k,v])=>present(v)&&(!notice||!/(?:^id$|_id$|_ids$|filename|s3_key)/.test(k))).map(([k,v])=><Field key={k} name={label(k)} value={typeof v === 'object' ? <Values notice={notice} value={v as Record<string,unknown>}/> : notice&&['courier','email','whatsapp'].includes(String(v))?noticeMethodLabel(String(v)):String(v)}/>)}</dl>;
+function reportValue(key:string,value:unknown):string{if(typeof value==='boolean')return value?'Yes':'No';if(key.endsWith('_at')&&typeof value==='string')return date(value)??'';const values:Record<string,string>={likely_genuine:'Likely genuine',likely_not_genuine:'Likely not genuine',inconclusive:'Inconclusive',low:'Low',medium:'Medium',high:'High',ordinary:'Ordinary',urgent:'Urgent',property:'Property report editor',forensic:'Forensic report and affidavit',upload:'Uploaded final PDF'};return ['overall_status','risk_level','tier','production'].includes(key)?values[String(value)]??label(String(value)):String(value);}
+function Values({value,notice=false,report=false}: {value: Record<string, unknown>;notice?:boolean;report?:boolean}) {
+  if(report&&Array.isArray(value))return <ol>{value.filter(present).map((v,i)=><li key={i}>{typeof v==='object'?<Values report value={v as Record<string,unknown>}/>:String(v)}</li>)}</ol>;
+  return <dl className="event-values">{Object.entries(value).filter(([k,v])=>present(v)&&(!(notice||report)||!/(?:^id$|_id$|_ids$|filename|s3_key)/.test(k))).map(([k,v])=><Field key={k} name={label(k)} value={typeof v === 'object' ? <Values notice={notice} report={report} value={v as Record<string,unknown>}/> : report?reportValue(k,v):notice&&['courier','email','whatsapp'].includes(String(v))?noticeMethodLabel(String(v)):String(v)}/>)}</dl>;
 }
-function Preview({doc, close, notice=false}: {notice?:boolean;doc: AdminCaseDetail['documents'][number]; close(): void}) {
+function Preview({doc, close, notice=false, report=false}: {notice?:boolean;report?:boolean;doc: AdminCaseDetail['documents'][number]; close(): void}) {
  const ref=useRef<HTMLDialogElement>(null); const [url,setUrl]=useState(''),[error,setError]=useState('');
  useEffect(()=>{const dialog=ref.current;dialog?.showModal();return()=>dialog?.close();},[]);
  useEffect(()=>{let alive=true;api.adminDocumentPreview(doc.id).then(r=>{if(alive)setUrl(r.url);}).catch(e=>{if(alive)setError(e.message);});return()=>{alive=false;};},[doc.id]);
- return <dialog ref={ref} className="document-dialog" onCancel={e=>{e.preventDefault();close();}} aria-label={notice?noticeDocumentLabel(doc):doc.filename}>
-  <div className="dialog-heading"><div><h2>{notice?noticeDocumentLabel(doc):doc.filename}<Demo show={doc.simulated}/></h2><p>{label(doc.kind)}</p></div><button onClick={close} aria-label="Close document">×</button></div>
-  {error ? <div role="alert" className="error">{error}</div> : !url ? <p role="status">Opening document…</p> : <><a href={url} target="_blank" rel="noreferrer">Open in new tab ↗</a>{doc.mime_type.startsWith('image/') ? <img src={url} alt={notice?noticeDocumentLabel(doc):doc.filename}/> : doc.mime_type === 'application/pdf' ? <iframe title={notice?noticeDocumentLabel(doc):doc.filename} src={url}/> : null}</>}
+ return <dialog ref={ref} className="document-dialog" onCancel={e=>{e.preventDefault();close();}} aria-label={notice?noticeDocumentLabel(doc):report?reportFileLabel(doc):doc.filename}>
+  <div className="dialog-heading"><div><h2>{notice?noticeDocumentLabel(doc):report?reportFileLabel(doc):doc.filename}<Demo show={doc.simulated}/></h2><p>{label(doc.kind)}</p></div><button onClick={close} aria-label="Close document">×</button></div>
+  {error ? <div role="alert" className="error">{error}</div> : !url ? <p role="status">Opening document…</p> : <><a href={url} target="_blank" rel="noreferrer">Open in new tab ↗</a>{doc.mime_type.startsWith('image/') ? <img src={url} alt={notice?noticeDocumentLabel(doc):report?reportFileLabel(doc):doc.filename}/> : doc.mime_type === 'application/pdf' ? <iframe title={notice?noticeDocumentLabel(doc):report?reportFileLabel(doc):doc.filename} src={url}/> : null}</>}
  </dialog>;
 }
 export function CaseDetail() {
@@ -44,15 +47,15 @@ export function CaseDetail() {
  if(!data)return <main className="case-detail"><Link className="back-link" to={backPath}>← {heading}</Link>{error?<div className="error" role="alert">{error} <button onClick={()=>setReload(n=>n+1)}>Retry</button></div>:<p role="status">Loading case…</p>}</main>;
  const charged=data.payments.find(p=>p.purpose==='service_fee'&&p.status==='captured');
  const additional=charged&&data.pricing?BigInt(charged.base_amount_paise)-BigInt(data.pricing.base_amount_paise):null;
- const d=data, bucket=adminBucketFor(d.status,d.service_code,d.sub_status), canAssign=!isConsultationService(service)&&!d.advocate_id && ['paid','assigning','advocate_declined'].includes(d.status);
+ const d=data, bucket=adminBucketFor(d.status,d.service_code,d.sub_status), canAssign=!isConsultationService(service)&&(!d.advocate_id||['property_search','document_forensic'].includes(service)&&d.status==='advocate_declined') && ['paid','assigning','advocate_declined'].includes(d.status);
  const task=canAssign?'Assign an advocate':d.status==='advocate_declined'?'Advocate declined · assignment needs review':service==='legal_notice'&&d.status==='dispatched'?'Delivery confirmation awaits admin':null;
  const document=(doc: AdminCaseDetail['documents'][number])=><div className="document-row" key={doc.id}>
   <span className="file-symbol">{doc.mime_type==='application/pdf'?'PDF':'FILE'}</span><div className="file-description">
-  {doc.status==='uploaded'?<button className="text-button" onClick={()=>setPreview(doc)}>{service==='legal_notice'?noticeDocumentLabel(doc):doc.filename} ↗</button>:<strong>{service==='legal_notice'?noticeDocumentLabel(doc):doc.filename}</strong>}
+  {doc.status==='uploaded'?<button className="text-button" onClick={()=>setPreview(doc)}>{service==='legal_notice'?noticeDocumentLabel(doc):isFlowReportService(service)?reportFileLabel(doc):doc.filename} ↗</button>:<strong>{service==='legal_notice'?noticeDocumentLabel(doc):isFlowReportService(service)?reportFileLabel(doc):doc.filename}</strong>}
   <p>{doc.final?(service==='legal_notice'?'Final notice':'Final document'):doc.draft_version!==null?`Draft · v${doc.draft_version}`:label(doc.kind)}<Demo show={doc.simulated}/></p>
   {doc.identity_evidence&&<p>Declared type: {label(doc.identity_evidence.document_type)}{doc.identity_evidence.masked_copy?' · Masked copy declared by uploader':''}. Uploaded evidence, not identity verification.</p>}
   <p>{doc.owner}{doc.page_count!==null?` · ${doc.page_count} ${doc.page_count===1?'page':'pages'}`:''}{doc.status!=='uploaded'?` · ${label(doc.status)}`:''}</p></div></div>;
- const relatedDoc=(docId:string|null)=>{const doc=d.documents.find(v=>v.id===docId);return doc?<button className="text-button" onClick={()=>setPreview(doc)}>{service==='legal_notice'?noticeDocumentLabel(doc):doc.filename} ↗<Demo show={doc.simulated}/></button>:null;};
+ const relatedDoc=(docId:string|null)=>{const doc=d.documents.find(v=>v.id===docId);return doc?<button className="text-button" onClick={()=>setPreview(doc)}>{service==='legal_notice'?noticeDocumentLabel(doc):isFlowReportService(service)?reportFileLabel(doc):doc.filename} ↗<Demo show={doc.simulated}/></button>:null;};
  return <main className="case-detail">
   <Link className="back-link" to={backPath}>← {heading}</Link>
   <section className="case-overview"><div className="case-heading"><div><p className="eyebrow">{SERVICE_NAMES[service].toUpperCase()}</p><h1>{d.reference}<Demo show={d.simulated}/></h1><p>{d.contacts.find(c=>c.role==='client')?.name}</p></div><span className={'status '+(bucket??'')}>{service==='legal_notice'?noticeStage(d).admin:label(d.status)}</span></div>
@@ -69,7 +72,7 @@ export function CaseDetail() {
   {service==='fir_draft'&&<FirFlowPanel caseId={d.id} status={d.status+':'+(d.sub_status??'')}/>}
   {service==='legal_notice'&&<NoticeFlowPanel caseId={d.id} status={d.status+':'+(d.sub_status??'')} changed={()=>setReload(n=>n+1)}/>}
   {service==='fir_draft'&&<FirApprovalPanel record={d} reload={()=>setReload(n=>n+1)}/>}
-  {isReportService(service)&&<><ReportPanel record={d} reload={()=>setReload(n=>n+1)}/><section className="detail-panel"><div className="section-title"><h2>Original client intake</h2></div>{Object.values(d.intake).some(present)?<Values value={d.intake}/>:<p>No intake saved yet.</p>}</section></>}
+  {isReportService(service)&&<><ReportPanel record={d} reload={()=>setReload(n=>n+1)}/>{isFlowReportService(service)?<ReportIntake record={d}/>:<section className="detail-panel"><div className="section-title"><h2>Original client intake</h2></div>{Object.values(d.intake).some(present)?<Values value={d.intake}/>:<p>No intake saved yet.</p>}</section>}</>}
   {isConsultationService(service)&&<><ConsultationPanel record={d} reload={()=>setReload(n=>n+1)}/><section className="detail-panel"><div className="section-title"><h2>Original client intake</h2></div>{Object.values(d.intake).some(present)?<Values value={d.intake}/>:<p>No intake saved yet.</p>}</section></>}
   {service==='fir_draft'&&<section className="detail-panel fir-intake"><div className="section-title"><h2>Original intake</h2></div>{Object.values(d.intake).some(present)?<Values value={d.intake}/>:<p>No intake was recorded for this case.</p>}</section>}
   <section className="people-section"><h2>People</h2><div className="people-grid">{d.contacts.map((c,i)=><article className="person" key={i}><p className="eyebrow">{c.role==='sender'?'SENDER · INTAKE':label(c.role)}</p>{c.name&&<h3>{c.name}</h3>}<dl><Field name="Title" value={c.salutation}/><Field name="Age" value={c.age}/><Field name="Relation" value={c.relation}/><Field name="Father’s or husband’s name" value={c.relative_name}/><Field name="Email" value={c.email}/><Field name="Phone" value={c.phone}/><Field name="Address" value={c.address}/><Field name="Relationship" value={c.relationship}/></dl></article>)}</div></section>
@@ -83,9 +86,9 @@ export function CaseDetail() {
   <div className="case-columns"><div className="case-spine">{d.events.length>0&&<section id="timeline" className="detail-panel timeline-panel"><div className="section-title"><h2>Case timeline</h2><span>{d.events.length} {d.events.length===1?'event':'events'} · newest first</span></div>
    <ol className="case-timeline">{d.events.map(e=><li key={e.id}><div className="event-heading"><strong>{eventTitle(e)}</strong><Demo show={e.source==='simulated'}/><time dateTime={e.created_at}>{date(e.created_at)}</time></div>
     {(e.actor||e.from_status)&&<p>{e.actor?.name}{e.actor?.role?` · ${label(e.actor.role)}`:''}{e.from_status && e.from_status!==e.to_status?<span className="event-transition">{label(e.from_status)} → {e.to_status?label(e.to_status):label(e.type)}</span>:null}</p>}
-    {Object.values(e.payload).some(present)&&<details><summary>Event details</summary><Values notice={service==='legal_notice'} value={e.payload}/></details>}
+    {Object.values(e.payload).some(present)&&<details><summary>Event details</summary><Values notice={service==='legal_notice'} report={isFlowReportService(service)} value={e.payload}/></details>}
    </li>)}</ol>
-  </section>}  {d.drafts.length>0&&<section id="drafts" className="detail-panel drafts-panel"><div className="section-title"><h2>Drafts</h2><span>Latest first</span></div>{d.drafts.map((draft,i)=><details key={draft.id} open={i===0}><summary>{i===0?'Current draft':'Draft'} · v{draft.version}<span>{draft.author} · {date(draft.created_at)}</span></summary>{draft.document_id&&relatedDoc(draft.document_id)}<dl className="draft-content">{Object.entries(draft.content).filter(([key,v])=>present(v)&&(service!=='fir_draft'||key!=='document_ids')).map(([key,v])=><Field key={key} name={label(key)} value={isReportService(service)&&key==='signature'?'Drawn signature recorded with this version; see the PDF.':typeof v==='string'?v:(service==='fir_draft'||isReportService(service))&&typeof v==='object'?<Values value={v as Record<string,unknown>}/>:JSON.stringify(v)}/>)}</dl></details>)}</section>}</div><div className="case-evidence">
+  </section>}  {d.drafts.length>0&&<section id="drafts" className="detail-panel drafts-panel"><div className="section-title"><h2>Drafts</h2><span>Latest first</span></div>{d.drafts.map((draft,i)=><details key={draft.id} open={i===0}><summary>{i===0?'Current draft':'Draft'} · v{draft.version}<span>{draft.author} · {date(draft.created_at)}</span></summary>{draft.document_id&&relatedDoc(draft.document_id)}<dl className="draft-content">{Object.entries(draft.content).filter(([key,v])=>present(v)&&(service!=='fir_draft'||key!=='document_ids')).map(([key,v])=><Field key={key} name={label(key)} value={isReportService(service)&&['report_document_id','document_ids'].includes(key)?'See the case documents.':isReportService(service)&&key==='signature'?'Drawn signature recorded with this version; see the PDF.':typeof v==='string'?(isFlowReportService(service)?reportValue(key,v):v):(service==='fir_draft'||isReportService(service))&&typeof v==='object'?<Values report={isFlowReportService(service)} value={v as Record<string,unknown>}/>:JSON.stringify(v)}/>)}</dl></details>)}</section>}</div><div className="case-evidence">
    {d.documents.length>0&&<section id="documents" className="detail-panel"><div className="section-title"><h2>Documents</h2><span>{d.documents.length} {d.documents.length===1?'file':'files'}</span></div>{(['client','advocate','admin','generated'] as const).map(origin=>{const docs=d.documents.filter(x=>x.origin===origin);return docs.length?<div className="document-group" key={origin}><h3>{label(origin)} <span>{docs.length}</span></h3>{docs.map(document)}</div>:null;})}</section>}
    {d.payments.length>0&&<section id="payments" className="detail-panel"><div className="section-title"><h2>Payments</h2><span>{d.payments.length} {d.payments.length===1?'record':'records'}</span></div>{d.payments.map(p=><article className="payment-row" key={p.id}><div><strong>{label(p.purpose)}<Demo show={p.simulated}/></strong><b>{money(p.total_paise)}</b></div><p>{p.payer.name} · {label(p.payer.role)}</p><p className="payment-state">{label(p.status)} · {date(p.captured_at??p.created_at)}</p><details><summary>Amount breakdown</summary><dl><Field name="Base" value={money(p.base_amount_paise)}/><Field name="GST" value={money(p.gst_paise)}/></dl></details></article>)}</section>}
    {d.shipments.map((s,i)=><section id={i===0?"shipments":undefined} className="detail-panel" key={s.id}><div className="section-title"><h2>Shipment<Demo show={s.simulated}/></h2><span>{label(s.status)}</span></div><dl className="shipment-fields">
@@ -95,6 +98,6 @@ export function CaseDetail() {
 
   {assign&&<AssignAdvocate caseId={d.id} reference={d.reference} service={service} close={()=>setAssign(false)} assigned={()=>{setAssign(false);setReload(n=>n+1);}}/>}
   {delivering&&<ConfirmDelivery record={d} close={()=>setDelivering(false)} confirmed={()=>{setDelivering(false);setReload(n=>n+1);}}/>}
-  {preview&&<Preview notice={service==='legal_notice'} doc={preview} close={()=>setPreview(null)}/>}
+  {preview&&<Preview report={isFlowReportService(service)} notice={service==='legal_notice'} doc={preview} close={()=>setPreview(null)}/>}
  </main>;
 }

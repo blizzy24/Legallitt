@@ -25,7 +25,7 @@ const LABEL: Record<string, string> = {
   dispatched: 'Dispatched', completed: 'Completed', cancelled: 'Cancelled', refunded: 'Refunded',
 };
 const tone = (st: CaseStatus) => ({completed: 'good', cancelled: 'bad', refunded: 'neutral', client_review: 'warn', payment_pending: 'warn', draft: 'neutral'} as Record<string, 'good' | 'bad' | 'neutral' | 'warn'>)[st] ?? (groupOf(st) === 'accepted' ? 'good' : 'warn');
-export const statusLabel = (r: ApiCase) => r.sub_status === 'awaiting_admin_approval' ? 'Under Legalitt review' : LABEL[r.status] ?? r.status.replaceAll('_', ' ');
+export const statusLabel = (r: ApiCase) => r.report_card?.stage.client??(r.sub_status === 'awaiting_admin_approval' ? 'Under Legalitt review' : LABEL[r.status] ?? r.status.replaceAll('_', ' '));
 const text = (v: unknown) => typeof v === 'string' && v.trim() ? v.trim() : null;
 /** Forum or location the client entered, where the service records one. */
 function forum(r: ApiCase) {

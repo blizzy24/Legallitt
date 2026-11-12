@@ -43,7 +43,7 @@ async function dump(page,label=''){
   const info=await page.evaluate(sel=>{const norm=s=>(s??'').replace(/\s+/g,' ').trim(),vis=e=>e.getClientRects().length>0;
     return {url:location.pathname+location.search,
       buttons:[...new Set([...document.querySelectorAll(sel)].filter(vis).map(e=>norm(e.getAttribute('aria-label'))||norm(e.textContent)).filter(Boolean).map(s=>s.slice(0,70)))],
-      fields:[...document.querySelectorAll('input,textarea')].filter(vis).map(e=>`${e.getAttribute('aria-label')??''}|${e.getAttribute('placeholder')??''}|${e.type}=${(e.value??'').slice(0,30)}`),
+      fields:[...document.querySelectorAll('input,textarea')].filter(vis).map(e=>{const label=`${e.getAttribute('aria-label')??''}|${e.getAttribute('placeholder')??''}|${e.name??''}`;const secret=e.type==='password'||/password|passcode|token|secret|otp|one.time.code/i.test(label);return `${label}|${e.type}=${secret?'[REDACTED]':(e.value??'').slice(0,30)}`;}),
       text:norm(document.body.innerText).slice(0,1800)};},CLICKABLE);
   console.log(`--- ${label} ${info.url}\nBUTTONS: ${info.buttons.slice(0,45).join(' ¦ ')}${info.buttons.length>45?` ¦ …(+${info.buttons.length-45})`:''}\nFIELDS: ${info.fields.join(' ¦ ')}\nTEXT: ${info.text}\n---`);
   return info;

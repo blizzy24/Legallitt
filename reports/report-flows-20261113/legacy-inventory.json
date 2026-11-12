@@ -1,0 +1,16 @@
+{
+  "checked_at": "2026-11-12T20:39:21.480Z",
+  "counts": {
+    "property_search": {
+      "payment_pending": 1,
+      "completed": 1,
+      "draft": 1,
+      "refunded": 1,
+      "cancelled": 1
+    },
+    "document_forensic": {
+      "completed": 1,
+      "draft": 1
+    }
+  }
+}

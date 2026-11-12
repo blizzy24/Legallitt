@@ -44,6 +44,7 @@ import { caseScope, type CaseActor } from "./case-access";
 import { caseReference } from './case-reference';
 import {isReportService,REPORT_AWAITING_APPROVAL,REPORT_CHANGES_REQUESTED,type ChangeItem,type ReportServiceCode} from '@legalitt/shared';
 import {assertReportSubmittable} from '../service-reports/report-submission';
+import {ensureReportWorkflow,reportCorrectionAllowed} from '../service-reports/report-workflow';
 
 export const createCaseSchema = CreateCaseSchema;
 export const updateCaseSchema = z
@@ -422,6 +423,7 @@ export class CaseStateMachine {
     if (!payment) throw new ConflictException('A captured service payment is required');
     const updated=await this.advance(tx, actor, record, CaseStatus.paid, {payment_id: paymentId}, true, source);
     if(record.service_code==='legal_notice')await ensureNoticeLifecycle(tx,record);
+    if(['property_search','document_forensic'].includes(record.service_code))await ensureReportWorkflow(tx,updated);
     return updated;
   }
   async assign(actor: CaseActor, id: string, body: unknown) {
@@ -434,10 +436,14 @@ export class CaseStateMachine {
     return db.$transaction(async (tx) => {
       let record = await lockedCase(tx, actor, id);
       // Initial assignment only. A declined case retaining its former advocate
+      if(record.service_code==='property_search'){
+        const workflow=await ensureReportWorkflow(tx,record);
+        if(!workflow.data.verification||workflow.data.tasks?.some(t=>t.status!=='resolved'))throw new ConflictException('Verify the property request and resolve outstanding details before assignment.');
+      }
       // needs a separately approved reassignment flow, not this action.
       // FIR declines recorded before the reason-based rejection kept the advocate
       // on the case; returning it to admin means the admin can assign again (flow §3.2).
-      if (['fir_draft','legal_notice'].includes(record.service_code) && record.status === 'advocate_declined' && record.advocate_id) {
+      if (['fir_draft','legal_notice','property_search','document_forensic'].includes(record.service_code) && record.status === 'advocate_declined' && record.advocate_id) {
         await tx.caseAssignment.updateMany({where: {case_id: id, ended_at: null}, data: {ended_at: new Date(), end_reason: 'advocate_declined'}});
         record = await tx.case.update({where: {id}, data: {advocate_id: null}});
       }
@@ -461,7 +467,7 @@ export class CaseStateMachine {
       if (record.status !== "assigning")
         throw new ConflictException("Case is not awaiting assignment");
       record = await tx.case.update({ where: { id }, data: { advocate_id } });
-      if(['fir_draft','legal_notice'].includes(record.service_code)){
+      if(['fir_draft','legal_notice','property_search','document_forensic'].includes(record.service_code)){
         // Recorded as this admin's assignment, now; never inferred from an earlier 'assigned' event.
         if(!await tx.caseAssignment.findFirst({where:{case_id:id,ended_at:null}}))await tx.caseAssignment.create({data:{case_id:id,advocate_id,assigned_by:actor.id}});
         if(record.service_code==='fir_draft')await ensureFirLifecycle(tx,record);
@@ -1012,11 +1018,32 @@ export async function writeNoticeReassignment(tx:Prisma.TransactionClient,actor:
 
 type ReportSubmission = {draft_id: string; version: number; document_ids: string[]};
 
+/** Overdue report reassignment retains every author's work and assignment history. */
+export async function writeReportReassignment(tx:Prisma.TransactionClient,actor:CaseActor,id:string,advocateId:string,reason:string){
+ if(actor.role!=='admin')throw new ForbiddenException('Admin required');const c=await lockedCase(tx,actor,id);
+ if(!['property_search','document_forensic'].includes(c.service_code)||!['assigned','advocate_accepted','in_progress'].includes(c.status)||c.sub_status==='awaiting_admin_approval')throw new ConflictException('This report cannot be reassigned now.');
+ const now=new Date();await tx.caseAssignment.updateMany({where:{case_id:id,ended_at:null},data:{ended_at:now,end_reason:reason}});await tx.caseAssignment.create({data:{case_id:id,advocate_id:advocateId,assigned_by:actor.id}});
+ return tx.case.update({where:{id},data:{advocate_id:advocateId,status:'assigned',sub_status:null,updated_at:now}});
+}
+
+/** Requested client corrections preserve the original paid filing and tariff. */
+export async function writeReportCorrection(tx:Prisma.TransactionClient,actor:CaseActor,id:string,details:Prisma.InputJsonObject,taskId:string){
+ const c=await lockedCase(tx,actor,id);
+ if(actor.role!=='client'||!['property_search','document_forensic'].includes(c.service_code))throw new ForbiddenException('Case client required');
+ if(['draft','submitted','payment_pending','completed','cancelled','refunded'].includes(c.status))throw new ConflictException('This request is not awaiting a paid intake correction');
+ const workflow=await tx.reportWorkflow.findUnique({where:{case_id:id}});
+ const tasks=(workflow?.data as {tasks?:{id:string;kind:string;status:string}[]}|undefined)?.tasks;
+ if(!tasks?.some(t=>t.id===taskId&&t.kind==='details'&&t.status==='requested'))throw new ConflictException('No matching request for corrected details');
+ const updated=await tx.case.update({where:{id},data:{details,updated_at:new Date(Math.max(Date.now(),c.updated_at.getTime()+1))}});
+ await appendCaseEvent(tx,{case_id:id,type:'report_intake_corrected',actor_id:actor.id,actor_role:'client',from_status:c.status,to_status:c.status,payload:{task_id:taskId,previous_details:c.details}});
+ return updated;
+}
+
 export async function writeReportSaved(tx: Prisma.TransactionClient, actor: CaseActor, id: string, service: ReportServiceCode,
   draft: {id: string; version: number}) {
   const record = await lockedCase(tx, actor, id, service);
   if (actor.role !== 'advocate') throw new ForbiddenException('Assigned advocate required');
-  if (record.status !== 'in_progress' || record.sub_status === REPORT_AWAITING_APPROVAL)
+  if (record.status !== 'in_progress' && !await reportCorrectionAllowed(tx,record) || record.sub_status === REPORT_AWAITING_APPROVAL)
     throw new ConflictException('The submitted report is frozen while awaiting admin review.');
   return appendCaseEvent(tx, {case_id: id, type: 'service_report_saved', actor_id: actor.id, actor_role: actor.role,
     from_status: record.status, to_status: record.status, payload: {draft_id: draft.id, version: draft.version}});
@@ -1060,11 +1087,13 @@ export async function writeReportReleased(tx: Prisma.TransactionClient, actor: C
       from_status: 'in_progress', to_status: 'approved', payload: {draft_id: payload.draft_id, version: payload.version, document_ids: payload.document_ids}});
   } else {
     if (actor.role !== 'advocate') throw new ForbiddenException('Assigned advocate required');
-    if (record.status !== 'in_progress' || record.sub_status) throw new ConflictException('This report cannot be sent in the current state');
+    if (record.status !== 'in_progress' && !await reportCorrectionAllowed(tx,record) || record.sub_status) throw new ConflictException('This report cannot be sent in the current state');
   }
-  const updated = await tx.case.update({where: {id}, data: {status: 'completed', sub_status: null, completed_at: now, updated_at: now}});
+  const correction=record.status==='completed';
+  const updated = await tx.case.update({where: {id}, data: {status: 'completed', sub_status: null, completed_at: correction?record.completed_at:now, updated_at: now}});
+  if(correction){const w=await ensureReportWorkflow(tx,record);await tx.reportWorkflow.update({where:{case_id:id},data:{revision:{increment:1},data:{...w.data,correction_open:false} as Prisma.InputJsonObject}});}
   await appendCaseEvent(tx, {case_id: id, type: 'service_report_released', actor_id: actor.id, actor_role: actor.role,
-    from_status: viaApproval ? 'approved' : 'in_progress', to_status: 'completed', created_at: now,
+    from_status: correction?'completed':viaApproval ? 'approved' : 'in_progress', to_status: 'completed', created_at: now,
     payload: {draft_id: payload.draft_id, version: payload.version, document_ids: payload.document_ids, note: payload.note}});
   return updated;
 }

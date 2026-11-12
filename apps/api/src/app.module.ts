@@ -18,6 +18,7 @@ import {CancellationsController} from './cancellations/cancellations.controller'
 import {CancellationsService} from './cancellations/cancellations.service';
 import {ServiceReportsController} from './service-reports/service-reports.controller';
 import {ServiceReportsService} from './service-reports/service-reports.service';
+import {ReportWorkflowService} from './service-reports/report-workflow.service';
 import {FirController} from './cases/fir.controller';
 import {FirService} from './cases/fir.service';
 import { NotificationsController, NotificationRepository } from './notifications/notifications.controller';
@@ -95,7 +96,7 @@ import {ACCOUNT_COGNITO, CognitoAccountAdapter} from './account/account-cognito'
     NoticeFlowService,
     NoticeReminders,
     {provide: NOTICE_EMAIL, useClass: SesNoticeEmail},
-    PaymentsService, ServiceReportsService, CancellationsService,
+    PaymentsService, ServiceReportsService, ReportWorkflowService, CancellationsService,
     AuthService,
     AuthGuard,
     CaseRepository,

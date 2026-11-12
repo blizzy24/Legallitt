@@ -43,7 +43,7 @@ test('multi-service spine: real DB ownership, references, locks, documents, inbo
       assert.equal(new Set(rows.map(r=>r.reference)).size,rows.length);
       for (const service of SERVICE_CODES) {
         const pair=rows.filter(r=>r.service_code===service);
-        const prefix=service==='legal_notice'?'LN':service==='fir_draft'?'FIR':service.toUpperCase();
+        const prefix=service==='legal_notice'?'LN':service==='fir_draft'?'FIR':service==='property_search'?'PSR':service==='document_forensic'?'DF':service.toUpperCase();
         for(const row of pair){assert.match(row.reference,new RegExp(`^${prefix}-\\d{4}-\\d{4,}$`));assert.equal(row.client_id,owner.id);assert.equal(row.status,'draft');assert.deepEqual(row.details,{});}
         const serials=pair.map(r=>Number(r.reference.split('-').at(-1))).sort((a,b)=>a-b);
         assert.equal(serials[1],serials[0]+1);
@@ -85,6 +85,11 @@ test('multi-service spine: real DB ownership, references, locks, documents, inbo
         docs.push(ticket.document.id);
         await db.document.update({where:{id:ticket.document.id},data:{status:'uploaded'}});
         await db.case.update({where:{id:row.id},data:{status:'paid'}}); // fixture only: no new payment workflow
+        if(service==='property_search'){
+          const {ReportWorkflowService}=require('../dist/src/service-reports/report-workflow.service');
+          const workflow=new ReportWorkflowService(prisma,new InAppNotifications(new SimulatedNotifications()));
+          await workflow.action(admin,row.id,'verify',{revision:(await workflow.view(admin,row.id)).revision});
+        }
         if(['legal_advice','district_court','high_court'].includes(service))await db.consultation.create({data:{case_id:row.id,advocate_id:advocate.id,client_id:owner.id,mode:'chat',scheduled_at:new Date(Date.now()+86400000),duration_min:30,status:'scheduled'}});
         await assert.rejects(machine.assign(owner,row.id,{advocate_id:advocate.id}),{status:403});
         await machine.assign(admin,row.id,{advocate_id:advocate.id});
@@ -176,6 +181,16 @@ test('multi-service spine: real DB ownership, references, locks, documents, inbo
       await assert.rejects(client(owner).request('/cases?service_code=property_search&client_id='+stranger.id),{status:400});
       assert.ok((await client(owner).cases(undefined,'property_search')).items.every(r=>r.client_id===owner.id&&r.service_code==='property_search'));
       assert.equal((await client(admin).case(row.id)).id,row.id);
+      for(const outsider of [stranger,otherAdvocate]){
+        await assert.rejects(client(outsider).request(`/service-reports/${row.id}/workflow`),{status:404});
+        await assert.rejects(client(outsider).request(`/service-reports/${row.id}/wording`,{base_draft_id:null,section:'findings',text:'Test'}),{status:404});
+        for(const action of ['verify','request-information','reply','resolve','file-checklist','begin-report','review-checklist','reopen-chat','open-correction','reassign'])
+          await assert.rejects(client(outsider).request(`/service-reports/${row.id}/workflow/${action}`,{revision:0}),{status:404},action+' HTTP isolation');
+        for(const code of ['property_search','document_forensic']){
+          await assert.rejects(client(outsider).request(`/service-reports/settings/${code}`),{status:403});
+          await assert.rejects(client(outsider).request(`/service-reports/settings/${code}`,{}),{status:403});
+        }
+      }
       assert.ok((await client(admin).adminCases({service:'property_search'})).items.every(r=>r.service_code==='property_search'));
     });
   } finally {
@@ -185,6 +200,8 @@ test('multi-service spine: real DB ownership, references, locks, documents, inbo
     await db.adminAction.deleteMany({where:{admin_id:admin.id}});
     await db.document.deleteMany({where:{id:{in:docs}}});
     await db.consultation.deleteMany({where:{case_id:{in:ids}}});
+    await db.reportWorkflow.deleteMany({where:{case_id:{in:ids}}});
+    await db.caseAssignment.deleteMany({where:{case_id:{in:ids}}});
     await db.case.deleteMany({where:{id:{in:ids}}});
     await db.advocateProfile.deleteMany({where:{user_id:{in:users.map(u=>u.id)}}});
     await db.user.deleteMany({where:{id:{in:users.map(u=>u.id)}}});

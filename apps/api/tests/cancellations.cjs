@@ -2,6 +2,7 @@ const test=require('node:test'),assert=require('node:assert/strict'),{randomUUID
 const {PrismaClient}=require('../dist/src/generated/prisma/client'),{PrismaPg}=require('@prisma/adapter-pg');
 const {CaseStateMachine}=require('../dist/src/cases/case-state-machine');
 const {ServiceReportsService}=require('../dist/src/service-reports/service-reports.service');
+const {ReportWorkflowService}=require('../dist/src/service-reports/report-workflow.service');
 const {CancellationsService}=require('../dist/src/cancellations/cancellations.service');
 const {PaymentsService}=require('../dist/src/payments/payments.service');
 const {InAppNotifications}=require('../dist/src/notifications/in-app-notifications');
@@ -9,7 +10,7 @@ const {SimulatedNotifications}=require('../dist/src/notifications/simulated-noti
 const {seedConfirmedPricing,seedProvisionalPricing}=require('../dist/prisma/seed-pricing');
 
 const intake={tier:'ordinary',details:{contact:{fullName:'TEST Cancel',mobile:'+91 90000 00000'},jurisdiction:{state_code:'23',state:'Madhya Pradesh',district_code:'410',district:'Indore'},
-  property_address:'Plot 1, Indore',property_type:'residential',search_duration:'30_years'}};
+  property_address:'Plot 1, Indore',property_type:'residential',purpose:'buying',search_duration:'30_years'}};
 
 test('Cancellations and simulated refunds (D-12, D-13, D-14)',{skip:!process.env.LEGALITT_TEST_DATABASE_URL},async t=>{
   const db=new PrismaClient({adapter:new PrismaPg({connectionString:process.env.LEGALITT_TEST_DATABASE_URL})}),prisma={getClient:async()=>db};
@@ -17,11 +18,13 @@ test('Cancellations and simulated refunds (D-12, D-13, D-14)',{skip:!process.env
   const [client,other,advocate,otherAdvocate,admin]=users,ids=[];
   const inbox=new InAppNotifications(new SimulatedNotifications()),state=new CaseStateMachine(prisma,inbox);
   const reports=new ServiceReportsService(prisma,state,{},inbox),cancels=new CancellationsService(prisma,inbox);
+  const workflows=new ReportWorkflowService(prisma,inbox);
   const pay=new PaymentsService(prisma,state,{capture:async()=>({paymentId:randomUUID(),simulated:true,source:'simulated'})},inbox);
   const paidCase=async(accept=false)=>{
     const c=await state.create(client,{service_code:'property_search'});ids.push(c.id);
     await reports.intake(client,c.id,intake);await state.submitForPayment(client,c.id);
     const q=await pay.quote(client,{case_id:c.id});await pay.intent(client,{case_id:c.id,purpose:'service_fee',quote_id:q.id},randomUUID());
+    await workflows.action(admin,c.id,'verify',{revision:(await workflows.view(admin,c.id)).revision});
     await state.assign(admin,c.id,{advocate_id:advocate.id});
     if(accept)await state.transition(advocate,c.id,'advocate_accepted');
     return c;
@@ -86,6 +89,7 @@ test('Cancellations and simulated refunds (D-12, D-13, D-14)',{skip:!process.env
       await db.refund.deleteMany({where:{case_id:id}});await db.cancellationRequest.deleteMany({where:{case_id:id}});
       await db.payment.deleteMany({where:{case_id:id}});await db.casePriceQuote.deleteMany({where:{case_id:id}});
       await db.caseAssignment.deleteMany({where:{case_id:id}}).catch(()=>{});
+      await db.reportWorkflow.deleteMany({where:{case_id:id}});
       await db.document.deleteMany({where:{case_id:id}});await db.caseEvent.deleteMany({where:{case_id:id}});await db.caseParty.deleteMany({where:{case_id:id}});await db.case.delete({where:{id}});
     }
     await db.notification.deleteMany({where:{user_id:{in:users.map(u=>u.id)}}});

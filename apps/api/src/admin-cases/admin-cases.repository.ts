@@ -1,6 +1,7 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { z } from 'zod';
-import { isReportService } from '@legalitt/shared';
+import { isReportService,isFlowReportService,ReportWorkflowPolicySchema,reportStage,type ReportWorkflowData } from '@legalitt/shared';
+import {reportDeadline} from '../service-reports/report-workflow';
 import { ADMIN_CASE_BUCKETS, adminBucketFor, CaseStatus, SERVICE_CODES, type AdminCasePage, type AdminCaseRow } from '@legalitt/shared';
 import { PrismaService } from '../prisma.service';
 import { parse } from '../auth/auth.service';
@@ -76,7 +77,7 @@ export class AdminCasesRepository {
         orderBy: notice?[{tier:{sort:'desc',nulls:'last'}},{notice_lifecycle:{deadline_at:{sort:'asc',nulls:'last'}}},{id:'asc'}]:input.queue ? [{updated_at:'asc'},{id:'asc'}] : [{created_at:'desc'},{id:'desc'}], take: input.limit + 1,
         select: {
           id: true, reference: true, service_code: true, status: true, matter_type: true, created_at: true,
-          details: true, notice_document_id: true, sub_status:true, updated_at:true,
+          details: true, notice_document_id: true, sub_status:true, updated_at:true,tier:true,report_workflow:{include:{policy:true}},
           notice_lifecycle:{include:{policy:true}},fir_lifecycle:{include:{policy:true}},payments_case_id_relations:{where:{purpose:'service_fee',status:'captured'},orderBy:{captured_at:'asc'},take:1,select:{captured_at:true}},
           case_events_case_id_relations: {where: {OR:[{source:'simulated'},{to_status:'client_review'},{type:{in:['fir_draft_submitted','fir_draft_approved','service_report_submitted']}}]}, orderBy:{id:'asc'}, select: {id:true,type:true,payload:true,created_at:true,source:true,to_status:true}},
           client_id_relation: {select: {id: true, full_name: true}},
@@ -109,8 +110,13 @@ export class AdminCasesRepository {
         const noticePolicy=row.notice_lifecycle?NoticeWorkflowPolicySchema.parse(row.notice_lifecycle.policy.config):null;
         const clientSince=row.status==='client_review'?row.case_events_case_id_relations.filter(e=>e.to_status==='client_review').at(-1)?.created_at:null;
         const rounds=row.drafts_case_id_relations.reduce((sum,d)=>sum+d.draft_reviews_draft_id_relations.length,0);
+        const reportData=(row.report_workflow?.data??{}) as ReportWorkflowData;
+        const reportPolicy=row.report_workflow?ReportWorkflowPolicySchema.parse(row.report_workflow.policy.config):null;
+        const paidAt=row.payments_case_id_relations[0]?.captured_at;
+        const reportDue=reportData.deadline_at??(paidAt&&reportPolicy?reportDeadline(paidAt,reportPolicy,row.tier).toISOString():null);
         return {
           service_code: input.service,
+          ...(isFlowReportService(row.service_code)?{report_progress:{label:reportStage({...row,advocate_id:row.advocate_id_relation?.id},reportData).admin,deadline_at:reportDue,overdue:!!reportDue&&!reportData.paused_at&&!['completed','cancelled','refunded'].includes(row.status)&&Date.parse(reportDue)<Date.now(),paused:!!reportData.paused_at,followup_due:!!reportPolicy&&!!reportData.tasks?.some(t=>t.status==='requested'&&Date.now()-Date.parse(t.requested_at)>reportPolicy.followup_hours*3600000)}}:{}),
           ...(notice?{sub_status:row.sub_status,notice_deadline:{at:row.notice_lifecycle?.deadline_at?.toISOString()??null,
             warning:!!row.notice_lifecycle?.deadline_at&&!['completed','cancelled','refunded'].includes(row.status)&&row.notice_lifecycle.deadline_at.getTime()-Date.now()<=NoticeWorkflowPolicySchema.parse(row.notice_lifecycle.policy.config).deadline_alert_hours*3600000,
             overdue:!!row.notice_lifecycle?.deadline_at&&!['completed','cancelled','refunded'].includes(row.status)&&row.notice_lifecycle.deadline_at.getTime()<Date.now(),

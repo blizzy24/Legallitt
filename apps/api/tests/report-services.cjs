@@ -4,6 +4,7 @@ const {PrismaClient}=require('../dist/src/generated/prisma/client'),{PrismaPg}=r
 const {CaseStateMachine}=require('../dist/src/cases/case-state-machine');
 const {CaseRepository}=require('../dist/src/cases/case-repository');
 const {ServiceReportsService}=require('../dist/src/service-reports/service-reports.service');
+const {ReportWorkflowService}=require('../dist/src/service-reports/report-workflow.service');
 const {DocumentService}=require('../dist/src/documents/document.service');
 const {stagingKey}=require('../dist/src/documents/document-storage');
 const {PaymentsService}=require('../dist/src/payments/payments.service');
@@ -21,8 +22,8 @@ const signature=[[{x:.1,y:.1},{x:.4,y:.8},{x:.8,y:.2}]];
 const intakes={
   property_search:{tier:'ordinary',details:{contact:{fullName:'TEST Applicant',mobile:'+91 90000 00000',email:'test@legalitt.invalid'},
     jurisdiction:jurisdiction('Madhya Pradesh','Indore'),property_address:'Plot 42, Scheme 78, Indore',property_type:'residential',
-    survey_number:'Sy. 104/2',search_duration:'30_years',requirement:'Thirty-year title search before purchase.'}},
-  document_forensic:{tier:'urgent',details:{document_type:'agreement_contract',questioned_description:'Signature clause',no_reference_sample:false,instructions:'Compare page 3 signature.'}},
+    survey_number:'Sy. 104/2',search_duration:'30_years',purpose:'buying',requirement:'Thirty-year title search before purchase.'}},
+  document_forensic:{tier:'urgent',details:{document_type:'agreement_contract',analysis_type:'signature',questioned_description:'Signature clause',no_reference_sample:false,instructions:'Compare page 3 signature.'}},
   court_marriage:{tier:null,details:{contact:{mobile:'+91 90000 00001'},party_one:{full_name:'TEST One',date_of_birth:'1995-04-02',address:'Pune',marital_status:'never_married'},
     party_two:{full_name:'TEST Two',date_of_birth:'1996-05-03',address:'Pune',marital_status:'never_married'},jurisdiction:jurisdiction('Maharashtra','Pune')}},
 };
@@ -42,6 +43,9 @@ test('Report services: provisional pricing, paid intake, assignment, advocate re
   global.fetch=async(url,options)=>url==='https://report-storage.invalid'?(objects.set(options.body.get('key'),new Uint8Array(await options.body.get('file').arrayBuffer())),new Response(null,{status:204})):originalFetch(url,options);
   const docs=new DocumentService(prisma,storage,{inspect:async bytes=>({mime:'application/pdf',pageCount:(await PDFDocument.load(bytes)).getPageCount()})});
   const reports=new ServiceReportsService(prisma,state,docs,inbox),queue=new AdminCasesRepository(prisma);
+  const workflows=new ReportWorkflowService(prisma,inbox);
+  const policyIds=[];
+  const workflowAction=async(actor,id,action,body={})=>workflows.action(actor,id,action,{revision:(await workflows.view(actor,id)).revision,...body});
   const pay=new PaymentsService(prisma,state,{capture:async()=>({paymentId:randomUUID(),simulated:true,source:'simulated'})},inbox);
   const pdf=async()=>{const d=await PDFDocument.create();d.addPage();return d.save();};
   const upload=async(actor,caseId,kind,filename='TEST.pdf')=>{const ticket=await docs.presign(actor,{case_id:caseId,kind,filename,mime:'application/pdf'});
@@ -49,6 +53,7 @@ test('Report services: provisional pricing, paid intake, assignment, advocate re
   const draft=async code=>{const c=isServiceOffered(code)?await state.create(client,{service_code:code}):await seedDormantCase(db,client,code);ids.push(c.id);return c;};
   const paid=async(code)=>{
     const c=await draft(code);
+    if(code==='property_search'||code==='document_forensic')assert.match(c.reference,code==='property_search'?/^PSR-\d{4}-\d{5,}$/:/^DF-\d{4}-\d{5,}$/,'Current flow reference format; legacy references stay untouched');
     await reports.intake(client,c.id,intakes[code]);
     if(code!=='property_search')await assert.rejects(state.submitForPayment(client,c.id),{status:400},'required documents block submission');
     if(code==='document_forensic'){await upload(client,c.id,'questioned_document','Questioned.pdf');await upload(client,c.id,'reference_document','Reference.pdf');}
@@ -58,7 +63,9 @@ test('Report services: provisional pricing, paid intake, assignment, advocate re
     if(isServiceOffered(code))await state.submitForPayment(client,c.id);else await asIfOffered(code,()=>state.submitForPayment(client,c.id));
     const q=await pay.quote(client,{case_id:c.id});assert.equal(q.status,'ready');assert.equal(q.breakdown.total_paise,totals[code]);
     await pay.intent(client,{case_id:c.id,purpose:'service_fee',quote_id:q.id},randomUUID());
-    await state.assign(admin,c.id,{advocate_id:advocate.id});await state.transition(advocate,c.id,'advocate_accepted');
+    if(code==='property_search')await workflowAction(admin,c.id,'verify');
+    await state.assign(admin,c.id,{advocate_id:advocate.id});assert.equal(require('@legalitt/shared').REPORT_INTAKE_SCHEMAS[code].safeParse((await repo.read(advocate,c.id)).details).success,true,'redacted intake retains the service schema');await state.transition(advocate,c.id,'advocate_accepted');
+    if(code==='document_forensic')await workflowAction(advocate,c.id,'file-checklist',{files_open:true,pages_complete:true,legible:true});
     return c;
   };
   try{
@@ -99,10 +106,12 @@ test('Report services: provisional pricing, paid intake, assignment, advocate re
       await assert.rejects(docs.url(client,report.id),{status:404});
       await assert.rejects(reports.save(advocate,c.id,{base_draft_id:randomUUID(),report_document_id:report.id,note:''}),{status:409});
       const research={owner_details:'TEST owner research',documents_checked:[{description:'TEST checked record',reference:'TEST record reference'}],search_date:'2026-11-11',search_period:'1996–2026',records_inspected:'TEST inspected records',registry_office:'TEST registry office',search_notes:'TEST search notes',ownership_history:'TEST ownership history',findings:'TEST search findings',conclusion:'TEST final opinion'};
-      const working=await reports.save(advocate,c.id,{base_draft_id:null,production:'property',report:research,note:''});
+      const unsigned=await reports.save(advocate,c.id,{base_draft_id:null,production:'property',report:research,note:''});
+      await assert.rejects(reports.preview(advocate,c.id,unsigned.id),{status:400},'personal record check is required before generating a PDF');
+      await assert.rejects(reports.submit(advocate,c.id,unsigned.id),{status:400},'sign-off is required before direct delivery');
+      const working=await reports.save(advocate,c.id,{base_draft_id:unsigned.id,production:'property',report:{...research,personally_checked:true},note:''});
       const preview=await reports.preview(advocate,c.id,working.id),extracted=await require('./helpers/pdf-text.cjs').readPdfText(Buffer.from(preview.files[0].pdf_base64,'base64'));
       for(const text of ['TEST owner research','TEST checked record','TEST record reference','TEST inspected records','TEST registry office','TEST search notes','TEST ownership history','TEST search findings','TEST final opinion','Plot 42, Scheme 78, Indore'])assert.ok(extracted.text.includes(text),text+' reaches PDF');
-      await assert.rejects(reports.submit(advocate,c.id,working.id),{status:400},'working preview must not bypass final upload/sign-off');
       const draft=await reports.save(advocate,c.id,{base_draft_id:working.id,report_document_id:report.id,note:'Title clear for 30 years.'});
       assert.equal((await repo.read(advocate,c.id)).report.property_draft.id,working.id,'research survives final-upload versions');
       await assert.rejects(reports.approve(admin,c.id,draft.id),{status:409},'no admin gate for property search');
@@ -117,10 +126,11 @@ test('Report services: provisional pricing, paid intake, assignment, advocate re
       const c=await paid('document_forensic');
       const affidavit={deponent_name:'TEST Advocate',enrolment_number:'MP/1429/2014',age:38,office_address:'High Court Precinct, Indore',
         paragraphs:defaultAffidavitParagraphs({reference:c.reference,client:'TEST REPORT client',document:'Questioned.pdf'})};
-      const report={what_checked:'Signature on page 3.',how_checked:'10x optical comparison.',findings:'Hesitation marks.',final_result:'Does not match.'};
+      const report={what_checked:'Signature on page 3.',how_checked:'Visual comparison of supplied scans.',findings:'Hesitation marks.',final_result:'Does not match.',overall_status:'likely_not_genuine',risk_level:'high',authenticity:'Visible differences in the supplied signature copies.'};
       const unsigned=await reports.save(advocate,c.id,{base_draft_id:null,report,affidavit,signed:false});
       assert.equal((await db.case.findUnique({where:{id:c.id}})).status,'in_progress');
       await assert.rejects(reports.preview(advocate,c.id,unsigned.id),e=>e.status===400&&/Sign/.test(e.message));
+      const reportPreview=await reports.preview(advocate,c.id,unsigned.id,true);assert.equal(reportPreview.files.length,1,'report can be previewed before signing the affidavit');
       const v2=await reports.save(advocate,c.id,{base_draft_id:unsigned.id,report,affidavit,signature,signed:true});
       const preview=await reports.preview(advocate,c.id,v2.id);assert.equal(preview.files.length,2);
       for(const f of preview.files)assert.ok(Buffer.from(f.pdf_base64,'base64').subarray(0,4).equals(Buffer.from('%PDF')));
@@ -143,6 +153,7 @@ test('Report services: provisional pricing, paid intake, assignment, advocate re
       const v3=await reports.save(advocate,c.id,{base_draft_id:v2.id,report:{...report,findings:'Hesitation marks; seal ink differs under UV.'},affidavit,signature,signed:true});
       await reports.submit(advocate,c.id,v3.id);
       await assert.rejects(reports.approve(admin,c.id,v2.id),{status:409},'stale version cannot be approved');
+      await workflowAction(admin,c.id,'review-checklist',{draft_id:v3.id,format:true,signature:true,conclusion:true,question:true});
       const done=await reports.approve(admin,c.id,v3.id);assert.equal(done.status,'completed');
       assert.equal((await reports.approve(admin,c.id,v3.id)).status,'completed','idempotent');
       const seen=await repo.read(client,c.id);assert.equal(seen.report.released.document_ids.length,2);
@@ -162,16 +173,82 @@ test('Report services: provisional pricing, paid intake, assignment, advocate re
       assert.ok((await docs.url(client,file.id)).url);
       await assert.rejects(repo.read(other,c.id),{status:404});
     });
+    await t.test('Workflow actions isolate other clients and advocates, pause deadlines and release the editor PDF directly',async()=>{
+      const c=await paid('property_search');
+      const calls=[['verify',{}],['request-information',{kind:'details',prompt:'Confirm owner spelling'}],['reply',{task_id:randomUUID(),reply:'Response'}],['resolve',{task_id:randomUUID()}],['file-checklist',{files_open:true,pages_complete:true,legible:true}],['begin-report',{}],['review-checklist',{draft_id:randomUUID(),format:true,signature:true,conclusion:true,question:true}],['reopen-chat',{reason:'Follow-up'}]];
+      for(const outsider of [other,otherAdvocate]){
+        await assert.rejects(workflows.view(outsider,c.id),{status:404});
+        for(const [action,body]of calls)await assert.rejects(workflows.action(outsider,c.id,action,{revision:0,...body}),{status:404},action+' isolation');
+        await assert.rejects(workflows.settings(outsider,'property_search'),{status:403});
+        await assert.rejects(workflows.settings(outsider,'property_search',{}),{status:403});
+      }
+      const before=await workflows.view(admin,c.id);
+      await workflowAction(admin,c.id,'request-information',{kind:'details',prompt:'Confirm the full property address'});
+      const requested=await workflows.view(client,c.id),task=requested.tasks.at(-1);assert.ok(requested.paused_at);assert.equal(requested.chat.writable,true);
+      await assert.rejects(workflows.action(client,c.id,'reply',{revision:before.revision,task_id:task.id,reply:'New address'}),{status:409},'stale response refused');
+      await workflowAction(client,c.id,'reply',{task_id:task.id,reply:'Confirmed street number',details:{...intakes.property_search.details,property_address:'Plot 42, updated street, Indore'}});
+      await workflowAction(admin,c.id,'resolve',{task_id:task.id});
+      const resumed=await workflows.view(client,c.id);assert.equal(resumed.paused_at,null);assert.ok(Date.parse(resumed.deadline_at)>=Date.parse(before.deadline_at));
+      assert.equal((await db.reportWorkflow.findUnique({where:{case_id:c.id}})).data.original_details.property_address,intakes.property_search.details.property_address,'original filing retained');
+      await workflowAction(advocate,c.id,'request-information',{kind:'document',document_kind:'property_document',prompt:'Please supply the title deed'});
+      const documentTask=(await workflows.view(client,c.id)).tasks.at(-1);
+      await assert.rejects(upload(client,c.id,'reference_document'),{status:409},'request does not authorize another document kind');
+      const extra=await upload(client,c.id,'property_document');
+      await workflowAction(client,c.id,'reply',{task_id:documentTask.id,document_ids:[extra.id]});await workflowAction(advocate,c.id,'resolve',{task_id:documentTask.id});
+      await assert.rejects(upload(client,c.id,'property_document'),{status:409},'upload closes when the information request is resolved');
+      const research={client_details:'Client details entered and verified',property_details:'Property description edited by advocate',total_area:'120 square metres',owner_details:'Owner research',documents_checked:[{description:'Sale deed',reference:'R42',office:'Registry office A',checked:true}],search_date:'2026-11-13',search_period:'1996–2026',records_inspected:'Registry index',registry_office:'Indore registry',search_notes:'No extra records found',ownership_history:'Recorded chain of title',findings:'No encumbrance found in inspected records',findings_detail:{ownership:'Recorded owner',charges:'None in inspected index',court_case:'Not independently searched',property_tax:'Receipt supplied'},conclusion:'Limited to records inspected',personally_checked:true};
+      const d=await reports.save(advocate,c.id,{production:'property',base_draft_id:null,report:research,note:'Research complete'});
+      const preview=await reports.preview(advocate,c.id,d.id),text=(await require('./helpers/pdf-text.cjs').readPdfText(Buffer.from(preview.files[0].pdf_base64,'base64'))).text;
+      for(const phrase of ['Client details entered and verified','Property description edited by advocate','120 square metres','Registry office A','Not independently searched','Receipt supplied'])assert.ok(text.includes(phrase),phrase+' reaches PDF');
+      await reports.submit(advocate,c.id,d.id);const released=(await repo.read(client,c.id)).report.released;assert.equal(released.document_ids.length,1);assert.ok((await docs.url(client,released.document_ids[0])).url);
+      await assert.rejects(reports.submit(advocate,c.id,d.id),{status:409},'no double release');
+      const {NoticeMessages}=require('../dist/src/cases/notice-messages');const messages=new NoticeMessages(prisma),thread=await messages.thread(client,c.id);
+      await messages.send(client,thread.id,{body:'Thank you'});
+      await db.case.update({where:{id:c.id},data:{completed_at:new Date(Date.now()-8*86400000)}});
+      await assert.rejects(messages.send(client,thread.id,{body:'Expired'}),{status:409});
+      await workflowAction(admin,c.id,'reopen-chat',{reason:'Client follow-up on registry result'});await messages.send(client,thread.id,{body:'Reopened question'});
+      const {WalletService}=require('../dist/src/wallet/wallet.service');const wallet=new WalletService(prisma,inbox);
+      const earnedBefore=await wallet.wallet(advocate,{period:'all'}),completedBefore=(await db.case.findUnique({where:{id:c.id}})).completed_at;
+      await workflowAction(advocate,c.id,'open-correction');
+      await assert.rejects(reports.submit(advocate,c.id,d.id),{status:409},'correction must be a new version');
+      const corrected=await reports.save(advocate,c.id,{production:'property',base_draft_id:d.id,report:{...research,conclusion:'Corrected opinion, still limited to inspected records'},note:'Corrected version'});
+      await reports.submit(advocate,c.id,corrected.id);
+      const earnedAfter=await wallet.wallet(advocate,{period:'all'});assert.equal(earnedAfter.earned_paise,earnedBefore.earned_paise);assert.equal(earnedAfter.entries.filter(e=>e.case_id===c.id).length,1);assert.equal((await db.case.findUnique({where:{id:c.id}})).completed_at.toISOString(),completedBefore.toISOString());
+      for(const outsider of [other,otherAdvocate])await assert.rejects(workflows.wording(outsider,c.id,{base_draft_id:null,section:'findings',text:'Original'}),{status:404});
+    });
+    await t.test('overdue reassignment retains work, removes former access and requires fresh authorship',async()=>{
+      const c=await paid('property_search');await db.advocateProfile.create({data:{user_id:otherAdvocate.id,verification:'approved',city:'Pune'}});
+      const old=await reports.save(advocate,c.id,{base_draft_id:null,production:'property',report:{...require('@legalitt/shared').emptyPropertyReport(),personally_checked:true},note:''});
+      await assert.rejects(workflowAction(admin,c.id,'reassign',{advocate_id:otherAdvocate.id,reason:'Capacity'}),{status:409},'not overdue');
+      const w=await db.reportWorkflow.findUnique({where:{case_id:c.id}});await db.reportWorkflow.update({where:{case_id:c.id},data:{data:{...w.data,deadline_at:new Date(Date.now()-86400000).toISOString()}}});
+      await workflowAction(admin,c.id,'reassign',{advocate_id:otherAdvocate.id,reason:'TEST overdue research'});
+      await assert.rejects(repo.read(advocate,c.id),{status:404});await assert.rejects(workflows.view(advocate,c.id),{status:404});await assert.rejects(reports.preview(advocate,c.id,old.id),{status:404});
+      const next=await repo.read(otherAdvocate,c.id);assert.equal(next.status,'assigned');assert.equal(next.report.property_draft.report.personally_checked,false);assert.equal((await db.draft.findUnique({where:{id:old.id}})).content.report.personally_checked,true,'old attestation stays in history');
+      assert.equal((await db.caseAssignment.findMany({where:{case_id:c.id}})).length,2);assert.ok(await db.notification.findFirst({where:{user_id:advocate.id,case_id:c.id,title:'A new advocate has been assigned to your case'}}));
+      await state.transition(otherAdvocate,c.id,'advocate_accepted');await reports.start(otherAdvocate,c.id);await assert.rejects(reports.preview(otherAdvocate,c.id,old.id),{status:409},'cannot reuse previous advocate submission');
+    });
+    await t.test('upload limits are versioned per service and enforced on storage completion',async()=>{
+      const original=await draft('property_search'),pinned=await workflows.view(admin,original.id),prior=(await workflows.settings(admin,'property_search'))[0];
+      const policy=await workflows.settings(admin,'property_search',{base_version:prior.version,config:{...prior.config,max_upload_bytes:1024}});policyIds.push(policy.id);
+      assert.equal((await workflows.view(admin,original.id)).policy.max_upload_bytes,pinned.policy.max_upload_bytes,'existing case retains its policy');
+      const newer=await draft('property_search'),ticket=await docs.presign(client,{case_id:newer.id,kind:'property_document',filename:'TEST-too-large.pdf',mime:'application/pdf'});assert.equal(ticket.upload.max_bytes,1024);objects.set(stagingKey(ticket.document.s3_key),new Uint8Array(2048));await assert.rejects(docs.complete(client,ticket.document.id),{status:400});
+      const oldTicket=await docs.presign(client,{case_id:original.id,kind:'property_document',filename:'TEST-old-limit.pdf',mime:'application/pdf'});assert.equal(oldTicket.upload.max_bytes,pinned.policy.max_upload_bytes);
+      await assert.rejects(workflows.settings(admin,'property_search',{base_version:prior.version,config:prior.config}),{status:409},'stale setting edits are refused');
+    });
   }finally{
     global.fetch=originalFetch;
     for(const id of ids){
+      const messageThreads=await db.messageThread.findMany({where:{case_id:id},select:{id:true}});await db.message.deleteMany({where:{thread_id:{in:messageThreads.map(t=>t.id)}}});
       await db.notification.deleteMany({where:{case_id:id}});await db.adminAction.deleteMany({where:{subject_id:id}});
       const drafts=await db.draft.findMany({where:{case_id:id},select:{id:true}});
       await db.draftReview.deleteMany({where:{draft_id:{in:drafts.map(d=>d.id)}}});
       await db.payment.deleteMany({where:{case_id:id}});await db.casePriceQuote.deleteMany({where:{case_id:id}});
       await db.draft.deleteMany({where:{case_id:id}});await db.document.deleteMany({where:{case_id:id}});
+      await db.reportWorkflow.deleteMany({where:{case_id:id}});await db.caseAssignment.deleteMany({where:{case_id:id}});
+      const threads=await db.messageThread.findMany({where:{case_id:id},select:{id:true}});await db.message.deleteMany({where:{thread_id:{in:threads.map(t=>t.id)}}});await db.messageThread.deleteMany({where:{case_id:id}});
       await db.caseEvent.deleteMany({where:{case_id:id}});await db.caseParty.deleteMany({where:{case_id:id}});await db.case.delete({where:{id}});
     }
+    await db.adminAction.deleteMany({where:{subject_id:{in:policyIds}}});await db.reportWorkflowPolicy.deleteMany({where:{id:{in:policyIds}}});
     await db.notification.deleteMany({where:{user_id:{in:users.map(u=>u.id)}}});
     await db.advocateProfile.deleteMany({where:{user_id:{in:users.map(u=>u.id)}}});await db.user.deleteMany({where:{id:{in:users.map(u=>u.id)}}});
     await db.$disconnect();

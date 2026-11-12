@@ -27,6 +27,8 @@ import { FileInspector } from "./file-inspector";
 import {isConsultationService} from '@legalitt/shared';
 import {consultationDocumentVisible} from '../consultations/consultation-documents';
 import {assertReportDocumentDeletable,assertReportDocumentReadable,assertReportUploadAllowed} from '../service-reports/report-access';
+import {isFlowReportService} from '@legalitt/shared';
+import {ensureReportWorkflow} from '../service-reports/report-workflow';
 
 const transactionOptions = { timeout: 60_000 };
 @Injectable()
@@ -112,7 +114,7 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
       // they were accepted solely on FIR identity uploads, which are refused above.
       if (input.identity_last4 || input.identity)
         throw new BadRequestException('Identity details aren’t collected with uploads.');
-      assertReportUploadAllowed(actor, record, input.kind, internal?.serviceReport);
+      await assertReportUploadAllowed(tx,actor, record, input.kind, internal?.serviceReport);
       const id = randomUUID();
       // Original identity filenames may contain ID numbers. Never persist them,
       // including in object keys, download headers, the draft or PDF manifest.
@@ -133,7 +135,8 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
           status: "pending",
         },
       });
-      const upload = await this.storage.upload(key, input.mime, documentMaxBytes(input.mime, input.kind));
+      const maxBytes=isFlowReportService(record.service_code)?(await ensureReportWorkflow(tx,record)).policy.max_upload_bytes:documentMaxBytes(input.mime,input.kind);
+      const upload = await this.storage.upload(key, input.mime, maxBytes);
       return {
         document: this.publicRecord(doc),
         ...(doc.simulated ? {simulated: true} : {}),
@@ -141,7 +144,7 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
           ...upload,
           method: "POST",
           expires_in: DOCUMENT_URL_SECONDS,
-          max_bytes: documentMaxBytes(input.mime, input.kind),
+          max_bytes: maxBytes,
         },
       };
     }, transactionOptions);
@@ -153,7 +156,7 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
       if (doc.status === "uploaded") return this.publicRecord(doc);
       const record = await tx.case.findUniqueOrThrow({where:{id:doc.case_id!}});
       if(!await noticeDocumentVisible(tx,actor,record,doc))throw new NotFoundException('Document not found');
-      assertReportUploadAllowed(actor, record, doc.kind, true);
+      await assertReportUploadAllowed(tx,actor, record, doc.kind, true);
       if(!await consultationDocumentVisible(tx,actor,record,doc))throw new NotFoundException('Document not found');
       if (record.service_code === 'fir_draft' && (record.sub_status === 'awaiting_admin_approval' || record.status === 'completed'))
         throw new ConflictException('FIR documents are frozen at this stage');
@@ -164,6 +167,7 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
       if (slot && await tx.document.count({where: {case_id: record.id, kind: slot.kind, status: 'uploaded'}}) >= slot.max)
         throw new BadRequestException(`${slot.title} holds up to ${slot.max} files. Remove one to add another.`);
       const key = stagingKey(doc.s3_key);
+      const maxBytes=isFlowReportService(record.service_code)?(await ensureReportWorkflow(tx,record)).policy.max_upload_bytes:documentMaxBytes(doc.mime_type,doc.kind);
       const info = await this.storage.head(key);
       if (!info)
         throw new ConflictException("Upload is not present in storage");
@@ -171,13 +175,13 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
         if (
           !DocumentMimeSchema.safeParse(info.mime).success ||
           info.size < 1 ||
-          info.size > documentMaxBytes(info.mime, doc.kind) ||
+          info.size > maxBytes ||
           (doc.kind === FIR_CHANGE_ATTACHMENT_KIND && info.size > FIR_CHANGE_ATTACHMENT_MAX_BYTES)
         )
           throw new BadRequestException(
             "File exceeds the upload limits or has an unsupported type",
           );
-        const bytes = await this.storage.read(key, info, documentMaxBytes(info.mime, doc.kind));
+        const bytes = await this.storage.read(key, info, maxBytes);
         const actual = await this.inspector.inspect(bytes);
         if (actual.mime !== info.mime)
           throw new BadRequestException(
@@ -193,6 +197,7 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
             status: "uploaded",
           },
         });
+        if(['property_search','document_forensic'].includes(record.service_code)&&actor.role==='client')await appendCaseEvent(tx,{case_id:record.id,type:'report_document_uploaded',actor_id:actor.id,actor_role:actor.role,from_status:record.status,to_status:record.status,payload:{document_id:updated.id,kind:updated.kind}});
         return this.publicRecord(updated);
       } catch (error) {
         // Invalid content stays unavailable. Delete only the inspected version so
