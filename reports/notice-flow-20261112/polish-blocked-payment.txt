@@ -1,0 +1,5 @@
+STAGE blocked-payment
+SHOT client-quote-blocked.png
+SHOT client-unfinished-upload.png
+SHOT client-quote-recovered.png
+PASS Unfinished upload blocks payment explicitly; removal restores the quote without charging

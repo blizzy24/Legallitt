@@ -17,7 +17,7 @@ import {noticeHref} from './navigation';
 import DocumentThumbnail from '../documents/DocumentThumbnail';
 
 export const NOTICE_ISSUES=[['property-dispute','Property Dispute'],['money-recovery','Money Recovery'],['tenant-issue','Tenant Issue'],['family-dispute','Family Dispute'],['cheque-bounce','Cheque Bounce'],['consumer-complaint','Consumer Complaint'],['other','Any other']] as const;
-export const issueLabel=(code?:string|null)=>NOTICE_ISSUES.find(([key])=>key===code)?.[1]??code??'';
+export const issueLabel=(code?:string|null)=>NOTICE_ISSUES.find(([key])=>key===code?.replaceAll('_','-'))?.[1]??'';
 const slots:Record<string,[string,string][]>= {
   'property-dispute':[['notice_support_property','Property papers (sale deed, khata)'],['notice_support_agreement','Agreement'],['notice_support_screenshots','Screenshots']],
   'money-recovery':[['notice_support_invoice','Invoice / bill'],['notice_support_agreement','Agreement'],['notice_support_payment','Payment proof / ledger'],['notice_support_screenshots','Screenshots']],
