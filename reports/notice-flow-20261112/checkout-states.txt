@@ -1,0 +1,6 @@
+STAGE checkout-states
+SHOT state-scan-pay-loading.png
+SHOT state-scan-pay-error.png
+SHOT state-scan-pay-empty.png
+SHOT state-scan-pay-recovered.png
+PASS Checkout loading/error/empty and captured-payment recovery

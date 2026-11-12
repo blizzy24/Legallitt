@@ -1,0 +1,7 @@
+Verified layer 1/5
+Verified layer 2/5
+Verified layer 3/5
+Verified layer 4/5
+Verified layer 5/5
+Loaded image: node:22-bookworm-slim
+Loaded official Node ARM64 manifest sha256:1ee7b5f35129c6f4af835661a7a3cfbdd4748944c23b05567aa6ec00c6689e46

@@ -1,0 +1,169 @@
+{
+  "checked_at": "2026-11-12T16:06:42.299Z",
+  "environment": "local",
+  "simulated": [
+    "payments",
+    "object storage",
+    "AI",
+    "external email"
+  ],
+  "cases": [
+    {
+      "id": "c17ccc1b-a160-411f-b19a-54e153ed8393",
+      "methods": [
+        "courier"
+      ],
+      "tag": "courier",
+      "total": "165253",
+      "advocate": "advocate-2",
+      "declined": true,
+      "client_changed": true,
+      "admin_returned": true,
+      "failed": true,
+      "recovered": true
+    },
+    {
+      "id": "77094707-6068-4998-bcab-b385598c2d38",
+      "methods": [
+        "email"
+      ],
+      "tag": "email",
+      "total": "147353",
+      "advocate": "advocate"
+    },
+    {
+      "id": "3f1cc634-4160-4f52-b6e3-5f95a7c844ad",
+      "methods": [
+        "courier",
+        "email",
+        "whatsapp"
+      ],
+      "tag": "courier-email-whatsapp",
+      "total": "165253",
+      "advocate": "advocate"
+    }
+  ],
+  "results": [
+    {
+      "name": "Client intake/payment courier",
+      "at": "2026-11-12T14:05:26.081Z"
+    },
+    {
+      "name": "Client intake/payment email",
+      "at": "2026-11-12T14:06:00.465Z"
+    },
+    {
+      "name": "Client intake/payment courier-email-whatsapp",
+      "at": "2026-11-12T14:06:40.843Z"
+    },
+    {
+      "name": "Advocate draft/client approval courier",
+      "at": "2026-11-12T14:12:24.491Z"
+    },
+    {
+      "name": "Advocate draft/client approval email",
+      "at": "2026-11-12T14:13:05.929Z"
+    },
+    {
+      "name": "Advocate draft/client approval courier-email-whatsapp",
+      "at": "2026-11-12T14:13:47.929Z"
+    },
+    {
+      "name": "Admin verification/test e-sign courier",
+      "at": "2026-11-12T14:15:35.394Z"
+    },
+    {
+      "name": "Admin verification/test e-sign email",
+      "at": "2026-11-12T14:15:53.304Z"
+    },
+    {
+      "name": "Admin verification/test e-sign courier-email-whatsapp",
+      "at": "2026-11-12T14:16:10.281Z"
+    },
+    {
+      "name": "Dispatch, delivery and advocate credit courier",
+      "at": "2026-11-12T14:20:54.398Z"
+    },
+    {
+      "name": "Dispatch, delivery and advocate credit email",
+      "at": "2026-11-12T14:21:14.868Z"
+    },
+    {
+      "name": "Dispatch, delivery and advocate credit courier-email-whatsapp",
+      "at": "2026-11-12T14:21:49.688Z"
+    },
+    {
+      "name": "Cancellation before acceptance with full simulated refund",
+      "at": "2026-11-12T14:22:37.035Z"
+    },
+    {
+      "name": "Final candidate: partial/empty recovery, PDF viewer, wallet entries and AI draft choice",
+      "at": "2026-11-12T14:42:10.062Z"
+    },
+    {
+      "name": "Final candidate resumes saved intake and sends the six-section PDF; 36 loading/error captures checked",
+      "at": "2026-11-12T14:50:04.458Z"
+    },
+    {
+      "name": "Checkout loading/error/empty and captured-payment recovery",
+      "at": "2026-11-12T14:52:33.288Z"
+    },
+    {
+      "name": "Unfinished upload blocks payment explicitly; removal restores the quote without charging",
+      "at": "2026-11-12T14:56:53.241Z"
+    },
+    {
+      "name": "Client intake/payment courier",
+      "at": "2026-11-12T15:40:22.305Z"
+    },
+    {
+      "name": "Client intake/payment email",
+      "at": "2026-11-12T15:41:02.318Z"
+    },
+    {
+      "name": "Client intake/payment courier-email-whatsapp",
+      "at": "2026-11-12T15:41:53.147Z"
+    },
+    {
+      "name": "Advocate draft/client approval courier",
+      "at": "2026-11-12T15:47:57.001Z"
+    },
+    {
+      "name": "Advocate draft/client approval email",
+      "at": "2026-11-12T15:49:13.569Z"
+    },
+    {
+      "name": "Advocate draft/client approval courier-email-whatsapp",
+      "at": "2026-11-12T15:50:32.875Z"
+    },
+    {
+      "name": "Admin verification/test e-sign courier",
+      "at": "2026-11-12T15:53:56.579Z"
+    },
+    {
+      "name": "Admin verification/test e-sign email",
+      "at": "2026-11-12T15:54:19.830Z"
+    },
+    {
+      "name": "Admin verification/test e-sign courier-email-whatsapp",
+      "at": "2026-11-12T15:54:38.115Z"
+    },
+    {
+      "name": "Dispatch, delivery and advocate credit courier",
+      "at": "2026-11-12T15:56:19.041Z"
+    },
+    {
+      "name": "Dispatch, delivery and advocate credit email",
+      "at": "2026-11-12T15:56:39.371Z"
+    },
+    {
+      "name": "Dispatch, delivery and advocate credit courier-email-whatsapp",
+      "at": "2026-11-12T15:57:14.841Z"
+    },
+    {
+      "name": "Polish: hero, selectable cards, button hierarchy, safe document labels, timeline dates/details and PDF viewer",
+      "at": "2026-11-12T16:06:42.298Z"
+    }
+  ],
+  "page_errors": []
+}

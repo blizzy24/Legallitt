@@ -1,0 +1,10 @@
+STAGE polish
+SHOT client-landing.png
+SHOT client-uploads-polished.png
+SHOT client-review-files-polished.png
+SHOT client-tracking-polished.png
+SHOT client-delivered-courier.png
+SHOT advocate-documents-final.png
+SHOT advocate-credit-courier.png
+SHOT client-document-viewer-final.png
+PASS Polish: hero, selectable cards, button hierarchy, safe document labels, timeline dates/details and PDF viewer

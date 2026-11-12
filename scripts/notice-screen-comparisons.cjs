@@ -3,8 +3,21 @@ const fs=require('node:fs'),path=require('node:path'),{pathToFileURL}=require('n
 const root=path.resolve('docs/flows/ln-screens'),out=path.join(root,'comparisons');fs.mkdirSync(out,{recursive:true});
 const client='Legal-Notice-Client-Side',adv='Legal-Notice-Advocate-Side',viewer='Document-Viewer';
 const pairs=[
- ['landing',client,'Html → Body.png','client-landing.png'],['client-details',client,'04.png','client-step1-courier.png'],['delivery-methods',client,'156.png','client-methods-courier-email-whatsapp.png'],['issue-cheque',client,'142.png','client-issue-courier-email-whatsapp.png'],['uploads',client,'133.png','client-uploads-courier-email-whatsapp.png'],['review-files',client,'Html → Body (1).png','client-review-files-courier.png'],['summary',client,'08.png','client-summary-courier.png'],['payment',client,'Documents Forensic 16.png','client-payment-courier.png'],['scan-pay',client,'Documents Forensic 17.png','client-scan-courier.png'],['payment-success',client,'Documents Forensic 30.png','client-success-courier.png'],['client-tracking',client,'Html → Body (2).png','client-tracking-polished.png'],['client-changes',client,'Html → Body (3).png','client-request-changes.png'],['delivered',client,'Html → Body (5).png','client-delivered-courier.png'],['chat-readonly',client,'144.png','client-chat-readonly-courier.png'],
- ['advocate-fee',adv,'64.png','advocate-fee-courier.png'],['advocate-documents',adv,'61.png','advocate-documents-final.png'],['advocate-editor',adv,'62.png','advocate-editor-courier-revised.png'],['drafting-method',adv,'67.png','advocate-drafting-method.png'],['advocate-decline',adv,'71.png','advocate-decline.png'],['advocate-dispatch',adv,'Notice Dispatch Status.png','advocate-credit-courier.png'],
+ ['landing',client,'Html → Body.png','client-landing.png'],
+ ['client-details',client,'04.png','client-step1-courier.png'],
+ ['delivery-methods',client,'156.png','client-methods-courier-email-whatsapp.png'],
+ ['issue-cheque',client,'142.png','client-issue-courier-email-whatsapp.png'],
+ ['uploads',client,'133.png','client-uploads-polished.png'],
+ ['review-files',client,'Html → Body (1).png','client-review-files-polished.png'],
+ ['summary',client,'08.png','client-summary-courier.png'],
+ ['payment',client,'Documents Forensic 16.png','client-payment-courier.png'],
+ ['scan-pay',client,'Documents Forensic 17.png','client-scan-courier.png'],
+ ['payment-success',client,'Documents Forensic 30.png','client-success-courier.png'],
+ ['client-tracking',client,'Html → Body (2).png','client-tracking-polished.png'],
+ ['client-changes',client,'Html → Body (3).png','client-request-changes.png'],
+ ['delivered',client,'Html → Body (5).png','client-delivered-courier.png'],
+ ['chat-readonly',client,'144.png','client-chat-readonly-courier.png'],
+ ['advocate-fee',adv,'64.png','advocate-fee-courier.png'],['advocate-documents',adv,'61.png','advocate-documents-courier.png'],['advocate-editor',adv,'62.png','advocate-editor-courier-revised.png'],['drafting-method',adv,'67.png','advocate-drafting-method.png'],['advocate-decline',adv,'71.png','advocate-decline.png'],['advocate-dispatch',adv,'Notice Dispatch Status.png','advocate-credit-courier.png'],
  ['viewer',viewer,'iPhone 13 & 14 - 147.png','client-document-viewer-final.png'],['viewer-error',viewer,'iPhone 13 & 14 - 148.png','state-document-viewer-error.png'],['viewer-empty',viewer,'iPhone 13 & 14 - 149.png','state-viewer-empty.png']
 ];
 const esc=s=>s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('"','&quot;');

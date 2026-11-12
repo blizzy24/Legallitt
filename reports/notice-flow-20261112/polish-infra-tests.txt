@@ -1,0 +1,95 @@
+
+> @legalitt/infra@0.0.0 test D:\Legalitt\Legallitt\infra
+> pnpm build && node --test tests/*.cjs
+
+
+> @legalitt/infra@0.0.0 build D:\Legalitt\Legallitt\infra
+> tsc
+
+TAP version 13
+# Subtest: LegalittDev Core has no compute resources or dependencies
+ok 1 - LegalittDev Core has no compute resources or dependencies
+  ---
+  duration_ms: 356.4384
+  type: 'test'
+  ...
+# Subtest: LegalittProd Core has no compute resources or dependencies
+ok 2 - LegalittProd Core has no compute resources or dependencies
+  ---
+  duration_ms: 115.5525
+  type: 'test'
+  ...
+# Subtest: public signup cannot grant admin; Cognito has no custom OTP handlers
+ok 3 - public signup cannot grant admin; Cognito has no custom OTP handlers
+  ---
+  duration_ms: 2.0547
+  type: 'test'
+  ...
+# Subtest: only dev API courier milestones are enabled; Core, production and ops have no demo step switches
+ok 4 - only dev API courier milestones are enabled; Core, production and ops have no demo step switches
+  ---
+  duration_ms: 826.9543
+  type: 'test'
+  ...
+# tests\\foundation.cjs:107:7
+# WARNING Parameters/GeminiSecretArn: Parameter 'GeminiSecretArn' appears to be a password but does not have NoEcho set to true (CloudFormation Validate)
+#    Validation aws-cdk-lib.Stack
+#    Acknowledge with 'CloudFormation-Validate::W2509'
+# A copy of this report can be found in: C:\\Users\\KESHAV\\AppData\\Local\\Temp\\legalitt-cfn-check-XUTnST\\out\\validation-report.json
+# Subtest: LegalittDev: requested resources, isolated networking and encryption
+ok 5 - LegalittDev: requested resources, isolated networking and encryption
+  ---
+  duration_ms: 15.4844
+  type: 'test'
+  ...
+# Subtest: LegalittDev: bounded task roles and no invented deployment settings
+ok 6 - LegalittDev: bounded task roles and no invented deployment settings
+  ---
+  duration_ms: 1.8052
+  type: 'test'
+  ...
+# Subtest: LegalittDev: template parses through CDK CloudFormation resource schemas
+ok 7 - LegalittDev: template parses through CDK CloudFormation resource schemas
+  ---
+  duration_ms: 13749.4144
+  type: 'test'
+  ...
+# Subtest: LegalittProd: requested resources, isolated networking and encryption
+ok 8 - LegalittProd: requested resources, isolated networking and encryption
+  ---
+  duration_ms: 9.7296
+  type: 'test'
+  ...
+# Subtest: LegalittProd: bounded task roles and no invented deployment settings
+ok 9 - LegalittProd: bounded task roles and no invented deployment settings
+  ---
+  duration_ms: 1.8004
+  type: 'test'
+  ...
+# Subtest: LegalittProd: template parses through CDK CloudFormation resource schemas
+ok 10 - LegalittProd: template parses through CDK CloudFormation resource schemas
+  ---
+  duration_ms: 793.8661
+  type: 'test'
+  ...
+# Subtest: Gemini is dev-only, injected by ECS from one secret, with no Bedrock grant
+ok 11 - Gemini is dev-only, injected by ECS from one secret, with no Bedrock grant
+  ---
+  duration_ms: 879.5225
+  type: 'test'
+  ...
+# Subtest: notice SES is opt-in, constrained to one sender/identity, and absent from ops and production
+ok 12 - notice SES is opt-in, constrained to one sender/identity, and absent from ops and production
+  ---
+  duration_ms: 919.3221
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 17292.1544

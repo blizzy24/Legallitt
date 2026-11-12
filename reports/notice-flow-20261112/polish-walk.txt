@@ -1,0 +1,153 @@
+STAGE intakes
+SHOT client-landing.png
+SHOT client-step1-courier.png
+SHOT client-methods-courier.png
+SHOT client-issue-courier.png
+SHOT client-uploads-courier.png
+SHOT client-review-files-courier.png
+SHOT client-summary-courier.png
+SHOT client-payment-courier.png
+SHOT client-scan-courier.png
+SHOT client-success-courier.png
+PASS Client intake/payment courier
+SHOT client-step1-email.png
+SHOT client-methods-email.png
+SHOT client-issue-email.png
+SHOT client-uploads-email.png
+SHOT client-review-files-email.png
+SHOT client-summary-email.png
+SHOT client-payment-email.png
+SHOT client-scan-email.png
+SHOT client-success-email.png
+PASS Client intake/payment email
+SHOT client-step1-courier-email-whatsapp.png
+SHOT client-methods-courier-email-whatsapp.png
+SHOT client-issue-courier-email-whatsapp.png
+SHOT client-uploads-courier-email-whatsapp.png
+SHOT client-review-files-courier-email-whatsapp.png
+SHOT client-summary-courier-email-whatsapp.png
+SHOT client-payment-courier-email-whatsapp.png
+SHOT client-scan-courier-email-whatsapp.png
+SHOT client-success-courier-email-whatsapp.png
+PASS Client intake/payment courier-email-whatsapp
+STAGE drafts
+SHOT advocate-decline.png
+SHOT advocate-fee-courier.png
+SHOT advocate-documents-courier.png
+SHOT advocate-drafting-method.png
+SHOT advocate-editor-courier.png
+SHOT advocate-preview-courier.png
+SHOT client-draft-ready-courier.png
+SHOT client-document-viewer.png
+SHOT client-request-changes.png
+SHOT advocate-editor-courier-revised.png
+SHOT advocate-preview-courier.png
+SHOT client-admin-handoff-courier.png
+SHOT client-chat-readonly-courier.png
+PASS Advocate draft/client approval courier
+SHOT advocate-fee-email.png
+SHOT advocate-documents-email.png
+SHOT advocate-drafting-method.png
+SHOT advocate-editor-email.png
+SHOT advocate-preview-email.png
+SHOT client-draft-ready-email.png
+SHOT client-admin-handoff-email.png
+SHOT client-chat-readonly-email.png
+PASS Advocate draft/client approval email
+SHOT advocate-fee-courier-email-whatsapp.png
+SHOT advocate-documents-courier-email-whatsapp.png
+SHOT advocate-drafting-method.png
+SHOT advocate-editor-courier-email-whatsapp.png
+SHOT advocate-preview-courier-email-whatsapp.png
+SHOT client-draft-ready-courier-email-whatsapp.png
+SHOT client-admin-handoff-courier-email-whatsapp.png
+SHOT client-chat-readonly-courier-email-whatsapp.png
+PASS Advocate draft/client approval courier-email-whatsapp
+STAGE admin
+SHOT admin-address-check-courier.png
+SHOT admin-return.png
+SHOT advocate-editor-courier-revised.png
+SHOT advocate-preview-courier.png
+SHOT admin-notice-check-courier.png
+SHOT advocate-test-esign-courier.png
+SHOT admin-dispatch-ready-courier.png
+PASS Admin verification/test e-sign courier
+SHOT admin-address-check-email.png
+SHOT admin-notice-check-email.png
+SHOT advocate-test-esign-email.png
+SHOT admin-dispatch-ready-email.png
+PASS Admin verification/test e-sign email
+SHOT admin-address-check-courier-email-whatsapp.png
+SHOT admin-notice-check-courier-email-whatsapp.png
+SHOT advocate-test-esign-courier-email-whatsapp.png
+SHOT admin-dispatch-ready-courier-email-whatsapp.png
+PASS Admin verification/test e-sign courier-email-whatsapp
+STAGE delivery
+SHOT admin-sent-courier-courier.png
+SHOT admin-failed-delivery.png
+SHOT client-address-correction.png
+SHOT admin-retry.png
+SHOT admin-tracking-proof-courier.png
+SHOT admin-completed-courier.png
+SHOT client-delivered-courier.png
+SHOT advocate-credit-courier.png
+PASS Dispatch, delivery and advocate credit courier
+SHOT admin-sent-email-email.png
+SHOT admin-completed-email.png
+SHOT client-delivered-email.png
+SHOT advocate-credit-email.png
+PASS Dispatch, delivery and advocate credit email
+SHOT admin-sent-courier-email-whatsapp-courier.png
+SHOT admin-tracking-proof-courier-email-whatsapp.png
+SHOT admin-sent-courier-email-whatsapp-email.png
+SHOT admin-sent-courier-email-whatsapp-whatsapp.png
+SHOT admin-completed-courier-email-whatsapp.png
+SHOT client-delivered-courier-email-whatsapp.png
+SHOT advocate-credit-courier-email-whatsapp.png
+PASS Dispatch, delivery and advocate credit courier-email-whatsapp
+STAGE polish
+SHOT client-landing.png
+--- client failure /legal-notice/step1?caseId=4f3335a4-bc0d-4058-9f20-3262b0240d5d
+BUTTONS: Back ¦ Continue
+FIELDS: Full Name||text=Demo client ¦ Father’s / Husband’s name||text= ¦ Age||text= ¦ Mobile Number||tel= ¦ Email Address||email=demo-client@legalitt.invalid ¦ Full Address||textarea=
+TEXT: Legal Notice 1 2 3 4 5 6 Step 1 of 6 Please provide your details! Father’s / Husband’s name * Age * Mobile Number (Optional) Full Address * Saved to your case Continue Visible only to you, your advocate and Legalitt’s team
+---
+--- advocate-2 failure /dashboard
+BUTTONS: Notifications, 13 unread ¦ Manage AvailabilitySet weekly hours for chat consultations ¦ NEEDS REVIEW0 ¦ IN PROGRESS1 ¦ RESOLVED2 ¦ View All ¦ Dashboard ¦ Matters ¦ Clients ¦ Earnings
+FIELDS: 
+TEXT: 13 DA Good Morning, Demo 12 Nov 2026 Manage Availability Set weekly hours for chat consultations NEEDS REVIEW 0 IN PROGRESS 1 RESOLVED 2 NEEDS YOUR ATTENTION View All No cases need your action right now You can follow your ongoing and resolved cases in My Cases. EARNINGS A confirmed payout breakdown is not available for this historical case. Ask the administrator to check its payment record.
+---
+FAIL Expected values to be strictly equal:
++ actual - expected
+
++ 'http://localhost:8083/legal-notice/step1?caseId=4f3335a4-bc0d-4058-9f20-3262b0240d5d'
+- 'http://localhost:8083/legal-notice'
+
+STAGE polish
+SHOT client-landing.png
+--- client failure /legal-notice
+BUTTONS: Back ¦ Is a legal notice always required? ¦ What should it contain? ¦ Learn more ¦ DO IT YOURSELFQuick SubmissionEnter your details and submit your legal ¦ Continue with Quick Submission → ¦ GET EXPERT HELPAssistance ServiceGet guidance from our team through th ¦ Request Chat ¦ Request Callback ¦ URGENT₹999Within 5 daysPriority advocate assign ¦ ORDINARY₹699Within 10 daysStandard advocate assign ¦ Get Started
+FIELDS: 
+TEXT: Legal Notice Detail FORMAL LEGAL ACTION Send a Legal Notice Legally drafted. Professionally reviewed. Hassle-free. Why send a Legal Notice? Before you go to court, make your position clear. A legal notice formally communicates your grievance, your demand, and gives the other party an opportunity to respond. Acts as evidence in court Clearly states your demand Opens an opportunity to resolve the dispute May help avoid unnecessary litigation Is a legal notice always required? What should it contain? Learn more Drafted & reviewed by advocates on Legalitt Why choose Legalitt? Preview Before You Send Track Postal Acknowledgment Upload the reply you receive Choose how you’d like to proceed DO IT YOURSELF Quick Submission Enter your details and submit your legal notice request. Continue with Quick Submission → GET EXPERT HELP Assistance Service Get guidance from our team through the legal notice process. Request Chat Request Callback Choose Your Service Select the priority that suits your requirement. URGENT ₹999 Within 5 days Priority advocate assign ORDINARY ₹699 Within 10 days Standard advocate assign Selected: Urgent Assignment (5 Days) ₹999 Get Started Visible only to you, your advocate and Legalitt’s team.
+---
+--- advocate-2 failure /dashboard
+BUTTONS: Notifications, 13 unread ¦ Manage AvailabilitySet weekly hours for chat consultations ¦ NEEDS REVIEW0 ¦ IN PROGRESS1 ¦ RESOLVED2 ¦ View All ¦ Dashboard ¦ Matters ¦ Clients ¦ Earnings
+FIELDS: 
+TEXT: 13 DA Good Morning, Demo 12 Nov 2026 Manage Availability Set weekly hours for chat consultations NEEDS REVIEW 0 IN PROGRESS 1 RESOLVED 2 NEEDS YOUR ATTENTION View All No cases need your action right now You can follow your ongoing and resolved cases in My Cases. EARNINGS A confirmed payout breakdown is not available for this historical case. Ask the administrator to check its payment record.
+---
+FAIL Cannot read properties of undefined (reading 'some')
+STAGE polish
+SHOT client-landing.png
+SHOT client-uploads-polished.png
+SHOT client-review-files-polished.png
+--- client failure /legal-notice/tracking?caseId=c17ccc1b-a160-411f-b19a-54e153ed8393
+BUTTONS: Back ¦ View Profile ¦ View case chat ¦ View Notice Document ¦ Download PDF ¦ View Proof ¦ Download Proof ¦ Upload reply received ¦ Legal Advice ¦ View Notice Delivery
+FIELDS: 
+TEXT: Legal Notice Tracking Delivered Urgent Tier Notice Delivered Delivery has been confirmed for every selected method. REQUEST ID · LN-2026-0008 Copy NOTICE DETAILS Notice Type Money Recovery Service URGENT · 5 days Submitted On 12 Nov 2026, 9:10 PM Current Status Delivered ASSIGNED ADVOCATE Adv. Demo Advocate Asha Approved advocate View Profile View case chat Your notice has gone to Legalitt for preparation and dispatch. This chat is now read-only. REQUEST STATUS Request submitted 12 Nov 2026, 9:10 PM Your legal notice request has been received. Payment 12 Nov 2026, 9:10 PM Payment confirmed · ₹1,652.53 · Test payment Advocate assigned 12 Nov 2026, 9:15 PM Adv. Demo Advocate Asha assigned to prepare your notice. Draft preparation 12 Nov 2026, 9:16 PM Your advocate began preparing the legal notice. Your approval 12 Nov 2026, 9:17 PM You approved the draft for dispatch. Being prepared for dispatch 12 Nov 2026, 9:23 PM Legalitt checked the notice and completed the test e-sign step. Dispatched 12 Nov 2026, 9:25 PM Sent by Courier. Delivered 12 Nov 2026, 9:25 PM Delivery confirmed for all selected methods. YOUR LEGAL NOTICE Legal Notice PDF Prepared by Adv. Demo Advocate Asha View Notice Document Download PDF DELIVERY DETAILS Courier · Delivered Notice recipient TEST Notice Recipient Delivery address TEST ONLY, Corrected Recipient Street, Indore, 452001 Courier TEST Courier Waybill TEST-RETRY Copy Sent 12 Nov 2026, 9:25 PM Manually recorded by Legalitt. Delivery Progress 12 Nov 2026, 9:25 PM · TEST Indore hub TEST courier update: out for delivery Delivered 12 Nov 2026, 9:25 PM Received by TEST Recipient DELIVERY PROOF View Proof Download Proof 2 delivery attempts recorded. The previous failed attempt remains in the case history. Case Status Notice Delivery · Completed Courier 
+---
+--- advocate-2 failure /dashboard
+BUTTONS: Notifications, 13 unread ¦ Manage AvailabilitySet weekly hours for chat consultations ¦ NEEDS REVIEW0 ¦ IN PROGRESS1 ¦ RESOLVED2 ¦ View All ¦ Dashboard ¦ Matters ¦ Clients ¦ Earnings
+FIELDS: 
+TEXT: 13 DA Good Morning, Demo 12 Nov 2026 Manage Availability Set weekly hours for chat consultations NEEDS REVIEW 0 IN PROGRESS 1 RESOLVED 2 NEEDS YOUR ATTENTION View All No cases need your action right now You can follow your ongoing and resolved cases in My Cases. EARNINGS A confirmed payout breakdown is not available for this historical case. Ask the administrator to check its payment record.
+---
+FAIL els.filter is not a function

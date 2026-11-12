@@ -1,4 +1,4 @@
-import {noticeDate,noticeDocumentLabel,noticeMethodLabel} from '@legalitt/shared';
+import {noticeDate,noticeDocumentLabel,noticeMethodLabel,noticeStage} from '@legalitt/shared';
 import { ConfirmDelivery } from './confirm-delivery';
 import {NoticeFlowPanel} from './notice-flow-panel';
 import {FirApprovalPanel} from './fir-approval';
@@ -55,14 +55,14 @@ export function CaseDetail() {
  const relatedDoc=(docId:string|null)=>{const doc=d.documents.find(v=>v.id===docId);return doc?<button className="text-button" onClick={()=>setPreview(doc)}>{service==='legal_notice'?noticeDocumentLabel(doc):doc.filename} ↗<Demo show={doc.simulated}/></button>:null;};
  return <main className="case-detail">
   <Link className="back-link" to={backPath}>← {heading}</Link>
-  <section className="case-overview"><div className="case-heading"><div><p className="eyebrow">{SERVICE_NAMES[service].toUpperCase()}</p><h1>{d.reference}<Demo show={d.simulated}/></h1><p>{d.contacts.find(c=>c.role==='client')?.name}</p></div><span className={'status '+(bucket??'')}>{label(d.status)}</span></div>
+  <section className="case-overview"><div className="case-heading"><div><p className="eyebrow">{SERVICE_NAMES[service].toUpperCase()}</p><h1>{d.reference}<Demo show={d.simulated}/></h1><p>{d.contacts.find(c=>c.role==='client')?.name}</p></div><span className={'status '+(bucket??'')}>{service==='legal_notice'?noticeStage(d).admin:label(d.status)}</span></div>
    <dl className="summary-fields"><Field name="Matter" value={d.matter_type?label(d.matter_type):null}/><Field name="Intake issue" value={!d.matter_type&&typeof d.intake.issueType==='string'?label(d.intake.issueType.replaceAll('-','_')):null}/><Field name="Tier" value={d.tier?label(d.tier):null}/>
     <Field name="Service fee" value={d.pricing?<>{money(d.pricing.base_amount_paise)}{!d.pricing.confirmed&&<small className="unconfirmed">Unconfirmed price</small>}</>:null}/>
     <Field name="Additional fees" value={additional!==null&&additional>0n?money(additional.toString()):null}/>
     <Field name="Charged before GST" value={charged?money(charged.base_amount_paise):null}/>
     <Field name="GST paid" value={charged?money(charged.gst_paise):null}/>
     <Field name="Total paid" value={charged?money(charged.total_paise):null}/>
-    <Field name="GST rate" value={d.pricing?`${d.pricing.gst_bps/100}% exclusive`:null}/><Field name="Created" value={date(d.created_at)}/><Field name="Sub-status" value={d.sub_status?label(d.sub_status):null}/></dl>
+    <Field name="GST rate" value={d.pricing?`${d.pricing.gst_bps/100}% exclusive`:null}/><Field name="Created" value={date(d.created_at)}/><Field name="Sub-status" value={service!=='legal_notice'&&d.sub_status?label(d.sub_status):null}/></dl>
    {task&&<div className="admin-attention"><span className="attention-dot"/><div><small>NEEDS ADMIN</small><strong>{task}</strong></div>{canAssign&&<button className="assign" onClick={()=>setAssign(true)}>+ Assign</button>}{d.status==='dispatched'&&service!=='legal_notice'&&<button className="assign" onClick={()=>setDelivering(true)}>Confirm delivery</button>}</div>}
   </section>
   <CaseRefunds key={d.id+':'+d.status} caseId={d.id}/>

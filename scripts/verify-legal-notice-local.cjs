@@ -176,11 +176,21 @@ async function main(){
      await go(client,mobile+'/legal-notice');await text(client,'Choose Your Service');await client.waitForSelector('img[src*=notice-hero]');
      assert.ok(await client.$eval('img[src*=notice-hero]',e=>e.complete&&e.naturalWidth>0),'Supplied hero loaded');
      await snap(client,'client-landing');
-     const original=client.url();await click(client,'Assistance Service',{contains:true});assert.equal(client.url(),original);await click(client,'Quick Submission',{contains:true});assert.equal(client.url(),original);
+     const original=client.url();for(const title of ['Assistance Service','Quick Submission']){await client.$$eval('[role=radio]',(els,title)=>{const card=els.find(e=>e.textContent.includes(title));if(!card)throw Error('Missing option card');card.click();},title);assert.equal(client.url(),original);}
+     if(!live){
+       let filing=state.visual_case_id?await api.client.case(state.visual_case_id):await api.client.createCase({service_code:'legal_notice',tier:'urgent'});
+       state.visual_case_id=filing.id;save();
+       await api.client.request(`/notices/${filing.id}/filing`,(await api.client.case(c.id)).details,'PUT');
+       for(const kind of ['id_proof','notice_support_invoice'])if(!filing.documents?.some(d=>d.kind===kind)){
+         const file=await pdf('TEST-polish-'+kind),ticket=await api.client.presign({case_id:filing.id,kind,filename:'test-evidence.pdf',mime:'application/pdf'});
+         await api.client.upload(ticket,new File([fs.readFileSync(file)],'test-evidence.pdf',{type:'application/pdf'}));
+       }
+       for(const [route,name]of [['step4','client-uploads-polished'],['step4-review','client-review-files-polished']]){await go(client,mobile+'/legal-notice/'+route+'?caseId='+filing.id);await text(client,route==='step4'?'ID uploaded':'Review Your Documents');await snap(client,name);}
+     }
      for(const [p,url,name]of [[client,'/legal-notice/tracking?caseId='+c.id,'client-tracking-polished'],[client,'/legal-notice/delivery?caseId='+c.id,'client-delivered-courier'],[adv,'/advocate/notice/'+c.id+'/documents','advocate-documents-final'],[adv,'/advocate/notice/'+c.id+'/tracking','advocate-credit-courier']]){
        await go(p,mobile+url);await text(p,url.includes('documents')?'UPLOADED FILES':url.includes('tracking?')?'REQUEST STATUS':'Notice');
        const body=await p.evaluate(()=>document.body.innerText);assert.ok(!/Identity-proof-[0-9a-f-]{36}/i.test(body));assert.ok(!/\d{1,2}:\d{2}:\d{2}/.test(body),'No seconds in displayed dates');
-       const primary=await p.$eval('[role=button],button',els=>els.filter(e=>e.getClientRects().length&&['rgb(176, 156, 130)'].includes(getComputedStyle(e).backgroundColor)).map(e=>e.textContent));assert.ok(primary.length<=1,'At most one primary action: '+primary.join(', '));
+       const primary=await p.$$eval('[role=button],button',els=>els.filter(e=>e.getClientRects().length&&['rgb(176, 156, 130)'].includes(getComputedStyle(e).backgroundColor)).map(e=>e.textContent));assert.ok(primary.length<=1,'At most one primary action: '+primary.join(', '));
        if(url.includes('/documents'))await text(p,'Identity proof (Aadhaar / PAN)');
        if(url.includes('tracking?')){assert.match(body,/\d{1,2} [A-Z][a-z]{2} 2026, \d{1,2}:\d{2} [AP]M/);await text(p,'Your legal notice request has been received.');}
        await snap(p,name);

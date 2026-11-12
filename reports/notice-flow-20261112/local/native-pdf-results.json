@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "pages": 2,
+  "zoom": 1.5,
+  "external_requests": 0,
+  "script": "native-pdf-html.ts",
+  "scope": "Chromium offline HTML; physical mobile devices not exercised"
+}

@@ -17,7 +17,11 @@ case "$phase" in
  image)
   test "$(git rev-parse --short=7 HEAD)" = "$tag"
   git diff --quiet HEAD -- apps/api packages/shared package.json pnpm-lock.yaml
-  docker build --platform linux/arm64 -f apps/api/Dockerfile -t "$repo:$tag" .
+  proxy_args=()
+  if [[ "${NOTICE_BUILD_HOST_PROXY:-0}" == 1 ]]; then
+    proxy_args=(--build-arg HTTP_PROXY=http://host.docker.internal:3017 --build-arg HTTPS_PROXY=http://host.docker.internal:3017 --build-arg http_proxy=http://host.docker.internal:3017 --build-arg https_proxy=http://host.docker.internal:3017)
+  fi
+  docker build "${proxy_args[@]}" --platform linux/arm64 -f apps/api/Dockerfile -t "$repo:$tag" .
   aws ecr get-login-password --region "$region" | docker login --username AWS --password-stdin "${repo%/*}"
   docker push "$repo:$tag"
   aws ecr describe-images --region "$region" --repository-name legalitt-dev-api --image-ids "imageTag=$tag" > "$out/image.json"

@@ -1,0 +1,5 @@
+STAGE final-smoke
+SHOT client-resumed-final.png
+SHOT advocate-editor-final-revised.png
+SHOT advocate-preview-final.png
+PASS Final candidate resumes saved intake and sends the six-section PDF; 36 loading/error captures checked

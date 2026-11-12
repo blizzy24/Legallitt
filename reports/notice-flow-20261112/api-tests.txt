@@ -1,0 +1,1386 @@
+TAP version 13
+# Subtest: Account settings: preferences, security, password, export, deletion request, saved advocates — own data only (D-20–D-27)
+    # Subtest: preferences default on, persist per user, and quiet categories arrive read
+    ok 1 - preferences default on, persist per user, and quiet categories arrive read
+      ---
+      duration_ms: 93.5971
+      type: 'test'
+      ...
+    # Subtest: security reflects sign-in method; demo credentials are never changed
+    ok 2 - security reflects sign-in method; demo credentials are never changed
+      ---
+      duration_ms: 90.8922
+      type: 'test'
+      ...
+    # Subtest: saved advocates: approved only, per client, with availability and the consultation total
+    ok 3 - saved advocates: approved only, per client, with availability and the consultation total
+      ---
+      duration_ms: 141.1246
+      type: 'test'
+      ...
+    # Subtest: export contains only the caller’s own cases, payments and messages
+    ok 4 - export contains only the caller’s own cases, payments and messages
+      ---
+      duration_ms: 59.0794
+      type: 'test'
+      ...
+    # Subtest: deletion: blocked by an active paid case, otherwise deactivates immediately
+    ok 5 - deletion: blocked by an active paid case, otherwise deactivates immediately
+      ---
+      duration_ms: 94.2361
+      type: 'test'
+      ...
+    1..5
+ok 1 - Account settings: preferences, security, password, export, deletion request, saved advocates — own data only (D-20–D-27)
+  ---
+  duration_ms: 1372.0344
+  type: 'test'
+  ...
+# Subtest: Account area (D-15, D-17, D-18, D-19): own profile, documents, payments and receipts only
+    # Subtest: profile reads and updates only the signed-in client
+    ok 1 - profile reads and updates only the signed-in client
+      ---
+      duration_ms: 84.7151
+      type: 'test'
+      ...
+    # Subtest: documents: own cases only, deletable only before payment
+    ok 2 - documents: own cases only, deletable only before payment
+      ---
+      duration_ms: 144.8134
+      type: 'test'
+      ...
+    # Subtest: payments and receipts: own only, receipt says not a tax invoice
+    ok 3 - payments and receipts: own only, receipt says not a tax invoice
+      ---
+      duration_ms: 395.7382
+      type: 'test'
+      ...
+    1..3
+ok 2 - Account area (D-15, D-17, D-18, D-19): own profile, documents, payments and receipts only
+  ---
+  duration_ms: 963.3074
+  type: 'test'
+  ...
+# Subtest: picker eligibility/load, real assignment event, and stale timer cannot overwrite a human
+ok 3 - picker eligibility/load, real assignment event, and stale timer cannot overwrite a human
+  ---
+  duration_ms: 1015.934
+  type: 'test'
+  ...
+# Subtest: demo timer does not assign already-assigned cases
+ok 4 - demo timer does not assign already-assigned cases
+  ---
+  duration_ms: 1.9118
+  type: 'test'
+  ...
+# Subtest: admin list refuses non-admins before touching the database
+ok 5 - admin list refuses non-admins before touching the database
+  ---
+  duration_ms: 2.8663
+  type: 'test'
+  ...
+# (node:32384) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+# (Use `node --trace-deprecation ...` to show where the warning was created)
+# Subtest: admin list filters, counts, paginates, groups documents and exposes only table data
+ok 6 - admin list filters, counts, paginates, groups documents and exposes only table data
+  ---
+  duration_ms: 1658.7156
+  type: 'test'
+  ...
+# Subtest: human delivery persists receiver/time, real source and POD; duplicates and stale timer cannot overwrite
+ok 7 - human delivery persists receiver/time, real source and POD; duplicates and stale timer cannot overwrite
+  ---
+  duration_ms: 1032.786
+  type: 'test'
+  ...
+# Subtest: completed case is excluded by timer and simulator returns without authentication/upload
+ok 8 - completed case is excluded by timer and simulator returns without authentication/upload
+  ---
+  duration_ms: 1.194
+  type: 'test'
+  ...
+# Subtest: header retains the case pricing id and captured historical payment, independent of new prices
+ok 9 - header retains the case pricing id and captured historical payment, independent of new prices
+  ---
+  duration_ms: 158.4246
+  type: 'test'
+  ...
+# Subtest: admin detail: boundaries, sparse data, origins, payer, timeline and shipment evidence
+ok 10 - admin detail: boundaries, sparse data, origins, payer, timeline and shipment evidence
+  ---
+  duration_ms: 465.9576
+  type: 'test'
+  ...
+# Subtest: development seed: tagged through the real path, legacy seeds completed once and validated
+ok 11 - development seed: tagged through the real path, legacy seeds completed once and validated
+  ---
+  duration_ms: 425.3455
+  type: 'test'
+  ...
+# Subtest: system provenance cannot grant a role or cross case/document boundaries
+ok 12 - system provenance cannot grant a role or cross case/document boundaries
+  ---
+  duration_ms: 2.9611
+  type: 'test'
+  ...
+# Subtest: a demo-progression ticket is one identity, one case and only its routes
+ok 13 - a demo-progression ticket is one identity, one case and only its routes
+  ---
+  duration_ms: 0.8657
+  type: 'test'
+  ...
+# Subtest: demo progression defaults to courier milestones only, with explicit opt-in for each human action
+ok 14 - demo progression defaults to courier milestones only, with explicit opt-in for each human action
+  ---
+  duration_ms: 1.7405
+  type: 'test'
+  ...
+# (node:37504) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+# (Use `node --trace-deprecation ...` to show where the warning was created)
+# Subtest: D-35 advocate verification: owner-scoped documents, submit, admin decisions, isolation
+    # Subtest: partial saves allowed; submit blocked until complete; identity filename never persisted
+    ok 1 - partial saves allowed; submit blocked until complete; identity filename never persisted
+      ---
+      duration_ms: 516.7964
+      type: 'test'
+      ...
+    # Subtest: isolation: other advocates, clients and admins cannot act as this advocate
+    ok 2 - isolation: other advocates, clients and admins cannot act as this advocate
+      ---
+      duration_ms: 97.9843
+      type: 'test'
+      ...
+    # Subtest: submit → in review, frozen; admin requests update with reason; resubmit; approve publishes profile
+    ok 3 - submit → in review, frozen; admin requests update with reason; resubmit; approve publishes profile
+      ---
+      duration_ms: 408.5918
+      type: 'test'
+      ...
+    # Subtest: only approved advocates are assignable
+    ok 4 - only approved advocates are assignable
+      ---
+      duration_ms: 131.8833
+      type: 'test'
+      ...
+    1..4
+ok 15 - D-35 advocate verification: owner-scoped documents, submit, admin decisions, isolation
+  ---
+  duration_ms: 1520.3462
+  type: 'test'
+  ...
+# Subtest: AI default registration is simulated and preserves task-specific shapes
+ok 16 - AI default registration is simulated and preserves task-specific shapes
+  ---
+  duration_ms: 19.5283
+  type: 'test'
+  ...
+# Subtest: Gemini refuses registration outside dev, in production, or without credentials
+ok 17 - Gemini refuses registration outside dev, in production, or without credentials
+  ---
+  duration_ms: 11.8063
+  type: 'test'
+  ...
+# Subtest: Gemini calls fixed Google host with structured options and no key in URL
+ok 18 - Gemini calls fixed Google host with structured options and no key in URL
+  ---
+  duration_ms: 25.2173
+  type: 'test'
+  ...
+# Subtest: Gemini errors are actionable, redact credentials/prompts, and never fall back
+ok 19 - Gemini errors are actionable, redact credentials/prompts, and never fall back
+  ---
+  duration_ms: 6.8495
+  type: 'test'
+  ...
+# Subtest: Bedrock calls Mumbai, permits audited India profiles and rejects all other routing
+ok 20 - Bedrock calls Mumbai, permits audited India profiles and rejects all other routing
+  ---
+  duration_ms: 2.8139
+  type: 'test'
+  ...
+# Subtest: Bedrock defaults all tasks to Haiku and changes only the configured task to Sonnet
+ok 21 - Bedrock defaults all tasks to Haiku and changes only the configured task to Sonnet
+  ---
+  duration_ms: 1.4731
+  type: 'test'
+  ...
+# Subtest: Bedrock exposes region/model rejection and does not retry with another model
+ok 22 - Bedrock exposes region/model rejection and does not retry with another model
+  ---
+  duration_ms: 0.7334
+  type: 'test'
+  ...
+# Subtest: Bedrock missing AWS credentials fails module registration
+ok 23 - Bedrock missing AWS credentials fails module registration
+  ---
+  duration_ms: 870.8525
+  type: 'test'
+  ...
+# Subtest: AI port compile-time contract gives demand options and text only for text tasks
+ok 24 - AI port compile-time contract gives demand options and text only for text tasks
+  ---
+  duration_ms: 852.7217
+  type: 'test'
+  ...
+# [Nest] 29068  - 12/11/2026, 20:05:29   ERROR [AuthService] Object(5) {
+#   event: 'auth.otp.verify.failed',
+#   error: 'ServiceUnavailableException',
+#   reason: 'Phone sign-in is not configured',
+#   requestId: undefined,
+#   httpStatus: undefined
+# }
+# [Nest] 29068  - 12/11/2026, 20:05:29   ERROR [AuthService] Object(5) {
+#   event: 'auth.otp.request.failed',
+#   error: 'ServiceUnavailableException',
+#   reason: 'Phone sign-in is not configured',
+#   requestId: undefined,
+#   httpStatus: undefined
+# }
+# [Nest] 29068  - 12/11/2026, 20:05:29   ERROR [AuthService] Object(5) {
+#   event: 'auth.otp.verify.failed',
+#   error: 'ZodError',
+#   reason: 'code: Incorrect demo phone code. Enter 123456',
+#   requestId: undefined,
+#   httpStatus: undefined
+# }
+# [Nest] 29068  - 12/11/2026, 20:05:29   ERROR [AuthService] Object(5) {
+#   event: 'auth.otp.verify.failed',
+#   error: 'ZodError',
+#   reason: 'code: Incorrect demo phone code. Enter [redacted]6',
+#   requestId: undefined,
+#   httpStatus: undefined
+# }
+# [Nest] 29068  - 12/11/2026, 20:05:29   ERROR [AuthService] Object(5) {
+#   event: 'auth.otp.verify.failed',
+#   error: 'ZodError',
+#   reason: 'code: Incorrect demo phone code. Enter 123456',
+#   requestId: undefined,
+#   httpStatus: undefined
+# }
+# [Nest] 29068  - 12/11/2026, 20:05:29   ERROR [AuthService] Object(5) {
+#   event: 'auth.otp.verify.failed',
+#   error: 'ZodError',
+#   reason: 'phone: Too small: expected string to have >=1 characters; code: Incorrect demo phone code. Enter 123456',
+#   requestId: undefined,
+#   httpStatus: undefined
+# }
+# [Nest] 29068  - 12/11/2026, 20:05:29   ERROR [AuthService] Object(5) {
+#   event: 'auth.otp.verify.failed',
+#   error: 'ZodError',
+#   reason: 'phone: Too small: expected string to have >=1 characters; role: Invalid option: expected one of "client"|"advocate"',
+#   requestId: undefined,
+#   httpStatus: undefined
+# }
+# [Nest] 29068  - 12/11/2026, 20:05:29   ERROR [AuthService] Object(5) {
+#   event: 'auth.otp.verify.failed',
+#   error: 'ZodError',
+#   reason: 'phone: Too small: expected string to have >=1 characters; role: Invalid option: expected one of "client"|"advocate"',
+#   requestId: undefined,
+#   httpStatus: undefined
+# }
+# [Nest] 29068  - 12/11/2026, 20:05:29   ERROR [AuthService] Object(5) {
+#   event: 'auth.otp.request.failed',
+#   error: 'ServiceUnavailableException',
+#   reason: 'Phone sign-in is not configured',
+#   requestId: undefined,
+#   httpStatus: undefined
+# }
+# [Nest] 29068  - 12/11/2026, 20:05:29   ERROR [AuthService] Object(5) {
+#   event: 'auth.otp.verify.failed',
+#   error: 'ServiceUnavailableException',
+#   reason: 'Phone sign-in is not configured',
+#   requestId: undefined,
+#   httpStatus: undefined
+# }
+# [Nest] 29068  - 12/11/2026, 20:05:29   ERROR [AuthService] Object(5) {
+#   event: 'auth.otp.request.failed',
+#   error: 'ServiceUnavailableException',
+#   reason: 'Phone sign-in is not configured',
+#   requestId: undefined,
+#   httpStatus: undefined
+# }
+# [Nest] 29068  - 12/11/2026, 20:05:29   ERROR [AuthService] Object(5) {
+#   event: 'auth.otp.verify.failed',
+#   error: 'ServiceUnavailableException',
+#   reason: 'Phone sign-in is not configured',
+#   requestId: undefined,
+#   httpStatus: undefined
+# }
+# [Nest] 29068  - 12/11/2026, 20:05:29   ERROR [AuthService] Object(5) {
+#   event: 'auth.otp.request.failed',
+#   error: 'ServiceUnavailableException',
+#   reason: 'Phone sign-in is not configured',
+#   requestId: undefined,
+#   httpStatus: undefined
+# }
+# [Nest] 29068  - 12/11/2026, 20:05:29   ERROR [AuthService] Object(5) {
+#   event: 'auth.otp.verify.failed',
+#   error: 'ServiceUnavailableException',
+#   reason: 'Phone sign-in is not configured',
+#   requestId: undefined,
+#   httpStatus: undefined
+# }
+# Subtest: JWT verifier rejects expiry, wrong issuer/audience/use/signature and invalid role
+ok 25 - JWT verifier rejects expiry, wrong issuer/audience/use/signature and invalid role
+  ---
+  duration_ms: 75.439
+  type: 'test'
+  ...
+# Subtest: client cannot pass advocate guard or register as admin
+ok 26 - client cannot pass advocate guard or register as admin
+  ---
+  duration_ms: 10.4033
+  type: 'test'
+  ...
+# Subtest: simulated phone entry rejects production regardless of fixed code
+ok 27 - simulated phone entry rejects production regardless of fixed code
+  ---
+  duration_ms: 5.7689
+  type: 'test'
+  ...
+# Subtest: demo OTP ignores phone, selects only fixed accounts and uses password auth
+ok 28 - demo OTP ignores phone, selects only fixed accounts and uses password auth
+  ---
+  duration_ms: 33.8006
+  type: 'test'
+  ...
+# Subtest: registration validates password policy and logs actionable errors without credentials in dev and prod
+ok 29 - registration validates password policy and logs actionable errors without credentials in dev and prod
+  ---
+  duration_ms: 26.0803
+  type: 'test'
+  ...
+# Subtest: one auth policy logs confirmation, resend and demo failures with safe environment-specific responses
+ok 30 - one auth policy logs confirmation, resend and demo failures with safe environment-specific responses
+  ---
+  duration_ms: 13.2596
+  type: 'test'
+  ...
+# Subtest: Cancellations and simulated refunds (D-12, D-13, D-14)
+    # Subtest: unpaid draft cancels with nothing to refund
+    ok 1 - unpaid draft cancels with nothing to refund
+      ---
+      duration_ms: 182.5973
+      type: 'test'
+      ...
+    # Subtest: before acceptance: self-serve, immediate, full simulated refund, advocate released
+    ok 2 - before acceptance: self-serve, immediate, full simulated refund, advocate released
+      ---
+      duration_ms: 1024.5086
+      type: 'test'
+      ...
+    # Subtest: after acceptance: request, admin partial refund with visible reason
+    ok 3 - after acceptance: request, admin partial refund with visible reason
+      ---
+      duration_ms: 849.2635
+      type: 'test'
+      ...
+    # Subtest: admin can decline; case continues
+    ok 4 - admin can decline; case continues
+      ---
+      duration_ms: 442.8918
+      type: 'test'
+      ...
+    # Subtest: delivered work cannot be cancelled
+    ok 5 - delivered work cannot be cancelled
+      ---
+      duration_ms: 398.5759
+      type: 'test'
+      ...
+    # Subtest: isolation: other client and advocates get 404; queue is admin-only
+    ok 6 - isolation: other client and advocates get 404; queue is admin-only
+      ---
+      duration_ms: 375.3337
+      type: 'test'
+      ...
+    1..6
+ok 31 - Cancellations and simulated refunds (D-12, D-13, D-14)
+  ---
+  duration_ms: 4574.974
+  type: 'test'
+  ...
+# Subtest: case data access isolates clients, assigned advocates, other services and event cursors
+ok 32 - case data access isolates clients, assigned advocates, other services and event cursors
+  ---
+  duration_ms: 804.3474
+  type: 'test'
+  ...
+# Subtest: case mutations and append-only events have a single production writer
+ok 33 - case mutations and append-only events have a single production writer
+  ---
+  duration_ms: 53.6136
+  type: 'test'
+  ...
+# Subtest: Legal Notice state machine, transactions, permissions, concurrency and HTTP endpoints
+    # Subtest: matter type round trips all seven selections without changing unrelated intake
+    ok 1 - matter type round trips all seven selections without changing unrelated intake
+      ---
+      duration_ms: 231.5658
+      type: 'test'
+      ...
+    # Subtest: every allowed edge writes exactly one attributed event; every other edge is rejected
+    ok 2 - every allowed edge writes exactly one attributed event; every other edge is rejected
+      ---
+      duration_ms: 9593.1094
+      type: 'test'
+      ...
+    # Subtest: cancellation/refund roles, terminal states and human review gate
+    ok 3 - cancellation/refund roles, terminal states and human review gate
+      ---
+      duration_ms: 1338.4343
+      type: 'test'
+      ...
+    # Subtest: creation reference allocation, incremental drafts, submission and status injection
+    ok 4 - creation reference allocation, incremental drafts, submission and status injection
+      ---
+      duration_ms: 330.4618
+      type: 'test'
+      ...
+    # Subtest: event failure rolls back both status updates and case creation
+    ok 5 - event failure rolls back both status updates and case creation
+      ---
+      duration_ms: 111.1652
+      type: 'test'
+      ...
+    # Subtest: concurrent submissions produce one status change and one event
+    ok 6 - concurrent submissions produce one status change and one event
+      ---
+      duration_ms: 79.3622
+      type: 'test'
+      ...
+    # Subtest: HTTP create/list/read/patch/submit/events/cancel use authentication and scoped data
+    ok 7 - HTTP create/list/read/patch/submit/events/cancel use authentication and scoped data
+      ---
+      duration_ms: 4568.0551
+      type: 'test'
+      ...
+    1..7
+ok 34 - Legal Notice state machine, transactions, permissions, concurrency and HTTP endpoints
+  ---
+  duration_ms: 16733.3167
+  type: 'test'
+  ...
+# Subtest: receipt-backed client fees never derive an advocate payout
+ok 35 - receipt-backed client fees never derive an advocate payout
+  ---
+  duration_ms: 3.2188
+  type: 'test'
+  ...
+# Subtest: historical case price, not current price, reconciles with its payment
+ok 36 - historical case price, not current price, reconciles with its payment
+  ---
+  duration_ms: 0.4983
+  type: 'test'
+  ...
+# Subtest: missing historical addons hide both charges, retaining recorded receipt amounts
+ok 37 - missing historical addons hide both charges, retaining recorded receipt amounts
+  ---
+  duration_ms: 0.1822
+  type: 'test'
+  ...
+# Subtest: unpaid/sparse case never turns unknown totals into zero
+ok 38 - unpaid/sparse case never turns unknown totals into zero
+  ---
+  duration_ms: 0.238
+  type: 'test'
+  ...
+# Subtest: real zero charge is a value, not missing
+ok 39 - real zero charge is a value, not missing
+  ---
+  duration_ms: 0.2144
+  type: 'test'
+  ...
+# Subtest: D-07/D-88 completion view and D-24/D-89 admin deletion queue: data, decisions and isolation
+    # Subtest: assigned advocate sees completion, POD, notice and entitlement
+    ok 1 - assigned advocate sees completion, POD, notice and entitlement
+      ---
+      duration_ms: 68.1206
+      type: 'test'
+      ...
+    # Subtest: cancelled case: no further work, no reason, refund or entitlement (D-53)
+    ok 2 - cancelled case: no further work, no reason, refund or entitlement (D-53)
+      ---
+      duration_ms: 30.8657
+      type: 'test'
+      ...
+    # Subtest: isolation: other advocate 404, clients 403
+    ok 3 - isolation: other advocate 404, clients 403
+      ---
+      duration_ms: 5.5676
+      type: 'test'
+      ...
+    # Subtest: deletion queue: admin only, oldest first, complete keeps deactivated, reactivate restores, no erasure
+    ok 4 - deletion queue: admin only, oldest first, complete keeps deactivated, reactivate restores, no erasure
+      ---
+      duration_ms: 169.4118
+      type: 'test'
+      ...
+    1..4
+ok 40 - D-07/D-88 completion view and D-24/D-89 admin deletion queue: data, decisions and isolation
+  ---
+  duration_ms: 687.1946
+  type: 'test'
+  ...
+# Subtest: availability rejects overlapping, overnight and off-grid hours
+ok 41 - availability rejects overlapping, overnight and off-grid hours
+  ---
+  duration_ms: 7.8961
+  type: 'test'
+  ...
+# Subtest: three consultation services: booking contention, immutable prices, real chat, private briefs, admin correction and court representation
+    # Subtest: legal_advice
+    ok 1 - legal_advice
+      ---
+      duration_ms: 5970.6393
+      type: 'test'
+      ...
+    # Subtest: district_court
+    ok 2 - district_court
+      ---
+      duration_ms: 6827.2228
+      type: 'test'
+      ...
+    # Subtest: high_court
+    ok 3 - high_court
+      ---
+      duration_ms: 6424.7787
+      type: 'test'
+      ...
+    1..3
+ok 42 - three consultation services: booking contention, immutable prices, real chat, private briefs, admin correction and court representation
+  ---
+  duration_ms: 20580.6719
+  type: 'test'
+  ...
+# Subtest: mobile data source defaults to fixtures, including unknown flag values; API must be explicit
+ok 43 - mobile data source defaults to fixtures, including unknown flag values; API must be explicit
+  ---
+  duration_ms: 67.7324
+  type: 'test'
+  ...
+# Subtest: database seed is idempotent and ledger rejects non-positive amounts
+ok 44 - database seed is idempotent and ledger rejects non-positive amounts
+  ---
+  duration_ms: 2299.6575
+  type: 'test'
+  ...
+# Subtest: defaults leave all human actions alone and stop courier progression before delivery
+ok 45 - defaults leave all human actions alone and stop courier progression before delivery
+  ---
+  duration_ms: 3.9314
+  type: 'test'
+  ...
+# Subtest: each human action can be enabled independently without enabling another step
+ok 46 - each human action can be enabled independently without enabling another step
+  ---
+  duration_ms: 1.2903
+  type: 'test'
+  ...
+# Subtest: milestone call uses the real endpoint; a shipment that reaches delivery while polling is never auto-confirmed by default
+ok 47 - milestone call uses the real endpoint; a shipment that reaches delivery while polling is never auto-confirmed by default
+  ---
+  duration_ms: 1.7291
+  type: 'test'
+  ...
+# Subtest: master off does not poll or sign in, even when step flags are on
+ok 48 - master off does not poll or sign in, even when step flags are on
+  ---
+  duration_ms: 0.6545
+  type: 'test'
+  ...
+# Subtest: document input rejects path traversal, unsupported types, identity numbers and client-controlled metadata
+ok 49 - document input rejects path traversal, unsupported types, identity numbers and client-controlled metadata
+  ---
+  duration_ms: 6.7382
+  type: 'test'
+  ...
+# Subtest: structural inspection counts PDFs and images and rejects non-documents
+ok 50 - structural inspection counts PDFs and images and rejects non-documents
+  ---
+  duration_ms: 2378.8448
+  type: 'test'
+  ...
+# Subtest: S3 policies constrain size/type/key; reads pin versions; deletion purges exact-key versions
+ok 51 - S3 policies constrain size/type/key; reads pin versions; deletion purges exact-key versions
+  ---
+  duration_ms: 81.2714
+  type: 'test'
+  ...
+# Subtest: document authorization, completion, identity evidence and cleanup on PostgreSQL
+    # Subtest: unrelated clients and advocates cannot create or read evidence
+    ok 1 - unrelated clients and advocates cannot create or read evidence
+      ---
+      duration_ms: 86.9455
+      type: 'test'
+      ...
+    # Subtest: ID proof uses real size and structural page count; concurrent completion is idempotent
+    ok 2 - ID proof uses real size and structural page count; concurrent completion is idempotent
+      ---
+      duration_ms: 1808.7481
+      type: 'test'
+      ...
+    # Subtest: admin-owned POD is readable through case membership, never ownership
+    ok 3 - admin-owned POD is readable through case membership, never ownership
+      ---
+      duration_ms: 1105.3608
+      type: 'test'
+      ...
+    # Subtest: PNG counts one; malformed, mismatched and oversized objects are refused
+    ok 4 - PNG counts one; malformed, mismatched and oversized objects are refused
+      ---
+      duration_ms: 3614.509
+      type: 'test'
+      ...
+# [Nest] 1036  - 12/11/2026, 20:06:34    WARN [DocumentService] Document deletion will be retried by cleanup
+    # Subtest: deletion requires uploader/admin and blocks new downloads before retrying storage
+    ok 5 - deletion requires uploader/admin and blocks new downloads before retrying storage
+      ---
+      duration_ms: 612.7974
+      type: 'test'
+      ...
+    # Subtest: abandoned cleanup handles more than one batch and preserves recent or present objects
+    ok 6 - abandoned cleanup handles more than one batch and preserves recent or present objects
+      ---
+      duration_ms: 3268.2755
+      type: 'test'
+      ...
+    # Subtest: HTTP routes enforce authentication, scoped access and strict request bodies
+    ok 7 - HTTP routes enforce authentication, scoped access and strict request bodies
+      ---
+      duration_ms: 4321.8219
+      type: 'test'
+      ...
+    1..7
+ok 52 - document authorization, completion, identity evidence and cleanup on PostgreSQL
+  ---
+  duration_ms: 15735.1438
+  type: 'test'
+  ...
+# Subtest: FIR turnaround warnings use captured payment and service-specific changes_requested buckets
+ok 53 - FIR turnaround warnings use captured payment and service-specific changes_requested buckets
+  ---
+  duration_ms: 1.1948
+  type: 'test'
+  ...
+# Subtest: FIR admin rejection: draft returns, dormant identity returns, two draft rejections, reassignment and exact approved beneficiary
+    # Subtest: the submission carries no identity document; a return needs a reason; one concurrent return wins and no client feedback leaks
+    ok 1 - the submission carries no identity document; a return needs a reason; one concurrent return wins and no client feedback leaks
+      ---
+      duration_ms: 776.5792
+      type: 'test'
+      ...
+    # Subtest: an identity return recorded before Q114 blocks nothing, and its stored file stays purgeable
+    ok 2 - an identity return recorded before Q114 blocks nothing, and its stored file stays purgeable
+      ---
+      duration_ms: 579.2545
+      type: 'test'
+      ...
+    # Subtest: second draft rejection enables reassignment; history and payment age survive; former advocate is notified
+    ok 3 - second draft rejection enables reassignment; history and payment age survive; former advocate is notified
+      ---
+      duration_ms: 2935.2377
+      type: 'test'
+      ...
+    # Subtest: new advocate must create a new version; client approval completes the case and the completing advocate receives the full entitlement
+    ok 4 - new advocate must create a new version; client approval completes the case and the completing advocate receives the full entitlement
+      ---
+      duration_ms: 2951.1285
+      type: 'test'
+      ...
+    1..4
+ok 54 - FIR admin rejection: draft returns, dormant identity returns, two draft rejections, reassignment and exact approved beneficiary
+  ---
+  duration_ms: 11062.1296
+  type: 'test'
+  ...
+# Subtest: FIR: paid intake, advocate version freeze, admin-only approval, oldest-first stalled queue, private PDF and atomic release
+    # Subtest: Q114: submission and payment capture need no identity document
+    ok 1 - Q114: submission and payment capture need no identity document
+      ---
+      duration_ms: 325.7368
+      type: 'test'
+      ...
+    # Subtest: partial drafts save, complete errors block PDF, and stale concurrent saves cannot replace current work
+    ok 2 - partial drafts save, complete errors block PDF, and stale concurrent saves cannot replace current work
+      ---
+      duration_ms: 2550.7027
+      type: 'test'
+      ...
+    # Subtest: Q114: an identity file stored on an older case is never selected, attached, printed or shown to the advocate
+    ok 3 - Q114: an identity file stored on an older case is never selected, attached, printed or shown to the advocate
+      ---
+      duration_ms: 2542.0901
+      type: 'test'
+      ...
+    # Subtest: auto-save updates the advocate’s own unsent version in place, with the same checks; stale sessions are refused
+    ok 4 - auto-save updates the advocate’s own unsent version in place, with the same checks; stale sessions are refused
+      ---
+      duration_ms: 3267.1975
+      type: 'test'
+      ...
+    # Subtest: draft permissions and newest version only
+    ok 5 - draft permissions and newest version only
+      ---
+      duration_ms: 3164.8868
+      type: 'test'
+      ...
+    # Subtest: waiting draft frozen and no alternate exit or client review
+    ok 6 - waiting draft frozen and no alternate exit or client review
+      ---
+      duration_ms: 348.7586
+      type: 'test'
+      ...
+    # Subtest: unapproved PDF denied even by direct document ID; case isolation both ways
+    ok 7 - unapproved PDF denied even by direct document ID; case isolation both ways
+      ---
+      duration_ms: 1509.5852
+      type: 'test'
+      ...
+# (node:22936) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+# (Use `node --trace-deprecation ...` to show where the warning was created)
+    # Subtest: paid approval stalls are in Open; queue paginates oldest first and reports three days
+    ok 8 - paid approval stalls are in Open; queue paginates oldest first and reports three days
+      ---
+      duration_ms: 3490.5355
+      type: 'test'
+      ...
+    # Subtest: approval pins reviewed PDF and closes once; client can read only approved version
+    ok 9 - approval pins reviewed PDF and closes once; client can read only approved version
+      ---
+      duration_ms: 306.8997
+      type: 'test'
+      ...
+    1..9
+ok 55 - FIR: paid intake, advocate version freeze, admin-only approval, oldest-first stalled queue, private PDF and atomic release
+  ---
+  duration_ms: 18951.3476
+  type: 'test'
+  ...
+# Subtest: C10 mapping gives client, advocate and admin one state for every FIR status
+ok 56 - C10 mapping gives client, advocate and admin one state for every FIR status
+  ---
+  duration_ms: 4.575
+  type: 'test'
+  ...
+# Subtest: intake: place of incident, future dates and at least one accused
+ok 57 - intake: place of incident, future dates and at least one accused
+  ---
+  duration_ms: 5.1943
+  type: 'test'
+  ...
+# Subtest: FIR full flow
+    # Subtest: upload slots: file types, sizes and counts are enforced on the server
+    ok 1 - upload slots: file types, sizes and counts are enforced on the server
+      ---
+      duration_ms: 611.9469
+      type: 'test'
+      ...
+    # Subtest: Q114: no identity document is collected; the paid case has none and new ones are refused
+    ok 2 - Q114: no identity document is collected; the paid case has none and new ones are refused
+      ---
+      duration_ms: 41.1489
+      type: 'test'
+      ...
+    # Subtest: advocate rejects with a reason; the case returns to admin, who assigns another advocate
+    ok 3 - advocate rejects with a reason; the case returns to admin, who assigns another advocate
+      ---
+      duration_ms: 1248.2462
+      type: 'test'
+      ...
+    # Subtest: admin returns, advocate fixes and resends, admin approves → sent to client
+    ok 4 - admin returns, advocate fixes and resends, admin approves → sent to client
+      ---
+      duration_ms: 5897.6141
+      type: 'test'
+      ...
+    # Subtest: A6 audit log: the client opening the draft PDF is logged once per version, for the team only
+    ok 5 - A6 audit log: the client opening the draft PDF is logged once per version, for the team only
+      ---
+      duration_ms: 519.0444
+      type: 'test'
+      ...
+    # Subtest: remind client: once per 24 hours, advocate only
+    ok 6 - remind client: once per 24 hours, advocate only
+      ---
+      duration_ms: 146.8946
+      type: 'test'
+      ...
+    # Subtest: client requests changes with two sections and an attachment
+    ok 7 - client requests changes with two sections and an attachment
+      ---
+      duration_ms: 366.6389
+      type: 'test'
+      ...
+    # Subtest: advocate revises; the revision goes to admin again, then to the client
+    ok 8 - advocate revises; the revision goes to admin again, then to the client
+      ---
+      duration_ms: 1807.8694
+      type: 'test'
+      ...
+    # Subtest: Q119, Q120: client approval completes the case and the advocate’s wallet shows the share
+    ok 9 - Q119, Q120: client approval completes the case and the advocate’s wallet shows the share
+      ---
+      duration_ms: 1006.4094
+      type: 'test'
+      ...
+    # Subtest: the police step is gone: old routes return 404, settings is read-only, an old recorded receipt stays hidden from the client
+    ok 10 - the police step is gone: old routes return 404, settings is read-only, an old recorded receipt stays hidden from the client
+      ---
+      duration_ms: 1605.8689
+      type: 'test'
+      ...
+    # Subtest: migration 202611130010 completes FIR cases left waiting for a police receipt, with one event each
+    ok 11 - migration 202611130010 completes FIR cases left waiting for a police receipt, with one event each
+      ---
+      duration_ms: 56.6485
+      type: 'test'
+      ...
+    # Subtest: view isolation: another client, an unassigned advocate and a former advocate get 404
+    ok 12 - view isolation: another client, an unassigned advocate and a former advocate get 404
+      ---
+      duration_ms: 174.6046
+      type: 'test'
+      ...
+    # Subtest: Request Chat and Request Callback from FIR reach the admin inbox tagged FIR Draft
+    ok 13 - Request Chat and Request Callback from FIR reach the admin inbox tagged FIR Draft
+      ---
+      duration_ms: 117.5072
+      type: 'test'
+      ...
+    1..13
+ok 58 - FIR full flow
+  ---
+  duration_ms: 14654.8691
+  type: 'test'
+  ...
+# Subtest: upload metadata still refuses full identity numbers
+ok 59 - upload metadata still refuses full identity numbers
+  ---
+  duration_ms: 3.7875
+  type: 'test'
+  ...
+# Subtest: a complete FIR draft needs no identity document; the PDF has no identity row and never lists an identity file
+ok 60 - a complete FIR draft needs no identity document; the PDF has no identity row and never lists an identity file
+  ---
+  duration_ms: 1078.0706
+  type: 'test'
+  ...
+# Subtest: FIR identity uploads are refused at every stage; old stored identity files are shown only to the admin
+    # Subtest: the client cannot upload an identity document, with or without identity details, and no row is created
+    ok 1 - the client cannot upload an identity document, with or without identity details, and no row is created
+      ---
+      duration_ms: 73.271
+      type: 'test'
+      ...
+    # Subtest: identity details on any other upload are refused too
+    ok 2 - identity details on any other upload are refused too
+      ---
+      duration_ms: 60.9818
+      type: 'test'
+      ...
+    # Subtest: submission needs a primary document and no identity document
+    ok 3 - submission needs a primary document and no identity document
+      ---
+      duration_ms: 121.4473
+      type: 'test'
+      ...
+    # Subtest: an old identity file stays stored but is listed only for the admin
+    ok 4 - an old identity file stays stored but is listed only for the admin
+      ---
+      duration_ms: 191.9904
+      type: 'test'
+      ...
+    # Subtest: the advocate cannot open it; the admin can
+    ok 5 - the advocate cannot open it; the admin can
+      ---
+      duration_ms: 86.8509
+      type: 'test'
+      ...
+    # Subtest: nobody can add an identity document to an older case either
+    ok 6 - nobody can add an identity document to an older case either
+      ---
+      duration_ms: 71.6646
+      type: 'test'
+      ...
+    1..6
+ok 61 - FIR identity uploads are refused at every stage; old stored identity files are shown only to the admin
+  ---
+  duration_ms: 1533.3239
+  type: 'test'
+  ...
+# Subtest: official jurisdiction snapshot has unique LGD codes and a reproducible checksum
+ok 62 - official jurisdiction snapshot has unique LGD codes and a reproducible checksum
+  ---
+  duration_ms: 2.3085
+  type: 'test'
+  ...
+# Subtest: FIR submission validates real dates, contact, complainant and known versus unknown suspects
+ok 63 - FIR submission validates real dates, contact, complainant and known versus unknown suspects
+  ---
+  duration_ms: 22.6366
+  type: 'test'
+  ...
+# Subtest: FIR intake persists partial cases and parties atomically, with ownership and revision protection
+    # Subtest: partial save resumes with exact row IDs and all entered fields
+    ok 1 - partial save resumes with exact row IDs and all entered fields
+      ---
+      duration_ms: 167.4146
+      type: 'test'
+      ...
+    # Subtest: another client cannot read or write; foreign party IDs roll back all changes
+    ok 2 - another client cannot read or write; foreign party IDs roll back all changes
+      ---
+      duration_ms: 95.1707
+      type: 'test'
+      ...
+    # Subtest: simultaneous saves admit one revision; stale writes and v1 downgrade are blocked
+    ok 3 - simultaneous saves admit one revision; stale writes and v1 downgrade are blocked
+      ---
+      duration_ms: 82.2651
+      type: 'test'
+      ...
+    # Subtest: district parent validation is atomic; removed people disappear and remaining IDs survive
+    ok 4 - district parent validation is atomic; removed people disappear and remaining IDs survive
+      ---
+      duration_ms: 74.8801
+      type: 'test'
+      ...
+    # Subtest: submission requires a primary document, never an identity document (Q114), and locks further intake changes
+    ok 5 - submission requires a primary document, never an identity document (Q114), and locks further intake changes
+      ---
+      duration_ms: 142.0457
+      type: 'test'
+      ...
+    1..5
+ok 64 - FIR intake persists partial cases and parties atomically, with ownership and revision protection
+  ---
+  duration_ms: 1622.6907
+  type: 'test'
+  ...
+# Subtest: FIR PDF prints all eight structured sections, repeatable records and edited values; no identity document row (Q114)
+ok 65 - FIR PDF prints all eight structured sections, repeatable records and edited values; no identity document row (Q114)
+  ---
+  duration_ms: 753.1892
+  type: 'test'
+  ...
+# Subtest: Send for Review requires only the flow’s fields; optional facts may stay empty and are left out of the PDF
+ok 66 - Send for Review requires only the flow’s fields; optional facts may stay empty and are left out of the PDF
+  ---
+  duration_ms: 1064.1543
+  type: 'test'
+  ...
+# Subtest: Advocate edits to filed fields print instead of the filing, which stays on record; Other People Involved prints when present
+ok 67 - Advocate edits to filed fields print instead of the filing, which stays on record; Other People Involved prints when present
+  ---
+  duration_ms: 647.8466
+  type: 'test'
+  ...
+# Subtest: Statement of Facts is seeded as a letter around the client’s own words, leaving out parts with no value
+ok 68 - Statement of Facts is seeded as a letter around the client’s own words, leaving out parts with no value
+  ---
+  duration_ms: 4.4932
+  type: 'test'
+  ...
+# Subtest: FIR PDF wraps long content and Hindi across pages without clipping or changing logical text
+ok 69 - FIR PDF wraps long content and Hindi across pages without clipping or changing logical text
+  ---
+  duration_ms: 7402.6806
+  type: 'test'
+  ...
+# Subtest: FIR save accepts only editable content, explicit base token and source hash
+ok 70 - FIR save accepts only editable content, explicit base token and source hash
+  ---
+  duration_ms: 9.1059
+  type: 'test'
+  ...
+# Subtest: Prisma lifecycle exactly mirrors canonical shared lifecycle
+ok 71 - Prisma lifecycle exactly mirrors canonical shared lifecycle
+  ---
+  duration_ms: 1.4887
+  type: 'test'
+  ...
+# Subtest: migration includes every authoritative table and SQL-only constraints
+ok 72 - migration includes every authoritative table and SQL-only constraints
+  ---
+  duration_ms: 12.9619
+  type: 'test'
+  ...
+# Subtest: seed uses integer paise, source citations and unconfirmed observations
+ok 73 - seed uses integer paise, source citations and unconfirmed observations
+  ---
+  duration_ms: 2.7181
+  type: 'test'
+  ...
+# Subtest: seed reruns never update existing price versions
+ok 74 - seed reruns never update existing price versions
+  ---
+  duration_ms: 7.9388
+  type: 'test'
+  ...
+# Subtest: /health answers HTTP without AWS/database configuration
+ok 75 - /health answers HTTP without AWS/database configuration
+  ---
+  duration_ms: 2201.04
+  type: 'test'
+  ...
+# Subtest: the shared switch hides Court Marriage and nothing else
+ok 76 - the shared switch hides Court Marriage and nothing else
+  ---
+  duration_ms: 5.9448
+  type: 'test'
+  ...
+# Subtest: hidden services: creation refused, lists omit them, existing cases stay readable
+    # Subtest: a client cannot start a Court Marriage case; offered services still start
+    ok 1 - a client cannot start a Court Marriage case; offered services still start
+      ---
+      duration_ms: 66.2141
+      type: 'test'
+      ...
+    # Subtest: service and price listings omit Court Marriage
+    ok 2 - service and price listings omit Court Marriage
+      ---
+      duration_ms: 7.3678
+      type: 'test'
+      ...
+    # Subtest: an existing Court Marriage case stays readable to its owner and the admin only
+    ok 3 - an existing Court Marriage case stays readable to its owner and the admin only
+      ---
+      duration_ms: 155.9117
+      type: 'test'
+      ...
+    # Subtest: HTTP: refusal message, omitted listings, owner read
+    ok 4 - HTTP: refusal message, omitted listings, owner read
+      ---
+      duration_ms: 1182.0696
+      type: 'test'
+      ...
+    1..4
+ok 77 - hidden services: creation refused, lists omit them, existing cases stay readable
+  ---
+  duration_ms: 3233.5103
+  type: 'test'
+  ...
+# Subtest: paid Notice cases cannot reopen intake/payment, including cancelled cases with payment history
+ok 78 - paid Notice cases cannot reopen intake/payment, including cancelled cases with payment history
+  ---
+  duration_ms: 1.4755
+  type: 'test'
+  ...
+# Subtest: post-payment parents never point to intake and navigation preserves the case
+ok 79 - post-payment parents never point to intake and navigation preserves the case
+  ---
+  duration_ms: 0.7837
+  type: 'test'
+  ...
+# Subtest: mobile auth registry covers every root navigator screen and all advocate paths
+ok 80 - mobile auth registry covers every root navigator screen and all advocate paths
+  ---
+  duration_ms: 32.5095
+  type: 'test'
+  ...
+# Subtest: mobile source contains no blocking browser alert calls
+ok 81 - mobile source contains no blocking browser alert calls
+  ---
+  duration_ms: 130.4904
+  type: 'test'
+  ...
+# Subtest: service filters only narrow ownership; unknown roles fail closed
+ok 82 - service filters only narrow ownership; unknown roles fail closed
+  ---
+  duration_ms: 3.7185
+  type: 'test'
+  ...
+# Subtest: multi-service spine: real DB ownership, references, locks, documents, inbox and HTTP
+    # Subtest: all supported services create empty spines; reference allocation is concurrent and service-specific
+    ok 1 - all supported services create empty spines; reference allocation is concurrent and service-specific
+      ---
+      duration_ms: 3685.593
+      type: 'test'
+      ...
+# (node:39408) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+# (Use `node --trace-deprecation ...` to show where the warning was created)
+    # Subtest: assignment and document access remain tied to the current owner/advocate for every service
+    ok 2 - assignment and document access remain tied to the current owner/advocate for every service
+      ---
+      duration_ms: 5922.7141
+      type: 'test'
+      ...
+    # Subtest: waiting writers recheck membership after a concurrent owner change
+    ok 3 - waiting writers recheck membership after a concurrent owner change
+      ---
+      duration_ms: 60.6488
+      type: 'test'
+      ...
+    # Subtest: other services cannot enter the unchanged notice intake/draft/payment/dispatch workflow
+    ok 4 - other services cannot enter the unchanged notice intake/draft/payment/dispatch workflow
+      ---
+      duration_ms: 894.2909
+      type: 'test'
+      ...
+    # Subtest: HTTP uses token identity, never a service filter or supplied owner to grant access
+    ok 5 - HTTP uses token identity, never a service filter or supplied owner to grant access
+      ---
+      duration_ms: 2103.989
+      type: 'test'
+      ...
+    1..5
+ok 83 - multi-service spine: real DB ownership, references, locks, documents, inbox and HTTP
+  ---
+  duration_ms: 13046.1498
+  type: 'test'
+  ...
+# Subtest: admin-owned Legal Notice: method pricing, version return, chat lock, dispatch/proof and endpoint isolation
+    # Subtest: decline requires a reason, clears assignment, and lets admin assign a different advocate
+    ok 1 - decline requires a reason, clears assignment, and lets admin assign a different advocate
+      ---
+      duration_ms: 233.0799
+      type: 'test'
+      ...
+    # Subtest: every new HTTP endpoint enforces its role and case scope
+    ok 2 - every new HTTP endpoint enforces its role and case scope
+      ---
+      duration_ms: 1176.4878
+      type: 'test'
+      ...
+    1..2
+ok 84 - admin-owned Legal Notice: method pricing, version return, chat lock, dispatch/proof and endpoint isolation
+  ---
+  duration_ms: 9618.7258
+  type: 'test'
+  ...
+# Subtest: Legal Notice full lifecycle, draft privacy/versioning, role boundaries and delivery proof
+ok 85 - Legal Notice full lifecycle, draft privacy/versioning, role boundaries and delivery proof
+  ---
+  duration_ms: 5195.1906
+  type: 'test'
+  ...
+# Subtest: shared typed client exercises mounted notice routes; dev payment is unavailable in production
+ok 86 - shared typed client exercises mounted notice routes; dev payment is unavailable in production
+  ---
+  duration_ms: 1783.2976
+  type: 'test'
+  ...
+# Subtest: AI failures keep provider diagnostics in attributed events/logs, return plain HTTP errors, and preserve retry
+ok 87 - AI failures keep provider diagnostics in attributed events/logs, return plain HTTP errors, and preserve retry
+  ---
+  duration_ms: 1152.1492
+  type: 'test'
+  ...
+# Subtest: audit failures do not leak diagnostics or replace the actionable intake error
+ok 88 - audit failures do not leak diagnostics or replace the actionable intake error
+  ---
+  duration_ms: 2.8324
+  type: 'test'
+  ...
+# Subtest: seven-step intake persists columns/parties, authorises AI, rejects stale answers and requires completion
+ok 89 - seven-step intake persists columns/parties, authorises AI, rejects stale answers and requires completion
+  ---
+  duration_ms: 1486.7094
+  type: 'test'
+  ...
+# Subtest: Notice chat persists both sides, checks case membership and records read receipts
+ok 90 - Notice chat persists both sides, checks case membership and records read receipts
+  ---
+  duration_ms: 838.9223
+  type: 'test'
+  ...
+# Subtest: legacy notice migration preserves final documents, old charges, approval time and courier history
+ok 91 - legacy notice migration preserves final documents, old charges, approval time and courier history
+  ---
+  duration_ms: 310.1447
+  type: 'test'
+  ...
+# Subtest: letterhead preview binds the assigned profile and historical fee, while preserving all authored sections
+ok 92 - letterhead preview binds the assigned profile and historical fee, while preserving all authored sections
+  ---
+  duration_ms: 4.6432
+  type: 'test'
+  ...
+# Subtest: render-only preview refuses clients, admins, another advocate, stale drafts and non-editable states
+ok 93 - render-only preview refuses clients, admins, another advocate, stale drafts and non-editable states
+  ---
+  duration_ms: 1.5945
+  type: 'test'
+  ...
+# Subtest: preview, send and final reject every missing field before rendering or touching S3
+ok 94 - preview, send and final reject every missing field before rendering or touching S3
+  ---
+  duration_ms: 1.6671
+  type: 'test'
+  ...
+# Subtest: all six authored sections reach the selectable letterhead; intake never overwrites edits and offences stay out
+ok 95 - all six authored sections reach the selectable letterhead; intake never overwrites edits and offences stay out
+  ---
+  duration_ms: 959.4377
+  type: 'test'
+  ...
+# Subtest: long facts paginate without losing content or colliding with the footer
+ok 96 - long facts paginate without losing content or colliding with the footer
+  ---
+  duration_ms: 3215.6812
+  type: 'test'
+  ...
+# Subtest: long names and unbroken editable text stay within the page
+ok 97 - long names and unbroken editable text stay within the page
+  ---
+  duration_ms: 2465.3653
+  type: 'test'
+  ...
+# Subtest: editable recipient and facts preserve rupees, typographic punctuation and Devanagari
+ok 98 - editable recipient and facts preserve rupees, typographic punctuation and Devanagari
+  ---
+  duration_ms: 1334.115
+  type: 'test'
+  ...
+# Subtest: incomplete authored sections block generation together; email-only recipient needs no invented address
+ok 99 - incomplete authored sections block generation together; email-only recipient needs no invented address
+  ---
+  duration_ms: 1354.9609
+  type: 'test'
+  ...
+# Subtest: pinned reminder policy, visible overdue work and reassignment preserve history without automatic progression
+ok 100 - pinned reminder policy, visible overdue work and reassignment preserve history without automatic progression
+  ---
+  duration_ms: 763.0574
+  type: 'test'
+  ...
+# Subtest: real role inboxes: lifecycle recipients, atomicity, pagination, unread ownership and HTTP auth
+ok 101 - real role inboxes: lifecycle recipients, atomicity, pagination, unread ownership and HTTP auth
+  ---
+  duration_ms: 1474.6454
+  type: 'test'
+  ...
+# Subtest: confirmed split, combined taxable basis, delivery reimbursement and aggregate page allowance
+ok 102 - confirmed split, combined taxable basis, delivery reimbursement and aggregate page allowance
+  ---
+  duration_ms: 3.0795
+  type: 'test'
+  ...
+# Subtest: quotes pin rows, reject unresolved/changed documents, preserve receipts, and seed reruns preserve history
+ok 103 - quotes pin rows, reject unresolved/changed documents, preserve receipts, and seed reruns preserve history
+  ---
+  duration_ms: 2290.0723
+  type: 'test'
+  ...
+# Subtest: Report services: provisional pricing, paid intake, assignment, advocate report, admin gate, private release
+    # Subtest: provisional tariffs are unconfirmed and price as base + 25% platform + 18% GST
+    ok 1 - provisional tariffs are unconfirmed and price as base + 25% platform + 18% GST
+      ---
+      duration_ms: 31.5723
+      type: 'test'
+      ...
+    # Subtest: intake rules: client-only, draft-only, validated jurisdiction, no foreign kinds
+    ok 2 - intake rules: client-only, draft-only, validated jurisdiction, no foreign kinds
+      ---
+      duration_ms: 436.0337
+      type: 'test'
+      ...
+    # Subtest: Property Search: advocate uploads the PDF and sends it straight to the client (design 211)
+    ok 3 - Property Search: advocate uploads the PDF and sends it straight to the client (design 211)
+      ---
+      duration_ms: 1638.5545
+      type: 'test'
+      ...
+# (node:38232) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+# (Use `node --trace-deprecation ...` to show where the warning was created)
+    # Subtest: Document Forensic: rendered report + affidavit, admin changes, resubmit, approve, release
+    ok 4 - Document Forensic: rendered report + affidavit, admin changes, resubmit, approve, release
+      ---
+      duration_ms: 7298.0727
+      type: 'test'
+      ...
+    # Subtest: Court Marriage: uploaded application goes through admin approval
+    ok 5 - Court Marriage: uploaded application goes through admin approval
+      ---
+      duration_ms: 864.9034
+      type: 'test'
+      ...
+    1..5
+ok 104 - Report services: provisional pricing, paid intake, assignment, advocate report, admin gate, private release
+  ---
+  duration_ms: 11075.6102
+  type: 'test'
+  ...
+# Subtest: adapter registration defaults, demo alias and live startup failures
+ok 105 - adapter registration defaults, demo alias and live startup failures
+  ---
+  duration_ms: 614.9537
+  type: 'test'
+  ...
+# Subtest: phone audit allowlist never persists code, password or tokens
+ok 106 - phone audit allowlist never persists code, password or tokens
+  ---
+  duration_ms: 4.9427
+  type: 'test'
+  ...
+# Subtest: D-26/D-28/D-42: support tickets, callbacks, chat, admin inbox and unified messages inbox stay private
+    # Subtest: contact support ticket, admin reply appears in client inbox under support, close
+    ok 1 - contact support ticket, admin reply appears in client inbox under support, close
+      ---
+      duration_ms: 425.7264
+      type: 'test'
+      ...
+    # Subtest: callback is idempotent while open; chat reuses one open thread
+    ok 2 - callback is idempotent while open; chat reuses one open thread
+      ---
+      duration_ms: 127.1343
+      type: 'test'
+      ...
+    # Subtest: inbox lists only member case threads; search covers message text; unread is per reader
+    ok 3 - inbox lists only member case threads; search covers message text; unread is per reader
+      ---
+      duration_ms: 138.9357
+      type: 'test'
+      ...
+    1..3
+ok 107 - D-26/D-28/D-42: support tickets, callbacks, chat, admin inbox and unified messages inbox stay private
+  ---
+  duration_ms: 1127.6146
+  type: 'test'
+  ...
+# Subtest: Wallet: snapshot entitlements, masked bank account, payout requests, admin-only UTR, isolation (D-36, D-37, D-42)
+    # Subtest: entitlements come only from completed cases with a recorded snapshot
+    ok 1 - entitlements come only from completed cases with a recorded snapshot
+      ---
+      duration_ms: 114.8876
+      type: 'test'
+      ...
+    # Subtest: roles and isolation
+    ok 2 - roles and isolation
+      ---
+      duration_ms: 2.2303
+      type: 'test'
+      ...
+    # Subtest: bank account is stored for payment but always returned masked and unverified
+    ok 3 - bank account is stored for payment but always returned masked and unverified
+      ---
+      duration_ms: 58.3526
+      type: 'test'
+      ...
+    # Subtest: payout requests: minimum, balance, concurrency
+    ok 4 - payout requests: minimum, balance, concurrency
+      ---
+      duration_ms: 207.5537
+      type: 'test'
+      ...
+    # Subtest: only an admin records the UTR; the admin sees full bank details
+    ok 5 - only an admin records the UTR; the admin sees full bank details
+      ---
+      duration_ms: 103.3439
+      type: 'test'
+      ...
+    1..5
+ok 108 - Wallet: snapshot entitlements, masked bank account, payout requests, admin-only UTR, isolation (D-36, D-37, D-42)
+  ---
+  duration_ms: 923.9474
+  type: 'test'
+  ...
+1..108
+# tests 208
+# suites 0
+# pass 208
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 244506.3134

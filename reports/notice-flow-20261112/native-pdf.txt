@@ -1,0 +1,1 @@
+PASS: native PDF HTML renders two Devanagari pages, zooms and makes no external requests.
