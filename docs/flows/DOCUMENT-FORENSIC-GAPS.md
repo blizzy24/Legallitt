@@ -1,6 +1,6 @@
 # Document Forensic — flow comparison and acceptance
 
-Comparison started 12 November 2026 against `f3a16b0`. **Local acceptance passed. Deployment authorised; rollout evidence follows separately.**
+Comparison started 12 November 2026 against `f3a16b0`. **Local and live acceptance passed. Dev API and both Vercel sites deployed.**
 Precedence: owner instruction → Ishaan's 12 November answers → current Forensic
 flow/shared flows → `design/figma-2026-11-12/Document-Forensic-*`. The designer's
 text note explicitly sends Changes Needed back to Waiting for Specialist Report.
@@ -9,19 +9,19 @@ text note explicitly sends Changes Needed back to Waiting for Specialist Report.
 
 | Surface | Current implementation inspected | Required change | Status |
 |---|---|---|---|
-| Landing / speed | Generic report layout; fixed 24–48h / 12–24h estimates | Supplied hero, radio cards/icons; settings-backed Ordinary 3–5 working days / Urgent 24–48h; exact tariff prices | Implemented; local checks below |
-| Upload | One questioned file enforced; no analysis field; reference required for all analyses; instructions max 2000 | Multiple files for the same questioned document, per-file focus, seven current document choices, five analysis choices, conditional reference/no-reference warning, instructions max 1000 | Implemented; local checks below |
-| Review/payment/success | Generic checkout captures directly; no shared scan flow | Drawn review, shared quote/QR/success; Start Tracking/Home, real paid amount, no rounding/raw filenames | Implemented; local checks below |
-| Client timeline | Generic lifecycle rather than corrected six stages | Payment → Upload → Expert → Analysis → Quality Review → Report Ready, date/detail for completed steps | Implemented; local checks below |
-| More information | No report-service task model; paid uploads frozen | Assigned advocate request before/after acceptance, client Upload/Reply, deadline pause, 48h admin follow-up visibility | Implemented; local checks below |
-| Advocate screens | Request/documents/waiting collapse into generic preparation | Request → advocate-ticked file checklist → Waiting → four-section report → affidavit → review/submit | Implemented; local checks below |
-| Report summary | Four report text sections exist; no overall status/risk/authenticity fields | Advocate-authored summary shown only from released version, in PDF and client result | Implemented; local checks below |
-| Affidavit | Drawn vector mark supported; typed signature absent | Drawn or typed mark bound to the exact content/version, re-sign on edit, PDF rendering; no digital-signature/notarisation claim | Implemented; local checks below |
-| Admin correction | Exact-version submission/review exists; generic screen does not implement designed return navigation | Required action items → Waiting for Specialist Report → corrected version → rechecked affidavit → admin; one pending submission and stale-action protection | Implemented; local checks below |
-| Admin release | Existing approval releases files and completes | Explicit report/affidavit review checklist, exact version, client summary + both files, one wallet credit | Implemented; local checks below |
-| Chat | Existing case thread lacks delivery+7-day expiry/reopen | Policy-pinned chat window, readable closure explanation and audited admin reopening | Implemented; local checks below |
-| Presentation | Raw filenames/tier/status and generic dates/actions | One filled main action, human labels, minute-only IST dates, drawn icons/radios, five states | Implemented; local checks below |
-| Legacy cases | Existing drafts lack summary/checklist/typed mark metadata | Additive migration, do not invent findings or signature attestations; preserve released files/prices; make completion requirements explicit for unfinished cases | Implemented; local checks below |
+| Landing / speed | Generic report layout; fixed 24–48h / 12–24h estimates | Supplied hero, radio cards/icons; settings-backed Ordinary 3–5 working days / Urgent 24–48h; exact tariff prices | Implemented; local/live checks below |
+| Upload | One questioned file enforced; no analysis field; reference required for all analyses; instructions max 2000 | Multiple files for the same questioned document, per-file focus, seven current document choices, five analysis choices, conditional reference/no-reference warning, instructions max 1000 | Implemented; local/live checks below |
+| Review/payment/success | Generic checkout captures directly; no shared scan flow | Drawn review, shared quote/QR/success; Start Tracking/Home, real paid amount, no rounding/raw filenames | Implemented; local/live checks below |
+| Client timeline | Generic lifecycle rather than corrected six stages | Payment → Upload → Expert → Analysis → Quality Review → Report Ready, date/detail for completed steps | Implemented; local/live checks below |
+| More information | No report-service task model; paid uploads frozen | Assigned advocate request before/after acceptance, client Upload/Reply, deadline pause, 48h admin follow-up visibility | Implemented; local/live checks below |
+| Advocate screens | Request/documents/waiting collapse into generic preparation | Request → advocate-ticked file checklist → Waiting → four-section report → affidavit → review/submit | Implemented; local/live checks below |
+| Report summary | Four report text sections exist; no overall status/risk/authenticity fields | Advocate-authored summary shown only from released version, in PDF and client result | Implemented; local/live checks below |
+| Affidavit | Drawn vector mark supported; typed signature absent | Drawn or typed mark bound to the exact content/version, re-sign on edit, PDF rendering; no digital-signature/notarisation claim | Implemented; local/live checks below |
+| Admin correction | Exact-version submission/review exists; generic screen does not implement designed return navigation | Required action items → Waiting for Specialist Report → corrected version → rechecked affidavit → admin; one pending submission and stale-action protection | Implemented; local/live checks below |
+| Admin release | Existing approval releases files and completes | Explicit report/affidavit review checklist, exact version, client summary + both files, one wallet credit | Implemented; local/live checks below |
+| Chat | Existing case thread lacks delivery+7-day expiry/reopen | Policy-pinned chat window, readable closure explanation and audited admin reopening | Implemented; local/live checks below |
+| Presentation | Raw filenames/tier/status and generic dates/actions | One filled main action, human labels, minute-only IST dates, drawn icons/radios, five states | Implemented; local/live checks below |
+| Legacy cases | Existing drafts lack summary/checklist/typed mark metadata | Additive migration, do not invent findings or signature attestations; preserve released files/prices; make completion requirements explicit for unfinished cases | Implemented; local/live checks below |
 
 Retain: case membership/release isolation, version tokens, real document/PDF
 pipeline and bundled fonts, drawn signature support, exact-version admin review,
@@ -67,8 +67,26 @@ The authenticated mobile route smoke passed **347 routes, zero failures**.
 Final completion labels, Gallery/image viewer and versioned admin upload settings
 also passed their browser checks. The 25 MB default is enforced in upload tickets
 and completion; existing cases retain their configured policy.
-**Local gate passed; deployment is not yet claimed.**
+**Local gate passed. Deployment and full live acceptance also passed; see below.**
+Saved payment-pending tracking links also pass the shared checkout/QR path;
+foreign-client direct URLs and every workflow endpoint were checked again in the
+browser/API isolation run. [Additional checks](../../reports/report-flows-20261113/README.md).
 Native camera permission/device capture needs a physical-device check; browser Files
 upload and PDF display/download use the real local document pipeline. No real money
 moved: payments/refunds, storage, email and AI are labelled local test adapters;
 wallet entries are entitlements, not bank transfers.
+
+## Deployment and live acceptance — 13 November 2026
+
+Image `1bff6f2` was pushed, the additive migration completed, and the dev stack
+rolled out healthy before publishing both Vercel sites. Frontend `75eac72` fixes
+the upload-refresh race found by the first live run. The corrected live run passed
+all requested journeys, both cancellations, PDF viewing/download, exact wallet
+credits, endpoint/direct-URL isolation, error recovery and delayed-upload saves.
+All seven pre-existing cases retain their statuses and released files.
+
+[Deployment and test results](../../reports/report-flows-20261113/README.md) ·
+[Live screenshots](../../reports/report-flows-20261113/live/README.md).
+
+Docker builder and unused-image pruning completed after the build/push. No real
+money moved, and no credentials or existing client filings were changed.

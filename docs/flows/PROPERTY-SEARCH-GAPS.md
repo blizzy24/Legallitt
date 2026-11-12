@@ -1,6 +1,6 @@
 # Property Search — flow comparison and acceptance
 
-Comparison started 12 November 2026 against `f3a16b0`. **Local acceptance passed. Deployment authorised; rollout evidence follows separately.**
+Comparison started 12 November 2026 against `f3a16b0`. **Local and live acceptance passed. Dev API and both Vercel sites deployed.**
 Precedence: owner instruction → Ishaan's 12 November answers → current Property
 Search flow/shared flows → `design/figma-2026-11-12/Property-Search-Report-*`.
 Older numbered designs and earlier §4.7 assumptions are superseded where they conflict.
@@ -9,18 +9,18 @@ Older numbered designs and earlier §4.7 assumptions are superseded where they c
 
 | Surface | Current implementation inspected | Required change | Status |
 |---|---|---|---|
-| Landing / speed | Generic `reports/ClientScreen.tsx`; estimates are constants in `service-reports.ts` | Supplied illustration, radio method/speed cards, icon support actions; exact tariff amounts and configurable Ordinary/Urgent delivery windows | Implemented; local checks below |
-| Intake | Address exists; purpose is conflated with free-form requirement; owner names and Other detail absent | Distinct required address/purpose, optional owner names and what-to-check, Other detail, LGD selectors, optional documents; explicit Continue; resumable saves | Implemented; local checks below |
-| Review/payment/success | Generic report checkout directly captures a demo payment; raw tier and filenames reach views | Designed review and shared checkout/QR/success; Start Tracking and Home; exact paise; human labels | Implemented; local checks below |
-| Admin verification | Assignment exists; no sufficiency check or client correction task | Verification stage, reasoned “We need more details”, client Edit/reply, verify before assignment; overdue display | Implemented; local checks below |
-| Client tracking | Generic lifecycle summary rather than six designed stages | Submitted → Paid → Verification → Assigned → Preparation → Delivered, event timestamps/details and policy deadline | Implemented; local checks below |
-| Advocate request | Accept/decline exists in generic screen | Designed details, payout only, masked contact before acceptance, explicit decline/reassignment | Implemented; local checks below |
-| Document requests | Paid client files are unconditionally frozen in `report-access.ts` | Scoped request/reply uploads in chat, preserve original evidence, pause/resume deadline | Implemented; local checks below |
-| Editor | Eight-section research model exists; client/property sections read-only and owner/findings flattened | Current eight-section design, all authored fields rendered, structured checked-records/findings, explicit personal sign-off and wording-only AI suggestions | Implemented; local checks below |
-| Delivery | `submit()` rejects editor output and requires a second final upload | Either editor PDF or uploaded PDF; shared viewer/preview; note; direct release without admin review; one wallet credit; correction version without second credit | Implemented; local checks below |
-| Chat | Existing case thread has no report delivery+7-day policy/reopen control | Acceptance through delivery+7 days, visible read-only reason, audited admin reopening | Implemented; local checks below |
-| Presentation | Generic dates include seconds; raw document filenames/status/tier values; multiple filled actions | One main action, outlined/text secondary actions, human labels and IST minute dates, all five states | Implemented; local checks below |
-| Existing cases | No mapping to the newly required verification/deadline stages | Additive policy/state migration; retain prices/files/versions and safely open/finish old paid and completed cases | Implemented; local checks below |
+| Landing / speed | Generic `reports/ClientScreen.tsx`; estimates are constants in `service-reports.ts` | Supplied illustration, radio method/speed cards, icon support actions; exact tariff amounts and configurable Ordinary/Urgent delivery windows | Implemented; local/live checks below |
+| Intake | Address exists; purpose is conflated with free-form requirement; owner names and Other detail absent | Distinct required address/purpose, optional owner names and what-to-check, Other detail, LGD selectors, optional documents; explicit Continue; resumable saves | Implemented; local/live checks below |
+| Review/payment/success | Generic report checkout directly captures a demo payment; raw tier and filenames reach views | Designed review and shared checkout/QR/success; Start Tracking and Home; exact paise; human labels | Implemented; local/live checks below |
+| Admin verification | Assignment exists; no sufficiency check or client correction task | Verification stage, reasoned “We need more details”, client Edit/reply, verify before assignment; overdue display | Implemented; local/live checks below |
+| Client tracking | Generic lifecycle summary rather than six designed stages | Submitted → Paid → Verification → Assigned → Preparation → Delivered, event timestamps/details and policy deadline | Implemented; local/live checks below |
+| Advocate request | Accept/decline exists in generic screen | Designed details, payout only, masked contact before acceptance, explicit decline/reassignment | Implemented; local/live checks below |
+| Document requests | Paid client files are unconditionally frozen in `report-access.ts` | Scoped request/reply uploads in chat, preserve original evidence, pause/resume deadline | Implemented; local/live checks below |
+| Editor | Eight-section research model exists; client/property sections read-only and owner/findings flattened | Current eight-section design, all authored fields rendered, structured checked-records/findings, explicit personal sign-off and wording-only AI suggestions | Implemented; local/live checks below |
+| Delivery | `submit()` rejects editor output and requires a second final upload | Either editor PDF or uploaded PDF; shared viewer/preview; note; direct release without admin review; one wallet credit; correction version without second credit | Implemented; local/live checks below |
+| Chat | Existing case thread has no report delivery+7-day policy/reopen control | Acceptance through delivery+7 days, visible read-only reason, audited admin reopening | Implemented; local/live checks below |
+| Presentation | Generic dates include seconds; raw document filenames/status/tier values; multiple filled actions | One main action, outlined/text secondary actions, human labels and IST minute dates, all five states | Implemented; local/live checks below |
+| Existing cases | No mapping to the newly required verification/deadline stages | Additive policy/state migration; retain prices/files/versions and safely open/finish old paid and completed cases | Implemented; local/live checks below |
 
 Existing capabilities retained: real case ownership, LGD provenance, uploads and
 page counting, immutable price quotes, draft conflict checks, PDFs, in-app
@@ -64,8 +64,26 @@ The authenticated mobile route smoke passed **347 routes, zero failures**.
 Final completion labels, Gallery/image viewer and versioned admin upload settings
 also passed their browser checks. The 25 MB default is enforced in upload tickets
 and completion; existing cases retain their configured policy.
-**Local gate passed; deployment is not yet claimed.**
+**Local gate passed. Deployment and full live acceptance also passed; see below.**
+Saved payment-pending tracking links also pass the shared checkout/QR path;
+foreign-client direct URLs and every workflow endpoint were checked again in the
+browser/API isolation run. [Additional checks](../../reports/report-flows-20261113/README.md).
 Native camera permission/device capture needs a physical-device check; browser Files
 upload and PDF display/download use the real local document pipeline. No real money
 moved: payments/refunds, storage, email and AI are labelled local test adapters;
 wallet entries are entitlements, not bank transfers.
+
+## Deployment and live acceptance — 13 November 2026
+
+Image `1bff6f2` was pushed, the additive migration completed, and the dev stack
+rolled out healthy before publishing both Vercel sites. Frontend `75eac72` fixes
+the upload-refresh race found by the first live run. The corrected live run passed
+all requested journeys, both cancellations, PDF viewing/download, exact wallet
+credits, endpoint/direct-URL isolation, error recovery and delayed-upload saves.
+All seven pre-existing cases retain their statuses and released files.
+
+[Deployment and test results](../../reports/report-flows-20261113/README.md) ·
+[Live screenshots](../../reports/report-flows-20261113/live/README.md).
+
+Docker builder and unused-image pruning completed after the build/push. No real
+money moved, and no credentials or existing client filings were changed.

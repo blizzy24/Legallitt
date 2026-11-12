@@ -1,0 +1,243 @@
+{
+  "cases": [
+    {
+      "id": "e3c58db2-9f13-4e46-8795-b5bb651cc21b",
+      "service": "property_search",
+      "speed": "ordinary",
+      "tag": "property_search-ordinary",
+      "paid": true,
+      "advocate": "advocate-2"
+    },
+    {
+      "id": "6e47f4d8-e82e-4978-a626-1e43a76a4955",
+      "service": "property_search",
+      "speed": "urgent",
+      "tag": "property_search-urgent",
+      "paid": true,
+      "advocate": "advocate-2"
+    },
+    {
+      "id": "a396677c-4717-4d33-8c7c-1831052f4d87",
+      "service": "document_forensic",
+      "speed": "ordinary",
+      "tag": "document_forensic-ordinary",
+      "paid": true,
+      "advocate": "advocate",
+      "returned": true
+    },
+    {
+      "id": "5196e89a-7977-46e8-b091-904ac102c637",
+      "service": "document_forensic",
+      "speed": "urgent",
+      "tag": "document_forensic-urgent",
+      "paid": true,
+      "advocate": "advocate"
+    },
+    {
+      "id": "f9dcd030-cc62-44cb-96e8-483eb0dcd082",
+      "service": "property_search",
+      "speed": "ordinary",
+      "tag": "property_search-cancellation",
+      "cancel": true,
+      "paid": true
+    },
+    {
+      "id": "ecef4b56-5a6b-4fb3-a00e-60f871769823",
+      "service": "document_forensic",
+      "speed": "ordinary",
+      "tag": "document_forensic-cancellation",
+      "cancel": true,
+      "paid": true
+    }
+  ],
+  "results": [
+    {
+      "name": "property_search-ordinary intake persisted, exact quote paid, success and tracking",
+      "at": "2026-11-12T21:34:23.252Z"
+    },
+    {
+      "name": "property_search-urgent intake persisted, exact quote paid, success and tracking",
+      "at": "2026-11-12T21:34:59.825Z"
+    },
+    {
+      "name": "document_forensic-ordinary intake persisted, exact quote paid, success and tracking",
+      "at": "2026-11-12T21:46:32.168Z"
+    },
+    {
+      "name": "document_forensic-urgent intake persisted, exact quote paid, success and tracking",
+      "at": "2026-11-12T21:47:02.602Z"
+    },
+    {
+      "name": "property_search-ordinary assigned, request reviewed and accepted",
+      "at": "2026-11-12T21:47:50.018Z"
+    },
+    {
+      "name": "property_search-urgent assigned, request reviewed and accepted",
+      "at": "2026-11-12T21:48:12.443Z"
+    },
+    {
+      "name": "document_forensic-ordinary assigned, request reviewed and accepted",
+      "at": "2026-11-12T21:48:37.917Z"
+    },
+    {
+      "name": "document_forensic-urgent assigned, request reviewed and accepted",
+      "at": "2026-11-12T21:48:51.426Z"
+    },
+    {
+      "name": "property_search-ordinary report delivered directly to client",
+      "at": "2026-11-12T21:49:48.439Z"
+    },
+    {
+      "name": "property_search-urgent report delivered directly to client",
+      "at": "2026-11-12T21:50:01.293Z"
+    },
+    {
+      "name": "document_forensic-ordinary report and affidavit approved and released after correction",
+      "at": "2026-11-12T21:51:48.880Z"
+    },
+    {
+      "name": "document_forensic-urgent report and affidavit approved and released",
+      "at": "2026-11-12T21:52:46.409Z"
+    },
+    {
+      "name": "property_search-ordinary client viewer/download, isolation and one wallet credit",
+      "at": "2026-11-12T21:52:57.799Z"
+    },
+    {
+      "name": "property_search-urgent client viewer/download, isolation and one wallet credit",
+      "at": "2026-11-12T21:53:07.954Z"
+    },
+    {
+      "name": "document_forensic-ordinary client viewer/download, isolation and one wallet credit",
+      "at": "2026-11-12T21:53:23.933Z"
+    },
+    {
+      "name": "document_forensic-urgent client viewer/download, isolation and one wallet credit",
+      "at": "2026-11-12T21:53:40.069Z"
+    },
+    {
+      "name": "property_search-cancellation intake persisted, exact quote paid, success and tracking",
+      "at": "2026-11-12T21:53:52.798Z"
+    },
+    {
+      "name": "property_search cancellation before acceptance records full simulated refund",
+      "at": "2026-11-12T21:54:02.437Z"
+    },
+    {
+      "name": "document_forensic-cancellation intake persisted, exact quote paid, success and tracking",
+      "at": "2026-11-12T21:54:17.267Z"
+    },
+    {
+      "name": "document_forensic cancellation before acceptance records full simulated refund",
+      "at": "2026-11-12T21:54:26.798Z"
+    },
+    {
+      "name": "property_search-ordinary advocate completion uses human file labels and wallet confirmation",
+      "at": "2026-11-12T21:54:33.859Z"
+    },
+    {
+      "name": "property_search-urgent advocate completion uses human file labels and wallet confirmation",
+      "at": "2026-11-12T21:54:37.627Z"
+    },
+    {
+      "name": "document_forensic-ordinary advocate completion uses human file labels and wallet confirmation",
+      "at": "2026-11-12T21:54:41.160Z"
+    },
+    {
+      "name": "document_forensic-urgent advocate completion uses human file labels and wallet confirmation",
+      "at": "2026-11-12T21:54:44.838Z"
+    },
+    {
+      "name": "Document Forensic Gallery selection persists an image through the document pipeline",
+      "at": "2026-11-12T21:54:56.935Z"
+    },
+    {
+      "name": "property_search loading, error and retry states",
+      "at": "2026-11-12T21:55:15.359Z"
+    },
+    {
+      "name": "document_forensic loading, error and retry states",
+      "at": "2026-11-12T21:55:32.382Z"
+    },
+    {
+      "name": "property_search admin upload settings visible",
+      "at": "2026-11-12T21:55:36.941Z"
+    },
+    {
+      "name": "document_forensic admin upload settings visible",
+      "at": "2026-11-12T21:55:40.625Z"
+    },
+    {
+      "name": "property_search-ordinary foreign client direct URL and all workflow endpoints reject foreign client/unassigned advocate",
+      "at": "2026-11-12T21:55:57.202Z"
+    },
+    {
+      "name": "property_search-urgent foreign client direct URL and all workflow endpoints reject foreign client/unassigned advocate",
+      "at": "2026-11-12T21:56:03.923Z"
+    },
+    {
+      "name": "document_forensic-ordinary foreign client direct URL and all workflow endpoints reject foreign client/unassigned advocate",
+      "at": "2026-11-12T21:56:10.860Z"
+    },
+    {
+      "name": "document_forensic-urgent foreign client direct URL and all workflow endpoints reject foreign client/unassigned advocate",
+      "at": "2026-11-12T21:56:17.600Z"
+    },
+    {
+      "name": "Workflow settings are admin-only",
+      "at": "2026-11-12T21:56:18.418Z"
+    },
+    {
+      "name": "property_search delayed upload refresh preserves typing and subsequent saved edits",
+      "at": "2026-11-12T21:56:30.435Z"
+    },
+    {
+      "name": "document_forensic delayed upload refresh preserves typing and subsequent saved edits",
+      "at": "2026-11-12T21:56:44.675Z"
+    },
+    {
+      "name": "property_search payment-pending tracking link resumes the shared checkout and QR flow",
+      "at": "2026-11-12T21:56:51.207Z"
+    },
+    {
+      "name": "document_forensic payment-pending tracking link resumes the shared checkout and QR flow",
+      "at": "2026-11-12T21:56:59.691Z"
+    }
+  ],
+  "gallery_case_id": "09f16c2d-fb4d-432b-9c09-1605ef697b36",
+  "visuals": [
+    {
+      "id": "bb41773b-d200-4527-81e5-3a2b57fa339e",
+      "service": "property_search"
+    },
+    {
+      "id": "56013294-f998-47cb-8c23-c2bb36062716",
+      "service": "document_forensic"
+    }
+  ],
+  "save_races": [
+    {
+      "id": "ded13d68-13a7-4a7d-885f-0902327de74f",
+      "service": "property_search"
+    },
+    {
+      "id": "d07b7fb4-f904-4b95-be3b-14678b1dfb1e",
+      "service": "document_forensic"
+    }
+  ],
+  "legacy_pending": [
+    {
+      "id": "e502f8cd-e532-415a-b7ee-a21b63f270c0",
+      "service": "property_search"
+    },
+    {
+      "id": "5cd0687e-0505-4dfd-9d37-417e9641068d",
+      "service": "document_forensic"
+    }
+  ],
+  "last_check": {
+    "stage": "all",
+    "passed": true,
+    "at": "2026-11-12T21:56:59.692Z"
+  }
+}

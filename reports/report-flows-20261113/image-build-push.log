@@ -1,0 +1,433 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 2.72kB 0.0s done
+#1 DONE 0.1s
+
+#2 [internal] load metadata for docker.io/library/node:22-bookworm-slim
+#2 DONE 0.2s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 253B 0.0s done
+#3 DONE 0.1s
+
+#4 [build  1/13] FROM docker.io/library/node:22-bookworm-slim@sha256:f5edcaefce9e3505c53e917deda2f7999b3065f8d6462f5096db91342e498b36
+#4 resolve docker.io/library/node:22-bookworm-slim@sha256:f5edcaefce9e3505c53e917deda2f7999b3065f8d6462f5096db91342e498b36 0.0s done
+#4 extracting sha256:c96c411090da09187c55ab267826b3903b542b5c03f1cafa912d60e060e7850c
+#4 ...
+
+#5 [internal] load build context
+#5 transferring context: 8.95MB 0.6s done
+#5 DONE 0.7s
+
+#6 [stage-1 3/8] ADD https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem /etc/ssl/rds/global-bundle.pem
+#6 ...
+
+#4 [build  1/13] FROM docker.io/library/node:22-bookworm-slim@sha256:f5edcaefce9e3505c53e917deda2f7999b3065f8d6462f5096db91342e498b36
+#4 extracting sha256:c96c411090da09187c55ab267826b3903b542b5c03f1cafa912d60e060e7850c 1.0s done
+#4 DONE 1.2s
+
+#4 [build  1/13] FROM docker.io/library/node:22-bookworm-slim@sha256:f5edcaefce9e3505c53e917deda2f7999b3065f8d6462f5096db91342e498b36
+#4 extracting sha256:3a7b14f3e09ef4928f727883ab5693d524797e3833c2f4c6bc1f0d0791330a42 0.0s done
+#4 extracting sha256:9d7b1405876470cc4eb0c1eb2811037931a1a1e02767a4f514909ed3c50ad6a8
+#4 ...
+
+#6 [stage-1 3/8] ADD https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem /etc/ssl/rds/global-bundle.pem
+#6 DONE 1.8s
+
+#6 [stage-1 3/8] ADD https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem /etc/ssl/rds/global-bundle.pem
+#6 DONE 1.8s
+
+#4 [build  1/13] FROM docker.io/library/node:22-bookworm-slim@sha256:f5edcaefce9e3505c53e917deda2f7999b3065f8d6462f5096db91342e498b36
+#4 extracting sha256:9d7b1405876470cc4eb0c1eb2811037931a1a1e02767a4f514909ed3c50ad6a8 1.1s done
+#4 DONE 2.3s
+
+#4 [build  1/13] FROM docker.io/library/node:22-bookworm-slim@sha256:f5edcaefce9e3505c53e917deda2f7999b3065f8d6462f5096db91342e498b36
+#4 extracting sha256:d76d856751feaaeaf5bc9b5c40d4b8b78fdcb19c7dd79d67aaa9bb2d7d1c60c1 0.1s done
+#4 extracting sha256:6009fa0b728ada85ec401c99a280269ab76f1f5ee7edb64dc7ec40c306c1107a 0.0s done
+#4 DONE 2.4s
+
+#7 [build  2/13] RUN apt-get update && apt-get install -y --no-install-recommends openssl ca-certificates && rm -rf /var/lib/apt/lists/*
+#7 1.773 Get:1 http://deb.debian.org/debian bookworm InRelease [151 kB]
+#7 2.031 Get:2 http://deb.debian.org/debian bookworm-updates InRelease [55.4 kB]
+#7 2.258 Get:3 http://deb.debian.org/debian-security bookworm-security InRelease [34.8 kB]
+#7 3.565 Get:4 http://deb.debian.org/debian bookworm/main arm64 Packages [8689 kB]
+#7 7.460 Get:5 http://deb.debian.org/debian bookworm-updates/main arm64 Packages [6936 B]
+#7 7.606 Get:6 http://deb.debian.org/debian-security bookworm-security/main arm64 Packages [367 kB]
+#7 12.57 Fetched 9304 kB in 11s (828 kB/s)
+#7 12.57 Reading package lists...
+#7 17.46 Reading package lists...
+#7 22.17 Building dependency tree...
+#7 22.93 Reading state information...
+#7 23.72 The following additional packages will be installed:
+#7 23.72   libssl3
+#7 23.86 The following NEW packages will be installed:
+#7 23.86   ca-certificates libssl3 openssl
+#7 24.32 0 upgraded, 3 newly installed, 0 to remove and 0 not upgraded.
+#7 24.32 Need to get 3400 kB of archives.
+#7 24.32 After this operation, 8942 kB of additional disk space will be used.
+#7 24.32 Get:1 http://deb.debian.org/debian-security bookworm-security/main arm64 libssl3 arm64 3.0.22-1~deb12u2 [1829 kB]
+#7 25.35 Get:2 http://deb.debian.org/debian-security bookworm-security/main arm64 openssl arm64 3.0.22-1~deb12u2 [1410 kB]
+#7 26.23 Get:3 http://deb.debian.org/debian-security bookworm-security/main arm64 ca-certificates all 20250419~deb12u2 [161 kB]
+#7 27.67 debconf: delaying package configuration, since apt-utils is not installed
+#7 27.88 Fetched 3400 kB in 2s (1377 kB/s)
+#7 28.18 Selecting previously unselected package libssl3:arm64.
+#7 28.18 (Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 6090 files and directories currently installed.)
+#7 28.22 Preparing to unpack .../libssl3_3.0.22-1~deb12u2_arm64.deb ...
+#7 28.25 Unpacking libssl3:arm64 (3.0.22-1~deb12u2) ...
+#7 29.25 Selecting previously unselected package openssl.
+#7 29.25 Preparing to unpack .../openssl_3.0.22-1~deb12u2_arm64.deb ...
+#7 29.26 Unpacking openssl (3.0.22-1~deb12u2) ...
+#7 29.98 Selecting previously unselected package ca-certificates.
+#7 29.99 Preparing to unpack .../ca-certificates_20250419~deb12u2_all.deb ...
+#7 29.99 Unpacking ca-certificates (20250419~deb12u2) ...
+#7 30.46 Setting up libssl3:arm64 (3.0.22-1~deb12u2) ...
+#7 30.48 Setting up openssl (3.0.22-1~deb12u2) ...
+#7 30.55 Setting up ca-certificates (20250419~deb12u2) ...
+#7 32.05 debconf: unable to initialize frontend: Dialog
+#7 32.05 debconf: (TERM is not set, so the dialog frontend is not usable.)
+#7 32.05 debconf: falling back to frontend: Readline
+#7 32.06 debconf: unable to initialize frontend: Readline
+#7 32.06 debconf: (Can't locate Term/ReadLine.pm in @INC (you may need to install the Term::ReadLine module) (@INC contains: /etc/perl /usr/local/lib/aarch64-linux-gnu/perl/5.36.0 /usr/local/share/perl/5.36.0 /usr/lib/aarch64-linux-gnu/perl5/5.36 /usr/share/perl5 /usr/lib/aarch64-linux-gnu/perl-base /usr/lib/aarch64-linux-gnu/perl/5.36 /usr/share/perl/5.36 /usr/local/lib/site_perl) at /usr/share/perl5/Debconf/FrontEnd/Readline.pm line 7.)
+#7 32.06 debconf: falling back to frontend: Teletype
+#7 47.82 Updating certificates in /etc/ssl/certs...
+#7 72.09 148 added, 0 removed; done.
+#7 72.34 Processing triggers for libc-bin (2.36-9+deb12u14) ...
+#7 72.44 Processing triggers for ca-certificates (20250419~deb12u2) ...
+#7 72.61 Updating certificates in /etc/ssl/certs...
+#7 91.00 0 added, 0 removed; done.
+#7 91.00 Running hooks in /etc/ca-certificates/update.d...
+#7 91.05 done.
+#7 DONE 91.4s
+
+#8 [stage-1 3/8] ADD https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem /etc/ssl/rds/global-bundle.pem
+#8 DONE 0.1s
+
+#9 [stage-1 4/8] RUN chmod 0755 /etc/ssl/rds && chmod 0644 /etc/ssl/rds/global-bundle.pem
+#9 DONE 0.6s
+
+#10 [build  3/13] RUN corepack enable && corepack prepare pnpm@10.34.7 --activate
+#10 4.222 Preparing pnpm@10.34.7 for immediate activation...
+#10 ...
+
+#11 [stage-1 5/8] RUN cd /tmp && awk '/BEGIN CERT/{n++} {print > ("cert-" n ".pem")}' /etc/ssl/rds/global-bundle.pem  && for f in cert-*.pem; do if openssl x509 -noout -subject -in "$f" | grep -q "ap-south-1 Root CA RSA2048 G1"; then cp "$f" /etc/ssl/rds/ap-south-1-rsa2048-g1.pem; fi; done  && rm -f cert-*.pem && test -s /etc/ssl/rds/ap-south-1-rsa2048-g1.pem && chmod 0644 /etc/ssl/rds/ap-south-1-rsa2048-g1.pem
+#11 ...
+
+#10 [build  3/13] RUN corepack enable && corepack prepare pnpm@10.34.7 --activate
+#10 DONE 18.6s
+
+#12 [build  4/13] WORKDIR /repo
+#12 DONE 0.1s
+
+#13 [build  5/13] COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+#13 DONE 0.1s
+
+#11 [stage-1 5/8] RUN cd /tmp && awk '/BEGIN CERT/{n++} {print > ("cert-" n ".pem")}' /etc/ssl/rds/global-bundle.pem  && for f in cert-*.pem; do if openssl x509 -noout -subject -in "$f" | grep -q "ap-south-1 Root CA RSA2048 G1"; then cp "$f" /etc/ssl/rds/ap-south-1-rsa2048-g1.pem; fi; done  && rm -f cert-*.pem && test -s /etc/ssl/rds/ap-south-1-rsa2048-g1.pem && chmod 0644 /etc/ssl/rds/ap-south-1-rsa2048-g1.pem
+#11 ...
+
+#14 [build  6/13] COPY packages/shared/package.json packages/shared/
+#14 DONE 0.1s
+
+#15 [build  7/13] COPY apps/api/package.json apps/api/
+#15 DONE 0.1s
+
+#16 [build  8/13] RUN pnpm install --frozen-lockfile --filter @legalitt/api... --config.only-built-dependencies=prisma --config.only-built-dependencies=@prisma/engines
+#16 10.70 Scope: 2 of 3 workspace projects
+#16 12.92 Lockfile is up to date, resolution step is skipped
+#16 14.04 Progress: resolved 1, reused 0, downloaded 0, added 0
+#16 19.39 .                                        | +378 ++++++++++++++++++++++++++++++++
+#16 20.00 Progress: resolved 378, reused 0, downloaded 0, added 0
+#16 25.94  WARN  Request took 15088ms: https://registry.npmjs.org/pnpm
+#16 26.73
+#16 26.73    ╭──────────────────────────────────────────────────────────────────────╮
+#16 26.73    │                                                                      │
+#16 26.73    │                 Update available! 10.34.7 → 12.18.0.                 │
+#16 26.73    │                 Changelog: https://pnpm.io/v/12.18.0                 │
+#16 26.73    │   To update, run: curl -fsSL https://get.pnpm.io/install.sh | sh -   │
+#16 26.73    │                                                                      │
+#16 26.73    ╰──────────────────────────────────────────────────────────────────────╯
+#16 26.73
+#16 26.89 Progress: resolved 378, reused 0, downloaded 1, added 0
+#16 28.28 Progress: resolved 378, reused 0, downloaded 19, added 0
+#16 34.32 Progress: resolved 378, reused 0, downloaded 27, added 4
+#16 35.89 Progress: resolved 378, reused 0, downloaded 39, added 12
+#16 37.38 Progress: resolved 378, reused 0, downloaded 49, added 28
+#16 38.63 Progress: resolved 378, reused 0, downloaded 55, added 46
+#16 39.74 Progress: resolved 378, reused 0, downloaded 75, added 59
+#16 41.04 Progress: resolved 378, reused 0, downloaded 83, added 80
+#16 42.20 Progress: resolved 378, reused 0, downloaded 98, added 92
+#16 43.34 Progress: resolved 378, reused 0, downloaded 114, added 111
+#16 44.45 Progress: resolved 378, reused 0, downloaded 133, added 131
+#16 45.70 Progress: resolved 378, reused 0, downloaded 142, added 141
+#16 46.72 Progress: resolved 378, reused 0, downloaded 157, added 157
+#16 47.75 Progress: resolved 378, reused 0, downloaded 163, added 163
+#16 48.79 Progress: resolved 378, reused 0, downloaded 175, added 174
+#16 49.83 Progress: resolved 378, reused 0, downloaded 184, added 184
+#16 50.92 Progress: resolved 378, reused 0, downloaded 190, added 187
+#16 51.98 Progress: resolved 378, reused 0, downloaded 203, added 203
+#16 53.00 Progress: resolved 378, reused 0, downloaded 209, added 208
+#16 54.07 Progress: resolved 378, reused 0, downloaded 210, added 210
+#16 55.13 Progress: resolved 378, reused 0, downloaded 222, added 221
+#16 56.24 Progress: resolved 378, reused 0, downloaded 226, added 226
+#16 57.32 Progress: resolved 378, reused 0, downloaded 234, added 233
+#16 58.37 Progress: resolved 378, reused 0, downloaded 235, added 235
+#16 ...
+
+#11 [stage-1 5/8] RUN cd /tmp && awk '/BEGIN CERT/{n++} {print > ("cert-" n ".pem")}' /etc/ssl/rds/global-bundle.pem  && for f in cert-*.pem; do if openssl x509 -noout -subject -in "$f" | grep -q "ap-south-1 Root CA RSA2048 G1"; then cp "$f" /etc/ssl/rds/ap-south-1-rsa2048-g1.pem; fi; done  && rm -f cert-*.pem && test -s /etc/ssl/rds/ap-south-1-rsa2048-g1.pem && chmod 0644 /etc/ssl/rds/ap-south-1-rsa2048-g1.pem
+#11 DONE 78.2s
+
+#17 [stage-1 6/8] WORKDIR /repo
+#17 DONE 0.0s
+
+#16 [build  8/13] RUN pnpm install --frozen-lockfile --filter @legalitt/api... --config.only-built-dependencies=prisma --config.only-built-dependencies=@prisma/engines
+#16 60.40 Progress: resolved 378, reused 0, downloaded 239, added 239
+#16 62.94 Progress: resolved 378, reused 0, downloaded 243, added 239
+#16 63.94 Progress: resolved 378, reused 0, downloaded 251, added 251
+#16 64.98 Progress: resolved 378, reused 0, downloaded 253, added 253
+#16 65.98 Progress: resolved 378, reused 0, downloaded 263, added 263
+#16 67.01 Progress: resolved 378, reused 0, downloaded 264, added 264
+#16 68.02 Progress: resolved 378, reused 0, downloaded 266, added 266
+#16 69.10 Progress: resolved 378, reused 0, downloaded 273, added 273
+#16 69.92  WARN  Tarball download average speed 12 KiB/s (size 24 KiB) is below 50 KiB/s: https://registry.npmjs.org/@visx/scale/-/scale-4.0.1-alpha.0.tgz (GET)
+#16 70.17 Progress: resolved 378, reused 0, downloaded 281, added 279
+#16 71.17 Progress: resolved 378, reused 0, downloaded 291, added 291
+#16 72.18 Progress: resolved 378, reused 0, downloaded 295, added 295
+#16 73.28 Progress: resolved 378, reused 0, downloaded 309, added 305
+#16 74.30 Progress: resolved 378, reused 0, downloaded 318, added 317
+#16 75.32 Progress: resolved 378, reused 0, downloaded 319, added 319
+#16 76.38 Progress: resolved 378, reused 0, downloaded 327, added 325
+#16 77.39 Progress: resolved 378, reused 0, downloaded 341, added 340
+#16 78.48 Progress: resolved 378, reused 0, downloaded 345, added 344
+#16 79.53 Progress: resolved 378, reused 0, downloaded 355, added 355
+#16 80.53 Progress: resolved 378, reused 0, downloaded 362, added 362
+#16 81.54 Progress: resolved 378, reused 0, downloaded 368, added 368
+#16 82.55 Progress: resolved 378, reused 0, downloaded 370, added 370
+#16 83.55 Progress: resolved 378, reused 0, downloaded 371, added 371
+#16 87.60 Progress: resolved 378, reused 0, downloaded 372, added 371
+#16 88.60 Progress: resolved 378, reused 0, downloaded 373, added 373
+#16 92.39 Progress: resolved 378, reused 0, downloaded 374, added 373
+#16 93.39 Progress: resolved 378, reused 0, downloaded 374, added 374
+#16 98.23 Progress: resolved 378, reused 0, downloaded 375, added 374
+#16 99.24 Progress: resolved 378, reused 0, downloaded 375, added 375
+#16 100.2 Progress: resolved 378, reused 0, downloaded 377, added 377
+#16 111.3 Progress: resolved 378, reused 0, downloaded 378, added 377
+#16 111.4 Progress: resolved 378, reused 0, downloaded 378, added 378, done
+#16 116.1 .../node_modules/@prisma/engines postinstall$ node scripts/postinstall.js
+#16 130.7 .../node_modules/@prisma/engines postinstall: Done
+#16 131.4 .../node_modules/prisma preinstall$ node scripts/preinstall-entry.js
+#16 133.4 .../node_modules/prisma preinstall: Done
+#16 136.5 ╭ Warning ─────────────────────────────────────────────────────────────────────╮
+#16 136.5 │                                                                              │
+#16 136.5 │   Ignored build scripts: esbuild@0.28.2.                                     │
+#16 136.5 │   Run "pnpm approve-builds" to pick which dependencies should be allowed     │
+#16 136.5 │   to run scripts.                                                            │
+#16 136.5 │                                                                              │
+#16 136.5 ╰──────────────────────────────────────────────────────────────────────────────╯
+#16 137.2 Done in 2m 14.7s using pnpm v10.34.7
+#16 DONE 143.9s
+
+#18 [build  9/13] COPY tsconfig.json ./
+#18 DONE 1.9s
+
+#19 [build 10/13] COPY packages/shared packages/shared
+#19 DONE 0.7s
+
+#20 [build 11/13] COPY apps/api apps/api
+#20 DONE 1.5s
+
+#21 [build 12/13] RUN pnpm --filter @legalitt/shared build && pnpm --filter @legalitt/api build
+#21 15.80
+#21 15.80 > @legalitt/shared@0.0.0 build /repo/packages/shared
+#21 15.80 > tsc
+#21 15.80
+#21 75.67
+#21 75.67 > @legalitt/api@0.0.0 build /repo/apps/api
+#21 75.67 > prisma generate && tsc
+#21 75.67
+#21 92.64 Loaded Prisma config from prisma.config.ts.
+#21 92.64
+#21 94.64 Prisma schema loaded from prisma/schema.prisma.
+#21 108.1
+#21 108.1 ✔ Generated Prisma Client (7.10.1) to ./src/generated/prisma in 7.30s
+#21 108.1
+#21 DONE 296.4s
+
+#22 [build 13/13] RUN cd apps/api && pnpm exec prisma version >/dev/null
+#22 23.02 Loaded Prisma config from prisma.config.ts.
+#22 23.02
+#22 30.15 Prisma schema loaded from prisma/schema.prisma.
+#22 30.34 ┌─────────────────────────────────────────────────────────┐
+#22 30.34 │  Update available 7.10.1 -> 8.0.0-rc.33                 │
+#22 30.34 │                                                         │
+#22 30.34 │  This is a major update - please follow the guide at    │
+#22 30.34 │  https://pris.ly/d/major-version-upgrade                │
+#22 30.34 │                                                         │
+#22 30.34 │  Run the following to update                            │
+#22 30.34 │    npm i --save-dev prisma@latest                       │
+#22 30.34 │    npm i @prisma/client@latest                          │
+#22 30.34 └─────────────────────────────────────────────────────────┘
+#22 DONE 30.7s
+
+#23 [stage-1 7/8] COPY --from=build /repo /repo
+#23 DONE 4.9s
+
+#24 [stage-1 8/8] WORKDIR /repo/apps/api
+#24 DONE 0.2s
+
+#25 exporting to image
+#25 exporting layers
+#25 exporting layers 21.8s done
+#25 exporting manifest sha256:3514108b64758713529c987ad74b4eff43e0853b66533762e1831da791c45f87 0.0s done
+#25 exporting config sha256:0ac794a561f0c242f31e0638b77b4cf084de6ceda325054e2d2d2a5408678ef4 0.0s done
+#25 exporting attestation manifest sha256:714c70856cc56105fb769468c950ae9549d513f4fdd06c997860b1c96bd2c30b 0.0s done
+#25 exporting manifest list sha256:281ee7ebeca749dc326f8ce3c1877bba68db4210b876522f47db09f40bbbbb77 0.0s done
+#25 naming to 026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api:1bff6f2
+#25 naming to 026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api:1bff6f2 done
+#25 DONE 22.0s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/uwc8xrom7naqjdg8jdjik1d7k
+Login Succeeded
+The push refers to repository [026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api]
+9d7b14058764: Waiting
+c96c411090da: Waiting
+6a53779fb97c: Waiting
+4f4fb700ef54: Waiting
+6009fa0b728a: Waiting
+ca0bad6b690a: Waiting
+e7d8d8f3190a: Waiting
+d76d856751fe: Waiting
+3a7b14f3e09e: Waiting
+7e97639febbb: Waiting
+7f050d2505d5: Waiting
+dd11bf99c791: Waiting
+0befdf40db75: Waiting
+4f4fb700ef54: Waiting
+6009fa0b728a: Waiting
+ca0bad6b690a: Waiting
+e7d8d8f3190a: Waiting
+d76d856751fe: Waiting
+3a7b14f3e09e: Waiting
+7e97639febbb: Waiting
+7f050d2505d5: Waiting
+dd11bf99c791: Waiting
+0befdf40db75: Waiting
+9d7b14058764: Waiting
+c96c411090da: Waiting
+6a53779fb97c: Waiting
+9d7b14058764: Waiting
+c96c411090da: Waiting
+6a53779fb97c: Waiting
+4f4fb700ef54: Waiting
+6009fa0b728a: Waiting
+ca0bad6b690a: Waiting
+e7d8d8f3190a: Waiting
+d76d856751fe: Waiting
+3a7b14f3e09e: Waiting
+7e97639febbb: Waiting
+7f050d2505d5: Waiting
+dd11bf99c791: Waiting
+0befdf40db75: Waiting
+3a7b14f3e09e: Waiting
+7e97639febbb: Waiting
+7f050d2505d5: Waiting
+dd11bf99c791: Waiting
+0befdf40db75: Waiting
+9d7b14058764: Waiting
+c96c411090da: Waiting
+6a53779fb97c: Waiting
+4f4fb700ef54: Waiting
+6009fa0b728a: Waiting
+ca0bad6b690a: Waiting
+e7d8d8f3190a: Waiting
+d76d856751fe: Waiting
+6a53779fb97c: Waiting
+4f4fb700ef54: Waiting
+6009fa0b728a: Waiting
+ca0bad6b690a: Waiting
+e7d8d8f3190a: Waiting
+d76d856751fe: Waiting
+3a7b14f3e09e: Waiting
+7e97639febbb: Waiting
+7f050d2505d5: Waiting
+dd11bf99c791: Waiting
+0befdf40db75: Waiting
+9d7b14058764: Waiting
+c96c411090da: Waiting
+6a53779fb97c: Waiting
+4f4fb700ef54: Layer already exists
+6009fa0b728a: Layer already exists
+ca0bad6b690a: Waiting
+e7d8d8f3190a: Waiting
+d76d856751fe: Layer already exists
+3a7b14f3e09e: Layer already exists
+7e97639febbb: Waiting
+7f050d2505d5: Waiting
+dd11bf99c791: Waiting
+0befdf40db75: Waiting
+9d7b14058764: Layer already exists
+c96c411090da: Layer already exists
+ca0bad6b690a: Waiting
+7e97639febbb: Waiting
+7f050d2505d5: Waiting
+6a53779fb97c: Pushed
+0befdf40db75: Pushed
+ca0bad6b690a: Pushed
+7e97639febbb: Pushed
+dd11bf99c791: Pushed
+7f050d2505d5: Pushed
+e7d8d8f3190a: Pushed
+1bff6f2: digest: sha256:281ee7ebeca749dc326f8ce3c1877bba68db4210b876522f47db09f40bbbbb77 size: 856
+ID						RECLAIMABLE	SIZE		LAST ACCESSED
+oolamutk1k9b4lyansxucwvla*              	true 		9.896MB   	About a minute ago
+s4jxdpkjeggtwtkzgl7n9rzwx*              	true 	8.192kB   	About a minute ago
+buvyrn7ma69mkga3pc6762wxk*              	true 	8.192kB   	About a minute ago
+aruz4ymbbnmcze451zaiqljbi*              	true 	36.86kB   	About a minute ago
+5kpoxs9o7zsguz2di6uy6drb5*              	true 	180.2kB   	About a minute ago
+ycf463fpu5u5vquffhi9isv5p               	true 	4.128kB   	About a minute ago
+pqutc88gthchn9ul0v7irsm44               	true 	695.6MB   	About a minute ago
+l8edst6jwhay1716o3fnucvr5               	true 	9.462MB   	About a minute ago
+eh6v67o1hnt6y0ugpw3asfdvf               	true 	9.138MB   	About a minute ago
+qc5h65bhvpjjyrx0m7rtqwmhb               	true 	8.286kB   	About a minute ago
+kmxy4l3xm681gr1yi76b1gjb4               	true 	33.91kB   	About a minute ago
+x1lneqf0guplw6euu8h5m9427               	true 	405.5kB   	About a minute ago
+o9prw9kgqdtk7l138ih9jjypy               	true 	286.3kB   	About a minute ago
+s9s1othece8d0q6nhxxe21tzl               	true 	12.29kB   	About a minute ago
+p2ayoac817imvrybvt009ab3d               	true 	278.1kB   	About a minute ago
+zkql3mpqc7d6qbtheq28km9ld               	true 	648.9MB   	About a minute ago
+ik0f2ul1475munewp8d1qfmhv               	true 	20.48kB   	About a minute ago
+yycjvizw4emqz4kcpfynal5cq               	true 	20.48kB   	About a minute ago
+t0o4hcn60qpdwgas0nk9qn24n               	true 	385kB     	About a minute ago
+7v8c1rw6jkdbanpkm14jto8ra               	true 	8.192kB   	About a minute ago
+0kg9y32bhn2x8pftvqy7xdrep               	true 	24.04MB   	About a minute ago
+jed7q78mecczw4f08mor1p2fa               	true 	13.92MB   	About a minute ago
+veza7wlj4sorwqoq8cjn38p5j               	true 	24.06kB   	About a minute ago
+j5xctzeb3slgev1a02f4n545g               	true 	14.55MB   	11 minutes ago
+aog5sgkpgodo47n7rlwg9khlq               	true 	295.7MB   	11 minutes ago
+z6t7xmxkpw7h66mwj0sasoyfy               	true 	91.14kB   	11 minutes ago
+7chfq881ebp8nylpxkdcjvwsw               	true 	208.1MB   	11 minutes ago
+Total:	1.931GB
+Deleted Images:
+untagged: node:22-bookworm-slim
+deleted: sha256:f5edcaefce9e3505c53e917deda2f7999b3065f8d6462f5096db91342e498b36
+deleted: sha256:b06790a7ce8f827fd695d4a148ba260b351d658af126b6deb27af3823a1675a1
+untagged: 026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api:1bff6f2
+deleted: sha256:281ee7ebeca749dc326f8ce3c1877bba68db4210b876522f47db09f40bbbbb77
+deleted: sha256:3514108b64758713529c987ad74b4eff43e0853b66533762e1831da791c45f87
+deleted: sha256:0ac794a561f0c242f31e0638b77b4cf084de6ceda325054e2d2d2a5408678ef4
+deleted: sha256:c96c411090da09187c55ab267826b3903b542b5c03f1cafa912d60e060e7850c
+deleted: sha256:3a7b14f3e09ef4928f727883ab5693d524797e3833c2f4c6bc1f0d0791330a42
+deleted: sha256:9d7b1405876470cc4eb0c1eb2811037931a1a1e02767a4f514909ed3c50ad6a8
+deleted: sha256:d76d856751feaaeaf5bc9b5c40d4b8b78fdcb19c7dd79d67aaa9bb2d7d1c60c1
+deleted: sha256:6009fa0b728ada85ec401c99a280269ab76f1f5ee7edb64dc7ec40c306c1107a
+deleted: sha256:7f050d2505d5cee3e4d0fd025228f4860f8d570d2ead03a52691179850155de4
+deleted: sha256:dd11bf99c79150b426d8f3bc54eb0aeff16f1b90343fffd9f0f96aec001348e7
+deleted: sha256:7e97639febbb6877260389f5430d05d7872e2a631eb3fdcdbe2b3fdd8b219746
+deleted: sha256:0befdf40db75dd6f7b556ae93e8f559b64d16168a13efe6f8cfc56ad1c20940c
+deleted: sha256:ca0bad6b690af26001a7e39da3901755f052b9480dd7bc58f0c3ac0769dccad3
+deleted: sha256:e7d8d8f3190a8c01449162e6959fe4d7632c8daad1289524b0ae7a89dea122b3
+deleted: sha256:4f4fb700ef54461cfa02571ae0db9a0dc1e0cdb5577484a6d75e68dc38e8acc1
+deleted: sha256:714c70856cc56105fb769468c950ae9549d513f4fdd06c997860b1c96bd2c30b
+deleted: sha256:14714bb759624f29eb026e5d6f47fc5e9cd448789640ed50173c83557a7671b7
+deleted: sha256:6a53779fb97cc727e01ee8ae3d9a76080ba37d6fb83c7b4832f3975ceeaf4a95
+
+Total reclaimed space: 394.4MB

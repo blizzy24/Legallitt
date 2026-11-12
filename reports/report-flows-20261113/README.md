@@ -1,6 +1,21 @@
 # Property Search / Document Forensic acceptance — 13 November 2026
 
-Local gate passed. No deployment is claimed by this document yet.
+Local and live acceptance passed. The dev API and both Vercel sites are deployed.
+
+| Deployment | Verified result |
+|---|---|
+| API | Image `1bff6f2`, healthy ARM64 task; digest `sha256:281ee7ebeca749dc326f8ce3c1877bba68db4210b876522f47db09f40bbbbb77` |
+| Migration | `202611130030_report_workflows` completed before the stack update |
+| Client / advocate | [legalitt-5.vercel.app](https://legalitt-5.vercel.app), frontend fix `75eac72` |
+| Admin | [legalitt-admin-panel.vercel.app](https://legalitt-admin-panel.vercel.app), successful Vercel deployment |
+| Live journeys | Four delivered cases, both cancellation/refund paths, PDF downloads, exact wallet credits, isolation, error recovery and delayed-upload saves passed |
+| Existing cases | All seven retained their statuses; previously released PDFs still download |
+| Docker cleanup | Builder and unused-image pruning completed after the image build/push |
+
+[Live walkthrough](live-walk.log) · [Live screenshots and case references](live/README.md) ·
+[Final live result](live/latest-check.json) · [Legacy check](live/legacy-check.json) ·
+[Migration](deploy/migrate.log) · [Running image](deploy/verify.log) ·
+[Vercel results](deploy/vercel-save-fix.json) · [Cleanup](deploy/prune.log)
 
 | Check | Result | Evidence |
 |---|---|---|
@@ -15,7 +30,8 @@ Local gate passed. No deployment is claimed by this document yet.
 | Legacy inventory | Seven existing cases across draft, payment-pending, completed and cancelled/refunded states | [Read-only inventory](legacy-inventory.json) |
 | Saved payment-pending tracking links | Both services resume shared checkout and Scan & Pay | [Legacy payment check](legacy-payment.log) |
 | Endpoint and direct-URL isolation | Foreign client/unassigned advocate denied; admin settings denied to other roles | [Isolation check](isolation.log) |
-| Browser JavaScript errors | None in final checks | [Errors](local/browser-errors.json) |
+| Typing during upload refresh | Delayed response preserves edits and the save queue in both services | [Race regression](save-race.log) |
+| Browser JavaScript errors | None in final local or live checks | [Local](local/browser-errors.json), [live](live/browser-errors.json) |
 
 Property Search covered Ordinary/Urgent, admin more details, decline/reassignment,
 requested-document chat, editor PDF and uploaded PDF, client viewer/download,
@@ -49,3 +65,16 @@ author mark, not certificate signing/notarisation. Pricing remains provisional.
 
 Earlier troubleshooting logs and failure captures left locally are not the final
 acceptance result. The files linked above are the final evidence.
+
+The first live run caught a latency-dependent upload refresh overwriting newer
+intake edits. The refresh now preserves the form and active save queue. A deliberate
+delayed-response regression passes locally and live for both services, and all four
+fresh intake/payment paths passed again before publishing that frontend fix.
+[Regression](save-race.log), [fresh intakes](savefix-intakes.log),
+[first live failure](live-initial-failure.log). This issue affects
+the frontend only; the verified API image and migration are unchanged.
+
+The live run uses real authentication, API/database, S3 uploads/downloads, PDFs and
+in-app notifications. Payments/refunds remain explicitly simulated. No bank
+transfer or external forensic specialist was invoked. Admin settings were read
+only on deployed data; policy edits were tested on the isolated local database.

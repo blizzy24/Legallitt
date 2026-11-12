@@ -58,6 +58,7 @@ Captured against the local API with synthetic cases and explicitly simulated pay
 | resumed-scan | [Comparison](resumed-scan.png) | `design/figma-2026-11-12/Document-Forensic-Client-Side/Documents Forensic 13.png` |
 | review-ordinary | [Comparison](review-ordinary.png) | `design/figma-2026-11-12/Document-Forensic-Client-Side/Documents Forensic 12.png` |
 | review-urgent | [Comparison](review-urgent.png) | `design/figma-2026-11-12/Document-Forensic-Client-Side/Documents Forensic 12.png` |
+| save-during-upload | [Comparison](save-during-upload.png) | No separate design |
 | scan-cancellation | [Comparison](scan-cancellation.png) | `design/figma-2026-11-12/Document-Forensic-Client-Side/Documents Forensic 13.png` |
 | scan-ordinary | [Comparison](scan-ordinary.png) | `design/figma-2026-11-12/Document-Forensic-Client-Side/Documents Forensic 13.png` |
 | scan-urgent | [Comparison](scan-urgent.png) | `design/figma-2026-11-12/Document-Forensic-Client-Side/Documents Forensic 13.png` |

@@ -1,0 +1,27 @@
+{
+  "checked_at": "2026-11-12T21:27:17.744Z",
+  "passed": true,
+  "counts": {
+    "property_search": {
+      "payment_pending": 1,
+      "completed": 1,
+      "draft": 1,
+      "refunded": 1,
+      "cancelled": 1
+    },
+    "document_forensic": {
+      "completed": 1,
+      "draft": 1
+    }
+  },
+  "released": [
+    {
+      "service": "property_search",
+      "files": 1
+    },
+    {
+      "service": "document_forensic",
+      "files": 2
+    }
+  ]
+}

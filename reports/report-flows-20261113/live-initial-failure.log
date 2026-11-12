@@ -1,0 +1,31 @@
+SHOT landing.png
+SHOT intake-ordinary.png
+SHOT review-ordinary.png
+SHOT payment-ordinary.png
+SHOT scan-ordinary.png
+SHOT success-ordinary.png
+SHOT tracking-paid-ordinary.png
+PASS property_search-ordinary intake persisted, exact quote paid, success and tracking
+SHOT landing.png
+SHOT intake-urgent.png
+SHOT review-urgent.png
+SHOT payment-urgent.png
+SHOT scan-urgent.png
+SHOT success-urgent.png
+SHOT tracking-paid-urgent.png
+PASS property_search-urgent intake persisted, exact quote paid, success and tracking
+SHOT landing.png
+--- Failure client /document-forensic/upload?caseId=a396677c-4717-4d33-8c7c-1831052f4d87
+BUTTONS: Back ¦ View file ¦ Download ¦ Remove questioned document ¦ Camera: Questioned document ¦ Gallery: Questioned document ¦ Files: Questioned document ¦ Upload questioned document ¦ Document type ¦ Signature verification ¦ Handwriting ¦ Alteration / tampering ¦ Digital document authenticity ¦ Comprehensive ¦ Remove reference sample ¦ Camera: Reference sample ¦ Gallery: Reference sample ¦ Files: Reference sample ¦ Upload reference sample ¦ I do not have a reference sample ¦ Ordinary · 3–5 working days ¦ Urgent · 24–48 hours ¦ Review request
+FIELDS: Document description|Enter document description||text=TEST ONLY signature examinatio ¦ Target focus for document 1|Enter target focus for document 1||text=TEST signature on page 1 ¦ Instructions for the advocate|Enter instructions for the advocate||textarea= supplied scans and explain li
+TEXT: FORENSIC WORKFLOW Upload Document DF-2026-00005 FORENSIC AUTHENTICATION Step 2 of 3 Not saved Upload Documents Upload the document you want examined, then provide a reference sample if you have one. Document to Examine Document to examine 1 Questioned document · 1 KB · 1 page TEST signature on page 1 View file Download Remove questioned document Camera Gallery Files Upload questioned document PDF, JPG or PNG · Maximum 25 MB per file. To replace a file, remove it and upload the replacement. Document Details Document Type * [ Select document type ] Document description Requested analysis * ✓ Signature verification Handwriting Alteration / tampering Digital document authenticity Comprehensive Target focus for document 1 Reference Document / Sample Reference sample 1 Reference sample · 1 KB · 1 page View file Download Remove reference sample Camera Gallery Files Upload reference sample PDF, JPG or PNG · Maximum 25 MB per file. To replace a file, remove it and upload the replacement. I do not have a reference sample Specific Instructions 40/1000 characters Instructions for the advocate Use clear, readable copies. The advocate will state what can and cannot be concluded from the available material. Choose service speed ✓ Ordinary · 3–5 working days ₹5,898.53 including platform fee and GST, before additional pages. Urgent · 24–48 hours ₹8,848.53 including platform fee and GST, before additional pages. Review request
+---
+AssertionError [ERR_ASSERTION]: Entered "Instructions for the advocate"
++ actual - expected
+
++ 'supplied scans and explain limitations.'
+- 'TEST ONLY: compare the fictional supplied scans and explain limitations.'
+
+    at fill (D:\Legalitt\Legallitt\scripts\helpers\fir-walk-kit.cjs:35:10)
+    at async Object.run (D:\Legalitt\Legallitt\scripts\verify-report-flows.cjs:42:6)
+    at async main (D:\Legalitt\Legallitt\scripts\verify-report-flows.cjs:178:85)

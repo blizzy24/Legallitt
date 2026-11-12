@@ -1,0 +1,18 @@
+{
+  "sha": "c222a58bd2ecbfef08e276263055f73328915895",
+  "state": "success",
+  "statuses": [
+    {
+      "context": "Vercel – legalitt-admin-panel",
+      "state": "success",
+      "description": "Deployment has completed",
+      "url": "https://vercel.com/blizzard7/legalitt-admin-panel/5tbNsi5qEGoGWZYH2FrgaeY2gVGw"
+    },
+    {
+      "context": "Vercel – legalitt",
+      "state": "success",
+      "description": "Deployment has completed",
+      "url": "https://vercel.com/blizzard7/legalitt/AvBsqtyy1SgecZfzBEfQEgyf2QTu"
+    }
+  ]
+}
