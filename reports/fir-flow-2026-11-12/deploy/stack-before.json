@@ -1,0 +1,154 @@
+{
+    "Stacks": [
+        {
+            "StackId": "arn:aws:cloudformation:ap-south-1:026379630400:stack/LegalittDev-Compute-DevelopmentOnly/6a722080-d717-11f1-acc7-0affd88faab9",
+            "StackName": "LegalittDev-Compute-DevelopmentOnly",
+            "ChangeSetId": "arn:aws:cloudformation:ap-south-1:026379630400:changeSet/final-c7eaa2a/c8c02d9d-c683-4ca6-9e44-1cbc648a05fa",
+            "Description": "Legalitt DEVELOPMENT-ONLY compute (no NAT, no load balancer). Not for production.",
+            "Parameters": [
+                {
+                    "ParameterKey": "CorsOrigins",
+                    "ParameterValue": "https://legalitt-5.vercel.app,https://legalitt-admin-panel.vercel.app"
+                },
+                {
+                    "ParameterKey": "BootstrapVersion",
+                    "ParameterValue": "/cdk-bootstrap/hnb659fds/version",
+                    "ResolvedValue": "32"
+                },
+                {
+                    "ParameterKey": "DatabaseDeletionProtection",
+                    "ParameterValue": "true"
+                },
+                {
+                    "ParameterKey": "PrivateSubnet2Cidr",
+                    "ParameterValue": "10.20.11.0/24"
+                },
+                {
+                    "ParameterKey": "TaskCount",
+                    "ParameterValue": "1"
+                },
+                {
+                    "ParameterKey": "DatabaseStorageGiB",
+                    "ParameterValue": "20"
+                },
+                {
+                    "ParameterKey": "Postgres16Version",
+                    "ParameterValue": "16.13"
+                },
+                {
+                    "ParameterKey": "PrivateSubnet1Cidr",
+                    "ParameterValue": "10.20.10.0/24"
+                },
+                {
+                    "ParameterKey": "PublicSubnet2Cidr",
+                    "ParameterValue": "10.20.1.0/24"
+                },
+                {
+                    "ParameterKey": "UserPoolId",
+                    "ParameterValue": "ap-south-1_u98M4TfS9"
+                },
+                {
+                    "ParameterKey": "VpcCidr",
+                    "ParameterValue": "10.20.0.0/16"
+                },
+                {
+                    "ParameterKey": "TaskCpu",
+                    "ParameterValue": "256"
+                },
+                {
+                    "ParameterKey": "TaskMemoryMiB",
+                    "ParameterValue": "512"
+                },
+                {
+                    "ParameterKey": "ApiPort",
+                    "ParameterValue": "3001"
+                },
+                {
+                    "ParameterKey": "GeminiSecretArn",
+                    "ParameterValue": "arn:aws:secretsmanager:ap-south-1:026379630400:secret:legalitt-dev/gemini-api-key-PbZXqB"
+                },
+                {
+                    "ParameterKey": "PublicSubnet1Cidr",
+                    "ParameterValue": "10.20.0.0/24"
+                },
+                {
+                    "ParameterKey": "ApiImageTag",
+                    "ParameterValue": "c7eaa2a"
+                },
+                {
+                    "ParameterKey": "DatabaseInstanceClass",
+                    "ParameterValue": "db.t4g.micro"
+                }
+            ],
+            "CreationTime": "2026-11-02T23:44:59.761000+00:00",
+            "LastUpdatedTime": "2026-11-11T08:10:31.480000+00:00",
+            "RollbackConfiguration": {},
+            "StackStatus": "UPDATE_COMPLETE",
+            "DisableRollback": false,
+            "DeploymentConfig": {
+                "Mode": "STANDARD",
+                "DisableRollback": false
+            },
+            "NotificationARNs": [],
+            "Capabilities": [
+                "CAPABILITY_NAMED_IAM"
+            ],
+            "Outputs": [
+                {
+                    "OutputKey": "ApiUrl",
+                    "OutputValue": "https://gvycg0n3u8.execute-api.ap-south-1.amazonaws.com",
+                    "Description": "HTTPS base URL (development only)"
+                },
+                {
+                    "OutputKey": "TaskSubnetIds",
+                    "OutputValue": "subnet-060f72908da2419ee,subnet-0ad9da8fd0e033afd"
+                },
+                {
+                    "OutputKey": "DatabaseSecretArn",
+                    "OutputValue": "arn:aws:secretsmanager:ap-south-1:026379630400:secret:legalitt-dev/database-SY4O9G"
+                },
+                {
+                    "OutputKey": "TaskSecurityGroupId",
+                    "OutputValue": "sg-09a3b6978c7950214"
+                },
+                {
+                    "OutputKey": "ClusterName",
+                    "OutputValue": "legalitt-dev-cluster"
+                },
+                {
+                    "OutputKey": "RepositoryUri",
+                    "OutputValue": "026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api"
+                },
+                {
+                    "OutputKey": "OpsTaskDefinitionArn",
+                    "OutputValue": "arn:aws:ecs:ap-south-1:026379630400:task-definition/legalitt-dev-ops:38"
+                }
+            ],
+            "RoleARN": "arn:aws:iam::026379630400:role/cdk-hnb659fds-cfn-exec-role-026379630400-ap-south-1",
+            "Tags": [
+                {
+                    "Key": "environment",
+                    "Value": "dev"
+                },
+                {
+                    "Key": "application",
+                    "Value": "legalitt"
+                },
+                {
+                    "Key": "purpose",
+                    "Value": "development-only"
+                }
+            ],
+            "EnableTerminationProtection": false,
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            },
+            "LastOperations": [
+                {
+                    "OperationType": "UPDATE_STACK",
+                    "OperationId": "a0753ad8-049e-44da-8eed-b45142922003"
+                }
+            ]
+        }
+    ]
+}
