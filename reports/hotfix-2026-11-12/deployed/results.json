@@ -1,0 +1,193 @@
+{
+  "checked_at": "2026-11-12T12:06:51.663Z",
+  "target": {
+    "api": "https://gvycg0n3u8.execute-api.ap-south-1.amazonaws.com",
+    "mobile": "https://legalitt-5.vercel.app",
+    "admin": "https://legalitt-admin-panel.vercel.app"
+  },
+  "case": {
+    "callback_id": "218a3ed9-88bf-4f01-801b-72af76b37318",
+    "chat_id": "ad063f9a-3bab-44ce-a677-3bbbe8f3d8e8",
+    "case_id": "94420fd7-f8ca-432e-88d2-bc591621ca65",
+    "reference": "FIR-2026-0020"
+  },
+  "page_errors": [],
+  "results": [
+    {
+      "name": "C1 card tap selects without navigating",
+      "detail": ""
+    },
+    {
+      "name": "Request Callback ticket tagged FIR Draft",
+      "detail": "218a3ed9-88bf-4f01-801b-72af76b37318"
+    },
+    {
+      "name": "Request Chat thread tagged FIR Draft",
+      "detail": "ad063f9a-3bab-44ce-a677-3bbbe8f3d8e8"
+    },
+    {
+      "name": "both requests are in the admin Support inbox",
+      "detail": ""
+    },
+    {
+      "name": "C2 turnaround comes from settings",
+      "detail": "24–48 Hours"
+    },
+    {
+      "name": "C2 Send a FIR Draft opens Step 1",
+      "detail": "FIR-2026-0020"
+    },
+    {
+      "name": "C3 Step 1 saved",
+      "detail": "94420fd7-f8ca-432e-88d2-bc591621ca65"
+    },
+    {
+      "name": "C4 location and police station prefilled from Step 1",
+      "detail": ""
+    },
+    {
+      "name": "C4 Step 2 saved",
+      "detail": ""
+    },
+    {
+      "name": "C5 complainant sheet saves the extra fields",
+      "detail": ""
+    },
+    {
+      "name": "C5 requires at least one accused",
+      "detail": ""
+    },
+    {
+      "name": "C5 Step 3 saved: complainant, unknown accused, key witness",
+      "detail": ""
+    },
+    {
+      "name": "C6 Continue is blocked until a primary document is added",
+      "detail": ""
+    },
+    {
+      "name": "C6 uploads stored by slot; no Identity Proof slot",
+      "detail": ""
+    },
+    {
+      "name": "C7 editing from Review returns straight to Review",
+      "detail": ""
+    },
+    {
+      "name": "C7 Proceed To Pay opens payment",
+      "detail": ""
+    },
+    {
+      "name": "C8 fee rows come from the price quote",
+      "detail": "total ₹1,473.53"
+    },
+    {
+      "name": "C8a Scan & Pay never advances on a timer",
+      "detail": ""
+    },
+    {
+      "name": "C8b payment captured (simulated)",
+      "detail": "₹1,473.53"
+    },
+    {
+      "name": "C9 → C10 by tap; client sees Stage 2 of 5",
+      "detail": ""
+    },
+    {
+      "name": "admin §3.1 new paid request shows in the queue with Assign",
+      "detail": ""
+    },
+    {
+      "name": "A1 card shows FIR DRAFT, client · incident, fee and the status button",
+      "detail": ""
+    },
+    {
+      "name": "A2 masks the client’s mobile and email before acceptance",
+      "detail": "+91 90••••••00 · de••••@legalitt.invalid"
+    },
+    {
+      "name": "A2 Reject returns the case to admin; the advocate loses access",
+      "detail": ""
+    },
+    {
+      "name": "admin §3.2 sees the rejection reason and can reassign",
+      "detail": ""
+    },
+    {
+      "name": "admin reassigned to the second advocate; client still at stage 2",
+      "detail": ""
+    },
+    {
+      "name": "A2 Accept asks to confirm, then opens Review Documents",
+      "detail": ""
+    },
+    {
+      "name": "after acceptance the advocate sees the client’s mobile in full",
+      "detail": ""
+    },
+    {
+      "name": "A4 Generate with AI is disabled with the coming-soon line",
+      "detail": ""
+    },
+    {
+      "name": "A5 Save Draft stores a version; status Draft Preparation",
+      "detail": ""
+    },
+    {
+      "name": "A5 Send for Review → awaiting admin approval → A6",
+      "detail": ""
+    },
+    {
+      "name": "admin §3.3 Return to advocate needs a reason",
+      "detail": ""
+    },
+    {
+      "name": "advocate fixed the returned draft and resent it",
+      "detail": ""
+    },
+    {
+      "name": "admin §3.3 Approve sends the draft to the client (status client_review)",
+      "detail": ""
+    },
+    {
+      "name": "C11 shows the approved PDF with Approve and Request For Changes",
+      "detail": ""
+    },
+    {
+      "name": "C12 change request stored with 2 sections and an attachment",
+      "detail": ""
+    },
+    {
+      "name": "C13 → C10: stage 3, \"Advocate is updating your draft\"",
+      "detail": ""
+    },
+    {
+      "name": "A6 shows the client’s sections, text and attachment",
+      "detail": ""
+    },
+    {
+      "name": "the revision goes to the admin again",
+      "detail": ""
+    },
+    {
+      "name": "admin approved the revised draft",
+      "detail": ""
+    },
+    {
+      "name": "C11 Approve → C14; the case completes on client approval (client-submits wording)",
+      "detail": ""
+    },
+    {
+      "name": "A6 timeline ends at Client Approved; no police step",
+      "detail": ""
+    },
+    {
+      "name": "wallet shows the advocate’s share on client approval",
+      "detail": "₹999"
+    },
+    {
+      "name": "client downloads the approved draft PDF; no identity row",
+      "detail": "FIR_Draft_FIR-2026-0020_v3.pdf"
+    }
+  ]
+}

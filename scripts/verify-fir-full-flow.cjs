@@ -19,7 +19,7 @@ process.loadEnvFile('apps/api/.env.local');
 const deployed=process.env.FIR_DEPLOYED==='1';
 const base=deployed?'https://gvycg0n3u8.execute-api.ap-south-1.amazonaws.com':'http://127.0.0.1:3003';
 const mobile=deployed?'https://legalitt-5.vercel.app':'http://localhost:8083',adminWeb=deployed?'https://legalitt-admin-panel.vercel.app':'http://localhost:5174';
-const out=path.resolve('reports/fir-flow-2026-11-12',deployed?'deployed':'local'),shots=deployed?path.join(out,'screens'):path.resolve('docs/flows/fir-screens/built');
+const out=path.resolve(process.env.FIR_REPORT_DIR??'reports/fir-flow-2026-11-12',deployed?'deployed':'local'),shots=deployed?path.join(out,'screens'):path.resolve('docs/flows/fir-screens/built');
 fs.mkdirSync(out,{recursive:true});fs.mkdirSync(shots,{recursive:true});
 const arg=name=>process.argv.find(a=>a.startsWith(`--${name}=`))?.split('=').slice(1).join('=');
 const statePath=path.join(out,'state.json'),state=fs.existsSync(statePath)?JSON.parse(fs.readFileSync(statePath,'utf8')):{};
