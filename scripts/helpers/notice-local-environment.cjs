@@ -32,7 +32,7 @@ module.exports=async function start(){
  storage.discard=async(key,info)=>{if(objects.get(key)?.version===info.version)objects.delete(key);};storage.remove=async key=>{objects.delete(key);};
  app.get(NOTICE_EMAIL).assertReady=()=>{};
  app.get(NOTICE_EMAIL).send=async input=>{assert.ok(input.to.endsWith('.invalid'),'Only synthetic recipients in local walkthrough');sent.push({to:input.to,reference:input.reference,attemptId:input.attemptId,pdfBytes:input.pdf.length});return {messageId:'local-test-'+randomUUID(),simulated:true};};
- app.enableCors({origin:origins});await app.listen(3003,'127.0.0.1');
+ app.enableCors(require('../../apps/api/dist/src/http-cors').httpCorsOptions(origins));await app.listen(3003,'127.0.0.1');
  for(const [folder,port]of [['apps/mobile/dist/notice-verification',8083],['apps/admin/dist/notice-verification',5174]]){
    const root=path.resolve(folder),server=createServer((req,res)=>{let file=path.resolve(root,'.'+decodeURIComponent(new URL(req.url,'http://localhost').pathname));if(!file.startsWith(root+path.sep)||!fs.existsSync(file)||!fs.statSync(file).isFile())file=path.join(root,'index.html');res.setHeader('Content-Type',({'.js':'text/javascript','.mjs':'text/javascript','.html':'text/html','.css':'text/css','.png':'image/png','.ttf':'font/ttf','.wasm':'application/wasm'})[path.extname(file)]??'application/octet-stream');res.end(fs.readFileSync(file));});
    await new Promise(resolve=>server.listen(port,'127.0.0.1',resolve));servers.push(server);

@@ -20,7 +20,9 @@ async function main(){
    const {PrismaClient}=require('../apps/api/dist/src/generated/prisma/client'),{PrismaPg}=require('../apps/api/node_modules/@prisma/adapter-pg'),db=new PrismaClient({adapter:new PrismaPg({connectionString:url.href})});
    try{for(const role of ['advocate','advocate-2'])await db.advocateProfile.upsert({where:{user_id:users[role].id},create:{user_id:users[role].id,verification:'approved',city:'Indore'},update:{verification:'approved',city:'Indore'}});await require('../apps/api/dist/prisma/seed-pricing').seedConfirmedPricing(db);}finally{await db.$disconnect();}}
    browser=await puppeteer.launch({executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe',headless:true,protocolTimeout:120000});
-   const page=async role=>pages[role]??=await kit.signIn(browser,null,{role,email:`demo-${role}@legalitt.invalid`,password,mobile,adminWeb,errors});
+   const page=async role=>{if(pages[role])return pages[role];const p=await kit.signIn(browser,null,{role,email:`demo-${role}@legalitt.invalid`,password,mobile,adminWeb,errors});pages[role]=p;
+     p.on('requestfailed',r=>{if(r.url().startsWith(base+'/api/v1/'))console.log('NETWORK',role,r.method(),new URL(r.url()).pathname,r.failure()?.errorText);});
+     p.on('response',r=>{if(r.status()>=400&&r.url().startsWith(base+'/api/v1/'))console.log('HTTP',role,r.status(),r.request().method(),new URL(r.url()).pathname);});return p;};
    const snap=async(p,name)=>shot(p,path.join(shots,name+'.png'),{width:p.url().startsWith(adminWeb)?1440:430});
    const explore=arg('explore');if(explore){const [role,...rest]=explore.split(':'),p=await page(role);await go(p,(role==='admin'?adminWeb:mobile)+rest.join(':'));await dump(p,'Explore');await snap(p,'explore-'+role);return;}
    const stages=[];const stage=(name,run)=>stages.push({name,run});

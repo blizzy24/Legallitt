@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
+import { httpCorsOptions } from "./http-cors";
 
 async function bootstrap() {
   const port = Number(process.env.PORT);
@@ -13,11 +14,7 @@ async function bootstrap() {
     process.env.CORS_ORIGINS?.split(",")
       .map((value) => value.trim())
       .filter(Boolean) ?? [];
-  app.enableCors({
-    origin: origins,
-    allowedHeaders: ["Authorization", "Content-Type", "Idempotency-Key"],
-    methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
-  });
+  app.enableCors(httpCorsOptions(origins));
   await app.listen(port, "0.0.0.0");
 }
 
