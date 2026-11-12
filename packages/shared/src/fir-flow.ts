@@ -23,11 +23,11 @@ export function firStage(input: {status: string; sub_status?: string | null; adv
   switch (status) {
     case 'draft': return {client: client(1, 'Draft – not submitted'), advocate: advocate('Draft', null, null), admin: {label: 'Not submitted'}};
     case 'submitted': case 'payment_pending': return {client: client(1, 'Awaiting payment'), advocate: advocate('Awaiting payment', null, null), admin: {label: 'Awaiting payment'}};
-    case 'paid': case 'assigning': return {client: client(2, 'Under review'), advocate: advocate('New Request', null, null), admin: {label: 'New request · assign an advocate'}};
-    case 'advocate_declined': return {client: redraft ? {...redraft, note: null} : client(2, 'Under review'), advocate: advocate('Returned to admin', null, null), admin: {label: 'Advocate rejected · reassign'}};
+    case 'paid': case 'assigning': return {client: client(2, 'Under Review'), advocate: advocate('New Request', null, null), admin: {label: 'New request · assign an advocate'}};
+    case 'advocate_declined': return {client: redraft ? {...redraft, note: null} : client(2, 'Under Review'), advocate: advocate('Returned to admin', null, null), admin: {label: 'Advocate rejected · reassign'}};
     // A case reassigned after drafting began keeps its marker: the client's timeline never goes backwards.
-    case 'assigned': return {client: redraft ?? client(2, 'Under review', 'Drafting team assigned'), advocate: advocate('New Request', 'Review Request', 'request'), admin: {label: 'Assigned · awaiting advocate'}};
-    case 'advocate_accepted': return {client: redraft ?? client(2, 'Under review', 'Drafting team assigned'), advocate: advocate('Accepted', 'Review Documents', 'documents'), admin: {label: 'Accepted by advocate'}};
+    case 'assigned': return {client: redraft ?? client(2, 'Under Review', 'Drafting team assigned'), advocate: advocate('New Request', 'Review Request', 'request'), admin: {label: 'Assigned · awaiting advocate'}};
+    case 'advocate_accepted': return {client: redraft ?? client(2, 'Under Review', 'Drafting team assigned'), advocate: advocate('Accepted', 'Review Documents', 'documents'), admin: {label: 'Accepted by advocate'}};
     case 'in_progress':
       if (sub === 'awaiting_admin_approval') return {client: client(3, 'Draft being prepared'), advocate: advocate('Sent to Admin', 'View Status', 'status'), admin: {label: 'Awaiting admin approval'}};
       if (sub === FIR_CLIENT_CHANGES) return {client: client(3, 'Draft being updated', 'Advocate is updating your draft'), advocate: advocate('Client Changes', 'Continue Draft', 'draft'), admin: {label: 'Advocate revising after client changes'}};
@@ -89,6 +89,9 @@ export const FIR_POLICE_RECEIPT_KIND = 'fir_police_receipt';
 export const FIR_CHANGE_ATTACHMENT_MAX_BYTES = 10_000_000;
 export const FIR_MEDIA_KINDS: Record<string, readonly string[]> = {fir_scene: ['video/mp4'], fir_other: ['audio/mpeg']};
 export const maskedIdentity = (last4: string | null | undefined) => last4 ? `XXXX-XXXX-${last4}` : null;
+// Step 1 incident-type chips: the filing stores the id, documents show the label.
+export const FIR_INCIDENT_LABELS: Record<string, string> = {theft: 'Theft', fraud: 'Fraud', assault: 'Assault', harassment: 'Harassment', 'property-dispute': 'Property Dispute', 'cyber-crime': 'Cyber Crime', other: 'Other'};
+export const firIncidentLabel = (type: string | null | undefined) => (type && FIR_INCIDENT_LABELS[type]) || type || '';
 
 export type FirFlowDocument = {id: string; filename: string; mime_type: string; size_bytes: string; page_count: number | null};
 export type FirFlowReview = {role: 'admin' | 'client'; decision: 'approved' | 'returned' | 'changes_requested'; comment: string | null;
@@ -98,8 +101,13 @@ export type FirFlowView = {
   case_id: string; reference: string; status: string; sub_status: string | null; stage: FirStageView;
   settings: FirSettings; created_at: string; submitted_at: string | null; paid_at: string | null; completed_at: string | null;
   incident_type: string | null; police_station: string | null; city: string | null;
+  /** From the filing's jurisdiction (A6 header "PS <station>, <district>"; client city line "<city> (<state>)"). */
+  district: string | null; state: string | null;
+  /** Draft requests only: the intake step the client last reached (1–5). */
+  intake_step: number | null;
   client: {name: string; mobile: string | null; email: string | null; city: string | null} | null;
-  advocate: {id: string; name: string; verified: boolean; photo_url: string | null} | null;
+  /** `photo_key`: the advocate profile photo key (mobile resolves it); null shows initials. */
+  advocate: {id: string; name: string; verified: boolean; photo_key: string | null} | null;
   /** Client: the latest admin-approved draft. Advocate/admin: the latest generated draft. */
   draft: {draft_id: string; version: number; document: FirFlowDocument; created_by: string; created_at: string; sections: number; files: number} | null;
   reviews: FirFlowReview[];

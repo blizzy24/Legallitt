@@ -1,28 +1,118 @@
-import { previewNotice } from '../../components/PreviewNotice';
-import DemoPressable from '../../components/DemoPressable';
-import { router, type Href } from 'expo-router';
-import { ArrowRight, Check, Download, Eye, FileText, Gavel, ShieldCheck } from 'lucide-react-native';
+import { router, useLocalSearchParams, type Href } from 'expo-router';
+import { ArrowRight, Check, CheckCircle2, Download, Eye, FileText, Gavel } from 'lucide-react-native';
+import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { backend } from '../../lib/auth';
+import { type FirFlowView } from '@legalitt/shared';
 
-import FirJourneyToggle from '../../components/FirJourneyToggle';
+import ConfirmModal from '../../components/ConfirmModal';
 import FirResultHeader from '../../components/FirResultHeader';
-import FirTimeline from '../../components/FirTimeline';
+import FirTimeline, { type TimelineItem } from '../../components/FirTimeline';
 import RequestIdCard from '../../components/RequestIdCard';
 import { shrinkToFit } from '../../constants/textFit';
 import { colors, firResult as t, font, ink } from '../../constants/theme';
-import { FIR_REQUEST, READY_STAGE_CHIP, READY_TIMELINE } from '../../data/fir';
-import { clientDocHref } from '../../data/docLinks';
+import { backOr, copyText, firHref, firPdfName, formatSize, shareStatus, useFirFlow, viewDocument } from '../../features/fir/flow';
+import { downloadDocument } from '../../features/fir/client/api';
+import { errorText, goHome } from '../../features/fir/client/format';
+import { InlineError, LoadingState, StatePanel } from '../../features/fir/client/ui';
 
-// FIR draft ready (design/49) — the end state of the journey app/fir/status.tsx
-// starts. Both are reachable through the dev toggle at the foot of each screen.
-function FixtureFirReadyScreen() {
+// C11 Your FIR Draft Is Ready. Two drawn versions of one screen:
+//  • F6 (design/client/fir-draft/F6-draft-ready-decision.png) while the client's
+//    decision is due (status client_review): Approve → / Request For Changes.
+//  • design/49 when no decision is pending — after approval, or while requested
+//    changes are being made: View FIR Draft / Back to Dashboard.
+// Left out per flow C11 [REMOVE]: "BNSS Compliant", "Certified", "compiled and
+// certified", "IPC" (BNS only) and design/49's encrypted / Bar Council footer.
+// "securely logged" on the first progress row is reworded without the claim.
+
+const ROWS: [string, string][] = [
+  ['Request Submitted', 'Incident details & statements received'],
+  ['Information Reviewed', 'Examined by specialized legal drafting panel'],
+  ['FIR Draft Prepared', 'Statutory sections mapped under BNS framework'],
+  ['Ready for Your Review', 'Inspect facts, examine particulars, and download official PDF'],
+];
+
+/** Progress rows: stage 4 = row 4 active; stage 5 = all done; earlier = row 3 being updated. */
+function progress(flow: FirFlowView): { items: TimelineItem[]; stage: number } {
+  const c = flow.stage.client;
+  const current = c.stage >= 5 ? 5 : c.stage === 4 ? 4 : 3;
+  const items = ROWS.map(([title, description], i): TimelineItem => {
+    const n = i + 1;
+    const tone = n < current ? 'done' : n === current ? 'active' : 'pending';
+    return { title, description, tone, state: tone === 'active' ? 'ACTIVE' : '', footnote: tone === 'active' && current === 3 ? c.note : null };
+  });
+  return { items, stage: Math.min(current, 4) };
+}
+
+export default function FirReadyScreen() {
+  const { caseId } = useLocalSearchParams<{ caseId?: string }>();
   const insets = useSafeAreaInsets();
-  const file = FIR_REQUEST.draftFile;
+  const f = useFirFlow(caseId);
+  const flow = f.flow;
+  const [confirming, setConfirming] = useState(false);
+  const [fileError, setFileError] = useState('');
+  const [shareNote, setShareNote] = useState('');
+
+  const decision = !!flow?.stage.client.decision_due;
+  const back = () => { if (caseId) backOr(firHref('status', caseId)); else goHome(); };
+  const share = async () => {
+    if (!flow) return;
+    setShareNote('');
+    try { await shareStatus(flow); }
+    catch {
+      const c = flow.stage.client;
+      const ok = await copyText(`FIR Draft request ${flow.reference}: ${c.status} (Stage ${c.stage} of 5, ${c.label}).`);
+      setShareNote(ok ? 'Sharing isn’t available here, so the status was copied instead.' : 'Sharing isn’t available on this device.');
+    }
+  };
+  const header = <FirResultHeader title="Fir Draft" onBack={back} {...(flow && !decision ? { action: 'share' as const, onAction: () => void share() } : {})} />;
+
+  if (f.loading && !flow) return <View style={styles.screen}>{header}<LoadingState label="Loading your FIR draft…" /></View>;
+  if (!flow)
+    return (
+      <View style={styles.screen}>
+        {header}
+        <ScrollView contentContainerStyle={styles.content}>
+          <StatePanel tone="error" title="We couldn’t load your FIR draft" body={f.error || 'Something went wrong loading your request.'}
+            actions={[...(caseId ? [{ label: 'Try again', onPress: f.reload, primary: true }] : []), { label: 'Back to Dashboard', onPress: goHome }]} />
+        </ScrollView>
+      </View>
+    );
+
+  const draft = flow.draft;
+  if (!draft)
+    return (
+      <View style={styles.screen}>
+        {header}
+        <ScrollView contentContainerStyle={styles.content}>
+          {decision
+            ? <StatePanel tone="error" title="Your draft file couldn’t be loaded" body="Your FIR draft is waiting for your review, but its PDF isn’t available right now. Try again, or contact Legalitt Support if this continues."
+                actions={[{ label: 'Try again', onPress: f.reload, primary: true }, { label: 'Contact Support', onPress: () => router.push((`/support?caseId=${encodeURIComponent(flow.case_id)}`) as Href) }]} />
+            : <StatePanel title="Your FIR draft isn’t ready yet" body="It appears here once your advocate has prepared it and it has been checked by Legalitt. We’ll notify you in the app."
+                actions={[{ label: 'Track Request', onPress: () => router.replace(firHref('status', flow.case_id)), primary: true }]} />}
+        </ScrollView>
+      </View>
+    );
+
+  const c = flow.stage.client;
+  const updating = !decision && c.stage < 5;
+  const name = firPdfName(flow.reference, draft.version);
+  const size = formatSize(draft.document.size_bytes);
+  const { items, stage } = progress(flow);
+  const open = async (action: () => Promise<void>, failed: string) => {
+    setFileError('');
+    try { await action(); } catch (e) { setFileError(`${failed} ${errorText(e, '')}`.trim()); }
+  };
+  const approve = async () => {
+    setConfirming(false);
+    const result = await f.run(() => backend.firClientApprove(flow.case_id, draft.draft_id));
+    if (result) router.replace(firHref('approved', flow.case_id));
+  };
 
   return (
     <View style={styles.screen}>
-      <FirResultHeader title="Fir Draft" />
+      {header}
 
       <ScrollView
         contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + t.contentTop }]}
@@ -32,7 +122,7 @@ function FixtureFirReadyScreen() {
           <View style={styles.pill}>
             <View style={styles.pillDot} />
             <Text style={styles.pillText} {...shrinkToFit(0.8)}>
-              DRAFT READY
+              {updating ? c.status.toUpperCase() : 'DRAFT READY'}
             </Text>
           </View>
 
@@ -40,33 +130,30 @@ function FixtureFirReadyScreen() {
             <View style={styles.heroCircle}>
               <FileText size={t.heroDocGlyph} color={colors.brandDark} />
             </View>
-            <View style={styles.heroBadge}>
-              <Check size={t.heroBadgeGlyph} color={ink.onBrand} strokeWidth={3} />
-            </View>
+            {!updating && (
+              <View style={styles.heroBadge}>
+                <Check size={t.heroBadgeGlyph} color={ink.onBrand} strokeWidth={3} />
+              </View>
+            )}
           </View>
 
           <Text style={styles.heading} {...shrinkToFit(0.75)}>
-            Your FIR Draft Is Ready
+            {updating ? 'Your FIR Draft Is Being Updated' : 'Your FIR Draft Is Ready'}
           </Text>
           <Text style={styles.body}>
-            Your formal First Information Report dossier has been prepared by your advocate and approved
-            by Legalitt for your review.
+            {updating
+              ? 'Your advocate is updating your draft. The version you reviewed stays available below.'
+              : 'Your formal First Information Report dossier has been prepared for your preliminary inspection.'}
           </Text>
 
-          <RequestIdCard requestId={FIR_REQUEST.requestId} style={styles.idCard} />
+          <RequestIdCard requestId={flow.reference} style={styles.idCard} />
+          {!!shareNote && <Text accessibilityLiveRegion="polite" style={styles.shareNote}>{shareNote}</Text>}
         </View>
 
         <View style={styles.card}>
-          <View style={styles.labelRow}>
-            <Text style={styles.label} {...shrinkToFit(0.8)}>
-              FINALIZED DRAFT DOSSIER
-            </Text>
-            <View style={styles.dossierChip}>
-              <Text style={styles.dossierChipText} {...shrinkToFit(0.8)}>
-                Approved draft
-              </Text>
-            </View>
-          </View>
+          <Text style={styles.label} {...shrinkToFit(0.8)}>
+            FINALIZED DRAFT DOSSIER
+          </Text>
 
           <View style={styles.file}>
             <View style={styles.fileIcon}>
@@ -74,31 +161,36 @@ function FixtureFirReadyScreen() {
             </View>
             <View style={styles.fileText}>
               <Text style={styles.fileName} {...shrinkToFit(0.75)}>
-                {file.name}
+                {name}
               </Text>
               <Text style={styles.fileCaption} {...shrinkToFit(0.8)}>
-                {file.caption}
+                Prepared for your verification
               </Text>
               <Text style={styles.fileMeta} {...shrinkToFit(0.8)}>
-                {file.meta}
+                {size ? `PDF Dossier · ${size}` : 'PDF Dossier'}
               </Text>
             </View>
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel="Preview draft"
-              onPress={() => router.push(clientDocHref(file.name, 'doc-fir-draft') as Href)}
+              accessibilityLabel={`View ${name}`}
+              onPress={() => void open(() => viewDocument(draft.document.id), 'The draft couldn’t be opened.')}
               style={styles.eye}
             >
               <Eye size={t.dossierEyeIcon} color={colors.textPrimary} />
             </Pressable>
           </View>
 
-          <Pressable onPress={() => previewNotice("Download PDF")} accessibilityRole="button" style={styles.download}>
+          <Pressable
+            onPress={() => void open(() => downloadDocument(draft.document.id, name), 'The draft couldn’t be downloaded.')}
+            accessibilityRole="button"
+            style={styles.download}
+          >
             <Download size={t.downloadIcon} color={t.downloadColour} />
             <Text style={styles.downloadLabel} {...shrinkToFit(0.8)}>
               Download PDF
             </Text>
           </Pressable>
+          <InlineError style={styles.fileError} message={fileError} />
         </View>
 
         <View style={styles.card}>
@@ -108,12 +200,12 @@ function FixtureFirReadyScreen() {
             </Text>
             <View style={styles.stageChip}>
               <Text style={styles.stageChipText} {...shrinkToFit(0.8)}>
-                {READY_STAGE_CHIP}
+                Stage {stage} of 4
               </Text>
             </View>
           </View>
 
-          <FirTimeline items={READY_TIMELINE} variant="ready" />
+          <FirTimeline items={items} variant="ready" />
         </View>
 
         <View style={styles.caution}>
@@ -142,32 +234,60 @@ function FixtureFirReadyScreen() {
 
         <View style={styles.spacer} />
 
-        <DemoPressable
-          onPress={() => router.push(clientDocHref(file.name, 'doc-fir-draft') as Href)}
-          accessibilityRole="button"
-          style={({ pressed }) => [styles.button, pressed && styles.pressed]}
-        >
-          <Text style={styles.buttonLabel}>View FIR Draft</Text>
-          <ArrowRight size={t.buttonIcon} color={ink.onBrand} style={styles.buttonIcon} />
-        </DemoPressable>
+        {!!f.error && <InlineError style={styles.actionError} message={f.error} retryLabel="Reload" onRetry={f.reload} />}
 
-        <Pressable
-          accessibilityRole="button"
-          onPress={() => router.replace('/(tabs)/home')}
-          style={({ pressed }) => [styles.button, styles.buttonLight, pressed && styles.pressed]}
-        >
-          <Text style={[styles.buttonLabel, styles.buttonLightLabel]}>Back to Dashboard</Text>
-        </Pressable>
-
-        <View style={styles.footer}>
-          <ShieldCheck size={t.footerIcon} color={colors.textBody} />
-          <Text style={styles.footerText} {...shrinkToFit(0.75)}>
-            Stored encrypted • Visible to you, your advocate and Legalitt’s team
-          </Text>
-        </View>
-
-        <FirJourneyToggle value="ready" />
+        {decision ? (
+          <>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityState={{ disabled: f.busy, busy: f.busy }}
+              disabled={f.busy}
+              onPress={() => setConfirming(true)}
+              style={({ pressed }) => [styles.button, f.busy && styles.disabled, pressed && styles.pressed]}
+            >
+              <Text style={styles.buttonLabel}>{f.busy ? 'Approving…' : 'Approve'}</Text>
+              {!f.busy && <ArrowRight size={t.buttonIcon} color={ink.onBrand} style={styles.buttonIcon} />}
+            </Pressable>
+            <Pressable
+              accessibilityRole="button"
+              disabled={f.busy}
+              onPress={() => router.push(firHref('request-changes', flow.case_id))}
+              style={({ pressed }) => [styles.button, styles.buttonLight, f.busy && styles.disabled, pressed && styles.pressed]}
+            >
+              <Text style={[styles.buttonLabel, styles.buttonLightLabel]}>Request For Changes</Text>
+            </Pressable>
+          </>
+        ) : (
+          <>
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => void open(() => viewDocument(draft.document.id), 'The draft couldn’t be opened.')}
+              style={({ pressed }) => [styles.button, pressed && styles.pressed]}
+            >
+              <Text style={styles.buttonLabel}>View FIR Draft</Text>
+              <ArrowRight size={t.buttonIcon} color={ink.onBrand} style={styles.buttonIcon} />
+            </Pressable>
+            <Pressable
+              accessibilityRole="button"
+              onPress={goHome}
+              style={({ pressed }) => [styles.button, styles.buttonLight, pressed && styles.pressed]}
+            >
+              <Text style={[styles.buttonLabel, styles.buttonLightLabel]}>Back to Dashboard</Text>
+            </Pressable>
+          </>
+        )}
       </ScrollView>
+
+      <ConfirmModal
+        visible={confirming}
+        icon={CheckCircle2}
+        tone="neutral"
+        title="Approve this FIR draft?"
+        body="Your advocate will be notified."
+        confirmLabel="Approve"
+        onConfirm={() => void approve()}
+        onCancel={() => setConfirming(false)}
+      />
     </View>
   );
 }
@@ -252,6 +372,12 @@ const styles = StyleSheet.create({
   idCard: {
     marginTop: t.idGap,
   },
+  shareNote: {
+    marginTop: 8,
+    fontFamily: font.appBody,
+    fontSize: 12,
+    color: colors.textBody,
+  },
   labelRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -263,20 +389,6 @@ const styles = StyleSheet.create({
     fontSize: t.labelSize,
     letterSpacing: t.labelSpacing,
     color: colors.textBody,
-  },
-  dossierChip: {
-    marginLeft: 8,
-    minHeight: t.dossierChipHeight,
-    borderRadius: t.dossierChipRadius,
-    paddingHorizontal: t.dossierChipPadX,
-    backgroundColor: t.dossierChipBg,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  dossierChipText: {
-    fontFamily: font.appSemi,
-    fontSize: t.dossierChipSize,
-    color: colors.textPrimary,
   },
   file: {
     marginTop: t.dossierRowGap,
@@ -314,13 +426,14 @@ const styles = StyleSheet.create({
     marginTop: t.dossierMetaGap,
     fontFamily: font.appSemi,
     fontSize: t.dossierMetaSize,
-    color: colors.textBody,
+    color: t.downloadColour,
   },
   eye: {
     marginLeft: 10,
     width: t.dossierEye,
     height: t.dossierEye,
     borderRadius: t.dossierEye / 2,
+    backgroundColor: t.dossierChipBg,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -335,6 +448,9 @@ const styles = StyleSheet.create({
     fontFamily: font.appSemi,
     fontSize: t.downloadSize,
     color: t.downloadColour,
+  },
+  fileError: {
+    marginTop: 10,
   },
   sectionTitle: {
     flex: 1,
@@ -407,6 +523,9 @@ const styles = StyleSheet.create({
     flex: 1,
     minHeight: t.buttonGap,
   },
+  actionError: {
+    marginBottom: 4,
+  },
   button: {
     marginTop: t.buttonStackGap,
     minHeight: t.buttonHeight,
@@ -422,6 +541,9 @@ const styles = StyleSheet.create({
   buttonLightLabel: {
     color: colors.textPrimary,
   },
+  disabled: {
+    opacity: 0.6,
+  },
   pressed: {
     opacity: 0.85,
   },
@@ -433,19 +555,4 @@ const styles = StyleSheet.create({
   buttonIcon: {
     marginLeft: t.buttonIconGap,
   },
-  footer: {
-    marginTop: t.footerGap,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  footerText: {
-    marginLeft: t.footerIconGap,
-    fontFamily: font.appBody,
-    fontSize: t.footerSize,
-    color: colors.textBody,
-  },
 });
-import FirClient from '../../features/fir/FirClient';
-import {DATA_SOURCE} from '../../lib/data-source';
-export default function LiveFirScreen() { return DATA_SOURCE === 'api' ? <FirClient/> : <FixtureFirReadyScreen/>; }

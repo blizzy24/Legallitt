@@ -1,5 +1,5 @@
 import {FirAdminService} from './fir-admin.service';
-import {Body,Controller,Get,Param,Patch,Post,Put,Req,UseGuards} from '@nestjs/common';
+import {Body,Controller,Get,Param,Patch,Post,Req,UseGuards} from '@nestjs/common';
 import {z} from 'zod';
 import {AuthGuard, type AuthRequest} from '../auth/auth.controller';
 import {parse} from '../auth/auth.service';
@@ -12,7 +12,8 @@ export class FirController {
   constructor(private readonly fir: FirService,private readonly review: FirAdminService,private readonly flow: FirFlowService) {}
   // docs/flows/FIR-DRAFT-FLOW.md: one role-shaped view, the C10 stage, and the new actions.
   @Get('settings') settings(){return this.flow.settings();}
-  @Put('settings') updateSettings(@Req() req:AuthRequest,@Body() body:unknown){return this.flow.updateSettings(req.user!,body);}
+  // PATCH, not PUT: the API's cross-origin policy allows GET, POST, PATCH and DELETE only.
+  @Patch('settings') updateSettings(@Req() req:AuthRequest,@Body() body:unknown){return this.flow.updateSettings(req.user!,body);}
   @Get(':id/flow') view(@Req() req:AuthRequest,@Param('id') value:string){return json(this.flow.view(req.user!,id(value)));}
   @Post(':id/client-approve') clientApprove(@Req() req:AuthRequest,@Param('id') value:string,@Body() body:unknown){return json(this.flow.clientApprove(req.user!,id(value),body));}
   @Post(':id/client-changes') clientChanges(@Req() req:AuthRequest,@Param('id') value:string,@Body() body:unknown){return json(this.flow.clientChanges(req.user!,id(value),body));}

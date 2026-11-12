@@ -11,6 +11,7 @@ const {PaymentsService}=require('../dist/src/payments/payments.service'),{seedCo
 const {InAppNotifications}=require('../dist/src/notifications/in-app-notifications'),{SimulatedNotifications}=require('../dist/src/notifications/simulated-notifications');
 const {SupportService}=require('../dist/src/support/support.service'),{WalletService}=require('../dist/src/wallet/wallet.service'),{AdvocateCompletionService}=require('../dist/src/completion/advocate-completion');
 const {firStage,adminBucketFor,firDateInFuture,firIntakeErrors}=require('@legalitt/shared'),fixture=require('./helpers/fir.cjs');
+const {readPdfText}=require('./helpers/pdf-text.cjs');
 
 test('C10 mapping gives client, advocate and admin one state for every FIR status',()=>{
   const cases=[['paid',null,2,null],['assigned',null,2,'Review Request'],['advocate_accepted',null,2,'Review Documents'],['in_progress',null,3,'Continue Draft'],
@@ -39,7 +40,7 @@ test('FIR full flow',{skip:!process.env.LEGALITT_TEST_DATABASE_URL},async t=>{
   const inbox=new InAppNotifications(new SimulatedNotifications()),state=new CaseStateMachine(prisma,inbox),docs=new DocumentService(prisma,storage,{inspect:async()=>({mime:'application/pdf',pageCount:1})});
   const fir=new FirService(prisma,docs,inbox),review=new FirAdminService(prisma,docs,inbox),flow=new FirFlowService(prisma,inbox),repo=new CaseRepository(prisma),support=new SupportService(prisma,inbox),wallet=new WalletService(prisma,inbox),completion=new AdvocateCompletionService(prisma);
   const json=value=>JSON.stringify(value,(_,v)=>typeof v==='bigint'?v.toString():v);
-  const HIDDEN=['fir_admin_returned','fir_identity_reviewed','fir_advocate_reassigned','fir_draft_saved','fir_draft_submitted','fir_draft_approved','fir_advocate_rejected','fir_client_reminded'];
+  const HIDDEN=['fir_admin_returned','fir_identity_reviewed','fir_advocate_reassigned','fir_draft_saved','fir_draft_submitted','fir_draft_approved','fir_advocate_rejected','fir_client_reminded','fir_client_viewed'];
   const pay=new PaymentsService(prisma,state,{capture:async()=>({paymentId:randomUUID(),simulated:true,source:'simulated'})},inbox);
   const before={};for(const model of ['servicePricing','commissionRate','feePolicy','pageOveragePolicy'])before[model]=await db[model].findMany({select:{id:true}});
   const settingsBefore=await db.firSettings.findUnique({where:{id:1}});
@@ -109,8 +110,27 @@ test('FIR full flow',{skip:!process.env.LEGALITT_TEST_DATABASE_URL},async t=>{
       const seen=[...(await repo.read(client,c.id)).events,...(await repo.events(client,c.id,{})).items];
       assert.equal(seen.some(e=>HIDDEN.includes(e.type)),false,'client never sees the admin step');assert.ok(seen.every(e=>Object.keys(e.payload).length===0));
       assert.deepEqual((await repo.read(client,c.id)).drafts.map(d=>d.id),[draft.id]);
-      const v=await flow.view(client,c.id);assert.equal(v.status,'client_review');assert.equal(v.stage.client.stage,4);assert.equal(v.draft.draft_id,draft.id);
+      const v=await flow.view(client,c.id);assert.equal(v.status,'client_review');
+      // Flow A5 §2: the PDF prints the identity document masked, never its file name; incident type as its label.
+      const pdfDoc=await db.document.findUniqueOrThrow({where:{id:v.draft.document.id}}),{text:pdfText}=await readPdfText(objects.get(pdfDoc.s3_key));
+      assert.ok(pdfText.includes('Passport (XXXX-XXXX-4812)'),'masked identity in the PDF');assert.equal(pdfText.includes('Identity-proof-'),false);
+      assert.ok(pdfText.includes('FIR DRAFT — prepared for submission at'));assert.ok(pdfText.includes('Incident type: Theft'));assert.equal(v.stage.client.stage,4);assert.equal(v.draft.draft_id,draft.id);
       assert.ok((await docs.url(client,v.draft.document.id)).url);await assert.rejects(docs.url(other,v.draft.document.id),{status:404});
+    });
+    await t.test('A6 audit log: the client opening the draft PDF is logged once per version, for the team only',async()=>{
+      const v=await flow.view(client,c.id);
+      // Opened once above; twice more by the client and once by the advocate (who is not logged).
+      await docs.url(client,v.draft.document.id);await docs.url(client,v.draft.document.id);await docs.url(advocate,v.draft.document.id);
+      const viewed=(await flow.view(advocate,c.id)).events.filter(e=>e.type==='fir_client_viewed');
+      assert.equal(viewed.length,1,'exactly one event however often the client opens the PDF');
+      assert.equal(viewed[0].label,`Client viewed the draft (v${v.draft.version})`);assert.equal(viewed[0].actor,'client');
+      assert.equal((await flow.view(admin,c.id)).events.filter(e=>e.type==='fir_client_viewed').length,1);
+      const rows=await db.caseEvent.findMany({where:{case_id:c.id,type:'fir_client_viewed'}});
+      assert.equal(rows.length,1);assert.deepEqual(rows[0].payload,{version:v.draft.version,draft_id:v.draft.draft_id});
+      assert.ok((await repo.read(advocate,c.id)).events.some(e=>e.type==='fir_client_viewed'));
+      assert.equal((await flow.view(client,c.id)).events.some(e=>e.type==='fir_client_viewed'),false,'the client timeline leaves it out');
+      assert.equal((await repo.read(client,c.id)).events.some(e=>e.type==='fir_client_viewed'),false,'GET /cases/:id hides it from the client');
+      assert.equal((await repo.events(client,c.id,{})).items.some(e=>e.type==='fir_client_viewed'),false);
     });
     await t.test('remind client: once per 24 hours, advocate only',async()=>{
       await assert.rejects(flow.remindClient(client,c.id),{status:403});await assert.rejects(flow.remindClient(stranger,c.id),{status:404});
@@ -135,7 +155,10 @@ test('FIR full flow',{skip:!process.env.LEGALITT_TEST_DATABASE_URL},async t=>{
     await t.test('advocate revises; the revision goes to admin again, then to the client',async()=>{
       draft=await draftAndSend(advocate,c.id);assert.equal((await flow.view(client,c.id)).stage.client.stage,3);
       assert.equal((await db.case.findUnique({where:{id:c.id}})).sub_status,'awaiting_admin_approval');
-      await adminApprove(c.id,draft.id);assert.equal((await flow.view(client,c.id)).draft.version,draft.version);
+      await adminApprove(c.id,draft.id);const sent=await flow.view(client,c.id);assert.equal(sent.draft.version,draft.version);
+      await docs.url(client,sent.draft.document.id);
+      const viewed=(await flow.view(advocate,c.id)).events.filter(e=>e.type==='fir_client_viewed').map(e=>e.label);
+      assert.equal(viewed.length,2,'a new version gets its own "client viewed" event');assert.equal(viewed[1],`Client viewed the draft (v${draft.version})`);
     });
     await t.test('client approves; with the setting on, the advocate submits to police with a receipt',async()=>{
       await assert.rejects(flow.clientApprove(other,c.id,{draft_id:draft.id}),{status:404});await assert.rejects(flow.clientApprove(advocate,c.id,{draft_id:draft.id}),{status:403});
@@ -157,6 +180,8 @@ test('FIR full flow',{skip:!process.env.LEGALITT_TEST_DATABASE_URL},async t=>{
       await assert.rejects(docs.url(client,spare.id),{status:404});
       assert.deepEqual((await completion.completion(advocate,c.id)).documents.map(d=>d.label).sort(),['Approved FIR draft','Police receipt']);
       assert.equal((await review.read(admin,c.id)).entitlement.amount_paise,done.share_paise);
+      const card=(await repo.list(advocate,{})).items.find(i=>i.id===c.id).fir_card;assert.equal(card.share_paise,done.share_paise,'A1 card fee comes with the list');assert.equal(card.note,'Submitted to police');
+      assert.equal((await repo.list(client,{})).items.find(i=>i.id===c.id).fir_card,undefined,'the client list carries no advocate share');
       const entries=await wallet.wallet(advocate,{period:'all'}),entry=entries.entries.find(e=>e.case_id===c.id);
       assert.ok(entry,'completed FIR appears in the advocate wallet');assert.equal(entry.share_paise,done.share_paise);
       assert.equal((await wallet.wallet(first,{period:'all'})).entries.some(e=>e.case_id===c.id),false,'the advocate who rejected is not paid');

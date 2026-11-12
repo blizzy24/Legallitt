@@ -1,9 +1,14 @@
-import { router } from 'expo-router';
-import { ArrowLeft, ArrowRight, Clock, FileCheck, FileText, Search, Shield, SquarePen, Users, type LucideIcon } from 'lucide-react-native';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { firTurnaroundText, type FirSettings } from '@legalitt/shared';
+import { router, type Href } from 'expo-router';
+import { ArrowLeft, ArrowRight, Clock, FileText, Layers, Shield, SquarePen, Users, ZoomIn, type LucideIcon } from 'lucide-react-native';
+import { useCallback, useEffect, useState } from 'react';
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { colors, firInfo as v, firLanding as l, font, ink } from '../../constants/theme';
+import { openFirDraftHref } from '../../features/fir/intake/draft';
+import { InlineError } from '../../features/fir/intake/ui';
+import { backend } from '../../lib/auth';
 
 type Reason = { icon: LucideIcon; title: string; body: string };
 
@@ -19,12 +24,12 @@ const REASONS: Reason[] = [
     body: 'Important information such as what happened, when and where it happened, and the people involved can be organised systematically.',
   },
   {
-    icon: FileCheck,
+    icon: Layers,
     title: 'Create a Structured Account',
     body: 'A well-organised FIR draft brings the relevant information together in a logical sequence instead of leaving important details scattered or unclear.',
   },
   {
-    icon: Search,
+    icon: ZoomIn,
     title: 'Reduce Unnecessary Confusion',
     body: 'Clear wording and organised information can make it easier to review the incident and identify the details that require attention.',
   },
@@ -42,11 +47,35 @@ const STEPS = [
   { title: 'PDF Delivered', body: 'Receive the prepared FIR draft for your next step.' },
 ];
 
-// FIR explainer (design/41). NOTE: that export is 226px wide (0.58px per point), so
-// its type sizes and insets could not be measured; the structure and copy are as
-// drawn, sizes are carried over from design/40 and the rest of the app.
-function FixtureFirInfoScreen() {
+// C2 — Why a proper FIR draft is important (design/41). That export is 226px wide
+// (0.58px per point), so its type sizes and insets could not be measured; the
+// structure and copy are as drawn, sizes are carried over from the landing page.
+// The turnaround comes from the FIR settings (flow [DECIDE]: one value, 24–48 h),
+// not the design's 12–24. The header shield is decorative, not a button.
+export default function FirInfoScreen() {
   const insets = useSafeAreaInsets();
+  const [settings, setSettings] = useState<FirSettings | null>(null), [settingsError, setSettingsError] = useState(''), [loadingSettings, setLoadingSettings] = useState(true);
+  const [opening, setOpening] = useState(false), [openError, setOpenError] = useState('');
+  const loadSettings = useCallback(() => {
+    let alive = true;
+    setLoadingSettings(true); setSettingsError('');
+    backend.firSettings()
+      .then((value) => { if (alive) setSettings(value); })
+      .catch(() => { if (alive) setSettingsError('The turnaround time couldn’t be loaded.'); })
+      .finally(() => { if (alive) setLoadingSettings(false); });
+    return () => { alive = false; };
+  }, []);
+  useEffect(() => loadSettings(), [loadSettings]);
+  const send = async () => {
+    setOpening(true); setOpenError('');
+    try {
+      router.push(await openFirDraftHref());
+    } catch (cause) {
+      setOpenError(`Your request couldn’t be opened.${cause instanceof Error ? ` ${cause.message}` : ''} Check your connection and try again.`);
+    } finally {
+      setOpening(false);
+    }
+  };
 
   return (
     <View style={styles.screen}>
@@ -55,7 +84,7 @@ function FixtureFirInfoScreen() {
           accessibilityRole="button"
           accessibilityLabel="Back"
           hitSlop={10}
-          onPress={() => (router.canGoBack() ? router.back() : router.replace('/fir'))}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/fir' as Href))}
         >
           <ArrowLeft size={l.backIcon} color={colors.textPrimary} />
         </Pressable>
@@ -63,9 +92,9 @@ function FixtureFirInfoScreen() {
           <Text style={styles.headerTitle}>FIR Draft</Text>
           <Text style={styles.headerSub}>Professional Legal Assistance</Text>
         </View>
-        <Pressable accessibilityRole="button" accessibilityLabel="Security information" hitSlop={10} style={styles.shield}>
+        <View style={styles.shield} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
           <Shield size={v.shieldIcon} color={colors.textBody} />
-        </Pressable>
+        </View>
       </View>
 
       <ScrollView contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + v.buttonGap }]} showsVerticalScrollIndicator={false}>
@@ -107,10 +136,12 @@ function FixtureFirInfoScreen() {
               <Text style={styles.helpChipText}>STEP 1 TO 4</Text>
             </View>
           </View>
+          <View style={styles.helpDivider} />
           <View style={styles.steps}>
+            <View style={styles.stepLine} />
             {STEPS.map((s, i) => (
               <View key={s.title} style={styles.stepRow}>
-                <View style={styles.stepDisc}>
+                <View style={[styles.stepDisc, i === STEPS.length - 1 && styles.stepDiscLast]}>
                   <Text style={styles.stepDiscText}>{String(i + 1).padStart(2, '0')}</Text>
                 </View>
                 <View style={styles.stepText}>
@@ -127,12 +158,26 @@ function FixtureFirInfoScreen() {
             <Clock size={v.turnLabelSize + 3} color={colors.textBody} />
             <Text style={styles.turnLabel}>ESTIMATED TURNAROUND TIME</Text>
           </View>
-          <View style={styles.turnValueRow}>
-            <Text style={styles.turnValue}>12–24 Hours</Text>
-            <View style={styles.turnChip}>
-              <Text style={styles.turnChipText}>Standard Review</Text>
+          {settings ? (
+            <View style={styles.turnValueRow}>
+              <Text style={styles.turnValue}>{firTurnaroundText(settings)}</Text>
+              <View style={styles.turnChip}>
+                <Text style={styles.turnChipText}>Standard Review</Text>
+              </View>
             </View>
-          </View>
+          ) : loadingSettings ? (
+            <View style={styles.turnValueRow} accessibilityRole="progressbar" accessibilityLabel="Loading the turnaround time">
+              <ActivityIndicator color={ink.accent} />
+              <Text style={[styles.turnNote, styles.turnLoading]}>Loading the turnaround time…</Text>
+            </View>
+          ) : (
+            <View>
+              <InlineError text={settingsError} />
+              <Pressable accessibilityRole="button" onPress={loadSettings} hitSlop={6} style={styles.retry}>
+                <Text style={styles.retryText}>Try again</Text>
+              </Pressable>
+            </View>
+          )}
           <Text style={styles.turnNote}>
             Estimated time for preparing the FIR draft after the required information has been received.
           </Text>
@@ -140,12 +185,16 @@ function FixtureFirInfoScreen() {
 
         <Pressable
           accessibilityRole="button"
-          onPress={() => router.push('/fir/step1')}
-          style={({ pressed }) => [styles.button, pressed && styles.pressed]}
+          accessibilityState={{ busy: opening, disabled: opening }}
+          disabled={opening}
+          onPress={() => void send()}
+          style={({ pressed }) => [styles.button, (pressed || opening) && styles.pressed]}
         >
-          <Text style={styles.buttonText}>Send a FIR Draft</Text>
-          <ArrowRight size={v.buttonIcon} color={ink.onBrand} />
+          {opening ? <ActivityIndicator color={ink.onBrand} /> : null}
+          <Text style={styles.buttonText}>{opening ? 'Opening your request…' : 'Send a FIR Draft'}</Text>
+          {opening ? null : <ArrowRight size={v.buttonIcon} color={ink.onBrand} />}
         </Pressable>
+        <InlineError text={openError} />
       </ScrollView>
     </View>
   );
@@ -311,9 +360,25 @@ const styles = StyleSheet.create({
     letterSpacing: 0.4,
     color: ink.accent,
   },
+  helpDivider: {
+    marginTop: 14,
+    height: 1,
+    backgroundColor: l.cardBorder,
+  },
   steps: {
     marginTop: v.stepsGap,
     gap: v.stepRowGap,
+  },
+  stepLine: {
+    position: 'absolute',
+    left: v.stepDisc / 2 - 0.5,
+    top: 4,
+    bottom: 4,
+    width: 1,
+    backgroundColor: l.cardBorder,
+  },
+  stepDiscLast: {
+    backgroundColor: '#8F7A60',
   },
   stepRow: {
     flexDirection: 'row',
@@ -393,6 +458,19 @@ const styles = StyleSheet.create({
     fontSize: v.turnChipSize,
     color: colors.textBody,
   },
+  turnLoading: {
+    marginTop: 0,
+    marginLeft: 10,
+  },
+  retry: {
+    marginTop: 6,
+    alignSelf: 'flex-start',
+  },
+  retryText: {
+    fontFamily: font.appSemi,
+    fontSize: 13,
+    color: ink.accent,
+  },
   turnNote: {
     marginTop: v.turnNoteGap,
     fontFamily: font.appBody,
@@ -419,6 +497,3 @@ const styles = StyleSheet.create({
     color: ink.onBrand,
   },
 });
-import FirClient from '../../features/fir/FirClient';
-import {DATA_SOURCE} from '../../lib/data-source';
-export default function LiveFirScreen() { return DATA_SOURCE === 'api' ? <FirClient/> : <FixtureFirInfoScreen/>; }

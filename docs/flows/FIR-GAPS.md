@@ -136,3 +136,45 @@ Transitions: admin approve → `client_review`. Client approve → `approved` (s
 | 4 Reassign after repeated failure | Reason shown in the timeline; only the final advocate is paid | Allowed after the policy count; no reason (`packages/shared/src/fir-lifecycle.ts:6`) | Add a required reason, stored in the event |
 | Setting | One switch for who submits to police | None | Toggle on the FIR approval panel |
 | Statuses | Same state as client and advocate | Generic buckets | Use the shared mapping label |
+
+## Resolution (12 November 2026, not deployed)
+
+Every gap above is closed in code except the items under "Still open". Each fix was checked locally, end to end, as client, advocate and admin: `scripts/verify-fir-full-flow.cjs`, 47 checks, all passing in one clean run. The built screens are beside their designs in [`fir-screens/`](fir-screens/README.md).
+
+- **Data (§4):**
+  - Additive migration `202611120010_fir_full_flow`.
+  - Place of incident, police station id, key witness and identity last four digits.
+  - Custom upload slots, `ai_used` on drafts, and client reviews with sections and an attachment.
+  - Police submission with receipt, `fir_settings`, and support requests tagged with the service.
+- **Statuses:** `firStage()` in `packages/shared/src/fir-flow.ts` is the single C10 mapping. The client timeline, the advocate chip and button, and the admin label all use it.
+- **Client C1–C14:**
+  - Every route renders its designed screen on real data.
+  - Request Chat and Request Callback reach the admin Support inbox tagged "FIR Draft".
+  - Request Changes stores the chosen sections and an attachment, and the revision goes back to the admin before the client sees it.
+- **Advocate A1–A7:**
+  - Designed screens on real data.
+  - Reject takes a required reason and returns the case to admin.
+  - Generate with AI is disabled with "coming soon".
+  - "Send for Review" sends the draft to the admin.
+  - Remind Client can be used once every 24 hours.
+  - "Mark as submitted to police" requires a receipt.
+  - The advocate's share is credited when the case completes.
+- **Admin §3:**
+  - New requests and assignment.
+  - The rejection reason is shown, and the case can be reassigned.
+  - Approve sends the draft to the client; Return requires a reason.
+  - Reassigning after repeated failures needs a reason, which appears in the timeline.
+  - The police-submission switch.
+  - All of this is marked "awaiting Figma admin designs".
+- **Police submission:** controlled by the switch, default on. Switching it off gives the client-submits version with no code change; checked locally.
+- **Tests:**
+  - API suite 190/190, including a new `fir-full-flow.cjs` with an isolation check for every new endpoint.
+  - The mobile and admin typechecks have no new errors.
+
+**Still open**
+
+- The police-station list is unverified (D-100, §9.1).
+- "Use current location" attaches coordinates only; there is no geocoding.
+- The Help Center has no FIR section.
+- The A1 "Upcoming" counter is always 0.
+- The old browser scripts `verify-fir-draft.cjs`, `verify-fir-admin-rejection.cjs` and `helpers/fir-admin-return-walk.cjs` drive the retired screens; `verify-fir-full-flow.cjs` replaces them.

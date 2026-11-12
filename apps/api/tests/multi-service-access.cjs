@@ -40,7 +40,7 @@ test('multi-service spine: real DB ownership, references, locks, documents, inbo
       assert.equal(new Set(rows.map(r=>r.reference)).size,rows.length);
       for (const service of SERVICE_CODES) {
         const pair=rows.filter(r=>r.service_code===service);
-        const prefix=service==='legal_notice'?'LN':service.toUpperCase();
+        const prefix=service==='legal_notice'?'LN':service==='fir_draft'?'FIR':service.toUpperCase();
         for(const row of pair){assert.match(row.reference,new RegExp(`^${prefix}-\\d{4}-\\d{4,}$`));assert.equal(row.client_id,owner.id);assert.equal(row.status,'draft');assert.deepEqual(row.details,{});}
         const serials=pair.map(r=>Number(r.reference.split('-').at(-1))).sort((a,b)=>a-b);
         assert.equal(serials[1],serials[0]+1);

@@ -1,13 +1,13 @@
 import {PDFDocument,rgb,type PDFPage} from 'pdf-lib';
-import {FirDraftContentSchema,firDraftProblems,firPdfSections,type FirDraftContent} from '@legalitt/shared';
+import {FirDraftContentSchema,firDraftProblems,firDraftStation,firPdfSections,type FirDraftContent} from '@legalitt/shared';
 import {PdfText,embedTextFonts,needsPage,unsupportedCharacters} from './pdf-text';
 
 // Design447's eight numbered sections, with neutral jurisdiction branding.
 // Only the three typed station-use fields are left for handwriting.
-export async function renderFirPdf(reference:string,input:FirDraftContent){
+export async function renderFirPdf(reference:string,input:FirDraftContent,opts:{identity?:string|null}={}){
  const content=FirDraftContentSchema.parse(input),problems=firDraftProblems(content);
  if(problems.length)throw new Error(problems.map(p=>p.message).join('\n'));
- const sections=firPdfSections(content);
+ const sections=firPdfSections(content,opts);
  for(const section of sections)for(const line of section.lines){
   const unsupported=unsupportedCharacters(line.value);
   if(unsupported.length)throw new Error(`${section.title}${line.label?` — ${line.label}`:''}: unsupported characters (${unsupported.join(' ')}). Use supported Latin or Devanagari text before generating the PDF.`);
@@ -24,11 +24,15 @@ export async function renderFirPdf(reference:string,input:FirDraftContent){
   }
  };
  // Flow A5 [DECIDE]: the heading names who it is for, never a police office as its author.
- const j=content.police_filing.jurisdiction.value;
- const heading=`FIR DRAFT — prepared for submission at ${[j.policeStation,j.state].map(v=>v.trim()).filter(Boolean).join(', ')}`;
+ // The station is the advocate's edit when there is one (flow A5 §1); an edited
+ // "District & State" box replaces the filed state.
+ const j=content.police_filing.jurisdiction.value,place=content.overrides?.district_state??j.state;
+ const heading=`FIR DRAFT — prepared for submission at ${[firDraftStation(content),place].map(v=>v.trim()).filter(Boolean).join(', ')}`;
  const newPage=()=>{
   page=pdf.addPage([595,842]);top=35;
   for(const row of text.wrap([{text:heading,weight:'bold'}],right-left,13)){text.draw(page,row,left,top,13,ink);top+=18;}top+=5;
+  // The proforma's own name, as on the editor (flow A5): never a police office as author.
+  text.draw(page,text.runs('FIRST INFORMATION REPORT','bold'),left,top,11,ink);top+=16;
   text.draw(page,text.runs('FORM I — POLICE INFORMATION PROFORMA'),left,top,10,ink);top+=19;
   text.draw(page,text.runs(reference),left,top,9,muted);top+=23;
   page.drawLine({start:{x:left,y:842-top},end:{x:right,y:842-top},thickness:.7,color:muted});top+=14;

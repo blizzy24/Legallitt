@@ -1,43 +1,94 @@
+import { firPoliceStations } from '@legalitt/shared';
 import { useState } from 'react';
-import { Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
-import { ChevronDown } from 'lucide-react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { colors, font, ink } from '../constants/theme';
-import { POLICE_STATIONS } from '../data/policeStations';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
-export default function PoliceStationPicker({ value, onChange }: { value: string; onChange: (value: string) => void }) {
-  const [open, setOpen] = useState(false);
-  const [query, setQuery] = useState('');
-  const insets = useSafeAreaInsets();
-  const matches = POLICE_STATIONS.filter(station => station.toLowerCase().includes(query.trim().toLowerCase()));
-  return <>
-    <Pressable accessibilityRole="button" accessibilityLabel="Select police station" onPress={() => { setQuery(''); setOpen(true); }} style={styles.field}>
-      <Text style={styles.value}>{value || 'Select Police Station'}</Text><ChevronDown size={20} color={ink.accent} />
-    </Pressable>
-    <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
-      <View style={styles.overlay}>
-        <View style={[styles.sheet, { paddingBottom: Math.max(20, insets.bottom) }]}>
-          <Text style={styles.title}>Select Police Station</Text>
-          <TextInput autoFocus accessibilityLabel="Search police stations" placeholder="Search station or city" value={query} onChangeText={setQuery} style={styles.search} />
-          <ScrollView keyboardShouldPersistTaps="handled">
-            {matches.map(station => <Pressable key={station} accessibilityRole="radio" accessibilityState={{ checked: value === station }} onPress={() => { onChange(station); setOpen(false); }} style={styles.option}>
-              <Text style={styles.value}>{station}{value === station ? ' ✓' : ''}</Text>
-            </Pressable>)}
-            {!matches.length && <Text style={styles.empty}>No matching stations</Text>}
-          </ScrollView>
-          <Pressable accessibilityRole="button" onPress={() => setOpen(false)} style={styles.option}><Text style={styles.value}>Close</Text></Pressable>
-        </View>
+import { colors, firStep as s, font, ink } from '../constants/theme';
+import { JurisdictionPicker } from '../features/fir/JurisdictionPicker';
+
+const TYPE_CODE = '__type__';
+
+/**
+ * Police Station on FIR Step 1 (flow C3): a dropdown filtered by the chosen
+ * district, from the seeded list (MP: Indore and Bhopal), with "Type police
+ * station name" always available. Districts without a list take typed text.
+ */
+export default function PoliceStationPicker({
+  stateCode,
+  districtCode,
+  value,
+  stationId,
+  onChange,
+  onBlur,
+  invalid = false,
+}: {
+  stateCode?: string;
+  districtCode?: string;
+  /** The station name as saved. */
+  value: string;
+  /** Set when the name came from the seeded list. */
+  stationId?: string;
+  onChange: (station: { name: string; id?: string }) => void;
+  onBlur?: () => void;
+  invalid?: boolean;
+}) {
+  const stations = firPoliceStations(stateCode, districtCode);
+  // Typed text is shown where there is no list, after "Type police station name",
+  // or for a name saved as free text (no station id), e.g. edited on Step 2.
+  const [typing, setTyping] = useState(false);
+  if (!districtCode) {
+    return <JurisdictionPicker label="Police Station" value="" options={[]} onChange={() => {}} disabled disabledHint="Choose a district first." invalid={invalid} />;
+  }
+  if (!stations.length || typing || (!!value && !stationId)) {
+    return (
+      <View>
+        <TextInput
+          value={value}
+          onChangeText={(name) => onChange({ name })}
+          onBlur={onBlur}
+          placeholder="Type police station name"
+          placeholderTextColor={s.placeholder}
+          accessibilityLabel="Police Station"
+          autoCapitalize="words"
+          style={[styles.input, invalid && styles.invalid]}
+        />
+        {stations.length ? (
+          <Pressable accessibilityRole="button" hitSlop={8} onPress={() => { setTyping(false); onChange({ name: '' }); }} style={styles.switch}>
+            <Text style={styles.switchText}>Choose from the list instead</Text>
+          </Pressable>
+        ) : (
+          <Text style={styles.note}>We don’t have a station list for this district yet, so type the station’s name.</Text>
+        )}
       </View>
-    </Modal>
-  </>;
+    );
+  }
+  return (
+    <JurisdictionPicker
+      label="Police Station"
+      value={stationId ? value : ''}
+      invalid={invalid}
+      options={[...stations.map((st) => ({ code: st.id, name: st.name })), { code: TYPE_CODE, name: 'Type police station name' }]}
+      onChange={(code) => {
+        if (code === TYPE_CODE) { setTyping(true); onChange({ name: '' }); return; }
+        const st = stations.find((x) => x.id === code);
+        if (st) onChange({ name: st.name, id: st.id });
+      }}
+    />
+  );
 }
+
 const styles = StyleSheet.create({
-  field: { minHeight: 48, borderWidth: 1, borderColor: colors.brand, borderRadius: 12, padding: 12, flexDirection: 'row', alignItems: 'center', gap: 10 },
-  value: { fontFamily: font.appBody, fontSize: 14, color: colors.textPrimary, flexShrink: 1 },
-  overlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.35)' },
-  sheet: { backgroundColor: colors.card, padding: 20, borderTopLeftRadius: 20, borderTopRightRadius: 20, maxHeight: '75%' },
-  title: { fontFamily: font.appSemi, fontSize: 20, color: colors.textPrimary },
-  search: { fontFamily: font.appBody, fontSize: 16, padding: 14, borderWidth: 1, borderColor: colors.brand, borderRadius: 10, marginVertical: 16 },
-  option: { paddingVertical: 18, borderBottomWidth: 1, borderBottomColor: colors.screenBg },
-  empty: { padding: 20, fontFamily: font.appBody, color: colors.textBody },
+  input: {
+    height: s.fieldHeight,
+    borderRadius: s.fieldRadius,
+    backgroundColor: s.fieldBg,
+    paddingHorizontal: s.fieldPadX,
+    fontFamily: font.appBody,
+    fontSize: s.fieldTextSize,
+    color: s.fieldText,
+    outlineWidth: 0,
+  },
+  invalid: { borderWidth: 1, borderColor: '#B3261E' },
+  switch: { marginTop: 8, alignSelf: 'flex-start' },
+  switchText: { fontFamily: font.appSemi, fontSize: 12.5, color: ink.accent },
+  note: { marginTop: 8, fontFamily: font.appBody, fontSize: 12, lineHeight: 17, color: colors.textMuted },
 });

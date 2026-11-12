@@ -4,8 +4,10 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { colors, font, ink, payment as p } from '../constants/theme';
 
-type Method = 'upi' | 'cards' | 'netbanking';
-type UpiMode = 'app' | 'qr';
+export type PaymentMethod = 'upi' | 'cards' | 'netbanking';
+export type UpiMode = 'app' | 'qr';
+export type PaymentSelection = { method: PaymentMethod; upiMode: UpiMode };
+export const DEFAULT_PAYMENT_SELECTION: PaymentSelection = { method: 'upi', upiMode: 'qr' };
 
 // The payment method list: UPI (with its two sub-options), Cards and Net Banking.
 //
@@ -15,14 +17,32 @@ type UpiMode = 'app' | 'qr';
 // on design/28 did NOT generalise and stays in step6: design/77 draws a "Service
 // Summary" card in its place with different rows entirely.
 //
-// Selection is internal: neither screen acts on the choice, and both files draw UPI
-// with "Scan QR Code" pre-selected.
-export default function PaymentMethods() {
-  const [method, setMethod] = useState<Method>('upi');
-  const [upiMode, setUpiMode] = useState<UpiMode>('qr');
+// Every file draws UPI with "Scan QR Code" pre-selected. Callers that don't act on
+// the choice render it bare and the selection stays internal; a caller that does
+// (FIR F3: Scan QR goes to Scan & Pay, the others pay in place) passes `value` and
+// `onChange`. `disabled` freezes the list while a payment is processing.
+export default function PaymentMethods({
+  value,
+  onChange,
+  disabled = false,
+}: {
+  value?: PaymentSelection;
+  onChange?: (next: PaymentSelection) => void;
+  disabled?: boolean;
+} = {}) {
+  const [internal, setInternal] = useState<PaymentSelection>(DEFAULT_PAYMENT_SELECTION);
+  const current = value ?? internal;
+  const { method, upiMode } = current;
+  const select = (next: PaymentSelection) => {
+    if (disabled) return;
+    if (!value) setInternal(next);
+    onChange?.(next);
+  };
+  const setMethod = (m: PaymentMethod) => select({ method: m, upiMode });
+  const setUpiMode = (mode: UpiMode) => select({ method: 'upi', upiMode: mode });
 
   return (
-    <View>
+    <View style={disabled && styles.disabled} pointerEvents={disabled ? 'none' : 'auto'}>
       <View style={[styles.group, method === 'upi' && styles.groupSelected]}>
         <Pressable
           accessibilityRole="radio"
@@ -51,20 +71,14 @@ export default function PaymentMethods() {
             title="Pay via UPI App"
             subtitle="Google Pay, PhonePe, Paytm & other UPI apps"
             selected={method === 'upi' && upiMode === 'app'}
-            onPress={() => {
-              setMethod('upi');
-              setUpiMode('app');
-            }}
+            onPress={() => setUpiMode('app')}
           />
           <SubOption
             icon={<QrCode size={p.subTileIcon} color={colors.textBody} />}
             title="Scan QR Code"
             subtitle="Scan the QR using any UPI-enabled app"
             selected={method === 'upi' && upiMode === 'qr'}
-            onPress={() => {
-              setMethod('upi');
-              setUpiMode('qr');
-            }}
+            onPress={() => setUpiMode('qr')}
           />
         </View>
       </View>
@@ -155,6 +169,9 @@ function SubOption({ icon, title, subtitle, selected, onPress }: OptionProps) {
 }
 
 const styles = StyleSheet.create({
+  disabled: {
+    opacity: 0.6,
+  },
   group: {
     marginTop: p.groupGap,
     borderRadius: p.groupRadius,

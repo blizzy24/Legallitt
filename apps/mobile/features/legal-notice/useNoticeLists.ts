@@ -1,4 +1,4 @@
-import {advocateNoticeStatistics, ADV_NOTICE_FILTERS} from './advocateList';
+import {advocateMatterCount, advocateMatterStatistics, ADV_MATTER_FILTERS} from './advocateList';
 import {router, type Href} from 'expo-router';
 import {bucketFor, isNoticeCase, SERVICE_NAMES} from '@legalitt/shared';
 import {caseTitle, caseCategory, caseDestination, advocateCaseMatters} from '../cases/case-list';
@@ -17,14 +17,18 @@ export function useNoticeLists(){
  const active=cards.filter(r=>r.status==='active'),closed=cards.filter(r=>r.status==='closed');
  const pending:PendingRequest[]=records.filter(r=>bucketFor(r.status)==='pending').map(r=>({id:r.id,title:title(r),categoryLabel:caseCategory(r),note:'',requestedDate:r.created_at ? calendarDate(r.created_at) : '',estimatedMatch:'',status:'awaiting-review',statusLabel:'Awaiting Review',progressNote:'Verification in progress'}));
  const requests:RequestItem[]=records.map(r=>({id:r.id,service:SERVICE_NAMES[r.service_code],reference:r.reference,status:bucketFor(r.status)==='pending'?'awaiting':bucketFor(r.status)==='closed'?'confirmed':'accepted',rows:[{label:'Assigned Advocate',value:r.advocate?.full_name??''},{label:'Requested Date',value:new Date(r.created_at).toLocaleDateString('en-GB')}]}));
+ // A1 FIR cards read their fee and latest note from the list response (record.fir_card).
  const matters=advocateCaseMatters(records);
  return {api,error:c.error,controller:c,open,
-   matterFilters:api?ADV_NOTICE_FILTERS:undefined,
-   matterServices:api?['All Services',...new Set(['Legal Notice',...records.map(r=>SERVICE_NAMES[r.service_code])])]:undefined,
-   matterCount:api?(rows:AdvCaseMatter[])=>(c.loading||!!c.error)?'':String(rows.length):undefined,
-   matterStatistics:api?(rows:AdvCaseMatter[])=>(c.loading||!!c.error)?[]:advocateNoticeStatistics(rows):undefined,
+   matterFilters:api?ADV_MATTER_FILTERS:undefined,
+   // Designs 213/214 always offer Legal Notice, FIR Draft and Property Search, then the
+   // other services present. Property Search keeps the chip's drawn label (not the service
+   // name "Property Search Report"), so it never appears twice; the filter matches on its key.
+   matterServices:api?['All Services',...new Set(['Legal Notice','FIR Draft','Property Search',...records.map(r=>r.service_code==='property_search'?'Property Search':SERVICE_NAMES[r.service_code])])]:undefined,
+   matterCount:api?(rows:AdvCaseMatter[])=>(c.loading||!!c.error)?'':advocateMatterCount(rows):undefined,
+   matterStatistics:api?(rows:AdvCaseMatter[])=>(c.loading||!!c.error)?[]:advocateMatterStatistics(rows):undefined,
    closed:api?closed:[],active:api?active:activeCases(),pending:api?pending:PENDING_REQUESTS,hearings:api?[]:upcomingHearings(),stats:api?{active:active.length,pending:pending.length,hearings:0}:caseStats(),
    requests:api?requests:REQUESTS,matters:api?matters:ADV_CASES,
-   statistics:api?advocateNoticeStatistics(matters):ADV_CASES_STATS,
+   statistics:api?advocateMatterStatistics(matters):ADV_CASES_STATS,
  };
 }

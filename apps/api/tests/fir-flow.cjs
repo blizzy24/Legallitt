@@ -72,6 +72,29 @@ test('FIR: paid intake, advocate version freeze, admin-only approval, oldest-fir
       await assert.rejects(fir.save(advocate,c.id,{...current,base_draft_id:latest.id}),{status:409});
       await db.caseParty.update({where:{id:person.id},data:{name:person.name}});
     });
+    await t.test('auto-save updates the advocate’s own unsent version in place, with the same checks; stale sessions are refused',async()=>{
+      const input=await saveInput(c.id),ctx=await fir.context(advocate,c.id);assert.equal(ctx.requires_new_version,false);
+      const versions=await db.draft.count({where:{case_id:c.id}}),events=await db.caseEvent.count({where:{case_id:c.id,type:'fir_draft_saved'}}),base_saved_at=ctx.latest_content.filing_snapshot.captured_at;
+      await new Promise(r=>setTimeout(r,5));
+      const auto=await fir.save(advocate,c.id,{...input,content:{...input.content,others_involved:'TEST auto-saved associates',overrides:{place:'TEST auto-saved place'}},autosave:true,base_saved_at});
+      assert.equal(auto.id,ctx.latest_draft_id);assert.equal(auto.version,ctx.latest_version);
+      assert.equal(await db.draft.count({where:{case_id:c.id}}),versions,'no new version');assert.equal(await db.caseEvent.count({where:{case_id:c.id,type:'fir_draft_saved'}}),events,'no new event');
+      const row=await db.draft.findUniqueOrThrow({where:{id:auto.id}});assert.equal(row.content.others_involved,'TEST auto-saved associates');assert.equal(row.content.overrides.place,'TEST auto-saved place');
+      const now=row.content.filing_snapshot.captured_at;assert.notEqual(now,base_saved_at);assert.equal((await fir.context(advocate,c.id)).latest_content.filing_snapshot.captured_at,now);
+      await assert.rejects(fir.save(advocate,c.id,{...input,filing_hash:'b'.repeat(64),autosave:true,base_saved_at:now}),e=>e.status===409&&/client filing changed/.test(e.message));
+      await assert.rejects(fir.save(advocate,c.id,{...input,content:{...input.content,attachment_ids:[randomUUID()]},autosave:true,base_saved_at:now}),{status:400});
+      await assert.rejects(fir.save(advocate,c.id,{...input,autosave:true,base_saved_at}),e=>e.status===409&&/another session/.test(e.message),'a stale session cannot overwrite newer work');
+      assert.deepEqual((await db.draft.findUniqueOrThrow({where:{id:auto.id}})).content,row.content,'refused auto-saves change nothing');
+      const pdf=await fir.preview(advocate,c.id,auto.id);assert.ok(Buffer.from(pdf.pdf_base64,'base64').subarray(0,4).equals(Buffer.from('%PDF')));
+      // An auto-save landing after the PDF was rendered stops the send: only rendered content is submitted.
+      const complete=docs.complete;
+      docs.complete=async(...args)=>{docs.complete=complete;const done=await complete.apply(docs,args);const latest=await fir.context(advocate,c.id);
+        await fir.save(advocate,c.id,{...await saveInput(c.id),autosave:true,base_saved_at:latest.latest_content.filing_snapshot.captured_at});return done;};
+      await assert.rejects(fir.send(advocate,c.id,auto.id),e=>e.status===409&&/auto-saved while sending/.test(e.message));
+      docs.complete=complete;
+      assert.equal(await db.firSubmission.count({where:{case_id:c.id}}),0);assert.notEqual((await db.case.findUnique({where:{id:c.id}})).sub_status,'awaiting_admin_approval');
+      assert.equal(await db.document.count({where:{case_id:c.id,kind:'fir_draft',status:'uploaded'}}),0,'the unsent PDF is removed');
+    });
     await t.test('draft permissions and newest version only',async()=>{
       await assert.rejects(fir.save(client,c.id,await saveInput(c.id)),{status:403});await assert.rejects(fir.save(otherAdvocate,c.id,await saveInput(c.id)),{status:404});
       const old=await save(c.id),next=await save(c.id,{statement_of_facts:content.statement_of_facts+' Latest.'});
@@ -84,6 +107,10 @@ test('FIR: paid intake, advocate version freeze, admin-only approval, oldest-fir
     await t.test('waiting draft frozen and no alternate exit or client review',async()=>{
       assert.equal(pending.status,'in_progress');assert.equal(pending.sub_status,'awaiting_admin_approval');
       for(const action of [()=>save(c.id),()=>fir.send(advocate,c.id,submitted.draft_id),()=>state.transition(admin,c.id,'cancelled'),()=>state.transition(client,c.id,'approved'),()=>state.transition(advocate,c.id,'client_review')])await assert.rejects(action(),{status:409});
+      // Auto-save never reaches a sent version.
+      const ctx=await fir.context(advocate,c.id),sent=await db.draft.findUniqueOrThrow({where:{id:submitted.draft_id}});assert.equal(ctx.requires_new_version,true);
+      await assert.rejects(fir.save(advocate,c.id,{...await saveInput(c.id),autosave:true,base_saved_at:ctx.latest_content.filing_snapshot.captured_at}),{status:409});
+      assert.deepEqual((await db.draft.findUniqueOrThrow({where:{id:sent.id}})).content,sent.content);
       await assert.rejects(fir.approve(client,c.id,submitted.draft_id),{status:403});await assert.rejects(fir.approve(advocate,c.id,submitted.draft_id),{status:403});
       await assert.rejects(fir.approve(admin,c.id,randomUUID(),await token(c.id)),{status:409});
       await assert.rejects(docs.delete(admin,submitted.document_id),{status:409});

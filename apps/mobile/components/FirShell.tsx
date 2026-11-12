@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { router, type Href } from 'expo-router';
 import { ArrowLeft, CircleQuestionMark, User } from 'lucide-react-native';
 import type { ReactNode } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -18,18 +18,21 @@ type Props = {
   showHelp?: boolean;
   /** Extra bottom clearance for a screen that supplies its own fixed bar. */
   bottomInset?: number;
+  /** Replaces the default Back (Step 1 asks "Save as draft and leave?" first). */
+  onBack?: () => void;
 };
 
 // Header and progress bar shared by the five FIR steps (design/42, design/43).
 // Deliberately separate from WizardShell: that one is centred title + numbered
 // circles; this one is a screen-centred title with an avatar and a percentage bar.
-export default function FirShell({ step, title, children, showHelp = false, bottomInset = 0 }: Props) {
+export default function FirShell({ step, title, children, showHelp = false, bottomInset = 0, onBack }: Props) {
   const insets = useSafeAreaInsets();
   const intake=useFir();
   const percent = Math.round((step / FIR_STEPS) * 100);
 
   const goBack = () => {
-    if(DATA_SOURCE==='api'&&intake.record?.status==='draft'){void intake.back();return;}
+    if (onBack) { onBack(); return; }
+    if (DATA_SOURCE !== 'api' || intake.record?.status === 'draft') { void intake.back(); return; }
     if (router.canGoBack()) router.back();
     else router.replace('/fir');
   };
@@ -45,7 +48,8 @@ export default function FirShell({ step, title, children, showHelp = false, bott
         </Text>
         <View style={styles.headerRight}>
           {showHelp && (
-            <Pressable accessibilityRole="button" accessibilityLabel="Help" hitSlop={10} style={styles.help}>
+            // Flow C4: (?) opens the Help Center at its FIR questions.
+            <Pressable accessibilityRole="button" accessibilityLabel="Help" hitSlop={10} style={styles.help} onPress={() => router.push('/help?topic=fir' as Href)}>
               <CircleQuestionMark size={f.helpSize} color={colors.textMuted} />
             </Pressable>
           )}
@@ -60,7 +64,8 @@ export default function FirShell({ step, title, children, showHelp = false, bott
           <Text style={styles.stepLabel}>
             STEP {step} OF {FIR_STEPS}
           </Text>
-          <Text style={styles.percent}>{percent}% Completed</Text>
+          {/* Only F0b (Step 1) draws the percentage; designs 43–46 show the label and bar alone. */}
+          {step === 1 ? <Text style={styles.percent}>{percent}% Completed</Text> : null}
         </View>
         <View style={styles.track} accessibilityLabel={`Step ${step} of ${FIR_STEPS}`}>
           <View style={[styles.fill, { width: `${percent}%` }]} />

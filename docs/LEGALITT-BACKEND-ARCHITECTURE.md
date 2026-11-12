@@ -2310,6 +2310,10 @@ empty, or explicitly accepted in writing by the client, before production.
 | Refunds (D-12, D-13) | Follows `PAYMENTS_MODE` (no separate flag) | No Razorpay keys; refunds are `refunds` rows with `simulated=true` against the original captured payment; admin panel labels "Simulated refunds — no money moved" | Razorpay refunds API wired with real keys |
 | Advocate payouts (D-36) | No flag; manual by design | No Razorpay Route; a withdrawal is a `payout_requests` row; an admin pays outside the app and records the UTR. Bank accounts are stored and shown "Unverified" (no penny-drop) | Razorpay Route linked accounts and transfers |
 | Support callbacks (D-26) | No flag | A callback request is a support ticket for staff to action by phone outside the app; no telephony integration | A calling integration, if the client wants one |
+| FIR police-station list (flow C3, D-100) | No flag; data in `packages/shared/src/fir-police-stations.ts` | Indore and Bhopal stations are commonly published names, not yet checked against MP Police's official list; every other district uses "Type police station name" | MP Police's list is supplied and checked, or another state's list is added |
+| FIR "Use current location" (flow C3) | No flag | Attaches the browser's coordinates only; no reverse-geocoding provider is chosen, so address, city and PIN are still typed. Hidden on native (no location package) | A geocoding provider is chosen (cost decision) |
+| FIR Generate with AI (flow A4, D-08) | No flag | Disabled with "AI drafting is coming soon. Use Create Manually."; every draft records `ai_used=false` | D-08 is built |
+| FIR police submission (flow C14) | `fir_settings.police_submission_by_advocate` (default **on**), admin switch on the FIR case page | The client has not yet confirmed who takes the approved draft to the police. On: the advocate uploads the receipt and the case completes. Off: client approval completes the case and the client submits it | The client confirms; the unused variant can then be retired |
 
 **In-app notifications are real (3 Nov 2026).** Each notification is a real row,
 created in the same transaction as its case action. `NOTIFY_MODE` affects only
@@ -2329,6 +2333,51 @@ client without an advocate in between. If one does, it needs either an advocate
 gate or explicit framing that it is not legal advice.
 
 ### 9.2 Register of design substitutions
+
+**FIR Draft rebuild — 12 November 2026** (`docs/flows/FIR-DRAFT-FLOW.md`, gap table
+`docs/flows/FIR-GAPS.md`, screens beside designs in `docs/flows/fir-screens/`). Every
+FIR route renders its designed screen on real data in all modes; the undesigned
+`FirClient`/`FirAdvocate` screens and the fixture copies are retired. The C10 mapping
+(`firStage()`) drives the client timeline, the advocate chip/button and the admin
+label. [REMOVE] claims are left out and [DECIDE] items use the flow's proposals.
+Built without a design, from existing components and the app's style:
+
+| Piece | Flow section | Notes |
+|---|---|---|
+| Complainant details sheet | C5 | Full name, father's/husband's name, age, gender (Male / Female / Other), occupation, address; all required |
+| Add Accused / Opposite Party sheet | C5 | Name or "Unknown", phone, alias/description, address, primary; "Remove this person?" confirmation |
+| Add Witness sheet | C5 | Name, relation, phone, statement note, Key Witness |
+| Identity Proof slot form | C6 | Accepted ID type, last four digits only (shown XXXX-XXXX-1234), masked-Aadhaar confirmation |
+| Custom category sheet; "Delete this file?" confirmation | C6 | Client names the slot; empty custom slots can be removed |
+| "Save as draft and leave?" dialog | C3 | Save draft / Discard / Stay |
+| Request Callback submitted state; Support Chat (i) note | C1a, C1b | Existing states; the drawn chat attachment button is shown disabled with "not available yet", because support threads cannot carry files (D-58) |
+| F3/F4/F5 states | C8 | Fee calculating/blocked/failed, processing, "Test payment, no money is charged", QR expired + Generate new QR, labelled "Simulate successful payment" button |
+| C10 next-step button and stage texts other than stage 2 | C10 | Review Your Draft / Complete Payment / Continue Your Request / View Approved Draft |
+| Approve confirmation | C11 | "Approve this FIR draft? Your advocate will be notified." |
+| "Being updated" variant of design 49 | C11 | Shown while the advocate revises after a change request |
+| Discard dialog and validation | C12 | "Discard your changes?" when text was typed |
+| F9 client-submits variant | C14 | With the police setting off: "Download your approved draft" / "Submit it at <police station>" |
+| Accept confirmation; Reject reason sheet | A2 | Reason required; the case returns to admin |
+| BNS legal-section search sheet | A5 | Curated BNS list (no IPC) plus custom entry |
+| Save changes? sheet; outline list; "Complete these before sending" card | A5 | Auto-save about 30 s after the last edit updates the advocate's own unsent version in place ("Auto-saved N min ago"); Save Draft creates a new version; Send for Review goes straight to A6 |
+| "Also in the PDF" line under each accused and witness | A5 | Client-filed details (alias, phone, relationship) that print but have no box on design 218 |
+| Editable filed values (sections 1–3) | A5 | Stored as advocate overrides beside the untouched client filing; the PDF prints the override |
+| A6 status panels other than "Waiting for Client Review" | A6 | Waiting for admin, admin returned (+ Edit Draft), client changes (sections, text, attachment), client approved, completed |
+| "Mark as submitted to police" sheet | A6 / C14 | Receipt upload required, date not in the future nor before client approval |
+| Admin FIR progress panel, police-submission switch, client-review history, police receipt, reassignment reason, rejection reason | §3 | **Awaiting Figma admin designs**; existing admin panel style |
+| Admin Support inbox "FIR Draft" tag | §3 / C1 | **Awaiting Figma admin designs** |
+| Loading, error, empty, "at another step" panels on every FIR screen | all | Five states |
+
+Copy changes on drawn screens (false or unsupported claims): F6/49 "compiled and
+certified" → "prepared", "BNSS / IPC" → "BNS"; F8 "logged securely" → "sent"; F7 "Choose
+file or drag & drop" → "Choose file"; F9 drops "VERIFICATION CONFIRMED" and "e-Filing" (its "within 24 hours" promise is
+kept in the advocate-submits variant, which the police setting controls); A7 "Payment
+Received" → "Added to Wallet" (payouts are manual, D-36); design 219's "Advocate
+Preview Switcher" is left out (design-only demo aid). The (?) opens Help filtered to
+the FIR questions (the Help Center has one FIR question). Not built: the verified tick beside the complainant's
+mobile appears only when that number was verified at sign-in, browser Back does not
+show the C12 discard prompt, and the A1 "Upcoming" counter is always 0 because no FIR
+case carries a schedule.
 
 **Report services — 11 November 2026.** Reconnect Property Search 72–80/206–212
 and Document Forensic 82–90/223–232 using their field groups, document cards,

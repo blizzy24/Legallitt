@@ -19,6 +19,6 @@ export function acceptedFirIdentity(policy:FirIdentityPolicy,doc:{kind:string;st
  const type=policy.accepted_documents.find(t=>t.code===evidence.data.document_type);
  return !!type&&(!type.requires_masking||evidence.data.masked_copy);
 }
-export const FIR_ID_NOTICE='Upload any one accepted identity document. Never upload a full Aadhaar card: use the masked copy showing only the last four digits. We do not extract or record ID numbers from identity uploads. An upload is not identity verification.';
+export const FIR_ID_NOTICE='Upload any one accepted identity document. Never upload a full Aadhaar card: use the masked copy showing only the last four digits. We keep only the last four digits you enter, shown masked (XXXX-XXXX-1234); no number is read from the file. An upload is not identity verification.';
 export const MASKED_AADHAAR_HELP='Get a masked copy from UIDAI: open My Aadhaar, choose Download Aadhaar, select the masked Aadhaar option and complete the OTP download.';
 export const MASKED_AADHAAR_URL='https://myaadhaar.uidai.gov.in/';

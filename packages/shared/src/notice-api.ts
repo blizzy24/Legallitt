@@ -50,6 +50,9 @@ export type ApiUser = {
   name: string;
   email: string | null;
   phone: string | null;
+  /** Set by sign-in: whether the mobile number / email was verified with a code. */
+  emailVerified?: boolean;
+  phoneVerified?: boolean;
 };
 export type ApiAuthResult = { user: ApiUser; tokens: ApiTokens; simulated?: boolean };
 export type ApiEvent = {
@@ -76,7 +79,13 @@ export type ApiDocument = {
   status: string;
   identity_notice?: string;
   identity_evidence?: import('./fir-identity').IdentityEvidence | null;
+  /** FIR: the last four digits of an identity document, shown as XXXX-XXXX-1234. */
+  identity_last4?: string | null;
+  /** FIR: the client's name for a custom upload slot. */
+  slot_label?: string | null;
 };
+/** Advocate list only (FIR, design 214): the advocate's share and the latest timeline note. */
+export type FirListCard = {share_paise: string | null; note: string | null};
 export type ApiDraft = {
   compliance_period_days?: number | null;
   closing_policy?: NoticePolicy | null;
@@ -113,6 +122,7 @@ export type CaseClientFees = {
   breakdown_complete: boolean; simulated: boolean;
 };
 export type ApiCase = {
+  fir_card?: FirListCard;
   advocate_payout?: {service_share_paise: string; delivery_reimbursement_paise: string; net_paise: string} | null;
   client_fees?: CaseClientFees;
   compliance_period_days?: number | null;

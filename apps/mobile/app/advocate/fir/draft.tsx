@@ -1,351 +1,296 @@
-import { previewNotice } from '../../../components/PreviewNotice';
-import { router, useLocalSearchParams, type Href } from 'expo-router';
-import {
-  ArrowRight,
-  Check,
-  Bookmark,
-  ChevronLeft,
-  Copy,
-  Eye,
-  FileText,
-  FolderOpen,
-  IdCard,
-  Image as ImageIcon,
-  Paperclip,
-  Pencil,
-  Save,
-  Settings,
-  Shield,
-  SquarePen,
-  Sparkles,
-  UserRound,
-  UserRoundPlus,
-  UsersRound,
-  X,
-} from 'lucide-react-native';
-import { Fragment, useEffect, useRef, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { router } from 'expo-router';
+import { ArrowRight, Bookmark, ChevronLeft, Eye, FolderOpen, Save, SquarePen, UserRound } from 'lucide-react-native';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import {
+  acceptedFirIdentity, assembleFirDraft, firDraftProblems, FirDraftContentSchema, FirDraftEditableSchema, firEditableContent, firSectionLabel, maskedIdentity,
+  type FirDraftContext, type FirDraftEditable,
+} from '@legalitt/shared';
 
 import { shrinkToFit } from '../../../constants/textFit';
-import { FIR_DRAFT } from '../../../data/advocateFir';
-import { advFirDraft as t, colors, font, ink } from '../../../constants/theme';
-import { advDocHref } from '../../../data/docLinks';
+import { advFirDraft as t, colors, ink } from '../../../constants/theme';
+import { FIR_DRAFT as copy } from '../../../data/advocateFir';
+import { backend } from '../../../lib/auth';
+import { styles } from '../../../features/fir/draftStyles';
+import { DraftEditor, DRAFT_SECTIONS } from '../../../features/fir/DraftEditor';
+import { useFirFlow, viewDocument } from '../../../features/fir/flow';
+import { hashRef } from '../../../features/fir/client/format';
+import {
+  compactReviewRoute, dayTime, InlineError, MovedOn, openPdf, pickAndUpload, Sheet, SheetButton, StateCard, toCases,
+  useAction, useAdvocateCaseId, useAgo, useFirRecord, type FirDoc,
+} from '../../../features/fir/advocate/common';
 
-// FIR draft — the FORM I police proforma (design/218).
-//
-// ⚠ THIS IS NOT components/LegalDocumentPage. That component is the Legalitt
-// letterhead legal-notice form (designs 189 and 209) — a printed page with a
-// branded header, ruled blanks and a disclaimer bar. design/218 is a Madhya Pradesh
-// Police FORM I proforma: a numbered, eight-section editable form with labelled
-// field boxes, removable legal-section tags and attached-document rows. Nothing
-// below the title is shared, so this is built separately.
-//
-// ⚠ THE DOCKET JUMPS TO #FIR-2026-8841, with a "#", where designs 214/215/220 read
-// FIR-2026-1048 unprefixed. See data/advocateFir.ts note 3.
-//
-// ⚠ THE NARRATIVE IS CUT OFF IN THE EXPORT. design/218 claims "158 Words" under a
-// fixed-height box that clips mid-sentence at "...along with two". About 55 words
-// are legible; the rest is not in the PNG. Rendered exactly as far as the export
-// shows — nothing invented.
-//
-// ⚠ "4 Sections" here, "8 Legal Sections" on design/219.
-//
-// ⚠ "4 Included" documents, with a fourth set of names — and Case Papers.pdf is
-// subtitled "Lease agreement executed copy", which does not match its name.
-//
-// design/447 is pixel-identical to218. Fields, chips, inclusion and add controls
-// now use local state. The session cache lets View Draft reopen these edits;
-// it is frontend memory only, not a backend save or AI generation.
+// FIR proforma editor (design/218, flow A5), live in every data mode.
+// Save Draft (or the bookmark) saves a new version. Auto-save runs ~30 s after the
+// last edit when the changes are well-formed: it updates this advocate's own unsent
+// version in place (a first draft, or the first edit after a sent version, is saved
+// as a new version), and never touches a version that was sent. Send for Review
+// validates, saves if needed, sends and opens A6. Leaving with unsaved edits asks first.
+const EDITABLE = ['advocate_accepted', 'in_progress', 'changes_requested'];
+const AUTOSAVE_MS = 30_000;
+const LISTED = (d: FirDoc) => d.status === 'uploaded' && !['fir_draft', 'fir_police_receipt'].includes(d.kind);
+const issueText = (path: PropertyKey[], message: string) => `${path.map(String).join(' › ').replaceAll('_', ' ')}: ${message}`;
 
-const ICONS = { id: IdCard, copy: Copy, doc: FileText, image: ImageIcon, person: UserRoundPlus };
-
-function Section({ n, title, note, noteGreen }: { n: string; title: string; note?: string; noteGreen?: boolean }) {
-  return (
-    <View style={styles.sectionRow}>
-      <View style={styles.sectionNum}>
-        <Text style={styles.sectionNumText} {...shrinkToFit(0.8)}>
-          {n}
-        </Text>
-      </View>
-      <Text style={styles.sectionTitle} {...shrinkToFit(0.7)}>
-        {title}
-      </Text>
-      {note && (
-        <Text style={[styles.sectionNote, noteGreen && styles.sectionNoteGreen]} {...shrinkToFit(0.75)}>
-          {note}
-        </Text>
-      )}
-    </View>
-  );
-}
-
-type DraftDocument = {name: string; sub: string; icon: keyof typeof ICONS};
-type DraftState = {
-  fields: Record<string, string>;
-  tags: string[];
-  narrative: string;
-  witnesses: string[];
-  accused: string[];
-  included: string[];
-  documents: DraftDocument[];
-};
-const sessionDrafts = new Map<string, DraftState>();
-function initialDraft(): DraftState {
-  return {
-    fields: Object.fromEntries(FIR_DRAFT.sections.flatMap(section => section.fields.map(field => [`${section.n}:${field.label}`, field.value]))),
-    tags: [...FIR_DRAFT.legal.tags], narrative: FIR_DRAFT.facts.body,
-    witnesses: FIR_DRAFT.witnesses.fields.map(field => field.value), accused: [],
-    included: FIR_DRAFT.attached.rows.map(row => row.name), documents: [...FIR_DRAFT.attached.rows],
-  };
-}
-function Field({ label, value, onChange, tint, icon }: { label: string; value: string; onChange: (value: string) => void; tint?: boolean; icon?: keyof typeof ICONS }) {
-  const Icon = icon ? ICONS[icon] : null;
-  return <View style={styles.field}>
-    <Text style={styles.fieldLabel} {...shrinkToFit(0.8)}>{label}</Text>
-    <View style={[styles.fieldBox, tint && styles.fieldBoxTint]}>
-      {Icon && <Icon size={t.tintBoxIcon} color={colors.brandDark} style={styles.tintIcon}/>}
-      <TextInput accessibilityLabel={label} value={value} onChangeText={onChange} multiline={label === 'Home & Present Address'} style={[styles.fieldValue, {padding:0}]} />
-    </View>
-  </View>;
-}
-
-function FixtureAdvocateFirDraftScreen() {
+export default function AdvocateFirDraftScreen() {
   const insets = useSafeAreaInsets();
-  const { id } = useLocalSearchParams<{ id?: string }>();
-  const d = FIR_DRAFT;
-  const sessionKey = id || d.docket;
-  const [draft, setDraft] = useState<DraftState>(() => sessionDrafts.get(sessionKey) ?? initialDraft());
-  const [addingSection, setAddingSection] = useState(false);
-  const [sectionText, setSectionText] = useState('');
-  const [saved, setSaved] = useState(false);
-  const narrativeInput = useRef<TextInput>(null);
-  useEffect(() => { sessionDrafts.set(sessionKey, draft); setSaved(false); }, [draft, sessionKey]);
-  const fieldChange = (key: string, value: string) => setDraft(current => ({...current, fields: {...current.fields, [key]: value}}));
-  const addSection = () => {
-    if (!addingSection) { setAddingSection(true); return; }
-    const value = sectionText.trim();
-    if (value && !draft.tags.includes(value)) setDraft(current => ({...current, tags: [...current.tags, value]}));
-    if (value) { setSectionText(''); setAddingSection(false); }
-  };
-  const attachDocument = () => {
-    if (typeof document === 'undefined') { previewNotice(d.attached.add); return; }
-    const input = document.createElement('input'); input.type = 'file'; input.multiple = true;
-    input.onchange = () => {
-      const rows = Array.from(input.files ?? []).map(file => ({name:file.name, sub:'', icon:'doc' as const}));
-      setDraft(current => ({...current, documents:[...current.documents, ...rows.filter(row => !current.documents.some(doc => doc.name === row.name))], included:[...new Set([...current.included, ...rows.map(row => row.name)])]}));
-    };
-    input.click();
-  };
+  const caseId = useAdvocateCaseId();
+  const f = useFirFlow(caseId);
+  const rec = useFirRecord(caseId);
+  const flow = f.flow;
+  const editable = !!flow && EDITABLE.includes(flow.status) && flow.sub_status !== 'awaiting_admin_approval';
 
+  const [context, setContext] = useState<FirDraftContext | null>(null);
+  const [value, setValue] = useState<FirDraftEditable | null>(null);
+  const [ctxLoading, setCtxLoading] = useState(false), [ctxError, setCtxError] = useState('');
+  const [dirty, setDirty] = useState(false), [saving, setSaving] = useState(false), [autoSaving, setAutoSaving] = useState(false);
+  const [savedAt, setSavedAt] = useState<string | null>(null), [savedKind, setSavedKind] = useState<'manual' | 'auto'>('manual');
+  const [problems, setProblems] = useState<string[]>([]);
+  const [leaving, setLeaving] = useState(false), [reloading, setReloading] = useState(false), [outline, setOutline] = useState(false);
+  const [attaching, setAttaching] = useState(false), [sending, setSending] = useState(false);
+  const act = useAction(), sheetAct = useAction();
+  const ago = useAgo(savedAt);
+  const scroll = useRef<ScrollView>(null), cardY = useRef(0), sectionY = useRef<Record<number, number>>({});
+  const generation = useRef(0), edits = useRef(0), seeded = useRef(false);
+  // The context every save builds on, current even inside a save that waited for another.
+  const ctxRef = useRef<FirDraftContext | null>(null), inflight = useRef<Promise<unknown> | null>(null);
+  const putContext = (c: FirDraftContext | null) => { ctxRef.current = c; setContext(c); };
+
+  const load = useCallback(async () => {
+    if (!caseId) return;
+    const token = ++generation.current;
+    setCtxLoading(true); setCtxError('');
+    try {
+      const c = await backend.firDraftContext(caseId);
+      if (token !== generation.current) return;
+      ctxRef.current = c; setContext(c); setValue(c.latest_content ? firEditableContent(c.latest_content) : c.initial_content);
+      seeded.current = !!c.latest_content; setDirty(false); setProblems([]);
+      setSavedAt(c.latest_content?.filing_snapshot.captured_at ?? null); setSavedKind('manual');
+    } catch (e) { if (token === generation.current) setCtxError(e instanceof Error ? e.message : 'Couldn’t load the draft.'); }
+    finally { if (token === generation.current) setCtxLoading(false); }
+  }, [caseId]);
+  useEffect(() => { if (editable && !context && !ctxLoading && !ctxError) void load(); }, [editable, context, ctxLoading, ctxError, load]);
+  useEffect(() => () => { generation.current++; }, []);
+  useEffect(() => {
+    if (Platform.OS !== 'web' || !dirty) return;
+    const warn = (event: BeforeUnloadEvent) => { event.preventDefault(); event.returnValue = ''; };
+    globalThis.addEventListener('beforeunload', warn);
+    return () => globalThis.removeEventListener('beforeunload', warn);
+  }, [dirty]);
+
+  const documents = useMemo(() => (rec.record?.documents ?? []).filter(LISTED), [rec.record]);
+  const identityDocs = useMemo(() => context ? documents.filter(d => acceptedFirIdentity(context.identity_policy, d)) : [], [context, documents]);
+  // A first draft lists every upload; the advocate unticks what stays out of the dossier.
+  useEffect(() => {
+    if (seeded.current || !context || !rec.record) return;
+    seeded.current = true;
+    setValue(v => v && !v.attachment_ids.length ? { ...v, attachment_ids: documents.map(d => d.id) } : v);
+  }, [context, rec.record, documents]);
+  // The single accepted identity upload is the draft's ID; it is always attached.
+  const effective = useMemo(() => {
+    if (!value) return null;
+    let v = value;
+    if (!v.identity_document_id && identityDocs.length === 1) v = { ...v, identity_document_id: identityDocs[0].id };
+    if (v.identity_document_id && !v.attachment_ids.includes(v.identity_document_id)) v = { ...v, attachment_ids: [...v.attachment_ids, v.identity_document_id] };
+    return v;
+  }, [value, identityDocs]);
+  const identityLabel = useCallback((doc: FirDoc) => {
+    const type = context?.identity_policy.accepted_documents.find(x => x.code === doc.identity_evidence?.document_type)?.label ?? 'Identity Proof';
+    return `${type} (${maskedIdentity(doc.identity_last4) ?? 'masked'})`;
+  }, [context]);
+
+  const edit = (patch: Partial<FirDraftEditable>) => { edits.current++; setValue(v => v ? { ...v, ...patch } : v); setDirty(true); setProblems([]); };
+
+  function computeProblems(): string[] {
+    if (!caseId || !context || !effective || !rec.record) return ['The draft is still loading.'];
+    const parsed = FirDraftEditableSchema.safeParse(effective);
+    if (!parsed.success) return parsed.error.issues.map(i => issueText(i.path, i.message));
+    const out: string[] = [];
+    const docs = rec.record.documents ?? [];
+    const attachments = parsed.data.attachment_ids.flatMap(id => {
+      const doc = docs.find(d => d.id === id && d.status === 'uploaded');
+      return doc ? [{ document_id: doc.id, filename: doc.filename, mime_type: doc.mime_type as 'application/pdf' }] : [];
+    });
+    if (attachments.length !== parsed.data.attachment_ids.length) out.push('Untick documents that are no longer available.');
+    if (parsed.data.identity_document_id && !docs.some(d => d.id === parsed.data.identity_document_id && acceptedFirIdentity(context.identity_policy, d)))
+      out.push('The selected identity document isn’t an accepted identity upload.');
+    try { out.push(...firDraftProblems(assembleFirDraft(caseId, context.intake, context.filing_hash, new Date().toISOString(), parsed.data, attachments)).map(p => p.message)); }
+    catch (e) { out.push(e instanceof Error ? e.message : 'The draft couldn’t be checked.'); }
+    return out;
+  }
+  const showProblems = (list: string[]) => { setProblems(list); setTimeout(() => scroll.current?.scrollToEnd({ animated: true }), 60); };
+
+  /** Saves the editor. `auto`: the flow A5 auto-save, in place when the working version allows it. */
+  async function save(auto = false): Promise<{ id: string; version: number }> {
+    // One save at a time: a tap waits for an auto-save in flight, then builds on its result.
+    while (inflight.current) await inflight.current.catch(() => undefined);
+    const ctx = ctxRef.current;
+    if (!caseId || !ctx || !effective) throw new Error('The draft is still loading.');
+    const parsed = FirDraftEditableSchema.safeParse(effective);
+    if (!parsed.success) throw new Error(parsed.error.issues.map(i => issueText(i.path, i.message)).join('\n'));
+    const unchanged = !!ctx.latest_draft_id && !!ctx.latest_content && !ctx.requires_new_version
+      && JSON.stringify(firEditableContent(ctx.latest_content)) === JSON.stringify(parsed.data);
+    if (unchanged) { setDirty(false); return { id: ctx.latest_draft_id!, version: ctx.latest_version }; }
+    // In place only for this advocate's own version that was never sent (the API checks again).
+    const inPlace = auto && !!ctx.latest_draft_id && !!ctx.latest_content && !ctx.requires_new_version && ctx.legacy_content === null;
+    const started = edits.current;
+    const run = (async () => {
+      const saved = await backend.saveFirDraft(caseId, {
+        base_draft_id: ctx.latest_draft_id, filing_hash: ctx.filing_hash, content: parsed.data,
+        ...(inPlace ? { autosave: true, base_saved_at: ctx.latest_content!.filing_snapshot.captured_at } : {}),
+      });
+      // Parsed so the stored JSON compares key-for-key with the editor next time.
+      const stored = FirDraftContentSchema.safeParse(saved.content);
+      putContext({ ...ctx, latest_draft_id: saved.id, latest_version: saved.version, latest_content: stored.success ? stored.data : saved.content, legacy_content: null, requires_new_version: false });
+      setSavedAt(saved.content.filing_snapshot.captured_at); setSavedKind(auto ? 'auto' : 'manual');
+      if (edits.current === started) setDirty(false);
+      f.reload();
+      return saved;
+    })();
+    inflight.current = run;
+    if (auto) setAutoSaving(true); else setSaving(true);
+    try { return await run; }
+    finally { if (inflight.current === run) inflight.current = null; if (auto) setAutoSaving(false); else setSaving(false); }
+  }
+  async function autosave() {
+    if (!effective || act.busy || leaving || !FirDraftEditableSchema.safeParse(effective).success) return;
+    try { await save(true); if (act.error.startsWith('Auto-save')) act.setError(''); }
+    catch (e) { act.setError(`Auto-save didn’t complete. ${e instanceof Error ? e.message : 'Use Save Draft.'}`); }
+  }
+  const autosaveRef = useRef(autosave); autosaveRef.current = autosave;
+  const ready = editable && !!context && !!effective && !!rec.record;
+  // Flow A5: ~30 s after the last edit. Any new edit, or a tap in progress, restarts the wait.
+  useEffect(() => {
+    if (!dirty || !ready || act.busy) return;
+    const timer = setTimeout(() => void autosaveRef.current(), AUTOSAVE_MS);
+    return () => clearTimeout(timer);
+  }, [dirty, effective, ready, act.busy]);
+
+  const onSave = () => void act.run(() => save());
+  const onPreview = () => void act.run(async () => {
+    const list = computeProblems(); if (list.length) { showProblems(list); return; }
+    const saved = await save(); const pdf = await backend.previewFirDraft(caseId!, saved.id); await openPdf(pdf.filename, pdf.pdf_base64);
+  });
+  // Flow A5: straight to A6. The Preview eye is where the PDF is checked before sending.
+  const onSend = () => void act.run(async () => {
+    const list = computeProblems(); if (list.length) { showProblems(list); return; }
+    setSending(true);
+    try {
+      const saved = await save();
+      await backend.sendFirDraft(caseId!, saved.id);
+      setDirty(false); router.replace(compactReviewRoute(caseId!));
+    } finally { setSending(false); }
+  });
+  const attach = () => void act.run(async () => {
+    if (!caseId || !effective) return;
+    setAttaching(true);
+    try {
+      const doc = await pickAndUpload(caseId, 'supporting_document');
+      if (!doc) return;
+      rec.setRecord(r => r ? { ...r, documents: [...(r.documents ?? []), doc] } : r);
+      edit({ attachment_ids: [...effective.attachment_ids, doc.id] });
+    } finally { setAttaching(false); }
+  });
+  const back = () => { if (dirty) { sheetAct.setError(''); setLeaving(true); } else toCases(); };
+  const jump = (n: number) => { setOutline(false); scroll.current?.scrollTo({ y: Math.max(0, cardY.current + (sectionY.current[n] ?? 0) - 12), animated: true }); };
+
+  // The latest return or change request stays at the top until the next version is sent (A5).
+  const feedback = flow && editable ? flow.reviews[flow.reviews.length - 1] : undefined;
+  const showFeedback = feedback && feedback.decision !== 'approved' ? feedback : undefined;
+
+  let body: ReactNode;
+  if (!caseId) body = <StateCard title="This link is missing its request ID." actionLabel="Back to Cases" onAction={toCases} />;
+  else if (!flow) body = f.error ? <StateCard title="Couldn’t load this request." error={f.error} actionLabel="Retry" onAction={f.reload} secondaryLabel="Back to Cases" onSecondary={toCases} />
+    : <StateCard loading title="Loading the FIR draft…" />;
+  else if (!editable) body = <MovedOn caseId={caseId} stage={flow.stage} />;
+  else if (!context || !rec.record) body = ctxError || (rec.error && !rec.record)
+    ? <StateCard title="Couldn’t load the draft." error={ctxError || rec.error} actionLabel="Retry" onAction={() => { rec.reload(); setCtxError(''); }} />
+    : <StateCard loading title="Loading the draft and the client’s filing…" />;
+  else body = <>
+    {showFeedback && <View style={styles.feedback}>
+      <Text style={styles.feedbackTitle}>{showFeedback.role === 'client' ? 'Client requested changes' : 'Returned by Legalitt admin'}</Text>
+      <Text style={styles.feedbackMeta}>{[showFeedback.version ? `Draft v${showFeedback.version}` : '', dayTime(showFeedback.created_at)].filter(Boolean).join(' • ')}</Text>
+      {!!showFeedback.sections.length && <Text style={styles.feedbackMeta}>Sections: {showFeedback.sections.map(firSectionLabel).join(' · ')}</Text>}
+      {!!showFeedback.comment?.trim() && <Text style={styles.feedbackBody}>{showFeedback.comment.trim()}</Text>}
+      {showFeedback.attachment && <Pressable accessibilityRole="button" onPress={() => void act.run(() => viewDocument(showFeedback.attachment!.id))}><Text style={styles.feedbackLink}>View attachment: {showFeedback.attachment.filename}</Text></Pressable>}
+    </View>}
+    {context.legacy_content !== null && <StateCard title="The previous draft uses an older format" body="Review it against the form below; saving creates a new version in the current format." />}
+    <View onLayout={e => { cardY.current = e.nativeEvent.layout.y; }}>
+      <DraftEditor context={context} value={effective!} onChange={edit} documents={documents} identityDocs={identityDocs} identityLabel={identityLabel}
+        viewDocument={id => void act.run(() => viewDocument(id))} attach={attach} attaching={attaching} onSectionLayout={(n, y) => { sectionY.current[n] = y; }} />
+    </View>
+    {!!problems.length && <View style={styles.problems} accessibilityLiveRegion="polite">
+      <Text style={styles.problemsTitle}>Complete these before sending</Text>
+      {problems.map((p, n) => <Text key={n} style={styles.problem}>• {p}</Text>)}
+    </View>}
+  </>;
+
+  const status = !ready ? '' : saving ? 'Saving…' : autoSaving ? 'Auto-saving…' : dirty ? 'Unsaved changes'
+    : savedAt ? (savedKind === 'auto' ? copy.autoSaved(ago) : copy.saved(ago)) : 'Not saved yet';
   return (
     <View style={styles.screen}>
       <View style={[styles.header, { paddingTop: insets.top + t.headerTop }]}>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Back"
-          hitSlop={10}
-          onPress={() => (router.canGoBack() ? router.back() : router.replace('/matters' as Href))}
-        >
-          <ChevronLeft size={t.backIcon} color={colors.textPrimary} />
-        </Pressable>
+        <Pressable accessibilityRole="button" accessibilityLabel="Back" hitSlop={10} onPress={back}><ChevronLeft size={t.backIcon} color={colors.textPrimary} /></Pressable>
         <View style={styles.headerText}>
-          <Text style={styles.eyebrow} {...shrinkToFit(0.8)}>
-            {d.eyebrow}
-          </Text>
-          <Text style={styles.title} {...shrinkToFit(0.75)}>
-            {d.title}
-          </Text>
+          <Text style={styles.eyebrow} {...shrinkToFit(0.8)}>{copy.eyebrow}</Text>
+          <Text style={styles.title} {...shrinkToFit(0.75)}>{copy.title}</Text>
         </View>
-        <SquarePen size={t.headerIcon} color={colors.textPrimary} style={styles.headerIcon} />
-        <Eye size={t.headerIcon} color={colors.textPrimary} style={styles.headerIcon} />
-        <Bookmark size={t.headerIcon} color={colors.textPrimary} style={styles.headerIcon} />
-        <View style={styles.avatar}>
-          <UserRound size={t.avatarGlyph} color={ink.onBrand} />
-        </View>
+        {ready && <>
+          <Pressable accessibilityRole="button" accessibilityLabel="Outline" accessibilityState={{ expanded: outline }} hitSlop={8} onPress={() => setOutline(o => !o)}><SquarePen size={t.headerIcon} color={colors.textPrimary} style={styles.headerIcon} /></Pressable>
+          <Pressable accessibilityRole="button" accessibilityLabel="Preview PDF" hitSlop={8} disabled={act.busy} onPress={onPreview}><Eye size={t.headerIcon} color={colors.textPrimary} style={styles.headerIcon} /></Pressable>
+          <Pressable accessibilityRole="button" accessibilityLabel="Save Draft" hitSlop={8} disabled={act.busy} onPress={onSave}><Bookmark size={t.headerIcon} color={colors.textPrimary} style={styles.headerIcon} /></Pressable>
+        </>}
+        <View style={styles.avatar}><UserRound size={t.avatarGlyph} color={ink.onBrand} /></View>
       </View>
 
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
-        <View style={styles.statusRow}>
-          <View style={styles.status}>
-            <View style={styles.statusDot} />
-            <Text style={styles.statusText} {...shrinkToFit(0.8)}>
-              {d.statusChip}
-            </Text>
+      <ScrollView ref={scroll} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+        {outline && ready && <View style={styles.outline}>{DRAFT_SECTIONS.map((title, i) =>
+          <Pressable key={title} accessibilityRole="button" onPress={() => jump(i + 1)} style={styles.outlineRow}>
+            <View style={styles.sectionNum}><Text style={styles.sectionNumText}>{i + 1}</Text></View><Text style={styles.outlineText}>{title}</Text>
+          </Pressable>)}</View>}
+        {ready && flow && <>
+          <View style={styles.statusRow}>
+            <View style={styles.status}><View style={styles.statusDot} /><Text style={styles.statusText} {...shrinkToFit(0.8)}>{flow.stage.advocate.chip}</Text></View>
+            <Text style={styles.saved} accessibilityLiveRegion="polite" {...shrinkToFit(0.75)}>{status}</Text>
           </View>
-          <Text style={styles.saved} {...shrinkToFit(0.75)}>
-            {d.saved}
-          </Text>
-        </View>
-
-        <View style={styles.docket}>
-          <FolderOpen size={t.docketIcon} color={colors.brandDark} />
-          <View style={styles.docketText}>
-            <Text style={styles.docketTitle} {...shrinkToFit(0.75)}>
-              {d.docket}
-            </Text>
-            <Text style={styles.docketSub} {...shrinkToFit(0.8)}>
-              {d.docketSub}
-            </Text>
+          <View style={styles.docket}>
+            <FolderOpen size={t.docketIcon} color={colors.brandDark} />
+            <View style={styles.docketText}>
+              <Text style={styles.docketTitle} {...shrinkToFit(0.75)}>{copy.docket} {hashRef(flow.reference)}</Text>
+              {!!flow.police_station && <Text style={styles.docketSub} {...shrinkToFit(0.8)}>{flow.police_station}</Text>}
+            </View>
           </View>
-          <Settings size={t.docketCog} color={colors.textBody} />
-        </View>
-
-        {/* Static. No AI call is wired anywhere in this flow. */}
-        <View style={styles.ai}>
-          <Sparkles size={t.aiIcon} color={colors.brandDark} />
-          <View style={styles.aiText}>
-            <Text style={styles.aiTitle} {...shrinkToFit(0.8)}>
-              {d.ai.title}
-            </Text>
-            <Text style={styles.aiBody}>{d.ai.body}</Text>
-          </View>
-        </View>
-
-        <View style={styles.card}>
-          <View style={styles.crest}>
-            <Shield size={t.crestGlyph} color={colors.brandDark} />
-          </View>
-          <Text style={styles.command} {...shrinkToFit(0.7)}>
-            {d.proforma.command}
-          </Text>
-          <Text style={styles.firTitle} {...shrinkToFit(0.75)}>
-            {d.proforma.title}
-          </Text>
-          <Text style={styles.form} {...shrinkToFit(0.7)}>
-            {d.proforma.form}
-          </Text>
-          <Text style={styles.under} {...shrinkToFit(0.75)}>
-            {d.proforma.under}
-          </Text>
-
-          {d.sections.map((s) => (
-            <Fragment key={s.n}>
-              <Section n={s.n} title={s.title} note={'note' in s ? s.note : undefined} />
-              <View style={styles.fields}>
-                {s.fields.map((f) => (
-                  <View key={f.label} style={'half' in f && f.half ? styles.half : styles.full}>
-                    <Field label={f.label} value={draft.fields[`${s.n}:${f.label}`]} onChange={value => fieldChange(`${s.n}:${f.label}`, value)} tint={'tint' in f ? f.tint : undefined} icon={'icon' in f ? f.icon : undefined} />
-                  </View>
-                ))}
-              </View>
-              {s.n === '4' && draft.accused.map((value, i) => <View key={i} style={styles.fields}><Field label="Main Accused Name" value={value} onChange={value => setDraft(current => ({...current, accused: current.accused.map((old, n) => n === i ? value : old)}))}/></View>)}
-              {'add' in s && s.add && (
-                <Pressable onPress={() => setDraft(current => ({...current, accused:[...current.accused, '']}))} accessibilityRole="button" style={({ pressed }) => [styles.add, pressed && styles.pressed]}>
-                  <UserRoundPlus size={t.addIcon} color={t.addColour} />
-                  <Text style={styles.addText} {...shrinkToFit(0.8)}>
-                    {s.add}
-                  </Text>
-                </Pressable>
-              )}
-            </Fragment>
-          ))}
-
-          <Section n={d.legal.n} title={d.legal.title} note={`${draft.tags.length} Sections`} />
-          <Text style={styles.hint}>{d.legal.hint}</Text>
-          <View style={styles.tags}>
-            {draft.tags.map((tag) => (
-              <View key={tag} style={styles.tag}>
-                <Text style={styles.tagText} {...shrinkToFit(0.75)}>
-                  {tag}
-                </Text>
-                <Pressable accessibilityRole="button" accessibilityLabel={`Remove ${tag}`} hitSlop={8} onPress={() => setDraft(current => ({...current, tags: current.tags.filter(value => value !== tag)}))}><X size={t.tagX} color={t.tagColour} style={styles.tagX}/></Pressable>
-              </View>
-            ))}
-          </View>
-          {addingSection && <TextInput autoFocus accessibilityLabel="Add Legal Section" value={sectionText} onChangeText={setSectionText} onSubmitEditing={addSection} placeholder={d.legal.add} style={[styles.fieldBox, styles.fieldValue]}/>}
-          <Pressable onPress={addSection} accessibilityRole="button" style={({ pressed }) => [styles.add, pressed && styles.pressed]}>
-            <Text style={styles.addText} {...shrinkToFit(0.8)}>
-              {d.legal.add}
-            </Text>
-          </Pressable>
-
-          <Section n={d.facts.n} title={d.facts.title} note={d.facts.note} />
-          <View style={styles.narrative}>
-            {/* ⚠ Cut off in the export at "...along with two". Nothing invented. */}
-            <TextInput ref={narrativeInput} accessibilityLabel={d.facts.title} multiline value={draft.narrative} onChangeText={value => setDraft(current => ({...current,narrative:value}))} style={[styles.narrativeText, {height:t.narrativeMaxHeight-t.narrativePad*2,padding:0,textAlignVertical:'top'}]}/>
-          </View>
-          <View style={styles.narrativeFoot}>
-            <Text style={styles.narrativeFootText} {...shrinkToFit(0.8)}>
-              {draft.narrative === d.facts.body ? d.facts.foot : `${draft.narrative.trim().split(/\s+/).filter(Boolean).length} Words • Editable`}
-            </Text>
-            <Pressable onPress={() => narrativeInput.current?.focus()} accessibilityRole="button" style={styles.narrativeEdit}>
-              <Pencil size={t.narrativeEditIcon} color={t.narrativeEditColour} />
-              <Text style={styles.narrativeEditText} {...shrinkToFit(0.8)}>
-                {d.facts.edit}
-              </Text>
-            </Pressable>
-          </View>
-
-          <Section n={d.witnesses.n} title={d.witnesses.title} />
-          <View style={styles.fields}>
-            {draft.witnesses.map((value, i) => <View key={i} style={styles.full}><Field label={`Witness ${i+1}`} value={value} onChange={value => setDraft(current => ({...current, witnesses:current.witnesses.map((old,n) => n===i ? value : old)}))}/></View>)}
-          </View>
-          <Pressable onPress={() => setDraft(current => ({...current, witnesses:[...current.witnesses,'']}))} accessibilityRole="button" style={({pressed}) => [styles.add, pressed && styles.pressed]}><UsersRound size={t.addIcon} color={t.addColour}/><Text style={styles.addText}>{d.witnesses.add}</Text></Pressable>
-
-          <Section n={d.attached.n} title={d.attached.title} note={`${draft.included.length} Included`} noteGreen />
-          {draft.documents.map((row, i) => {
-            const Icon = ICONS[row.icon];
-            return (
-              <View key={row.name} style={[styles.doc, i === 0 ? styles.docFirst : null]}>
-                <Pressable accessibilityRole="checkbox" accessibilityLabel={row.name} accessibilityState={{checked:draft.included.includes(row.name)}} onPress={() => setDraft(current => ({...current,included:current.included.includes(row.name)?current.included.filter(name=>name!==row.name):[...current.included,row.name]}))} style={[styles.docCheck,!draft.included.includes(row.name)&&{backgroundColor:'transparent',borderWidth:1,borderColor:t.docCheckBg}]}/>
-                <Icon size={t.docIcon} color={colors.textPrimary} style={styles.docIcon} />
-                <View style={styles.docText}>
-                  <Text style={styles.docName} {...shrinkToFit(0.75)}>
-                    {row.name}
-                  </Text>
-                  <Text style={styles.docSub} {...shrinkToFit(0.8)}>
-                    {row.sub}
-                  </Text>
-                </View>
-                <Pressable
-                  accessibilityRole="button"
-                  accessibilityLabel={`View ${row.name}`}
-                  hitSlop={8}
-                  onPress={() => router.push(advDocHref(row.name) as Href)}
-                >
-                  <Eye size={t.docEye} color={colors.textPrimary} />
-                </Pressable>
-              </View>
-            );
-          })}
-          <Pressable onPress={attachDocument} accessibilityRole="button" style={({ pressed }) => [styles.add, pressed && styles.pressed]}>
-            <Paperclip size={t.addIcon} color={t.addColour} />
-            <Text style={styles.addText} {...shrinkToFit(0.8)}>
-              {d.attached.add}
-            </Text>
-          </Pressable>
-        </View>
+        </>}
+        {body}
       </ScrollView>
 
-      <View style={[styles.bar, { paddingBottom: insets.bottom + t.barPadBottom }]}>
+      {ready && <View style={[styles.bar, { paddingBottom: insets.bottom + t.barPadBottom }]}>
+        <View style={styles.barError}><InlineError error={act.error} retryLabel="Reload saved draft" onRetry={/newer|another session|changed/i.test(act.error) ? () => setReloading(true) : undefined} /></View>
         <View style={styles.barRow}>
-          <Pressable accessibilityRole="button" accessibilityState={{selected:saved}} onPress={() => {sessionDrafts.set(sessionKey,draft);setSaved(true);}} style={({ pressed }) => [styles.btn, styles.save, pressed && styles.pressed]}>
-            {saved ? <Check size={t.btnIcon} color={t.saveColour}/> : <Save size={t.btnIcon} color={t.saveColour}/>}
-            <Text style={styles.saveText} {...shrinkToFit(0.8)}>
-              {d.save}
-            </Text>
+          <Pressable accessibilityRole="button" disabled={act.busy} onPress={onSave} style={({ pressed }) => [styles.btn, styles.save, pressed && styles.pressed, act.busy && { opacity: 0.6 }]}>
+            <Save size={t.btnIcon} color={t.saveColour} />
+            <Text style={styles.saveText} {...shrinkToFit(0.8)}>{saving ? 'Saving…' : copy.save}</Text>
           </Pressable>
-          <Pressable
-            accessibilityRole="button"
-            onPress={() => router.push(`/advocate/fir/review?id=${id ?? ''}` as Href)}
-            style={({ pressed }) => [styles.btn, styles.send, pressed && styles.pressed]}
-          >
-            <Text style={styles.sendText} {...shrinkToFit(0.75)}>
-              {d.send}
-            </Text>
+          <Pressable accessibilityRole="button" disabled={act.busy} onPress={onSend} style={({ pressed }) => [styles.btn, styles.send, pressed && styles.pressed, act.busy && { opacity: 0.6 }]}>
+            <Text style={styles.sendText} {...shrinkToFit(0.75)}>{sending && !saving ? 'Sending…' : copy.send}</Text>
             <ArrowRight size={t.btnIcon} color={ink.onBrand} style={styles.sendArrow} />
           </Pressable>
         </View>
-        <Text style={styles.cap} {...shrinkToFit(0.75)}>
-          {d.caption}
-        </Text>
-      </View>
+        <Text style={styles.cap} {...shrinkToFit(0.75)}>{copy.caption}</Text>
+      </View>}
+
+      <Sheet visible={leaving} title="Save changes?" body="You have edits that aren’t saved yet." onClose={() => !sheetAct.busy && setLeaving(false)}>
+        <InlineError error={sheetAct.error} />
+        <SheetButton label={sheetAct.busy ? 'Saving…' : 'Save and leave'} disabled={sheetAct.busy} onPress={() => void sheetAct.run(async () => { await save(); setLeaving(false); toCases(); })} />
+        <SheetButton label="Discard changes" tone="danger" disabled={sheetAct.busy} onPress={() => { setDirty(false); setLeaving(false); toCases(); }} />
+        <SheetButton label="Keep editing" tone="neutral" disabled={sheetAct.busy} onPress={() => setLeaving(false)} />
+      </Sheet>
+
+      {/* A save refused because another session saved first offers a clean reload. */}
+      <Sheet visible={reloading} title="Reload the saved draft?" body="This replaces your unsaved edits with the latest saved version." onClose={() => setReloading(false)}>
+        <SheetButton label="Reload saved draft" tone="danger" onPress={() => { setReloading(false); act.setError(''); seeded.current = false; putContext(null); }} />
+        <SheetButton label="Keep my edits" tone="neutral" onPress={() => setReloading(false)} />
+      </Sheet>
     </View>
   );
 }
-
-import {styles} from '../../../features/fir/draftStyles';
-import FirAdvocate from '../../../features/fir/FirAdvocate';
-import {DATA_SOURCE} from '../../../lib/data-source';
-export default function LiveFirScreen() { return DATA_SOURCE === 'api' ? <FirAdvocate/> : <FixtureAdvocateFirDraftScreen/>; }

@@ -40,7 +40,7 @@ export class ApiClient {
   // docs/flows/FIR-DRAFT-FLOW.md: role-shaped view and the client / advocate / admin actions.
   firFlow(id:string){return this.request<import('./fir-flow').FirFlowView>(`/fir/${id}/flow`);}
   firSettings(){return this.request<import('./fir-flow').FirSettings>('/fir/settings');}
-  updateFirSettings(input:{police_submission_by_advocate:boolean}){return this.request<import('./fir-flow').FirSettings>('/fir/settings',input,'PUT');}
+  updateFirSettings(input:{police_submission_by_advocate:boolean}){return this.request<import('./fir-flow').FirSettings>('/fir/settings',input,'PATCH');}
   firClientApprove(id:string,draft_id:string){return this.request<import('./fir-flow').FirFlowView>(`/fir/${id}/client-approve`,{draft_id});}
   firClientChanges(id:string,input:{draft_id:string;sections:string[];comment:string;attachment_document_id?:string|null}){return this.request<import('./fir-flow').FirFlowView>(`/fir/${id}/client-changes`,input);}
   firReject(id:string,reason:string){return this.request<{rejected:true}>(`/fir/${id}/reject`,{reason});}

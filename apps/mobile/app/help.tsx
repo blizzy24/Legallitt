@@ -1,4 +1,4 @@
-import {router} from 'expo-router';
+import {router, useLocalSearchParams} from 'expo-router';
 import {ChevronDown, ChevronUp, Headset, Search} from 'lucide-react-native';
 import {useState} from 'react';
 import {Pressable, ScrollView, Text, TextInput, View} from 'react-native';
@@ -6,12 +6,24 @@ import {font} from '../constants/theme';
 import {FAQS, FAQ_CATEGORIES, SUPPORT_HOURS, type Faq} from '../features/account/faq';
 import {Button, Card, Empty, Screen, SectionLabel, ink, s} from '../features/account/ui';
 
+/** The FIR Draft topic: questions that mention FIR (FirShell's (?) opens /help?topic=fir, flow C4). */
+const FIR_TOPIC = 'FIR Draft' as const;
+const aboutFir = (f: Faq) => /\bFIR\b/.test(f.q + ' ' + f.a);
+type Filter = 'All' | Faq['category'] | typeof FIR_TOPIC;
+
 // Help Center (profile-20; older 69). D-25: searchable FAQs whose answers describe
 // what the app actually does. The drawn "Confidential Legal Assistance" footer is omitted (D-01).
+// Opened with ?topic=fir (the FIR steps' (?) button), it starts on the FIR questions,
+// the first one expanded; a "FIR Draft" chip shows the filter and "All FAQs" clears it.
 export default function HelpCenterScreen() {
-  const [query, setQuery] = useState(''), [category, setCategory] = useState<'All' | Faq['category']>('All'), [open, setOpen] = useState<string | null>(FAQS[0].q);
+  const {topic} = useLocalSearchParams<{topic?: string}>();
+  const fir = topic === 'fir';
+  const [query, setQuery] = useState(''), [category, setCategory] = useState<Filter>(fir ? FIR_TOPIC : 'All');
+  const [open, setOpen] = useState<string | null>(() => (fir ? (FAQS.find(f => /\bFIR\b/.test(f.q)) ?? FAQS.find(aboutFir)) : FAQS[0])?.q ?? null);
   const q = query.trim().toLowerCase();
-  const rows = FAQS.filter(f => (category === 'All' || f.category === category) && (!q || (f.q + ' ' + f.a).toLowerCase().includes(q)));
+  const inFilter = (f: Faq) => category === 'All' || (category === FIR_TOPIC ? aboutFir(f) : f.category === category);
+  const rows = FAQS.filter(f => inFilter(f) && (!q || (f.q + ' ' + f.a).toLowerCase().includes(q)));
+  const chips: Filter[] = ['All', ...(fir ? [FIR_TOPIC] : []), ...FAQ_CATEGORIES];
   return <Screen title="Help Center" subtitle="Support & FAQs">
     <View style={[s.input, {flexDirection: 'row', alignItems: 'center', gap: 10}]}>
       <Search size={18} color={ink.brown}/>
@@ -19,7 +31,7 @@ export default function HelpCenterScreen() {
         style={{flex: 1, fontFamily: font.appBody, fontSize: 15, minHeight: 46}}/>
     </View>
     <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{gap: 8}}>
-      {(['All', ...FAQ_CATEGORIES] as const).map(c => <Pressable key={c} accessibilityRole="button" accessibilityState={{selected: c === category}} onPress={() => setCategory(c)}
+      {chips.map(c => <Pressable key={c} accessibilityRole="button" accessibilityState={{selected: c === category}} onPress={() => setCategory(c)}
         style={{paddingHorizontal: 14, paddingVertical: 9, borderRadius: 12, borderWidth: 1, borderColor: ink.border, backgroundColor: c === category ? ink.chip : '#fff'}}>
         <Text style={{fontFamily: font.appBody, fontSize: 14, color: c === category ? ink.accent : '#3D3832'}}>{c === 'All' ? 'All FAQs' : c}</Text></Pressable>)}
     </ScrollView>

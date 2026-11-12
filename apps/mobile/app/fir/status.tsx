@@ -1,60 +1,166 @@
-import { router } from 'expo-router';
-import { ArrowRight, Bell, ClipboardList, Headset, Lock, ShieldCheck } from 'lucide-react-native';
+import { router, useLocalSearchParams, type Href } from 'expo-router';
+import { ArrowRight, Bell, ClipboardList, Headset } from 'lucide-react-native';
+import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { FIR_CLIENT_CHANGES, FIR_CLIENT_STAGES, type FirFlowView } from '@legalitt/shared';
 
-import FirJourneyToggle from '../../components/FirJourneyToggle';
 import FirResultHeader from '../../components/FirResultHeader';
-import FirTimeline from '../../components/FirTimeline';
+import FirTimeline, { type TimelineItem } from '../../components/FirTimeline';
 import RequestIdCard from '../../components/RequestIdCard';
 import { shrinkToFit } from '../../constants/textFit';
-import { colors, firResult as t, font } from '../../constants/theme';
-import { FIR_REQUEST, STATUS_STAGE_CHIP, STATUS_TIMELINE } from '../../data/fir';
+import { colors, firResult as t, font, ink } from '../../constants/theme';
+import { ClientIdentityReplacement } from '../../features/fir/Lifecycle';
+import { backOr, copyText, firHref, formatDate, shareStatus, useFirFlow } from '../../features/fir/flow';
+import { goHome, isPaid, requestSubmittedAt, turnaroundLong } from '../../features/fir/client/format';
+import { InlineError, LoadingState, StatePanel } from '../../features/fir/client/ui';
 
-// FIR draft status (design/48).
-//
-// REPORTED — the chip reads "Stage 2 of 4" while the timeline below it lists five
-// items. Both are drawn as the file has them; STATUS_STAGE_CHIP in data/fir.ts is a
-// one-line change once the client says which count is right.
+// C10 FIR Draft Status (design/48). The stage, its label and note come only from
+// flow.stage.client — the shared C10 mapping — so client, advocate and admin agree.
+// Five stages, "Stage N of 5" (flow [DECIDE]). Left out per flow C10 [REMOVE]:
+// "Verified Draft", "SMS &" in the notice, the 256-bit encrypted-folio / Bar
+// Council footer line, and "IPC" in the Information Review line (BNS only). The
+// drawn "securely logged … institutional intake" line drops only "securely".
 
-function FixtureFirStatusScreen() {
-  // Navigation follows the client's tap; time alone never advances FIR.
+// Row copy as drawn on design/48 (IPC removed).
+const STAGE_COPY = [
+  'Your FIR Draft request and submitted incident synopsis have been received.',
+  'Our legal documentation team is examining the facts, jurisdiction clauses, and applicable BNS provisions.',
+  'Your FIR draft will be formulated as per police jurisdictional requirements once verification finishes.',
+  'Review and approve the draft before dispatch.',
+  'You will receive instant access to download, print, and file the draft at the designated police station.',
+];
+const IDENTITY_SUBS = new Set(['identity_replacement_required', 'identity_review_pending', 'multiple_corrections_required']);
+
+function timeline(flow: FirFlowView): TimelineItem[] {
+  const c = flow.stage.client;
+  return FIR_CLIENT_STAGES.map((title, i) => {
+    const n = i + 1;
+    const tone = n < c.stage || (n === c.stage && c.done) ? 'done' : n === c.stage ? 'active' : 'pending';
+    return {
+      title,
+      description: STAGE_COPY[i]!,
+      tone,
+      state: tone === 'done' ? 'Completed' : tone === 'active' ? 'Active' : n === FIR_CLIENT_STAGES.length ? 'Upcoming' : 'Pending',
+      footnote: tone === 'active' ? c.note : null,
+    };
+  });
+}
+
+/** Heading and line under it for each state. Only stage 2 is drawn; the rest are §9.2. */
+function headline(flow: FirFlowView): [string, string] {
+  const c = flow.stage.client;
+  if (flow.status === 'draft') return ['FIR Draft Request Not Submitted', 'Your request is saved as a draft. Finish the steps and complete payment to submit it.'];
+  if (flow.status === 'submitted' || flow.status === 'payment_pending') return ['FIR Draft Request Awaiting Payment', 'Complete payment to send your request to our legal team.'];
+  if (flow.status === 'cancelled' || flow.status === 'refunded') return ['FIR Draft Request Cancelled', flow.status === 'refunded' ? 'This request was cancelled and refunded.' : 'This request was cancelled.'];
+  switch (c.stage) {
+    case 3: return flow.sub_status === FIR_CLIENT_CHANGES
+      ? ['Your FIR Draft Is Being Updated', 'Your advocate is updating your draft with the changes you asked for.']
+      : ['Your FIR Draft Is Being Prepared', 'Your advocate is preparing your FIR draft.'];
+    case 4: return ['Your FIR Draft Is Ready', 'Review your draft, then approve it or request changes.'];
+    case 5: return c.done
+      ? ['FIR Draft Completed', 'Your approved FIR draft is ready to download.']
+      : ['FIR Draft Approved', c.note ? `You approved your draft. ${c.note}.` : 'You approved your draft.'];
+    default: return ['FIR Draft Request Submitted', 'Your request has been logged and is currently under institutional intake review.'];
+  }
+}
+
+/** The one thing the client can do next from here, if anything. */
+function nextAction(flow: FirFlowView): { label: string; href: Href } | null {
+  const id = flow.case_id, c = flow.stage.client;
+  if (c.decision_due) return { label: 'Review Your Draft', href: firHref('ready', id) };
+  if (flow.status === 'draft') return { label: 'Continue Your Request', href: firHref(`step${flow.intake_step ?? 1}`, id) };
+  if (flow.status === 'submitted' || flow.status === 'payment_pending') return { label: 'Complete Payment', href: firHref('payment', id) };
+  if (c.stage === 3 && flow.sub_status === FIR_CLIENT_CHANGES) return { label: 'View Your Change Request', href: firHref('changes-submitted', id) };
+  if (c.stage === 5 && flow.events.some(e => e.type === 'fir_client_approved')) return { label: 'View Approved Draft', href: firHref('approved', id) };
+  if (c.stage === 5 && flow.draft) return { label: 'View FIR Draft', href: firHref('ready', id) };
+  return null;
+}
+
+export default function FirStatusScreen() {
+  const { caseId } = useLocalSearchParams<{ caseId?: string }>();
   const insets = useSafeAreaInsets();
+  const f = useFirFlow(caseId);
+  const flow = f.flow;
+  const [shareNote, setShareNote] = useState('');
+
+  const share = async () => {
+    if (!flow) return;
+    setShareNote('');
+    try {
+      await shareStatus(flow);
+    } catch {
+      const c = flow.stage.client;
+      const ok = await copyText(`FIR Draft request ${flow.reference}: ${c.status} (Stage ${c.stage} of 5, ${c.label}).`);
+      setShareNote(ok ? 'Sharing isn’t available here, so the status was copied instead.' : 'Sharing isn’t available on this device.');
+    }
+  };
+  const header = <FirResultHeader title="Fir Draft Status" action="share" onAction={flow ? () => void share() : undefined} onBack={() => backOr('/(tabs)/home' as Href)} />;
+
+  if (f.loading && !flow) return <View style={styles.screen}>{header}<LoadingState /></View>;
+  if (!flow)
+    return (
+      <View style={styles.screen}>
+        {header}
+        <ScrollView contentContainerStyle={styles.content}>
+          <StatePanel tone="error" title="We couldn’t load your request" body={f.error || 'Something went wrong loading your request.'}
+            actions={[...(caseId ? [{ label: 'Try again', onPress: f.reload, primary: true }] : []), { label: 'Go to My Requests', onPress: () => router.replace('/cases') }, { label: 'Go to Home', onPress: goHome }]} />
+        </ScrollView>
+      </View>
+    );
+
+  const c = flow.stage.client;
+  const paid = isPaid(flow);
+  const cancelled = flow.status === 'cancelled' || flow.status === 'refunded';
+  const [heading, body] = headline(flow);
+  const action = nextAction(flow);
+  const submitted = requestSubmittedAt(flow);
 
   return (
     <View style={styles.screen}>
-      <FirResultHeader title="Fir Draft Status" />
+      {header}
 
       <ScrollView
         contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + t.contentTop }]}
         showsVerticalScrollIndicator={false}
       >
+        {!!f.error && <InlineError style={styles.refreshError} message={`Couldn’t refresh this request. ${f.error}`} onRetry={f.reload} />}
+
         <View style={styles.card}>
           <View style={styles.pillRow}>
             <View style={styles.pill}>
               <View style={styles.pillDot} />
               <Text style={styles.pillText} {...shrinkToFit(0.8)}>
-                UNDER REVIEW
-              </Text>
-            </View>
-            <View style={styles.verified}>
-              <ShieldCheck size={t.verifiedIcon} color={colors.textBody} />
-              <Text style={styles.verifiedText} {...shrinkToFit(0.8)}>
-                Verified Draft
+                {c.status.toUpperCase()}
               </Text>
             </View>
           </View>
 
           <Text style={styles.heading} {...shrinkToFit(0.75)}>
-            FIR Draft Request Submitted
+            {heading}
           </Text>
-          <Text style={styles.body}>
-            Your request has been securely logged and is currently under institutional intake
-            review.
-          </Text>
+          <Text style={styles.body}>{body}</Text>
 
-          <RequestIdCard requestId={FIR_REQUEST.requestId} style={styles.idCard} />
+          <RequestIdCard requestId={flow.reference} style={styles.idCard} />
+          {!!shareNote && <Text accessibilityLiveRegion="polite" style={styles.shareNote}>{shareNote}</Text>}
         </View>
+
+        {action && (
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => router.push(action.href)}
+            style={({ pressed }) => [styles.button, pressed && styles.pressed]}
+          >
+            <Text style={styles.buttonLabel}>{action.label}</Text>
+            <ArrowRight size={t.buttonIcon} color={ink.onBrand} style={styles.buttonIcon} />
+          </Pressable>
+        )}
+
+        {paid && !!flow.sub_status && IDENTITY_SUBS.has(flow.sub_status) && (
+          <View style={styles.identity}>
+            <ClientIdentityReplacement caseId={flow.case_id} revision={`${flow.status}:${flow.sub_status}`} />
+          </View>
+        )}
 
         <View style={styles.card}>
           <View style={styles.labelRow}>
@@ -64,40 +170,44 @@ function FixtureFirStatusScreen() {
             <ClipboardList size={t.noteIcon} color={colors.textBody} />
           </View>
 
-          <Row label="Request Type" value={FIR_REQUEST.service} first />
-          <Row label="Submitted On" value={FIR_REQUEST.submittedOn} />
-          <Row label="Current Status" chip="Under Review" />
-          <Row label="Estimated Turnaround" value={FIR_REQUEST.turnaround} note={FIR_REQUEST.turnaroundNote} />
+          <Row label="Request Type" value="FIR Draft" first />
+          {paid && !!submitted && <Row label="Submitted On" value={formatDate(submitted)} />}
+          <Row label="Current Status" chip={c.status} />
+          {paid && !cancelled && c.stage < 4 && (
+            <Row label="Estimated Turnaround" value={turnaroundLong(flow.settings)} note="Standard legal verification window" />
+          )}
         </View>
 
-        <View style={styles.card}>
-          <View style={styles.labelRow}>
-            <View style={styles.sectionText}>
-              <Text style={styles.label} {...shrinkToFit(0.8)}>
-                REQUEST STATUS
-              </Text>
-              <Text style={styles.sectionTitle} {...shrinkToFit(0.8)}>
-                What happens next?
-              </Text>
+        {paid && !cancelled && (
+          <View style={styles.card}>
+            <View style={styles.labelRow}>
+              <View style={styles.sectionText}>
+                <Text style={styles.label} {...shrinkToFit(0.8)}>
+                  REQUEST STATUS
+                </Text>
+                <Text style={styles.sectionTitle} {...shrinkToFit(0.8)}>
+                  What happens next?
+                </Text>
+              </View>
+              <View style={styles.stageChip}>
+                <Text style={styles.stageChipText} {...shrinkToFit(0.8)}>
+                  Stage {c.stage} of 5
+                </Text>
+              </View>
             </View>
-            {/* REPORTED — "of 4" against five timeline items below. */}
-            <View style={styles.stageChip}>
-              <Text style={styles.stageChipText} {...shrinkToFit(0.8)}>
-                {STATUS_STAGE_CHIP}
-              </Text>
-            </View>
+
+            <FirTimeline items={timeline(flow)} variant="status" />
           </View>
+        )}
 
-          <FirTimeline items={STATUS_TIMELINE} variant="status" />
-        </View>
-
-        <View style={styles.note}>
-          <Bell size={t.noteIcon} color={colors.textBody} />
-          <Text style={styles.noteText}>
-            We&apos;ll notify you via SMS &amp; in-app notification the moment your FIR draft is
-            compiled and ready for download.
-          </Text>
-        </View>
+        {paid && !cancelled && c.stage < 4 && (
+          <View style={styles.note}>
+            <Bell size={t.noteIcon} color={colors.textBody} />
+            <Text style={styles.noteText}>
+              We&apos;ll notify you in the app the moment your FIR draft is compiled and ready for download.
+            </Text>
+          </View>
+        )}
 
         <View style={styles.card}>
           <View style={styles.helpRow}>
@@ -117,7 +227,7 @@ function FixtureFirStatusScreen() {
 
           <Pressable
             accessibilityRole="button"
-            onPress={() => router.push('/support-chat')}
+            onPress={() => router.push((`/support?caseId=${encodeURIComponent(flow.case_id)}`) as Href)}
             style={({ pressed }) => [styles.helpButton, pressed && styles.pressed]}
           >
             <Text style={styles.helpButtonLabel} {...shrinkToFit(0.8)}>
@@ -128,18 +238,9 @@ function FixtureFirStatusScreen() {
         </View>
 
         <View style={styles.spacer} />
-
-        <View style={styles.footer}>
-          <Lock size={t.footerIcon} color={colors.textBody} />
-          <Text style={styles.footerText} {...shrinkToFit(0.75)}>
-            STORED ENCRYPTED · VISIBLE ONLY TO YOUR CASE TEAM
-          </Text>
-        </View>
         <Text style={styles.footerLine} {...shrinkToFit(0.75)}>
           Drafts strictly curated under legal tech advisory protocols.
         </Text>
-
-        <FirJourneyToggle value="status" />
       </ScrollView>
     </View>
   );
@@ -196,11 +297,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: t.padX,
     paddingTop: t.contentTop,
   },
+  refreshError: {
+    marginTop: t.cardGap,
+  },
   card: {
     marginTop: t.cardGap,
     borderRadius: t.cardRadius,
     backgroundColor: colors.card,
     padding: t.cardPad,
+  },
+  identity: {
+    marginTop: t.cardGap,
   },
   pillRow: {
     flexDirection: 'row',
@@ -214,6 +321,7 @@ const styles = StyleSheet.create({
     backgroundColor: t.pillBg,
     flexDirection: 'row',
     alignItems: 'center',
+    flexShrink: 1,
   },
   pillDot: {
     width: t.pillDot,
@@ -227,18 +335,6 @@ const styles = StyleSheet.create({
     fontSize: t.pillSize,
     letterSpacing: t.pillSpacing,
     color: t.pillText,
-  },
-  verified: {
-    marginLeft: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
-    flexShrink: 1,
-  },
-  verifiedText: {
-    marginLeft: t.verifiedIconGap,
-    fontFamily: font.appBody,
-    fontSize: t.verifiedSize,
-    color: colors.textBody,
   },
   heading: {
     marginTop: t.pillGap,
@@ -256,6 +352,12 @@ const styles = StyleSheet.create({
   },
   idCard: {
     marginTop: t.pillGap,
+  },
+  shareNote: {
+    marginTop: 8,
+    fontFamily: font.appBody,
+    fontSize: 12,
+    color: colors.textBody,
   },
   labelRow: {
     flexDirection: 'row',
@@ -414,24 +516,29 @@ const styles = StyleSheet.create({
   helpButtonIcon: {
     marginLeft: t.helpButtonIconGap,
   },
+  button: {
+    marginTop: t.cardGap,
+    minHeight: t.buttonHeight,
+    borderRadius: t.buttonRadius,
+    backgroundColor: colors.brand,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonLabel: {
+    fontFamily: font.appSemi,
+    fontSize: t.buttonSize,
+    color: ink.onBrand,
+  },
+  buttonIcon: {
+    marginLeft: t.buttonIconGap,
+  },
   pressed: {
     opacity: 0.85,
   },
   spacer: {
     flex: 1,
     minHeight: t.buttonGap,
-  },
-  footer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  footerText: {
-    marginLeft: t.footerIconGap,
-    fontFamily: font.appSemi,
-    fontSize: t.footerSize,
-    letterSpacing: 0.4,
-    color: colors.textBody,
   },
   footerLine: {
     marginTop: t.footerLineGap,
@@ -441,6 +548,3 @@ const styles = StyleSheet.create({
     color: colors.textBody,
   },
 });
-import FirClient from '../../features/fir/FirClient';
-import {DATA_SOURCE} from '../../lib/data-source';
-export default function LiveFirScreen() { return DATA_SOURCE === 'api' ? <FirClient/> : <FixtureFirStatusScreen/>; }

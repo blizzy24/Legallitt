@@ -30,7 +30,6 @@ export function useFirFlow(caseId?:string){
 
 export const firHref=(screen:string,caseId:string,extra:Record<string,string>={})=>
   (`/fir/${screen}?${new URLSearchParams({caseId,...extra}).toString()}`) as Href;
-export const advocateFirHref=(screen:string,caseId:string)=>(`/advocate/fir/${screen}?caseId=${encodeURIComponent(caseId)}`) as Href;
 
 /** Back that never strands the person: history if there is any, otherwise the given route. */
 export function backOr(fallback:Href){if(router.canGoBack())router.back();else router.replace(fallback);}

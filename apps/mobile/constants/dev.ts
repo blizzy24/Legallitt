@@ -11,19 +11,12 @@
  * prototype drives them yet:
  *
  *   - app/legal-notice/tracking.tsx   Drafting in Progress / Awaiting Your Approval
- *   - app/fir/status.tsx + app/fir/ready.tsx   Under Review / Draft Ready
  *
- * NOT app/advocate/fir/review.tsx. That screen has a three-state switcher too, but
- * design/219 DRAWS it, with its own "ADVOCATE PREVIEW SWITCHER" label and an
- * "Interactive Demo" tag, so it is client UI and is rendered unconditionally. Its
- * Approved and Changes segments still have no design behind them; the screen says
- * so inline rather than hiding the control.
+ * The FIR screens have no preview control: every FIR state comes from the case
+ * (docs/flows/FIR-DRAFT-FLOW.md), and design 219's "Advocate Preview Switcher"
+ * is left out as a design-only demo aid.
  *
- * The FIR pair is one control shared by two routes (components/FirJourneyToggle.tsx):
- * status and ready are two states of the same journey, and nothing in the prototype
- * advances between them, so the toggle navigates rather than setting local state.
- *
- * Set to false to hide both. The screens still accept `?state=` in the URL, so the
+ * Set to false to hide it. The screen still accepts `?state=` in the URL, so the
  * states stay reachable for review without the on-screen control.
  */
 export const DEV_PREVIEW_TOGGLES = false;

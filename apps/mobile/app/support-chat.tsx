@@ -440,6 +440,13 @@ const styles = StyleSheet.create({
   },
 });
 
+import {SERVICE_CODES, type ServiceCode} from '@legalitt/shared';
+import {useLocalSearchParams} from 'expo-router';
 import {SupportChat} from '../features/messages/Support';
 import {DATA_SOURCE as LIVE_DATA_SOURCE} from '../lib/data-source';
-export default function LiveScreen() { return LIVE_DATA_SOURCE === 'api' ? <SupportChat/> : <FixtureSupportChatScreen/>; }
+// ?service=fir_draft (flow C1b): shows "Regarding: FIR Draft Service" and tags the thread.
+export default function LiveScreen() {
+  const {service} = useLocalSearchParams<{service?: string}>();
+  const code = SERVICE_CODES.includes(service as ServiceCode) ? (service as ServiceCode) : undefined;
+  return LIVE_DATA_SOURCE === 'api' ? <SupportChat service={code}/> : <FixtureSupportChatScreen/>;
+}

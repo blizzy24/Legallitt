@@ -1,0 +1,146 @@
+
+=== client-assistance
+SHOT C1-landing.png
+PASS C1 card tap selects without navigating 
+SHOT C1a-request-callback.png
+SHOT C1a-request-callback-submitted.png
+PASS Request Callback ticket tagged FIR Draft 9706ecf6-a0f9-4b6f-900c-53a0feff28f6
+SHOT C1b-support-chat.png
+SHOT C1b-support-chat-sent.png
+PASS Request Chat thread tagged FIR Draft 34b1218e-65e5-4d99-888b-c1be6c2afbea
+SHOT ADMIN-support-inbox.png
+PASS both requests are in the admin Support inbox 
+
+=== client-intake
+SHOT C2-why-fir.png
+PASS C2 turnaround comes from settings 24–48 Hours
+PASS C2 Send a FIR Draft opens Step 1 
+SHOT C3-step1-quick-submission.png
+PASS C3 Step 1 saved e5b6cfd9-8c61-4401-969e-0b50ad7b5d36
+PASS C4 location and police station prefilled from Step 1 
+SHOT C4-step2-incident.png
+PASS C4 Step 2 saved 
+SHOT C5-complainant-sheet.png
+PASS C5 complainant sheet saves the extra fields 
+PASS C5 requires at least one accused 
+SHOT C5-accused-sheet.png
+SHOT C5-witness-sheet.png
+SHOT C5-step3-people.png
+PASS C5 Step 3 saved: complainant, unknown accused, key witness 
+SHOT C6-step4-documents-blocked.png
+PASS C6 Continue is blocked with the reason beside each missing slot 
+SHOT C6-step4-documents.png
+PASS C6 uploads stored by slot; identity shown masked XXXX-XXXX-4812
+SHOT C7-step5-review.png
+PASS C7 editing from Review returns straight to Review 
+PASS C7 Proceed To Pay opens payment 
+
+=== client-payment
+SHOT C8-F3-complete-payment.png
+PASS C8 fee rows come from the price quote total ₹1,473.53
+SHOT C8a-F4-scan-pay.png
+PASS C8a Scan & Pay never advances on a timer 
+SHOT C8b-F5-payment-success.png
+PASS C8b payment captured (simulated) ₹1,473.53
+SHOT C9-request-submitted.png
+SHOT C10-status-stage2.png
+PASS C9 → C10 by tap; client sees Stage 2 of 5 
+
+=== advocate-reject
+SHOT ADMIN-fir-list.png
+SHOT ADMIN-new-request.png
+PASS admin §3.1 new paid request shows in the queue with Assign 
+SHOT A1-cases-list.png
+SHOT A1-cases-list-fir.png
+PASS A1 card shows FIR DRAFT, client · incident, fee and the status button 
+SHOT A2-request-details.png
+SHOT A2-reject-sheet.png
+PASS A2 Reject returns the case to admin; the advocate loses access 
+SHOT A1-cases-list-empty.png
+SHOT ADMIN-advocate-rejected.png
+PASS admin §3.2 sees the rejection reason and can reassign 
+PASS admin reassigned to the second advocate; client still at stage 2 
+
+=== advocate-draft
+SHOT A2-accept-confirm.png
+PASS A2 Accept asks to confirm, then opens Review Documents 
+SHOT A3-review-documents.png
+SHOT A4-draft-generator.png
+PASS A4 Generate with AI is disabled with the coming-soon line 
+SHOT A5-proforma-editor-initial.png
+SHOT A5-legal-section-sheet.png
+SHOT A5-proforma-editor.png
+PASS A5 Save Draft stores a version; status Draft Preparation 
+SHOT A6-review-waiting-admin-449.png
+PASS A5 Send for Review → awaiting admin approval → A6 
+SHOT A1-cases-list-sent-to-admin.png
+SHOT A6-review-waiting-admin-219.png
+
+=== admin-return
+SHOT ADMIN-approval-queue.png
+SHOT ADMIN-return-for-correction.png
+PASS admin §3.3 Return to advocate needs a reason 
+SHOT A1-cases-list-admin-returned.png
+SHOT A6-review-admin-returned.png
+SHOT A5-proforma-admin-returned.png
+PASS advocate fixed the returned draft and resent it 
+
+=== admin-approve
+SHOT ADMIN-approve.png
+SHOT ADMIN-sent-to-client.png
+PASS admin §3.3 Approve sends the draft to the client (status client_review) 
+
+=== client-changes
+SHOT C10-status-stage4.png
+SHOT C11-F6-draft-ready-decision.png
+PASS C11 shows the approved PDF with Approve and Request For Changes 
+SHOT C12-F7-request-changes-validation.png
+SHOT C12-F7-request-changes.png
+SHOT C13-F8-change-request-submitted.png
+PASS C12 change request stored with 2 sections and an attachment 
+SHOT C10-status-stage3-changes.png
+PASS C13 → C10: stage 3, "Advocate is updating your draft" 
+
+=== advocate-revise
+SHOT A1-cases-list-client-changes.png
+SHOT A6-review-client-changes.png
+PASS A6 shows the client’s sections, text and attachment 
+SHOT A5-proforma-client-changes.png
+PASS the revision goes to the admin again 
+
+=== admin-approve-2
+PASS admin approved the revised draft 
+
+=== client-approve
+SHOT C11-approve-confirm.png
+SHOT C14-F9-draft-approved.png
+PASS C11 Approve → C14; with the setting on the case waits for police submission 
+
+=== advocate-police
+SHOT A1-cases-list-client-approved.png
+SHOT A6-review-client-approved.png
+SHOT A6-mark-submitted-sheet.png
+SHOT A7-completed.png
+PASS A6 Mark as submitted to police needs the receipt; the case completes 
+SHOT A7-wallet.png
+PASS wallet shows the advocate’s share ₹999
+
+=== client-final
+SHOT C10-status-stage5-completed.png
+SHOT C11-49-draft-ready-no-decision.png
+SHOT C14-F9-draft-approved-police-done.png
+PASS client sees completion and the police receipt 
+PASS client downloads the approved draft PDF and the police receipt FIR_Draft_FIR-2026-0007_v3.pdf
+
+=== police-setting-off
+SHOT ADMIN-police-setting-off.png
+PASS admin switched "advocate submits to police" off in the panel 
+SHOT C14-F9-draft-approved-client-submits.png
+PASS setting off: client approval completes the case; F9 shows the client-submits version 
+SHOT C10-status-completed-client-submits.png
+SHOT A6-review-completed-client-submits.png
+SHOT A7-completed-client-submits.png
+PASS setting off: advocate screens drop the police step and the share is credited 
+PASS setting switched back on 
+
+ALL 47 FIR FLOW CHECKS PASSED

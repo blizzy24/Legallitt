@@ -11,19 +11,15 @@ import {parse} from '../auth/auth.service';
 import {appendCaseEvent,lockedCase,writeFirFlowTransition} from './case-state-machine';
 import {ensureFirLifecycle,firCorrectionState} from './fir-lifecycle';
 import type {CaseActor} from './case-access';
+import {FIR_EVENT_LABELS,firTeamEventLabel} from './fir-event-labels';
 import {NOTIFICATIONS,type NotificationsPort} from '../notifications/notifications.port';
 
 type Tx=Prisma.TransactionClient;
 const doc=(d:Document):FirFlowDocument=>({id:d.id,filename:d.filename,mime_type:d.mime_type,size_bytes:d.size_bytes.toString(),page_count:d.page_count});
 const hours=(h:number)=>h*3600_000;
 
-// Event labels for the timelines and the advocate's audit log (A6). The client
-// never sees the admin step or internal review events (C10).
-const LABELS:Record<string,string>={fir_draft_saved:'Draft saved',fir_draft_submitted:'Sent to admin',fir_admin_returned:'Admin returned the draft',
-  fir_draft_approved:'Admin approved',fir_sent_to_client:'Sent to client',fir_client_approved:'Client approved',fir_client_changes_requested:'Client requested changes',
-  fir_client_reminded:'Client reminded',fir_police_submitted:'Submitted to police',fir_advocate_reassigned:'Advocate reassigned',fir_advocate_rejected:'Advocate rejected · returned to admin',
-  fir_released_to_client:'Draft released to client · completed',fir_identity_reviewed:'Identity document reviewed',fir_identity_replaced:'Replacement identity uploaded',payment_captured:'Payment received',case_cancelled:'Request cancelled',refund_recorded:'Refund recorded'};
-const STATUS_LABELS:Record<string,string>={submitted:'Request submitted',paid:'Payment received',assigned:'Advocate assigned',advocate_accepted:'Advocate accepted',advocate_declined:'Advocate rejected · returned to admin',completed:'Completed'};
+// The client never sees the admin step or internal review events (C10).
+const LABELS=FIR_EVENT_LABELS;
 const CLIENT_EVENTS=new Set(['payment_captured','fir_sent_to_client','fir_released_to_client','fir_client_approved','fir_client_changes_requested','fir_police_submitted','case_cancelled','refund_recorded']);
 const CLIENT_STATUS_LABELS:Record<string,string>={submitted:'Request submitted',assigned:'Drafting team assigned',completed:'Completed'};
 
@@ -53,7 +49,7 @@ export class FirFlowService {
 
   private async build(tx:Tx,actor:CaseActor,c:Case):Promise<FirFlowView>{
     const isClient=actor.role==='client',settings=await this.settings(tx);
-    const intake=firIntakeDetails(c.details,await tx.caseParty.findMany({where:{case_id:c.id}})) as {contact?:{fullName?:string;mobile?:string;email?:string};jurisdiction?:{policeStation?:string};place?:{city?:string};incident?:{type?:string}};
+    const intake=firIntakeDetails(c.details,await tx.caseParty.findMany({where:{case_id:c.id}})) as {contact?:{fullName?:string;mobile?:string;email?:string};jurisdiction?:{policeStation?:string;district?:string;state?:string};place?:{city?:string};incident?:{type?:string}};
     const events=await tx.caseEvent.findMany({where:{case_id:c.id},orderBy:{id:'asc'}});
     const life=await tx.firLifecycle.findUnique({where:{case_id:c.id}});
     const submittedAt=events.find(e=>e.to_status==='submitted')?.created_at??null;
@@ -81,8 +77,8 @@ export class FirFlowService {
     const receipt=police?await tx.document.findUnique({where:{id:police.receipt_document_id}}):null;
     let advocate:FirFlowView['advocate']=null;
     if(c.advocate_id&&!isClient||c.advocate_id&&!['assigned'].includes(c.status)){
-      const u=await tx.user.findUnique({where:{id:c.advocate_id!},select:{id:true,full_name:true,advocate_profiles_user_id_relations:{select:{verification:true}}}});
-      if(u)advocate={id:u.id,name:u.full_name,verified:u.advocate_profiles_user_id_relations?.verification==='approved',photo_url:null};
+      const u=await tx.user.findUnique({where:{id:c.advocate_id!},select:{id:true,full_name:true,advocate_profiles_user_id_relations:{select:{verification:true,photo_key:true}}}});
+      if(u)advocate={id:u.id,name:u.full_name,verified:u.advocate_profiles_user_id_relations?.verification==='approved',photo_key:u.advocate_profiles_user_id_relations?.photo_key??null};
     }
     const reminded=[...events].reverse().find(e=>e.type==='fir_client_reminded')?.created_at??null;
     const next=reminded?new Date(reminded.getTime()+hours(FIR_REMIND_HOURS)):null;
@@ -93,16 +89,16 @@ export class FirFlowService {
         if(!CLIENT_EVENTS.has(e.type))return null;
         return {type:e.type,label:e.type==='fir_sent_to_client'?'Draft ready for your review':e.type==='fir_released_to_client'?'Draft ready':e.type==='fir_client_approved'?'You approved the draft':e.type==='fir_client_changes_requested'?'You requested changes':LABELS[e.type],actor:actorRole,created_at:e.created_at.toISOString()};
       }
-      const p=(e.payload??{}) as {version?:number;reason?:string};
-      const base=e.type==='status_changed'?STATUS_LABELS[e.to_status??'']:LABELS[e.type];
-      if(!base)return null;
       // Why an advocate left a case, or was replaced, is for the admin only.
-      return {type:e.type,label:`${base}${p.version?` (v${p.version})`:''}${p.reason&&actor.role==='admin'?`: ${p.reason}`:''}`,actor:actorRole,created_at:e.created_at.toISOString()};
+      const label=firTeamEventLabel(e,actor.role==='admin');
+      return label?{type:e.type,label,actor:actorRole,created_at:e.created_at.toISOString()}:null;
     };
     const breakdown=(paid?.quote?.snapshot as {breakdown?:{advocate_entitlement_paise?:string|null}}|undefined)?.breakdown;
     return {case_id:c.id,reference:c.reference,status:c.status,sub_status:c.sub_status,stage:firStage(c),settings,
       created_at:c.created_at.toISOString(),submitted_at:submittedAt?.toISOString()??null,paid_at:(life?.paid_at??paid?.captured_at)?.toISOString()??null,completed_at:c.completed_at?.toISOString()??null,
+      intake_step:c.status==='draft'?Math.max(1,Math.min(5,Number((c.details as {intake_step?:unknown}|null)?.intake_step)||1)):null,
       incident_type:intake.incident?.type||null,police_station:intake.jurisdiction?.policeStation||null,city:intake.place?.city||null,
+      district:intake.jurisdiction?.district||null,state:intake.jurisdiction?.state||null,
       client:isClient?null:{name:intake.contact?.fullName||'Client',mobile:intake.contact?.mobile||null,email:intake.contact?.email||null,city:intake.place?.city||null},
       advocate,draft,reviews,
       police:police&&receipt?{submitted_on:police.submitted_on.toISOString().slice(0,10),receipt:doc(receipt),created_at:police.created_at.toISOString()}:null,

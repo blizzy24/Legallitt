@@ -10,6 +10,8 @@ const matterLabels: Record<string, string> = {
   ...Object.fromEntries([...PROPERTY_TYPES,...FORENSIC_DOCUMENT_TYPES].map(v=>[v.code,v.label])),
   property_dispute: 'Property Dispute', money_recovery: 'Money Recovery', tenant_issue: 'Tenant Issue',
   family_dispute: 'Family Dispute', cheque_bounce: 'Cheque Bounce', consumer_complaint: 'Consumer Complaint',
+  // FIR Draft incident types (Step 1 chips).
+  theft: 'Theft', fraud: 'Fraud', assault: 'Assault', harassment: 'Harassment', 'property-dispute': 'Property Dispute', 'cyber-crime': 'Cyber Crime',
 };
 const partyLabels: Record<string, string> = {sender: 'Sender', noticee: 'Noticee', opposing: 'Opposing party', accused: 'Accused', witness: 'Witness'};
 const rupees = (value: string) => '₹' + (BigInt(value) / 100n).toLocaleString('en-IN') + '.' + (BigInt(value) % 100n).toString().padStart(2, '0');

@@ -22,7 +22,7 @@ function routesIn(dir, base = '') {
   });
 }
 const routes = [...new Set(routesIn(app))].sort().map(route => route.replace(/\[[^\]]+\]/g, '1'));
-assert.equal(routes.length, 341, 'Every route is enumerated, including report-service documents/chat, Court Marriage and the messages/support threads (D-28), cancellation (D-12), account settings (D-20..D-27) and Payment Details (D-18)');
+assert.equal(routes.length, 346, 'Every route is enumerated, including the five FIR client screens added by docs/flows/FIR-DRAFT-FLOW.md (scan-pay, payment-success, request-changes, changes-submitted, approved), report-service documents/chat, Court Marriage and the messages/support threads (D-28), cancellation (D-12), account settings (D-20..D-27) and Payment Details (D-18)');
 const fixtureMode = process.env.SMOKE_DATA_SOURCE === 'fixtures';
 const sessions = fixtureMode ? {} : Object.fromEntries(['client', 'advocate'].map(role => {
   const file = process.env[`SMOKE_${role.toUpperCase()}_SESSION`];

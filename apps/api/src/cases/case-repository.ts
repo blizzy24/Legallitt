@@ -1,3 +1,4 @@
+import {FIR_EVENT_LABELS,FIR_STATUS_LABELS,firTeamEventLabel} from './fir-event-labels';
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { z } from "zod";
 import { CaseStatusSchema, NoticePolicySchema, ServiceCodeSchema, firIntakeDetails, type ServiceCode } from "@legalitt/shared";
@@ -44,7 +45,7 @@ function decodeCursor(value: string) {
 // FIR (docs/flows/FIR-DRAFT-FLOW.md C10): the client never sees the admin step,
 // internal reviews, an advocate's rejection or reminders, and gets no payloads.
 // A later advocate does not see why an earlier advocate left the case.
-const FIR_CLIENT_HIDDEN_EVENTS = ['fir_admin_returned','fir_identity_reviewed','fir_advocate_reassigned','fir_draft_saved','fir_draft_submitted','fir_draft_approved','fir_advocate_rejected','fir_client_reminded'];
+const FIR_CLIENT_HIDDEN_EVENTS = ['fir_admin_returned','fir_identity_reviewed','fir_advocate_reassigned','fir_draft_saved','fir_draft_submitted','fir_draft_approved','fir_advocate_rejected','fir_client_reminded','fir_client_viewed'];
 const FIR_ADVOCATE_PRIVATE_EVENTS = ['fir_advocate_rejected','fir_advocate_reassigned'];
 function firEventsFor<T extends {type: string; payload: unknown}>(role: string, events: T[]): T[] {
   if (role === 'client') return events.filter(e => !FIR_CLIENT_HIDDEN_EVENTS.includes(e.type)).map(e => ({...e, payload: {}}));
@@ -191,7 +192,21 @@ export class CaseRepository {
       include: { advocate_id_relation: { select: { id: true, full_name: true } } },
       take: input.limit + 1,
     });
-    const items = rows.slice(0, input.limit).map(({ advocate_id_relation: advocate, ...record }) => ({ ...record, advocate }));
+    // A1 (design 214): the advocate's FIR card shows their share and the latest note.
+    const firIds = actor.role === 'advocate' ? rows.filter(r => r.service_code === 'fir_draft').map(r => r.id) : [];
+    const firCards = new Map<string, {share_paise: string | null; note: string | null}>();
+    if (firIds.length) {
+      const paid = await db.payment.findMany({where: {case_id: {in: firIds}, purpose: 'service_fee', status: 'captured'}, select: {case_id: true, quote: {select: {snapshot: true}}}});
+      const latest = await db.caseEvent.findMany({where: {case_id: {in: firIds}, case_id_relation: {is: caseScope(actor)},
+        OR: [{type: {in: Object.keys(FIR_EVENT_LABELS)}}, {type: 'status_changed', to_status: {in: Object.keys(FIR_STATUS_LABELS) as never}}]},
+        orderBy: [{case_id: 'asc'}, {id: 'desc'}], distinct: ['case_id']});
+      for (const id of firIds) {
+        const snapshot = paid.find(p => p.case_id === id)?.quote?.snapshot as {breakdown?: {advocate_entitlement_paise?: string | null}} | undefined;
+        const event = latest.find(e => e.case_id === id);
+        firCards.set(id, {share_paise: snapshot?.breakdown?.advocate_entitlement_paise ?? null, note: event ? firTeamEventLabel(event, false) : null});
+      }
+    }
+    const items = rows.slice(0, input.limit).map(({ advocate_id_relation: advocate, ...record }) => ({ ...record, advocate, ...(firCards.has(record.id) ? {fir_card: firCards.get(record.id)} : {}) }));
     const last = items.at(-1);
     return {
       items,

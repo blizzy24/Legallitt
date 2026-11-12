@@ -1,5 +1,5 @@
-import { router } from 'expo-router';
-import { ArrowRight, Check, Clock, Lock } from 'lucide-react-native';
+import { router, useLocalSearchParams, type Href } from 'expo-router';
+import { ArrowRight, Check, Clock } from 'lucide-react-native';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -7,15 +7,52 @@ import FirResultHeader from '../../components/FirResultHeader';
 import RequestIdCard from '../../components/RequestIdCard';
 import { shrinkToFit } from '../../constants/textFit';
 import { colors, firResult as t, font, ink } from '../../constants/theme';
-import { FIR_REQUEST } from '../../data/fir';
+import { firHref, useFirFlow } from '../../features/fir/flow';
+import { dayTime, goHome, hashRef, isPaid, requestSubmittedAt, turnaroundShort } from '../../features/fir/client/format';
+import { LoadingState, StatePanel } from '../../features/fir/client/ui';
 
-// FIR request submitted (design/47).
-function FixtureFirSubmittedScreen() {
+// C9 Request Submitted (design/47), reached from F5 Start Tracking. Real request ID,
+// submitted time and the policy turnaround. Back arrow and Back To Home go Home —
+// never back into payment. The drawn "Your information is encrypted • Bar Council
+// Compliant" footer is left out (flow C9 [REMOVE]).
+export default function FirSubmittedScreen() {
+  const { caseId } = useLocalSearchParams<{ caseId?: string }>();
   const insets = useSafeAreaInsets();
+  const f = useFirFlow(caseId);
+  const flow = f.flow;
+  const header = <FirResultHeader title="Fir Draft" eyebrow="LEGALITT" action="info" onAction={() => router.push('/help' as Href)} onBack={goHome} />;
+
+  if (f.loading && !flow) return <View style={styles.screen}>{header}<LoadingState /></View>;
+  if (!flow)
+    return (
+      <View style={styles.screen}>
+        {header}
+        <ScrollView contentContainerStyle={styles.content}>
+          <StatePanel tone="error" title="We couldn’t load your request" body={f.error || 'Something went wrong loading your request.'}
+            actions={[...(caseId ? [{ label: 'Try again', onPress: f.reload, primary: true }] : []), { label: 'Back To Home', onPress: goHome }]} />
+        </ScrollView>
+      </View>
+    );
+  if (!isPaid(flow))
+    return (
+      <View style={styles.screen}>
+        {header}
+        <ScrollView contentContainerStyle={styles.content}>
+          {flow.status === 'cancelled'
+            ? <StatePanel title="This request was cancelled" body={`Request ${hashRef(flow.reference)} was cancelled.`} actions={[{ label: 'Back To Home', onPress: goHome, primary: true }]} />
+            : <StatePanel title="Your request isn’t submitted yet" body={`Request ${hashRef(flow.reference)} is waiting for payment. It is submitted to our legal team once payment is complete.`}
+                actions={[{ label: 'Complete Payment', onPress: () => router.replace(firHref('payment', flow.case_id)), primary: true }, { label: 'Back To Home', onPress: goHome }]} />}
+        </ScrollView>
+      </View>
+    );
+
+  const submitted = requestSubmittedAt(flow);
+  const underReview = flow.stage.client.stage === 2;
+  const meta = [submitted && `Submitted ${dayTime(submitted)}`, `Turnaround: ${turnaroundShort(flow.settings)}`].filter(Boolean).join(' • ');
 
   return (
     <View style={styles.screen}>
-      <FirResultHeader title="Fir Draft" eyebrow="LEGALITT" action="info" />
+      {header}
 
       <ScrollView
         contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + t.contentTop }]}
@@ -35,7 +72,7 @@ function FixtureFirSubmittedScreen() {
           preparing your formal draft.
         </Text>
 
-        <RequestIdCard requestId={FIR_REQUEST.requestId} style={styles.idCard} />
+        <RequestIdCard requestId={flow.reference} style={styles.idCard} />
 
         <View style={styles.card}>
           <View style={styles.labelRow}>
@@ -45,18 +82,16 @@ function FixtureFirSubmittedScreen() {
             <View style={styles.statusChip}>
               <View style={styles.statusDot} />
               <Text style={styles.statusChipText} {...shrinkToFit(0.8)}>
-                Submitted
+                {underReview ? 'Submitted' : flow.stage.client.status}
               </Text>
             </View>
           </View>
           <Text style={styles.statusTitle} {...shrinkToFit(0.75)}>
-            Your request is now under review
+            {underReview ? 'Your request is now under review' : `Stage ${flow.stage.client.stage} of 5: ${flow.stage.client.label}`}
           </Text>
           <View style={styles.meta}>
             <Clock size={t.statusMetaIcon} color={colors.textBody} />
-            <Text style={styles.metaText}>
-              Submitted {FIR_REQUEST.submittedAt} • Turnaround: {FIR_REQUEST.turnaroundShort}
-            </Text>
+            <Text style={styles.metaText}>{meta}</Text>
           </View>
         </View>
 
@@ -64,7 +99,7 @@ function FixtureFirSubmittedScreen() {
 
         <Pressable
           accessibilityRole="button"
-          onPress={() => router.push('/fir/status')}
+          onPress={() => router.push(firHref('status', flow.case_id))}
           style={({ pressed }) => [styles.button, pressed && styles.pressed]}
         >
           <Text style={styles.buttonLabel}>Track Request</Text>
@@ -74,19 +109,12 @@ function FixtureFirSubmittedScreen() {
         {/* design/47 draws this one a shade lighter than Track Request. */}
         <Pressable
           accessibilityRole="button"
-          onPress={() => router.replace('/(tabs)/home')}
+          onPress={goHome}
           style={({ pressed }) => [styles.button, styles.buttonSecondary, pressed && styles.pressed]}
         >
           <Text style={styles.buttonLabel}>Back To Home</Text>
           <ArrowRight size={t.buttonIcon} color={ink.onBrand} style={styles.buttonIcon} />
         </Pressable>
-
-        <View style={styles.footer}>
-          <Lock size={t.footerIcon} color={colors.textBody} />
-          <Text style={styles.footerText} {...shrinkToFit(0.75)}>
-            Stored encrypted • Visible to your advocate and Legalitt’s team
-          </Text>
-        </View>
       </ScrollView>
     </View>
   );
@@ -228,19 +256,4 @@ const styles = StyleSheet.create({
   buttonIcon: {
     marginLeft: t.buttonIconGap,
   },
-  footer: {
-    marginTop: t.footerGap,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  footerText: {
-    marginLeft: t.footerIconGap,
-    fontFamily: font.appBody,
-    fontSize: t.footerSize,
-    color: colors.textBody,
-  },
 });
-import FirClient from '../../features/fir/FirClient';
-import {DATA_SOURCE} from '../../lib/data-source';
-export default function LiveFirScreen() { return DATA_SOURCE === 'api' ? <FirClient/> : <FixtureFirSubmittedScreen/>; }

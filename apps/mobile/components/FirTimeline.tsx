@@ -3,7 +3,17 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { shrinkToFit } from '../constants/textFit';
 import { colors, firResult as t, font, ink } from '../constants/theme';
-import type { TimelineItem } from '../data/fir';
+
+export type TimelineTone = 'done' | 'active' | 'pending';
+export type TimelineItem = {
+  title: string;
+  description: string;
+  /** Right-hand label (design/48) or the active row's tag (design/49, F6). Empty hides it. */
+  state: string;
+  tone: TimelineTone;
+  /** Extra line inside the highlighted active card (design/48 "Drafting team assigned"). */
+  footnote?: string | null;
+};
 
 type Props = {
   items: TimelineItem[];

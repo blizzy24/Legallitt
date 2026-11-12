@@ -212,6 +212,8 @@ export const advFirDocuments = {
   headerTop: 12,
   headerPadBottom: 16,
   backIcon: 26,
+  /** Back icon box → title. With the glyph's own inset the title starts ~26 pt after the chevron, as on 216. */
+  titleGap: 16,
   titleSize: 17,
   avatar: 32,
   avatarGlyph: 15,
@@ -428,6 +430,8 @@ export const advFirGenerator = {
   boxSize: 14,
   boxLineHeight: 24,
   boxMinHeight: 60,
+  /** What Happened? box: about 5.5 lines of boxLineHeight, as drawn on 217. */
+  statementMinHeight: 132,
   boxPlaceholderColour: '#6B6257',
   countGap: 11,
   countSize: 12,

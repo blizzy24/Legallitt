@@ -3,9 +3,9 @@ import type { AdvCaseMatter, AdvMatterStatus } from '../../data/advocateSide';
 import { noticeMatter } from '../../data/legalNoticeMatter';
 
 // Advocate work, not the client's active/pending grouping. Design 162 provides
-// REVIEW / PROGRESS / RESOLVED and Needs Review / In Progress / Open Case.
-// 184 supplies Review Request; 443 supplies Continue Draft. No notice is a
-// scheduled hearing or consultation, so Upcoming is never a notice bucket.
+// Needs Review / In Progress / Open Case (the dashboard's groups, kept in
+// `bucket`). 184 supplies Review Request; 443 supplies Continue Draft. No notice
+// is a scheduled hearing or consultation, so Upcoming is never a notice tag.
 type Entry = { bucket: 'Needs Review' | 'In Progress' | 'Resolved'; status: AdvMatterStatus;
   action: 'Review Request' | 'Continue Draft' | 'Open Case' | null; screen?: string };
 export function advocateNoticeState(status: CaseStatus): Entry {
@@ -37,7 +37,30 @@ export function advocateNoticeState(status: CaseStatus): Entry {
     default: { const exhaustive: never = status; throw new Error(`Unknown lifecycle: ${exhaustive}`); }
   }
 }
-export const ADV_NOTICE_FILTERS = ['All','Needs Review','In Progress','Waiting for Client','Resolved'];
+// Designs 213/214: the cases list counts ACTIVE / UPCOMING / COMPLETED and filters
+// All · Active · Upcoming · Waiting for Client, for every service. Open work is
+// Active; Upcoming is a scheduled appointment, which no case in the list carries
+// yet, so it counts only what is really scheduled (none today); Completed is
+// completed. Cancelled, refunded and declined cases appear under All only.
+// `bucket` keeps the dashboard's Needs Review / In Progress / Resolved groups.
+export const ADV_MATTER_FILTERS = ['All','Active','Upcoming','Waiting for Client'];
+const OPEN_WORK = new Set<string>([CaseStatus.assigned, CaseStatus.advocate_accepted, CaseStatus.in_progress, CaseStatus.client_review,
+  CaseStatus.changes_requested, CaseStatus.approved, CaseStatus.dispatching, CaseStatus.dispatched]);
+export function advocateMatterTags(status: CaseStatus): string[] {
+  if (status === CaseStatus.completed) return ['Completed'];
+  if (!OPEN_WORK.has(status)) return [];
+  return status === CaseStatus.client_review ? ['Active', 'Waiting for Client'] : ['Active'];
+}
+export function advocateMatterStatistics(matters: AdvCaseMatter[]) {
+  const count = (tag: string) => String(matters.filter(m => m.filterTags?.includes(tag)).length);
+  return [
+    {label:'ACTIVE',value:count('Active'),tone:'active' as const},
+    {label:'UPCOMING',value:count('Upcoming'),tone:'upcoming' as const},
+    {label:'COMPLETED',value:count('Completed'),tone:'completed' as const},
+  ];
+}
+/** "8 active" beside Your Matters (design/214). */
+export const advocateMatterCount = (matters: AdvCaseMatter[]) => `${matters.filter(m => m.filterTags?.includes('Active')).length} active`;
 export function advocateNoticeMatters(records: ApiCase[]): AdvCaseMatter[] {
   return records.filter(isNoticeCase).slice()
     .sort((a,b)=>Date.parse(b.updated_at)-Date.parse(a.updated_at)||b.id.localeCompare(a.id))
@@ -49,14 +72,7 @@ export function advocateNoticeMatters(records: ApiCase[]): AdvCaseMatter[] {
         urgency:r.tier==='urgent'?'URGENT':r.tier==='ordinary'?'ORDINARY':null,
         title:parties.length===2?parties.join(' → '):noticeMatter(r.matter_type).title,
         searchText:parties.join(' '),ref:r.reference,status:entry.status,body:'',footer:'',
-        bucket:entry.bucket,filterTags:r.status==='client_review'?['Waiting for Client']:[],
+        bucket:entry.bucket,filterTags:advocateMatterTags(r.status),
         action:entry.action,actionArrow:entry.action==='Continue Draft'||entry.action==='Open Case'};
     });
-}
-export function advocateNoticeStatistics(matters: AdvCaseMatter[]) {
-  return [
-    {label:'REVIEW',value:String(matters.filter(m=>m.bucket==='Needs Review').length),tone:'upcoming' as const},
-    {label:'PROGRESS',value:String(matters.filter(m=>m.bucket==='In Progress').length),tone:'active' as const},
-    {label:'RESOLVED',value:String(matters.filter(m=>m.bucket==='Resolved').length),tone:'completed' as const},
-  ];
 }

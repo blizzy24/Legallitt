@@ -1,536 +1,246 @@
-import { router, useLocalSearchParams, type Href } from 'expo-router';
+import { router } from 'expo-router';
 import {
-  CalendarDays,
-  Check,
-  ChevronLeft,
-  Coins,
-  Eye,
-  FileText,
-  Gavel,
-  Home,
-  IdCard,
-  Image as ImageIcon,
-  Mail,
-  MapPin,
-  MessageSquareQuote,
-  Phone,
-  Quote,
-  Shield,
-  ShieldCheck,
-  TriangleAlert,
-  UserRound,
-  Wallet,
-  X,
+  CalendarDays, Check, ChevronLeft, Coins, Eye, FileText, Gavel, IdCard, Image as ImageIcon, Mail, MapPin,
+  Phone, Quote, Shield, ShieldCheck, TriangleAlert, UserRound, Wallet, X,
 } from 'lucide-react-native';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import ConfirmModal from '../../../components/ConfirmModal';
 import { shrinkToFit } from '../../../constants/textFit';
-import { FIR_REQUEST } from '../../../data/advocateFir';
+import { FIR_REQUEST as c } from '../../../data/advocateFir';
+import { incidentLabel } from '../../../data/fir';
 import { advFirRequest as t, colors, font, ink, status } from '../../../constants/theme';
-import { advDocHref } from '../../../data/docLinks';
+import { backend } from '../../../lib/auth';
+import { rupees, useFirFlow, viewDocument } from '../../../features/fir/flow';
+import {
+  clientDocuments, dayTime, docName, docType, firRoute, formatSize, incidentWhen, InlineError, intakeOf, isIdentity, joinDot,
+  MovedOn, Sheet, SheetButton, StateCard, s as ui, toCases, useAction, useAdvocateCaseId, useFirRecord,
+} from '../../../features/fir/advocate/common';
 
-// FIR request details (design/215).
-//
-// ⚠ THE FEE CONTRADICTS design/214. The cases card reads "Fee: ₹4,500"; this screen
-// splits ₹3,500 into ₹500 + ₹3,000. Both are stored, each on the screen that draws
-// it. See data/advocateFir.ts note 1.
-//
-// ⚠ ₹500 OF ₹3,500 IS 14.286% — a fifth commission rate in the app. Stored as a
-// literal, deliberately not computed. Note 2.
-//
-// ⚠ THE DOCKET IS FIR-2026-1048 here and #FIR-2026-8841 on designs 218/219, with an
-// inconsistent "#". Note 3.
-//
-// ⚠ FIVE DOCUMENTS here, FOUR with different names on design/216. Note 4.
-//
-// ⚠ THE INCIDENT DATE IS IN THE FUTURE (18 Oct 2026 against a current date of
-// 9 Oct 2026). Not normalised. Note 5.
-//
-// ⚠ The mobile number is unmasked; design/207 masks the same client's. Note 6.
-//
-// ⚠ design/215 CLIPS the email to "rahul@example.co". Stored and rendered whole —
-// the project never ellipsizes. Note 7.
-//
-// ⚠ The Reject button is status.redContainer / status.onRedContainer — the
-// design/210 red, now a shared palette pair. See constants/theme.ts.
+// FIR request details (design/215, flow A2), live in every data mode.
+// [REMOVE] KYC Verified, the fee split and Escrow line, "All Verified" and "Signed".
+// [DECIDE] The fee shows only what the advocate receives, from the price snapshot.
+// Accept confirms, then opens Review Documents (A3). Reject needs a reason; the
+// request returns to the admin and the advocate loses access, so it goes to Cases.
 
-const CELL_ICONS = { phone: Phone, mail: Mail };
-const ROW_ICONS = { alert: TriangleAlert, calendar: CalendarDays, pin: MapPin };
-const DOC_ICONS = { doc: FileText, image: ImageIcon, id: IdCard, quote: MessageSquareQuote, home: Home };
-
-function FixtureAdvocateFirRequestScreen() {
+export default function AdvocateFirRequestScreen() {
   const insets = useSafeAreaInsets();
-  const { id } = useLocalSearchParams<{ id: string }>();
-  const r = FIR_REQUEST;
+  const caseId = useAdvocateCaseId();
+  const f = useFirFlow(caseId);
+  const rec = useFirRecord(caseId);
+  const flow = f.flow, intake = intakeOf(rec.record);
+  const act = useAction(), rejectAct = useAction();
+  const [confirming, setConfirming] = useState(false), [rejecting, setRejecting] = useState(false);
+  const [reason, setReason] = useState(''), [reasonError, setReasonError] = useState('');
+  const open = !!flow && flow.status === 'assigned';
+
+  const received = flow ? [...flow.events].reverse().find(e => e.type === 'status_changed' && e.label.startsWith('Advocate assigned'))?.created_at ?? flow.paid_at : null;
+  const cells = flow?.client ? [
+    { label: c.client.name, value: flow.client.name },
+    { label: c.client.city, value: flow.client.city ?? flow.city },
+    { label: c.client.mobile, value: flow.client.mobile, icon: Phone },
+    { label: c.client.email, value: flow.client.email, icon: Mail },
+  ].filter(x => x.value?.trim()) : [];
+  const incident = [
+    { icon: TriangleAlert, label: c.incident.type, value: incidentLabel(flow?.incident_type || intake?.incident.type || null) || flow?.incident_type || intake?.incident.type },
+    { icon: CalendarDays, label: c.incident.when, value: incidentWhen(intake?.incident) },
+    { icon: MapPin, label: c.incident.where, value: intake?.incident.location },
+  ].filter(x => x.value?.trim());
+  const docs = clientDocuments(rec.record);
+  const statement = intake ? [intake.incident.description, intake.incident.additional].map(v => v?.trim()).filter(Boolean) : [];
+
+  const accept = () => { setConfirming(false); void act.run(async () => { await backend.request(`/cases/${caseId}/accept`, {}); router.replace(firRoute(caseId!, 'documents')); }); };
+  const reject = () => {
+    if (!reason.trim()) { setReasonError(c.rejectSheet.required); return; }
+    void rejectAct.run(async () => { await backend.firReject(caseId!, reason.trim()); setRejecting(false); toCases(); });
+  };
+
+  let content;
+  if (!caseId) content = <StateCard title="This link is missing its request ID." actionLabel="Back to Cases" onAction={toCases} />;
+  else if (!flow) content = f.error ? <StateCard title="Couldn’t load this request." error={f.error} actionLabel="Retry" onAction={f.reload} secondaryLabel="Back to Cases" onSecondary={toCases} />
+    : <StateCard loading title="Loading the request…" />;
+  else if (!open) content = <MovedOn caseId={caseId} stage={flow.stage} />;
+  else content = <>
+    <View style={styles.card}>
+      <View style={styles.row}>
+        <View style={styles.chip}><View style={styles.chipDot} /><Text style={styles.chipText} {...shrinkToFit(0.75)}>{c.statusChip}</Text></View>
+        {!!received && <Text style={styles.recv} {...shrinkToFit(0.75)}>{c.recv} {dayTime(received)}</Text>}
+      </View>
+      <View style={styles.idRow}><Shield size={t.idIcon} color={colors.textPrimary} /><Text style={styles.id} {...shrinkToFit(0.7)}>{c.idLabel} {flow.reference}</Text></View>
+      {!!flow.police_station && <Text style={styles.station}>{c.stationLabel} {flow.police_station}</Text>}
+    </View>
+
+    {!!cells.length && <View style={styles.card}>
+      <View style={styles.row}>
+        <Text style={styles.sectionTitle} {...shrinkToFit(0.75)}>{c.client.title}</Text>
+        <View style={styles.sectionAvatar}><UserRound size={t.sectionAvatarGlyph} color={colors.textPrimary} /></View>
+      </View>
+      <View style={styles.grid}>{cells.map(cell => {
+        const Icon = cell.icon;
+        return <View key={cell.label} style={styles.cell}>
+          <Text style={styles.cellLabel} {...shrinkToFit(0.7)}>{cell.label}</Text>
+          <View style={styles.cellValueRow}>{Icon && <Icon size={t.cellIcon} color={colors.textPrimary} style={styles.cellIcon} />}<Text style={styles.cellValue} {...shrinkToFit(0.6)}>{cell.value}</Text></View>
+        </View>;
+      })}</View>
+    </View>}
+
+    {!rec.record ? (rec.error
+      ? <StateCard title="Couldn’t load the client’s filing." error={rec.error} actionLabel="Retry" onAction={rec.reload} />
+      : <StateCard loading title="Loading the client’s filing…" />) : <>
+      {!!incident.length && <View style={styles.card}>
+        <View style={styles.row}><Text style={styles.sectionTitle} {...shrinkToFit(0.75)}>{c.incident.title}</Text><Gavel size={t.sectionIcon} color={colors.textPrimary} style={styles.sectionIcon} /></View>
+        {incident.map(row => <View key={row.label} style={styles.incRow}>
+          <row.icon size={t.rowIcon} color={colors.brandDark} style={styles.rowIcon} />
+          <View style={styles.incText}><Text style={styles.rowLabel} {...shrinkToFit(0.8)}>{row.label}</Text><Text style={styles.rowValue}>{row.value}</Text></View>
+        </View>)}
+      </View>}
+
+      {!!statement.length && <View style={styles.card}>
+        <View style={styles.row}><Quote size={t.quoteMark} color={colors.brandDark} style={styles.quoteMark} /><Text style={styles.sectionTitle} {...shrinkToFit(0.75)}>{c.statement.title}</Text></View>
+        <View style={styles.quote}>{statement.map((para, n) => <Text key={n} style={[styles.quoteText, n > 0 && { marginTop: 10 }]}>{n === 0 ? `“${para}${statement.length === 1 ? '”' : ''}` : `${para}”`}</Text>)}</View>
+      </View>}
+    </>}
+
+    <View style={styles.card}>
+      <View style={styles.row}><Text style={styles.sectionTitle} {...shrinkToFit(0.75)}>{c.fee.title}</Text><Wallet size={t.sectionIcon} color={colors.textPrimary} style={styles.sectionIcon} /></View>
+      {flow.share_paise ? <View style={styles.advBox}><View style={styles.advTop}>
+        <View style={styles.advText}>
+          <Text style={styles.advLabel} {...shrinkToFit(0.75)}>{c.fee.advocateLabel}</Text>
+          <Text style={styles.advAmount} {...shrinkToFit(0.7)}>{rupees(flow.share_paise)}</Text>
+        </View>
+        <View style={styles.advCoin}><Coins size={t.advCoinGlyph} color={colors.brandDark} /></View>
+      </View></View> : <Text style={[styles.rowValue, { marginTop: 12, color: colors.textBody }]}>{c.fee.missing}</Text>}
+    </View>
+
+    {rec.record && <View style={styles.card}>
+      <View style={styles.row}>
+        <Text style={styles.sectionTitle} {...shrinkToFit(0.75)}>{c.documents.title}</Text>
+        {!!docs.length && <View style={styles.docsChip}><Text style={styles.docsChipText} {...shrinkToFit(0.75)}>{c.documents.files(docs.length)}</Text></View>}
+      </View>
+      {!docs.length && <Text style={[styles.rowValue, { marginTop: 12, color: colors.textBody }]}>{c.documents.none}</Text>}
+      {docs.map(d => {
+        const Icon = isIdentity(d) ? IdCard : d.mime_type.startsWith('image/') || d.mime_type.startsWith('video/') ? ImageIcon : FileText;
+        return <View key={d.id} style={styles.docRow}>
+          <View style={styles.docIconBox}><Icon size={t.docIconGlyph} color={colors.textPrimary} /></View>
+          <View style={styles.docText}>
+            <Text style={styles.docName}>{docName(d)}</Text>
+            <Text style={styles.docMeta} {...shrinkToFit(0.8)}>{joinDot(formatSize(d.size_bytes), docType(d.mime_type))}</Text>
+          </View>
+          <Pressable accessibilityRole="button" accessibilityLabel={`View ${docName(d)}`} hitSlop={8} onPress={() => void act.run(() => viewDocument(d.id))}><Eye size={t.docEye} color={colors.textPrimary} /></Pressable>
+        </View>;
+      })}
+      <View style={styles.warn}><ShieldCheck size={t.warnIcon} color={colors.brandDark} style={styles.warnIcon} /><Text style={styles.warnText}>{c.documents.warn}</Text></View>
+    </View>}
+  </>;
 
   return (
     <View style={styles.screen}>
       <View style={[styles.header, { paddingTop: insets.top + t.headerTop }]}>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Back"
-          hitSlop={10}
-          onPress={() => (router.canGoBack() ? router.back() : router.replace('/matters' as Href))}
-        >
-          <ChevronLeft size={t.backIcon} color={colors.textPrimary} />
-        </Pressable>
-        <Text style={styles.title} {...shrinkToFit(0.75)}>
-          {r.title}
-        </Text>
-        <View style={styles.avatar}>
-          <UserRound size={t.avatarGlyph} color={ink.onBrand} />
-        </View>
+        <Pressable accessibilityRole="button" accessibilityLabel="Back" hitSlop={10} onPress={toCases}><ChevronLeft size={t.backIcon} color={colors.textPrimary} /></Pressable>
+        <Text style={styles.title} {...shrinkToFit(0.75)}>{c.title}</Text>
+        <View style={styles.avatar}><UserRound size={t.avatarGlyph} color={ink.onBrand} /></View>
       </View>
 
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={styles.card}>
-          <View style={styles.row}>
-            <View style={styles.chip}>
-              <View style={styles.chipDot} />
-              <Text style={styles.chipText} {...shrinkToFit(0.75)}>
-                {r.statusChip}
-              </Text>
-            </View>
-            <Text style={styles.recv} {...shrinkToFit(0.75)}>
-              {r.recv}
-            </Text>
-          </View>
-          <View style={styles.idRow}>
-            <Shield size={t.idIcon} color={colors.textPrimary} />
-            <Text style={styles.id} {...shrinkToFit(0.7)}>
-              {r.idLabel} {r.id}
-            </Text>
-          </View>
-          <Text style={styles.station} {...shrinkToFit(0.75)}>
-            {r.stationLabel} {r.station}
-          </Text>
-        </View>
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>{content}</ScrollView>
 
-        <View style={styles.card}>
-          <View style={styles.row}>
-            <Text style={styles.sectionTitle} {...shrinkToFit(0.75)}>
-              {r.client.title}
-            </Text>
-            <View style={styles.kyc}>
-              <ShieldCheck size={t.kycIcon} color={t.kycColour} />
-              <Text style={styles.kycText} {...shrinkToFit(0.75)}>
-                {r.client.chip}
-              </Text>
-            </View>
-            <View style={styles.sectionAvatar}>
-              <UserRound size={t.sectionAvatarGlyph} color={colors.textPrimary} />
-            </View>
-          </View>
-          <View style={styles.grid}>
-            {r.client.cells.map((c) => {
-              const Icon = c.icon ? CELL_ICONS[c.icon] : null;
-              return (
-                <View key={c.label} style={styles.cell}>
-                  <Text style={styles.cellLabel} {...shrinkToFit(0.7)}>
-                    {c.label}
-                  </Text>
-                  <View style={styles.cellValueRow}>
-                    {Icon && <Icon size={t.cellIcon} color={colors.textPrimary} style={styles.cellIcon} />}
-                    {/* Never ellipsized — shrinks to fit the cell. */}
-                    <Text style={styles.cellValue} {...shrinkToFit(0.6)}>
-                      {c.value}
-                    </Text>
-                  </View>
-                </View>
-              );
-            })}
-          </View>
-        </View>
-
-        <View style={styles.card}>
-          <View style={styles.row}>
-            <Text style={styles.sectionTitle} {...shrinkToFit(0.75)}>
-              {r.incident.title}
-            </Text>
-            <Gavel size={t.sectionIcon} color={colors.textPrimary} style={styles.sectionIcon} />
-          </View>
-          {r.incident.rows.map((row) => {
-            const Icon = ROW_ICONS[row.icon];
-            return (
-              <View key={row.label} style={styles.incRow}>
-                <Icon size={t.rowIcon} color={colors.brandDark} style={styles.rowIcon} />
-                <View style={styles.incText}>
-                  <Text style={styles.rowLabel} {...shrinkToFit(0.8)}>
-                    {row.label}
-                  </Text>
-                  <Text style={styles.rowValue}>{row.value}</Text>
-                </View>
-              </View>
-            );
-          })}
-        </View>
-
-        <View style={styles.card}>
-          <View style={styles.row}>
-            <Quote size={t.quoteMark} color={colors.brandDark} style={styles.quoteMark} />
-            <Text style={styles.sectionTitle} {...shrinkToFit(0.75)}>
-              {r.statement.title}
-            </Text>
-          </View>
-          <View style={styles.quote}>
-            <Text style={styles.quoteText}>{r.statement.quote}</Text>
-          </View>
-        </View>
-
-        <View style={styles.card}>
-          <View style={styles.row}>
-            <Text style={styles.sectionTitle} {...shrinkToFit(0.75)}>
-              {r.fee.title}
-            </Text>
-            <Wallet size={t.sectionIcon} color={colors.textPrimary} style={styles.sectionIcon} />
-          </View>
-          {r.fee.rows.map((f) => (
-            <View key={f.label} style={styles.feeRow}>
-              <Text style={styles.feeLabel} {...shrinkToFit(0.8)}>
-                {f.label}
-              </Text>
-              <Text
-                style={[styles.feeValue, 'deduct' in f && f.deduct ? styles.feeDeduct : null]}
-                {...shrinkToFit(0.8)}
-              >
-                {f.value}
-              </Text>
-            </View>
-          ))}
-          <View style={styles.advBox}>
-            <View style={styles.advTop}>
-            <View style={styles.advText}>
-              <Text style={styles.advLabel} {...shrinkToFit(0.75)}>
-                {r.fee.advocateLabel}
-              </Text>
-              <Text style={styles.advAmount} {...shrinkToFit(0.7)}>
-                {r.fee.advocateAmount}
-              </Text>
-            </View>
-            <View style={styles.advCoin}>
-              <Coins size={t.advCoinGlyph} color={colors.brandDark} />
-            </View>
-            </View>
-            <View style={styles.advEscrow}>
-              <Shield size={t.advEscrowIcon} color={t.advEscrowColour} style={styles.advEscrowIcon} />
-              <Text style={styles.advEscrowText}>{r.fee.escrow}</Text>
-            </View>
-          </View>
-        </View>
-
-        <View style={styles.card}>
-          <View style={styles.row}>
-            <Text style={styles.sectionTitle} {...shrinkToFit(0.75)}>
-              {r.documents.title}
-            </Text>
-            <View style={styles.docsChip}>
-              <Text style={styles.docsChipText} {...shrinkToFit(0.75)}>
-                {r.documents.chip}
-              </Text>
-            </View>
-            <Text style={styles.docsVerified} {...shrinkToFit(0.75)}>
-              {r.documents.verified}
-            </Text>
-          </View>
-          {r.documents.rows.map((d) => {
-            const Icon = DOC_ICONS[d.icon];
-            return (
-              <View key={d.name} style={styles.docRow}>
-                <View style={styles.docIconBox}>
-                  <Icon size={t.docIconGlyph} color={colors.textPrimary} />
-                </View>
-                <View style={styles.docText}>
-                  <Text style={styles.docName} {...shrinkToFit(0.7)}>
-                    {d.name}
-                  </Text>
-                  <Text style={styles.docMeta} {...shrinkToFit(0.8)}>
-                    {d.meta}
-                  </Text>
-                </View>
-                <Pressable
-                  accessibilityRole="button"
-                  accessibilityLabel={`View ${d.name}`}
-                  hitSlop={8}
-                  onPress={() => router.push(advDocHref(d.name) as Href)}
-                >
-                  <Eye size={t.docEye} color={colors.textPrimary} />
-                </Pressable>
-              </View>
-            );
-          })}
-          <View style={styles.warn}>
-            <ShieldCheck size={t.warnIcon} color={colors.brandDark} style={styles.warnIcon} />
-            <Text style={styles.warnText}>{r.documents.warn}</Text>
-          </View>
-        </View>
-      </ScrollView>
-
-      <View style={[styles.bar, { paddingBottom: insets.bottom + t.barPadBottom }]}>
-        <View style={styles.barRow}>
-          <Pressable
-            accessibilityRole="button"
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/matters' as Href))}
-            style={({ pressed }) => [styles.btn, styles.reject, pressed && styles.pressed]}
-          >
-            <X size={t.btnIcon} color={status.onRedContainer} />
-            <Text style={styles.rejectText} {...shrinkToFit(0.8)}>
-              {r.reject}
-            </Text>
+      {open && <View style={[styles.bar, { paddingBottom: insets.bottom + t.barPadBottom }]}>
+        <InlineError error={act.error} />
+        <View style={[styles.barRow, !!act.error && { marginTop: 10 }]}>
+          <Pressable accessibilityRole="button" disabled={act.busy} onPress={() => { setReason(''); setReasonError(''); rejectAct.setError(''); setRejecting(true); }}
+            style={({ pressed }) => [styles.btn, styles.reject, pressed && styles.pressed]}>
+            <X size={t.btnIcon} color={status.onRedContainer} /><Text style={styles.rejectText} {...shrinkToFit(0.8)}>{c.reject}</Text>
           </Pressable>
-          <Pressable
-            accessibilityRole="button"
-            onPress={() => router.push(`/advocate/fir/documents?id=${id}` as Href)}
-            style={({ pressed }) => [styles.btn, styles.accept, pressed && styles.pressed]}
-          >
-            <Check size={t.btnIcon} color={ink.onBrand} />
-            <Text style={styles.acceptText} {...shrinkToFit(0.8)}>
-              {r.accept}
-            </Text>
+          <Pressable accessibilityRole="button" disabled={act.busy} onPress={() => setConfirming(true)} style={({ pressed }) => [styles.btn, styles.accept, pressed && styles.pressed, act.busy && { opacity: 0.6 }]}>
+            <Check size={t.btnIcon} color={ink.onBrand} /><Text style={styles.acceptText} {...shrinkToFit(0.8)}>{act.busy ? 'Accepting…' : c.accept}</Text>
           </Pressable>
         </View>
         <View style={styles.barRow}>
-          <Text style={styles.capReject} {...shrinkToFit(0.75)}>
-            {r.rejectCaption}
-          </Text>
-          <Text style={styles.capAccept} {...shrinkToFit(0.75)}>
-            {r.acceptCaption}
-          </Text>
+          <Text style={styles.capReject} {...shrinkToFit(0.75)}>{c.rejectCaption}</Text>
+          <Text style={styles.capAccept} {...shrinkToFit(0.75)}>{c.acceptCaption}</Text>
         </View>
-      </View>
+      </View>}
+
+      <ConfirmModal visible={confirming} icon={Check} tone="neutral" title={c.acceptConfirm.title} body={c.acceptConfirm.body}
+        confirmLabel={c.acceptConfirm.confirm} cancelLabel={c.acceptConfirm.cancel} onConfirm={accept} onCancel={() => setConfirming(false)} />
+
+      <Sheet visible={rejecting} title={c.rejectSheet.title} body={c.rejectSheet.body} onClose={() => !rejectAct.busy && setRejecting(false)}>
+        <Text style={ui.label}>{c.rejectSheet.label}</Text>
+        <TextInput accessibilityLabel={c.rejectSheet.label} value={reason} onChangeText={v => { setReason(v); setReasonError(''); }} multiline maxLength={2000}
+          placeholder={c.rejectSheet.placeholder} placeholderTextColor={colors.textMuted} style={[ui.input, { minHeight: 110, textAlignVertical: 'top' }]} />
+        {!!reasonError && <Text style={[ui.error, { marginTop: 8 }]} accessibilityRole="alert">{reasonError}</Text>}
+        <InlineError error={rejectAct.error} />
+        <SheetButton label={rejectAct.busy ? 'Rejecting…' : c.rejectSheet.confirm} tone="danger" disabled={rejectAct.busy} onPress={reject} />
+        <SheetButton label={c.rejectSheet.cancel} tone="neutral" disabled={rejectAct.busy} onPress={() => setRejecting(false)} />
+      </Sheet>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: t.bg },
-  header: {
-    paddingHorizontal: t.padX,
-    paddingBottom: t.headerPadBottom,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  title: {
-    flex: 1,
-    minWidth: 0,
-    marginHorizontal: 10,
-    textAlign: 'center',
-    fontFamily: font.appHeading,
-    fontSize: t.titleSize,
-    color: colors.textPrimary,
-  },
-  avatar: {
-    width: t.avatar,
-    height: t.avatar,
-    borderRadius: t.avatar / 2,
-    backgroundColor: t.avatarBg,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+  header: { paddingHorizontal: t.padX, paddingBottom: t.headerPadBottom, flexDirection: 'row', alignItems: 'center' },
+  title: { flex: 1, minWidth: 0, marginHorizontal: 10, textAlign: 'center', fontFamily: font.appHeading, fontSize: t.titleSize, color: colors.textPrimary },
+  avatar: { width: t.avatar, height: t.avatar, borderRadius: t.avatar / 2, backgroundColor: t.avatarBg, alignItems: 'center', justifyContent: 'center' },
 
   content: { paddingHorizontal: t.padX, paddingBottom: 24 },
-  card: {
-    marginTop: t.cardGap,
-    borderRadius: t.cardRadius,
-    backgroundColor: t.cardBg,
-    padding: t.cardPad,
-  },
+  card: { marginTop: t.cardGap, borderRadius: t.cardRadius, backgroundColor: t.cardBg, padding: t.cardPad },
   row: { flexDirection: 'row', alignItems: 'center' },
 
-  chip: {
-    minHeight: t.chipHeight,
-    borderRadius: t.chipRadius,
-    backgroundColor: t.chipBg,
-    paddingHorizontal: t.chipPadX,
-    flexDirection: 'row',
-    alignItems: 'center',
-    flexShrink: 1,
-  },
-  chipDot: {
-    width: t.chipDot,
-    height: t.chipDot,
-    borderRadius: t.chipDot / 2,
-    backgroundColor: t.chipColour,
-    marginRight: t.chipDotGap,
-  },
+  chip: { minHeight: t.chipHeight, borderRadius: t.chipRadius, backgroundColor: t.chipBg, paddingHorizontal: t.chipPadX, flexDirection: 'row', alignItems: 'center', flexShrink: 1 },
+  chipDot: { width: t.chipDot, height: t.chipDot, borderRadius: t.chipDot / 2, backgroundColor: t.chipColour, marginRight: t.chipDotGap },
   chipText: { fontFamily: font.appSemi, fontSize: t.chipSize, color: t.chipColour, flexShrink: 1 },
   recv: { marginLeft: 'auto', paddingLeft: 8, fontFamily: font.appBody, fontSize: t.recvSize, color: t.recvColour, flexShrink: 1 },
 
   idRow: { marginTop: t.idGap, flexDirection: 'row', alignItems: 'center' },
   id: { marginLeft: t.idIconGap, flexShrink: 1, fontFamily: font.appHeading, fontSize: t.idSize, color: colors.textPrimary },
-  station: {
-    marginTop: t.stationGap,
-    marginLeft: t.stationIndent,
-    fontFamily: font.appBody,
-    fontSize: t.stationSize,
-    color: t.stationColour,
-  },
+  station: { marginTop: t.stationGap, marginLeft: t.stationIndent, fontFamily: font.appBody, fontSize: t.stationSize, color: t.stationColour },
 
   sectionTitle: { flexShrink: 1, fontFamily: font.appHeading, fontSize: t.sectionTitleSize, color: colors.textPrimary },
   sectionIcon: { marginLeft: 'auto' },
-  kyc: {
-    marginLeft: t.kycGap,
-    minHeight: t.kycHeight,
-    borderRadius: t.kycRadius,
-    backgroundColor: t.kycBg,
-    paddingHorizontal: t.kycPadX,
-    flexDirection: 'row',
-    alignItems: 'center',
-    flexShrink: 1,
-  },
-  kycText: { marginLeft: t.kycIconGap, fontFamily: font.appSemi, fontSize: t.kycSize, color: t.kycColour, flexShrink: 1 },
-  sectionAvatar: {
-    marginLeft: 'auto',
-    width: t.sectionAvatar,
-    height: t.sectionAvatar,
-    borderRadius: t.sectionAvatar / 2,
-    backgroundColor: t.sectionAvatarBg,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+  sectionAvatar: { marginLeft: 'auto', width: t.sectionAvatar, height: t.sectionAvatar, borderRadius: t.sectionAvatar / 2, backgroundColor: t.sectionAvatarBg, alignItems: 'center', justifyContent: 'center' },
 
   grid: { marginTop: t.gridGap, flexDirection: 'row', flexWrap: 'wrap', gap: t.gridGapY },
-  cell: {
-    width: '48%',
-    flexGrow: 1,
-    borderRadius: t.cellRadius,
-    backgroundColor: t.cellBg,
-    padding: t.cellPad,
-  },
-  cellLabel: {
-    fontFamily: font.appSemi,
-    fontSize: t.cellLabelSize,
-    letterSpacing: t.cellLabelSpacing,
-    color: t.cellLabelColour,
-  },
+  cell: { width: '48%', flexGrow: 1, borderRadius: t.cellRadius, backgroundColor: t.cellBg, padding: t.cellPad },
+  cellLabel: { fontFamily: font.appSemi, fontSize: t.cellLabelSize, letterSpacing: t.cellLabelSpacing, color: t.cellLabelColour },
   cellValueRow: { marginTop: t.cellValueGap, flexDirection: 'row', alignItems: 'center' },
-  cellIcon: { marginRight: t.cellIconGap },
+  /** flexShrink 0: the icon keeps its size when a long address wraps beside it. */
+  cellIcon: { marginRight: t.cellIconGap, flexShrink: 0 },
   cellValue: { flexShrink: 1, fontFamily: font.appHeading, fontSize: t.cellValueSize, color: colors.textPrimary },
 
   incRow: { marginTop: t.rowGap, flexDirection: 'row', alignItems: 'flex-start' },
   rowIcon: { marginTop: 2 },
   incText: { flex: 1, minWidth: 0, marginLeft: t.rowIconGap },
   rowLabel: { fontFamily: font.appBody, fontSize: t.rowLabelSize, color: t.rowLabelColour },
-  rowValue: {
-    marginTop: t.rowValueGap,
-    fontFamily: font.appBody,
-    fontSize: t.rowValueSize,
-    lineHeight: t.rowValueLineHeight,
-    color: colors.textPrimary,
-  },
+  rowValue: { marginTop: t.rowValueGap, fontFamily: font.appBody, fontSize: t.rowValueSize, lineHeight: t.rowValueLineHeight, color: colors.textPrimary },
 
   quoteMark: { marginRight: t.quoteMarkGap },
   quote: { marginTop: t.quoteGap, borderRadius: t.quoteRadius, backgroundColor: t.quoteBg, padding: t.quotePad },
-  quoteText: {
-    fontFamily: font.appBody,
-    fontSize: t.quoteSize,
-    lineHeight: t.quoteLineHeight,
-    color: colors.textPrimary,
-  },
+  quoteText: { fontFamily: font.appBody, fontSize: t.quoteSize, lineHeight: t.quoteLineHeight, color: colors.textPrimary },
 
-  feeRow: { marginTop: t.feeRowGap, flexDirection: 'row', alignItems: 'center' },
-  feeLabel: { flexShrink: 1, marginRight: 10, fontFamily: font.appBody, fontSize: t.feeLabelSize, color: colors.textPrimary },
-  feeValue: { marginLeft: 'auto', flexShrink: 1, fontFamily: font.appHeading, fontSize: t.feeValueSize, color: colors.textPrimary },
-  feeDeduct: { color: t.feeDeductColour },
-
-  advBox: {
-    marginTop: t.advBoxGap,
-    borderRadius: t.advBoxRadius,
-    backgroundColor: t.advBoxBg,
-    padding: t.advBoxPad,
-  },
+  advBox: { marginTop: t.advBoxGap, borderRadius: t.advBoxRadius, backgroundColor: t.advBoxBg, padding: t.advBoxPad },
   advTop: { flexDirection: 'row', alignItems: 'center' },
   advText: { flex: 1, minWidth: 0, marginRight: 10 },
-  advLabel: {
-    fontFamily: font.appSemi,
-    fontSize: t.advLabelSize,
-    letterSpacing: t.advLabelSpacing,
-    color: t.advLabelColour,
-  },
+  advLabel: { fontFamily: font.appSemi, fontSize: t.advLabelSize, letterSpacing: t.advLabelSpacing, color: t.advLabelColour },
   advAmount: { marginTop: t.advAmountGap, fontFamily: font.appHeading, fontSize: t.advAmountSize, color: colors.textPrimary },
-  advCoin: {
-    width: t.advCoin,
-    height: t.advCoin,
-    borderRadius: t.advCoin / 2,
-    backgroundColor: t.advCoinBg,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  advEscrow: { marginTop: t.advEscrowGap, flexDirection: 'row', alignItems: 'flex-start' },
-  advEscrowIcon: { marginTop: 1 },
-  advEscrowText: {
-    flex: 1,
-    minWidth: 0,
-    marginLeft: t.advEscrowIconGap,
-    fontFamily: font.appSemi,
-    fontSize: t.advEscrowSize,
-    lineHeight: t.advEscrowLineHeight,
-    color: t.advEscrowColour,
-  },
+  advCoin: { width: t.advCoin, height: t.advCoin, borderRadius: t.advCoin / 2, backgroundColor: t.advCoinBg, alignItems: 'center', justifyContent: 'center' },
 
-  docsChip: {
-    marginLeft: t.docsChipGap,
-    minHeight: t.docsChipHeight,
-    borderRadius: t.docsChipRadius,
-    backgroundColor: t.docsChipBg,
-    paddingHorizontal: t.docsChipPadX,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexShrink: 1,
-  },
+  docsChip: { marginLeft: t.docsChipGap, minHeight: t.docsChipHeight, borderRadius: t.docsChipRadius, backgroundColor: t.docsChipBg, paddingHorizontal: t.docsChipPadX, alignItems: 'center', justifyContent: 'center', flexShrink: 1 },
   docsChipText: { fontFamily: font.appSemi, fontSize: t.docsChipSize, color: t.docsChipColour },
-  docsVerified: { marginLeft: 'auto', paddingLeft: 8, fontFamily: font.appSemi, fontSize: t.docsVerifiedSize, color: t.docsVerifiedColour, flexShrink: 1 },
-
-  docRow: {
-    marginTop: t.docRowGapY,
-    borderRadius: t.docRowRadius,
-    backgroundColor: t.docRowBg,
-    padding: t.docRowPad,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  docIconBox: {
-    width: t.docIconBox,
-    height: t.docIconBox,
-    borderRadius: t.docIconRadius,
-    backgroundColor: t.docIconBg,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+  docRow: { marginTop: t.docRowGapY, borderRadius: t.docRowRadius, backgroundColor: t.docRowBg, padding: t.docRowPad, flexDirection: 'row', alignItems: 'center' },
+  docIconBox: { width: t.docIconBox, height: t.docIconBox, borderRadius: t.docIconRadius, backgroundColor: t.docIconBg, alignItems: 'center', justifyContent: 'center' },
   docText: { flex: 1, minWidth: 0, marginHorizontal: t.docIconGap },
   docName: { fontFamily: font.appHeading, fontSize: t.docNameSize, color: colors.textPrimary },
   docMeta: { marginTop: t.docMetaGap, fontFamily: font.appBody, fontSize: t.docMetaSize, color: t.docMetaColour },
 
-  warn: {
-    marginTop: t.warnGap,
-    borderRadius: t.warnRadius,
-    backgroundColor: t.warnBg,
-    padding: t.warnPad,
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-  },
+  warn: { marginTop: t.warnGap, borderRadius: t.warnRadius, backgroundColor: t.warnBg, padding: t.warnPad, flexDirection: 'row', alignItems: 'flex-start' },
   warnIcon: { marginTop: 1 },
-  warnText: {
-    flex: 1,
-    minWidth: 0,
-    marginLeft: t.warnIconGap,
-    fontFamily: font.appBody,
-    fontSize: t.warnSize,
-    lineHeight: t.warnLineHeight,
-    color: t.warnColour,
-  },
+  warnText: { flex: 1, minWidth: 0, marginLeft: t.warnIconGap, fontFamily: font.appBody, fontSize: t.warnSize, lineHeight: t.warnLineHeight, color: t.warnColour },
 
   bar: { paddingHorizontal: t.padX, paddingTop: t.barPadTop, backgroundColor: t.barBg },
   barRow: { flexDirection: 'row', alignItems: 'center', gap: t.barGapX },
-  btn: {
-    minHeight: t.btnHeight,
-    borderRadius: t.btnRadius,
-    paddingHorizontal: t.btnPadX,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexShrink: 1,
-  },
+  btn: { minHeight: t.btnHeight, borderRadius: t.btnRadius, paddingHorizontal: t.btnPadX, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', flexShrink: 1 },
   /** The shared tinted-red container. See constants/theme.ts. */
   reject: { backgroundColor: status.redContainer },
   rejectText: { marginLeft: t.btnIconGap, fontFamily: font.appHeading, fontSize: t.btnSize, color: status.onRedContainer, flexShrink: 1 },
@@ -540,6 +250,3 @@ const styles = StyleSheet.create({
   capAccept: { marginTop: t.capGap, marginLeft: 'auto', fontFamily: font.appSemi, fontSize: t.capSize, color: t.capAcceptColour, flexShrink: 1 },
   pressed: { opacity: 0.85 },
 });
-import FirAdvocate from '../../../features/fir/FirAdvocate';
-import {DATA_SOURCE} from '../../../lib/data-source';
-export default function LiveFirScreen() { return DATA_SOURCE === 'api' ? <FirAdvocate/> : <FixtureAdvocateFirRequestScreen/>; }

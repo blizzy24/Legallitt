@@ -51,6 +51,11 @@ test('FIR admin rejection: mixed returns, purge retry, replacement, two draft re
    assert.equal((await review.read(admin,id)).rejection_count,1);
   });
   await t.test('second draft rejection enables reassignment; history and payment age survive; former advocate is notified',async()=>{
+   // Flow A5: after a return the sent version is never auto-saved in place; Save Draft makes the next version.
+   const returned=await fir.context(advocate,id),sentBefore=await db.draft.findUniqueOrThrow({where:{id:first.id}});assert.equal(returned.requires_new_version,true);
+   const autoContent=fixture.editable(returned.intake);autoContent.identity_document_id=replacement.id;autoContent.attachment_ids=[replacement.id];
+   await assert.rejects(fir.save(advocate,id,{base_draft_id:returned.latest_draft_id,filing_hash:returned.filing_hash,content:autoContent,autosave:true,base_saved_at:returned.latest_content.filing_snapshot.captured_at}),e=>e.status===409&&/auto-saved in place/.test(e.message));
+   assert.deepEqual((await db.draft.findUniqueOrThrow({where:{id:first.id}})).content,sentBefore.content);assert.equal(await db.draft.count({where:{case_id:id}}),1);
    const second=await save(advocate,replacement);await fir.send(advocate,id,second.id);await review.reject(admin,id,{...await token(),draft_reason:'TEST explain the applicable section'});
    const old=await token();await review.reassign(admin,id,{...old,advocate_id:next.id,reason:'TEST two draft rejections'});const life=await review.read(admin,id);
    assert.equal(life.rejection_count,0);assert.equal(life.assignments.length,2);assert.equal(life.assignments[0].rejections,2);assert.ok(life.assignments[0].ended_at);assert.equal(life.paid_at,originalLife.paid_at);

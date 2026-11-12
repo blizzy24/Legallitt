@@ -55,7 +55,22 @@ const STATUS_TONE: Record<string, { bg: string; fg: string }> = {
   'Documents Pending': { bg: '#FBEEDC', fg: '#B5741A' },
   Active: { bg: '#E4F4EA', fg: '#1E7A44' },
   Upcoming: { bg: '#E6EEF8', fg: '#2E5EA8' },
+  // FIR Draft chips from the shared C10 mapping (firStage().advocate.chip, flow A1).
+  'New Request': { bg: '#FBEEDC', fg: '#8A5A1A' },
+  Accepted: { bg: '#E4F4EA', fg: '#1E7A44' },
+  'Sent to Admin': { bg: '#E6EEF8', fg: '#2E5EA8' },
+  'Admin Returned': { bg: '#FFDAD6', fg: '#93000A' },
+  'Identity Replacement': { bg: '#FBEEDC', fg: '#B5741A' },
+  'Waiting for Client': { bg: '#FBEEDC', fg: '#B5741A' },
+  'Client Changes': { bg: '#FFDAD6', fg: '#93000A' },
+  'Client Approved': { bg: '#E4F4EA', fg: '#1E7A44' },
+  Completed: { bg: '#E4F4EA', fg: '#1E7A44' },
+  'Returned to admin': { bg: '#EFEDED', fg: '#5C5C5C' },
+  Cancelled: { bg: '#EFEDED', fg: '#5C5C5C' },
 };
+
+// Flow A1's empty state when the FIR Draft filter has nothing to show.
+const FIR_EMPTY = 'No FIR requests yet. New requests assigned to you will appear here.';
 
 const STAT_TONE = { active: '#A08A6E', upcoming: '#F0C890', completed: '#2FBF6B' } as const;
 
@@ -120,6 +135,7 @@ export default function AdvocateCasesList({
   const stats = statisticsFor ? statisticsFor(scoped) : statistics;
   const count = countLabel ? countLabel(matters) : c.listChip;
   const filtersActive = (filter !== 'All' ? 1 : 0) + (service !== 'All Services' ? 1 : 0);
+  const firEmpty = ADV_CASES_SERVICE_KEYS[service] === 'fir' && !search.trim() && scoped.length === 0;
 
   function review(m: AdvCaseMatter) {
     if (onReview) { onReview(m); return; }
@@ -128,7 +144,7 @@ export default function AdvocateCasesList({
     } else if (m.serviceKey === 'legal-notice') {
       router.push(`/advocate/notice/${m.id}/fee` as Href);
     } else if (m.serviceKey === 'fir') {
-      router.push('/advocate/fir/fir-2026-1048' as Href);
+      router.push((m.href ?? '/advocate/fir/fir-2026-1048') as Href);
     } else if (m.serviceKey === 'forensic') {
       router.push('/advocate/forensic/df-2026-1048' as Href);
     } else if (m.href) {
@@ -312,8 +328,8 @@ export default function AdvocateCasesList({
         )}
 
         {state && (state.loading || state.error || matters.length===0) && <View style={styles.card}>
-          <Text accessibilityRole={state.error?'alert':undefined} accessibilityLiveRegion="polite" style={styles.sub}>{state.loading?instructedCopy.advocateWork.loading:state.error?instructedCopy.advocateWork.failed:records.length===0?instructedCopy.advocateWork.emptyTitle:instructedCopy.advocateWork.noMatches}</Text>
-          {!state.loading && !state.error && records.length===0 && <Text style={styles.sub}>{instructedCopy.advocateWork.emptyBody}</Text>}
+          <Text accessibilityRole={state.error?'alert':undefined} accessibilityLiveRegion="polite" style={styles.sub}>{state.loading?instructedCopy.advocateWork.loading:state.error?instructedCopy.advocateWork.failed:firEmpty?FIR_EMPTY:records.length===0?instructedCopy.advocateWork.emptyTitle:instructedCopy.advocateWork.noMatches}</Text>
+          {!state.loading && !state.error && !firEmpty && records.length===0 && <Text style={styles.sub}>{instructedCopy.advocateWork.emptyBody}</Text>}
           {!!state.error && !state.loading && <Pressable accessibilityRole="button" onPress={state.onRetry}><Text style={styles.sub}>{instructedCopy.advocateWork.retry}</Text></Pressable>}
         </View>}
         {(!state?.loading && !state?.error ? matters : []).map((m) => {

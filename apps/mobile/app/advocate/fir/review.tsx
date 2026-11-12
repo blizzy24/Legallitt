@@ -1,345 +1,266 @@
-import { useDemoWait } from '../../../hooks/useDemoAdvance';
-import { DEMO_AUTO_ADVANCE } from '../../../constants/dev';
-import { advFirReviewCompact as compactTokens } from '../../../constants/tokens/advFir';
-import { previewNotice } from '../../../components/PreviewNotice';
-import { router, useLocalSearchParams, type Href } from 'expo-router';
+import { router } from 'expo-router';
 import {
-  BellRing,
-  Check,
-  CheckCheck,
-  ChevronLeft,
-  Eye,
-  FileText,
-  History,
-  Hourglass,
-  Info,
-  Mail,
-  MailPlus,
-  MapPin,
-  Phone,
-  PhoneForwarded,
-  Send,
-  Share2,
-  Shield,
-  ShieldCheck,
-  UserRound,
+  BellRing, Check, CheckCheck, ChevronLeft, Eye, FileText, History, Hourglass, Info, Mail, MapPin, MessageSquareWarning,
+  Phone, PhoneForwarded, Send, Share2, Shield, ShieldCheck, UserRound, type LucideIcon,
 } from 'lucide-react-native';
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Linking, Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { FIR_CLIENT_CHANGES, firSectionLabel, type FirFlowView } from '@legalitt/shared';
 
+import { advFirReviewCompact as compactTokens } from '../../../constants/tokens/advFir';
 import { shrinkToFit } from '../../../constants/textFit';
-import { FIR_REVIEW } from '../../../data/advocateFir';
-import { advFirReview as t, colors, font, ink, previewStep } from '../../../constants/theme';
+import { FIR_REVIEW as c } from '../../../data/advocateFir';
+import { advFirReview as t, colors, font, ink } from '../../../constants/theme';
+import { backend } from '../../../lib/auth';
+import { formatDate, formatTime, initials, useFirFlow, viewDocument } from '../../../features/fir/flow';
+import { PoliceSubmissionSheet } from '../../../features/fir/advocate/PoliceSubmissionSheet';
+import { hashRef } from '../../../features/fir/client/format';
+import { dayTime, firRoute, InlineError, MovedOn, StateCard, toCases, useAction, useAdvocateCaseId } from '../../../features/fir/advocate/common';
 
-// FIR review & status (design/219).
-//
-// THE PREVIEW SWITCHER IS CLIENT UI, NOT A DEV AFFORDANCE. Every other preview
-// switcher in this project is something we added and hid behind
-// DEV_PREVIEW_TOGGLES; design/219 draws this one as screen content, with its own
-// "ADVOCATE PREVIEW SWITCHER" label and an "Interactive Demo" tag. It is therefore
-// ungated and always rendered.
-//
-// ⚠ ITS LABELS ARE "Waiting / Approved / Changes", not "Changes Needed".
-//
-// ⚠ ONLY THE "Waiting" STATE IS DESIGNED. design/219 is a single-state export and
-// there is no Approved or Changes screen anywhere in this batch, so the other two
-// segments cannot change the content without inventing it. They select; the content
-// stays as drawn, and a dev-only note says so.
-//
-// ⚠ THE FILING TIMELINE HAS NO CONNECTOR LINES. design/219 draws five standalone
-// circles, 23pt across, on a 50pt row pitch — measured from the PNG. The Property
-// Search tracker's rail and line values are NOT reused: the element does not exist
-// here. components/FirTimeline is also not reused for the same reason — it is built
-// around a connector rail, the firResult tokens and the client-side TimelineItem
-// shape, none of which apply.
-//
-// ⚠ "8 Legal Sections" here, "4 Sections" on design/218. "4 Files Attached" is a
-// fifth count for the document set. The docket is #FIR-2026-8841 with a "#".
+// FIR review & status (designs 219 and 449, flow A6), live in every data mode.
+// [DECIDE] The Filing Timeline adds the admin step; "Submitted to Police" follows the
+// case: shown once the client approved into police submission, when a submission is
+// recorded, or (case not completed yet) while the advocate-submits setting is on.
+// [REMOVE] Verified Complainant, Resend Review Link, SMS and the Preview Switcher.
+// 449 is the compact layout opened right after sending: no status panel while
+// nobody needs the advocate, and Continue returns to Cases.
+const ACCESS = ['advocate_accepted', 'in_progress', 'changes_requested', 'client_review', 'approved', 'completed', 'cancelled', 'refunded'];
+const DRAFTING = ['advocate_accepted', 'in_progress', 'changes_requested'];
+type Tone = 'done' | 'active' | 'todo';
+type Row = { title: string; sub: string; tone: Tone; icon: LucideIcon };
+type Panel = { icon: LucideIcon; title: string; body?: string; note?: string; review?: FirFlowView['reviews'][number]; actionable: boolean };
 
-const TL_ICONS = { check: Check, hourglass: Hourglass, checkcheck: CheckCheck, send: Send };
+const latest = (flow: FirFlowView, type: string) => [...flow.events].reverse().find(e => e.type === type)?.created_at ?? null;
+const station = (value: string | null) => !value ? '' : /^(ps|police station)\b/i.test(value) ? value : `PS ${value}`;
+/** "PS <station>, <district>" (design 219), named the same in the header, the status panel and the police sheet. */
+const stationName = (flow: FirFlowView) => {
+  const name = station(flow.police_station?.trim() || null), district = flow.district?.trim();
+  return name && district && !name.toLowerCase().includes(district.toLowerCase()) ? `${name}, ${district}` : name;
+};
+/** "Indore (Madhya Pradesh)" when the state is known. */
+const placeName = (city: string | null | undefined, state: string | null) => {
+  const town = city?.trim(), region = state?.trim();
+  return town && region && town.toLowerCase() !== region.toLowerCase() ? `${town} (${region})` : town || region || '';
+};
+/** A 10-digit Indian mobile reads "+91 98260 41298"; any other format is shown as entered. */
+const mobileLabel = (value: string) => {
+  const m = /^(?:\+91)?(\d{10})$/.exec(value.replace(/[\s-]/g, ''));
+  return m ? `+91 ${m[1].slice(0, 5)} ${m[1].slice(5)}` : value;
+};
 
-function FixtureAdvocateFirReviewScreen({ compact = false }: { compact?: boolean }) {
-  const insets = useSafeAreaInsets();
-  const { id } = useLocalSearchParams<{ id?: string }>();
-  const r = FIR_REVIEW;
-  const [state, setState] = useState(r.switcher.states[0]);
-  // Both exports are Waiting. Only demo mode simulates the next external event.
-  useDemoWait(!compact && state === r.switcher.states[0], () => {
-    // Keep this case's local draft when the demo advances to the compact view.
-    router.push({ pathname: '/advocate/fir/review-compact', params: { id: id ?? '' } });
+function timeline(flow: FirFlowView) {
+  // Follows the case, not today's setting: a case completed with the setting on keeps
+  // its police row (it has a submission); one completed with it off never had one.
+  const police = flow.status === 'approved' || !!flow.police || (flow.status !== 'completed' && flow.settings.police_submission_by_advocate);
+  const steps: { title: string; icon: LucideIcon; done: string; active?: string; todo?: string }[] = [
+    { title: 'Draft Created', icon: FileText, done: [flow.draft ? `v${flow.draft.version}` : '', dayTime(latest(flow, 'fir_draft_saved') ?? flow.draft?.created_at)].filter(Boolean).join(' • ') },
+    { title: 'Sent to Admin', icon: Send, done: dayTime(latest(flow, 'fir_draft_submitted')) },
+    { title: 'Admin Approved', icon: ShieldCheck, done: dayTime(latest(flow, 'fir_draft_approved')), active: 'Active step • Awaiting Legalitt approval' },
+    { title: 'Sent to Client', icon: Mail, done: dayTime(latest(flow, 'fir_sent_to_client') ?? latest(flow, 'fir_draft_approved')) },
+    { title: 'Client Approved', icon: CheckCheck, done: dayTime(latest(flow, 'fir_client_approved')), active: 'Active step • Awaiting sign-off', todo: 'Client formal consent' },
+    ...(police ? [{ title: 'Submitted to Police', icon: Send, done: flow.police ? `Submitted ${formatDate(flow.police.submitted_on)}` : dayTime(latest(flow, 'fir_police_submitted')), active: 'Active step • Upload the police receipt', todo: 'Final dispatch & receipt' }] : []),
+  ];
+  const review = flow.reviews[flow.reviews.length - 1];
+  const drafting = review && review.decision !== 'approved' ? review.role === 'client' ? 'Active step • Client requested changes' : 'Active step • Returned by admin' : 'Active step • In progress';
+  const active = flow.status === 'completed' ? steps.length
+    : flow.status === 'approved' ? 5
+    : flow.status === 'client_review' ? 4
+    : flow.status === 'in_progress' && flow.sub_status === 'awaiting_admin_approval' ? 2 : 0;
+  const rows: Row[] = steps.map((step, i) => {
+    const tone: Tone = i < active ? 'done' : i === active ? 'active' : 'todo';
+    const sub = tone === 'done' ? step.done : tone === 'active' ? (i === 0 ? drafting : step.active ?? '') : step.todo ?? '';
+    return { title: step.title, sub, tone, icon: tone === 'done' ? Check : tone === 'active' ? Hourglass : step.icon };
   });
+  return { rows, stage: `Stage ${Math.min(active + 1, steps.length)} of ${steps.length}` };
+}
+
+function panelFor(flow: FirFlowView): Panel | null {
+  const client = flow.client?.name ?? 'the client';
+  const review = flow.reviews[flow.reviews.length - 1];
+  if (DRAFTING.includes(flow.status) && flow.sub_status === 'awaiting_admin_approval')
+    return { icon: Hourglass, title: 'Waiting for Admin Approval', body: 'Sent to Legalitt for approval.', actionable: false };
+  if (DRAFTING.includes(flow.status)) {
+    if (review && review.decision !== 'approved')
+      return { icon: MessageSquareWarning, title: review.role === 'client' || flow.sub_status === FIR_CLIENT_CHANGES ? 'Client Requested Changes' : 'Returned by Admin', review, actionable: true };
+    return { icon: FileText, title: 'Draft in progress', body: 'No draft has been sent for review yet.', actionable: true };
+  }
+  if (flow.status === 'client_review') return { icon: Mail, title: c.waitingClient.title, body: c.waitingClient.body(client), note: c.waitingClient.note, actionable: false };
+  if (flow.status === 'approved') return { icon: CheckCheck, title: 'Client Approved',
+    body: `Submit the FIR${stationName(flow) ? ` at ${stationName(flow)}` : ''} and upload the police receipt.`, actionable: true };
+  if (flow.status === 'completed') return { icon: Check, title: 'FIR Draft Completed', body: 'The client approved your draft.', actionable: true };
+  if (flow.status === 'cancelled' || flow.status === 'refunded') return { icon: Info, title: flow.stage.advocate.chip, body: 'This request was cancelled. No further work is needed.', actionable: false };
+  return null;
+}
+
+export default function AdvocateFirReviewScreen({ compact = false }: { compact?: boolean }) {
+  const insets = useSafeAreaInsets();
+  const caseId = useAdvocateCaseId();
+  const f = useFirFlow(caseId);
+  const act = useAction();
+  const [police, setPolice] = useState(false), [allEvents, setAllEvents] = useState(false), [reminded, setReminded] = useState(false);
+  const flow = f.flow;
+  const allowed = !!flow && ACCESS.includes(flow.status);
+
+  let content;
+  if (!caseId) content = <StateCard title="This link is missing its request ID." actionLabel="Back to Cases" onAction={toCases} />;
+  else if (!flow) content = f.error ? <StateCard title="Couldn’t load this request." error={f.error} actionLabel="Retry" onAction={f.reload} secondaryLabel="Back to Cases" onSecondary={toCases} />
+    : <StateCard loading title="Loading the request…" />;
+  else if (!allowed) content = <MovedOn caseId={caseId} stage={flow.stage} />;
+  else {
+    const { rows, stage } = timeline(flow);
+    const panel = panelFor(flow);
+    const showPanel = !!panel && (!compact || panel.actionable);
+    const events = [...flow.events].reverse();
+    const shown = allEvents ? events : events.slice(0, 8);
+    const mobile = flow.client?.mobile?.trim();
+    const city = placeName(flow.client?.city ?? flow.city, flow.state);
+    const stationLine = stationName(flow);
+    const remind = flow.remind;
+    const review = panel?.review;
+    const today = new Date(Date.now() + 330 * 60000).toISOString().slice(0, 10);
+    content = <>
+      <View style={styles.card}>
+        <View style={styles.row}>
+          <Text style={styles.docket} {...shrinkToFit(0.75)}>{hashRef(flow.reference)}</Text>
+          <View style={styles.docketChip}><View style={styles.docketChipDot} /><Text style={styles.docketChipText} {...shrinkToFit(0.75)}>{flow.stage.advocate.chip.toUpperCase()}</Text></View>
+        </View>
+        {!!stationLine && <View style={styles.stationRow}><Shield size={t.stationIcon} color={colors.textPrimary} /><Text style={styles.station}>{stationLine}</Text></View>}
+      </View>
+
+      {flow.client && <View style={styles.card}>
+        <Text style={styles.label} {...shrinkToFit(0.8)}>{c.client.label}</Text>
+        <View style={styles.clientRow}>
+          <View style={styles.initials}><Text style={styles.initialsText} {...shrinkToFit(0.8)}>{initials(flow.client.name)}</Text></View>
+          <View style={styles.clientText}>
+            <Text style={styles.name} {...shrinkToFit(0.75)}>{flow.client.name}</Text>
+            {!!mobile && <View style={styles.phoneRow}><Phone size={t.phoneIcon} color={colors.textPrimary} /><Text style={styles.phone} {...shrinkToFit(0.75)}>{mobileLabel(mobile)}</Text></View>}
+          </View>
+          {!!mobile && <Pressable accessibilityRole="button" accessibilityLabel={`Call ${flow.client.name}`} onPress={() => void act.run(() => Linking.openURL(`tel:${mobile.replace(/[^\d+]/g, '')}`))} style={styles.callBtn}>
+            <PhoneForwarded size={t.callGlyph} color={colors.textPrimary} />
+          </Pressable>}
+        </View>
+        {!!city && <View style={styles.cityRow}><MapPin size={t.cityIcon} color={t.cityColour} /><Text style={styles.city}>{city}</Text></View>}
+      </View>}
+
+      {flow.draft && <View style={styles.card}>
+        <View style={styles.row}>
+          <View style={styles.fileIcon}><FileText size={t.fileIconGlyph} color={colors.brandDark} /></View>
+          <View style={styles.fileText}>
+            <View style={styles.row}>
+              <Text style={styles.fileTitle} {...shrinkToFit(0.75)}>{c.draft.title}</Text>
+              <View style={styles.verChip}><Text style={styles.verChipText} {...shrinkToFit(0.8)}>v{flow.draft.version}</Text></View>
+            </View>
+            <Text style={styles.fileSub}>Created by {flow.draft.created_by}</Text>
+          </View>
+        </View>
+        <View style={styles.pro}>
+          <View style={styles.row}><Shield size={t.proIcon} color={colors.brandDark} /><Text style={styles.proTitle} {...shrinkToFit(0.8)}>{c.draft.proforma}</Text></View>
+          <View style={styles.proStats}>
+            <View style={styles.row}><FileText size={t.proStatIcon} color={colors.textBody} /><Text style={styles.proStat}>{flow.draft.sections} Legal {flow.draft.sections === 1 ? 'Section' : 'Sections'}</Text></View>
+            <View style={[styles.row, styles.proStatNext]}><FileText size={t.proStatIcon} color={colors.textBody} /><Text style={styles.proStat}>{flow.draft.files} {flow.draft.files === 1 ? 'File' : 'Files'} Attached</Text></View>
+          </View>
+        </View>
+        <View style={styles.actRow}>
+          <Pressable accessibilityRole="button" onPress={() => void act.run(() => viewDocument(flow.draft!.document.id))} style={({ pressed }) => [styles.act, pressed && styles.pressed]}>
+            <Eye size={t.actIcon} color={colors.textPrimary} /><Text style={styles.actText} {...shrinkToFit(0.8)}>{c.draft.view}</Text>
+          </Pressable>
+          {/* Shares the request ID, version and status only, never a document link. */}
+          <Pressable accessibilityRole="button" accessibilityLabel="Share draft status" onPress={() => void act.run(async () => { await Share.share({ message: `FIR Draft ${flow.reference} (v${flow.draft!.version}): ${flow.stage.advocate.chip}.` }); })} style={styles.actShare}>
+            <Share2 size={t.actIcon} color={colors.textPrimary} />
+          </Pressable>
+        </View>
+      </View>}
+      <InlineError error={act.error} />
+
+      <View style={styles.card}>
+        <View style={styles.row}><Text style={styles.label} {...shrinkToFit(0.8)}>{c.timeline.label}</Text><Text style={styles.tlStage} {...shrinkToFit(0.8)}>{stage}</Text></View>
+        <View style={styles.tl}>{rows.map((row, i) => {
+          const bg = row.tone === 'done' ? t.tlDoneBg : row.tone === 'active' ? t.tlActiveBg : t.tlTodoBg;
+          const fg = row.tone === 'done' ? ink.onBrand : colors.textPrimary;
+          return <View key={row.title} style={[styles.tlRow, i > 0 && styles.tlRowNext]}>
+            <View style={[styles.tlDot, { backgroundColor: bg }]}><row.icon size={t.tlDotGlyph} color={fg} strokeWidth={row.tone === 'done' ? 3 : 2} /></View>
+            <View style={styles.tlText}>
+              <Text style={[styles.tlTitle, row.tone === 'todo' && { color: colors.textBody }]} {...shrinkToFit(0.75)}>{row.title}</Text>
+              {!!row.sub && <Text style={styles.tlSub} {...shrinkToFit(0.8)}>{row.sub}</Text>}
+            </View>
+          </View>;
+        })}</View>
+      </View>
+
+      {showPanel && panel && <View style={styles.card}>
+        <View style={styles.row}>
+          <View style={styles.alertIcon}><panel.icon size={t.alertIconGlyph} color={colors.brandDark} /></View>
+          <View style={styles.alertText}>
+            <Text style={styles.alertTitle} {...shrinkToFit(0.75)}>{panel.title}</Text>
+            {!!panel.body && <Text style={styles.alertBody}>{panel.body}</Text>}
+            {review && <Text style={styles.alertBody}>{[review.version ? `Draft v${review.version}` : '', dayTime(review.created_at)].filter(Boolean).join(' • ')}</Text>}
+          </View>
+        </View>
+        {review && (!!review.comment?.trim() || !!review.sections.length || review.attachment) && <View style={styles.note}>
+          <Info size={t.noteIcon} color={colors.textPrimary} style={styles.noteIcon} />
+          <View style={{ flex: 1, minWidth: 0 }}>
+            {!!review.sections.length && <Text style={[styles.noteText, { fontFamily: font.appSemi }]}>{review.sections.map(firSectionLabel).join(' · ')}</Text>}
+            {!!review.comment?.trim() && <Text style={styles.noteText}>{review.comment.trim()}</Text>}
+            {review.attachment && <Pressable accessibilityRole="button" onPress={() => void act.run(() => viewDocument(review.attachment!.id))}>
+              <Text style={[styles.noteText, { color: colors.brandDark, textDecorationLine: 'underline' }]}>View attachment: {review.attachment.filename}</Text>
+            </Pressable>}
+          </View>
+        </View>}
+        {!!panel.note && <View style={styles.note}><Info size={t.noteIcon} color={colors.textPrimary} style={styles.noteIcon} /><Text style={styles.noteText}>{panel.note}</Text></View>}
+
+        {DRAFTING.includes(flow.status) && flow.sub_status !== 'awaiting_admin_approval' && <Pressable accessibilityRole="button" onPress={() => router.push(firRoute(caseId, 'draft'))} style={({ pressed }) => [styles.remind, pressed && styles.pressed]}>
+          <FileText size={t.remindIcon} color={ink.onBrand} /><Text style={styles.remindText}>{review && review.decision !== 'approved' ? 'Edit Draft' : 'Continue Draft'}</Text>
+        </Pressable>}
+        {flow.status === 'client_review' && remind && <>
+          <Pressable accessibilityRole="button" accessibilityState={{ disabled: !remind.allowed || act.busy }} disabled={!remind.allowed || act.busy}
+            onPress={() => void act.run(async () => { const view = await backend.firRemindClient(caseId); f.setFlow(view); setReminded(true); })}
+            style={({ pressed }) => [styles.remind, pressed && styles.pressed, (!remind.allowed || act.busy) && { opacity: 0.55 }]}>
+            <BellRing size={t.remindIcon} color={ink.onBrand} /><Text style={styles.remindText} {...shrinkToFit(0.8)}>{act.busy ? 'Sending reminder…' : c.waitingClient.remind}</Text>
+          </Pressable>
+          {(reminded || !remind.allowed) && <Text style={[styles.alertBody, { marginTop: 10, textAlign: 'center' }]} accessibilityLiveRegion="polite">
+            {[reminded ? 'Reminder sent to the client in the app.' : remind.last_at ? `Last reminded ${dayTime(remind.last_at)}.` : '', !remind.allowed && remind.next_at ? `You can remind again ${dayTime(remind.next_at)}.` : ''].filter(Boolean).join(' ')}
+          </Text>}
+        </>}
+        {flow.status === 'approved' && <Pressable accessibilityRole="button" onPress={() => setPolice(true)} style={({ pressed }) => [styles.remind, pressed && styles.pressed]}>
+          <Send size={t.remindIcon} color={ink.onBrand} /><Text style={styles.remindText} {...shrinkToFit(0.8)}>Mark as submitted to police</Text>
+        </Pressable>}
+        {flow.status === 'completed' && <Pressable accessibilityRole="button" onPress={() => router.push(firRoute(caseId, 'completed'))} style={({ pressed }) => [styles.remind, pressed && styles.pressed]}>
+          <Text style={styles.remindText}>View</Text>
+        </Pressable>}
+      </View>}
+
+      <View style={styles.card}>
+        <View style={styles.row}><Text style={styles.label} {...shrinkToFit(0.8)}>{c.audit.label}</Text><History size={t.auditIcon} color={colors.textPrimary} style={styles.auditIcon} /></View>
+        {!events.length && <Text style={[styles.auditText, { marginTop: t.auditRowGap, color: colors.textBody }]}>No activity recorded yet.</Text>}
+        {shown.map((e, i) => <View key={`${e.created_at}-${i}`} style={styles.auditRow}>
+          <View style={styles.auditDot} />
+          <Text style={styles.auditText}>{e.label}</Text>
+          <Text style={styles.auditTime} {...shrinkToFit(0.8)}>{new Date(Date.parse(e.created_at) + 330 * 60000).toISOString().slice(0, 10) === today ? formatTime(e.created_at) : formatDate(e.created_at)}</Text>
+        </View>)}
+        {events.length > shown.length || allEvents && events.length > 8 ? <Pressable accessibilityRole="button" onPress={() => setAllEvents(v => !v)} style={{ marginTop: t.auditRowGap }}>
+          <Text style={[styles.auditText, { color: colors.brandDark }]}>{allEvents ? 'Show fewer' : `Show all (${events.length})`}</Text>
+        </Pressable> : null}
+      </View>
+
+      {compact && <Pressable accessibilityRole="button" onPress={toCases}
+        style={({ pressed }) => [styles.remind, { marginTop: compactTokens.continueTop, minHeight: compactTokens.continueH, borderRadius: compactTokens.continueRadius }, pressed && styles.pressed]}>
+        <Text style={styles.remindText}>{c.continue}</Text>
+      </Pressable>}
+
+      {flow.status === 'approved' && <PoliceSubmissionSheet visible={police} caseId={caseId} station={stationLine || null} approvedAt={latest(flow, 'fir_client_approved')}
+        onClose={() => setPolice(false)} onDone={view => { f.setFlow(view); setPolice(false); router.replace(firRoute(caseId, 'completed')); }} />}
+    </>;
+  }
 
   return (
     <View style={styles.screen}>
       <View style={[styles.header, { paddingTop: insets.top + t.headerTop }]}>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Back"
-          hitSlop={10}
-          onPress={() => (router.canGoBack() ? router.back() : router.replace('/matters' as Href))}
-        >
-          <ChevronLeft size={t.backIcon} color={colors.textPrimary} />
-        </Pressable>
-        <Text style={styles.title} {...shrinkToFit(0.75)}>
-          {compact ? 'Fir Review' : r.title}
-        </Text>
-        <View style={styles.avatar}>
-          <UserRound size={t.avatarGlyph} color={ink.onBrand} />
-        </View>
+        <Pressable accessibilityRole="button" accessibilityLabel="Back" hitSlop={10} onPress={toCases}><ChevronLeft size={t.backIcon} color={colors.textPrimary} /></Pressable>
+        <Text style={styles.title} {...shrinkToFit(0.75)}>{c.title}</Text>
+        <View style={styles.avatar}><UserRound size={t.avatarGlyph} color={ink.onBrand} /></View>
       </View>
-
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Drawn in design/219 as screen content — client UI, not a dev control. */}
-        <View style={styles.switchLabelRow}>
-          <Text style={styles.switchLabel} {...shrinkToFit(0.75)}>
-            {r.switcher.label}
-          </Text>
-          <Eye size={t.demoIcon} color={t.demoColour} style={styles.demoIcon} />
-          <Text style={styles.demo} {...shrinkToFit(0.75)}>
-            {r.switcher.demo}
-          </Text>
-        </View>
-        <View style={styles.seg}>
-          {r.switcher.states.map((s) => (
-            <Pressable
-              key={s}
-              accessibilityRole="button"
-              accessibilityState={{ selected: state === s }}
-              onPress={() => setState(s)}
-              style={[styles.segItem, state === s && styles.segItemOn]}
-            >
-              <Text style={[styles.segText, state === s && styles.segTextOn]} {...shrinkToFit(0.8)}>
-                {s}
-              </Text>
-            </Pressable>
-          ))}
-        </View>
-        {/* The other two states have no design (data/advocateFir.ts devNote — a code
-            note, never rendered); they show the drawn content with a neutral line. */}
-        {state !== r.switcher.states[0] && (
-          <View style={styles.devNote}>
-            <Text style={styles.devNoteText}>{previewStep.line}</Text>
-          </View>
-        )}
-
-        <View style={styles.card}>
-          <View style={styles.row}>
-            <Text style={styles.docket} {...shrinkToFit(0.75)}>
-              {r.docket}
-            </Text>
-            <View style={styles.docketChip}>
-              <View style={styles.docketChipDot} />
-              <Text style={styles.docketChipText} {...shrinkToFit(0.75)}>
-                {r.statusChip}
-              </Text>
-            </View>
-          </View>
-          <View style={styles.stationRow}>
-            <Shield size={t.stationIcon} color={colors.textPrimary} />
-            <Text style={styles.station} {...shrinkToFit(0.75)}>
-              {r.station}
-            </Text>
-          </View>
-        </View>
-
-        <View style={styles.card}>
-          <View style={styles.row}>
-            <Text style={styles.label} {...shrinkToFit(0.8)}>
-              {r.client.label}
-            </Text>
-            <View style={styles.verified}>
-              <ShieldCheck size={t.verifiedIcon} color={t.verifiedColour} />
-              <Text style={styles.verifiedText} {...shrinkToFit(0.75)}>
-                {r.client.chip}
-              </Text>
-            </View>
-          </View>
-          <View style={styles.clientRow}>
-            <View style={styles.initials}>
-              <Text style={styles.initialsText} {...shrinkToFit(0.8)}>
-                {r.client.initials}
-              </Text>
-            </View>
-            <View style={styles.clientText}>
-              <Text style={styles.name} {...shrinkToFit(0.75)}>
-                {r.client.name}
-              </Text>
-              <View style={styles.phoneRow}>
-                <Phone size={t.phoneIcon} color={colors.textPrimary} />
-                <Text style={styles.phone} {...shrinkToFit(0.75)}>
-                  {r.client.phone}
-                </Text>
-              </View>
-            </View>
-            <Pressable onPress={() => previewNotice("Call client")} accessibilityRole="button" accessibilityLabel="Call client" style={styles.callBtn}>
-              <PhoneForwarded size={t.callGlyph} color={colors.textPrimary} />
-            </Pressable>
-          </View>
-          <View style={styles.cityRow}>
-            <MapPin size={t.cityIcon} color={t.cityColour} />
-            <Text style={styles.city} {...shrinkToFit(0.8)}>
-              {r.client.city}
-            </Text>
-          </View>
-        </View>
-
-        <View style={styles.card}>
-          <View style={styles.row}>
-            <View style={styles.fileIcon}>
-              <FileText size={t.fileIconGlyph} color={colors.brandDark} />
-            </View>
-            <View style={styles.fileText}>
-              <View style={styles.row}>
-                <Text style={styles.fileTitle} {...shrinkToFit(0.75)}>
-                  {r.draft.title}
-                </Text>
-                <View style={styles.verChip}>
-                  <Text style={styles.verChipText} {...shrinkToFit(0.8)}>
-                    {r.draft.version}
-                  </Text>
-                </View>
-              </View>
-              <Text style={styles.fileSub} {...shrinkToFit(0.8)}>
-                {r.draft.by}
-              </Text>
-            </View>
-          </View>
-
-          <View style={styles.pro}>
-            <View style={styles.row}>
-              <Shield size={t.proIcon} color={colors.brandDark} />
-              <Text style={styles.proTitle} {...shrinkToFit(0.8)}>
-                {r.draft.proforma}
-              </Text>
-            </View>
-            <View style={styles.proStats}>
-              <View style={styles.row}>
-                <FileText size={t.proStatIcon} color={colors.textBody} />
-                <Text style={styles.proStat} {...shrinkToFit(0.8)}>
-                  {r.draft.sections}
-                </Text>
-              </View>
-              <View style={[styles.row, styles.proStatNext]}>
-                <FileText size={t.proStatIcon} color={colors.textBody} />
-                <Text style={styles.proStat} {...shrinkToFit(0.8)}>
-                  {r.draft.files}
-                </Text>
-              </View>
-            </View>
-          </View>
-
-          <View style={styles.actRow}>
-            {/* The draft has its own reader, design/218, so View opens that. */}
-            <Pressable
-              accessibilityRole="button"
-              onPress={() => router.push(`/advocate/fir/draft?id=${id ?? ''}` as Href)}
-              style={({ pressed }) => [styles.act, pressed && styles.pressed]}
-            >
-              <Eye size={t.actIcon} color={colors.textPrimary} />
-              <Text style={styles.actText} {...shrinkToFit(0.8)}>
-                {r.draft.view}
-              </Text>
-            </Pressable>
-            <Pressable onPress={() => previewNotice("Share draft")} accessibilityRole="button" accessibilityLabel="Share draft" style={styles.actShare}>
-              <Share2 size={t.actIcon} color={colors.textPrimary} />
-            </Pressable>
-          </View>
-        </View>
-
-        <View style={styles.card}>
-          <View style={styles.row}>
-            <Text style={styles.label} {...shrinkToFit(0.8)}>
-              {r.timeline.label}
-            </Text>
-            <Text style={styles.tlStage} {...shrinkToFit(0.8)}>
-              {r.timeline.stage}
-            </Text>
-          </View>
-          {/* ⚠ No connector lines — design/219 draws none. */}
-          <View style={styles.tl}>
-            {r.timeline.rows.map((row, i) => {
-              const Icon = TL_ICONS[row.icon];
-              const bg =
-                row.tone === 'done' ? t.tlDoneBg : row.tone === 'active' ? t.tlActiveBg : t.tlTodoBg;
-              const fg = row.tone === 'done' ? ink.onBrand : colors.textPrimary;
-              return (
-                <View key={row.title} style={[styles.tlRow, i > 0 && styles.tlRowNext]}>
-                  <View style={[styles.tlDot, { backgroundColor: bg }]}>
-                    <Icon size={t.tlDotGlyph} color={fg} strokeWidth={row.tone === 'done' ? 3 : 2} />
-                  </View>
-                  <View style={styles.tlText}>
-                    <Text style={styles.tlTitle} {...shrinkToFit(0.75)}>
-                      {row.title}
-                    </Text>
-                    <Text style={styles.tlSub} {...shrinkToFit(0.8)}>
-                      {row.sub}
-                    </Text>
-                  </View>
-                </View>
-              );
-            })}
-          </View>
-        </View>
-
-        {!compact && <View style={styles.card}>
-          <View style={styles.row}>
-            <View style={styles.alertIcon}>
-              <Mail size={t.alertIconGlyph} color={colors.brandDark} />
-            </View>
-            <View style={styles.alertText}>
-              <Text style={styles.alertTitle} {...shrinkToFit(0.75)}>
-                {r.alert.title}
-              </Text>
-              <Text style={styles.alertBody}>{r.alert.body}</Text>
-            </View>
-          </View>
-          <View style={styles.note}>
-            <Info size={t.noteIcon} color={colors.textPrimary} style={styles.noteIcon} />
-            <Text style={styles.noteText}>{r.alert.note}</Text>
-          </View>
-          <Pressable onPress={() => previewNotice(r.alert.resend)} accessibilityRole="button" style={({ pressed }) => [styles.resend, pressed && styles.pressed]}>
-            <MailPlus size={t.resendIcon} color={colors.textPrimary} />
-            <Text style={styles.resendText} {...shrinkToFit(0.8)}>
-              {r.alert.resend}
-            </Text>
-          </Pressable>
-          <Pressable
-            accessibilityRole="button"
-            onPress={() => previewNotice(r.alert.remind)}
-            style={({ pressed }) => [styles.remind, pressed && styles.pressed]}
-          >
-            <BellRing size={t.remindIcon} color={ink.onBrand} />
-            <Text style={styles.remindText} {...shrinkToFit(0.8)}>
-              {r.alert.remind}
-            </Text>
-          </Pressable>
-        </View>}
-
-        <View style={styles.card}>
-          <View style={styles.row}>
-            <Text style={styles.label} {...shrinkToFit(0.8)}>
-              {r.audit.label}
-            </Text>
-            <History size={t.auditIcon} color={colors.textPrimary} style={styles.auditIcon} />
-          </View>
-          {r.audit.rows.map((row) => (
-            <View key={row.text} style={styles.auditRow}>
-              <View style={styles.auditDot} />
-              <Text style={styles.auditText} {...shrinkToFit(0.75)}>
-                {row.text}
-              </Text>
-              <Text style={styles.auditTime} {...shrinkToFit(0.8)}>
-                {row.time}
-              </Text>
-            </View>
-          ))}
-        </View>
-        {compact && <Pressable accessibilityRole="button" onPress={() => {
-          if (DEMO_AUTO_ADVANCE && state === r.switcher.states[0]) router.push(`/advocate/fir/completed?id=${id ?? ''}` as Href);
-          else previewNotice('Continue');
-        }} style={[styles.remind, {marginTop:compactTokens.continueTop,minHeight:compactTokens.continueH,borderRadius:compactTokens.continueRadius}]}><Text style={styles.remindText}>Continue</Text></Pressable>}
-      </ScrollView>
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>{content}</ScrollView>
     </View>
   );
 }
@@ -606,6 +527,3 @@ const styles = StyleSheet.create({
   auditTime: { fontFamily: font.appBody, fontSize: t.auditTimeSize, color: t.auditTimeColour, flexShrink: 1 },
   pressed: { opacity: 0.85 },
 });
-import FirAdvocate from '../../../features/fir/FirAdvocate';
-import {DATA_SOURCE} from '../../../lib/data-source';
-export default function LiveFirScreen(props: {compact?: boolean} = {}) { return DATA_SOURCE === 'api' ? <FirAdvocate/> : <FixtureAdvocateFirReviewScreen {...props}/>; }

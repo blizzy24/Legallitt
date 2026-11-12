@@ -1067,3 +1067,70 @@ to merge into `docs/DECISIONS.md` §13 and the architecture document.
 | UTR details 361 | D-85 | Shows only the real amount, account, dates and UTR; drawn download receipt / advocate desk actions omitted |
 | Bank account 257–260, 360 | D-36, D-84 | One real form (holder, bank, IFSC, account number twice, type); drawn "Matched"/verified states and OTP verification replaced by "Unverified" |
 | Payout settings 256 | D-36 | Payout account and an accurate description of manual payouts; schedules shown as not available |
+
+## 14. FIR Draft rebuild — 12 November 2026 (D-100 onward)
+
+The flow (`docs/flows/FIR-DRAFT-FLOW.md`) settles every [DECIDE] item with its own
+proposal, and section 5 items 3–13 use their defaults. These are the builder's
+decisions on points the flow leaves open. Numbering starts at D-100 to stay clear of
+earlier ranges.
+
+**D-100. Police stations: Indore and Bhopal seeded, free text everywhere.** The list
+in `packages/shared/src/fir-police-stations.ts` uses commonly published station names;
+it has not been checked against MP Police's official list (§9.1). "Type police station
+name" is always offered.
+
+**D-101. Identity Proof keeps only the last four digits.** The client types them at
+upload; they are stored in `documents.identity_last4` and shown as XXXX-XXXX-1234
+everywhere. A full number is still refused, and no number is read from the file.
+
+**D-102. FIR requests are numbered FIR-YYYY-NNNN** (flow §4). The sequence continues,
+so earlier FIR_DRAFT-… references stay valid and unique. Draft PDFs are named
+`FIR_Draft_<ID>_v<N>.pdf`.
+
+**D-103. Primary Documents is enforced on the server.** Submission needs at least one
+uploaded Primary Document and an accepted identity document. Each upload slot also
+enforces its drawn file types and count (Scene Photos & Video: JPEG/PNG/MP4, five files,
+50 MB each; Ancillary: adds MP3). Video and audio are accepted only in those FIR slots.
+
+**D-104. Admin approval sends the draft to the client; completion follows the client.**
+Approve → `client_review`. The client approves (→ `approved` / awaiting police
+submission when the advocate submits, else `completed`) or requests changes
+(→ `changes_requested` / `client_changes_requested`), which goes back to the advocate
+and then to the admin again. The advocate's share is reported, and credited to the
+wallet, only when the case completes.
+
+**D-105. An advocate's rejection returns the case to admin with no advocate.** The
+reason is required and is visible to admins only; the next advocate never sees why the
+previous one left. FIR declines recorded before this change can also be reassigned.
+
+**D-106. Remind Client is in-app only, once every 24 hours** (flow A6), and is logged.
+
+**D-107. Settings change through PATCH.** The API's cross-origin policy allows GET,
+POST, PATCH and DELETE; `PATCH /fir/settings` is admin-only and logged.
+
+**D-108. Step 1's City list is the LGD district list.** There is no city list; district
+names (with their state) stand in, plus "Use '<typed>'". Choosing a listed city fills
+State and District when both are empty.
+
+**D-109. A1 cards show ORDINARY when the case has no tier.** FIR Draft has one service
+level, so an untiered request is the ordinary one (design 214's tag). The advocate's
+fee and latest note come with the list response (`fir_card`), advocates only.
+
+**D-110. The advocate can edit the filed values in proforma sections 1–3** (flow A5:
+"all editable"). Edits are stored as overrides beside the client's filing, which stays
+untouched and hash-protected; the PDF prints the override. FIR Number and Report
+Received stay blank for the police, and the identity document stays masked.
+
+**D-111. Send for Review checks the flow's required fields only:** complainant name,
+police station, a valid incident date and time, place, at least one complete legal
+section, the statement, the identity document, and the personal details the client had
+to give. Distance, vehicle, motive and witness details are optional and print only when
+filled. The Statement of Facts is seeded letter-style around the client's own words.
+
+**D-112. Auto-save updates the advocate's own unsent version in place** about 30
+seconds after the last edit; Save Draft creates a new version. A send is refused if an
+auto-save changed the draft after its PDF was rendered.
+
+**D-113. "Client viewed the draft" is recorded once per version** when the client opens
+the PDF during review. It appears in the advocate's and admin's audit logs only.

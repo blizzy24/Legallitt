@@ -22,7 +22,7 @@ import type { Prisma, Document } from "../generated/prisma/client";
 import { parse } from "../auth/auth.service";
 import { PrismaService } from "../prisma.service";
 import { caseScope, type CaseActor } from "../cases/case-access";
-import { lockedCase } from "../cases/case-state-machine";
+import { appendCaseEvent, lockedCase } from "../cases/case-state-machine";
 import { DocumentStorage, stagingKey } from "./document-storage";
 import { FileInspector } from "./file-inspector";
 import {firIdentityPolicy} from './fir-identity';
@@ -229,6 +229,15 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
         if (['cancelled','refunded'].includes(record.status) || !(approved || receipt)) throw new NotFoundException('Document not found');
       }
       await assertReportDocumentReadable(tx, actor, record, doc);
+      if (record.service_code === 'fir_draft' && actor.role === 'client' && doc.kind === 'fir_draft' && record.status === 'client_review') {
+        // A6 audit log: "Client viewed the draft", once per draft version. The case row
+        // is locked above, so two concurrent opens cannot both append it.
+        const draft = await tx.draft.findFirst({where:{case_id:record.id,document_id:doc.id},select:{id:true,version:true}});
+        const seen = draft && (await tx.caseEvent.findMany({where:{case_id:record.id,type:'fir_client_viewed'},select:{payload:true}}))
+          .some(e => (e.payload as {draft_id?: string} | null)?.draft_id === draft.id);
+        if (draft && !seen)
+          await appendCaseEvent(tx, {case_id:record.id,type:'fir_client_viewed',actor_id:actor.id,actor_role:actor.role,payload:{version:draft.version,draft_id:draft.id}});
+      }
       return {
         url: await this.storage.download(doc.s3_key, doc.filename,
           preview && actor.role === 'admin' && ['application/pdf', 'image/png', 'image/jpeg'].includes(doc.mime_type)),
