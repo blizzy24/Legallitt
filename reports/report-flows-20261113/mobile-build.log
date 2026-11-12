@@ -3,11 +3,11 @@ env: export EXPO_PUBLIC_LOCAL_API_PROXY LOCAL_API_PROXY_TARGET
 Expo Autolinking module resolution enabled
 Starting Metro Bundler
 
-| (node:21040) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (node:27188) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
 | (Use `node --trace-warnings ...` to show where the warning was created)
-| (node:21040) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (node:27188) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
 | (Use `node --trace-warnings ...` to show where the warning was created)
-Web Bundled 4041ms node_modules\.pnpm\expo-router@57.0.21_d4d3468dbc9b324b440405f4eadac231\node_modules\expo-router\entry.js (3630 modules)
+Web Bundled 3882ms node_modules\.pnpm\expo-router@57.0.21_d4d3468dbc9b324b440405f4eadac231\node_modules\expo-router\entry.js (3631 modules)
 
 › Assets (72):
 ..\..\node_modules\.pnpm\@expo-google-fonts+inter@0.4.2\node_modules\@expo-google-fonts\inter\100Thin_Italic\Inter_100Thin_Italic.1b97f7df9b976cfe530c18c09598e6f6.ttf (347KB)
@@ -78,8 +78,8 @@ assets\onboarding-05.68f1fd535d9b13d298383f60b97fcbf2.png (672KB)
 assets\property-design-source.251dce4376391f4e1a472655a7718a4d.png (661KB)
 
 › web bundles (2):
-_expo/static/js/web/entry-8de9df8e5cc94f2cde490effb8291f51.js (8.5MB)
-_expo/static/js/web/pdf-b590ca8e63c40c36cfe3ccbc6626361c.js (573KB)
+_expo/static/js/web/entry-ba7736c0be92a2d03ea424c6e91ea05c.js (8.5MB)
+_expo/static/js/web/pdf-4dbd04e4b605bcb1df3bebf3bc238871.js (573KB)
 
 › Files (3):
 favicon.ico (15KB)

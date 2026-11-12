@@ -28,6 +28,8 @@ Captured against the local API with synthetic cases and explicitly simulated pay
 | information | [Comparison](information.png) | `design/figma-2026-11-12/Property-Search-Report-Client-Side/Html → Body.png` |
 | intake-ordinary | [Comparison](intake-ordinary.png) | `design/figma-2026-11-12/Property-Search-Report-Client-Side/Property Search Report 16.png` |
 | intake-urgent | [Comparison](intake-urgent.png) | `design/figma-2026-11-12/Property-Search-Report-Client-Side/Property Search Report 16.png` |
+| isolation-ordinary | [Comparison](isolation-ordinary.png) | No separate design |
+| isolation-urgent | [Comparison](isolation-urgent.png) | No separate design |
 | landing | [Comparison](landing.png) | `design/figma-2026-11-12/Property-Search-Report-Client-Side/Html → Body → Standalone Mobile App Screen (390px by 852px).png` |
 | loading | [Comparison](loading.png) | No separate design |
 | partial-intake | [Comparison](partial-intake.png) | `design/figma-2026-11-12/Property-Search-Report-Client-Side/Property Search Report 16.png` |
@@ -36,6 +38,8 @@ Captured against the local API with synthetic cases and explicitly simulated pay
 | payment-urgent | [Comparison](payment-urgent.png) | `design/figma-2026-11-12/Property-Search-Report-Client-Side/Property Search Report 04.png` |
 | received-viewer-ordinary-0 | [Comparison](received-viewer-ordinary-0.png) | `design/figma-2026-11-12/Document-Viewer/iPhone 13 & 14 - 147.png` |
 | received-viewer-urgent-0 | [Comparison](received-viewer-urgent-0.png) | `design/figma-2026-11-12/Document-Viewer/iPhone 13 & 14 - 147.png` |
+| resumed-payment | [Comparison](resumed-payment.png) | `design/figma-2026-11-12/Property-Search-Report-Client-Side/Property Search Report 04.png` |
+| resumed-scan | [Comparison](resumed-scan.png) | `design/figma-2026-11-12/Property-Search-Report-Client-Side/Documents Forensic 29.png` |
 | review-ordinary | [Comparison](review-ordinary.png) | `design/figma-2026-11-12/Property-Search-Report-Client-Side/Property Search Report 03.png` |
 | review-urgent | [Comparison](review-urgent.png) | `design/figma-2026-11-12/Property-Search-Report-Client-Side/Property Search Report 03.png` |
 | scan-cancellation | [Comparison](scan-cancellation.png) | `design/figma-2026-11-12/Property-Search-Report-Client-Side/Documents Forensic 29.png` |

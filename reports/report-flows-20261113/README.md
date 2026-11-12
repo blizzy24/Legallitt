@@ -13,6 +13,8 @@ Local gate passed. No deployment is claimed by this document yet.
 | Gallery and image viewer | Real upload persisted; “1 image” displayed | [Gallery log](gallery.log) |
 | Versioned upload limit | Admin UI changes new cases only; API rejects oversize | [Browser settings](settings.log), [API checks](upload-policy-tests.log) |
 | Legacy inventory | Seven existing cases across draft, payment-pending, completed and cancelled/refunded states | [Read-only inventory](legacy-inventory.json) |
+| Saved payment-pending tracking links | Both services resume shared checkout and Scan & Pay | [Legacy payment check](legacy-payment.log) |
+| Endpoint and direct-URL isolation | Foreign client/unassigned advocate denied; admin settings denied to other roles | [Isolation check](isolation.log) |
 | Browser JavaScript errors | None in final checks | [Errors](local/browser-errors.json) |
 
 Property Search covered Ordinary/Urgent, admin more details, decline/reassignment,

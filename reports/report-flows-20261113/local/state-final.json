@@ -170,6 +170,34 @@
     {
       "name": "Document Forensic Gallery selection persists an image through the document pipeline",
       "at": "2026-11-12T20:56:39.238Z"
+    },
+    {
+      "name": "property_search-ordinary foreign client direct URL and all workflow endpoints reject foreign client/unassigned advocate",
+      "at": "2026-11-12T21:04:49.345Z"
+    },
+    {
+      "name": "property_search-urgent foreign client direct URL and all workflow endpoints reject foreign client/unassigned advocate",
+      "at": "2026-11-12T21:04:53.435Z"
+    },
+    {
+      "name": "document_forensic-ordinary foreign client direct URL and all workflow endpoints reject foreign client/unassigned advocate",
+      "at": "2026-11-12T21:04:57.561Z"
+    },
+    {
+      "name": "document_forensic-urgent foreign client direct URL and all workflow endpoints reject foreign client/unassigned advocate",
+      "at": "2026-11-12T21:05:01.707Z"
+    },
+    {
+      "name": "Workflow settings are admin-only",
+      "at": "2026-11-12T21:05:01.803Z"
+    },
+    {
+      "name": "property_search payment-pending tracking link resumes the shared checkout and QR flow",
+      "at": "2026-11-12T21:18:35.965Z"
+    },
+    {
+      "name": "document_forensic payment-pending tracking link resumes the shared checkout and QR flow",
+      "at": "2026-11-12T21:18:42.241Z"
     }
   ],
   "visuals": [
@@ -183,9 +211,19 @@
     }
   ],
   "last_check": {
-    "stage": "gallery",
+    "stage": "legacy-payment",
     "passed": true,
-    "at": "2026-11-12T20:56:39.239Z"
+    "at": "2026-11-12T21:18:42.242Z"
   },
-  "gallery_case_id": "c9af3f2a-6912-4804-aa79-a0db94554243"
+  "gallery_case_id": "c9af3f2a-6912-4804-aa79-a0db94554243",
+  "legacy_pending": [
+    {
+      "id": "34a7f646-8af8-43d0-ae36-d5300e833ee4",
+      "service": "property_search"
+    },
+    {
+      "id": "968c2aa1-cc15-4849-af22-963694a052f8",
+      "service": "document_forensic"
+    }
+  ]
 }

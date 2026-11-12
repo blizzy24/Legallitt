@@ -1,0 +1,6 @@
+SHOT resumed-payment.png
+SHOT resumed-scan.png
+PASS property_search payment-pending tracking link resumes the shared checkout and QR flow
+SHOT resumed-payment.png
+SHOT resumed-scan.png
+PASS document_forensic payment-pending tracking link resumes the shared checkout and QR flow

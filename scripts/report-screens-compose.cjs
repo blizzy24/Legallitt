@@ -7,8 +7,8 @@ const mapping=(service,name)=>{
  if(name==='information')return c+(ps?'Html → Body.png':'Documents Forensic 01.png');
  if(/^(intake|empty-intake|partial-intake)/.test(name))return c+(ps?'Property Search Report 16.png':'Html → Body (1).png');
  if(name.startsWith('review-'))return c+(ps?'Property Search Report 03.png':'Documents Forensic 12.png');
- if(name.startsWith('payment-'))return c+(ps?'Property Search Report 04.png':'Documents Forensic 04.png');
- if(name.startsWith('scan-'))return c+(ps?'Documents Forensic 29.png':'Documents Forensic 13.png');
+ if(name.startsWith('payment-')||name==='resumed-payment')return c+(ps?'Property Search Report 04.png':'Documents Forensic 04.png');
+ if(name.startsWith('scan-')||name==='resumed-scan')return c+(ps?'Documents Forensic 29.png':'Documents Forensic 13.png');
  if(name.startsWith('success-'))return c+(ps?'Documents Forensic 33.png':'Documents Forensic 13.png');
  if(name.startsWith('tracking-'))return c+(ps?'Property Search Report 06.png':'Documents Forensic 15.png');
  if(name.startsWith('delivered-'))return c+(ps?'Documents Forensic 37.png':'Documents Forensic 38.png');

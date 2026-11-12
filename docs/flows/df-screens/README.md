@@ -36,6 +36,8 @@ Captured against the local API with synthetic cases and explicitly simulated pay
 | information | [Comparison](information.png) | `design/figma-2026-11-12/Document-Forensic-Client-Side/Documents Forensic 01.png` |
 | intake-ordinary | [Comparison](intake-ordinary.png) | `design/figma-2026-11-12/Document-Forensic-Client-Side/Html → Body (1).png` |
 | intake-urgent | [Comparison](intake-urgent.png) | `design/figma-2026-11-12/Document-Forensic-Client-Side/Html → Body (1).png` |
+| isolation-ordinary | [Comparison](isolation-ordinary.png) | No separate design |
+| isolation-urgent | [Comparison](isolation-urgent.png) | No separate design |
 | landing | [Comparison](landing.png) | `design/figma-2026-11-12/Document-Forensic-Client-Side/Html → Body.png` |
 | loading | [Comparison](loading.png) | No separate design |
 | partial-intake | [Comparison](partial-intake.png) | `design/figma-2026-11-12/Document-Forensic-Client-Side/Html → Body (1).png` |
@@ -52,6 +54,8 @@ Captured against the local API with synthetic cases and explicitly simulated pay
 | report-revised | [Comparison](report-revised.png) | `design/figma-2026-11-12/Document-Forensic-Advocate-Side/Html → Body.png` |
 | report-urgent | [Comparison](report-urgent.png) | `design/figma-2026-11-12/Document-Forensic-Advocate-Side/Html → Body.png` |
 | resubmit | [Comparison](resubmit.png) | `design/figma-2026-11-12/Document-Forensic-Advocate-Side/Html → Body (2).png` |
+| resumed-payment | [Comparison](resumed-payment.png) | `design/figma-2026-11-12/Document-Forensic-Client-Side/Documents Forensic 04.png` |
+| resumed-scan | [Comparison](resumed-scan.png) | `design/figma-2026-11-12/Document-Forensic-Client-Side/Documents Forensic 13.png` |
 | review-ordinary | [Comparison](review-ordinary.png) | `design/figma-2026-11-12/Document-Forensic-Client-Side/Documents Forensic 12.png` |
 | review-urgent | [Comparison](review-urgent.png) | `design/figma-2026-11-12/Document-Forensic-Client-Side/Documents Forensic 12.png` |
 | scan-cancellation | [Comparison](scan-cancellation.png) | `design/figma-2026-11-12/Document-Forensic-Client-Side/Documents Forensic 13.png` |

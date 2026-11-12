@@ -156,6 +156,24 @@ async function main(){let browser;const pages={},api={},users={},errors=[];
     await size.dispose();pass(service+' admin upload settings visible'+(live?'':' and versioned changes apply only to new cases'));
    }
   });
+  stage('isolation',async()=>{
+   for(const c of state.cases.filter(c=>c.paid&&!c.cancel)){
+    const other=c.advocate==='advocate-2'?'advocate':'advocate-2';for(const role of ['client-isolation',other]){
+     await assert.rejects(api[role].case(c.id),e=>e.status===404);await assert.rejects(api[role].request(`/service-reports/${c.id}/workflow`),e=>e.status===404);
+     for(const action of ['verify','request-information','reply','resolve','file-checklist','begin-report','review-checklist','reassign','open-correction','reopen-chat'])await assert.rejects(api[role].request(`/service-reports/${c.id}/workflow/${action}`,{revision:0}),e=>e.status===404);
+     await assert.rejects(api[role].request(`/service-reports/${c.id}/wording`,{}),e=>e.status===404);
+    }
+    const p=await page('client-isolation');await go(p,mobile+'/'+c.service.replaceAll('_','-')+'/track?caseId='+c.id);await text(p,'Case not found');await snap(p,c.service,'isolation-'+c.speed);pass(c.tag+' foreign client direct URL and all workflow endpoints reject foreign client/unassigned advocate');
+   }
+   for(const role of ['client','advocate'])for(const service of ['property_search','document_forensic']){await assert.rejects(api[role].request('/service-reports/settings/'+service),e=>e.status===403);await assert.rejects(api[role].request('/service-reports/settings/'+service,{}),e=>e.status===403);}pass('Workflow settings are admin-only');
+  });
+  stage('legacy-payment',async()=>{
+   state.legacy_pending??=[];
+   for(const service of ['property_search','document_forensic']){
+    let entry=state.legacy_pending.find(c=>c.service===service);if(!entry){const source=await api.client.case(state.cases.find(c=>c.service===service&&!c.cancel).id),created=await api.client.createCase({service_code:service});entry={id:created.id,service};state.legacy_pending.push(entry);save();await api.client.saveReportIntake(entry.id,{tier:'ordinary',details:{...source.details,...service==='document_forensic'?{no_reference_sample:true,document_focus:{}}:{}}});if(service==='document_forensic'){const ticket=await api.client.presign({case_id:entry.id,kind:'questioned_document',filename:'TEST-resumed-request.pdf',mime:'application/pdf'});await api.client.upload(ticket,new Blob([fs.readFileSync(await syntheticPdf('resumed-request'))],{type:'application/pdf'}));}await api.client.submit(entry.id);}
+    const p=await casePage('client',entry);await text(p,'Complete Payment');await text(p,'SELECT PAYMENT METHOD');await snap(p,service,'resumed-payment');await click(p,'Pay →');await text(p,'Scan & Pay');await snap(p,service,'resumed-scan');pass(service+' payment-pending tracking link resumes the shared checkout and QR flow');
+   }
+  });
 
   const selected=arg('stage');for(const s of stages)if(!selected||selected===s.name)await s.run();
   fs.writeFileSync(path.join(out,'browser-errors.json'),JSON.stringify(errors,null,2)+'\n');

@@ -1,3 +1,4 @@
 
 > @legalitt/mobile@1.0.0 typecheck D:\Legalitt\Legallitt\apps\mobile
 > node scripts/prepare-pdf-viewer.cjs && tsc --noEmit
+
