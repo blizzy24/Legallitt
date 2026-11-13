@@ -1,0 +1,8 @@
+SHOT delivered-details-ordinary.png
+PASS property_search-ordinary shares real PDF file, falls back to download, refreshes on focus and collapses request details
+SHOT delivered-details-urgent.png
+PASS property_search-urgent shares real PDF file, falls back to download, refreshes on focus and collapses request details
+SHOT delivered-details-ordinary.png
+PASS document_forensic-ordinary shares real PDF file, falls back to download, refreshes on focus and collapses request details
+SHOT delivered-details-urgent.png
+PASS document_forensic-urgent shares real PDF file, falls back to download, refreshes on focus and collapses request details

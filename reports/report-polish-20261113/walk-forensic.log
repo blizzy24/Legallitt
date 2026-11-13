@@ -1,0 +1,35 @@
+SHOT file-checklist-ordinary.png
+SHOT waiting-ordinary.png
+SHOT report-ordinary.png
+SHOT report-preview-ordinary.png
+SHOT affidavit-ordinary.png
+SHOT affidavit-signed-ordinary.png
+SHOT affidavit-preview-ordinary.png
+SHOT affidavit-viewer-ordinary.png
+SHOT submit-ordinary.png
+SHOT with-admin-ordinary.png
+SHOT admin-review-ordinary.png
+SHOT waiting-correction.png
+SHOT report-revised.png
+SHOT report-preview-ordinary.png
+SHOT affidavit-resigned.png
+SHOT affidavit-signed-ordinary.png
+SHOT affidavit-preview-ordinary.png
+SHOT affidavit-viewer-ordinary.png
+SHOT resubmit.png
+SHOT with-admin-ordinary.png
+SHOT admin-checklist-ordinary.png
+PASS document_forensic-ordinary report and affidavit approved and released after correction
+SHOT file-checklist-urgent.png
+SHOT waiting-urgent.png
+SHOT report-urgent.png
+SHOT report-preview-urgent.png
+SHOT affidavit-urgent.png
+SHOT affidavit-signed-urgent.png
+SHOT affidavit-preview-urgent.png
+SHOT affidavit-viewer-urgent.png
+SHOT submit-urgent.png
+SHOT with-admin-urgent.png
+SHOT admin-review-urgent.png
+SHOT admin-checklist-urgent.png
+PASS document_forensic-urgent report and affidavit approved and released

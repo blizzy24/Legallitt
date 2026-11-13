@@ -1,0 +1,14 @@
+SHOT delivered-ordinary.png
+SHOT request-menu.png
+SHOT admin-queue.png
+SHOT success-ordinary.png
+SHOT delivered-ordinary.png
+SHOT request-menu.png
+SHOT admin-queue.png
+SHOT success-ordinary.png
+SHOT affidavit-partial.png
+SHOT affidavit-signed-ordinary.png
+SHOT affidavit-preview-ordinary.png
+SHOT affidavit-drawn-signature.png
+SHOT submit-controls.png
+PASS Affidavit Edit Text/Add Info/Save persists to the PDF; typed and drawn Re-sign work; saved PDF page/size metadata displays

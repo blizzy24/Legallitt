@@ -4,12 +4,14 @@ Captured against the local API with synthetic cases and explicitly simulated pay
 
 | Screen | Evidence | Source |
 |---|---|---|
+| accepted-client-card | [Comparison](accepted-client-card.png) | `design/figma-2026-11-12/Document-Forensic-Advocate-Side/80.png` |
 | accepted-ordinary | [Comparison](accepted-ordinary.png) | `design/figma-2026-11-12/Document-Forensic-Advocate-Side/80.png` |
 | accepted-urgent | [Comparison](accepted-urgent.png) | `design/figma-2026-11-12/Document-Forensic-Advocate-Side/80.png` |
 | admin-assigned-ordinary | [Comparison](admin-assigned-ordinary.png) | No separate design |
 | admin-assigned-urgent | [Comparison](admin-assigned-urgent.png) | No separate design |
 | admin-checklist-ordinary | [Comparison](admin-checklist-ordinary.png) | No separate design |
 | admin-checklist-urgent | [Comparison](admin-checklist-urgent.png) | No separate design |
+| admin-queue | [Comparison](admin-queue.png) | No separate design |
 | admin-review-ordinary | [Comparison](admin-review-ordinary.png) | No separate design |
 | admin-review-urgent | [Comparison](admin-review-urgent.png) | No separate design |
 | admin-settings | [Comparison](admin-settings.png) | No separate design |
@@ -17,14 +19,22 @@ Captured against the local API with synthetic cases and explicitly simulated pay
 | advocate-completed-urgent | [Comparison](advocate-completed-urgent.png) | No separate design |
 | advocate-request-ordinary | [Comparison](advocate-request-ordinary.png) | `design/figma-2026-11-12/Document-Forensic-Advocate-Side/79.png` |
 | advocate-request-urgent | [Comparison](advocate-request-urgent.png) | `design/figma-2026-11-12/Document-Forensic-Advocate-Side/79.png` |
+| affidavit-drawn-signature | [Comparison](affidavit-drawn-signature.png) | `design/figma-2026-11-12/Document-Forensic-Advocate-Side/Html → Body (1).png` |
 | affidavit-ordinary | [Comparison](affidavit-ordinary.png) | `design/figma-2026-11-12/Document-Forensic-Advocate-Side/Html → Body (1).png` |
+| affidavit-partial | [Comparison](affidavit-partial.png) | `design/figma-2026-11-12/Document-Forensic-Advocate-Side/Html → Body (1).png` |
+| affidavit-preview-ordinary | [Comparison](affidavit-preview-ordinary.png) | `design/figma-2026-11-12/Document-Forensic-Advocate-Side/Html → Body (1).png` |
+| affidavit-preview-urgent | [Comparison](affidavit-preview-urgent.png) | `design/figma-2026-11-12/Document-Forensic-Advocate-Side/Html → Body (1).png` |
 | affidavit-resigned | [Comparison](affidavit-resigned.png) | `design/figma-2026-11-12/Document-Forensic-Advocate-Side/Html → Body (1).png` |
+| affidavit-signed-ordinary | [Comparison](affidavit-signed-ordinary.png) | `design/figma-2026-11-12/Document-Forensic-Advocate-Side/Html → Body (1).png` |
+| affidavit-signed-urgent | [Comparison](affidavit-signed-urgent.png) | `design/figma-2026-11-12/Document-Forensic-Advocate-Side/Html → Body (1).png` |
 | affidavit-urgent | [Comparison](affidavit-urgent.png) | `design/figma-2026-11-12/Document-Forensic-Advocate-Side/Html → Body (1).png` |
 | affidavit-viewer-ordinary | [Comparison](affidavit-viewer-ordinary.png) | `design/figma-2026-11-12/Document-Viewer/iPhone 13 & 14 - 147.png` |
 | affidavit-viewer-urgent | [Comparison](affidavit-viewer-urgent.png) | `design/figma-2026-11-12/Document-Viewer/iPhone 13 & 14 - 147.png` |
 | cancellation-before-acceptance | [Comparison](cancellation-before-acceptance.png) | No separate design |
 | cancellation-refunded | [Comparison](cancellation-refunded.png) | No separate design |
 | client-more-information | [Comparison](client-more-information.png) | No separate design |
+| delivered-details-ordinary | [Comparison](delivered-details-ordinary.png) | `design/figma-2026-11-12/Document-Forensic-Client-Side/Documents Forensic 38.png` |
+| delivered-details-urgent | [Comparison](delivered-details-urgent.png) | `design/figma-2026-11-12/Document-Forensic-Client-Side/Documents Forensic 38.png` |
 | delivered-ordinary | [Comparison](delivered-ordinary.png) | `design/figma-2026-11-12/Document-Forensic-Client-Side/Documents Forensic 38.png` |
 | delivered-urgent | [Comparison](delivered-urgent.png) | `design/figma-2026-11-12/Document-Forensic-Client-Side/Documents Forensic 38.png` |
 | empty-intake | [Comparison](empty-intake.png) | `design/figma-2026-11-12/Document-Forensic-Client-Side/Html → Body (1).png` |
@@ -53,6 +63,7 @@ Captured against the local API with synthetic cases and explicitly simulated pay
 | report-preview-urgent | [Comparison](report-preview-urgent.png) | `design/figma-2026-11-12/Document-Forensic-Advocate-Side/Html → Body.png` |
 | report-revised | [Comparison](report-revised.png) | `design/figma-2026-11-12/Document-Forensic-Advocate-Side/Html → Body.png` |
 | report-urgent | [Comparison](report-urgent.png) | `design/figma-2026-11-12/Document-Forensic-Advocate-Side/Html → Body.png` |
+| request-menu | [Comparison](request-menu.png) | No separate design |
 | resubmit | [Comparison](resubmit.png) | `design/figma-2026-11-12/Document-Forensic-Advocate-Side/Html → Body (2).png` |
 | resumed-payment | [Comparison](resumed-payment.png) | `design/figma-2026-11-12/Document-Forensic-Client-Side/Documents Forensic 04.png` |
 | resumed-scan | [Comparison](resumed-scan.png) | `design/figma-2026-11-12/Document-Forensic-Client-Side/Documents Forensic 13.png` |
@@ -62,6 +73,7 @@ Captured against the local API with synthetic cases and explicitly simulated pay
 | scan-cancellation | [Comparison](scan-cancellation.png) | `design/figma-2026-11-12/Document-Forensic-Client-Side/Documents Forensic 13.png` |
 | scan-ordinary | [Comparison](scan-ordinary.png) | `design/figma-2026-11-12/Document-Forensic-Client-Side/Documents Forensic 13.png` |
 | scan-urgent | [Comparison](scan-urgent.png) | `design/figma-2026-11-12/Document-Forensic-Client-Side/Documents Forensic 13.png` |
+| submit-controls | [Comparison](submit-controls.png) | `design/figma-2026-11-12/Document-Forensic-Advocate-Side/Html → Body (2).png` |
 | submit-ordinary | [Comparison](submit-ordinary.png) | `design/figma-2026-11-12/Document-Forensic-Advocate-Side/Html → Body (2).png` |
 | submit-urgent | [Comparison](submit-urgent.png) | `design/figma-2026-11-12/Document-Forensic-Advocate-Side/Html → Body (2).png` |
 | success-cancellation | [Comparison](success-cancellation.png) | `design/figma-2026-11-12/Document-Forensic-Client-Side/Documents Forensic 13.png` |

@@ -1,0 +1,295 @@
+{
+  "cases": [
+    {
+      "id": "10915dcb-f22a-4164-a63f-2ab9f6acfbcf",
+      "service": "property_search",
+      "speed": "ordinary",
+      "tag": "property_search-ordinary",
+      "paid": true,
+      "advocate": "advocate-2"
+    },
+    {
+      "id": "bfaffcd5-3806-482e-b4df-4cd38bcd5b10",
+      "service": "property_search",
+      "speed": "urgent",
+      "tag": "property_search-urgent",
+      "paid": true,
+      "advocate": "advocate-2"
+    },
+    {
+      "id": "472081c3-8dfd-428a-82c1-48635b2d8492",
+      "service": "document_forensic",
+      "speed": "ordinary",
+      "tag": "document_forensic-ordinary",
+      "paid": true,
+      "advocate": "advocate",
+      "returned": true
+    },
+    {
+      "id": "8e562bf5-1dc9-497a-aee8-8a585ede6547",
+      "service": "document_forensic",
+      "speed": "urgent",
+      "tag": "document_forensic-urgent",
+      "paid": true,
+      "advocate": "advocate"
+    },
+    {
+      "id": "f42bd10c-6d68-412b-9d06-33092164fa2f",
+      "service": "property_search",
+      "speed": "ordinary",
+      "tag": "property_search-cancellation",
+      "cancel": true,
+      "paid": true
+    },
+    {
+      "id": "3501813c-28b0-4a64-bde2-1c0574f536c9",
+      "service": "document_forensic",
+      "speed": "ordinary",
+      "tag": "document_forensic-cancellation",
+      "cancel": true,
+      "paid": true
+    }
+  ],
+  "results": [
+    {
+      "name": "property_search-ordinary intake persisted, exact quote paid, success and tracking",
+      "at": "2026-11-13T09:18:55.622Z"
+    },
+    {
+      "name": "property_search-urgent intake persisted, exact quote paid, success and tracking",
+      "at": "2026-11-13T09:19:29.555Z"
+    },
+    {
+      "name": "document_forensic-ordinary intake persisted, exact quote paid, success and tracking",
+      "at": "2026-11-13T09:19:56.747Z"
+    },
+    {
+      "name": "document_forensic-urgent intake persisted, exact quote paid, success and tracking",
+      "at": "2026-11-13T09:20:23.238Z"
+    },
+    {
+      "name": "property_search-ordinary assigned, request reviewed and accepted",
+      "at": "2026-11-13T09:23:30.837Z"
+    },
+    {
+      "name": "property_search-urgent assigned, request reviewed and accepted",
+      "at": "2026-11-13T09:23:52.822Z"
+    },
+    {
+      "name": "document_forensic-ordinary assigned, request reviewed and accepted",
+      "at": "2026-11-13T09:24:15.984Z"
+    },
+    {
+      "name": "document_forensic-urgent assigned, request reviewed and accepted",
+      "at": "2026-11-13T09:24:28.299Z"
+    },
+    {
+      "name": "property_search-ordinary report delivered directly to client",
+      "at": "2026-11-13T09:27:48.545Z"
+    },
+    {
+      "name": "property_search-urgent report delivered directly to client",
+      "at": "2026-11-13T09:28:00.251Z"
+    },
+    {
+      "name": "document_forensic-ordinary report and affidavit approved and released after correction",
+      "at": "2026-11-13T09:31:31.927Z"
+    },
+    {
+      "name": "document_forensic-urgent report and affidavit approved and released",
+      "at": "2026-11-13T09:33:09.773Z"
+    },
+    {
+      "name": "property_search-ordinary client viewer/download, isolation and one wallet credit",
+      "at": "2026-11-13T09:35:00.758Z"
+    },
+    {
+      "name": "property_search-urgent client viewer/download, isolation and one wallet credit",
+      "at": "2026-11-13T09:35:10.883Z"
+    },
+    {
+      "name": "document_forensic-ordinary client viewer/download, isolation and one wallet credit",
+      "at": "2026-11-13T09:35:27.092Z"
+    },
+    {
+      "name": "document_forensic-urgent client viewer/download, isolation and one wallet credit",
+      "at": "2026-11-13T09:35:43.166Z"
+    },
+    {
+      "name": "property_search-ordinary shares real PDF file, falls back to download, refreshes on focus and collapses request details",
+      "at": "2026-11-13T09:37:29.820Z"
+    },
+    {
+      "name": "property_search-urgent shares real PDF file, falls back to download, refreshes on focus and collapses request details",
+      "at": "2026-11-13T09:37:36.458Z"
+    },
+    {
+      "name": "document_forensic-ordinary shares real PDF file, falls back to download, refreshes on focus and collapses request details",
+      "at": "2026-11-13T09:37:43.206Z"
+    },
+    {
+      "name": "document_forensic-urgent shares real PDF file, falls back to download, refreshes on focus and collapses request details",
+      "at": "2026-11-13T09:37:49.969Z"
+    },
+    {
+      "name": "property_search-cancellation intake persisted, exact quote paid, success and tracking",
+      "at": "2026-11-13T09:38:17.353Z"
+    },
+    {
+      "name": "property_search cancellation before acceptance records full simulated refund",
+      "at": "2026-11-13T09:38:28.463Z"
+    },
+    {
+      "name": "document_forensic-cancellation intake persisted, exact quote paid, success and tracking",
+      "at": "2026-11-13T09:38:42.441Z"
+    },
+    {
+      "name": "document_forensic cancellation before acceptance records full simulated refund",
+      "at": "2026-11-13T09:38:53.460Z"
+    },
+    {
+      "name": "Affidavit Edit Text/Add Info/Save persists to the PDF; typed and drawn Re-sign work; saved PDF page/size metadata displays",
+      "at": "2026-11-13T09:41:11.729Z"
+    },
+    {
+      "name": "property_search-ordinary shares real PDF file, falls back to download, refreshes on focus and collapses request details",
+      "at": "2026-11-13T09:43:42.955Z"
+    },
+    {
+      "name": "property_search-urgent shares real PDF file, falls back to download, refreshes on focus and collapses request details",
+      "at": "2026-11-13T09:43:50.792Z"
+    },
+    {
+      "name": "property_search-ordinary shares real PDF file, falls back to download, refreshes on focus and collapses request details",
+      "at": "2026-11-13T09:44:48.999Z"
+    },
+    {
+      "name": "property_search-urgent shares real PDF file, falls back to download, refreshes on focus and collapses request details",
+      "at": "2026-11-13T09:44:56.485Z"
+    },
+    {
+      "name": "document_forensic-ordinary shares real PDF file, falls back to download, refreshes on focus and collapses request details",
+      "at": "2026-11-13T09:45:03.422Z"
+    },
+    {
+      "name": "property_search-ordinary shares real PDF file, falls back to download, refreshes on focus and collapses request details",
+      "at": "2026-11-13T09:47:31.752Z"
+    },
+    {
+      "name": "property_search-urgent shares real PDF file, falls back to download, refreshes on focus and collapses request details",
+      "at": "2026-11-13T09:47:39.534Z"
+    },
+    {
+      "name": "property_search-ordinary shares real PDF file, falls back to download, refreshes on focus and collapses request details",
+      "at": "2026-11-13T09:52:37.601Z"
+    },
+    {
+      "name": "property_search-urgent shares real PDF file, falls back to download, refreshes on focus and collapses request details",
+      "at": "2026-11-13T09:52:44.833Z"
+    },
+    {
+      "name": "document_forensic-ordinary shares real PDF file, falls back to download, refreshes on focus and collapses request details",
+      "at": "2026-11-13T09:52:52.920Z"
+    },
+    {
+      "name": "document_forensic-urgent shares real PDF file, falls back to download, refreshes on focus and collapses request details",
+      "at": "2026-11-13T09:52:59.844Z"
+    },
+    {
+      "name": "property_search-ordinary advocate completion uses human file labels and wallet confirmation",
+      "at": "2026-11-13T09:53:12.442Z"
+    },
+    {
+      "name": "property_search-urgent advocate completion uses human file labels and wallet confirmation",
+      "at": "2026-11-13T09:53:16.607Z"
+    },
+    {
+      "name": "document_forensic-ordinary advocate completion uses human file labels and wallet confirmation",
+      "at": "2026-11-13T09:53:24.275Z"
+    },
+    {
+      "name": "document_forensic-urgent advocate completion uses human file labels and wallet confirmation",
+      "at": "2026-11-13T09:53:28.576Z"
+    },
+    {
+      "name": "Document Forensic Gallery selection persists an image through the document pipeline",
+      "at": "2026-11-13T09:53:49.681Z"
+    },
+    {
+      "name": "property_search-ordinary foreign client direct URL and all workflow endpoints reject foreign client/unassigned advocate",
+      "at": "2026-11-13T09:54:04.822Z"
+    },
+    {
+      "name": "property_search-urgent foreign client direct URL and all workflow endpoints reject foreign client/unassigned advocate",
+      "at": "2026-11-13T09:54:10.104Z"
+    },
+    {
+      "name": "document_forensic-ordinary foreign client direct URL and all workflow endpoints reject foreign client/unassigned advocate",
+      "at": "2026-11-13T09:54:14.835Z"
+    },
+    {
+      "name": "document_forensic-urgent foreign client direct URL and all workflow endpoints reject foreign client/unassigned advocate",
+      "at": "2026-11-13T09:54:19.162Z"
+    },
+    {
+      "name": "Workflow settings are admin-only",
+      "at": "2026-11-13T09:54:19.378Z"
+    },
+    {
+      "name": "property_search delayed upload refresh preserves typing and subsequent saved edits",
+      "at": "2026-11-13T09:54:41.971Z"
+    },
+    {
+      "name": "document_forensic delayed upload refresh preserves typing and subsequent saved edits",
+      "at": "2026-11-13T09:54:56.500Z"
+    },
+    {
+      "name": "property_search payment-pending tracking link resumes the shared checkout and QR flow",
+      "at": "2026-11-13T09:55:29.921Z"
+    },
+    {
+      "name": "document_forensic payment-pending tracking link resumes the shared checkout and QR flow",
+      "at": "2026-11-13T09:55:37.996Z"
+    },
+    {
+      "name": "Final send action row, accepted client contact card, advocate list dates and admin queue date presentation checked",
+      "at": "2026-11-13T10:01:16.591Z"
+    }
+  ],
+  "last_check": {
+    "stage": "final-visuals",
+    "passed": true,
+    "at": "2026-11-13T10:01:16.596Z"
+  },
+  "affidavit_visual": {
+    "id": "6c45f06a-5021-4074-9fc7-348573469d16",
+    "service": "document_forensic",
+    "advocate": "advocate"
+  },
+  "gallery_case_id": "305cfb66-0c65-4db8-9de3-2b953fc3655d",
+  "save_races": [
+    {
+      "id": "6ed38d72-0c6f-40b6-9764-30b0fd8fe425",
+      "service": "property_search"
+    },
+    {
+      "id": "b6c643c2-0564-489a-b85a-192e6cfc8716",
+      "service": "document_forensic"
+    }
+  ],
+  "legacy_pending": [
+    {
+      "id": "863eead2-2877-49a1-9df5-f5900fdb8432",
+      "service": "property_search"
+    },
+    {
+      "id": "7a7ce9ea-301e-4042-a1b1-b8f55fa52db5",
+      "service": "document_forensic"
+    }
+  ],
+  "send_visual": {
+    "id": "935619cb-f8a3-42ae-936b-f6aec6c86f95",
+    "service": "property_search",
+    "advocate": "advocate-2"
+  }
+}

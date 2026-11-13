@@ -1,0 +1,11 @@
+SHOT advocate-chat-request.png
+SHOT client-chat-upload.png
+SHOT editor-eight-sections.png
+SHOT editor-pdf-viewer.png
+SHOT send-ordinary.png
+SHOT sent-ordinary.png
+PASS property_search-ordinary report delivered directly to client
+SHOT upload-final-report.png
+SHOT send-urgent.png
+SHOT sent-urgent.png
+PASS property_search-urgent report delivered directly to client

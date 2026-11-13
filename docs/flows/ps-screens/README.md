@@ -9,7 +9,9 @@ Captured against the local API with synthetic cases and explicitly simulated pay
 | admin-assigned-ordinary | [Comparison](admin-assigned-ordinary.png) | No separate design |
 | admin-assigned-urgent | [Comparison](admin-assigned-urgent.png) | No separate design |
 | admin-more-details | [Comparison](admin-more-details.png) | No separate design |
+| admin-queue | [Comparison](admin-queue.png) | No separate design |
 | admin-settings | [Comparison](admin-settings.png) | No separate design |
+| advocate-case-list | [Comparison](advocate-case-list.png) | No separate design |
 | advocate-chat-request | [Comparison](advocate-chat-request.png) | `design/figma-2026-11-12/Property-Search-Report-Client-Side/Html → Body (2).png` |
 | advocate-completed-ordinary | [Comparison](advocate-completed-ordinary.png) | No separate design |
 | advocate-completed-urgent | [Comparison](advocate-completed-urgent.png) | No separate design |
@@ -19,6 +21,9 @@ Captured against the local API with synthetic cases and explicitly simulated pay
 | cancellation-refunded | [Comparison](cancellation-refunded.png) | No separate design |
 | client-chat-upload | [Comparison](client-chat-upload.png) | `design/figma-2026-11-12/Property-Search-Report-Client-Side/Html → Body (2).png` |
 | client-more-details | [Comparison](client-more-details.png) | No separate design |
+| decline-reason | [Comparison](decline-reason.png) | No separate design |
+| delivered-details-ordinary | [Comparison](delivered-details-ordinary.png) | `design/figma-2026-11-12/Property-Search-Report-Client-Side/Documents Forensic 37.png` |
+| delivered-details-urgent | [Comparison](delivered-details-urgent.png) | `design/figma-2026-11-12/Property-Search-Report-Client-Side/Documents Forensic 37.png` |
 | delivered-ordinary | [Comparison](delivered-ordinary.png) | `design/figma-2026-11-12/Property-Search-Report-Client-Side/Documents Forensic 37.png` |
 | delivered-urgent | [Comparison](delivered-urgent.png) | `design/figma-2026-11-12/Property-Search-Report-Client-Side/Documents Forensic 37.png` |
 | editor-eight-sections | [Comparison](editor-eight-sections.png) | `design/figma-2026-11-12/Property-Search-Report-Advocate-Side/Html → Body.png` |
@@ -38,6 +43,7 @@ Captured against the local API with synthetic cases and explicitly simulated pay
 | payment-urgent | [Comparison](payment-urgent.png) | `design/figma-2026-11-12/Property-Search-Report-Client-Side/Property Search Report 04.png` |
 | received-viewer-ordinary-0 | [Comparison](received-viewer-ordinary-0.png) | `design/figma-2026-11-12/Document-Viewer/iPhone 13 & 14 - 147.png` |
 | received-viewer-urgent-0 | [Comparison](received-viewer-urgent-0.png) | `design/figma-2026-11-12/Document-Viewer/iPhone 13 & 14 - 147.png` |
+| request-menu | [Comparison](request-menu.png) | No separate design |
 | resumed-payment | [Comparison](resumed-payment.png) | `design/figma-2026-11-12/Property-Search-Report-Client-Side/Property Search Report 04.png` |
 | resumed-scan | [Comparison](resumed-scan.png) | `design/figma-2026-11-12/Property-Search-Report-Client-Side/Documents Forensic 29.png` |
 | review-ordinary | [Comparison](review-ordinary.png) | `design/figma-2026-11-12/Property-Search-Report-Client-Side/Property Search Report 03.png` |

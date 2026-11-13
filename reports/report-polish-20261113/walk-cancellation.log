@@ -1,0 +1,16 @@
+SHOT payment-cancellation.png
+SHOT scan-cancellation.png
+SHOT success-cancellation.png
+SHOT tracking-paid-cancellation.png
+PASS property_search-cancellation intake persisted, exact quote paid, success and tracking
+SHOT cancellation-before-acceptance.png
+SHOT cancellation-refunded.png
+PASS property_search cancellation before acceptance records full simulated refund
+SHOT payment-cancellation.png
+SHOT scan-cancellation.png
+SHOT success-cancellation.png
+SHOT tracking-paid-cancellation.png
+PASS document_forensic-cancellation intake persisted, exact quote paid, success and tracking
+SHOT cancellation-before-acceptance.png
+SHOT cancellation-refunded.png
+PASS document_forensic cancellation before acceptance records full simulated refund

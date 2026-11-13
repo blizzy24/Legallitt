@@ -1,0 +1,13 @@
+HTTP 404 /api/v1/cases/10915dcb-f22a-4164-a63f-2ab9f6acfbcf
+SHOT isolation-ordinary.png
+PASS property_search-ordinary foreign client direct URL and all workflow endpoints reject foreign client/unassigned advocate
+HTTP 404 /api/v1/cases/bfaffcd5-3806-482e-b4df-4cd38bcd5b10
+SHOT isolation-urgent.png
+PASS property_search-urgent foreign client direct URL and all workflow endpoints reject foreign client/unassigned advocate
+HTTP 404 /api/v1/cases/472081c3-8dfd-428a-82c1-48635b2d8492
+SHOT isolation-ordinary.png
+PASS document_forensic-ordinary foreign client direct URL and all workflow endpoints reject foreign client/unassigned advocate
+HTTP 404 /api/v1/cases/8e562bf5-1dc9-497a-aee8-8a585ede6547
+SHOT isolation-urgent.png
+PASS document_forensic-urgent foreign client direct URL and all workflow endpoints reject foreign client/unassigned advocate
+PASS Workflow settings are admin-only
