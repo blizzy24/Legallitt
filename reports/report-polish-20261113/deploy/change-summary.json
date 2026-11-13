@@ -1,0 +1,23 @@
+{
+  "status": "CREATE_COMPLETE",
+  "changes": [
+    {
+      "logical_id": "ApiService",
+      "type": "AWS::ECS::Service",
+      "action": "Modify",
+      "replacement": "False"
+    },
+    {
+      "logical_id": "OpsTask",
+      "type": "AWS::ECS::TaskDefinition",
+      "action": "Modify",
+      "replacement": "True"
+    },
+    {
+      "logical_id": "Task",
+      "type": "AWS::ECS::TaskDefinition",
+      "action": "Modify",
+      "replacement": "True"
+    }
+  ]
+}

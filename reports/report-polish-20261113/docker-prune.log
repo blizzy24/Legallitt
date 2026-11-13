@@ -1,0 +1,51 @@
+ID						RECLAIMABLE	SIZE		LAST ACCESSED
+go1r9bhe6z4wv2ggfhfnl46tl*              	true 		8.192kB   	4 minutes ago
+sw8q9s0wywuha7alql3q31hs4               	true 	4.128kB   	4 minutes ago
+z8m00xtbh6kpp1suyn2d3w3lg*              	true 	8.192kB   	4 minutes ago
+rrghg0bq18w3elqf42bd73iho*              	true 	9.515MB   	4 minutes ago
+0nv38far4rqs0a6pxg9pdurn5               	true 	10.94MB   	4 minutes ago
+s6y6pw4g3xu7zxerqbystsyup               	true 	10.99MB   	4 minutes ago
+ml8fiyq96loa62tl12j84pbua               	true 	483.8kB   	4 minutes ago
+iens9hp4t7v3594fokyzs8gxe               	true 	4.128kB   	4 minutes ago
+n3ynezivkq5z9l6bkb80vfwjy               	true 	4.128kB   	4 minutes ago
+4qk46i7ko5tzpuiagpfkdciok               	true 	695.6MB   	10 minutes ago
+raug319ga8hzklze5td3cfids               	true 	8.286kB   	10 minutes ago
+m9ha0zcc0t3d414r1yrcu2gn5               	true 	21.63kB   	10 minutes ago
+jur661sxi4s43rhgfccryc1r4               	true 	274kB     	10 minutes ago
+tebj590g6fvrori5cxbjzsc9d               	true 	274kB     	10 minutes ago
+e75ik6hdev8gjbsvlcy1ebcrz               	true 	13.83MB   	10 minutes ago
+ovbm2nv4claheotd3wf74wvy8               	true 	24.06kB   	10 minutes ago
+j89shxaqul531iq6dd2a3xsoi               	true 	14.55MB   	10 minutes ago
+4o3y1srwzkc0wweb32geqywkd               	true 	295.7MB   	10 minutes ago
+8x3lf1la9llztpgu9g61jii1m               	true 	91.14kB   	10 minutes ago
+s0nc0deyciqzf1os20yc35f2t               	true 	208.1MB   	10 minutes ago
+Total:	1.26GB
+Deleted Images:
+untagged: 026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api:3a7631d
+deleted: sha256:a50d85e1fd4e1cf04bd00b91fe281e64ba2415dcfadde13221c4478e93879b54
+deleted: sha256:0b8768174aa51a3eaebc18789d7404c9f2e8b37428c78f05f8446e799aa59cd3
+deleted: sha256:957a61c63c034a9cc85f0048091d28579a2b7ee673e240c368b2190a0b82de49
+deleted: sha256:c96c411090da09187c55ab267826b3903b542b5c03f1cafa912d60e060e7850c
+deleted: sha256:3a7b14f3e09ef4928f727883ab5693d524797e3833c2f4c6bc1f0d0791330a42
+deleted: sha256:9d7b1405876470cc4eb0c1eb2811037931a1a1e02767a4f514909ed3c50ad6a8
+deleted: sha256:d76d856751feaaeaf5bc9b5c40d4b8b78fdcb19c7dd79d67aaa9bb2d7d1c60c1
+deleted: sha256:6009fa0b728ada85ec401c99a280269ab76f1f5ee7edb64dc7ec40c306c1107a
+deleted: sha256:7f050d2505d5cee3e4d0fd025228f4860f8d570d2ead03a52691179850155de4
+deleted: sha256:dd11bf99c79150b426d8f3bc54eb0aeff16f1b90343fffd9f0f96aec001348e7
+deleted: sha256:7e97639febbb6877260389f5430d05d7872e2a631eb3fdcdbe2b3fdd8b219746
+deleted: sha256:0befdf40db75dd6f7b556ae93e8f559b64d16168a13efe6f8cfc56ad1c20940c
+deleted: sha256:ca0bad6b690af26001a7e39da3901755f052b9480dd7bc58f0c3ac0769dccad3
+deleted: sha256:e7d8d8f3190a8c01449162e6959fe4d7632c8daad1289524b0ae7a89dea122b3
+deleted: sha256:4f4fb700ef54461cfa02571ae0db9a0dc1e0cdb5577484a6d75e68dc38e8acc1
+deleted: sha256:4f4fb700ef54461cfa02571ae0db9a0dc1e0cdb5577484a6d75e68dc38e8acc1
+deleted: sha256:2d113514f1b821c620643e23876dcaccdf56e9460e45762aed8a52585ad4c630
+deleted: sha256:240fe9cc5040addbbf069f1fc39e8ab08d77175ee575f95174f9b47d857b82dd
+deleted: sha256:050775c132acad29baad7476aa7a0a75f1a1d4b6326f37c6352aeb0aa996d380
+deleted: sha256:4f4fb700ef54461cfa02571ae0db9a0dc1e0cdb5577484a6d75e68dc38e8acc1
+deleted: sha256:09d8d03cda46ce8fc87df347a691415a4ce15c4436be15c69cd7f1ae5ba2c8a3
+deleted: sha256:46f098b78d08f03c04f9f17bb6c4a383b3dcd552a7f334ca5956e3b722a1e23c
+deleted: sha256:0eee37884e84c98ffe035b38b123c86f57721171bc6b81fb23d24d4f6bd4c5d9
+
+Total reclaimed space: 397.6MB
+Total:	0B
+Total reclaimed space: 0B

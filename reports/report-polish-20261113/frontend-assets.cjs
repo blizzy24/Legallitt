@@ -1,0 +1,4 @@
+const fs=require('fs'),assert=require('assert/strict');
+(async()=>{const result={};for(const site of ['https://legalitt-5.vercel.app','https://legalitt-admin-panel.vercel.app']){const r=await fetch(site);assert.ok(r.ok);const html=await r.text();result[site]=[...html.matchAll(/<script\b[^>]*\bsrc="([^"]+)"/g)].map(m=>m[1]).sort();assert.ok(result[site].length);}
+const file='reports/report-polish-20261113/deploy/frontend-assets.json';if(process.argv.includes('--verify')){assert.deepEqual(result,JSON.parse(fs.readFileSync(file)));console.log('PASS both published frontend script assets match the fully walked release');}else{fs.writeFileSync(file,JSON.stringify(result,null,2)+'\n');console.log('Recorded both published frontend script assets');}
+})().catch(e=>{console.error(e.message);process.exitCode=1;});

@@ -17,6 +17,10 @@ workflow, migration or existing-case data changes. New synthetic cases only.
 Current-pass results and deployment evidence: [polish report](../../reports/report-polish-20261113/README.md).
 Updated comparisons: [screen index](ps-screens/README.md).
 
+Polish acceptance passed: API 213/213, shared 30/30, routes 347/347, and all 42
+live browser/API assertion groups. API `3a7631d` and frontend `3b42e97` deployed.
+All 20 pre-existing PS/DF cases retained their statuses and update timestamps.
+
 ## Original flow rebuild acceptance
 
 Comparison started 12 November 2026 against `f3a16b0`. **Local and live acceptance passed. Dev API and both Vercel sites deployed.**

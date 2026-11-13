@@ -1,6 +1,6 @@
 # Property Search and Document Forensic polish — 13 November 2026
 
-Implementation: `3a7631d`, with a subsequent final action-row/evidence commit.
+Implementation: `3a7631d`; final action-row and local evidence: `3b42e97`.
 Baseline: frontend `f7f090a`, API `1bff6f2`.
 
 ## Scope
@@ -52,8 +52,46 @@ admin presentation changes. [PS gaps](../../docs/flows/PROPERTY-SEARCH-GAPS.md) 
 
 ## Deployment
 
-Pending until the image, stack, both frontend deployments and live synthetic checks
-are verified. No migration is required for this pass.
+API image `3a7631d` is pushed and deployed to
+`LegalittDev-Compute-DevelopmentOnly` (`UPDATE_COMPLETE`). The running ARM64 image
+is healthy and its digest matches
+`sha256:a50d85e1fd4e1cf04bd00b91fe281e64ba2415dcfadde13221c4478e93879b54`.
+No migration was required or run. The change set modified only ECS service/task
+definitions. No settings or pricing seeds ran.
+
+Commit `3b42e97` was pushed to `origin/main`, triggering the existing GitHub-linked
+Vercel deployments. Both completed successfully: [client/advocate](https://vercel.com/blizzard7/legalitt/FLe2A2bzms1RRzDg47qjNUotJDtw)
+and [admin](https://vercel.com/blizzard7/legalitt-admin-panel/J8NVA16C9Kmo9AQjdBD17ApcK6HH).
+The full live run passed. Post-build/deploy pruning reclaimed 1.26 GB of builder cache and
+397.6 MB of unused images; the local PostgreSQL container remains intact.
+
+Public Debian mirror downloads stalled during the standard image build. The
+deployment-specific [fallback Dockerfile](Dockerfile.runtime-reuse) rebuilds the
+shared package and API inside the pinned, previously deployed `1bff6f2` runtime.
+[Dependency guard](check-runtime-lock.cjs) verifies unchanged API/shared importers
+and every existing lockfile resolution/snapshot. Only mobile dependencies were
+added. No host-generated binaries or credentials enter the image.
+
+## Live acceptance
+
+The [complete live browser run](walk-live.log) passed on both deployed sites with
+zero unhandled browser JavaScript errors. [Screenshots and case/assertion index](live/README.md).
+
+- PS Ordinary/editor and Urgent/upload: more details, decline, reassignment,
+  acceptance, chat/document exchange, direct delivery, viewing/download and one wallet credit.
+- DF with and without reference sample: information request, checklist, report,
+  affidavit, correction/re-sign/resubmission on the first case, approval and release.
+- All four: file sharing/fallback, focus/pull refresh, collapsed details, wallet and
+  foreign-client/unassigned-advocate isolation. One pre-acceptance cancellation per
+  service completed its simulated refund.
+- Upload/save races, checkout resumption, image viewing, empty/partial/loading/error
+  recovery and affidavit text/signature/PDF metadata controls all passed.
+
+The read-only before/after check confirms all **20 pre-existing PS/DF cases** retained
+their statuses and update timestamps. [Preservation result](preservation.log).
+Only new synthetic cases were exercised. No pricing/settings, real payments,
+credentials or existing filings were changed. Docker pruning was repeated after
+the live checks; no unused cache/images remained.
 
 ## Limits and simulations
 

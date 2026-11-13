@@ -1,0 +1,205 @@
+SHOT landing.png
+SHOT intake-ordinary.png
+SHOT review-ordinary.png
+SHOT payment-ordinary.png
+SHOT scan-ordinary.png
+SHOT success-ordinary.png
+SHOT tracking-paid-ordinary.png
+PASS property_search-ordinary intake persisted, exact quote paid, success and tracking
+SHOT landing.png
+SHOT intake-urgent.png
+SHOT review-urgent.png
+SHOT payment-urgent.png
+SHOT scan-urgent.png
+SHOT success-urgent.png
+SHOT tracking-paid-urgent.png
+PASS property_search-urgent intake persisted, exact quote paid, success and tracking
+SHOT landing.png
+SHOT intake-ordinary.png
+SHOT review-ordinary.png
+SHOT payment-ordinary.png
+SHOT scan-ordinary.png
+SHOT success-ordinary.png
+SHOT tracking-paid-ordinary.png
+PASS document_forensic-ordinary intake persisted, exact quote paid, success and tracking
+SHOT landing.png
+SHOT intake-urgent.png
+SHOT review-urgent.png
+SHOT payment-urgent.png
+SHOT scan-urgent.png
+SHOT success-urgent.png
+SHOT tracking-paid-urgent.png
+PASS document_forensic-urgent intake persisted, exact quote paid, success and tracking
+SHOT admin-more-details.png
+SHOT client-more-details.png
+SHOT admin-assigned-ordinary.png
+SHOT advocate-request-ordinary.png
+SHOT decline-reason.png
+SHOT accepted-ordinary.png
+PASS property_search-ordinary assigned, request reviewed and accepted
+SHOT admin-assigned-urgent.png
+SHOT advocate-request-urgent.png
+SHOT decline-reason.png
+SHOT accepted-urgent.png
+PASS property_search-urgent assigned, request reviewed and accepted
+SHOT admin-assigned-ordinary.png
+SHOT advocate-request-ordinary.png
+SHOT client-more-information.png
+SHOT accepted-ordinary.png
+PASS document_forensic-ordinary assigned, request reviewed and accepted
+SHOT admin-assigned-urgent.png
+SHOT advocate-request-urgent.png
+SHOT accepted-urgent.png
+PASS document_forensic-urgent assigned, request reviewed and accepted
+SHOT advocate-chat-request.png
+SHOT client-chat-upload.png
+SHOT editor-eight-sections.png
+SHOT editor-pdf-viewer.png
+SHOT send-ordinary.png
+SHOT sent-ordinary.png
+PASS property_search-ordinary report delivered directly to client
+SHOT upload-final-report.png
+SHOT send-urgent.png
+SHOT sent-urgent.png
+PASS property_search-urgent report delivered directly to client
+SHOT file-checklist-ordinary.png
+SHOT waiting-ordinary.png
+SHOT report-ordinary.png
+SHOT report-preview-ordinary.png
+SHOT affidavit-ordinary.png
+SHOT affidavit-signed-ordinary.png
+SHOT affidavit-preview-ordinary.png
+SHOT affidavit-viewer-ordinary.png
+SHOT submit-ordinary.png
+SHOT with-admin-ordinary.png
+SHOT admin-review-ordinary.png
+SHOT waiting-correction.png
+SHOT report-revised.png
+SHOT report-preview-ordinary.png
+SHOT affidavit-resigned.png
+SHOT affidavit-signed-ordinary.png
+SHOT affidavit-preview-ordinary.png
+SHOT affidavit-viewer-ordinary.png
+SHOT resubmit.png
+SHOT with-admin-ordinary.png
+SHOT admin-checklist-ordinary.png
+PASS document_forensic-ordinary report and affidavit approved and released after correction
+SHOT file-checklist-urgent.png
+SHOT waiting-urgent.png
+SHOT report-urgent.png
+SHOT report-preview-urgent.png
+SHOT affidavit-urgent.png
+SHOT affidavit-signed-urgent.png
+SHOT affidavit-preview-urgent.png
+SHOT affidavit-viewer-urgent.png
+SHOT submit-urgent.png
+SHOT with-admin-urgent.png
+SHOT admin-review-urgent.png
+SHOT admin-checklist-urgent.png
+PASS document_forensic-urgent report and affidavit approved and released
+SHOT delivered-ordinary.png
+SHOT received-viewer-ordinary-0.png
+PASS property_search-ordinary client viewer/download, isolation and one wallet credit
+SHOT delivered-urgent.png
+SHOT received-viewer-urgent-0.png
+PASS property_search-urgent client viewer/download, isolation and one wallet credit
+SHOT delivered-ordinary.png
+SHOT received-viewer-ordinary-0.png
+SHOT received-viewer-ordinary-1.png
+PASS document_forensic-ordinary client viewer/download, isolation and one wallet credit
+SHOT delivered-urgent.png
+SHOT received-viewer-urgent-0.png
+SHOT received-viewer-urgent-1.png
+PASS document_forensic-urgent client viewer/download, isolation and one wallet credit
+SHOT delivered-details-ordinary.png
+PASS property_search-ordinary shares real PDF file, falls back to download, refreshes on focus and collapses request details
+SHOT delivered-details-urgent.png
+PASS property_search-urgent shares real PDF file, falls back to download, refreshes on focus and collapses request details
+SHOT delivered-details-ordinary.png
+PASS document_forensic-ordinary shares real PDF file, falls back to download, refreshes on focus and collapses request details
+SHOT delivered-details-urgent.png
+PASS document_forensic-urgent shares real PDF file, falls back to download, refreshes on focus and collapses request details
+SHOT payment-cancellation.png
+SHOT scan-cancellation.png
+SHOT success-cancellation.png
+SHOT tracking-paid-cancellation.png
+PASS property_search-cancellation intake persisted, exact quote paid, success and tracking
+SHOT cancellation-before-acceptance.png
+SHOT cancellation-refunded.png
+PASS property_search cancellation before acceptance records full simulated refund
+SHOT payment-cancellation.png
+SHOT scan-cancellation.png
+SHOT success-cancellation.png
+SHOT tracking-paid-cancellation.png
+PASS document_forensic-cancellation intake persisted, exact quote paid, success and tracking
+SHOT cancellation-before-acceptance.png
+SHOT cancellation-refunded.png
+PASS document_forensic cancellation before acceptance records full simulated refund
+SHOT advocate-completed-ordinary.png
+PASS property_search-ordinary advocate completion uses human file labels and wallet confirmation
+SHOT advocate-completed-urgent.png
+PASS property_search-urgent advocate completion uses human file labels and wallet confirmation
+SHOT advocate-completed-ordinary.png
+PASS document_forensic-ordinary advocate completion uses human file labels and wallet confirmation
+SHOT advocate-completed-urgent.png
+PASS document_forensic-urgent advocate completion uses human file labels and wallet confirmation
+SHOT gallery-upload.png
+SHOT image-viewer.png
+PASS Document Forensic Gallery selection persists an image through the document pipeline
+SHOT information.png
+SHOT empty-intake.png
+SHOT partial-intake.png
+SHOT loading.png
+HTTP 503 /api/v1/cases/6609b62b-6d8a-429d-afe8-b666f256c79b
+SHOT error-retry.png
+PASS property_search loading, error and retry states
+SHOT information.png
+SHOT empty-intake.png
+SHOT partial-intake.png
+SHOT loading.png
+HTTP 503 /api/v1/cases/6fc42cd0-6f3c-4b25-9a9e-a5afacada370
+SHOT error-retry.png
+PASS document_forensic loading, error and retry states
+HTTP 404 /api/v1/cases/6609b62b-6d8a-429d-afe8-b666f256c79b
+SHOT isolation-ordinary.png
+PASS property_search-ordinary foreign client direct URL and all workflow endpoints reject foreign client/unassigned advocate
+HTTP 404 /api/v1/cases/d40fb1df-b67e-44a6-abd0-ea0d5e98dc01
+SHOT isolation-urgent.png
+PASS property_search-urgent foreign client direct URL and all workflow endpoints reject foreign client/unassigned advocate
+HTTP 404 /api/v1/cases/6fc42cd0-6f3c-4b25-9a9e-a5afacada370
+SHOT isolation-ordinary.png
+PASS document_forensic-ordinary foreign client direct URL and all workflow endpoints reject foreign client/unassigned advocate
+HTTP 404 /api/v1/cases/0a6a2050-9216-4dc4-8a8d-cc2f5fb421b1
+SHOT isolation-urgent.png
+PASS document_forensic-urgent foreign client direct URL and all workflow endpoints reject foreign client/unassigned advocate
+PASS Workflow settings are admin-only
+SHOT save-during-upload.png
+PASS property_search delayed upload refresh preserves typing and subsequent saved edits
+SHOT save-during-upload.png
+PASS document_forensic delayed upload refresh preserves typing and subsequent saved edits
+SHOT resumed-payment.png
+SHOT resumed-scan.png
+PASS property_search payment-pending tracking link resumes the shared checkout and QR flow
+SHOT resumed-payment.png
+SHOT resumed-scan.png
+PASS document_forensic payment-pending tracking link resumes the shared checkout and QR flow
+SHOT delivered-ordinary.png
+SHOT request-menu.png
+SHOT admin-queue.png
+SHOT success-ordinary.png
+SHOT delivered-ordinary.png
+SHOT request-menu.png
+SHOT admin-queue.png
+SHOT success-ordinary.png
+SHOT affidavit-partial.png
+SHOT affidavit-signed-ordinary.png
+SHOT affidavit-preview-ordinary.png
+SHOT affidavit-drawn-signature.png
+SHOT submit-controls.png
+PASS Affidavit Edit Text/Add Info/Save persists to the PDF; typed and drawn Re-sign work; saved PDF page/size metadata displays
+SHOT admin-queue.png
+SHOT admin-queue.png
+SHOT send-urgent.png
+SHOT accepted-client-card.png
+SHOT advocate-case-list.png
+PASS Final send action row, accepted client contact card, advocate list dates and admin queue date presentation checked

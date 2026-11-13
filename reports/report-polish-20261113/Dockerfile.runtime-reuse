@@ -1,0 +1,12 @@
+# Deployment-specific fallback for stalled Debian mirror downloads.
+# The deployed runtime/dependencies are pinned and unchanged by this API patch.
+FROM 026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api@sha256:281ee7ebeca749dc326f8ce3c1877bba68db4210b876522f47db09f40bbbbb77
+USER root
+WORKDIR /repo
+COPY packages/shared packages/shared
+COPY apps/api apps/api
+RUN cd packages/shared && node node_modules/typescript/bin/tsc \
+ && cd /repo/apps/api && node node_modules/prisma/build/index.js generate \
+ && node node_modules/typescript/bin/tsc
+WORKDIR /repo/apps/api
+USER node
