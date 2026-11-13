@@ -1,7 +1,8 @@
 # Overnight court rebuild — 14 November 2026
 
-Local implementation and acceptance checks are complete. Deployment has not yet
-been performed; release identifiers will be recorded here after verification.
+Local implementation and acceptance checks are complete. **Deployment was stopped
+at the migration launcher, before any AWS migration task started.** The previous
+working API and production frontend aliases remain unchanged, as instructed.
 
 ## Part A
 
@@ -69,8 +70,27 @@ and the affected journey resumed successfully.
 - Final Terms/Privacy copy is still outstanding from the client; linked pages
   honestly say it is being finalised. No policy text was invented.
 
-## Release
+## Release and stop condition
 
-Pending final release commit, image/migration/stack, frontend deploy verification,
-configuration seed and Docker cleanup. The deployed version is unchanged until
-all gates have passed.
+- API/shared implementation: `a10fde9`. Image pushed to development ECR as
+  `a10fde9`, digest `sha256:7b65e88c82602d598000bfbb355f5c884fced08c18e2b510cc251b5e077f90f8`.
+- Frontend corrections: `679102e`, `0c1a51b`; both rebuilt and typechecked.
+- `bash infra/scripts/dev-ops-task.sh migrate a10fde9` was run in **Git Bash**.
+  It exited before registering/running an AWS task because `python3` resolves to
+  `C:/Users/KESHAV/AppData/Local/Microsoft/WindowsApps/python3` (the Store alias).
+  The installed `python` is Python 3.13.5. See [launcher output](migrate-deployed.log).
+- Interpreter selection is fixed in `b3feced`: Git Bash defaults to `python`,
+  other platforms to `python3`, with `PYTHON_BIN` override. Shell syntax was
+  checked. **The migration was not retried**, honoring the instruction to stop
+  deployment on a failed step and leave the working version live.
+- No stack update, production Vercel update, or deployed court configuration seed
+  was performed. Existing cases and credentials were not changed.
+- Work is pushed to `overnight-court-20261114`, rather than `main`, because main
+  automatically deploys both production Vercel projects. This keeps the work
+  safely on GitHub while preserving the previous working frontends.
+- Docker builder and image prune ran after the image push. No release build cache
+  or unused local API image was retained.
+
+The remaining release steps are migration with `a10fde9`, stack update, both
+frontends, `seed-courts a10fde9`, and live verification. All local acceptance gates
+passed; these release steps are explicitly **not claimed complete**.

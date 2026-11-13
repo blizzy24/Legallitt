@@ -1,0 +1,10 @@
+{
+  "checked_at": "2026-11-13T23:43:05.780Z",
+  "stack": "LegalittDev-Compute-DevelopmentOnly",
+  "status": "UPDATE_COMPLETE",
+  "live_api_image": "7bc60d0",
+  "main_commit": "29aecf63e24daf28eeae6ce5c8c5242c96b26ce0",
+  "migration_task_started": false,
+  "production_frontend_update": false,
+  "new_court_config_seeded": false
+}

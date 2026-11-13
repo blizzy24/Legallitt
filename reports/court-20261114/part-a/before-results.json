@@ -1,0 +1,15 @@
+{
+  "passed": 9,
+  "screens": [
+    "ln-issue",
+    "ln-uploads",
+    "ln-upload-review",
+    "ln-submitted",
+    "property_search-request",
+    "property_search-accepted",
+    "document_forensic-request",
+    "document_forensic-accepted",
+    "ps-records-unavailable"
+  ],
+  "errors": []
+}

@@ -1,0 +1,20 @@
+[
+  {
+    "service": "district_court",
+    "downloadBytes": 927,
+    "pages": 1,
+    "foreignClientDownload": 404,
+    "hearingCredits": 2,
+    "earned_paise": "200000",
+    "completionLumpSum": 0
+  },
+  {
+    "service": "high_court",
+    "downloadBytes": 927,
+    "pages": 1,
+    "foreignClientDownload": 404,
+    "hearingCredits": 1,
+    "earned_paise": "150000",
+    "completionLumpSum": 0
+  }
+]
