@@ -1,0 +1,144 @@
+SHOT intake-ordinary.png
+SHOT review-ordinary.png
+SHOT payment-ordinary.png
+SHOT scan-ordinary.png
+SHOT success-ordinary.png
+SHOT tracking-paid-ordinary.png
+PASS property_search-ordinary intake persisted, exact quote paid, success and tracking
+SHOT landing.png
+SHOT intake-urgent.png
+SHOT review-urgent.png
+SHOT payment-urgent.png
+SHOT scan-urgent.png
+SHOT success-urgent.png
+SHOT tracking-paid-urgent.png
+PASS property_search-urgent intake persisted, exact quote paid, success and tracking
+SHOT landing.png
+SHOT intake-ordinary.png
+SHOT review-ordinary.png
+SHOT payment-ordinary.png
+SHOT scan-ordinary.png
+SHOT success-ordinary.png
+SHOT tracking-paid-ordinary.png
+PASS document_forensic-ordinary intake persisted, exact quote paid, success and tracking
+SHOT landing.png
+SHOT intake-urgent.png
+SHOT review-urgent.png
+SHOT payment-urgent.png
+SHOT scan-urgent.png
+SHOT success-urgent.png
+SHOT tracking-paid-urgent.png
+PASS document_forensic-urgent intake persisted, exact quote paid, success and tracking
+SHOT admin-more-details.png
+SHOT client-more-details.png
+SHOT admin-assigned-ordinary.png
+SHOT advocate-request-ordinary.png
+SHOT decline-reason.png
+SHOT accepted-ordinary.png
+PASS property_search-ordinary assigned, request reviewed and accepted
+SHOT admin-assigned-urgent.png
+SHOT advocate-request-urgent.png
+SHOT decline-reason.png
+SHOT accepted-urgent.png
+PASS property_search-urgent assigned, request reviewed and accepted
+SHOT admin-assigned-ordinary.png
+SHOT advocate-request-ordinary.png
+SHOT client-more-information.png
+SHOT accepted-ordinary.png
+PASS document_forensic-ordinary assigned, request reviewed and accepted
+SHOT admin-assigned-urgent.png
+SHOT advocate-request-urgent.png
+SHOT accepted-urgent.png
+PASS document_forensic-urgent assigned, request reviewed and accepted
+SHOT advocate-chat-request.png
+SHOT client-chat-upload.png
+SHOT editor-eight-sections.png
+SHOT editor-pdf-viewer.png
+SHOT send-ordinary.png
+SHOT sent-ordinary.png
+SHOT admin-review-ordinary.png
+SHOT admin-revised-review.png
+SHOT client-quality-review-ordinary.png
+PASS property_search-ordinary report approved by admin after return and correction
+SHOT upload-final-report.png
+SHOT send-urgent.png
+SHOT sent-urgent.png
+SHOT admin-review-urgent.png
+SHOT client-quality-review-urgent.png
+PASS property_search-urgent report approved by admin
+SHOT original-request-form.png
+SHOT original-client-request.png
+SHOT original-sent.png
+SHOT original-admin-receipt.png
+SHOT original-received.png
+PASS DF original request → acknowledgement → sent note → receipt; deadline pauses and resumes
+SHOT office-note-outcome.png
+SHOT admin-office-note.png
+SHOT client-records-unavailable.png
+SHOT office-note-chat.png
+PASS PS records unavailable: office note replaces report, exact-version admin approval, client chat and download, no refund
+SHOT file-checklist-ordinary.png
+SHOT waiting-ordinary.png
+SHOT report-ordinary.png
+SHOT report-preview-ordinary.png
+SHOT affidavit-ordinary.png
+SHOT affidavit-signed-ordinary.png
+SHOT affidavit-preview-ordinary.png
+SHOT affidavit-viewer-ordinary.png
+SHOT submit-ordinary.png
+SHOT with-admin-ordinary.png
+SHOT admin-review-ordinary.png
+SHOT waiting-correction.png
+SHOT report-revised.png
+SHOT report-preview-ordinary.png
+SHOT affidavit-resigned.png
+SHOT affidavit-signed-ordinary.png
+SHOT affidavit-preview-ordinary.png
+SHOT affidavit-viewer-ordinary.png
+SHOT resubmit.png
+SHOT with-admin-ordinary.png
+SHOT admin-checklist-ordinary.png
+PASS document_forensic-ordinary report and affidavit approved and released after correction
+SHOT file-checklist-urgent.png
+SHOT waiting-urgent.png
+SHOT report-urgent.png
+SHOT report-preview-urgent.png
+SHOT affidavit-urgent.png
+SHOT affidavit-signed-urgent.png
+SHOT affidavit-preview-urgent.png
+SHOT affidavit-viewer-urgent.png
+SHOT submit-urgent.png
+SHOT with-admin-urgent.png
+SHOT admin-review-urgent.png
+SHOT admin-checklist-urgent.png
+PASS document_forensic-urgent report and affidavit approved and released
+SHOT delivered-ordinary.png
+SHOT received-viewer-ordinary-0.png
+PASS property_search-ordinary client viewer/download, isolation and one wallet credit
+SHOT delivered-urgent.png
+SHOT received-viewer-urgent-0.png
+PASS property_search-urgent client viewer/download, isolation and one wallet credit
+SHOT delivered-ordinary.png
+SHOT received-viewer-ordinary-0.png
+SHOT received-viewer-ordinary-1.png
+PASS document_forensic-ordinary client viewer/download, isolation and one wallet credit
+SHOT delivered-urgent.png
+SHOT received-viewer-urgent-0.png
+SHOT received-viewer-urgent-1.png
+PASS document_forensic-urgent client viewer/download, isolation and one wallet credit
+SHOT payment-cancellation.png
+SHOT scan-cancellation.png
+SHOT success-cancellation.png
+SHOT tracking-paid-cancellation.png
+PASS property_search-cancellation intake persisted, exact quote paid, success and tracking
+SHOT cancellation-before-acceptance.png
+SHOT cancellation-refunded.png
+PASS property_search cancellation before acceptance records full simulated refund
+SHOT payment-cancellation.png
+SHOT scan-cancellation.png
+SHOT success-cancellation.png
+SHOT tracking-paid-cancellation.png
+PASS document_forensic-cancellation intake persisted, exact quote paid, success and tracking
+SHOT cancellation-before-acceptance.png
+SHOT cancellation-refunded.png
+PASS document_forensic cancellation before acceptance records full simulated refund

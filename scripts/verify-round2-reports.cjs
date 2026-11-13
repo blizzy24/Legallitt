@@ -2,7 +2,15 @@
 // credentials in memory. Local test adapters by default; live is explicit.
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),puppeteer=require('puppeteer-core');
 const {ApiClient}=require('../packages/shared/dist'),{PDFDocument,StandardFonts}=require('../apps/api/node_modules/pdf-lib');
-const kit=require('./helpers/fir-walk-kit.cjs'),{click,fill,text,at,go,shot,dump,chooseFile,delay}=kit;
+const kit=require('./helpers/fir-walk-kit.cjs'),{click,fill,text,at,go,shot,dump,delay}=kit;
+async function chooseFile(page,trigger,file,opts={}){
+ // Autosave can refresh the workflow and briefly disable the upload control.
+ // Wait for the real saved state before locating/clicking it on live intake.
+ if(/\/(property-search\/request|document-forensic\/upload)/.test(page.url())){
+  await text(page,'Saved');await page.waitForNetworkIdle({idleTime:500,timeout:15000}).catch(()=>{});
+ }
+ return kit.chooseFile(page,trigger,file,opts);
+}
 process.loadEnvFile('apps/api/.env.local');
 const live=process.argv.includes('--live'),base=live?'https://gvycg0n3u8.execute-api.ap-south-1.amazonaws.com':'http://127.0.0.1:3004',mobile=live?'https://legalitt-5.vercel.app':'http://localhost:8084',adminWeb=live?'https://legalitt-admin-panel.vercel.app':'http://localhost:5175';
 const out=path.resolve('reports/round2-20261113/reports',live?'live':'local');fs.mkdirSync(out,{recursive:true});
@@ -28,6 +36,8 @@ async function main(){let browser;const pages={},api={},users={},errors=[];
     const root='/'+service.replaceAll('_','-'),tag=service+'-'+speed;
     const existing=state.cases.find(c=>c.tag===tag);if(existing?.paid)continue;
     if(existing&&(await api.client.case(existing.id)).status!=='draft'){await go(p,mobile+root+'/payment?caseId='+existing.id);await payThroughUi(p,service,speed,existing);continue;}
+    if(existing){const saved=await api.client.case(existing.id),issues=require('../packages/shared/dist').reportIntakeProblems(service,saved.details,saved.tier,saved.documents.filter(d=>d.status==='uploaded'));
+     if(!issues.length){await go(p,mobile+root+(service==='document_forensic'?'/upload':'/request')+'?caseId='+existing.id);await snap(p,service,'intake-'+speed);await click(p,'Review request');await text(p,'Review your request');await snap(p,service,'review-'+speed);await click(p,'Continue to payment');await payThroughUi(p,service,speed,existing);continue;}}
     await go(p,mobile+root);await text(p,'CHOOSE YOUR SERVICE SPEED');await kit.noText(p,'Provisional prices');await snap(p,service,'landing');
     if(existing)await go(p,mobile+root+(service==='document_forensic'?'/upload':'/request')+'?caseId='+existing.id);
     else{if(speed==='urgent')await click(p,'Urgent',{contains:true});await click(p,'Continue →');await p.waitForFunction(()=>new URL(location.href).searchParams.has('caseId'));}

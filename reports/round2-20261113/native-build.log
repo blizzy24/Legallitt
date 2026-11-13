@@ -1,0 +1,293 @@
+v22.23.4
+
+> @legalitt/shared@0.0.0 build D:\Legalitt\Legallitt\packages\shared
+> tsc
+
+
+> @legalitt/api@0.0.0 build D:\Legalitt\Legallitt\apps\api
+> prisma generate && tsc
+
+Loaded Prisma config from prisma.config.ts.
+
+Prisma schema loaded from prisma\schema.prisma.
+
+✔ Generated Prisma Client (7.10.1) to .\src\generated\prisma in 553ms
+
+PASS native build of exact source; dependency manifests and lockfile unchanged
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile.native-build
+#1 transferring dockerfile: 726B 0.1s done
+#1 DONE 0.1s
+
+#2 [internal] load metadata for 026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api@sha256:0b8768174aa51a3eaebc18789d7404c9f2e8b37428c78f05f8446e799aa59cd3
+#2 ...
+
+#3 [auth] sharing credentials for 026379630400.dkr.ecr.ap-south-1.amazonaws.com
+#3 DONE 0.0s
+
+#2 [internal] load metadata for 026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api@sha256:0b8768174aa51a3eaebc18789d7404c9f2e8b37428c78f05f8446e799aa59cd3
+#2 DONE 1.7s
+
+#4 [1/5] FROM 026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api@sha256:0b8768174aa51a3eaebc18789d7404c9f2e8b37428c78f05f8446e799aa59cd3
+#4 resolve 026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api@sha256:0b8768174aa51a3eaebc18789d7404c9f2e8b37428c78f05f8446e799aa59cd3 0.0s done
+#4 ...
+
+#5 [internal] load build context
+#5 transferring context: 7.30MB 0.4s done
+#5 DONE 0.4s
+
+#4 [1/5] FROM 026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api@sha256:0b8768174aa51a3eaebc18789d7404c9f2e8b37428c78f05f8446e799aa59cd3
+#4 DONE 0.7s
+
+#4 [1/5] FROM 026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api@sha256:0b8768174aa51a3eaebc18789d7404c9f2e8b37428c78f05f8446e799aa59cd3
+#4 extracting sha256:7f050d2505d5cee3e4d0fd025228f4860f8d570d2ead03a52691179850155de4
+#4 extracting sha256:7f050d2505d5cee3e4d0fd025228f4860f8d570d2ead03a52691179850155de4 0.2s done
+#4 DONE 0.9s
+
+#4 [1/5] FROM 026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api@sha256:0b8768174aa51a3eaebc18789d7404c9f2e8b37428c78f05f8446e799aa59cd3
+#4 extracting sha256:dd11bf99c79150b426d8f3bc54eb0aeff16f1b90343fffd9f0f96aec001348e7 0.0s done
+#4 extracting sha256:7e97639febbb6877260389f5430d05d7872e2a631eb3fdcdbe2b3fdd8b219746 0.0s done
+#4 extracting sha256:0befdf40db75dd6f7b556ae93e8f559b64d16168a13efe6f8cfc56ad1c20940c 0.0s done
+#4 extracting sha256:ca0bad6b690af26001a7e39da3901755f052b9480dd7bc58f0c3ac0769dccad3 0.0s done
+#4 DONE 1.0s
+
+#4 [1/5] FROM 026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api@sha256:0b8768174aa51a3eaebc18789d7404c9f2e8b37428c78f05f8446e799aa59cd3
+#4 extracting sha256:e7d8d8f3190a8c01449162e6959fe4d7632c8daad1289524b0ae7a89dea122b3
+#4 extracting sha256:e7d8d8f3190a8c01449162e6959fe4d7632c8daad1289524b0ae7a89dea122b3 8.7s done
+#4 DONE 9.6s
+
+#4 [1/5] FROM 026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api@sha256:0b8768174aa51a3eaebc18789d7404c9f2e8b37428c78f05f8446e799aa59cd3
+#4 extracting sha256:4f4fb700ef54461cfa02571ae0db9a0dc1e0cdb5577484a6d75e68dc38e8acc1 0.0s done
+#4 extracting sha256:2d113514f1b821c620643e23876dcaccdf56e9460e45762aed8a52585ad4c630 0.0s done
+#4 extracting sha256:240fe9cc5040addbbf069f1fc39e8ab08d77175ee575f95174f9b47d857b82dd 0.1s done
+#4 DONE 9.8s
+
+#4 [1/5] FROM 026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api@sha256:0b8768174aa51a3eaebc18789d7404c9f2e8b37428c78f05f8446e799aa59cd3
+#4 extracting sha256:4f4fb700ef54461cfa02571ae0db9a0dc1e0cdb5577484a6d75e68dc38e8acc1 0.0s done
+#4 extracting sha256:050775c132acad29baad7476aa7a0a75f1a1d4b6326f37c6352aeb0aa996d380 0.1s done
+#4 DONE 9.9s
+
+#6 [2/5] WORKDIR /repo
+#6 DONE 0.5s
+
+#7 [3/5] COPY packages/shared packages/shared
+#7 DONE 0.1s
+
+#8 [4/5] COPY apps/api apps/api
+#8 DONE 0.2s
+
+#9 [5/5] WORKDIR /repo/apps/api
+#9 DONE 0.1s
+
+#10 exporting to image
+#10 exporting layers
+#10 exporting layers 0.5s done
+#10 exporting manifest sha256:c1564c20ae13cbe1274a7066a94c76a4285c5b143952b5dd90faad7ff33137d0 0.0s done
+#10 exporting config sha256:c984c1d7d03a86b8674a4031fc72b0759c793d919d12d01499fc79b1836067bf 0.0s done
+#10 exporting attestation manifest sha256:f4549fdeb5845c71581771635f29b378909f49f6daca46857380689eac4a901e 0.0s done
+#10 exporting manifest list sha256:2cf5d543e10c6ba15b2998fb020052b1c3a76662c1f45437f220f4363d774137 0.0s done
+#10 naming to 026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api:7bc60d0 done
+#10 ...
+
+#4 [1/5] FROM 026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api@sha256:0b8768174aa51a3eaebc18789d7404c9f2e8b37428c78f05f8446e799aa59cd3
+#4 sha256:c96c411090da09187c55ab267826b3903b542b5c03f1cafa912d60e060e7850c 4.19MB / 100.27MB 5.4s
+#4 sha256:9d7b1405876470cc4eb0c1eb2811037931a1a1e02767a4f514909ed3c50ad6a8 4.19MB / 144.63MB 5.3s
+#4 sha256:c96c411090da09187c55ab267826b3903b542b5c03f1cafa912d60e060e7850c 8.39MB / 100.27MB 10.5s
+#4 sha256:9d7b1405876470cc4eb0c1eb2811037931a1a1e02767a4f514909ed3c50ad6a8 7.34MB / 144.63MB 10.4s
+#4 sha256:c96c411090da09187c55ab267826b3903b542b5c03f1cafa912d60e060e7850c 12.58MB / 100.27MB 15.6s
+#4 sha256:9d7b1405876470cc4eb0c1eb2811037931a1a1e02767a4f514909ed3c50ad6a8 10.49MB / 144.63MB 15.5s
+#4 sha256:c96c411090da09187c55ab267826b3903b542b5c03f1cafa912d60e060e7850c 17.83MB / 100.27MB 19.2s
+#4 sha256:9d7b1405876470cc4eb0c1eb2811037931a1a1e02767a4f514909ed3c50ad6a8 15.73MB / 144.63MB 20.6s
+#4 sha256:c96c411090da09187c55ab267826b3903b542b5c03f1cafa912d60e060e7850c 22.02MB / 100.27MB 24.3s
+#4 sha256:9d7b1405876470cc4eb0c1eb2811037931a1a1e02767a4f514909ed3c50ad6a8 22.02MB / 144.63MB 25.7s
+#4 sha256:c96c411090da09187c55ab267826b3903b542b5c03f1cafa912d60e060e7850c 27.26MB / 100.27MB 27.9s
+#4 sha256:c96c411090da09187c55ab267826b3903b542b5c03f1cafa912d60e060e7850c 32.51MB / 100.27MB 30.9s
+#4 sha256:9d7b1405876470cc4eb0c1eb2811037931a1a1e02767a4f514909ed3c50ad6a8 26.21MB / 144.63MB 30.8s
+#4 sha256:c96c411090da09187c55ab267826b3903b542b5c03f1cafa912d60e060e7850c 37.75MB / 100.27MB 34.2s
+#4 sha256:9d7b1405876470cc4eb0c1eb2811037931a1a1e02767a4f514909ed3c50ad6a8 28.31MB / 144.63MB 35.8s
+#4 sha256:c96c411090da09187c55ab267826b3903b542b5c03f1cafa912d60e060e7850c 42.99MB / 100.27MB 39.1s
+#4 sha256:9d7b1405876470cc4eb0c1eb2811037931a1a1e02767a4f514909ed3c50ad6a8 33.55MB / 144.63MB 40.9s
+#4 sha256:c96c411090da09187c55ab267826b3903b542b5c03f1cafa912d60e060e7850c 48.23MB / 100.27MB 43.8s
+#4 sha256:9d7b1405876470cc4eb0c1eb2811037931a1a1e02767a4f514909ed3c50ad6a8 37.75MB / 144.63MB 46.0s
+#4 sha256:c96c411090da09187c55ab267826b3903b542b5c03f1cafa912d60e060e7850c 53.48MB / 100.27MB 47.4s
+#4 sha256:9d7b1405876470cc4eb0c1eb2811037931a1a1e02767a4f514909ed3c50ad6a8 45.09MB / 144.63MB 50.1s
+#4 sha256:c96c411090da09187c55ab267826b3903b542b5c03f1cafa912d60e060e7850c 56.62MB / 100.27MB 52.5s
+#4 sha256:9d7b1405876470cc4eb0c1eb2811037931a1a1e02767a4f514909ed3c50ad6a8 49.28MB / 144.63MB 55.2s
+#4 sha256:c96c411090da09187c55ab267826b3903b542b5c03f1cafa912d60e060e7850c 61.87MB / 100.27MB 56.4s
+#4 sha256:c96c411090da09187c55ab267826b3903b542b5c03f1cafa912d60e060e7850c 67.11MB / 100.27MB 58.9s
+#4 sha256:9d7b1405876470cc4eb0c1eb2811037931a1a1e02767a4f514909ed3c50ad6a8 53.48MB / 144.63MB 60.3s
+#4 sha256:c96c411090da09187c55ab267826b3903b542b5c03f1cafa912d60e060e7850c 69.21MB / 100.27MB 64.0s
+#4 sha256:9d7b1405876470cc4eb0c1eb2811037931a1a1e02767a4f514909ed3c50ad6a8 60.82MB / 144.63MB 63.9s
+#4 sha256:9d7b1405876470cc4eb0c1eb2811037931a1a1e02767a4f514909ed3c50ad6a8 68.16MB / 144.63MB 67.9s
+#4 sha256:c96c411090da09187c55ab267826b3903b542b5c03f1cafa912d60e060e7850c 70.25MB / 100.27MB 69.1s
+#4 sha256:9d7b1405876470cc4eb0c1eb2811037931a1a1e02767a4f514909ed3c50ad6a8 75.50MB / 144.63MB 72.0s
+#4 sha256:c96c411090da09187c55ab267826b3903b542b5c03f1cafa912d60e060e7850c 70.25MB / 100.27MB 74.2s
+#4 sha256:9d7b1405876470cc4eb0c1eb2811037931a1a1e02767a4f514909ed3c50ad6a8 79.69MB / 144.63MB 77.1s
+#4 sha256:c96c411090da09187c55ab267826b3903b542b5c03f1cafa912d60e060e7850c 75.50MB / 100.27MB 78.1s
+#4 sha256:9d7b1405876470cc4eb0c1eb2811037931a1a1e02767a4f514909ed3c50ad6a8 83.89MB / 144.63MB 82.2s
+#4 sha256:c96c411090da09187c55ab267826b3903b542b5c03f1cafa912d60e060e7850c 78.64MB / 100.27MB 83.2s
+#4 sha256:c96c411090da09187c55ab267826b3903b542b5c03f1cafa912d60e060e7850c 83.89MB / 100.27MB 87.3s
+#4 sha256:9d7b1405876470cc4eb0c1eb2811037931a1a1e02767a4f514909ed3c50ad6a8 89.13MB / 144.63MB 87.3s
+#4 sha256:c96c411090da09187c55ab267826b3903b542b5c03f1cafa912d60e060e7850c 89.13MB / 100.27MB 91.0s
+#4 sha256:9d7b1405876470cc4eb0c1eb2811037931a1a1e02767a4f514909ed3c50ad6a8 95.42MB / 144.63MB 92.4s
+#4 sha256:c96c411090da09187c55ab267826b3903b542b5c03f1cafa912d60e060e7850c 94.37MB / 100.27MB 95.7s
+#4 sha256:9d7b1405876470cc4eb0c1eb2811037931a1a1e02767a4f514909ed3c50ad6a8 102.76MB / 144.63MB 97.5s
+#4 sha256:c96c411090da09187c55ab267826b3903b542b5c03f1cafa912d60e060e7850c 99.61MB / 100.27MB 100.5s
+#4 sha256:c96c411090da09187c55ab267826b3903b542b5c03f1cafa912d60e060e7850c 100.27MB / 100.27MB 100.7s done
+#4 sha256:9d7b1405876470cc4eb0c1eb2811037931a1a1e02767a4f514909ed3c50ad6a8 110.10MB / 144.63MB 102.3s
+#4 sha256:9d7b1405876470cc4eb0c1eb2811037931a1a1e02767a4f514909ed3c50ad6a8 117.44MB / 144.63MB 105.4s
+#4 sha256:9d7b1405876470cc4eb0c1eb2811037931a1a1e02767a4f514909ed3c50ad6a8 124.78MB / 144.63MB 108.0s
+#4 sha256:9d7b1405876470cc4eb0c1eb2811037931a1a1e02767a4f514909ed3c50ad6a8 132.12MB / 144.63MB 110.7s
+#4 sha256:9d7b1405876470cc4eb0c1eb2811037931a1a1e02767a4f514909ed3c50ad6a8 139.46MB / 144.63MB 113.7s
+#4 sha256:9d7b1405876470cc4eb0c1eb2811037931a1a1e02767a4f514909ed3c50ad6a8 144.63MB / 144.63MB 115.8s done
+#4 DONE 125.7s
+
+#10 exporting to image
+#10 DONE 116.4s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/rt65yg7pu8i5opqqaotyu332t
+WARNING: The requested image's platform (linux/arm64) does not match the detected host platform (linux/amd64/v3) and no specific platform was requested
+arm64
+PASS ARM64 application and seed modules load
+The push refers to repository [026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api]
+3a7b14f3e09e: Waiting
+7f050d2505d5: Waiting
+d76d856751fe: Waiting
+e7d8d8f3190a: Waiting
+240fe9cc5040: Waiting
+45e54bf7dfb8: Waiting
+d4c69d913b4b: Waiting
+c96c411090da: Waiting
+6009fa0b728a: Waiting
+dd11bf99c791: Waiting
+7e97639febbb: Waiting
+0befdf40db75: Waiting
+9d7b14058764: Waiting
+2d113514f1b8: Waiting
+ca0bad6b690a: Waiting
+be210b200e02: Waiting
+4f4fb700ef54: Waiting
+050775c132ac: Waiting
+9d7b14058764: Waiting
+2d113514f1b8: Waiting
+ca0bad6b690a: Waiting
+be210b200e02: Waiting
+4f4fb700ef54: Waiting
+050775c132ac: Waiting
+3a7b14f3e09e: Waiting
+7f050d2505d5: Waiting
+d76d856751fe: Waiting
+e7d8d8f3190a: Waiting
+240fe9cc5040: Waiting
+45e54bf7dfb8: Waiting
+d4c69d913b4b: Waiting
+c96c411090da: Waiting
+6009fa0b728a: Waiting
+dd11bf99c791: Waiting
+7e97639febbb: Waiting
+0befdf40db75: Waiting
+9d7b14058764: Waiting
+2d113514f1b8: Waiting
+ca0bad6b690a: Waiting
+be210b200e02: Waiting
+4f4fb700ef54: Waiting
+050775c132ac: Waiting
+3a7b14f3e09e: Waiting
+7f050d2505d5: Waiting
+d76d856751fe: Waiting
+e7d8d8f3190a: Waiting
+240fe9cc5040: Waiting
+45e54bf7dfb8: Waiting
+d4c69d913b4b: Waiting
+c96c411090da: Waiting
+6009fa0b728a: Waiting
+dd11bf99c791: Waiting
+7e97639febbb: Waiting
+0befdf40db75: Waiting
+0befdf40db75: Waiting
+9d7b14058764: Waiting
+2d113514f1b8: Waiting
+ca0bad6b690a: Waiting
+be210b200e02: Waiting
+4f4fb700ef54: Waiting
+050775c132ac: Waiting
+3a7b14f3e09e: Waiting
+7f050d2505d5: Waiting
+d76d856751fe: Waiting
+e7d8d8f3190a: Waiting
+240fe9cc5040: Waiting
+45e54bf7dfb8: Waiting
+d4c69d913b4b: Waiting
+c96c411090da: Waiting
+6009fa0b728a: Waiting
+dd11bf99c791: Waiting
+7e97639febbb: Waiting
+3a7b14f3e09e: Waiting
+7f050d2505d5: Waiting
+d76d856751fe: Waiting
+e7d8d8f3190a: Waiting
+240fe9cc5040: Waiting
+45e54bf7dfb8: Waiting
+d4c69d913b4b: Waiting
+c96c411090da: Waiting
+6009fa0b728a: Waiting
+dd11bf99c791: Waiting
+7e97639febbb: Waiting
+0befdf40db75: Waiting
+9d7b14058764: Waiting
+2d113514f1b8: Waiting
+ca0bad6b690a: Waiting
+be210b200e02: Waiting
+4f4fb700ef54: Waiting
+050775c132ac: Waiting
+3a7b14f3e09e: Waiting
+7f050d2505d5: Waiting
+d76d856751fe: Waiting
+e7d8d8f3190a: Waiting
+240fe9cc5040: Waiting
+45e54bf7dfb8: Waiting
+d4c69d913b4b: Waiting
+c96c411090da: Layer already exists
+6009fa0b728a: Waiting
+dd11bf99c791: Waiting
+7e97639febbb: Waiting
+0befdf40db75: Waiting
+9d7b14058764: Waiting
+2d113514f1b8: Layer already exists
+ca0bad6b690a: Waiting
+be210b200e02: Waiting
+4f4fb700ef54: Waiting
+050775c132ac: Waiting
+0befdf40db75: Layer already exists
+9d7b14058764: Waiting
+ca0bad6b690a: Layer already exists
+be210b200e02: Waiting
+4f4fb700ef54: Layer already exists
+050775c132ac: Waiting
+3a7b14f3e09e: Layer already exists
+7f050d2505d5: Layer already exists
+d76d856751fe: Layer already exists
+e7d8d8f3190a: Waiting
+240fe9cc5040: Layer already exists
+45e54bf7dfb8: Waiting
+d4c69d913b4b: Waiting
+6009fa0b728a: Layer already exists
+dd11bf99c791: Layer already exists
+7e97639febbb: Layer already exists
+be210b200e02: Waiting
+050775c132ac: Waiting
+e7d8d8f3190a: Waiting
+45e54bf7dfb8: Waiting
+d4c69d913b4b: Waiting
+9d7b14058764: Waiting
+050775c132ac: Waiting
+e7d8d8f3190a: Layer already exists
+9d7b14058764: Layer already exists
+050775c132ac: Waiting
+be210b200e02: Pushed
+050775c132ac: Waiting
+050775c132ac: Layer already exists
+45e54bf7dfb8: Pushed
+d4c69d913b4b: Pushed
+7bc60d0: digest: sha256:2cf5d543e10c6ba15b2998fb020052b1c3a76662c1f45437f220f4363d774137 size: 856

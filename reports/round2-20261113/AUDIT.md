@@ -27,15 +27,16 @@ This audit describes local verification; deployment evidence is recorded separat
 | Cancellation | Full simulated refund before acceptance; admin decision after acceptance; blocked after dispatch, including late approval of pending cancellation | `notice-cancellation.log`, `report-cancellations.log`, API cancellation tests |
 | FIR scope | No consultation/slot UI in FIR routes/features; only a shared-picker comment mentions consultation | Source search and FIR full-flow regression |
 
-## Remaining release gates
+## Completed release gates
 
 - Local gates passed: API **224/224**, shared **30/30**, authenticated routes
   **348/348**, both frontend typechecks/builds, final screen states and journeys.
 - Comparisons: PS **68**, DF **88**, LN **168**, including retained unchanged
   screens for context. Only the Round 2 implementation and evidence are staged.
-- Push image; run the two additive migrations; deploy dev stack and both Vercel
-  projects; activate `seed-round2` only after compatible code serves.
-- Verify live deployment and new synthetic checks, push final evidence, prune Docker.
+- Image `7bc60d0` pushed; both additive migrations succeeded before stack deployment.
+  Dev stack and both Vercel projects succeeded; `seed-round2` activated afterwards.
+- Live synthetic checks passed; required Docker pruning completed. See
+  [the release report](RELEASE.md) for scope, results and explicit limits.
 
 ## Explicit limits
 

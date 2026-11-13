@@ -1,0 +1,10 @@
+# API/shared manifests and lockfile match the pinned deployed ARM64 runtime.
+# Platform-independent JS is compiled and tested with native Node 22 before COPY.
+# Linux Prisma CLI/engines and runtime dependencies remain from this digest.
+FROM 026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api@sha256:0b8768174aa51a3eaebc18789d7404c9f2e8b37428c78f05f8446e799aa59cd3
+USER root
+WORKDIR /repo
+COPY packages/shared packages/shared
+COPY apps/api apps/api
+WORKDIR /repo/apps/api
+USER node

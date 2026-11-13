@@ -1,0 +1,16 @@
+image tag 7bc60d0 (one-off legalitt-dev-ops:50)
+task arn:aws:ecs:ap-south-1:026379630400:task/legalitt-dev-cluster/3ee79ee7f95646b69a1c49af150d4ed1
+exit 0 (Essential container in task exited)
+2026-11-13T20:35:07 Loaded Prisma config from prisma.config.ts.
+2026-11-13T20:35:07 Prisma schema loaded from prisma/schema.prisma.
+2026-11-13T20:35:08 Datasource "db": PostgreSQL database "legalitt", schema "public" at "legalitt-dev-database.c1mu80ok42w3.ap-south-1.rds.amazonaws.com:5432"
+2026-11-13T20:35:08 32 migrations found in prisma/migrations
+2026-11-13T20:35:08 Applying migration `202611130100_round2_built_services`
+2026-11-13T20:35:08 Applying migration `202611130101_notice_signatures`
+2026-11-13T20:35:08 The following migration(s) have been applied:
+2026-11-13T20:35:08 migrations/
+2026-11-13T20:35:08   └─ 202611130100_round2_built_services/
+2026-11-13T20:35:08     └─ migration.sql
+2026-11-13T20:35:08   └─ 202611130101_notice_signatures/
+2026-11-13T20:35:08     └─ migration.sql
+2026-11-13T20:35:08 All migrations have been successfully applied.

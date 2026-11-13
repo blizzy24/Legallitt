@@ -20,7 +20,7 @@ captured price snapshots remain intact; verification uses new synthetic cases.
 - [x] FIR consultation-copy/route audit.
 - [x] Additive migrations and backward-compatibility tests; full API/shared/routes/build gates.
 - [x] Synthetic browser journeys and updated design comparisons.
-- [ ] Image → migrate → dev stack → both frontends; activate new tariffs safely; live checks, push and prune.
+- [x] Image → migrate → dev stack → both frontends; activate new tariffs safely; live checks, push and prune.
 
 ## Interpretation awaiting confirmation
 
@@ -31,7 +31,9 @@ cheque-bounce validation, signature/return, reminders and extension checks.
 See [the item-by-item audit](../../reports/round2-20261113/AUDIT.md) and the
 [LN](ln-screens/README.md), [PS](ps-screens/README.md), and
 [DF](df-screens/README.md) comparison indexes. Deployment is recorded separately
-after the release gates complete.
+in [the release report](../../reports/round2-20261113/RELEASE.md): API `7bc60d0`,
+both Vercel deployments successful, both additive migrations and pricing activation
+successful, live synthetic checks passed and Docker pruned.
 
 DF Urgent uses 3–4 **calendar days**, following the literal “days” rather than
 “working days” used for the other three windows. The versioned setting exposes the

@@ -1,0 +1,155 @@
+{
+  "cases": [
+    {
+      "id": "a4c9ae1b-5c04-4388-be6f-c1e069a6fd7e",
+      "service": "property_search",
+      "speed": "ordinary",
+      "tag": "property_search-ordinary",
+      "paid": true,
+      "advocate": "advocate-2",
+      "returned": true
+    },
+    {
+      "id": "c39397e4-315f-4813-98a5-9bcafba463b2",
+      "service": "property_search",
+      "speed": "urgent",
+      "tag": "property_search-urgent",
+      "paid": true,
+      "advocate": "advocate-2"
+    },
+    {
+      "id": "e036d378-ba7c-4ac1-b471-df087d782063",
+      "service": "document_forensic",
+      "speed": "ordinary",
+      "tag": "document_forensic-ordinary",
+      "paid": true,
+      "advocate": "advocate",
+      "returned": true
+    },
+    {
+      "id": "b58c9ed0-cb27-4e0c-b8ff-893a1fb4fc2d",
+      "service": "document_forensic",
+      "speed": "urgent",
+      "tag": "document_forensic-urgent",
+      "paid": true,
+      "advocate": "advocate"
+    },
+    {
+      "id": "22932ab5-ad4e-4559-a1a2-8d654c0bc0a7",
+      "service": "property_search",
+      "speed": "ordinary",
+      "tag": "property_search-cancellation",
+      "cancel": true,
+      "paid": true
+    },
+    {
+      "id": "99fe9982-d744-431f-bc47-cddf87c09fb5",
+      "service": "document_forensic",
+      "speed": "ordinary",
+      "tag": "document_forensic-cancellation",
+      "cancel": true,
+      "paid": true
+    }
+  ],
+  "results": [
+    {
+      "name": "property_search-ordinary intake persisted, exact quote paid, success and tracking",
+      "at": "2026-11-13T20:56:01.704Z"
+    },
+    {
+      "name": "property_search-urgent intake persisted, exact quote paid, success and tracking",
+      "at": "2026-11-13T20:56:49.176Z"
+    },
+    {
+      "name": "document_forensic-ordinary intake persisted, exact quote paid, success and tracking",
+      "at": "2026-11-13T20:57:30.045Z"
+    },
+    {
+      "name": "document_forensic-urgent intake persisted, exact quote paid, success and tracking",
+      "at": "2026-11-13T20:58:05.098Z"
+    },
+    {
+      "name": "property_search-ordinary assigned, request reviewed and accepted",
+      "at": "2026-11-13T20:59:01.774Z"
+    },
+    {
+      "name": "property_search-urgent assigned, request reviewed and accepted",
+      "at": "2026-11-13T20:59:26.171Z"
+    },
+    {
+      "name": "document_forensic-ordinary assigned, request reviewed and accepted",
+      "at": "2026-11-13T20:59:55.762Z"
+    },
+    {
+      "name": "document_forensic-urgent assigned, request reviewed and accepted",
+      "at": "2026-11-13T21:00:11.095Z"
+    },
+    {
+      "name": "property_search-ordinary report approved by admin after return and correction",
+      "at": "2026-11-13T21:01:57.824Z"
+    },
+    {
+      "name": "property_search-urgent report approved by admin",
+      "at": "2026-11-13T21:02:23.335Z"
+    },
+    {
+      "name": "DF original request → acknowledgement → sent note → receipt; deadline pauses and resumes",
+      "at": "2026-11-13T21:02:54.811Z"
+    },
+    {
+      "name": "PS records unavailable: office note replaces report, exact-version admin approval, client chat and download, no refund",
+      "at": "2026-11-13T21:03:26.444Z"
+    },
+    {
+      "name": "document_forensic-ordinary report and affidavit approved and released after correction",
+      "at": "2026-11-13T21:06:08.444Z"
+    },
+    {
+      "name": "document_forensic-urgent report and affidavit approved and released",
+      "at": "2026-11-13T21:07:30.335Z"
+    },
+    {
+      "name": "property_search-ordinary client viewer/download, isolation and one wallet credit",
+      "at": "2026-11-13T21:07:42.121Z"
+    },
+    {
+      "name": "property_search-urgent client viewer/download, isolation and one wallet credit",
+      "at": "2026-11-13T21:07:52.987Z"
+    },
+    {
+      "name": "document_forensic-ordinary client viewer/download, isolation and one wallet credit",
+      "at": "2026-11-13T21:08:10.101Z"
+    },
+    {
+      "name": "document_forensic-urgent client viewer/download, isolation and one wallet credit",
+      "at": "2026-11-13T21:08:26.395Z"
+    },
+    {
+      "name": "property_search-cancellation intake persisted, exact quote paid, success and tracking",
+      "at": "2026-11-13T21:08:43.081Z"
+    },
+    {
+      "name": "property_search cancellation before acceptance records full simulated refund",
+      "at": "2026-11-13T21:08:59.501Z"
+    },
+    {
+      "name": "document_forensic-cancellation intake persisted, exact quote paid, success and tracking",
+      "at": "2026-11-13T21:09:18.055Z"
+    },
+    {
+      "name": "document_forensic cancellation before acceptance records full simulated refund",
+      "at": "2026-11-13T21:09:30.692Z"
+    }
+  ],
+  "no_records": {
+    "id": "0e81c61c-b9f9-4778-a82b-517dde07d093",
+    "service": "property_search",
+    "speed": "ordinary",
+    "advocate": "advocate"
+  },
+  "last_check": {
+    "stage": "all",
+    "passed": true,
+    "at": "2026-11-13T21:09:30.694Z"
+  }
+}

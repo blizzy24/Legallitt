@@ -1,0 +1,4 @@
+image tag 7bc60d0 (one-off legalitt-dev-ops:52)
+task arn:aws:ecs:ap-south-1:026379630400:task/legalitt-dev-cluster/82fe843ee2be4b5f93c8b56d7486489c
+exit 0 (Essential container in task exited)
+2026-11-13T20:45:15 Round 2 PS/DF tariffs and turnaround activated; existing cases and price snapshots unchanged.

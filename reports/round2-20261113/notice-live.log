@@ -1,0 +1,97 @@
+STAGE intakes
+SHOT client-landing.png
+SHOT client-step1-courier.png
+SHOT client-methods-courier.png
+SHOT client-issue-courier.png
+SHOT client-uploads-courier.png
+SHOT client-review-files-courier.png
+SHOT client-summary-courier.png
+SHOT client-payment-courier.png
+SHOT client-scan-courier.png
+SHOT client-success-courier.png
+PASS Client intake/payment courier
+SHOT client-step1-email.png
+SHOT client-methods-email.png
+SHOT client-issue-email.png
+SHOT client-uploads-email.png
+SHOT client-review-files-email.png
+SHOT client-summary-email.png
+SHOT client-payment-email.png
+SHOT client-scan-email.png
+SHOT client-success-email.png
+PASS Client intake/payment email
+SHOT client-step1-courier-email-whatsapp.png
+SHOT client-methods-courier-email-whatsapp.png
+SHOT client-issue-courier-email-whatsapp.png
+SHOT client-uploads-courier-email-whatsapp.png
+SHOT client-review-files-courier-email-whatsapp.png
+SHOT client-summary-courier-email-whatsapp.png
+SHOT client-payment-courier-email-whatsapp.png
+SHOT client-scan-courier-email-whatsapp.png
+SHOT client-success-courier-email-whatsapp.png
+PASS Client intake/payment courier-email-whatsapp
+STAGE drafts
+SHOT advocate-decline.png
+HTTP advocate 404 GET /api/v1/notices/0dbc7251-a922-4870-b76e-f48f378c9cd6/flow
+HTTP advocate 404 GET /api/v1/cases/0dbc7251-a922-4870-b76e-f48f378c9cd6
+SHOT advocate-fee-courier.png
+SHOT advocate-documents-courier.png
+SHOT advocate-drafting-method.png
+SHOT advocate-editor-courier.png
+SHOT advocate-preview-courier.png
+SHOT client-draft-ready-courier.png
+SHOT client-document-viewer.png
+SHOT client-request-changes.png
+SHOT advocate-editor-courier-revised.png
+SHOT advocate-preview-courier.png
+SHOT advocate-profile-signature.png
+SHOT advocate-signed-courier.png
+SHOT advocate-submitted-courier.png
+SHOT client-admin-handoff-courier.png
+SHOT client-chat-readonly-courier.png
+PASS Advocate draft/client approval courier
+SHOT advocate-fee-email.png
+SHOT advocate-documents-email.png
+SHOT advocate-drafting-method.png
+SHOT advocate-editor-email.png
+SHOT advocate-preview-email.png
+SHOT client-draft-ready-email.png
+SHOT advocate-signed-email.png
+SHOT advocate-submitted-email.png
+SHOT client-admin-handoff-email.png
+SHOT client-chat-readonly-email.png
+PASS Advocate draft/client approval email
+SHOT advocate-fee-courier-email-whatsapp.png
+SHOT advocate-documents-courier-email-whatsapp.png
+SHOT advocate-drafting-method.png
+SHOT advocate-editor-courier-email-whatsapp.png
+SHOT advocate-preview-courier-email-whatsapp.png
+SHOT client-draft-ready-courier-email-whatsapp.png
+SHOT advocate-signed-courier-email-whatsapp.png
+SHOT advocate-submitted-courier-email-whatsapp.png
+SHOT client-admin-handoff-courier-email-whatsapp.png
+SHOT client-chat-readonly-courier-email-whatsapp.png
+PASS Advocate draft/client approval courier-email-whatsapp
+STAGE admin
+SHOT admin-address-check-courier.png
+SHOT admin-return.png
+SHOT advocate-editor-courier-revised.png
+SHOT advocate-preview-courier.png
+SHOT advocate-profile-signature.png
+SHOT advocate-signed-courier.png
+SHOT advocate-submitted-courier.png
+SHOT admin-notice-check-courier.png
+SHOT admin-dispatch-ready-courier.png
+PASS Admin verification/test e-sign courier
+SHOT admin-address-check-email.png
+SHOT admin-notice-check-email.png
+SHOT admin-dispatch-ready-email.png
+PASS Admin verification/test e-sign email
+SHOT admin-address-check-courier-email-whatsapp.png
+SHOT admin-notice-check-courier-email-whatsapp.png
+SHOT admin-dispatch-ready-courier-email-whatsapp.png
+PASS Admin verification/test e-sign courier-email-whatsapp
+STAGE cancellation
+SHOT client-cancel-before-acceptance.png
+SHOT client-cancelled-refund.png
+PASS Cancellation before acceptance with full simulated refund

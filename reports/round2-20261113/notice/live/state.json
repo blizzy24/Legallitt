@@ -1,0 +1,82 @@
+{
+  "cases": [
+    {
+      "id": "0dbc7251-a922-4870-b76e-f48f378c9cd6",
+      "methods": [
+        "courier"
+      ],
+      "tag": "courier",
+      "total": "165253",
+      "paid": true,
+      "advocate": "advocate-2",
+      "declined": true,
+      "client_changed": true,
+      "admin_returned": true
+    },
+    {
+      "id": "de6df343-8d35-4662-a497-5cd6724d3d3a",
+      "methods": [
+        "email"
+      ],
+      "tag": "email",
+      "total": "147353",
+      "paid": true,
+      "advocate": "advocate"
+    },
+    {
+      "id": "2a2d19f6-5705-48cc-81e9-6064938958d2",
+      "methods": [
+        "courier",
+        "email",
+        "whatsapp"
+      ],
+      "tag": "courier-email-whatsapp",
+      "total": "165253",
+      "paid": true,
+      "advocate": "advocate"
+    }
+  ],
+  "results": [
+    {
+      "name": "Client intake/payment courier",
+      "at": "2026-11-13T20:46:11.948Z"
+    },
+    {
+      "name": "Client intake/payment email",
+      "at": "2026-11-13T20:46:54.090Z"
+    },
+    {
+      "name": "Client intake/payment courier-email-whatsapp",
+      "at": "2026-11-13T20:47:45.515Z"
+    },
+    {
+      "name": "Advocate draft/client approval courier",
+      "at": "2026-11-13T20:50:28.420Z"
+    },
+    {
+      "name": "Advocate draft/client approval email",
+      "at": "2026-11-13T20:51:42.014Z"
+    },
+    {
+      "name": "Advocate draft/client approval courier-email-whatsapp",
+      "at": "2026-11-13T20:52:52.377Z"
+    },
+    {
+      "name": "Admin verification/test e-sign courier",
+      "at": "2026-11-13T20:54:08.158Z"
+    },
+    {
+      "name": "Admin verification/test e-sign email",
+      "at": "2026-11-13T20:54:33.797Z"
+    },
+    {
+      "name": "Admin verification/test e-sign courier-email-whatsapp",
+      "at": "2026-11-13T20:54:45.413Z"
+    },
+    {
+      "name": "Cancellation before acceptance with full simulated refund",
+      "at": "2026-11-13T20:55:17.934Z"
+    }
+  ],
+  "cancellation_case_id": "bf928ced-af31-473a-9146-08f6c0cd3320"
+}

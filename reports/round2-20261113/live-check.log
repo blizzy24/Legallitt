@@ -1,0 +1,6 @@
+PASS 35 existing payment records unchanged
+PASS authenticated support policy: Mon–Sat 10–19, callback within 24h
+PASS property_search confirmed tariffs and admin-only access
+PASS document_forensic confirmed tariffs and admin-only access
+PASS signature profile route
+PASS live counterpart phone privacy and bidirectional client case isolation (404 both ways)
