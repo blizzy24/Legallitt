@@ -256,7 +256,7 @@ export class ApiClient {
     return this.request<{
       code: string;
       name: string;
-      pricing_mode?: 'fixed' | 'consultation_then_quote' | 'unconfirmed';
+      pricing_mode?: 'fixed' | 'consultation_then_quote' | 'representation_advance' | 'unconfirmed';
       pricing: {
         id: string;
         tier: string | null;

@@ -1,0 +1,10 @@
+import {useEffect,useState} from 'react';
+import {Link} from 'react-router';
+import {noticeDate,noticeCalendarDate,type CourtView,type CourtService} from '@legalitt/shared';
+import {api} from './session';
+export function CourtQueue({service}:{service:CourtService}){
+ const [rows,setRows]=useState<CourtView[]>(),[error,setError]=useState(''),[attempt,setAttempt]=useState(0);
+ useEffect(()=>{const focus=()=>setAttempt(n=>n+1);window.addEventListener('focus',focus);return()=>window.removeEventListener('focus',focus);},[]);
+ useEffect(()=>{let live=true;api.request<{items:CourtView[]}>('/courts').then(v=>{if(live){setRows(v.items.filter(c=>c.case.service_code===service));setError('');}}).catch(e=>{if(live)setError(e.message);});return()=>{live=false;};},[service,attempt]);
+ return <section className="table-panel"><div className="section-title"><h2>Court representation queue</h2></div>{error&&<div role="alert" className="error">{error}<button onClick={()=>setAttempt(n=>n+1)}>Retry</button></div>}{!rows?<p>{error?'Court queue unavailable.':'Loading court requests…'}</p>:!rows.length?<p>No representation requests yet. Existing consultation cases remain in the table below.</p>:<table><thead><tr><th>Request</th><th>Stage</th><th>Needs attention</th><th>Updated</th></tr></thead><tbody>{rows.map(v=><tr key={v.case.id}><td><Link to={`/services/${service}/cases/${v.case.id}`}>{v.case.reference}</Link>{v.case.title&&<small>{v.case.title}</small>}</td><td><span className="status open">{v.stage.label}</span>{v.data.deadline_at&&!v.data.accepted_at&&<small>First action expected by {noticeCalendarDate(v.data.deadline_at)}</small>}</td><td>{v.warnings.map(w=><p className="error" key={w}>{w}</p>)}{v.data.cancel_requested&&!v.data.cancel_requested.decided_at&&<p>Cancellation and refund decision needed</p>}{v.data.phase==='completion_review'&&<p>Review final order and confirm completion</p>}{v.data.pickup?.status==='booking'&&<p>Book manual courier pickup</p>}{v.data.changes.some(c=>c.status==='requested')&&<p>Advocate-change decision or reassignment needed</p>}</td><td>{noticeDate(v.case.updated_at)}</td></tr>)}</tbody></table>}</section>;
+}

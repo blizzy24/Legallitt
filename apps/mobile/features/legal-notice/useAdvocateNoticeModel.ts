@@ -25,7 +25,7 @@ export function useAdvocateNoticeModel(stage: string) {
   // Design 192's sign-off line: "Approved today, 11:20 AM", or the date when it was not today.
   const signOff=approvedAt?(()=>{const d=new Date(approvedAt),now=new Date();const day=d.toDateString()===now.toDateString()?'today':d.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
     return `Client Sign-off complete • Approved ${day}, ${d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})}`;})():'';
-  const finalMeta=notice?.page_count ? `${notice.page_count} Pages • Approved by Client` : '';
+  const finalMeta=notice?.page_count ? `${notice.page_count} ${notice.page_count===1?'page':'pages'} • Approved by Client` : '';
   const [pricing,setPricing]=useState<Awaited<ReturnType<typeof c.repository.service>>['pricing']>([]);
   const needsCourierPrice=['delivery','payment','scan-pay','paid'].includes(stage);
   useEffect(()=>{if(api&&needsCourierPrice)void c.run(async()=>setPricing((await c.repository.service('courier')).pricing));},[api,needsCourierPrice]);
@@ -135,8 +135,8 @@ export function useAdvocateNoticeModel(stage: string) {
     }:fixture.ADV_NOTICE,
     ADV_NOTICE_DOCS: api?{...fixture.ADV_NOTICE_DOCS,
       summaryTitle:r?`${documents.length} Documents • ${documents.reduce((n,d)=>n+(d.page_count??0),0)} Pages`:'',
-      summarySub:'',statusChip:'',aiChip:'',aiFindings:[],filesCountLabel:r?`${documents.length} Files Attached`:'',
-      files:documents.map(d=>({id:d.id,name:d.filename,meta:d.page_count===null?'':`${d.page_count} pages`})),
+      summarySub:'',statusChip:'',aiChip:'',aiFindings:[],filesCountLabel:r?`${documents.length} ${documents.length===1?'file':'files'} attached`:'',
+      files:documents.map(d=>({id:d.id,name:d.filename,meta:d.page_count===null?'':`${d.page_count} ${d.page_count===1?'page':'pages'}`})),
     }:fixture.ADV_NOTICE_DOCS,
     ADV_NOTICE_DRAFTING: api?{...fixture.ADV_NOTICE_DRAFTING,docket:r?.reference??''}:fixture.ADV_NOTICE_DRAFTING,
     ADV_NOTICE_DRAFT:api?{...fixture.ADV_NOTICE_DRAFT,parties:{client,opponent:recipient},sections:fixture.ADV_NOTICE_DRAFT.sections.map((s,i)=>({...s,body:c.content[draftKeys[i]]}))}:fixture.ADV_NOTICE_DRAFT,

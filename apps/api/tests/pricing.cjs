@@ -65,11 +65,14 @@ test('quotes pin rows, reject unresolved/changed documents, preserve receipts, a
     const services = new ServicesController(prisma);
     for (const code of ['district_court','high_court']) {
       const service = await services.one(code);
-      assert.equal(service.pricing_mode,'consultation_then_quote');
-      assert.equal(service.pricing.length,1);
-      assert.equal(service.pricing[0].base_amount_paise,'60000');
-      assert.equal(service.pricing[0].duration_minutes,30);
-      assert.equal(service.pricing[0].tier,null);
+      const hasRepresentation=!!await db.courtPolicy.findFirst({where:{service_code:code}});
+      assert.equal(service.pricing_mode,hasRepresentation?'representation_advance':'consultation_then_quote');
+      const legacy=service.pricing.filter(p=>p.variant==='consultation_30_minutes');
+      assert.equal(legacy.length,1);
+      assert.equal(legacy[0].base_amount_paise,'60000');
+      assert.equal(legacy[0].duration_minutes,30);
+      assert.equal(legacy[0].tier,null);
+      if(hasRepresentation)assert.ok(service.pricing.some(p=>p.variant==='representation'&&p.tier==='ordinary'));
     }
     const base = await db.servicePricing.findFirstOrThrow({where:{service_code:'legal_notice',tier:'urgent',confirmed:true,variant:null}});
     const c = await db.case.create({data:{reference:'TEST-PRICE-'+randomUUID(),service_code:'legal_notice',client_id:client.id,

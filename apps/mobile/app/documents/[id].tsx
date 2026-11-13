@@ -214,7 +214,7 @@ function FixtureDocumentViewerScreen() {
 
           <View style={styles.infoGrid}>
             <Info label="File Format" value={doc.format} />
-            <Info label="File Size" value={`${doc.size} (${doc.pages} Pages)`} />
+            <Info label="File Size" value={`${doc.size} (${doc.pages} ${doc.pages===1?'page':'pages'})`} />
           </View>
           <View style={styles.infoGrid}>
             <Info label="Uploaded Date" value={doc.uploadedAt} />

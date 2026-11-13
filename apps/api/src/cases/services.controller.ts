@@ -42,7 +42,7 @@ export class ServicesController {
     });
     return {
       ...service,
-      pricing_mode: policy?.pricing_mode ?? 'unconfirmed',
+      pricing_mode: ['district_court','high_court'].includes(code)&&await db.courtPolicy.findFirst({where:{service_code:code,effective_from:{lte:now}}})?'representation_advance':policy?.pricing_mode ?? 'unconfirmed',
       pricing: pricing.map((p) => ({
         ...p,
         base_amount_paise: p.base_amount_paise.toString(),

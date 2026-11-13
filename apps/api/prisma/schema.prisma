@@ -1093,3 +1093,67 @@ model PayoutRequest {
   @@index([advocate_id, requested_at], map: "payout_requests_advocate_idx")
   @@map("payout_requests")
 }
+
+model CourtPolicy {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  service_code String
+  version Int
+  config Json
+  source_note String
+  created_by String? @db.Uuid
+  effective_from DateTime @default(now()) @db.Timestamptz(6)
+  @@unique([service_code,version])
+  @@map("court_policies")
+}
+model CourtWorkspace {
+  case_id String @id @db.Uuid
+  policy_id String @db.Uuid
+  revision Int @default(0)
+  data Json
+  private_notes Json @default("{}")
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @default(now()) @db.Timestamptz(6)
+  @@map("court_workspaces")
+}
+model CourtHearingRate {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  service_code String
+  kind String
+  version Int
+  amount_paise BigInt?
+  created_by String? @db.Uuid
+  effective_from DateTime @default(now()) @db.Timestamptz(6)
+  @@unique([service_code,kind,version])
+  @@map("court_hearing_rates")
+}
+model CourtHearing {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  case_id String @db.Uuid
+  advocate_id String @db.Uuid
+  at DateTime @db.Timestamptz(6)
+  court String
+  room String
+  bench String
+  judge String?
+  note String @default("")
+  started_at DateTime? @db.Timestamptz(6)
+  update Json?
+  private_note String @default("")
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  created_by String @db.Uuid
+  @@index([case_id,at],map:"court_hearings_case_date")
+  @@map("court_hearings")
+}
+model CourtHearingCredit {
+  hearing_id String @id @db.Uuid
+  case_id String @db.Uuid
+  advocate_id String @db.Uuid
+  kind String
+  rate_id String @db.Uuid
+  amount_paise BigInt
+  classified_by String @db.Uuid
+  classified_at DateTime @default(now()) @db.Timestamptz(6)
+  reason String
+  @@index([advocate_id,classified_at],map:"court_hearing_credits_advocate")
+  @@map("court_hearing_credits")
+}

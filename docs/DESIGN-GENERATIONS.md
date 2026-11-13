@@ -1,5 +1,20 @@
 # Legalitt — which design is the current one
 
+## Court override — 14 November 2026
+
+For District Court and High Court, the 172 PNGs extracted from the November
+court ZIP supersede the numbered designs: `District-Court-Representaion-Client-Side`
+(52), `District-Court-Representation-Advocate-Side` (35),
+`High-Court-Representation-Client-Side` (50), and
+`High-Court-Representation-Advocate-Side` (35), all under
+`design/figma-2026-11-12/`. The source ZIP was removed after verifying the count.
+Read the overnight instructions and Round 2 answers before
+`flows/COURT-REPRESENTATION-FLOW.md`; they override payment timing, prices,
+calling/phone disclosure and hearing compensation. See
+`flows/court-screens/README.md` for the screen-to-source comparison index.
+
+The older court guidance below remains historical, not the current court source.
+
 28 October 2026
 
 The client has redrawn screens over time without removing the old versions.

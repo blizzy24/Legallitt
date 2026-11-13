@@ -36,7 +36,9 @@ export async function walletEntries(tx: Tx, advocateId: string): Promise<WalletE
     select: {id: true, reference: true, service_code: true, completed_at: true,
       payments_case_id_relations: {where: {status: 'captured', purpose: {in: ['service_fee', 'representation']}}, select: {total_paise: true, quote: {select: {snapshot: true}}}}}});
   const out: WalletEntry[] = [];
+  const courtCases=new Set((await tx.courtWorkspace.findMany({where:{case_id:{in:cases.map(c=>c.id)}},select:{case_id:true}})).map(w=>w.case_id));
   for (const c of cases) {
+    if(courtCases.has(c.id))continue;
     let share = 0n, paid = 0n, platform = 0n, gst = 0n, known = false;
     for (const p of c.payments_case_id_relations) {
       const b = (p.quote?.snapshot as {breakdown?: QuoteBreakdown} | undefined)?.breakdown;
@@ -58,6 +60,9 @@ export async function walletEntries(tx: Tx, advocateId: string): Promise<WalletE
         client_paid_paise: '0', platform_fee_paise: '0', gst_paise: '0', share_paise: d.advocate_entitlement_paise!.toString(), source: 'cancellation_decision'});
     }
   }
+  const hearingCredits=await tx.courtHearingCredit.findMany({where:{advocate_id:advocateId},orderBy:{classified_at:'desc'}});
+  const hearingCases=await tx.case.findMany({where:{id:{in:hearingCredits.map(h=>h.case_id)}},select:{id:true,reference:true,service_code:true}});
+  for(const credit of hearingCredits){const c=hearingCases.find(c=>c.id===credit.case_id);if(c)out.push({case_id:c.id,reference:c.reference+' · '+(credit.kind==='effective'?'Effective':'Passive')+' hearing',service_code:c.service_code,completed_at:credit.classified_at.toISOString(),client_paid_paise:'0',platform_fee_paise:'0',gst_paise:'0',share_paise:credit.amount_paise.toString(),source:'hearing'});}
   return out.sort((a, b) => (b.completed_at ?? '').localeCompare(a.completed_at ?? ''));
 }
 

@@ -1,3 +1,5 @@
+import {CourtRepresentationController} from './courts/court.controller';
+import {CourtRepresentationService} from './courts/court.service';
 import {AdvocateCompletionController, AdvocateCompletionService} from './completion/advocate-completion';
 import {AccountDeletionsAdminController, AccountDeletionsAdminService} from './account/account-deletions-admin';
 import {AdvocateVerificationController} from './advocate-verification/advocate-verification.controller';
@@ -64,6 +66,7 @@ import {NoticeFlowService} from './cases/notice-flow.service';
 import {NOTICE_EMAIL, SesNoticeEmail} from './cases/notice-email';
 import {NoticeDraftAiController} from './cases/notice-draft-ai';
 import {NoticeReminders} from './cases/notice-reminders';
+import {CourtReminders} from './courts/court-reminders';
 
 @Controller("health")
 export class HealthController {
@@ -84,7 +87,7 @@ import {ACCOUNT_COGNITO, CognitoAccountAdapter} from './account/account-cognito'
 
 @Module({
   imports: [AiModule, CourierModule, AdminUiModule, DemoModule, DatabaseModule, PhoneAuthModule, PaymentsModule, NotificationsModule],
-  controllers: [AdvocateSignatureController,NoticeSigningController,WalletController, AdvocateVerificationController, AdvocateCompletionController, AccountDeletionsAdminController, AccountController, AccountDataController, SupportController, ConsultationController, FirController, NotificationsController, NoticeIntakeAiController, AdminAdvocatesController, AdminCasesController, NoticeMessagesController,
+  controllers: [CourtRepresentationController,AdvocateSignatureController,NoticeSigningController,WalletController, AdvocateVerificationController, AdvocateCompletionController, AccountDeletionsAdminController, AccountController, AccountDataController, SupportController, ConsultationController, FirController, NotificationsController, NoticeIntakeAiController, AdminAdvocatesController, AdminCasesController, NoticeMessagesController,
     PaymentsController, ServiceReportsController, CancellationsController, SupportSettingsController, ReportTariffsController,
     HealthController,
     AuthController,
@@ -96,11 +99,11 @@ import {ACCOUNT_COGNITO, CognitoAccountAdapter} from './account/account-cognito'
     ServicesController,
     DocumentController,
   ],
-  providers: [{provide:APP_INTERCEPTOR,useClass:ContactPrivacyInterceptor},AdvocateSignatures,NoticeSigning,WalletService, AdvocateVerificationService, AdvocateCompletionService, AccountDeletionsAdminService, AccountService, AccountDataService, {provide: ACCOUNT_COGNITO, useClass: CognitoAccountAdapter}, SupportService, ConsultationService, ConsultationPayments, ConsultationReports, FirAdminService, FirFlowService, FirService, NotificationRepository, AdminCaseDetailRepository, AdminAdvocatesRepository, AdminCasesRepository, NoticeMessages,
+  providers: [CourtRepresentationService,{provide:APP_INTERCEPTOR,useClass:ContactPrivacyInterceptor},AdvocateSignatures,NoticeSigning,WalletService, AdvocateVerificationService, AdvocateCompletionService, AccountDeletionsAdminService, AccountService, AccountDataService, {provide: ACCOUNT_COGNITO, useClass: CognitoAccountAdapter}, SupportService, ConsultationService, ConsultationPayments, ConsultationReports, FirAdminService, FirFlowService, FirService, NotificationRepository, AdminCaseDetailRepository, AdminAdvocatesRepository, AdminCasesRepository, NoticeMessages,
     ShipmentService,
     NoticePdfService,
     NoticeFlowService,
-    NoticeReminders,
+    NoticeReminders, CourtReminders,
     {provide: NOTICE_EMAIL, useClass: SesNoticeEmail},
     PaymentsService, ServiceReportsService, ReportWorkflowService, CancellationsService, SupportSettings, ReportTariffs,
     AuthService,

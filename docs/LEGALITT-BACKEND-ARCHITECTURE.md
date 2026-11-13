@@ -1424,6 +1424,62 @@ CREATE TABLE fir_settings ( -- dormant single row; was: who takes the approved d
 );
 ```
 
+### 4.3d Court representation — 14 November 2026 (local implementation)
+
+Additive migration 202611140001. New representation cases pin a policy row and
+use the existing cases/details/documents/payment/event pipeline. Existing paid
+consultation cases retain their original engine. Current owner, assigned advocate
+and admin scope is enforced at every entry point. The workspace revision guards
+stale actions. Payment snapshots keep advance/balance, tariff, commission, fee and
+page-rule versions. Review submissions are immutable arrays with distinct IDs and
+version numbers; the latest pending review is the only actionable one. Each
+hearing credit has a unique hearing ID and snapshots its advocate and rate version.
+Rates start unset. Completion never creates a second lump-sum entitlement.
+
+```sql
+-- New representation requests only. Existing consultation cases/prices are untouched.
+CREATE SEQUENCE court_district_reference_seq;
+CREATE SEQUENCE court_high_reference_seq;
+CREATE TABLE court_policies (
+ id uuid PRIMARY KEY DEFAULT gen_random_uuid(), service_code text NOT NULL REFERENCES services(code),
+ version integer NOT NULL, config jsonb NOT NULL, source_note text NOT NULL,
+ created_by uuid REFERENCES users(id), effective_from timestamptz NOT NULL DEFAULT now(),
+ UNIQUE(service_code,version)
+);
+CREATE TABLE court_workspaces (
+ case_id uuid PRIMARY KEY REFERENCES cases(id), policy_id uuid NOT NULL REFERENCES court_policies(id),
+ revision integer NOT NULL DEFAULT 0, data jsonb NOT NULL, private_notes jsonb NOT NULL DEFAULT '{}',
+ created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE TABLE court_hearing_rates (
+ id uuid PRIMARY KEY DEFAULT gen_random_uuid(), service_code text NOT NULL REFERENCES services(code),
+ kind text NOT NULL CHECK(kind IN ('effective','passive')), version integer NOT NULL,
+ amount_paise bigint CHECK(amount_paise >= 0), created_by uuid REFERENCES users(id),
+ effective_from timestamptz NOT NULL DEFAULT now(), UNIQUE(service_code,kind,version)
+);
+CREATE TABLE court_hearings (
+ id uuid PRIMARY KEY DEFAULT gen_random_uuid(), case_id uuid NOT NULL REFERENCES cases(id),
+ advocate_id uuid NOT NULL REFERENCES users(id), at timestamptz NOT NULL,
+ court text NOT NULL, room text NOT NULL, bench text NOT NULL, judge text,
+ note text NOT NULL DEFAULT '', started_at timestamptz, update jsonb,
+ private_note text NOT NULL DEFAULT '', created_at timestamptz NOT NULL DEFAULT now(),
+ created_by uuid NOT NULL REFERENCES users(id)
+);
+CREATE INDEX court_hearings_case_date ON court_hearings(case_id,at);
+CREATE TABLE court_hearing_credits (
+ hearing_id uuid PRIMARY KEY REFERENCES court_hearings(id), case_id uuid NOT NULL REFERENCES cases(id),
+ advocate_id uuid NOT NULL REFERENCES users(id), kind text NOT NULL CHECK(kind IN ('effective','passive')),
+ rate_id uuid NOT NULL REFERENCES court_hearing_rates(id), amount_paise bigint NOT NULL CHECK(amount_paise >= 0),
+ classified_by uuid NOT NULL REFERENCES users(id), classified_at timestamptz NOT NULL DEFAULT now(),
+ reason text NOT NULL
+);
+CREATE INDEX court_hearing_credits_advocate ON court_hearing_credits(advocate_id,classified_at);
+
+```
+
+Activate with `seed-courts <IMAGE_TAG>` only after compatible API and frontends.
+This section documents the pending implementation, not a deployment claim.
+
 ### 4.3c Round 2 built-service additions — 13 November 2026
 
 Additive migrations 202611130100 and 202611130101. Existing filings, captured
@@ -2463,6 +2519,17 @@ is re-litigated mid-build.
 
 ### 9.1 Register of simulated capabilities
 
+**Court representation local implementation — 14 November 2026 (not yet deployed):**
+submission advance, remaining balance, pickup, advocate-change and court/process
+fee checkouts use the existing simulated payment adapter and explicitly move no
+money. Partial refunds are test ledger records. Hearing credits are wallet
+entitlements, not bank transfers. Admin manually arranges courier pickup and
+records tracking. Filing and hearings happen offline; advocates/admin enter
+updates, never a court-server integration. Voice/video calling is hidden.
+Reminders are in-app and never advance a case. Local journeys use isolated
+PostgreSQL and test object storage.
+
+
 **Round 2 — 13 November 2026:** uploaded advocate signatures are stored images,
 not digital-certificate signatures. Test Aadhaar e-sign remains labelled and
 collects no Aadhaar number. Overdue partial refunds use the existing test refund
@@ -2558,6 +2625,18 @@ client without an advocate in between. If one does, it needs either an advocate
 gate or explicit framing that it is not legal advice.
 
 ### 9.2 Register of design substitutions
+
+**Court representation — 14 November 2026 (local, not yet deployed):** court
+verification/assignment, paid-change decisions, courier booking/tracking, hearing
+classification/rates, review unlock, completion confirmation, partial-refund and
+stalled-case queue screens have no supplied admin designs. They use the existing
+admin panel style. The November court drawings supply client/advocate layouts;
+the overnight instruction overrides delayed full payment with an advance and
+balance, removes calls and escrow claims, and replaces the completion lump sum
+with per-hearing credits. Payment controls honestly say test payment. The
+completion request form (final order plus note) fills the flow’s explicit missing
+advocate action. Every material remaining visual gap is tracked in COURT-GAPS.
+
 
 **Round 2 — 13 November 2026:** new admin tariff/support settings, PS quality
 review and office-note upload, pending-client-response queue, deadline remedies,

@@ -10,7 +10,7 @@ export type WalletEntry = {
   case_id: string; reference: string; service_code: string; completed_at: string | null;
   /** D-37: our structure — client paid, platform fee (25% of base), GST, your share. */
   client_paid_paise: string; platform_fee_paise: string; gst_paise: string; share_paise: string;
-  source: 'completed' | 'cancellation_decision';
+  source: 'completed' | 'cancellation_decision' | 'hearing';
 };
 export type MaskedBankAccount = {holder_name: string; bank_name: string; ifsc: string; account_last4: string;
   account_type: string | null; verified: false; updated_at: string};

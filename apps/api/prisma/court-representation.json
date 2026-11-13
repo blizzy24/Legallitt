@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "source_note": "Owner overnight instructions, 14 November 2026; Round 2 answers section G. Hearing rates intentionally NOT SET.",
+  "prices": {"district_court":{"ordinary":"2500000","urgent":"3500000"},"high_court":{"ordinary":"2499900","urgent":"3499900"}},
+  "config": {
+    "deposit_paise":"200000","change_fee_paise":"200000","pickup_paise":"24900",
+    "free_changes":2,"paid_changes":2,"review_rounds":3,"chat_days":7,"receipt_alert_days":7,
+    "ordinary_days":[5,7],"urgent_days":[2,3],"working_weekdays":[1,2,3,4,5,6],
+    "high_courts":["Madhya Pradesh","Delhi","Bombay"]
+  }
+}

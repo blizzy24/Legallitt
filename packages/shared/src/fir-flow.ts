@@ -88,8 +88,8 @@ export const FIR_POLICE_RECEIPT_KIND = 'fir_police_receipt';
 export const FIR_CHANGE_ATTACHMENT_MAX_BYTES = 10_000_000;
 export const FIR_MEDIA_KINDS: Record<string, readonly string[]> = {fir_scene: ['video/mp4'], fir_other: ['audio/mpeg']};
 export const maskedIdentity = (last4: string | null | undefined) => last4 ? `XXXX-XXXX-${last4}` : null;
-// A2: an assigned advocate sees the client's mobile and email masked until they
-// accept the request ("+91 90••••••00", "de••••@legalitt.invalid"); in full afterwards.
+// Legacy pre-acceptance contact presentation. The API privacy projection always
+// removes client phone numbers; accepting a request never reveals a phone number.
 export const firContactMasked = (role: string, status: string) => role === 'advocate' && status === 'assigned';
 export function maskMobile(value: string | null | undefined): string | null {
   if (!value?.trim()) return null;

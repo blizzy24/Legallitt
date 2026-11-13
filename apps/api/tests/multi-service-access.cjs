@@ -34,7 +34,7 @@ test('multi-service spine: real DB ownership, references, locks, documents, inbo
   let app;
   // Hidden services (Q79/Q113) take no new cases; their existing rows must keep the
   // same ownership and access rules, so those are seeded directly.
-  const create = async service => {const row=isServiceOffered(service)?await machine.create(owner,{service_code:service}):await seedDormantCase(db,owner,service);ids.push(row.id);return row;};
+  const create = async service => {const row=['district_court','high_court'].includes(service)?await require('./helpers/legacy-court-case.cjs').seedLegacyCourtCase(db,owner,service):isServiceOffered(service)?await machine.create(owner,{service_code:service}):await seedDormantCase(db,owner,service);ids.push(row.id);return row;};
   try {
     await db.user.createMany({data:users});
     await db.advocateProfile.create({data:{user_id:advocate.id,verification:'approved',city:'Test city'}});

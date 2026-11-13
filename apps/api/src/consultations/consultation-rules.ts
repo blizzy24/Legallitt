@@ -9,6 +9,7 @@ export const jsonValue=(v:unknown):Prisma.InputJsonValue=>JSON.parse(JSON.string
 export function role(actor:CaseActor,required:CaseActor['role']){if(actor.role!==required)throw new ForbiddenException(`${required} action required`);}
 export async function consultationCase(tx:Prisma.TransactionClient,actor:CaseActor,id:string){
   const record=await lockedCase(tx,actor,id);
+  if(await tx.courtWorkspace.findUnique({where:{case_id:id}}))throw new ConflictException('Use the court representation workflow for this case.');
   if(!isConsultationService(record.service_code))throw new NotFoundException('Case not found');
   return record;
 }

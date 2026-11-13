@@ -4,6 +4,8 @@ import { ConfirmDelivery } from './confirm-delivery';
 import {NoticeFlowPanel} from './notice-flow-panel';
 import {FirApprovalPanel} from './fir-approval';
 import {FirFlowPanel} from './fir-flow-panel';
+import {CourtIntakeSummary} from './court-intake';
+import {CourtPanel} from './court-panel';
 import {ConsultationPanel} from './consultation-panel';
 import {isConsultationService,isReportService} from '@legalitt/shared';
 import {ReportIntake} from './report-intake';
@@ -70,12 +72,12 @@ export function CaseDetail() {
     <Field name="GST rate" value={d.pricing?`${d.pricing.gst_bps/100}% exclusive`:null}/><Field name="Created" value={date(d.created_at)}/><Field name="Sub-status" value={service!=='legal_notice'&&d.sub_status?label(d.sub_status):null}/></dl>
    {task&&<div className="admin-attention"><span className="attention-dot"/><div><small>NEEDS ADMIN</small><strong>{task}</strong></div>{canAssign&&<button className="assign" onClick={()=>setAssign(true)}>+ Assign</button>}{d.status==='dispatched'&&service!=='legal_notice'&&<button className="assign" onClick={()=>setDelivering(true)}>Confirm delivery</button>}</div>}
   </section>
-  <CaseRefunds key={d.id+':'+d.status} caseId={d.id}/>
+  {d.intake.intake_version!==3&&<CaseRefunds key={d.id+':'+d.status} caseId={d.id}/>}
   {service==='fir_draft'&&<FirFlowPanel caseId={d.id} status={d.status+':'+(d.sub_status??'')}/>}
   {service==='legal_notice'&&<NoticeFlowPanel caseId={d.id} status={d.status+':'+(d.sub_status??'')} changed={()=>setReload(n=>n+1)}/>}
   {service==='fir_draft'&&<FirApprovalPanel record={d} reload={()=>setReload(n=>n+1)}/>}
   {isReportService(service)&&<><ReportPanel record={d} reload={()=>setReload(n=>n+1)}/>{isFlowReportService(service)?<ReportIntake record={d}/>:<section className="detail-panel"><div className="section-title"><h2>Original client intake</h2></div>{Object.values(d.intake).some(present)?<Values value={d.intake}/>:<p>No intake saved yet.</p>}</section>}</>}
-  {isConsultationService(service)&&<><ConsultationPanel record={d} reload={()=>setReload(n=>n+1)}/><section className="detail-panel"><div className="section-title"><h2>Original client intake</h2></div>{Object.values(d.intake).some(present)?<Values value={d.intake}/>:<p>No intake saved yet.</p>}</section></>}
+  {isConsultationService(service)&&<>{d.intake.intake_version===3&&(service==='district_court'||service==='high_court')?<CourtPanel record={d} reload={()=>setReload(n=>n+1)}/>:<ConsultationPanel record={d} reload={()=>setReload(n=>n+1)}/>}<section className="detail-panel"><div className="section-title"><h2>Original client intake</h2></div>{d.intake.intake_version===3?<CourtIntakeSummary value={d.intake}/>:Object.values(d.intake).some(present)?<Values value={d.intake}/>:<p>No intake saved yet.</p>}</section></>}
   {service==='fir_draft'&&<section className="detail-panel fir-intake"><div className="section-title"><h2>Original intake</h2></div>{Object.values(d.intake).some(present)?<Values value={d.intake}/>:<p>No intake was recorded for this case.</p>}</section>}
   <section className="people-section"><h2>People</h2><div className="people-grid">{d.contacts.map((c,i)=><article className="person" key={i}><p className="eyebrow">{c.role==='sender'?'SENDER · INTAKE':label(c.role)}</p>{c.name&&<h3>{c.name}</h3>}<dl><Field name="Title" value={c.salutation}/><Field name="Age" value={c.age}/><Field name="Relation" value={c.relation}/><Field name="Father’s or husband’s name" value={c.relative_name}/><Field name="Email" value={c.email}/><Field name="Phone" value={isFlowReportService(service)?reportPhone(c.phone):c.phone}/><Field name="Address" value={c.address}/><Field name="Relationship" value={c.relationship}/></dl></article>)}</div></section>
   <nav className="case-sections" aria-label="Case sections">

@@ -1,3 +1,5 @@
+import {CourtPolicySchema,courtChat,type CourtData} from '@legalitt/shared';
+import {courtDocumentVisible} from '../courts/court-rules';
 import {BadRequestException,ConflictException,Body,Controller,Get,Injectable,NotFoundException,Param,Post,Query,Req,UseGuards} from '@nestjs/common';
 import {z} from 'zod';
 import {NoticeCommentSchema, noticeChatWritable} from '@legalitt/shared';
@@ -41,6 +43,7 @@ export class NoticeMessages {
   return db.$transaction(async tx=>{
    // Recheck membership under the case lock; assignment may change between calls.
    const record=await lockedCase(tx,actor,thread.case_id!);
+   if(['district_court','high_court'].includes(record.service_code)){const work=await tx.courtWorkspace.findUnique({where:{case_id:record.id}});if(work){const policy=await tx.courtPolicy.findUniqueOrThrow({where:{id:work.policy_id}}),chat=courtChat(work.data as unknown as CourtData,CourtPolicySchema.parse(policy.config),record.completed_at?.toISOString());if(!chat.writable)throw new ConflictException(chat.reason);}}
    if(isFlowReportService(record.service_code)){
     const workflow=await ensureReportWorkflow(tx,record),chat=reportChat(record,workflow.data,workflow.policy);
     if(!chat.writable)throw new ConflictException(chat.reason);
@@ -53,6 +56,7 @@ export class NoticeMessages {
    if(value.document_id&&!await tx.document.findFirst({where:{id:value.document_id,case_id:thread.case_id,status:'uploaded'}}))throw new BadRequestException('Attach an uploaded document from this case');
    if(value.document_id){
     const doc=await tx.document.findUniqueOrThrow({where:{id:value.document_id}});
+    if(await courtDocumentVisible(tx,{id:record.client_id,role:'client'},record,doc)===false)throw new BadRequestException('Share this document through the court review or update before attaching it in chat.');
     await assertReportDocumentReadable(tx,{id:record.client_id,role:'client'},record,doc);
     if(!await noticeDocumentVisible(tx,{id:record.client_id,role:'client'},record,doc))throw new BadRequestException('Send the draft through review before sharing it with the client.');
    }

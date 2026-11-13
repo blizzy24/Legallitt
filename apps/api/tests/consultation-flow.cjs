@@ -27,7 +27,7 @@ test('three consultation services: booking contention, immutable prices, real ch
  const payments=new ConsultationPayments(prisma,{capture:async()=>{captures++;return {paymentId:randomUUID(),simulated:true,source:'simulated'};}},notifications);
  const revision=async(id,actor=advocate)=>({expected_revision:(await service.read(actor,id)).revision});
  const intake=ConsultationIntakeSchema.parse({full_name:'TEST Client',phone:'9999999999',email:'consultation@example.invalid',description:'An existing civil dispute needs advice and a plan.',title:'TEST Client v Other Party',other_party:'TEST Other Party',matter_type:'Civil',state:INDIA_JURISDICTIONS[0].name,district:INDIA_JURISDICTIONS[0].districts[0].name,bench_unknown:true,consent:true});
- const create=async(code,owner=client)=>{const c=await state.create(owner,{service_code:code});ids.push(c.id);await service.intake(owner,c.id,{expected_updated_at:c.updated_at.toISOString(),intake});return c;};
+ const create=async(code,owner=client)=>{const c=['district_court','high_court'].includes(code)?await require('./helpers/legacy-court-case.cjs').seedLegacyCourtCase(db,owner,code):await state.create(owner,{service_code:code});ids.push(c.id);await service.intake(owner,c.id,{expected_updated_at:c.updated_at.toISOString(),intake});return c;};
  const at=offset=>{const d=new Date(Date.now()+86400_000+offset*3600_000);d.setUTCMinutes(0,0,0);return d.toISOString();};
  const content={key_points:'We discussed the client’s concern and available documents.',next_steps:'Collect the relevant correspondence and preserve originals.',outcome:'Client understands the available options.',attachment_ids:[]};
  const reviewBrief=async(id,kind,correction=false)=>{

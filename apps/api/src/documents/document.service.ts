@@ -272,6 +272,7 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
         const linked=await tx.draft.findFirst({where:{case_id:parent.id,document_id:id}})||await tx.draftReview.findFirst({where:{attachment_document_id:id}})||await tx.noticeDelivery.findFirst({where:{case_id:parent.id,OR:[{document_id:id},{proof_document_id:id},{receipt_document_id:id}]}});
         if(linked||parent.notice_document_id===id||!['draft','submitted','payment_pending'].includes(parent.status)&&['id_proof','notice_cheque','notice_return_memo'].includes(record.kind)||!['draft','submitted','payment_pending'].includes(parent.status)&&record.kind.startsWith('notice_support'))throw new ConflictException('Filed notice evidence, review versions and delivery proof are retained with the case.');
       }
+      if(['district_court','high_court'].includes(parent.service_code)){const work=await tx.courtWorkspace.findUnique({where:{case_id:parent.id}});if(work&&parent.status!=='draft')throw new ConflictException('Submitted court documents are retained. Upload a replacement; previous versions remain in the case history.');}
       if(isConsultationService(parent.service_code)){
         const reports=await tx.consultationReport.findMany({where:{case_id:parent.id,status:{in:['submitted','approved']}}});
         if(reports.some(r=>r.document_id===id||((r.content as {attachment_ids?:string[]}).attachment_ids??[]).includes(id))||await tx.courtProgress.findFirst({where:{case_id:parent.id,document_ids:{has:id}}}))

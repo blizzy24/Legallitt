@@ -185,6 +185,9 @@ export class CaseStateMachine {
     return db.$transaction(async (tx) => {
       if (!await tx.service.findFirst({where: {code: input.service_code, active: true}}))
         throw new BadRequestException('Service is not available');
+      if (['district_court','high_court'].includes(input.service_code) &&
+          await tx.courtPolicy.findFirst({where:{service_code:input.service_code,effective_from:{lte:new Date()}}}))
+        throw new ConflictException('Start court representation from the current court service screen. Existing consultation cases remain available in My Cases.');
       const reference = await caseReference(tx, input.service_code);
       const record = await tx.case.create({
         data: {
@@ -326,6 +329,9 @@ export class CaseStateMachine {
     source: 'real' | 'simulated' = 'real',
   ) {
     const from = record.status as CaseStatus;
+    if (['district_court', 'high_court'].includes(record.service_code) &&
+        await tx.courtWorkspace.findUnique({where: {case_id: record.id}}))
+      throw new ConflictException('Use the court representation actions for this case.');
     if (record.service_code === 'fir_draft' && record.sub_status === FIR_AWAITING_APPROVAL)
       throw new ConflictException('Use the FIR admin review actions for this submitted version.');
     if (capturedPayment) {
@@ -813,6 +819,24 @@ export async function writeConsultationCase(tx:Prisma.TransactionClient,actor:Ca
   const updated=await tx.case.update({where:{id},data:{...data,updated_at:new Date()}});
   await appendCaseEvent(tx,{case_id:id,type,actor_id:actor.id,actor_role:actor.role,from_status:before.status,to_status:updated.status,payload});
   return updated;
+}
+
+/** Court representation owns its versioned workspace, but case/event mutations
+ * remain here with the other service writers. Callers hold the same case lock. */
+export async function createCourtRepresentationCase(tx:Prisma.TransactionClient,actor:CaseActor,
+ data:{reference:string;service_code:'district_court'|'high_court';tier:string;details:Prisma.InputJsonValue}){
+ if(actor.role!=='client')throw new ForbiddenException('Only clients create cases');
+ if(!await tx.service.findFirst({where:{code:data.service_code,active:true}}))throw new BadRequestException('Service is not available');
+ const record=await tx.case.create({data:{...data,client_id:actor.id,sub_status:'court_draft'}});
+ await appendCaseEvent(tx,{case_id:record.id,type:'court_request_created',actor_id:actor.id,actor_role:actor.role,to_status:'draft',payload:{workflow_version:3}});
+ return record;
+}
+export async function writeCourtRepresentationCase(tx:Prisma.TransactionClient,actor:CaseActor,id:string,data:Prisma.CaseUncheckedUpdateInput,type:string,payload:Prisma.InputJsonObject={}){
+ const before=await lockedCase(tx,actor,id);
+ if(!['district_court','high_court'].includes(before.service_code)||!await tx.courtWorkspace.findUnique({where:{case_id:id}}))throw new NotFoundException('Court representation case not found');
+ const updated=await tx.case.update({where:{id},data:{...data,updated_at:new Date()}});
+ await appendCaseEvent(tx,{case_id:id,type,actor_id:actor.id,actor_role:actor.role,from_status:before.status,to_status:updated.status,payload});
+ return updated;
 }
 
 // FIR uses the same sole case/event writer. Service orchestration handles the

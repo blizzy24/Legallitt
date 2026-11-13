@@ -55,7 +55,7 @@ export function useDeliveryModel(screen: 'delivery' | 'delivered' = 'delivery') 
     deliveredAt:shipment?.delivered_at ? clockTime(shipment.delivered_at) : '',
     receivedBy:shipment?.received_by??'',proof:proofSource,proofStatus:proof?'Available':'',signatureStatus:'',
     // The page count is read from the generated file, never assumed.
-    fileMeta:notice?.page_count ? `${completed?'Signed Copy':'Signed copy'} · ${notice.page_count} Pages` : '',
+    fileMeta:notice?.page_count ? `${completed?'Signed Copy':'Signed copy'} · ${notice.page_count} ${notice.page_count===1?'page':'pages'}` : '',
     estimate:'',latestUpdate:'',latestPlace:'',latestTime:'',
     progressStep,
     completedSteps:done.flatMap((value,i)=>value && i!==progressStep?[i]:[]),

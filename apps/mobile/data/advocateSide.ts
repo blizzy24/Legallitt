@@ -2062,7 +2062,7 @@ export const ADV_NOTICE_DOCS = {
     { id: 'invoice', name: 'Invoice_Record.pdf', meta: '8 pages • 920 KB' },
     { id: 'previous', name: 'Previous_Notice.pdf', meta: '4 pages • 640 KB' },
     { id: 'proof', name: 'Payment_Proof.pdf', meta: '2 pages • 320 KB' },
-    { id: 'noticee', name: 'Noticee Detail', meta: '1 pages • 320 KB' },
+    { id: 'noticee', name: 'Noticee Detail', meta: '1 page • 320 KB' },
   ],
   additionalLabel: 'Additional Documents ?',
   additionalPlaceholder: 'Type.....',

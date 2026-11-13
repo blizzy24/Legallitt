@@ -53,6 +53,7 @@ export class CancellationsService {
   constructor(private readonly prisma: PrismaService, @Inject(NOTIFICATIONS) private readonly notifications: NotificationsPort) {}
 
   private async view(tx: Tx, record: {id: string; reference: string; service_code: string; status: string; client_id: string}): Promise<CaseCancellation> {
+    if(await tx.courtWorkspace.findUnique({where:{case_id:record.id}}))throw new ConflictException('Use the court representation screen for cancellation and refund details.');
     const mode = cancellationMode(record.status as never);
     const [request, refunds, money] = await Promise.all([
       tx.cancellationRequest.findFirst({where: {case_id: record.id}, orderBy: [{requested_at: 'desc'}, {id: 'desc'}]}),
@@ -87,6 +88,7 @@ export class CancellationsService {
     const db = await this.prisma.getClient();
     return db.$transaction(async tx => {
       const record = await lockedCase(tx, actor, id);
+      if(await tx.courtWorkspace.findUnique({where:{case_id:record.id}}))throw new ConflictException('Use the court case cancellation screen; court filing and refund rules apply.');
       const mode = cancellationMode(record.status as never);
       if (mode === 'closed') throw new ConflictException('This work has been delivered or sent, so it can no longer be cancelled. Contact Support if something is wrong.');
       if (mode === 'ended') throw new ConflictException('This request is already cancelled.');

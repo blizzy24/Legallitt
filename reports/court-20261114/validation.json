@@ -1,0 +1,101 @@
+{
+  "date": "2026-11-14",
+  "scope": "isolated local synthetic court cases; no real case changes",
+  "suites": {
+    "full-api-final": {
+      "tests": 235,
+      "passed": 235,
+      "failed": 0
+    },
+    "court-snapshot-tests": {
+      "tests": 11,
+      "passed": 11,
+      "failed": 0
+    },
+    "shared-tests-final": {
+      "tests": 30,
+      "passed": 30,
+      "failed": 0
+    },
+    "infra-tests": {
+      "tests": 12,
+      "passed": 12,
+      "failed": 0
+    }
+  },
+  "routeChecks": {
+    "routes": 348,
+    "failures": []
+  },
+  "typechecks": {
+    "mobile": "passed",
+    "admin": "passed",
+    "api": "passed",
+    "infra": "passed"
+  },
+  "builds": {
+    "mobile": "passed",
+    "admin": "passed",
+    "api": "passed",
+    "shared": "passed"
+  },
+  "partA": {
+    "passed": 10,
+    "screens": [
+      "ln-issue",
+      "ln-uploads",
+      "ln-upload-review",
+      "ln-submitted",
+      "ln-admin-return",
+      "property_search-request",
+      "property_search-accepted",
+      "document_forensic-request",
+      "document_forensic-accepted",
+      "ps-records-unavailable"
+    ],
+    "errors": []
+  },
+  "browserPassed": [
+    "PASS dc assignment, client acceptance and exact balance",
+    "PASS hc assignment, client acceptance and exact balance",
+    "PASS assignment browser checks",
+    "PASS dc pending intake, assistance, information and admin queue screenshots",
+    "PASS hc pending intake, assistance, information and admin queue screenshots",
+    "PASS capture browser checks",
+    "PASS dc completion plus seven days closes chat; admin can reopen",
+    "PASS hc completion plus seven days closes chat; admin can reopen",
+    "PASS chat browser checks",
+    "PASS dc final order, admin completion, client viewer/download and rating",
+    "PASS hc final order, admin completion, client viewer/download and rating",
+    "PASS completion browser checks",
+    "PASS dc document checklist, uploads and advocate receipt",
+    "PASS hc document checklist, uploads and advocate receipt",
+    "PASS documents browser checks",
+    "PASS third free change creates visible admin contact task",
+    "PASS fourth review blocked until admin unlock",
+    "PASS advocate decline releases access and admin reassigns",
+    "PASS filed cases show support instead of cancellation",
+    "PASS edges browser checks",
+    "PASS free cancellation before payment",
+    "PASS paid cancellation with admin partial test refund",
+    "PASS pending-case deposit, NOC-later intake and admin information/verification",
+    "PASS capture-extra browser checks",
+    "PASS dc pass-through payment, receipt and offline filing",
+    "PASS hc pass-through payment, receipt and offline filing",
+    "PASS fees-filing browser checks",
+    "PASS dc hearing updates, private drafts and admin hearing credits",
+    "PASS hc hearing updates, private drafts and admin hearing credits",
+    "PASS hearings browser checks",
+    "PASS dc intake, persisted case and submission payment",
+    "PASS hc intake, persisted case and submission payment",
+    "PASS intakes browser checks",
+    "PASS HC non-refundable paid change rejected",
+    "PASS HC non-refundable paid change approved",
+    "PASS paid-changes browser checks",
+    "PASS process fee pass-through payment and real document receipt pipeline",
+    "PASS process-fee browser checks",
+    "PASS dc pre-filing review with corrections and revised version",
+    "PASS hc pre-filing review",
+    "PASS review browser checks"
+  ]
+}

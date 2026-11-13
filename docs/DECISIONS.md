@@ -1161,3 +1161,63 @@ refuses new Court Marriage cases. Code and data are kept dormant.
 
 **D-118. Every payment-success screen has Start Tracking and Home** (Q3); nothing moves
 on by itself.
+
+## 16. Court representation overnight run — 14 November 2026
+
+These decisions implement the owner's overnight instructions and await client
+confirmation where explicitly marked. They supersede the earlier court
+consultation/quote proposal for **new representation requests only**.
+
+- **Deposit assumption:** ₹2,000 is an advance against the final tax-inclusive
+  total, deducted once from the balance. It is not an extra fee. The completed
+  payment breakdown records the full tariff, tax and the advance deduction.
+- **Unassigned closure assumption:** if no advocate can be assigned, admin may
+  refund the deposit, with a recorded reason. No automatic refund is invented.
+- **Court price interpretation:** the pairs mean Ordinary/Urgent, as directed:
+  DC ₹25,000/₹35,000 and HC ₹24,999/₹34,999 advocate base. Their first-action
+  windows are 5–7/2–3 working days. These are not promised court listing dates.
+- **Hearing pay assumption:** new representation cases earn only the admin-
+  classified hearing amounts; completion creates no lump-sum entitlement. Each
+  hearing snapshots its actual assigned advocate and the applicable rate version.
+  Previously earned hearing credits remain attached to that advocate after a
+  reassignment. Unset rates block credit rather than becoming zero.
+- **Compatibility:** old court consultation cases, bookings, quotes, prices and
+  files retain their old engine. An explicit representation workflow record
+  distinguishes new cases; no real existing case is converted or reset.
+- **Change fees:** ₹2,000 is the total non-refundable processing charge shown
+  before checkout, including on rejection. It is outside hearing compensation.
+  Tax treatment of this fixed charge awaits confirmation; do not invent GST.
+- **Pickup:** ₹249 is the quoted flat total, booked and tracked manually by admin.
+  No courier provider or automatic physical-custody verification is claimed.
+- **Reviews:** the third submitted pre-filing round is the normal limit; a fourth
+  needs an explicit admin unlock. Approving the third remains possible.
+- **Identity:** use the flow's masked Aadhaar, passport or voter ID upload choices;
+  no number is extracted. An upload is not identity verification. NOC may follow
+  later on a pending case; after a paid replacement is approved, arrange handover
+  before switching the assignment so former advocates do not retain case access.
+- **Privacy:** all court endpoints retain the current owner/current-assignee/admin
+  scope. Internal notes are advocate-private. Calling is hidden; chat is available
+  after advocate acceptance, until completion plus seven days unless admin reopens.
+- **Working days assumption:** Monday–Saturday, excluding Sunday; no official
+  court holiday calendar is asserted. Admin can version the working-day policy for new requests.
+
+Implementation, verification and deployment status are tracked in
+`flows/COURT-GAPS.md` and `../reports/court-20261114/README.md`; this decision entry
+does not claim that the new workflow has shipped.
+
+Additional implementation assumptions awaiting confirmation:
+
+- Pending cases use the same saved intake and deposit-paid verification queue as
+  new cases, with their existing case number, court, status and prior-advocate NOC.
+  They retain a DC-/HC- reference rather than creating a second, disconnected
+  verification case. This reconciles the older separate verification screens with
+  the confirmed submission-payment timing.
+- Court feedback is recorded once on the completed case. It is not silently added
+  to a public advocate rating aggregate without a confirmed moderation policy.
+- Terms and Privacy links open the existing style of legal-policy placeholder.
+  Final client-supplied legal copy is still outstanding; no legal terms are invented.
+- Payment uses the existing explicitly labelled test adapter. It does not draw a
+  payable QR, claim a bank transfer, or automatically navigate after a timer.
+- Additional hearing dates are entered through the same full hearing form, so
+  time, room and bench are saved together rather than accepting a date-only
+  promise in the client update. Hearing details are always notified in-app.
