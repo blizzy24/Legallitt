@@ -40,7 +40,8 @@
           "cameraPermission": "Allow Legalitt to photograph documents you choose to upload.",
           "microphonePermission": false
         }
-      ]
+      ],
+      "expo-sharing"
     ],
     "scheme": "app14",
     "experiments": {

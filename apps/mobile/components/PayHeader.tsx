@@ -8,6 +8,7 @@ import { colors, font, payHeader as h, wizard as w } from '../constants/theme';
 type Props = {
   title: string;
   subtitle: string;
+  status?: string;
   /** Centred line under the title block (design/29, 30). */
   intro?: string;
   onBack?: () => void;
@@ -17,7 +18,7 @@ type Props = {
 
 // Compact header shared by the payment screens (design/28, 29, 30): circular back
 // button, left-aligned title and subtitle, optional intro line, full-bleed divider.
-export default function PayHeader({ title, subtitle, intro, onBack, padX = w.padX }: Props) {
+export default function PayHeader({ title, subtitle, status, intro, onBack, padX = w.padX }: Props) {
   const insets = useSafeAreaInsets();
   const goBack = onBack ?? (() => (router.canGoBack() ? router.back() : router.replace('/(tabs)/home')));
 
@@ -29,7 +30,8 @@ export default function PayHeader({ title, subtitle, intro, onBack, padX = w.pad
         </Pressable>
         <View style={styles.text}>
           <Text style={styles.title}>{title}</Text>
-          <Text style={styles.subtitle}>{subtitle}</Text>
+          {!!subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
+          {status && <View style={{alignSelf:'flex-start',marginTop:7,paddingHorizontal:11,paddingVertical:5,borderRadius:18,backgroundColor:'#F6EBDD'}}><Text style={{fontFamily:font.appBody,fontSize:11,color:'#756044'}}>● {status}</Text></View>}
         </View>
       </View>
       {intro && <Text style={styles.intro}>{intro}</Text>}

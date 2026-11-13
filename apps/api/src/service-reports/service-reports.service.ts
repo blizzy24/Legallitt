@@ -8,6 +8,7 @@ import {
   isFlowReportService,ReportWorkflowPolicySchema,
 } from '@legalitt/shared';
 import {z} from 'zod';
+import {PDFDocument} from 'pdf-lib';
 import type {Prisma} from '../generated/prisma/client';
 import {PrismaService} from '../prisma.service';
 import {parse} from '../auth/auth.service';
@@ -178,7 +179,7 @@ export class ServiceReportsService {
     const input=await this.submittable(actor,id,draftId);
     if(input.content.production==='property'&&!input.content.report.personally_checked)throw new BadRequestException('Confirm that you personally checked the records before generating the PDF.');
     const files = await this.render(input,reportOnly);
-    return {files: files.map(f => ({filename: f.filename, pdf_base64: Buffer.from(f.bytes).toString('base64')}))};
+    return {files: await Promise.all(files.map(async f => ({filename: f.filename, pdf_base64: Buffer.from(f.bytes).toString('base64'),page_count:(await PDFDocument.load(f.bytes)).getPageCount(),size_bytes:String(f.bytes.length)})))};
   }
 
   async submit(actor: CaseActor, id: string, draftId: string) {

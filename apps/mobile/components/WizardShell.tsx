@@ -32,6 +32,7 @@ type Props = {
   header?: 'centred' | 'leading';
   title?: string;
   subtitle?: string;
+  status?: string;
   /** Hide the default Continue button (step 6 supplies its own fixed bar). */
   hideButton?: boolean;
   /** Extra bottom clearance, e.g. for a fixed bar supplied by the step. */
@@ -49,6 +50,7 @@ export default function WizardShell({
   header = 'centred',
   title = 'Legal Notice',
   subtitle = 'Private & Confidential',
+  status,
   hideButton = false,
   bottomInset = 0,
   background = 'white',
@@ -80,7 +82,7 @@ export default function WizardShell({
         </View>
       ) : (
         <View>
-          <PayHeader title={title} subtitle={subtitle} onBack={goBack} />
+          <PayHeader title={title} subtitle={subtitle} status={status} onBack={goBack} />
           <View style={[styles.header, styles.headerLeading]}>
             <Stepper step={step} totalSteps={totalSteps} />
             <Text style={styles.stepLabel}>

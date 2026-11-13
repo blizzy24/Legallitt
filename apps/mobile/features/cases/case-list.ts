@@ -2,6 +2,7 @@ import { adminBucketFor, advocateFirPath, firStage, formatPaise, isNoticeCase, i
 import { advocateNoticeMatters, advocateNoticeState, advocateMatterTags } from '../legal-notice/advocateList';
 import { noticeMatter } from '../../data/legalNoticeMatter';
 import type { AdvCaseMatter, AdvMatterStatus } from '../../data/advocateSide';
+import {reportDay} from '../reports/presentation';
 import { incidentLabel } from '../../data/fir';
 
 export function caseTitle(record: ApiCase) {
@@ -67,7 +68,7 @@ export function advocateCaseMatters(records: ApiCase[], fir: Record<string, FirC
     // The dashboard's three groups read `bucket`; the cases list's chips and counters read filterTags.
     const legacy: AdvCaseMatter['bucket'] = bucket==='completed'||bucket==='closed'?'Resolved':bucket==='open'||record.status==='assigned'?'Needs Review':'In Progress';
     if (record.service_code === 'fir_draft') return firMatter(record, record.fir_card ?? fir[record.id], legacy);
-    if(isFlowReportService(record.service_code)){const stage=record.report_card?.stage??reportStage(record);return {id:record.id,service:SERVICE_NAMES[record.service_code],serviceKey:serviceKeys[record.service_code],href:caseDestination(record,true)!,urgency:record.tier==='urgent'?'URGENT':'ORDINARY',title:record.report_card?.client_name??caseTitle(record),ref:record.reference,status:stage.advocate as AdvMatterStatus,body:record.report_card?.deadline_at&&record.status!=='completed'?`Expected by ${noticeDate(record.report_card.deadline_at)}`:'',footer:updatedLabel(record.updated_at),bucket:legacy,filterTags:advocateMatterTags(record.status),action:'Review Request',actionArrow:true};}
+    if(isFlowReportService(record.service_code)){const stage=record.report_card?.stage??reportStage(record);return {id:record.id,service:SERVICE_NAMES[record.service_code],serviceKey:serviceKeys[record.service_code],href:caseDestination(record,true)!,urgency:record.tier==='urgent'?'URGENT':'ORDINARY',title:record.report_card?.client_name??caseTitle(record),ref:record.reference,status:stage.advocate as AdvMatterStatus,body:record.report_card?.deadline_at&&record.status!=='completed'?`Expected by ${reportDay(record.report_card.deadline_at)}`:'',footer:noticeDate(record.updated_at)??'',bucket:legacy,filterTags:advocateMatterTags(record.status),action:'Review Request',actionArrow:true};}
     return {id:record.id,service:SERVICE_NAMES[record.service_code],serviceKey:serviceKeys[record.service_code],
       href:caseDestination(record,true)!,urgency:null,title:caseTitle(record),ref:record.reference,
       status:statusLabels[record.status],body:'',footer:'',bucket:legacy,

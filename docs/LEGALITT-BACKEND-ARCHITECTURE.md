@@ -2469,6 +2469,21 @@ gate or explicit framing that it is not legal advice.
 
 ### 9.2 Register of design substitutions
 
+**PS/DF visual polish — 13 November 2026:** request headers carry the shared
+workflow label; due dates use date-only IST and audit events retain minute-level
+IST timestamps. Tracking has one six-stage timeline and one expected date, with
+filing/documents/payment collapsed below. Delivered reports use the success
+layout, DF summary, file-based sharing (download fallback) and separate affidavit
+actions. Advocate requests use client/property/scope/document cards, a payout-only
+amount and a Decline/Accept footer. The missing decline-reason sheet follows the
+existing mobile style. The affidavit has a formatted preview, explicit text-edit
+mode, signature/date/enrolment card and Save Draft/Continue footer. It remains a
+proforma, not an e-sign or notarisation. Admin queues keep the existing admin
+style, with focus/pull refresh and dated review information. Pricing, lifecycle
+and payout rules are unchanged. Two additive read fields support the drawings:
+PDF-preview page count/byte size, and client contact for the assigned advocate
+only after acceptance (before acceptance no contact values are returned).
+
 **PS/DF rebuild — 13 November 2026:** undesigned admin verification, information
 requests/resolution, deadline/follow-up warnings, overdue reassignment, settings, chat reopening and
 four-item forensic review use the existing admin style. The flows require them

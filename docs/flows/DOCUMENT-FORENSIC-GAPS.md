@@ -1,5 +1,24 @@
 # Document Forensic — flow comparison and acceptance
 
+## Visual polish — 13 November 2026
+
+Baseline: `f7f090a` (API `1bff6f2`). Presentation-only changes, apart from
+additive preview metadata and accepted-advocate contact fields. No tariff,
+workflow, migration or existing-case data changes. New synthetic cases only.
+
+| Surface | Polish applied |
+|---|---|
+| Tracking | Request/status card, Stage X of 6, checked/current/pending timeline with dated details, one expected date, outline Chat/Support row, cancellation in the menu, collapsed request details |
+| Delivered | Analysis Completed badge/title, result/risk/review-date/page-count summary, optional advocate note, View Report primary, Download/Share, separate affidavit row and chat closing date |
+| Advocate request / work | Client/scope/document cards, accepted-only contact, payout-only amount, Decline/Accept footer, menu actions, focus/pull refresh, one primary action |
+| Affidavit | Ready/in-progress pills, matter summary, formatted proforma, Edit Text/Add Info/Save, signature/date/enrolment/Re-sign, PDF metadata/Preview and sticky Save Draft/Continue footer |
+| Intake / admin | Chosen-speed summary, Browse Files area with Camera/Gallery/Files; dated review queue, collapsed corrections and focus/pull refresh |
+
+Current-pass results and deployment evidence: [polish report](../../reports/report-polish-20261113/README.md).
+Updated comparisons: [screen index](df-screens/README.md).
+
+## Original flow rebuild acceptance
+
 Comparison started 12 November 2026 against `f3a16b0`. **Local and live acceptance passed. Dev API and both Vercel sites deployed.**
 Precedence: owner instruction → Ishaan's 12 November answers → current Forensic
 flow/shared flows → `design/figma-2026-11-12/Document-Forensic-*`. The designer's

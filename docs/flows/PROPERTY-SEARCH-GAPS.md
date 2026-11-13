@@ -1,5 +1,24 @@
 # Property Search — flow comparison and acceptance
 
+## Visual polish — 13 November 2026
+
+Baseline: `f7f090a` (API `1bff6f2`). Presentation-only changes, apart from
+additive preview metadata and accepted-advocate contact fields. No tariff,
+workflow, migration or existing-case data changes. New synthetic cases only.
+
+| Surface | Polish applied |
+|---|---|
+| Tracking | Request/status card, Stage X of 6, checked/current/pending timeline with dated details, one expected date, outline Chat/Support row, cancellation in the menu, collapsed request details |
+| Delivered | Success badge, Report Ready, View Report primary, Download/Share file actions, optional note, chat closing date and collapsed timeline/details |
+| Advocate request | Client avatar/contact privacy, property tiles, owner/scope cards, document metadata, advocate amount only, Decline/Accept footer and required-reason sheet |
+| Advocate work | Header status/menu, focus/pull refresh, outline save/preview actions, upload metadata, human labels, sent confirmation |
+| Intake / admin | Chosen-speed summary with Change; dated admin progress and review information; refresh on focus/pull |
+
+Current-pass results and deployment evidence: [polish report](../../reports/report-polish-20261113/README.md).
+Updated comparisons: [screen index](ps-screens/README.md).
+
+## Original flow rebuild acceptance
+
 Comparison started 12 November 2026 against `f3a16b0`. **Local and live acceptance passed. Dev API and both Vercel sites deployed.**
 Precedence: owner instruction → Ishaan's 12 November answers → current Property
 Search flow/shared flows → `design/figma-2026-11-12/Property-Search-Report-*`.

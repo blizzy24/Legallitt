@@ -59,7 +59,7 @@ export function visibleReportDocuments<T extends {id: string; owner_id: string}>
 type Breakdown = import('@legalitt/shared').QuoteBreakdown;
 /** GET /cases/:id for report services. Same membership scope as every read. */
 export function reportCaseView<C extends CaseRow & {details: unknown}, D extends {id: string; owner_id: string}, R extends object>(input: {
-  actor: CaseActor; record: C; caseRecord: R; client: {full_name: string} | null;
+  actor: CaseActor; record: C; caseRecord: R; client: {full_name: string;phone?:string|null;email?:string|null} | null;
   events: (EventRow & {from_status: string | null; to_status: string | null})[]; documents: D[];
   drafts: {id: string; kind: string; version: number; content: unknown; created_at: Date;created_by?:string|null}[];
   payment: {simulated: boolean; quote: {snapshot: unknown} | null} | undefined;
@@ -77,6 +77,10 @@ export function reportCaseView<C extends CaseRow & {details: unknown}, D extends
     documents: visibleReportDocuments(record, input.documents, events, actor),
     drafts: [], reviews: [], shipments: [],
     client_name: input.client?.full_name ?? null,
+    // Membership was checked by CaseRepository. Contact is deliberately absent
+    // until this assigned advocate accepts, just like the intake contact fields.
+    client_contact: actor.role==='advocate'&&['property_search','document_forensic'].includes(record.service_code)&&['advocate_accepted','in_progress','completed'].includes(record.status)
+      ? {phone:input.client?.phone??null,email:input.client?.email??null}:null,
     report: reportState(record, events, input.drafts, actor),
     client_fees: actor.role!=='advocate'&&breakdown ? {service_fee_paise:breakdown.service_fee_paise,platform_fee_paise:breakdown.platform_fee_paise,delivery_fee_paise:breakdown.delivery_fee_paise,gst_paise:breakdown.gst_paise,page_overage_paise:breakdown.page_overage_paise,total_paise:breakdown.total_paise,breakdown_complete: true, simulated: input.payment!.simulated} : null,
     advocate_payout: !client && breakdown?.advocate_entitlement_paise ? {net_paise: breakdown.advocate_entitlement_paise} : null,

@@ -154,7 +154,7 @@ export class CaseRepository {
       const pending = await db.document.findMany({where:{case_id:record.id,owner_id:actor.id,status:'pending'},orderBy:[{created_at:'asc'},{id:'asc'}]});
       return reportCaseView({actor, record, caseRecord, events, documents:[...documents,...pending], drafts: allDrafts, payment: payments[0], pricing, parties,
         advocate: advocate ? {...advocateUser, profile} : null,
-        client: await db.user.findUnique({where: {id: record.client_id}, select: {full_name: true}})});
+        client: await db.user.findUnique({where: {id: record.client_id}, select: {full_name: true,phone:true,email:true}})});
     }
     if (record.service_code !== 'legal_notice')
       return { ...caseRecord, parties, pricing, advocate: advocate ? {...advocateUser, profile} : advocate, events, documents, drafts, reviews, shipments };

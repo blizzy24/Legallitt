@@ -34,6 +34,7 @@ test('Report services: provisional pricing, paid intake, assignment, advocate re
   const db=new PrismaClient({adapter:new PrismaPg({connectionString:process.env.LEGALITT_TEST_DATABASE_URL})}),prisma={getClient:async()=>db};
   const users=['client','client','advocate','advocate','admin'].map(role=>({id:randomUUID(),role,cognito_sub:randomUUID(),full_name:'TEST REPORT '+role}));
   const [client,other,advocate,otherAdvocate,admin]=users,ids=[];
+  client.email=`test-report-${client.id}@legalitt.invalid`;
   const inbox=new InAppNotifications(new SimulatedNotifications()),state=new CaseStateMachine(prisma,inbox),repo=new CaseRepository(prisma);
   const objects=new Map(),originalFetch=global.fetch;
   const storage={upload:async key=>({url:'https://report-storage.invalid',fields:{key:stagingKey(key)}}),
@@ -64,7 +65,8 @@ test('Report services: provisional pricing, paid intake, assignment, advocate re
     const q=await pay.quote(client,{case_id:c.id});assert.equal(q.status,'ready');assert.equal(q.breakdown.total_paise,totals[code]);
     await pay.intent(client,{case_id:c.id,purpose:'service_fee',quote_id:q.id},randomUUID());
     if(code==='property_search')await workflowAction(admin,c.id,'verify');
-    await state.assign(admin,c.id,{advocate_id:advocate.id});assert.equal(require('@legalitt/shared').REPORT_INTAKE_SCHEMAS[code].safeParse((await repo.read(advocate,c.id)).details).success,true,'redacted intake retains the service schema');await state.transition(advocate,c.id,'advocate_accepted');
+    await state.assign(admin,c.id,{advocate_id:advocate.id});const assigned=await repo.read(advocate,c.id);assert.equal(require('@legalitt/shared').REPORT_INTAKE_SCHEMAS[code].safeParse(assigned.details).success,true,'redacted intake retains the service schema');assert.equal(assigned.client_contact,null,'no client contact before acceptance');await assert.rejects(repo.read(otherAdvocate,c.id),{status:404});await assert.rejects(repo.read(other,c.id),{status:404});await state.transition(advocate,c.id,'advocate_accepted');
+    if(code==='property_search'||code==='document_forensic'){const accepted=await repo.read(advocate,c.id),owner=users.find(u=>u.id===client.id);assert.equal(accepted.client_contact.email,owner.email??null);assert.equal(accepted.client_contact.phone,owner.phone??null);assert.equal((await repo.read(client,c.id)).client_contact,null);}
     if(code==='document_forensic')await workflowAction(advocate,c.id,'file-checklist',{files_open:true,pages_complete:true,legible:true});
     return c;
   };
@@ -133,7 +135,7 @@ test('Report services: provisional pricing, paid intake, assignment, advocate re
       const reportPreview=await reports.preview(advocate,c.id,unsigned.id,true);assert.equal(reportPreview.files.length,1,'report can be previewed before signing the affidavit');
       const v2=await reports.save(advocate,c.id,{base_draft_id:unsigned.id,report,affidavit,signature,signed:true});
       const preview=await reports.preview(advocate,c.id,v2.id);assert.equal(preview.files.length,2);
-      for(const f of preview.files)assert.ok(Buffer.from(f.pdf_base64,'base64').subarray(0,4).equals(Buffer.from('%PDF')));
+      for(const f of preview.files){const bytes=Buffer.from(f.pdf_base64,'base64');assert.ok(bytes.subarray(0,4).equals(Buffer.from('%PDF')));assert.equal(f.size_bytes,String(bytes.length));assert.equal(f.page_count,(await PDFDocument.load(bytes)).getPageCount());}
       assert.equal(await db.document.count({where:{case_id:c.id,kind:{in:['forensic_report','forensic_affidavit']}}}),0,'preview stores nothing');
       const race=await Promise.allSettled([reports.submit(advocate,c.id,v2.id),reports.submit(advocate,c.id,v2.id)]);
       assert.equal(race.filter(r=>r.status==='fulfilled').length,1);

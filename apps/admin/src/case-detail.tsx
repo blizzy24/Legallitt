@@ -1,3 +1,4 @@
+import {reportPhone,useReportRefresh} from './report-presentation';
 import {reportFileLabel,isFlowReportService,noticeDate,noticeDocumentLabel,noticeMethodLabel,noticeStage} from '@legalitt/shared';
 import { ConfirmDelivery } from './confirm-delivery';
 import {NoticeFlowPanel} from './notice-flow-panel';
@@ -42,6 +43,7 @@ export function CaseDetail() {
  });return()=>{alive=false;};},[id,reload]);
  const routeService = ServiceCodeSchema.safeParse(useParams().service);
  const service = data?.service_code ?? (routeService.success ? routeService.data : 'legal_notice');
+ useReportRefresh(isFlowReportService(service),()=>setReload(n=>n+1));
  const heading = service === 'legal_notice' ? 'Legal Notices' : SERVICE_NAMES[service];
  const backPath = adminCaseListPath(service);
  if(!data)return <main className="case-detail"><Link className="back-link" to={backPath}>← {heading}</Link>{error?<div className="error" role="alert">{error} <button onClick={()=>setReload(n=>n+1)}>Retry</button></div>:<p role="status">Loading case…</p>}</main>;
@@ -75,7 +77,7 @@ export function CaseDetail() {
   {isReportService(service)&&<><ReportPanel record={d} reload={()=>setReload(n=>n+1)}/>{isFlowReportService(service)?<ReportIntake record={d}/>:<section className="detail-panel"><div className="section-title"><h2>Original client intake</h2></div>{Object.values(d.intake).some(present)?<Values value={d.intake}/>:<p>No intake saved yet.</p>}</section>}</>}
   {isConsultationService(service)&&<><ConsultationPanel record={d} reload={()=>setReload(n=>n+1)}/><section className="detail-panel"><div className="section-title"><h2>Original client intake</h2></div>{Object.values(d.intake).some(present)?<Values value={d.intake}/>:<p>No intake saved yet.</p>}</section></>}
   {service==='fir_draft'&&<section className="detail-panel fir-intake"><div className="section-title"><h2>Original intake</h2></div>{Object.values(d.intake).some(present)?<Values value={d.intake}/>:<p>No intake was recorded for this case.</p>}</section>}
-  <section className="people-section"><h2>People</h2><div className="people-grid">{d.contacts.map((c,i)=><article className="person" key={i}><p className="eyebrow">{c.role==='sender'?'SENDER · INTAKE':label(c.role)}</p>{c.name&&<h3>{c.name}</h3>}<dl><Field name="Title" value={c.salutation}/><Field name="Age" value={c.age}/><Field name="Relation" value={c.relation}/><Field name="Father’s or husband’s name" value={c.relative_name}/><Field name="Email" value={c.email}/><Field name="Phone" value={c.phone}/><Field name="Address" value={c.address}/><Field name="Relationship" value={c.relationship}/></dl></article>)}</div></section>
+  <section className="people-section"><h2>People</h2><div className="people-grid">{d.contacts.map((c,i)=><article className="person" key={i}><p className="eyebrow">{c.role==='sender'?'SENDER · INTAKE':label(c.role)}</p>{c.name&&<h3>{c.name}</h3>}<dl><Field name="Title" value={c.salutation}/><Field name="Age" value={c.age}/><Field name="Relation" value={c.relation}/><Field name="Father’s or husband’s name" value={c.relative_name}/><Field name="Email" value={c.email}/><Field name="Phone" value={isFlowReportService(service)?reportPhone(c.phone):c.phone}/><Field name="Address" value={c.address}/><Field name="Relationship" value={c.relationship}/></dl></article>)}</div></section>
   <nav className="case-sections" aria-label="Case sections">
    {d.events.length>0&&<a href="#timeline">Timeline <span>{d.events.length}</span></a>}
    {d.drafts.length>0&&<a href="#drafts">Drafts <span>{d.drafts.length}</span></a>}
