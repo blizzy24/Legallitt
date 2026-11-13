@@ -65,6 +65,9 @@
     "PASS dc completion plus seven days closes chat; admin can reopen",
     "PASS hc completion plus seven days closes chat; admin can reopen",
     "PASS chat browser checks",
+    "PASS district_court completed presentation",
+    "PASS high_court completed presentation",
+    "PASS recapture-completed browser checks",
     "PASS dc final order, admin completion, client viewer/download and rating",
     "PASS hc final order, admin completion, client viewer/download and rating",
     "PASS completion browser checks",
@@ -97,5 +100,10 @@
     "PASS dc pre-filing review with corrections and revised version",
     "PASS hc pre-filing review",
     "PASS review browser checks"
-  ]
+  ],
+  "finalFrontend": {
+    "build": "passed",
+    "typecheck": "passed",
+    "completedCopyBrowser": "both courts passed"
+  }
 }
