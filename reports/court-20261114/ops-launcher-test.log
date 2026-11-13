@@ -1,0 +1,5 @@
+image tag a10fde9 (one-off test-ops:1)
+task arn:test:task/test-only
+exit 0 (TEST-MOCK-ONLY)
+TEST MOCK: no migration or AWS action was performed
+PASS Git Bash ops launcher uses installed Python; all AWS calls mocked.

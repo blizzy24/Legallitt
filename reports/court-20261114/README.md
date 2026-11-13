@@ -80,17 +80,25 @@ and the affected journey resumed successfully.
   `C:/Users/KESHAV/AppData/Local/Microsoft/WindowsApps/python3` (the Store alias).
   The installed `python` is Python 3.13.5. See [launcher output](migrate-deployed.log).
 - Interpreter selection is fixed in `b3feced`: Git Bash defaults to `python`,
-  other platforms to `python3`, with `PYTHON_BIN` override. Shell syntax was
-  checked. **The migration was not retried**, honoring the instruction to stop
+  other platforms to `python3`, with `PYTHON_BIN` override. Shell syntax and a
+  full launcher test with every AWS call mocked passed. See
+  [mock launcher result](ops-launcher-test.log). **The migration was not retried**, honoring the instruction to stop
   deployment on a failed step and leave the working version live.
 - No stack update, production Vercel update, or deployed court configuration seed
   was performed. Existing cases and credentials were not changed.
 - Work is pushed to `overnight-court-20261114`, rather than `main`, because main
   automatically deploys both production Vercel projects. This keeps the work
   safely on GitHub while preserving the previous working frontends.
+- All 172 extracted design PNGs, 151 court comparisons and the Part A captures
+  are committed on that branch. The evidence push succeeded (88.6 MiB); there
+  is no screenshot-upload limitation for this run.
 - Docker builder and image prune ran after the image push. No release build cache
   or unused local API image was retained.
 
 The remaining release steps are migration with `a10fde9`, stack update, both
 frontends, `seed-courts a10fde9`, and live verification. All local acceptance gates
 passed; these release steps are explicitly **not claimed complete**.
+
+[GitHub work branch](https://github.com/blizzy24/Legallitt/tree/overnight-court-20261114)
+contains the code and evidence. [Preserved deployment check](deployment-preserved.json)
+records API `7bc60d0`, unchanged main `29aecf6`, and no started migration task.
