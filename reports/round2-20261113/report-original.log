@@ -1,0 +1,3 @@
+SHOT original-client-request.png
+SHOT original-admin-receipt.png
+PASS DF original request → acknowledgement → sent note → receipt; deadline pauses and resumes

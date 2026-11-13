@@ -1,0 +1,67 @@
+STAGE intakes
+SHOT client-landing.png
+SHOT client-step1-courier.png
+SHOT client-methods-courier.png
+SHOT client-issue-courier.png
+SHOT client-uploads-courier.png
+SHOT client-review-files-courier.png
+SHOT client-summary-courier.png
+SHOT client-payment-courier.png
+SHOT client-scan-courier.png
+SHOT client-success-courier.png
+PASS Client intake/payment courier
+SHOT client-step1-email.png
+SHOT client-methods-email.png
+SHOT client-issue-email.png
+SHOT client-uploads-email.png
+SHOT client-review-files-email.png
+SHOT client-summary-email.png
+SHOT client-payment-email.png
+SHOT client-scan-email.png
+SHOT client-success-email.png
+PASS Client intake/payment email
+SHOT client-step1-courier-email-whatsapp.png
+SHOT client-methods-courier-email-whatsapp.png
+SHOT client-issue-courier-email-whatsapp.png
+SHOT client-uploads-courier-email-whatsapp.png
+SHOT client-review-files-courier-email-whatsapp.png
+SHOT client-summary-courier-email-whatsapp.png
+SHOT client-payment-courier-email-whatsapp.png
+SHOT client-scan-courier-email-whatsapp.png
+SHOT client-success-courier-email-whatsapp.png
+PASS Client intake/payment courier-email-whatsapp
+STAGE drafts
+SHOT advocate-decline.png
+HTTP advocate 404 GET /api/v1/cases/125fce5e-1e18-4d3d-a373-b35268b0c970
+HTTP advocate 404 GET /api/v1/notices/125fce5e-1e18-4d3d-a373-b35268b0c970/flow
+SHOT advocate-fee-courier.png
+SHOT advocate-documents-courier.png
+SHOT advocate-drafting-method.png
+SHOT advocate-editor-courier.png
+SHOT advocate-preview-courier.png
+SHOT client-draft-ready-courier.png
+SHOT client-document-viewer.png
+SHOT client-request-changes.png
+SHOT advocate-editor-courier-revised.png
+SHOT advocate-preview-courier.png
+--- client failure /legal-notice/tracking?caseId=125fce5e-1e18-4d3d-a373-b35268b0c970
+BUTTONS: Back ¦ View Profile ¦ Chat with Advocate ¦ View Notice Document ¦ Download PDF ¦ Request cancellation
+FIELDS:
+TEXT: Legal Notice Tracking Approved · advocate preparing submission Urgent Tier Legal Notice Request Submitted Your current request status is shown below. REQUEST ID · LN-2026-0001 Copy NOTICE DETAILS Notice Type Money Recovery Service URGENT · 5 days Submitted On 13 Nov 2026, 7:05 PM Current Status Approved · advocate preparing submission ASSIGNED ADVOCATE Adv. Demo Advocate Asha Approved advocate Bar registration TEST/2026/001 View Profile Chat with Advocate REQUEST STATUS Request submitted 13 Nov 2026, 7:05 PM Your legal notice request has been received. Payment 13 Nov 2026, 7:06 PM Payment confirmed · ₹1,652.53 · Test payment Advocate assigned 13 Nov 2026, 7:07 PM Adv. Demo Advocate Asha assigned to prepare your notice. Draft preparation 13 Nov 2026, 7:08 PM Your advocate began preparing the legal notice. 5 Your approval 13 Nov 2026, 7:08 PM The draft is ready for your review. 6 Being prepared for dispatch 7 Dispatched 8 Delivered LEGAL NOTICE DRAFT Legal Notice PDF Prepared by Adv. Demo Advocate Asha View Notice Document Download PDF Request cancellation
+---
+--- admin failure /legal-notices/125fce5e-1e18-4d3d-a373-b35268b0c970
+BUTTONS: ▤ Legal Notices ¦ ▤ FIR Drafts ¦ ▤ Legal Advice ¦ ▤ District Court Representation ¦ ▤ High Court Representation ¦ ▤ Property Search Report ¦ ▤ Document Forensic ¦ ▤ Cancellations & refunds ¦ ▤ Support inbox ¦ ▤ Account deletions ¦ ▤ Advocate approvals ¦ ▤ Payouts ¦ Sign out ¦ Notifications, 53 unread ¦ ← Legal Notices ¦ Refresh ¦ Ask client to fix ¦ Extend and notify client ¦ Timeline 17 ¦ Documents 2 ¦ Payments 1 ¦ Supporting document ↗ ¦ Identity proof (Aadhaar / PAN) ↗
+FIELDS: |||textarea= ¦ |||datetime-local= ¦ |||textarea=
+TEXT: LEGALITT ADMIN ▤ Legal Notices ▤ FIR Drafts ▤ Legal Advice ▤ District Court Representation ▤ High Court Representation ▤ Property Search Report ▤ Document Forensic ▤ Cancellations & refunds ▤ Support inbox ▤ Account deletions ▤ Advocate approvals ▤ Payouts Demo admin ADMIN Sign out Legal Notices 53 ADMIN ← Legal Notices LEGAL NOTICE LN-2026-0001demo Demo client Awaiting advocate acceptance Matter Money recovery Tier Urgent Service fee ₹999.00 Additional fees ₹428.75 Charged before GST ₹1,427.75 GST paid ₹224.78 Total paid ₹1,652.53 GST rate 18% exclusive Created 13 Nov 2026, 7:05 PM Legal Notice · Awaiting advocate acceptance Refresh Client sees: Advocate assigned. Advocate sees: Review request. Deadline: 18 Nov 2026, 7:06 PM Selected delivery methods Noticee TEST Notice Recipient Courier address TEST ONLY, Recipient Street, Indore · 452001 Ask client to correct a delivery contact Extend the case deadline People CLIENT Demo client Email demo-client@legalitt.invalid ADVOCATE Demo Advocate Asha Email demo-advocate-2@legalitt.invalid SENDER · INTAKE TEST Notice Client Email demo-client@legalitt.invalid Address TEST ONLY, Client Street, Indore NOTICEE TEST Notice Recipient Address TEST ONLY, Recipient Street, Indore Timeline 17 Documents 2 Payments 1 Case timeline 17 events · newest first Notification created 13 Nov 2026, 7:08 PM Event details Notification created 13 Nov 2026, 7:08 PM Event details Assigned 13 Nov 2026, 7:08 PM Demo admin · Admin Assigning → Assigned Event details Assigning 13 Nov 2026, 7:08 PM Demo admin · Admin Advocate declined → Assigning Notification created 13 Nov 2026, 7:07 PM Event details Advocate declined 13 Nov 2026, 7:07 PM Demo advocate · Advocate Assigned → Advocate declined Event details Notification created 13 Nov 2026, 7:07 PM Event details
+---
+--- advocate failure /matters
+BUTTONS: Search ¦ All ¦ Active ¦ Upcoming ¦ Waiting for Client ¦ All Services ¦ Legal Notice ¦ FIR Draft ¦ Property Search ¦ Document Forensic ¦ Recent First ¦ Review Request ¦ Dashboard ¦ Matters ¦ Clients ¦ Earnings
+FIELDS: |Search client, case, service or case ID...||text=
+TEXT: Cases Cases Manage your active legal matters and case work. ACTIVE 3 UPCOMING 0 COMPLETED 6 All Active Upcoming Waiting for Client All Services Legal Notice FIR Draft Property Search Document Forensic Your Matters 3 active Recent First Document Forensic URGENT Demo client DF-2026-00024 Check the files Expected by 17 Nov 2026 13 Nov 2026, 7:08 PM Review Request Document Forensic ORDINARY Demo client DF-2026-00023 Check the files Expected by 24 Nov 2026 13 Nov 2026, 7:08 PM Review Request Document Forensic ORDINARY Demo client DF-2026-00019 Report Draft Expected by 20 Nov 2026 13 Nov 2026, 3:10 PM Review Request Document Forensic URGENT Demo client DF-2026-00016 Report Completed 13 Nov 2026, 3:03 PM Review Request Document Forensic ORDINARY Demo client DF-2026-00015 Report Completed 13 Nov 2026, 3:01 PM Review Request Document Forensic URGENT Demo client DF-2026-0006 Report Completed 13 Nov 2026, 2:08 AM Review Request Document Forensic ORDINARY Demo client DF-2026-0005 Report Completed 13 Nov 2026, 2:07 AM Review Request Document Forensic URGENT Demo client DF-2026-0002 Report Completed 13 Nov 2026, 1:41 AM Review Request Document Forensic ORDINARY Demo client DF-2026-0001 Report Completed 13 Nov 2026, 1:40 AM Review Request
+---
+--- advocate-2 failure /advocate/notice/125fce5e-1e18-4d3d-a373-b35268b0c970/review?caseId=125fce5e-1e18-4d3d-a373-b35268b0c970
+BUTTONS: Back ¦ View Draft ¦ Upload signature image ¦ Use my uploaded signature ¦ Aadhaar e-sign · TEST STEP ¦ Apply my signature ¦ Message Client ¦ Contact Admin Support ¦ Back to My Cases
+FIELDS:
+TEXT: Client Review Review progress and client notes LN-2026-0001 · Urgent · Sign approved notice Draft due by 18 Nov 2026, 7:06 PM Review notes Version 1 · Client requested changes Sections Facts Please clarify that this is the agreed repayment, not a new loan. 13 Nov 2026, 7:08 PM Current status Sign approved notice Client TEST Notice Client Against TEST Notice Recipient View Draft REVIEW PROGRESS ✓ Request submitted ✓ Payment ✓ Advocate assigned ✓ Draft preparation ● Your approval ○ Admin preparation ○ Dispatched ○ Delivered My signature Upload your signature for Legal Notices. It is placed after the closing lines and cannot be moved. This is an uploaded image, not a digital certificate. No signature saved. Upload an image or use the clearly labelled test e-sign step on a notice. Upload signature image Sign client-approved notice ● Use my uploaded signature ○ Aadhaar e-sign · TEST STEP Your saved signature image is placed automatically after the closing lines. Apply my signature Message Client Contact Admin Support Back to My Cases
+---
+FAIL Text "Your notice is being finalised" never appeared on http://localhost:8084/legal-notice/tracking?caseId=125fce5e-1e18-4d3d-a373-b35268b0c970

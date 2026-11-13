@@ -1,0 +1,19 @@
+STAGE admin
+SHOT admin-address-check-courier.png
+SHOT admin-return.png
+SHOT advocate-editor-courier-revised.png
+SHOT advocate-preview-courier.png
+SHOT advocate-profile-signature.png
+SHOT advocate-signed-courier.png
+SHOT advocate-submitted-courier.png
+SHOT admin-notice-check-courier.png
+SHOT admin-dispatch-ready-courier.png
+PASS Admin verification/test e-sign courier
+SHOT admin-address-check-email.png
+SHOT admin-notice-check-email.png
+SHOT admin-dispatch-ready-email.png
+PASS Admin verification/test e-sign email
+SHOT admin-address-check-courier-email-whatsapp.png
+SHOT admin-notice-check-courier-email-whatsapp.png
+SHOT admin-dispatch-ready-courier-email-whatsapp.png
+PASS Admin verification/test e-sign courier-email-whatsapp

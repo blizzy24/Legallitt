@@ -1,0 +1,21 @@
+SHOT admin-more-details.png
+SHOT client-more-details.png
+SHOT admin-assigned-ordinary.png
+SHOT advocate-request-ordinary.png
+SHOT decline-reason.png
+SHOT accepted-ordinary.png
+PASS property_search-ordinary assigned, request reviewed and accepted
+SHOT admin-assigned-urgent.png
+SHOT advocate-request-urgent.png
+SHOT decline-reason.png
+SHOT accepted-urgent.png
+PASS property_search-urgent assigned, request reviewed and accepted
+SHOT admin-assigned-ordinary.png
+SHOT advocate-request-ordinary.png
+SHOT client-more-information.png
+SHOT accepted-ordinary.png
+PASS document_forensic-ordinary assigned, request reviewed and accepted
+SHOT admin-assigned-urgent.png
+SHOT advocate-request-urgent.png
+SHOT accepted-urgent.png
+PASS document_forensic-urgent assigned, request reviewed and accepted

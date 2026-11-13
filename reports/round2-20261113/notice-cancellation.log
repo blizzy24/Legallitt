@@ -1,0 +1,4 @@
+STAGE cancellation
+SHOT client-cancel-before-acceptance.png
+SHOT client-cancelled-refund.png
+PASS Cancellation before acceptance with full simulated refund

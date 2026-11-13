@@ -1,0 +1,14 @@
+SHOT information.png
+SHOT empty-intake.png
+SHOT partial-intake.png
+SHOT loading.png
+HTTP 503 /api/v1/cases/c661dcdb-0b3e-4622-88dc-fbcaa5043ccc
+SHOT error-retry.png
+PASS property_search loading, error and retry states
+SHOT information.png
+SHOT empty-intake.png
+SHOT partial-intake.png
+SHOT loading.png
+HTTP 503 /api/v1/cases/345029af-0ee4-4cbe-a757-74be40d1a459
+SHOT error-retry.png
+PASS document_forensic loading, error and retry states

@@ -1,0 +1,14 @@
+SHOT admin-pending-client-response.png
+SHOT admin-overdue-actions.png
+--- Deadline extension form /legal-notices/1fcc59f6-1519-4ffa-a6e0-254d21c452e8
+BUTTONS: ▤ Legal Notices ¦ ▤ FIR Drafts ¦ ▤ Legal Advice ¦ ▤ District Court Representation ¦ ▤ High Court Representation ¦ ▤ Property Search Report ¦ ▤ Document Forensic ¦ ▤ Cancellations & refunds ¦ ▤ Support inbox ¦ ▤ Account deletions ¦ ▤ Advocate approvals ¦ ▤ Payouts ¦ Sign out ¦ Notifications, 65 unread ¦ ← Legal Notices ¦ Refresh ¦ Ask client to fix ¦ Record test partial refund ¦ Extend and notify client ¦ Timeline 22 ¦ Drafts 1 ¦ Documents 3 ¦ Payments 1 ¦ Legal Notice PDF ↗ ¦ Supporting document ↗ ¦ Identity proof (Aadhaar / PAN) ↗
+FIELDS: |||textarea= ¦ |||text= ¦ |||textarea= ¦ |||datetime-local=2026-11-17T19:19 ¦ |||textarea=TEST ONLY extension explained
+TEXT: LEGALITT ADMIN ▤ Legal Notices ▤ FIR Drafts ▤ Legal Advice ▤ District Court Representation ▤ High Court Representation ▤ Property Search Report ▤ Document Forensic ▤ Cancellations & refunds ▤ Support inbox ▤ Account deletions ▤ Advocate approvals ▤ Payouts Demo admin ADMIN Sign out Legal Notices 65 ADMIN ← Legal Notices LEGAL NOTICE LN-2026-0004demo Demo client Waiting for client Matter Money recovery Tier Urgent Service fee ₹999.00 Additional fees ₹428.75 Charged before GST ₹1,427.75 GST paid ₹224.78 Total paid ₹1,652.53 GST rate 18% exclusive Created 13 Nov 2026, 7:12 PM Legal Notice · Waiting for client Refresh Client sees: Awaiting your approval. Advocate sees: Waiting for client. Overdue: 13 Nov 2026, 6:19 PM Selected delivery methods Noticee TEST Notice Recipient Courier address TEST ONLY, Recipient Street, Indore · 452001 Ask client to correct a delivery contact Record a partial refund for the delay Extend the case deadline New deadline (your local time) Reason shown to client Extend and notify client People CLIENT Demo client Email demo-client@legalitt.invalid ADVOCATE Demo advocate Email demo-advocate@legalitt.invalid SENDER · INTAKE TEST Notice Client Email demo-client@legalitt.invalid Address TEST ONLY, Client Street, Indore NOTICEE TEST Notice Recipient Address TEST ONLY, Recipient Street, Indore Timeline 22 Drafts 1 Documents 3 Payments 1 Case timeline 22 events · newest first Notification created 13 Nov 2026, 7:12 PM Event details Notice reminder sent 13 Nov 2026, 7:12 PM Event details Notification created 13 Nov 2026, 7:12 PM Event details Notification created 13 Nov 2026, 7:12 PM Event details Notification created 13 Nov 2026, 7:12 PM Event details Draft saved 13 Nov 2026, 7:12 PM Demo advocate · Advocate Event details In progress 13 Nov 2026, 7:12 PM De
+---
+SHOT admin-deadline-extended.png
+SHOT client-reminders.png
+SHOT client-support-hours.png
+SHOT admin-support-settings.png
+SHOT admin-tariff-settings.png
+SHOT admin-tariff-settings.png
+PASS reminder 24h/72h idempotence, 7-day queue, overdue extension/client notification, support and tariff settings screens

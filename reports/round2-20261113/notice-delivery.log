@@ -1,0 +1,20 @@
+STAGE delivery
+SHOT admin-completed-courier.png
+SHOT client-delivered-courier.png
+SHOT advocate-credit-courier.png
+PASS Dispatch, delivery and advocate credit courier
+SHOT admin-sent-email-email.png
+SHOT client-free-email-correction.png
+SHOT admin-free-email-retry.png
+SHOT admin-completed-email.png
+SHOT client-delivered-email.png
+SHOT advocate-credit-email.png
+PASS Dispatch, delivery and advocate credit email
+SHOT admin-sent-courier-email-whatsapp-courier.png
+SHOT admin-tracking-proof-courier-email-whatsapp.png
+SHOT admin-sent-courier-email-whatsapp-email.png
+SHOT admin-sent-courier-email-whatsapp-whatsapp.png
+SHOT admin-completed-courier-email-whatsapp.png
+SHOT client-delivered-courier-email-whatsapp.png
+SHOT advocate-credit-courier-email-whatsapp.png
+PASS Dispatch, delivery and advocate credit courier-email-whatsapp

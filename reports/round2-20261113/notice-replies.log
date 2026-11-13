@@ -1,0 +1,5 @@
+STAGE replies
+SHOT client-reply-uploaded.png
+SHOT admin-reply-uploaded.png
+SHOT client-replies-timeline.png
+PASS Client and admin reply uploads, assigned-advocate visibility, Reply Received timeline; cancellation blocked after dispatch

@@ -1,0 +1,198 @@
+
+> @legalitt/shared@0.0.0 test D:\Legalitt\Legallitt\packages\shared
+> pnpm build && node --test tests/*.cjs
+
+
+> @legalitt/shared@0.0.0 build D:\Legalitt\Legallitt\packages\shared
+> tsc
+
+TAP version 13
+# Subtest: all lifecycle states map to the approved admin buckets; unpaid states are excluded
+ok 1 - all lifecycle states map to the approved admin buckets; unpaid states are excluded
+  ---
+  duration_ms: 4.8751
+  type: 'test'
+  ...
+# Subtest: shared client refreshes once for concurrent expired sessions and attaches refreshed Cognito token
+ok 2 - shared client refreshes once for concurrent expired sessions and attaches refreshed Cognito token
+  ---
+  duration_ms: 92.8384
+  type: 'test'
+  ...
+# Subtest: 401 retries once after refresh; expired refresh clears credentials; offline mutations are never retried
+ok 3 - 401 retries once after refresh; expired refresh clears credentials; offline mutations are never retried
+  ---
+  duration_ms: 20.3876
+  type: 'test'
+  ...
+# Subtest: timeout and validation errors are visible; signed upload uses S3 directly with file last
+ok 4 - timeout and validation errors are visible; signed upload uses S3 directly with file last
+  ---
+  duration_ms: 16.0445
+  type: 'test'
+  ...
+# Subtest: a refresh finishing after sign-out cannot restore the old session
+ok 5 - a refresh finishing after sign-out cannot restore the old session
+  ---
+  duration_ms: 8.3192
+  type: 'test'
+  ...
+# Subtest: structured PDF field errors survive the HTTP client for actionable editor feedback
+ok 6 - structured PDF field errors survive the HTTP client for actionable editor feedback
+  ---
+  duration_ms: 2.0053
+  type: 'test'
+  ...
+# Subtest: creation keeps notice intake validation and accepts only empty spines for other services
+ok 7 - creation keeps notice intake validation and accepts only empty spines for other services
+  ---
+  duration_ms: 21.2859
+  type: 'test'
+  ...
+# Subtest: case and inbox destinations keep notice URLs stable and never send other services to notice screens
+ok 8 - case and inbox destinations keep notice URLs stable and never send other services to notice screens
+  ---
+  duration_ms: 2.7619
+  type: 'test'
+  ...
+# Subtest: all lifecycle values match the authoritative DDL and have the confirmed bucket
+ok 9 - all lifecycle values match the authoritative DDL and have the confirmed bucket
+  ---
+  duration_ms: 4.6772
+  type: 'test'
+  ...
+# Subtest: core schemas preserve every DDL column and nullable flag
+ok 10 - core schemas preserve every DDL column and nullable flag
+  ---
+  duration_ms: 17.5103
+  type: 'test'
+  ...
+# Subtest: money retains integer paise and rejects floats and unsafe coercion
+ok 11 - money retains integer paise and rejects floats and unsafe coercion
+  ---
+  duration_ms: 3.3069
+  type: 'test'
+  ...
+# Subtest: nine distinct services and lifecycle/bucket separation
+ok 12 - nine distinct services and lifecycle/bucket separation
+  ---
+  duration_ms: 1.0294
+  type: 'test'
+  ...
+# Subtest: Legal Notice intake permits draft fields but rejects arbitrary JSON and identity uploads
+ok 13 - Legal Notice intake permits draft fields but rejects arbitrary JSON and identity uploads
+  ---
+  duration_ms: 21.9921
+  type: 'test'
+  ...
+# Subtest: a new editor uses its case intake and the approved default closing, without saving a version
+ok 14 - a new editor uses its case intake and the approved default closing, without saving a version
+  ---
+  duration_ms: 6.3608
+  type: 'test'
+  ...
+# Subtest: sparse intake stays blank except the shared closing; no invented facts or another case's fixtures
+ok 15 - sparse intake stays blank except the shared closing; no invented facts or another case's fixtures
+  ---
+  duration_ms: 0.5365
+  type: 'test'
+  ...
+# Subtest: all six saved advocate sections win, including deliberate blanks; opening cannot overwrite corrections
+ok 16 - all six saved advocate sections win, including deliberate blanks; opening cannot overwrite corrections
+  ---
+  duration_ms: 0.8488
+  type: 'test'
+  ...
+# Subtest: intake indication follows untouched values, never changed, cleared or advocate-only sections
+ok 17 - intake indication follows untouched values, never changed, cleared or advocate-only sections
+  ---
+  duration_ms: 1.0488
+  type: 'test'
+  ...
+# Subtest: the six drawn sections are editable; legacy offences are not reopened
+ok 18 - the six drawn sections are editable; legacy offences are not reopened
+  ---
+  duration_ms: 0.6733
+  type: 'test'
+  ...
+# Subtest: email-only intake needs no invented postal address or WhatsApp; selected courier and WhatsApp validate their own fields
+ok 19 - email-only intake needs no invented postal address or WhatsApp; selected courier and WhatsApp validate their own fields
+  ---
+  duration_ms: 19.5731
+  type: 'test'
+  ...
+# Subtest: cheque bounce cannot be submitted without cheque and return details; partial drafts remain resumable
+ok 20 - cheque bounce cannot be submitted without cheque and return details; partial drafts remain resumable
+  ---
+  duration_ms: 5.007
+  type: 'test'
+  ...
+# Subtest: client sees finalisation through an internal return; all roles derive their stage from one mapping
+ok 21 - client sees finalisation through an internal return; all roles derive their stage from one mapping
+  ---
+  duration_ms: 1.4386
+  type: 'test'
+  ...
+# Subtest: chat cannot reopen during admin correction or after completion; no elapsed-time session limit
+ok 22 - chat cannot reopen during admin correction or after completion; no elapsed-time session limit
+  ---
+  duration_ms: 0.437
+  type: 'test'
+  ...
+# Subtest: whole positive periods only; retired criminal wording cannot return from historical policy snapshots
+ok 23 - whole positive periods only; retired criminal wording cannot return from historical policy snapshots
+  ---
+  duration_ms: 5.4344
+  type: 'test'
+  ...
+# Subtest: client decisions can change by settings without code; invalid templates are rejected
+ok 24 - client decisions can change by settings without code; invalid templates are rejected
+  ---
+  duration_ms: 1.2975
+  type: 'test'
+  ...
+# Subtest: notification destinations follow current lifecycle and retain the case id
+ok 25 - notification destinations follow current lifecycle and retain the case id
+  ---
+  duration_ms: 2.345
+  type: 'test'
+  ...
+# Subtest: poll started before mark-read cannot restore unread state; failures stay inline and logout discards results
+ok 26 - poll started before mark-read cannot restore unread state; failures stay inline and logout discards results
+  ---
+  duration_ms: 10.2056
+  type: 'test'
+  ...
+# Subtest: report stages distinguish verification, human file checks and internal correction without exposing reasons
+ok 27 - report stages distinguish verification, human file checks and internal correction without exposing reasons
+  ---
+  duration_ms: 3.9781
+  type: 'test'
+  ...
+# Subtest: historical report timelines do not invent missing event timestamps
+ok 28 - historical report timelines do not invent missing event timestamps
+  ---
+  duration_ms: 1.8224
+  type: 'test'
+  ...
+# Subtest: report file labels never fall back to internal filenames or UUIDs
+ok 29 - report file labels never fall back to internal filenames or UUIDs
+  ---
+  duration_ms: 0.9267
+  type: 'test'
+  ...
+# Subtest: turnaround policy refuses inverted windows and an empty working calendar
+ok 30 - turnaround policy refuses inverted windows and an empty working calendar
+  ---
+  duration_ms: 7.2251
+  type: 'test'
+  ...
+1..30
+# tests 30
+# suites 0
+# pass 30
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1651.9075

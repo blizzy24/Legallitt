@@ -1,6 +1,6 @@
-# Property Search: design comparisons
+# PS — Round 2 visual evidence
 
-Captured against the local API with synthetic cases and explicitly simulated payments/storage. Design is on the left; the running screen is on the right. Admin and additional states without a drawing are identified. These are evidence, not a claim of deployment. Generated with `scripts/report-screens-compose.cjs`; raw captures in `built/`.
+Comparison index regenerated 14 November 2026. Actual local browser captures use synthetic cases and labelled test adapters. Round 2 changed screens are captured by the scripts and logs in [the audit](../../../reports/round2-20261113/AUDIT.md); retained unchanged-screen captures provide visual context. No claim of deployment is implied by these images.
 
 | Screen | Evidence | Source |
 |---|---|---|
@@ -9,8 +9,12 @@ Captured against the local API with synthetic cases and explicitly simulated pay
 | admin-assigned-ordinary | [Comparison](admin-assigned-ordinary.png) | No separate design |
 | admin-assigned-urgent | [Comparison](admin-assigned-urgent.png) | No separate design |
 | admin-more-details | [Comparison](admin-more-details.png) | No separate design |
+| admin-office-note | [Comparison](admin-office-note.png) | No separate design |
 | admin-queue | [Comparison](admin-queue.png) | No separate design |
+| admin-review-ordinary | [Comparison](admin-review-ordinary.png) | No separate design |
+| admin-review-urgent | [Comparison](admin-review-urgent.png) | No separate design |
 | admin-settings | [Comparison](admin-settings.png) | No separate design |
+| admin-tariff-settings | [Comparison](admin-tariff-settings.png) | No separate design |
 | advocate-case-list | [Comparison](advocate-case-list.png) | No separate design |
 | advocate-chat-request | [Comparison](advocate-chat-request.png) | `design/figma-2026-11-12/Property-Search-Report-Client-Side/Html → Body (2).png` |
 | advocate-completed-ordinary | [Comparison](advocate-completed-ordinary.png) | No separate design |
@@ -21,6 +25,9 @@ Captured against the local API with synthetic cases and explicitly simulated pay
 | cancellation-refunded | [Comparison](cancellation-refunded.png) | No separate design |
 | client-chat-upload | [Comparison](client-chat-upload.png) | `design/figma-2026-11-12/Property-Search-Report-Client-Side/Html → Body (2).png` |
 | client-more-details | [Comparison](client-more-details.png) | No separate design |
+| client-quality-review-ordinary | [Comparison](client-quality-review-ordinary.png) | No separate design |
+| client-quality-review-urgent | [Comparison](client-quality-review-urgent.png) | No separate design |
+| client-records-unavailable | [Comparison](client-records-unavailable.png) | No separate design |
 | decline-reason | [Comparison](decline-reason.png) | No separate design |
 | delivered-details-ordinary | [Comparison](delivered-details-ordinary.png) | `design/figma-2026-11-12/Property-Search-Report-Client-Side/Documents Forensic 37.png` |
 | delivered-details-urgent | [Comparison](delivered-details-urgent.png) | `design/figma-2026-11-12/Property-Search-Report-Client-Side/Documents Forensic 37.png` |
@@ -37,6 +44,8 @@ Captured against the local API with synthetic cases and explicitly simulated pay
 | isolation-urgent | [Comparison](isolation-urgent.png) | No separate design |
 | landing | [Comparison](landing.png) | `design/figma-2026-11-12/Property-Search-Report-Client-Side/Html → Body → Standalone Mobile App Screen (390px by 852px).png` |
 | loading | [Comparison](loading.png) | No separate design |
+| office-note-chat | [Comparison](office-note-chat.png) | `design/figma-2026-11-12/Property-Search-Report-Client-Side/Html → Body (2).png` |
+| office-note-outcome | [Comparison](office-note-outcome.png) | No separate design |
 | partial-intake | [Comparison](partial-intake.png) | `design/figma-2026-11-12/Property-Search-Report-Client-Side/Property Search Report 16.png` |
 | payment-cancellation | [Comparison](payment-cancellation.png) | `design/figma-2026-11-12/Property-Search-Report-Client-Side/Property Search Report 04.png` |
 | payment-ordinary | [Comparison](payment-ordinary.png) | `design/figma-2026-11-12/Property-Search-Report-Client-Side/Property Search Report 04.png` |

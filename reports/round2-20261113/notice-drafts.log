@@ -1,0 +1,20 @@
+STAGE drafts
+SHOT client-admin-handoff-courier.png
+SHOT client-chat-readonly-courier.png
+PASS Advocate draft/client approval courier
+SHOT advocate-signed-email.png
+SHOT advocate-submitted-email.png
+SHOT client-admin-handoff-email.png
+SHOT client-chat-readonly-email.png
+PASS Advocate draft/client approval email
+SHOT advocate-fee-courier-email-whatsapp.png
+SHOT advocate-documents-courier-email-whatsapp.png
+SHOT advocate-drafting-method.png
+SHOT advocate-editor-courier-email-whatsapp.png
+SHOT advocate-preview-courier-email-whatsapp.png
+SHOT client-draft-ready-courier-email-whatsapp.png
+SHOT advocate-signed-courier-email-whatsapp.png
+SHOT advocate-submitted-courier-email-whatsapp.png
+SHOT client-admin-handoff-courier-email-whatsapp.png
+SHOT client-chat-readonly-courier-email-whatsapp.png
+PASS Advocate draft/client approval courier-email-whatsapp

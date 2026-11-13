@@ -1,0 +1,9 @@
+SHOT admin-review-ordinary.png
+SHOT client-quality-review-ordinary.png
+PASS property_search-ordinary report approved by admin after return and correction
+SHOT upload-final-report.png
+SHOT send-urgent.png
+SHOT sent-urgent.png
+SHOT admin-review-urgent.png
+SHOT client-quality-review-urgent.png
+PASS property_search-urgent report approved by admin

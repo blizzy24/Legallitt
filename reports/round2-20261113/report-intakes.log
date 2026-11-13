@@ -1,0 +1,32 @@
+SHOT landing.png
+SHOT intake-ordinary.png
+SHOT review-ordinary.png
+SHOT payment-ordinary.png
+SHOT scan-ordinary.png
+SHOT success-ordinary.png
+SHOT tracking-paid-ordinary.png
+PASS property_search-ordinary intake persisted, exact quote paid, success and tracking
+SHOT landing.png
+SHOT intake-urgent.png
+SHOT review-urgent.png
+SHOT payment-urgent.png
+SHOT scan-urgent.png
+SHOT success-urgent.png
+SHOT tracking-paid-urgent.png
+PASS property_search-urgent intake persisted, exact quote paid, success and tracking
+SHOT landing.png
+SHOT intake-ordinary.png
+SHOT review-ordinary.png
+SHOT payment-ordinary.png
+SHOT scan-ordinary.png
+SHOT success-ordinary.png
+SHOT tracking-paid-ordinary.png
+PASS document_forensic-ordinary intake persisted, exact quote paid, success and tracking
+SHOT landing.png
+SHOT intake-urgent.png
+SHOT review-urgent.png
+SHOT payment-urgent.png
+SHOT scan-urgent.png
+SHOT success-urgent.png
+SHOT tracking-paid-urgent.png
+PASS document_forensic-urgent intake persisted, exact quote paid, success and tracking

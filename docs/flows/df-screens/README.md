@@ -1,6 +1,6 @@
-# Document Forensic: design comparisons
+# DF — Round 2 visual evidence
 
-Captured against the local API with synthetic cases and explicitly simulated payments/storage. Design is on the left; the running screen is on the right. Admin and additional states without a drawing are identified. These are evidence, not a claim of deployment. Generated with `scripts/report-screens-compose.cjs`; raw captures in `built/`.
+Comparison index regenerated 14 November 2026. Actual local browser captures use synthetic cases and labelled test adapters. Round 2 changed screens are captured by the scripts and logs in [the audit](../../../reports/round2-20261113/AUDIT.md); retained unchanged-screen captures provide visual context. No claim of deployment is implied by these images.
 
 | Screen | Evidence | Source |
 |---|---|---|
@@ -15,6 +15,7 @@ Captured against the local API with synthetic cases and explicitly simulated pay
 | admin-review-ordinary | [Comparison](admin-review-ordinary.png) | No separate design |
 | admin-review-urgent | [Comparison](admin-review-urgent.png) | No separate design |
 | admin-settings | [Comparison](admin-settings.png) | No separate design |
+| admin-tariff-settings | [Comparison](admin-tariff-settings.png) | No separate design |
 | advocate-completed-ordinary | [Comparison](advocate-completed-ordinary.png) | No separate design |
 | advocate-completed-urgent | [Comparison](advocate-completed-urgent.png) | No separate design |
 | advocate-request-ordinary | [Comparison](advocate-request-ordinary.png) | `design/figma-2026-11-12/Document-Forensic-Advocate-Side/79.png` |
@@ -50,6 +51,10 @@ Captured against the local API with synthetic cases and explicitly simulated pay
 | isolation-urgent | [Comparison](isolation-urgent.png) | No separate design |
 | landing | [Comparison](landing.png) | `design/figma-2026-11-12/Document-Forensic-Client-Side/Html → Body.png` |
 | loading | [Comparison](loading.png) | No separate design |
+| original-admin-receipt | [Comparison](original-admin-receipt.png) | No separate design |
+| original-client-request | [Comparison](original-client-request.png) | No separate design |
+| original-request-form | [Comparison](original-request-form.png) | No separate design |
+| original-sent | [Comparison](original-sent.png) | No separate design |
 | partial-intake | [Comparison](partial-intake.png) | `design/figma-2026-11-12/Document-Forensic-Client-Side/Html → Body (1).png` |
 | payment-cancellation | [Comparison](payment-cancellation.png) | `design/figma-2026-11-12/Document-Forensic-Client-Side/Documents Forensic 04.png` |
 | payment-ordinary | [Comparison](payment-ordinary.png) | `design/figma-2026-11-12/Document-Forensic-Client-Side/Documents Forensic 04.png` |

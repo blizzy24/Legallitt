@@ -1,0 +1,71 @@
+STAGE states
+SHOT state-client-step1-loading.png
+NETWORK client GET /api/v1/cases/125fce5e-1e18-4d3d-a373-b35268b0c970 net::ERR_FAILED
+SHOT state-client-step1-error.png
+SHOT state-client-step2-loading.png
+HTTP client 503 OPTIONS /api/v1/cases/125fce5e-1e18-4d3d-a373-b35268b0c970
+SHOT state-client-step2-error.png
+SHOT state-client-step3-loading.png
+NETWORK client GET /api/v1/cases/125fce5e-1e18-4d3d-a373-b35268b0c970 net::ERR_FAILED
+SHOT state-client-step3-error.png
+SHOT state-client-step4-loading.png
+NETWORK client GET /api/v1/cases/125fce5e-1e18-4d3d-a373-b35268b0c970 net::ERR_FAILED
+SHOT state-client-step4-error.png
+SHOT state-client-step4-review-loading.png
+NETWORK client GET /api/v1/cases/125fce5e-1e18-4d3d-a373-b35268b0c970 net::ERR_FAILED
+SHOT state-client-step4-review-error.png
+SHOT state-client-step5-loading.png
+NETWORK client GET /api/v1/cases/125fce5e-1e18-4d3d-a373-b35268b0c970 net::ERR_FAILED
+SHOT state-client-step5-error.png
+SHOT state-client-step6-loading.png
+NETWORK client GET /api/v1/cases/125fce5e-1e18-4d3d-a373-b35268b0c970 net::ERR_FAILED
+SHOT state-client-step6-error.png
+SHOT state-client-tracking-loading.png
+NETWORK client GET /api/v1/cases/125fce5e-1e18-4d3d-a373-b35268b0c970 net::ERR_FAILED
+NETWORK client GET /api/v1/notices/125fce5e-1e18-4d3d-a373-b35268b0c970/flow net::ERR_FAILED
+SHOT state-client-tracking-error.png
+SHOT state-client-delivery-loading.png
+NETWORK client GET /api/v1/cases/125fce5e-1e18-4d3d-a373-b35268b0c970 net::ERR_FAILED
+NETWORK client GET /api/v1/notices/125fce5e-1e18-4d3d-a373-b35268b0c970/flow net::ERR_FAILED
+SHOT state-client-delivery-error.png
+SHOT state-client-success-loading.png
+NETWORK client GET /api/v1/cases/125fce5e-1e18-4d3d-a373-b35268b0c970 net::ERR_FAILED
+SHOT state-client-success-error.png
+SHOT state-document-viewer-loading.png
+NETWORK client GET /api/v1/documents/772af813-f524-48e4-864e-f38dce84390d/view net::ERR_FAILED
+SHOT state-document-viewer-error.png
+SHOT state-advocate-fee-loading.png
+NETWORK advocate-2 GET /api/v1/cases/125fce5e-1e18-4d3d-a373-b35268b0c970 net::ERR_FAILED
+NETWORK advocate-2 GET /api/v1/notices/125fce5e-1e18-4d3d-a373-b35268b0c970/flow net::ERR_FAILED
+SHOT state-advocate-fee-error.png
+SHOT state-advocate-documents-loading.png
+HTTP advocate-2 503 OPTIONS /api/v1/notices/125fce5e-1e18-4d3d-a373-b35268b0c970/flow
+NETWORK advocate-2 GET /api/v1/cases/125fce5e-1e18-4d3d-a373-b35268b0c970 net::ERR_FAILED
+SHOT state-advocate-documents-error.png
+SHOT state-advocate-drafting-loading.png
+HTTP advocate-2 503 OPTIONS /api/v1/cases/125fce5e-1e18-4d3d-a373-b35268b0c970
+NETWORK advocate-2 GET /api/v1/notices/125fce5e-1e18-4d3d-a373-b35268b0c970/flow net::ERR_FAILED
+SHOT state-advocate-drafting-error.png
+SHOT state-advocate-draft-loading.png
+NETWORK advocate-2 GET /api/v1/cases/125fce5e-1e18-4d3d-a373-b35268b0c970 net::ERR_FAILED
+NETWORK advocate-2 GET /api/v1/notices/125fce5e-1e18-4d3d-a373-b35268b0c970/flow net::ERR_FAILED
+SHOT state-advocate-draft-error.png
+SHOT state-advocate-review-loading.png
+NETWORK advocate-2 GET /api/v1/cases/125fce5e-1e18-4d3d-a373-b35268b0c970 net::ERR_FAILED
+NETWORK advocate-2 GET /api/v1/notices/125fce5e-1e18-4d3d-a373-b35268b0c970/flow net::ERR_FAILED
+SHOT state-advocate-review-error.png
+SHOT state-advocate-tracking-loading.png
+NETWORK advocate-2 GET /api/v1/cases/125fce5e-1e18-4d3d-a373-b35268b0c970 net::ERR_FAILED
+NETWORK advocate-2 GET /api/v1/notices/125fce5e-1e18-4d3d-a373-b35268b0c970/flow net::ERR_FAILED
+SHOT state-advocate-tracking-error.png
+SHOT state-admin-workflow-loading.png
+NETWORK admin GET /api/v1/admin/cases/125fce5e-1e18-4d3d-a373-b35268b0c970 net::ERR_FAILED
+SHOT state-admin-workflow-error.png
+SHOT state-intake-empty.png
+SHOT state-viewer-empty.png
+SHOT state-tracking-empty.png
+SHOT state-intake-partial.png
+SHOT state-intake-validation.png
+SHOT advocate-documents-final.png
+SHOT client-document-viewer-final.png
+PASS Loading/error/empty/partial screen states and final viewer
