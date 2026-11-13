@@ -56,8 +56,16 @@ script changed; the final complete run exited 0 with no unhandled browser errors
 - [Legal Notice comparisons](../../docs/flows/ln-screens/README.md): 168 entries.
 - [Property Search comparisons](../../docs/flows/ps-screens/README.md): 68 entries.
 - [Document Forensic comparisons](../../docs/flows/df-screens/README.md): 88 entries.
-- Live captures: [LN](notice/live/screens), [PS](reports/live/property_search),
-  [DF](reports/live/document_forensic).
+- Supplemental live captures are retained locally under `notice/live/screens`,
+  `reports/live/property_search` and `reports/live/document_forensic`.
+
+All requested side-by-side comparisons, application code, test logs and live
+result records are pushed to main. Uploads of the supplemental live PNGs repeatedly
+failed with connection resets, including smaller Git packs and individual GitHub
+blob requests. These optional additional images remain on disk and are preserved
+in local backup commit `0d244c3` (`round2-evidence-backup-0d244c3`); their upload is
+the only outstanding evidence-transfer item. They are not required to view the
+already-pushed side-by-side comparison indexes above.
 
 Comparison indexes include unchanged captures for context and label screens with
 no separate drawing. New admin screens and substitutions are recorded in architecture §9.2.
