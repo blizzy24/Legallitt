@@ -1,0 +1,15 @@
+import {useCallback,useState} from 'react';
+import {Image,Text} from 'react-native';
+import {useFocusEffect} from 'expo-router';
+import * as DocumentPicker from 'expo-document-picker';
+import {backend} from '../../lib/auth';
+import {noticeDate} from '@legalitt/shared';
+import {NoticeCard,NoticeAction,s} from './NoticeTracking';
+export type SavedSignature={id:string;url:string;created_at:string};
+export function SignatureSettings({onSignature}:{onSignature?:(v:SavedSignature|null)=>void}){
+ const [saved,setSaved]=useState<SavedSignature|null>(null),[loading,setLoading]=useState(true),[busy,setBusy]=useState(false),[error,setError]=useState('');
+ const load=useCallback(async()=>{setLoading(true);setError('');try{const v=await backend.request<{signature:SavedSignature|null}>('/account/signature');setSaved(v.signature);onSignature?.(v.signature);}catch(e){setError(e instanceof Error?e.message:'Your saved signature could not be loaded. Retry.');}finally{setLoading(false);}},[onSignature]);
+ useFocusEffect(useCallback(()=>{void load();},[load]));
+ const upload=async()=>{setBusy(true);setError('');try{const chosen=await DocumentPicker.getDocumentAsync({type:['image/png','image/jpeg'],copyToCacheDirectory:true});if(chosen.canceled)return;const file=chosen.assets[0];if((file.size??0)>2_000_000)throw Error('Use a PNG or JPEG image up to 2 MB.');const ticket=await backend.request<{document:{id:string;filename:string;mime_type:string};upload:{url:string;fields:Record<string,string>}}>('/account/signature/upload',{mime:file.mimeType});const form=new FormData();for(const [key,value]of Object.entries(ticket.upload.fields))form.append(key,value);form.append('file',file.file??{uri:file.uri,name:ticket.document.filename,type:file.mimeType} as unknown as Blob);const response=await fetch(ticket.upload.url,{method:'POST',body:form});if(!response.ok)throw Error('Signature upload failed. Retry.');await backend.request('/account/signature/complete',{document_id:ticket.document.id,base_signature_id:saved?.id??null});await load();}catch(e){setError(e instanceof Error?e.message:'Signature could not be saved. Retry.');}finally{setBusy(false);}};
+ return <NoticeCard title="My signature"><Text style={s.body}>Upload your signature for Legal Notices. It is placed after the closing lines and cannot be moved. This is an uploaded image, not a digital certificate.</Text>{loading?<Text style={s.muted}>Loading saved signature…</Text>:saved?<><Image accessibilityLabel="Your saved signature" source={{uri:saved.url}} style={{width:240,height:90,resizeMode:'contain'}}/><Text style={s.muted}>Saved {noticeDate(saved.created_at)}</Text></>:error?null:<Text style={s.muted}>No signature saved. Upload an image or use the clearly labelled test e-sign step on a notice.</Text>}{error&&<><Text accessibilityRole="alert" style={s.error}>{error}</Text><NoticeAction label="Retry loading signature" onPress={()=>void load()}/></>}<NoticeAction label={busy?'Saving signature…':saved?'Replace signature image':'Upload signature image'} disabled={loading||busy} onPress={()=>void upload()}/></NoticeCard>;
+}

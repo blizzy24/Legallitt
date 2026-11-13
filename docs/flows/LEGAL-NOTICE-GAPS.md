@@ -1,5 +1,11 @@
 # Legal Notice flow rebuild — gap analysis
 
+## Round 2 — 14 November 2026
+
+The 13 November answers supersede conflicting earlier conclusions below. Separate optional family names, no displayed/validated age, company designation, cheque requirements; exact approved-version advocate signing then explicit admin submission; internal return/re-sign; reminders and overdue remedies; both reply uploaders, courier/electronic retries and cancellation. Passed synthetic journeys are retained; final evidence and release checks are tracked separately.
+
+[Requirement audit](../../reports/round2-20261113/AUDIT.md) · [Round 2 record](ROUND2-BUILT-SERVICES.md). Deployment status is recorded there; earlier deployment sections refer to the previous release.
+
 Compared on 2026-11-12 against local main `6911cfc`. Implementation branch:
 `legal-notice-flow-20261112`. Local verification only; deployment is not authorised
 for this chunk. Existing unrelated changes and verification artifacts are preserved.

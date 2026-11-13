@@ -1,5 +1,11 @@
 # Property Search — flow comparison and acceptance
 
+## Round 2 — 14 November 2026
+
+The 13 November answers supersede conflicting earlier conclusions below. Confirmed versioned ₹499/₹999 bases and 4–6/2–3 working-day windows; permanent phone privacy; exact-version admin approve/return and Quality Review; office-note-only records-unavailable outcome with chat/notification and no refund. Browser journeys passed for editor return/resubmit, uploaded PDF, office note, downloads, wallet and cancellation.
+
+[Requirement audit](../../reports/round2-20261113/AUDIT.md) · [Round 2 record](ROUND2-BUILT-SERVICES.md). Deployment status is recorded there; earlier deployment sections refer to the previous release.
+
 ## Visual polish — 13 November 2026
 
 Baseline: `f7f090a` (API `1bff6f2`). Presentation-only changes, apart from

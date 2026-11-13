@@ -28,10 +28,10 @@ export function reportState(record: CaseRow, events: EventRow[],
   const changes = events.filter(e => e.type === 'service_report_changes_requested').at(-1);
   const released = events.filter(e => e.type === 'service_report_released').at(-1);
   const sub = submitted?.payload as {draft_id: string; version: number; document_ids: string[]} | undefined;
-  const stage: ReportState['stage'] = released ? 'released'
+  const stage: ReportState['stage'] = actor.role==='client'&&released ? 'released'
     : record.sub_status === REPORT_AWAITING_APPROVAL ? 'awaiting_admin_approval'
     : record.sub_status === REPORT_CHANGES_REQUESTED ? 'changes_requested'
-    : latest ? 'preparing' : 'not_started';
+    : released&&record.status==='completed' ? 'released' : latest ? 'preparing' : 'not_started';
   const rel = released?.payload as {document_ids: string[]; note?: string} | undefined;
   const approved=own.find(d=>d.id===(released?.payload as {draft_id?:string}|undefined)?.draft_id)?.content as ReportDraftContent|undefined;
   // A client never sees work in progress, change requests or unreleased versions.
@@ -44,7 +44,7 @@ export function reportState(record: CaseRow, events: EventRow[],
     submission: !client && sub && submitted ? {...sub, submitted_at: submitted.created_at.toISOString()} : null,
     changes: !client && changes && record.sub_status === REPORT_CHANGES_REQUESTED
       ? {items: (changes.payload as {items: ChangeItem[]}).items, requested_at: changes.created_at.toISOString()} : null,
-    released: rel && released ? {document_ids: rel.document_ids, note: rel.note ?? '', released_at: released.created_at.toISOString()} : null,
+    released: rel && released ? {document_ids: rel.document_ids, note: rel.note ?? '', released_at: released.created_at.toISOString(),...(approved&&approved.production!=='forensic'?{outcome:approved.outcome}:{})} : null,
     summary:released&&approved?.production==='forensic'?{overall_status:approved.report.overall_status,risk_level:approved.report.risk_level,authenticity:approved.report.authenticity,reviewed_at:released.created_at.toISOString()}:null,
   };
 }
@@ -52,7 +52,7 @@ export function reportState(record: CaseRow, events: EventRow[],
 /** Case-read filter: a client sees their own uploads and released files only. */
 export function visibleReportDocuments<T extends {id: string; owner_id: string}>(record: CaseRow, documents: T[], events: EventRow[], actor: CaseActor) {
   if (actor.role !== 'client') return documents;
-  const released = new Set(record.status === 'completed' ? releasedDocumentIds(events) : []);
+  const released = new Set(releasedDocumentIds(events));
   return documents.filter(d => d.owner_id === record.client_id || released.has(d.id));
 }
 
@@ -70,7 +70,7 @@ export function reportCaseView<C extends CaseRow & {details: unknown}, D extends
   const client = actor.role === 'client';
   return {
     ...input.caseRecord,
-    ...(actor.role==='advocate'&&record.status==='assigned'&&(record.details as {contact?:object}).contact?{details:{...(record.details as object),contact:{...(record.details as {contact:object}).contact,mobile:undefined,email:undefined}}}:{}),
+    ...(actor.role==='advocate'&&(record.details as {contact?:object}).contact?{details:{...(record.details as object),contact:{...(record.details as {contact:object}).contact,mobile:undefined,...record.status==='assigned'?{email:undefined}:{}}}}:{}),
     parties: input.parties, pricing: actor.role==='advocate'?null:input.pricing, advocate: input.advocate,
     // Clients follow the timeline through lifecycle moves and the release only.
     events: client ? events.filter(e => e.from_status !== e.to_status || ['service_report_released','report_document_uploaded'].includes(e.type)).map(e=>e.type==='service_report_released'?e:{...e,payload:{}}) : events,
@@ -80,7 +80,7 @@ export function reportCaseView<C extends CaseRow & {details: unknown}, D extends
     // Membership was checked by CaseRepository. Contact is deliberately absent
     // until this assigned advocate accepts, just like the intake contact fields.
     client_contact: actor.role==='advocate'&&['property_search','document_forensic'].includes(record.service_code)&&['advocate_accepted','in_progress','completed'].includes(record.status)
-      ? {phone:input.client?.phone??null,email:input.client?.email??null}:null,
+      ? {phone:null,email:input.client?.email??null}:null,
     report: reportState(record, events, input.drafts, actor),
     client_fees: actor.role!=='advocate'&&breakdown ? {service_fee_paise:breakdown.service_fee_paise,platform_fee_paise:breakdown.platform_fee_paise,delivery_fee_paise:breakdown.delivery_fee_paise,gst_paise:breakdown.gst_paise,page_overage_paise:breakdown.page_overage_paise,total_paise:breakdown.total_paise,breakdown_complete: true, simulated: input.payment!.simulated} : null,
     advocate_payout: !client && breakdown?.advocate_entitlement_paise ? {net_paise: breakdown.advocate_entitlement_paise} : null,
@@ -91,7 +91,7 @@ export function reportCaseView<C extends CaseRow & {details: unknown}, D extends
 export async function assertReportDocumentReadable(tx: Prisma.TransactionClient, actor: CaseActor, record: CaseRow, doc: {id: string; owner_id: string}) {
   if (!isReportService(record.service_code) || actor.role !== 'client' || doc.owner_id === record.client_id) return;
   const events = await tx.caseEvent.findMany({where: {case_id: record.id, type: 'service_report_released'}, orderBy:{id:'asc'}, select: {type: true, created_at: true, payload: true}});
-  if (record.status !== 'completed' || !releasedDocumentIds(events).includes(doc.id)) throw new NotFoundException('Document not found');
+  if (!releasedDocumentIds(events).includes(doc.id)) throw new NotFoundException('Document not found');
 }
 
 /** Presign guard: who may add which kind of file at which stage. */
@@ -115,7 +115,8 @@ export async function assertReportUploadAllowed(tx:Prisma.TransactionClient,acto
       throw new ConflictException('This document type is not used by this service.');
     return;
   }
-  // Admin uploads are not part of these services' drawn flows.
+  if(actor.role==='admin'&&code==='property_search'&&kind==='office_note'&&['paid','assigning','assigned','advocate_accepted','in_progress'].includes(record.status))return;
+  // Other admin uploads are not part of these services' flows.
   throw new ConflictException('Admin uploads are not part of this service.');
 }
 

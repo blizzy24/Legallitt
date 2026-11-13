@@ -9,7 +9,7 @@ const content = {sender: 'Editor sender must not replace intake', recipient: 'Ed
 
 function harness() {
   const record = {id: 'case-id', reference: 'LN-2026-0046', status: 'in_progress', advocate_id: actor.id,
-    pricing_id: 'historic-price', pricing_id_relation: {base_amount_paise: 137700n},
+    client_id_relation:{phone:null},pricing_id: 'historic-price', pricing_id_relation: {base_amount_paise: 137700n},
     details: {client: {fullName: 'Client name', address: 'Client address'}, noticee: {fullName: 'Noticee name', address: 'Noticee address'}},
     subject_line: 'Persisted AI subject', legal_demand: {selected: ['First client demand', 'Second client demand'], custom: 'Custom client demand'},
     case_parties_case_id_relations: [{kind: 'sender', age: 41, salutation: 'Mrs.', relation: 'W/o', relative_name: 'Client husband'}],
@@ -41,7 +41,7 @@ test('letterhead preview binds the assigned profile and historical fee, while pr
     assert.equal(supplied.reference, h.record.reference);
     assert.equal(supplied.date, h.draft.created_at);
     assert.equal(supplied.subject, 'Persisted AI subject');
-    assert.deepEqual(supplied.sender, {name: 'Client name', salutation: 'Mrs.', relation: 'W/o', relative: 'Client husband', age: 41, address: 'Client address'});
+    assert.deepEqual(supplied.sender, {name: 'Client name', salutation: 'Mrs.', relation: 'W/o', relative: 'Client husband', fatherName:undefined,motherName:undefined,husbandName:undefined,address: 'Client address'});
     assert.deepEqual(supplied.recipient, {name: 'Noticee name', address: 'Noticee address'});
     assert.deepEqual(supplied.demands, ['First client demand', 'Second client demand', 'Custom client demand']);
     assert.equal(supplied.serviceFeePaise, 137700n);

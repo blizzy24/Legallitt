@@ -6,6 +6,7 @@ type WorkflowCase={id:string;service_code:string;status:string;sub_status:string
 export function reportDeadline(start:Date,policy:ReportWorkflowPolicy,tier:string|null):Date {
   const window=policy.turnaround[tier==='urgent'?'urgent':'ordinary'];
   if(window.unit==='hours')return new Date(start.getTime()+window.max*3600000);
+  if(window.unit==='calendar_days')return new Date(start.getTime()+window.max*86400000);
   const deadline=new Date(start);let remaining=window.max;
   while(remaining){deadline.setUTCDate(deadline.getUTCDate()+1);const istDay=new Date(deadline.getTime()+330*60000).getUTCDay();if(policy.working_weekdays.includes(istDay))remaining--;}
   return deadline;

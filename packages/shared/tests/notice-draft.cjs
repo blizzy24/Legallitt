@@ -17,7 +17,7 @@ const intake = {
 test('a new editor uses its case intake and the approved default closing, without saving a version', () => {
   const content = noticeDraftOnOpen(intake);
   assert.deepEqual(content, {
-    sender: 'Ms. Test Sender D/o Shri Test Father\nAge 41\nTest sender address\n2025550101\nsender@example.invalid',
+    sender: 'Ms. Test Sender D/o Shri Test Father\nTest sender address\nsender@example.invalid',
     recipient: 'Test Recipient\nTest recipient address\nrecipient@example.invalid',
     subject: intake.subject_line,
     facts: intake.subject_matter,

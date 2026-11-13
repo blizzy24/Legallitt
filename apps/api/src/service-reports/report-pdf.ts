@@ -1,5 +1,5 @@
 import {PDFDocument, rgb, type PDFPage} from 'pdf-lib';
-import {FORENSIC_SECTIONS, forensicProblems, propertyReportProblems, PropertySearchIntakeSchema, PROPERTY_TYPES, SEARCH_DURATIONS, labelOf, type PropertyReport,type ReportSignature,type Affidavit, type ForensicReport} from '@legalitt/shared';
+import {redactPrivatePhones,FORENSIC_SECTIONS, forensicProblems, propertyReportProblems, PropertySearchIntakeSchema, PROPERTY_TYPES, SEARCH_DURATIONS, labelOf, type PropertyReport,type ReportSignature,type Affidavit, type ForensicReport} from '@legalitt/shared';
 import {PdfText, embedTextFonts, needsPage, unsupportedCharacters} from '../documents/pdf-text';
 
 // Designs 226 ("Preliminary Forensic Examination Report", created by Legalitt)
@@ -8,6 +8,7 @@ import {PdfText, embedTextFonts, needsPage, unsupportedCharacters} from '../docu
 // case holds are printed; nothing is left blank for handwriting.
 
 export type ForensicPdfInput = {
+  privatePhones?:unknown[];
   reference: string; client: string; documentName: string; documentType: string | null;
   report: ForensicReport; affidavit: Affidavit; signature?:ReportSignature; typedSignature?:string; signedAt: string | null; generatedAt: Date;
 };
@@ -50,6 +51,7 @@ async function layout(title: string, subtitle: string, reference: string, at: Da
 }
 
 export async function renderForensicPdfs(input: ForensicPdfInput, reportOnly=false) {
+  input=redactPrivatePhones(input,input.privatePhones??[]);
   const problems = forensicProblems({report: input.report, affidavit: input.affidavit, signature:input.signature,typed_signature:input.typedSignature,signed_at: input.signedAt}).filter(p=>!reportOnly||p.field.startsWith('report.'));
   if (problems.length) throw new Error(problems.map(p => p.message).join('\n'));
   for (const s of FORENSIC_SECTIONS) check(s.title, input.report[s.key]);
@@ -65,6 +67,7 @@ export async function renderForensicPdfs(input: ForensicPdfInput, reportOnly=fal
     if(input.report.overall_status){h.heading('Examination Summary');h.para(({likely_genuine:'Likely genuine',likely_not_genuine:'Likely not genuine',inconclusive:'Inconclusive'} as Record<string,string>)[input.report.overall_status]??'Inconclusive');}
     if(input.report.risk_level)h.para(`Risk level: ${input.report.risk_level[0].toUpperCase()}${input.report.risk_level.slice(1)}`);
     if(input.report.authenticity)h.para(input.report.authenticity);
+    if(input.report.external_specialist){h.heading('External specialist examination');h.para('The assigned advocate reviewed the specialist’s findings and remains responsible for this report and affidavit.');if(input.report.specialist_name)h.para(`Examined by: ${input.report.specialist_name}`);if(input.report.specialist_organisation)h.para(`Organisation: ${input.report.specialist_organisation}`);}
     for (const s of FORENSIC_SECTIONS) { h.heading(`${s.title} (${s.tag})`); h.para(input.report[s.key]); }
     h.gap();
     h.heading('Advocate Examination Notice');
@@ -90,13 +93,13 @@ export async function renderForensicPdfs(input: ForensicPdfInput, reportOnly=fal
   ];
 }
 
-export async function renderPropertyPdf(input:{reference:string;intake:unknown;report:PropertyReport;generatedAt:Date}){
+export async function renderPropertyPdf(input:{reference:string;intake:unknown;report:PropertyReport;generatedAt:Date;privatePhones?:unknown[]}){
  const issues=propertyReportProblems(input.report);if(issues.length)throw new Error(issues.map(i=>i.message).join('\n'));
- const f=PropertySearchIntakeSchema.parse(input.intake),r=input.report;
+ const raw=PropertySearchIntakeSchema.parse(input.intake),phones=[raw.contact.mobile,...input.privatePhones??[]],f=redactPrivatePhones(raw,phones),r=redactPrivatePhones(input.report,phones);
  for(const value of [JSON.stringify(f),JSON.stringify(r)])check('Property report',value);
  return layout('Property Search Report','Advocate research · client filing identified below',input.reference,input.generatedAt,h=>{
    const value=(label:string,v:string|null|undefined)=>{if(v?.trim())h.para(`${label}: ${v}`);};
-   h.heading('1. Client Details');if(r.client_details?.trim())h.para(r.client_details);else{value('Name',f.contact.fullName);value('Mobile',f.contact.mobile);value('Email',f.contact.email);}
+   h.heading('1. Client Details');if(r.client_details?.trim())h.para(r.client_details);else{value('Name',f.contact.fullName);value('Email',f.contact.email);}
    h.heading('2. Property Details');if(r.property_details?.trim())h.para(r.property_details);else{value('Type',labelOf(PROPERTY_TYPES,f.property_type));value('Address',f.property_address);value('State',f.jurisdiction.state);value('District',f.jurisdiction.district);value('Ward',f.jurisdiction.ward);value('Tehsil / village',f.jurisdiction.tehsil);value('Colony',f.jurisdiction.colony);value('Survey / plot / khata number',f.survey_number);value('Requested search duration',labelOf(SEARCH_DURATIONS,f.search_duration));value('Purpose / requirement',f.requirement);}value('Total area',r.total_area);
    h.heading('3. Owner Details');h.para(r.owner_details);
    h.heading('4. Documents Checked');for(const [i,d]of r.documents_checked.entries())h.para(`${i+1}. ${d.description}${d.reference?` — ${d.reference}`:''}${d.office?` · ${d.office}`:''}${d.checked===undefined?'':d.checked?' · Checked':' · Not checked'}`);

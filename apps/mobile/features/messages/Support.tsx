@@ -7,7 +7,7 @@ import {MESSAGES_PRIVACY_LINE, SERVICE_NAMES, SUPPORT_CONTACT_METHODS, SUPPORT_R
 import {backend} from '../../lib/auth';
 import {useSession} from '../../context/session';
 import {supportContactCopy as copy} from '../../copy/supportContact';
-import {supportHours} from '../../copy/support';
+import {SupportHoursNotice} from './SupportHours';
 import {speechRecognition} from '../fir/flow';
 import {Header, Loading, Notice, PrimaryButton, SecondaryButton, dayLabel, errorText, s, time, tone} from './ui';
 import {buttonShadow, callback as k, colors, font, ink, supportChat as c} from '../../constants/theme';
@@ -112,7 +112,7 @@ export function ContactSupport() {
   return <View style={s.screen}><Header title="Contact Support"/>
     <ScrollView contentContainerStyle={[s.content, {paddingBottom: insets.bottom + 40}]} keyboardShouldPersistTaps="handled">
       <Text style={[s.h1, {fontSize: 26}]}>Tell us how we can help.</Text>
-      <Text style={s.body}>{copy.ticketResponse}</Text>
+      <Text style={s.body}>Submit your request below. Legalitt Support will reply here.</Text><SupportHoursNotice/>
       {!!caseId && (about ? <View style={s.input}><Text style={s.muted}>About your request</Text><Text style={{fontFamily: font.appSemi, fontSize: 16, color: tone.ink}}>{about.reference}</Text></View>
         : aboutError ? <Notice>We couldn’t load that request, so this message won’t be linked to it. Mention the request ID in your description.</Notice>
         : <Text role="status" style={s.muted}>Loading your request…</Text>)}
@@ -225,7 +225,7 @@ export function SupportChat({service}: {service?: ServiceCode} = {}) {
         <Info size={c.infoIcon} color={colors.textPrimary}/>
       </Pressable>
     </View>
-    {info && <View style={chat.info}><Text style={chat.infoText}>Legalitt Support replies here during support hours ({supportHours.hours}). {MESSAGES_PRIVACY_LINE} This is not a chat with an advocate.</Text></View>}
+    {info && <View style={chat.info}><SupportHoursNotice/><Text style={chat.infoText}>{MESSAGES_PRIVACY_LINE} This is not a chat with an advocate.</Text></View>}
     {regarding && <View style={chat.bar}>
       <Clock size={c.barIcon} color={ink.accent}/>
       <Text style={chat.barText} numberOfLines={1}>Regarding: <Text style={chat.barStrong}>{regarding}</Text></Text>
@@ -344,8 +344,7 @@ const chat = StyleSheet.create({
 });
 
 // F1's note takes its hours from the support-hours constant (flow C1a [DECIDE]).
-const CALLBACK_HOURS = /(\d+)\s*hours?/i.exec(supportHours.callbackResponse)?.[1];
-const CALLBACK_NOTE = CALLBACK_HOURS ? `Our team will review your request and contact you in ${CALLBACK_HOURS} hours` : supportHours.callbackResponse;
+
 
 /**
  * D-26 Request a Callback (F1, Figma 162; flow C1a), prefilled from the profile.
@@ -366,7 +365,7 @@ export function RequestCallback({service}: {service?: ServiceCode} = {}) {
   };
   if (done) return <View style={s.screen}><Header title="Request a Callback" onBack={leave}/><ScrollView contentContainerStyle={s.content}>
     <View style={[s.card, {alignItems: 'center', paddingVertical: 28}]}><CheckCircle2 size={48} color={tone.ok}/><Text style={s.h2}>Callback requested</Text>
-      <Text style={[s.body, {textAlign: 'center'}]}>We’ll call {done.contact_name} on {done.contact_phone}. {CALLBACK_NOTE}.</Text></View>
+      <Text style={[s.body, {textAlign: 'center'}]}>We’ll call {done.contact_name} on {done.contact_phone}.</Text><SupportHoursNotice/></View>
     <PrimaryButton title="View in Messages" onPress={() => router.replace(`/messages/support?ticketId=${done.id}` as Href)}/>
     <SecondaryButton title="Done" onPress={leave}/>
   </ScrollView></View>;
@@ -397,7 +396,7 @@ export function RequestCallback({service}: {service?: ServiceCode} = {}) {
         <TextInput accessibilityLabel="Mobile Number" placeholder="Enter your mobile number" placeholderTextColor={ink.hint} value={mobile} onChangeText={setMobile} keyboardType="phone-pad" autoComplete="tel" style={[cb.field, cb.mobileField, touched && !mobileOk && cb.invalid]}/>
       </View>
       {touched && !mobileOk && <Text accessibilityRole="alert" style={cb.error}>Enter a 10-digit mobile number.</Text>}
-      <View style={cb.info}><Headset size={k.infoIcon} color={ink.accent}/><Text style={cb.infoText}>{CALLBACK_NOTE}</Text></View>
+      <View style={cb.info}><Headset size={k.infoIcon} color={ink.accent}/><View style={{flex:1}}><SupportHoursNotice/></View></View>
       {!!error && <View style={{marginTop: 14}}><Notice tone="error" action={{label: 'Try again', onPress: () => void submit()}}>Your callback request wasn’t sent. {error}</Notice></View>}
       <Pressable accessibilityRole="button" accessibilityState={{disabled: busy, busy}} disabled={busy} onPress={() => void submit()} style={({pressed}) => [cb.button, (pressed || busy) && {opacity: 0.8}]}>
         <Text style={cb.buttonText}>{busy ? 'Sending request…' : 'Request Callback'}</Text>

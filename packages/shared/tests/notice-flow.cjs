@@ -1,6 +1,6 @@
 const test=require('node:test'),assert=require('node:assert/strict');
 const {NoticeFilingSchema,NoticeFilingSubmissionSchema,noticeStage,noticeChatWritable}=require('../dist');
-const filing={intake_version:2,identity_kind:'pan',client:{fullName:'Test client',relativeName:'Test relative',age:32,address:'Test client address'},
+const filing={intake_version:2,identity_kind:'pan',client:{fullName:'Test client',fatherName:'Test father',motherName:'Test mother',husbandName:'Test spouse',address:'Test client address'},
  noticee:{fullName:'Test recipient',methods:['email'],email:'recipient@example.invalid'},issueType:'money-recovery',narrative:'Test facts'};
 test('email-only intake needs no invented postal address or WhatsApp; selected courier and WhatsApp validate their own fields',()=>{
  assert.equal(NoticeFilingSubmissionSchema.safeParse(filing).success,true);
@@ -24,7 +24,7 @@ test('client sees finalisation through an internal return; all roles derive thei
  assert.equal(noticeStage({status:'dispatched',sub_status:'notice_delivery_failed'}).admin,'Failed delivery · action required');
 });
 test('chat cannot reopen during admin correction or after completion; no elapsed-time session limit',()=>{
- for(const status of ['advocate_accepted','in_progress','changes_requested','client_review'])assert.equal(noticeChatWritable({status},false),true);
- for(const status of ['assigned','approved','dispatched','completed','cancelled','refunded'])assert.equal(noticeChatWritable({status},false),false);
- for(const status of ['in_progress','changes_requested','client_review'])assert.equal(noticeChatWritable({status},true),false);
+ for(const status of ['advocate_accepted','in_progress','changes_requested','client_review','approved'])assert.equal(noticeChatWritable({status},false),true);
+ for(const status of ['assigned','dispatched','completed','cancelled','refunded'])assert.equal(noticeChatWritable({status},false),false);
+ for(const status of ['in_progress','changes_requested','client_review','approved'])assert.equal(noticeChatWritable({status},true),false);
 });

@@ -123,6 +123,7 @@ export type CaseClientFees = {
   breakdown_complete: boolean; simulated: boolean;
 };
 export type ApiCase = {
+  notice_card?:{deadline_at:string|null;submitted_at:string|null};
   report_card?:{stage:import('./report-workflow').ReportStage;deadline_at:string|null;client_name:string|null};
   fir_card?: FirListCard;
   advocate_payout?: {service_share_paise: string; delivery_reimbursement_paise: string; net_paise: string} | null;

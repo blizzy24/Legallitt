@@ -29,7 +29,7 @@ export const SEED_NOTICES: SeedNotice[] = [
         selected: ["Pay the outstanding maintenance of ₹1,80,000 within 15 days of this notice.", "Resume the agreed monthly maintenance of ₹20,000 from the next month."],
         custom: "",
       },
-      sender: { age: 41, salutation: "Mrs.", relation: "W/o", relative_name: "Rajeev Mehra" },
+      sender: { salutation: "Mrs.", relation: "W/o", relative_name: "Rajeev Mehra" },
     },
   },
   {
@@ -48,7 +48,7 @@ export const SEED_NOTICES: SeedNotice[] = [
         selected: ["Pay the arrears of rent of ₹1,12,000 within 15 days of this notice.", "Vacate the flat and hand over vacant possession within 30 days."],
         custom: "",
       },
-      sender: { age: 58, salutation: "Mr.", relation: "S/o", relative_name: "Vasant Deshpande" },
+      sender: { salutation: "Mr.", relation: "S/o", relative_name: "Vasant Deshpande" },
     },
   },
   {
@@ -67,7 +67,7 @@ export const SEED_NOTICES: SeedNotice[] = [
         selected: ["Remove the compound wall built inside Plot No. 47 within 30 days of this notice."],
         custom: "Restore the boundary as marked in the taluka survey of 3 October 2026, at your own cost.",
       },
-      sender: { age: 36, salutation: "Ms.", relation: "D/o", relative_name: "Prakash Kulkarni" },
+      sender: { salutation: "Ms.", relation: "D/o", relative_name: "Prakash Kulkarni" },
     },
   },
   {
@@ -86,7 +86,7 @@ export const SEED_NOTICES: SeedNotice[] = [
         selected: ["Repay the loan of ₹3,50,000 within 15 days of this notice."],
         custom: "Pay interest at 9% a year from 30 June 2026 until repayment.",
       },
-      sender: { age: 33, salutation: "Mr.", relation: "S/o", relative_name: "Suresh Agarwal" },
+      sender: { salutation: "Mr.", relation: "S/o", relative_name: "Suresh Agarwal" },
     },
   },
   {
@@ -104,7 +104,7 @@ export const SEED_NOTICES: SeedNotice[] = [
         selected: ["Pay the cheque amount of ₹75,000 within 15 days of receiving this notice."],
         custom: "",
       },
-      sender: { age: 47, salutation: "Mr.", relation: "S/o", relative_name: "Gurcharan Singh Bedi" },
+      sender: { salutation: "Mr.", relation: "S/o", relative_name: "Gurcharan Singh Bedi" },
     },
   },
   {
@@ -122,7 +122,7 @@ export const SEED_NOTICES: SeedNotice[] = [
         selected: ["Replace the refrigerator with a new unit of the same model within 15 days."],
         custom: "Or refund the purchase price of ₹38,500.",
       },
-      sender: { age: 39, salutation: "Ms.", relation: "D/o", relative_name: "Venkatesh Iyer" },
+      sender: { salutation: "Ms.", relation: "D/o", relative_name: "Venkatesh Iyer" },
     },
   },
 ];

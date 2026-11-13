@@ -102,7 +102,7 @@ export function firFiledValues(intake:FirIntake):Record<FirDraftOverrideKey,stri
     complainant_name:(p?.name??'').trim(),father_name:answerText(pd?.father_name),
     age_gender:[age&&(pd?.age?.status==='provided'?`${age} Years`:age),gender].filter(Boolean).join(' / '),
     occupation:answerText(pd?.occupation),address:answerText(pd?.present_address),residence:(p?.residence??'').trim(),
-    phone_email:[p?.phone?.trim()||intake.contact.mobile.trim(),intake.contact.email.trim()].filter(Boolean).join(' | '),
+    phone_email:intake.contact.email.trim(),
     incident_date:isoDate(intake.incident.date),incident_time:time12(intake.incident.time),place:intake.incident.location.trim(),
   };
 }

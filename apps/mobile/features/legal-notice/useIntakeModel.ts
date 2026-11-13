@@ -47,7 +47,7 @@ export function useIntakeModel(stage: string) {
   }, [api]);
   const form: LegalNoticeForm = {
     client: {...EMPTY_FORM.client, ...c.details.client,
-      age: c.intakeFields.sender?.age == null ? '' : String(c.intakeFields.sender.age),
+      age: '',
       salutation: c.intakeFields.sender?.salutation ?? null, relation: c.intakeFields.sender?.relation ?? null,
       relativeName: c.intakeFields.sender?.relative_name ?? ''},
     noticee: {...EMPTY_FORM.noticee, ...c.details.noticee},
@@ -64,7 +64,7 @@ export function useIntakeModel(stage: string) {
     c.setIntakeFields(previous => ({...previous,
       ...(patch.subjectMatter !== undefined ? {subject_matter: patch.subjectMatter} : {}),
       ...(patch.legalDemand ? {legal_demand: patch.legalDemand} : {}),
-      ...(patch.client ? {sender: {age: patch.client.age.trim() ? Number(patch.client.age) : null,
+      ...(patch.client ? {sender: {
         salutation: patch.client.salutation, relation: patch.client.relation,
         relative_name: patch.client.relativeName || null}} : {}),
     }));

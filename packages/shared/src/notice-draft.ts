@@ -23,9 +23,8 @@ export function seedNoticeDraft(record: NoticeIntakeSource): NoticeDraftContent 
       // Same rule as the letterhead: a part prints only when it was supplied.
       sender?.fullName?.trim() ? noticeSenderDescription({name: sender.fullName, salutation: senderParty?.salutation,
         relation: senderParty?.relation, relative: senderParty?.relative_name}) : '',
-      senderParty?.age != null ? `Age ${senderParty.age}` : '',
-      filing.intake_version===2 && filing.client?.relativeName ? `Father’s/Husband’s name: ${filing.client.relativeName}` : '',
-      sender?.address, sender?.mobile, sender?.email,
+      ...(['fatherName','motherName','husbandName'] as const).map((key,i)=>filing.client?.[key]?`${['Father’s name','Mother’s name','Husband’s name'][i]}: ${filing.client[key]}`:''),
+      sender?.address, sender?.email,
     ]),
     recipient: filing.intake_version===2 ? lines([filing.noticee?.fullName,filing.noticee?.throughDesignation,
       ...(filing.noticee?.methods.includes('courier')?[filing.noticee.address,filing.noticee.pin]:[]),

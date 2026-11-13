@@ -3,6 +3,7 @@ import {Link, useNavigate, useParams, useSearchParams} from 'react-router';
 import {ApiError, adminCasePath, ServiceCodeSchema, SERVICE_NAMES, type ServiceCode, type SupportAdminTicket, type SupportInboxRow} from '@legalitt/shared';
 import {api, useSession} from './session';
 import {WaitingAge} from './fir-approval';
+import {SupportSettingsPanel} from './support-settings';
 
 const kinds: Record<SupportInboxRow['kind'], string> = {ticket: 'Contact form', callback: 'Callback', chat: 'Support chat'};
 const ist = (iso: string) => new Date(iso).toLocaleString('en-IN', {timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit'}) + ' IST';
@@ -26,7 +27,7 @@ export function SupportInbox() {
     return () => { alive = false; clearInterval(timer); };
   }, [status, reload]);
   return <main className="notices"><div className="page-title"><div><h1>Support inbox</h1><p>Contact requests, callbacks and support chats · unanswered first, oldest first</p></div></div>
-    <div className="counters" aria-label="Support status filters">{(['open', 'closed'] as const).map(s => <button key={s} className={'counter ' + (status === s ? 'selected' : '')} aria-pressed={status === s} onClick={() => setParams(s === 'open' ? {} : {status: s})}>
+    <SupportSettingsPanel/><div className="counters" aria-label="Support status filters">{(['open', 'closed'] as const).map(s => <button key={s} className={'counter ' + (status === s ? 'selected' : '')} aria-pressed={status === s} onClick={() => setParams(s === 'open' ? {} : {status: s})}>
       <span className={'counter-dot ' + (s === 'open' ? 'open' : 'completed')}/><span>{s === 'open' ? 'Open' : 'Closed'}</span><strong>{data?.counts[s] ?? '—'}</strong></button>)}</div>
     <section className="table-panel">
       {error && <div role="alert" className="error">{error} <button onClick={() => setReload(n => n + 1)}>Retry</button></div>}

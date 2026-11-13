@@ -26,19 +26,21 @@ export function noticeStage(input: {status: string; sub_status?: string | null})
   }
   if (['dispatching', 'dispatched'].includes(status) && !sub?.startsWith('notice_admin_')) {stage = 6; client = 'Delivery in progress'; advocate = 'Dispatch in progress'; admin = 'Update delivery';}
   if (sub === 'notice_delivery_failed') {stage = 6; client = 'Delivery needs attention'; advocate = 'Admin handling delivery'; admin = 'Failed delivery · action required';}
+  if(status==='approved'&&sub?.startsWith('notice_advocate_')){stage=4;client='Approved · advocate preparing submission';advocate=sub==='notice_advocate_ready_to_submit'?'Submit to Legalitt':'Sign approved notice';admin='Waiting for advocate submission';}
+  if(['dispatching','dispatched'].includes(status)||sub?.startsWith('notice_admin_')&&sub!=='notice_admin_advocate_correction')advocate='Submitted';
   if (status === 'completed') {stage = 7; client = advocate = admin = 'Delivered';}
   if (['cancelled', 'refunded'].includes(status)) {client = advocate = admin = status === 'refunded' ? 'Cancelled and refunded' : 'Cancelled';}
   return {stage, label: NOTICE_STAGES[stage], client, advocate, admin, complete: status === 'completed', cancelled: ['cancelled', 'refunded'].includes(status)};
 }
 
 export function noticeChatWritable(record: {status: string}, handedToAdmin: boolean) {
-  return !handedToAdmin && ['advocate_accepted', 'in_progress', 'changes_requested', 'client_review'].includes(record.status);
+  return !handedToAdmin && ['advocate_accepted', 'in_progress', 'changes_requested', 'client_review','approved'].includes(record.status);
 }
 const cleanText = z.string().trim().refine(v => !/(?:^|[^\d])\d{4}[ -]?\d{4}[ -]?\d{4}(?!\d)/.test(v), 'Do not include a full identity number');
 export const NoticeFilingSchema = z.strictObject({
   intake_version: z.literal(2),
   step: z.number().int().min(1).max(6).optional(),
-  client: z.strictObject({fullName: cleanText.max(300).optional(), relativeName: cleanText.max(300).optional(), age: z.number().int().min(1).max(120).optional(),
+  client: z.strictObject({fullName: cleanText.max(300).optional(), fatherName: cleanText.max(300).optional(), motherName: cleanText.max(300).optional(), husbandName: cleanText.max(300).optional(),
     address: cleanText.max(2000).optional(), mobile: z.string().trim().max(20).optional(), email: z.string().trim().max(320).optional()}).default({}),
   noticee: z.strictObject({fullName: cleanText.max(300).optional(), type: z.enum(['person', 'company']).optional(), throughDesignation: cleanText.max(300).optional(),
     methods: z.array(NoticeDeliveryMethodSchema).max(3).refine(v => new Set(v).size === v.length, 'Select each method once').default([]),
@@ -53,7 +55,7 @@ export const NoticeFilingSchema = z.strictObject({
 export type NoticeFiling = z.infer<typeof NoticeFilingSchema>;
 export const NoticeFilingSubmissionSchema = NoticeFilingSchema.superRefine((v, ctx) => {
   const need = (ok: unknown, path: (string | number)[], message: string) => {if (!ok) ctx.addIssue({code: 'custom', path, message});};
-  for (const field of ['fullName', 'relativeName', 'age', 'address'] as const) need(v.client[field], ['client', field], 'Complete this client detail');
+  for (const field of ['fullName', 'address'] as const) need(v.client[field], ['client', field], 'Complete this client detail');
   if(v.client.email)need(z.email().safeParse(v.client.email).success,['client','email'],'Enter a valid email address');
   if(v.key_date)need(z.iso.date().safeParse(v.key_date).success,['key_date'],'Use a valid date in YYYY-MM-DD format');
   need(v.noticee.fullName, ['noticee', 'fullName'], 'Enter the noticee’s name');
@@ -76,7 +78,7 @@ export const NoticeDeliveryResultSchema = NoticeRevisionSchema.extend({attempt_i
 
 export type NoticeFlowView={case_id:string;reference:string;status:string;sub_status:string|null;stage:ReturnType<typeof noticeStage>;revision:number;
   contacts:NoticeFiling['noticee'];handed_to_admin_at:string|null;chat:{writable:boolean;reason:string};document_id:string|null;draft_id:string|null;
-  deadline_at:string|null;overdue:boolean;deadline_alert:boolean;esign:{mode:'test';completed_at:string|null;label:string};retry_courier_paise:string;test_actions:boolean;
+  signature?:{id:string;mode:'test'|'uploaded';signed_at:string;draft_id:string}|null;deadline_at:string|null;overdue:boolean;deadline_alert:boolean;esign:{mode:'test';completed_at:string|null;label:string};retry_courier_paise:string;test_actions:boolean;
   attempts:{id:string;method:NoticeDeliveryMethod;attempt:number;status:string;recipient:NoticeFiling['noticee'];document_id:string|null;carrier:string|null;waybill:string|null;dispatch_date:string|null;receipt_document_id:string|null;source:string;sent_at:string|null;delivered_at:string|null;received_by:string|null;proof_document_id:string|null;failure_reason:string|null;retry_payment_id:string|null;tracking:{id:string;occurred_at:string;place:string|null;text:string}[]}[];
   tasks:{id:string;kind:'contact'|'documents';method?:NoticeDeliveryMethod;reason:string;status:'requested'|'responded'|'resolved';created_at:string;response:{contact?:Partial<NoticeFiling['noticee']>;document_ids?:string[]}|null}[];
   reviews:{id:string;version:number;decision:string;comment:string|null;reviewer_role:string;created_at:string;sections?:string[];attachment_document_id?:string|null}[];

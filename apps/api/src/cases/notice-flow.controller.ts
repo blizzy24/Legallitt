@@ -21,6 +21,7 @@ export class NoticeFlowController {
   @Post(':id/tasks/reply') @Roles('client') replyTask(@Req() req:AuthRequest,@Param('id') value:string,@Body() body:unknown){return this.flow.replyTask(req.user!,id(value),body);}
   @Post(':id/tasks/resolve') @Roles('admin') resolveTask(@Req() req:AuthRequest,@Param('id') value:string,@Body() body:unknown){return this.flow.resolveTask(req.user!,id(value),body);}
   @Post(':id/deadline') @Roles('admin') deadline(@Req() req:AuthRequest,@Param('id') value:string,@Body() body:unknown){return this.flow.extendDeadline(req.user!,id(value),body);}
+  @Post(':id/partial-refund') @Roles('admin') partialRefund(@Req() req:AuthRequest,@Param('id') value:string,@Body() body:unknown){return this.flow.partialRefund(req.user!,id(value),body);}
   @Post(':id/reassign') @Roles('admin') reassign(@Req() req:AuthRequest,@Param('id') value:string,@Body() body:unknown){return this.flow.reassign(req.user!,id(value),body);}
-  @Post(':id/reply-received') @Roles('client') replyReceived(@Req() req:AuthRequest,@Param('id') value:string,@Body() body:unknown){return this.flow.replyReceived(req.user!,id(value),body);}
+  @Post(':id/reply-received') @Roles('client','admin') replyReceived(@Req() req:AuthRequest,@Param('id') value:string,@Body() body:unknown){return this.flow.replyReceived(req.user!,id(value),body);}
 }

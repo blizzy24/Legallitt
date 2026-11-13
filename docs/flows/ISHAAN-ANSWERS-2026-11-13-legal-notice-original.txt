@@ -1,0 +1,383 @@
+LEGALITT – LEGAL NOTICE FLOW
+
+Final Answers and Development Instructions (Revised)
+
+1. Client-Side Decisions
+
+C1. Reply Update After Delivery
+
+Replace “Get Reply Update” with a reply-management facility.
+
+* The client should be able to view replies received from the noticee.
+* Admin/legal team can upload a reply received through other channels.
+* The client can also upload a reply received directly by them.
+* The uploaded reply must be visible to the client, advocate and admin.
+* Generate an in-app notification whenever a reply is uploaded.
+
+Do not claim that Legalitt automatically receives replies from the noticee.
+
+C2. Sender Details – Father’s Name, Mother’s Name and Husband’s Name
+
+Make the following changes to the sender details section:
+
+* Father’s Name
+* Mother’s Name
+* Husband’s Name
+
+All three must be separate fields wherever applicable.
+
+Remove the Age field completely. Age must not appear as a mandatory or optional field anywhere in the sender details section or the legal notice form.
+
+C3. Noticee Type – Person / Company
+
+Provide two options:
+
+* Individual / Person
+* Company / Organisation
+
+For a company, provide an additional field for the designation or concerned person through whom the notice is addressed, wherever applicable.
+
+C4. Issue Description
+
+The client must provide a brief description of the dispute.
+
+* Issue description: Mandatory.
+* Maximum length: 2,000 characters.
+* Amount involved: Optional.
+* Key date: Optional.
+
+For Cheque Bounce, capture cheque number, cheque date, amount, bank details and cheque return date as mandatory information.
+
+C5. Identity Verification
+
+Implement the previously approved identity-verification arrangements, including the approved Aadhaar OTP and Video KYC alternatives.
+
+* Identity information must be masked wherever appropriate.
+* Verification status must reflect the actual verification completed.
+* Do not display “KYC Verified” merely because a document has been uploaded.
+* DigiLocker must not be a mandatory dependency.
+
+C6. Document Requirements According to Notice Type
+
+Document upload categories should change dynamically according to the notice type selected.
+
+* Property Dispute: Property papers, sale deed, agreements and screenshots.
+* Money Recovery: Invoices, bills, agreements and payment proof.
+* Cheque Bounce: Cheque copy and bank return memo as mandatory documents.
+* Tenant Issue: Rent agreement, rent receipts and relevant communications.
+* Family / Consumer / Other: Relevant supporting documents.
+
+The client must also be able to upload additional documents.
+
+C7. Client Does Not Respond to Draft
+
+* First reminder after 24 hours.
+* Second reminder after 72 hours.
+* After seven days, place the case in the admin’s pending-client-response list.
+* Admin may contact the client.
+* The notice must never be treated as approved automatically.
+
+C8. Change Requests and Revisions
+
+Allow the client to request revisions to the draft.
+
+After three revision rounds, generate an alert for the admin so that the case can be monitored.
+
+Do not automatically reject further revision requests merely because three rounds have been completed.
+
+C9. Failed Delivery and Additional Courier Charges
+
+If delivery fails:
+
+* A new courier dispatch to an alternative postal address will attract another ₹179 courier fee.
+* Providing an alternative email address or WhatsApp number will not attract an additional ₹179 fee.
+* Inform the client of the applicable charge before proceeding.
+
+C10. Advocate-Client Chat Duration
+
+The proposed one-hour live-chat restriction must not be implemented.
+
+* Client and advocate can communicate through the case chat from acceptance until the advocate submits the completed notice to Legalitt.
+* Once the advocate submits the notice to admin, the advocate’s work on that case is concluded.
+* The advocate has no further dispatch responsibility.
+* Admin/legal team takes over the remaining verification, signature and delivery process.
+
+There must be no one-hour chat expiry or one-hour live-session restriction.
+
+C11. Upload Noticee’s Reply After Delivery
+
+Implement a reply section in the client’s case tracking page.
+
+* Client can upload a reply received directly from the noticee.
+* Admin/legal team can upload a reply received through other channels.
+* Uploaded replies must be accessible to the client and assigned advocate.
+* Generate an in-app notification when a reply is uploaded.
+* Update the case activity/timeline with “Reply Received”.
+
+Do not create a separate Legal Notice Response service at present.
+
+⸻
+
+2. Advocate-Side Decisions
+
+A1. Draft Deadline
+
+Display the actual draft submission deadline.
+
+* Urgent: 5 days.
+* Ordinary: 10 days.
+
+The deadline should be calculated from payment confirmation and displayed in the advocate’s dashboard.
+
+A2. Advocate Earnings
+
+Display the advocate’s actual base fee/share.
+
+The platform fee of 25% and GST are additional amounts charged to the client and must not be deducted from the advocate’s base fee.
+
+The ₹179 courier fee is not part of advocate earnings.
+
+A3. Ownership of ₹179 Courier Fee
+
+The ₹179 courier fee belongs to Legalitt because Legalitt’s legal team is responsible for arranging and bearing the courier delivery cost.
+
+It must not be credited to the advocate’s wallet.
+
+A4. AI Document Summary Card
+
+Display the AI Document Summary card in the advocate’s dashboard, even if its functionality is not yet operational.
+
+* The card must be visible in the advocate’s case details.
+* Show the title “AI Document Summary”.
+* The card may display an appropriate placeholder message such as “AI document summary will be available here.”
+* The card must not be removed or hidden merely because the functionality is not yet developed.
+* Do not display fabricated summaries or AI-generated results.
+* Actual functionality can be implemented in a subsequent development phase.
+
+A5. AI-Generated Drafting
+
+Continue with the existing AI drafting functionality.
+
+* Advocate can choose AI Generate Draft.
+* Advocate can also prepare the notice manually.
+* AI should use facts and information supplied in the client’s application and uploaded documents.
+* Advocate must be able to edit and review the generated draft before sending it to the client.
+
+AI-generated content must not be dispatched without advocate review.
+
+A6. Advocate Signature
+
+The final notice must carry the advocate’s authorised signature.
+
+Implement the approved signature workflow:
+
+1. Advocate’s Aadhaar-based e-signature; or
+2. Advocate’s signature uploaded and approved for use under the approved workflow.
+
+Where an uploaded signature is used:
+
+* Its placement must be fixed after the closing lines of the notice.
+* It must not be freely movable.
+* A simulated signature must never be represented as a completed Aadhaar e-signature.
+
+The admin/legal team is responsible for coordinating the final signature and dispatch process.
+
+A7. Advocate’s Responsibility After Submitting Draft
+
+Once the advocate submits the client-approved notice to admin:
+
+* Advocate’s responsibility for that case ends.
+* Advocate’s case moves to the submitted/completed stage on their dashboard.
+* Advocate does not verify the postal address for dispatch.
+* Advocate does not arrange courier, email or WhatsApp delivery.
+* Advocate does not upload proof of delivery.
+
+All further responsibility rests with Legalitt’s legal/admin team.
+
+A8. Legal Notice Response Service
+
+Do not incorporate a separate Legal Notice Response service at present.
+
+This refers to drafting a reply to a legal notice received by a client, which is different from sending a legal notice.
+
+It may be considered as a separate service in a future development phase.
+
+⸻
+
+3. Admin-Side Decisions
+
+AD1. WhatsApp Dispatch
+
+The Legalitt legal/admin team will be responsible for WhatsApp dispatch.
+
+For initial implementation:
+
+* Admin sends the notice manually through the Legalitt business WhatsApp number.
+* Admin records dispatch date and time.
+* Admin updates delivery status.
+* Client receives an in-app notification.
+
+Automated WhatsApp Business API integration can be considered separately.
+
+AD2. Email Dispatch
+
+Provide email dispatch functionality through the Legalitt platform.
+
+* Admin initiates dispatch.
+* Final signed PDF is attached.
+* System records recipient email address and dispatch date/time.
+* Email bounce or failure must be recorded.
+* Client receives an in-app status notification.
+
+AD3. Failed Delivery
+
+When any delivery method fails:
+
+* Admin records the failure reason.
+* Client receives an in-app notification.
+* Client can provide an alternative address or contact detail.
+* Admin verifies the new information before dispatching again.
+
+The additional courier charge rule in C9 will apply.
+
+AD4. E-sign Integration
+
+The application must support the approved advocate signature workflow.
+
+Until the actual Aadhaar e-sign provider is integrated, a test environment may be used for development.
+
+* Clearly identify simulated transactions.
+* Never show a test signature as a genuine Aadhaar e-sign.
+* Maintain signature records and relevant timestamps.
+* Do not represent the notice as authentically e-signed unless the actual signing process has been completed.
+
+AD5. Proof of Delivery
+
+For courier delivery:
+
+* Admin must upload the Proof of Delivery (POD) when available.
+* Record delivery date, time and recipient details.
+* Make the POD available to the client for viewing and downloading.
+* Update case status after delivery is confirmed.
+
+For email and WhatsApp, maintain their respective dispatch and delivery records. Do not generate fictitious courier PODs for electronic delivery.
+
+⸻
+
+4. Business, Payment and Cancellation Policies
+
+P1. Cancellation Before Advocate Acceptance
+
+If the client cancels before an advocate accepts the request, the client receives a full refund.
+
+P2. Cancellation After Advocate Acceptance but Before Dispatch
+
+The client may request cancellation.
+
+Admin will examine the work already performed and decide the applicable refund amount on a case-by-case basis.
+
+The refund decision must be recorded in the case history.
+
+P3. Cancellation After Dispatch
+
+Once the notice has been dispatched, cancellation will not be permitted.
+
+The client may contact Legalitt Support for assistance.
+
+P4. Advocate Misses the Deadline
+
+If the advocate fails to complete the draft within the prescribed deadline:
+
+* Admin receives an overdue notification.
+* Admin may contact the advocate.
+* Admin may extend the deadline with recorded reasons and notify the client.
+* Admin may reassign the case if necessary.
+* Admin may grant a partial refund on a case-by-case basis.
+
+There must not be an automatic full refund merely because the deadline has passed.
+
+P5. Client Does Not Respond
+
+Follow the reminder procedure:
+
+1. First reminder after 24 hours.
+2. Second reminder after 72 hours.
+3. Admin intervention after seven days.
+
+The notice must never be automatically approved due to client inactivity.
+
+P6. Admin Finds Errors During Final Verification
+
+The admin/legal team will examine the final notice before dispatch.
+
+If any correction is necessary:
+
+* Admin returns the draft to the advocate with specific reasons.
+* Advocate makes the necessary corrections.
+* Revised notice is submitted again to admin.
+* Admin conducts final verification before proceeding.
+
+P7. Multiple Delivery Methods
+
+The client may select one or more delivery methods:
+
+* Courier
+* Email
+* WhatsApp
+
+Maintain separate dispatch and delivery records for each selected method.
+
+If courier and email are both selected, the system must maintain separate courier and email statuses.
+
+The case must not be shown as successfully delivered through every method merely because one method succeeds.
+
+⸻
+
+5. Additional Requirements to Be Reflected in the Development
+
+Ref.	Requirement
+R1	Implement approved Aadhaar OTP and Video KYC alternatives.
+R2	Follow the previously approved in-app communication arrangements.
+R3	Client and advocate mobile numbers must remain hidden according to approved privacy rules.
+R4	Remove the one-hour live-chat expiry.
+R5	Advocate-client case chat ends when advocate submits the notice to admin.
+R6	Legalitt’s legal team, not the advocate, handles final verification and dispatch.
+R7	Advocate’s authorised signature must follow the approved signature workflow.
+R8	Uploaded signature placement must be fixed after the closing lines.
+R9	Noticee replies uploaded by admin must be visible to client and advocate.
+R10	Client must receive in-app notifications regarding important replies and case-status changes.
+R11	Sender details must contain separate Father’s Name, Mother’s Name and Husband’s Name fields.
+R12	Remove Age completely from sender details.
+R13	AI Document Summary card must be visible even before its functionality is developed.
+R14	Court Marriage must remain excluded from the present client-facing services.
+
+⸻
+
+6. Corrections to Existing Developer Flow
+
+The following changes must be incorporated into LEGAL-NOTICE-FLOW.md:
+
+Existing Flow	Required Correction
+Chat until client approval	Chat ends when advocate submits notice to admin.
+One-hour live-chat session	Remove entirely.
+Father’s Name / Husband’s Name	Separate fields for Father’s Name, Mother’s Name and Husband’s Name.
+Age field	Remove completely from sender details.
+Simple Aadhaar/PAN upload only	Implement approved identity-verification alternatives.
+AI Document Summary hidden because non-functional	Display the card with an appropriate placeholder.
+Advocate responsible for dispatch	Legalitt legal team is responsible.
+Advocate’s case remains active through delivery	Advocate’s responsibility ends upon submission to admin.
+Advocate’s dispatch screen	Remove advocate dispatch actions.
+Reply received only through client upload	Admin/legal team can also upload noticee’s reply.
+Advocate signature as an unimplemented test step	Follow approved signature alternatives and accurately distinguish testing from genuine signing.
+
+⸻
+
+7. Final Development Instruction
+
+The 131-point master reference and 43 approved points prevail over older versions of the Legal Notice flow wherever there is a conflict.
+
+The three additional changes expressly approved in this revision are:
+
+1. Age: Completely remove the Age field from sender details.
+2. Sender’s family details: Provide separate fields for Father’s Name, Mother’s Name and Husband’s Name.
+3. AI Document Summary: Display the AI Document Summary card in the advocate’s case dashboard even if its functionality is not yet operational. Use a placeholder rather than fabricated results.

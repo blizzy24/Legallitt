@@ -11,6 +11,7 @@ import {NOTICE_EMAIL, type NoticeEmailPort} from './notice-email';
 import {ensureNoticeLifecycle, requireNoticeRevision, NoticeWorkflowPolicySchema} from './notice-lifecycle';
 import {lockedNoticeCase, writeNoticeFlowState, writeNoticeFiling, writeNoticeReassignment, appendCaseEvent} from './case-state-machine';
 import type {CaseActor} from './case-access';
+import {refundable,recordRefunds} from '../cancellations/cancellations.service';
 
 type Tx = Prisma.TransactionClient;
 const admin = (actor: CaseActor) => {if (actor.role !== 'admin') throw new ForbiddenException('Admin action required.');};
@@ -34,14 +35,29 @@ export class NoticeFlowService {
       const attempts = await tx.noticeDelivery.findMany({where: {case_id: id}, orderBy: [{method: 'asc'}, {attempt: 'asc'}], include: {tracking: {orderBy: {occurred_at: 'asc'}}}});
       const reviews = await tx.draftReview.findMany({where: {draft_id_relation: {case_id: id}, ...(actor.role === 'client' ? {reviewer_id: actor.id} : {})}, include: {draft_id_relation: {select: {version: true}}}, orderBy: {created_at: 'asc'}});
       const tasks=await this.tasks(tx,id);
+      const signature=life.approved_document_id?await tx.noticeSignature.findFirst({where:{case_id:id,document_id:life.approved_document_id,draft_id:life.approved_draft_id??undefined},orderBy:{signed_at:'desc'},select:{id:true,mode:true,signed_at:true,draft_id:true}}):null;
       return serial({case_id: id, reference: record.reference, status: record.status, sub_status: record.sub_status, stage: noticeStage(record), revision: life.revision,
         contacts: life.contacts, handed_to_admin_at: life.handed_to_admin_at, chat: {writable: noticeChatWritable(record, !!life.handed_to_admin_at), reason: life.handed_to_admin_at ? 'Your notice has gone to Legalitt for preparation and dispatch. This chat is now read-only.' : 'Chat opens when your advocate accepts the request.'},
         document_id: actor.role==='client'?record.notice_document_id:life.approved_document_id, draft_id: actor.role === 'client' ? null : life.approved_draft_id,
-        deadline_at: life.deadline_at, overdue: !!life.deadline_at && life.deadline_at < new Date(),
-        deadline_alert: !!life.deadline_at && life.deadline_at.getTime() - Date.now() <= policy.deadline_alert_hours * 3600000,
+        deadline_at: life.deadline_at, overdue: !life.handed_to_admin_at && !!life.deadline_at && life.deadline_at < new Date(),
+        deadline_alert: !life.handed_to_admin_at && !!life.deadline_at && life.deadline_at.getTime() - Date.now() <= policy.deadline_alert_hours * 3600000,
         esign: {mode: 'test', completed_at: life.test_esigned_at, label: 'Test Aadhaar e-sign — no digital signature is applied'},
-        attempts,tasks, reviews: reviews.map(({draft_id_relation, ...r}) => ({...r, version: draft_id_relation.version})),
+        signature,attempts,tasks, reviews: reviews.map(({draft_id_relation, ...r}) => ({...r, version: draft_id_relation.version})),
         retry_courier_paise: policy.retry_courier_paise,test_actions:process.env.ENVIRONMENT==='dev'||process.env.NODE_ENV==='test'});
+    });
+  }
+  async partialRefund(actor:CaseActor,id:string,body:unknown){
+    admin(actor);
+    const input=parse(NoticeRevisionSchema.extend({amount_paise:z.string().regex(/^[1-9]\d{0,14}$/),reason:z.string().trim().min(3).max(1000)}),body),db=await this.prisma.getClient();
+    return db.$transaction(async tx=>{
+      const c=await lockedNoticeCase(tx,actor,id),life=await ensureNoticeLifecycle(tx,c);requireNoticeRevision(life.revision,input.revision);
+      if(!life.deadline_at||life.deadline_at>=new Date()||life.handed_to_admin_at||['completed','cancelled','refunded'].includes(c.status))throw new ConflictException('This action is available for overdue advocate work before submission to Legalitt.');
+      const amount=BigInt(input.amount_paise),money=await refundable(tx,id,c.client_id);
+      if(amount>=money.total)throw new BadRequestException('Enter a partial amount below the remaining payment. Use the cancellation review for a full refund.');
+      const refunds=await recordRefunds(tx,id,c.client_id,amount,input.reason,null,actor.id);
+      await this.bump(tx,id);await this.audit(tx,actor,id,'notice_overdue_partial_refund',{amount_paise:input.amount_paise,reason:input.reason,refund_ids:refunds.map(r=>r.id),simulated:true});
+      await this.notifications.send(tx,{user_id:c.client_id,case_id:id,kind:'notice_partial_refund',title:'Partial refund recorded · test',body:`Legalitt recorded a test partial refund for your delayed notice. No money was transferred. ${input.reason} Work on your case continues.`});
+      return {amount_paise:input.amount_paise,simulated:true,case_continues:true};
     });
   }
   async reassign(actor:CaseActor,id:string,body:unknown){
@@ -124,12 +140,13 @@ export class NoticeFlowService {
       await this.notifications.send(tx,{user_id:c.client_id,case_id:id,kind:'notice_deadline_extended',title:'Your advocate needs a little more time',body:`The updated deadline is ${deadline.toLocaleDateString('en-IN',{timeZone:'Asia/Kolkata'})}. ${input.reason}`});return {ok:true};});
   }
   async replyReceived(actor:CaseActor,id:string,body:unknown){
-    if(actor.role!=='client')throw new ForbiddenException('Only the client can upload the reply received.');
+    if(!['client','admin'].includes(actor.role))throw new ForbiddenException('Only the client or admin can upload the reply received.');
     const input=parse(NoticeRevisionSchema.extend({document_id:z.uuid()}),body),db=await this.prisma.getClient();return db.$transaction(async tx=>{
       const c=await lockedNoticeCase(tx,actor,id),life=await ensureNoticeLifecycle(tx,c);requireNoticeRevision(life.revision,input.revision);if(c.status!=='completed')throw new ConflictException('Record a reply after notice delivery.');
       const doc=await this.document(tx,id,input.document_id);if(doc.owner_id!==actor.id||doc.kind!=='notice_reply')throw new BadRequestException('Upload the reply received for this case.');
       await this.audit(tx,actor,id,'notice_reply_received',{document_id:doc.id});await this.bump(tx,id);
-      if(c.advocate_id)await this.notifications.send(tx,{user_id:c.advocate_id,case_id:id,kind:'notice_reply_received',title:'Reply received',body:'The client uploaded a reply to the delivered notice.'});return {ok:true};
+      if(c.advocate_id)await this.notifications.send(tx,{user_id:c.advocate_id,case_id:id,kind:'notice_reply_received',title:'Reply received',body:'A reply to the notice was uploaded. Open the case to view it.'});
+      await this.notifications.send(tx,{user_id:c.client_id,case_id:id,kind:'notice_reply_received',title:'Reply Received',body:'A reply is available in your Legal Notice. Legalitt does not receive replies automatically.'});return {ok:true};
     });
   }
   private async document(tx: Tx, id: string, documentId: string) {
@@ -154,9 +171,9 @@ export class NoticeFlowService {
         await this.document(tx, id, life.approved_document_id);
       }
       await tx.noticeLifecycle.update({where: {case_id: id}, data: {revision: {increment: 1}, ...(kind === 'address' ? {address_checked_at: new Date()} : {notice_checked_at: new Date()})}});
-      await writeNoticeFlowState(tx, actor, id, {status: c.status, sub_status: kind === 'address' ? 'notice_admin_notice_check' : 'notice_admin_awaiting_test_esign'}, `notice_${kind}_checked`);
+      await writeNoticeFlowState(tx, actor, id, {status: c.status, sub_status: kind === 'address' ? 'notice_admin_notice_check' : (await tx.noticeSignature.findFirst({where:{case_id:id,document_id:life.approved_document_id!}})||life.test_esigned_at?'notice_admin_ready_for_dispatch':'notice_admin_awaiting_test_esign')}, `notice_${kind}_checked`);
       await this.audit(tx, actor, id, `notice_${kind}_check`, {draft_id: life.approved_draft_id});
-      if (kind === 'notice' && c.advocate_id) await this.notifications.send(tx, {user_id: c.advocate_id, case_id: id, kind: 'notice_esign_requested', title: 'Complete the test e-sign step', body: 'This is a test step. No digital signature will be applied.'});
+      if (kind === 'notice' && c.advocate_id&&!await tx.noticeSignature.findFirst({where:{case_id:id,document_id:life.approved_document_id!}})&&!life.test_esigned_at) await this.notifications.send(tx, {user_id: c.advocate_id, case_id: id, kind: 'notice_esign_requested', title: 'Complete the test e-sign step', body: 'This is a test step. No digital signature will be applied.'});
       return {ok: true};
     });
   }
@@ -196,7 +213,7 @@ export class NoticeFlowService {
     const prepared = await db.$transaction(async tx => {
       const c = await lockedNoticeCase(tx, actor, id), life = await ensureNoticeLifecycle(tx, c);
       requireNoticeRevision(life.revision, input.revision);
-      if (!['notice_admin_ready_for_dispatch', 'notice_delivery_in_progress', 'notice_delivery_failed'].includes(c.sub_status ?? '') || !life.test_esigned_at || !life.approved_document_id) throw new ConflictException('Complete admin checks and the test e-sign first.');
+      if (!['notice_admin_ready_for_dispatch', 'notice_delivery_in_progress', 'notice_delivery_failed'].includes(c.sub_status ?? '') || !life.approved_document_id || !life.test_esigned_at&&!await tx.noticeSignature.findFirst({where:{case_id:id,document_id:life.approved_document_id!,draft_id:life.approved_draft_id??undefined}})) throw new ConflictException('Complete admin checks and the test e-sign first.');
       const contacts = parse(contactsSchema, life.contacts);
       if (!contacts.methods.includes(input.method)) throw new BadRequestException('This delivery method was not selected by the client.');
       if(input.method==='email')this.email.assertReady?.();

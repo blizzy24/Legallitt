@@ -1,0 +1,1342 @@
+LEGALITT – LEGAL ADVICE SERVICE
+
+Final Development Questions and Suggested Answers
+
+Reference: LEGAL-ADVICE-FLOW.md
+Scope: Client App, Advocate App, Admin Dashboard, Pricing, Payments, Consultation Management, AI Features and Backend.
+
+Status legend:
+
+* APPROVED: Confirmed requirement.
+* SUGGESTED: Recommended implementation.
+* CLARIFICATION: Requires further approval.
+
+⸻
+
+SECTION A – COMMON SERVICE REQUIREMENTS
+
+Q1. How should Legal Advice pricing be displayed?
+
+Suggested Answer:
+
+Pricing must be controlled through an editable pricing table in the Admin Dashboard.
+
+The starting/base prices for the three consultation modes shall be:
+
+* Chat Consultation – Starting at ₹499.
+* Audio Consultation – Starting at ₹699.
+* Video Consultation – Starting at ₹999.
+
+These amounts represent starting prices only and shall not be treated as fixed final prices.
+
+After selecting the consultation mode, the client must select an advocate from the available advocates displayed according to their respective experience categories.
+
+The final consultation price shall be determined by the experience category and corresponding price assigned to the selected advocate.
+
+The Admin must have the authority to configure and modify the starting prices, experience categories and corresponding prices without requiring any code modification.
+
+The selected advocate’s applicable consultation price must be displayed to the client before proceeding with payment.
+
+Status: APPROVED – Starting prices, experience-based advocate selection and Admin-controlled pricing.
+
+Q2. How should the platform fee and GST be calculated?
+
+Suggested Answer:
+
+The consultation price determined according to the selected advocate’s experience shall be treated as the advocate’s base fee.
+
+The following charges shall be calculated additionally:
+
+* Advocate’s Base Fee: 100% of the applicable experience-based consultation price.
+* Platform Fee: 25% of the advocate’s base fee.
+* GST: 18% on the combined advocate base fee and platform fee.
+
+The platform fee and GST shall be charged additionally to the client and shall not be deducted from the advocate’s base fee.
+
+The complete payment breakdown must be displayed before the client proceeds with payment.
+
+Status: APPROVED.
+
+Q3. Should identity verification be required for Legal Advice?
+
+Suggested Answer:
+
+Follow the existing approved Legalitt KYC system for clients and advocates, including the applicable Aadhaar OTP, video-KYC and DigiLocker verification workflows.
+
+No separate identity-verification procedure should be introduced specifically for Legal Advice.
+
+If a user has already completed the applicable KYC, the existing verification status should be used without unnecessarily repeating the verification process.
+
+Status: APPROVED – Platform-wide KYC requirements.
+
+Q4. Should clients and advocates be able to communicate through audio and video calls?
+
+Suggested Answer:
+
+Yes. Legal Advice must support all three consultation modes:
+
+* Chat Consultation.
+* Audio Consultation.
+* Video Consultation.
+
+The application should integrate the approved calling technology and support microphone and camera controls, call timer, pause and resume functionality, temporary disconnection handling and automatic session termination after the permitted duration.
+
+Status: APPROVED.
+
+Q5. Should the client and advocate see each other’s mobile numbers?
+
+Suggested Answer:
+
+Mobile numbers must remain masked in accordance with the approved Legalitt privacy requirements.
+
+Communication should take place through the application. Personal mobile numbers should not be disclosed merely because a consultation has been booked.
+
+Status: APPROVED.
+
+Q6. Should the service provide Assistance Service?
+
+Suggested Answer:
+
+Yes. The landing page should provide two options:
+
+1. Quick Submission – the client directly submits a consultation request.
+2. Assistance Service – the client can request Chat or Callback assistance from the Legalitt support team.
+
+All assistance requests must be visible in the Admin Support Dashboard and linked to the Legal Advice service.
+
+Status: SUGGESTED.
+
+⸻
+
+SECTION B – CLIENT-SIDE REQUIREMENTS
+
+Q7. Should the introductory page explaining the importance of legal advice be retained?
+
+Suggested Answer:
+
+Yes. Retain the informational page explaining:
+
+* Why legal advice is important.
+* When a person should consult an advocate.
+* What benefits a consultation provides.
+* Why Legalitt should be used.
+
+The Get Legal Advice button should redirect the client to the Legal Advice landing page.
+
+Remove unimplemented claims such as Verified Advocates and Secure Consultation until the relevant functionality is operational.
+
+Status: SUGGESTED.
+
+Q8. How should clients select their consultation format and advocate?
+
+Suggested Answer:
+
+Display three consultation options on the landing page:
+
+* Chat Consultation – Starting at ₹499.
+* Audio Consultation – Starting at ₹699.
+* Video Consultation – Starting at ₹999.
+
+The displayed amounts are starting prices only.
+
+After selecting the consultation mode, the client must be redirected to an advocate-selection screen.
+
+The screen should display available advocates according to their experience categories, along with their profiles and applicable consultation prices.
+
+The client must be able to compare advocates and select the preferred advocate based on experience and price.
+
+The final consultation price shall be determined by the selected advocate’s experience-based pricing.
+
+The consultation booking and payment process should proceed only after the client selects an advocate and confirms the applicable price.
+
+Status: APPROVED – Advocate selection based on experience and corresponding pricing.
+
+Q9. Should the Advocate Experience pricing categories be incorporated?
+
+Suggested Answer:
+
+Yes. Advocate experience-based pricing categories must be incorporated into Legal Advice.
+
+The client should be able to select an advocate based on the advocate’s experience and corresponding consultation charges.
+
+The experience categories may include:
+
+* Veteran – 15+ years.
+* Highly Experienced – 10–15 years.
+* Experienced – 5–10 years.
+* Emerging – Up to 5 years.
+
+The Admin must be able to manage the experience categories and determine the corresponding consultation prices for Chat, Audio and Video consultations.
+
+The applicable price must be displayed against each advocate before selection.
+
+The final consultation price shall depend on the selected advocate’s experience category and the price configured by Admin.
+
+Status: APPROVED – Experience-based pricing incorporated.
+
+Q10. Should clients select a legal category before booking?
+
+Suggested Answer:
+
+Yes. Provide the following legal categories:
+
+1. General Consultation.
+2. Family Law.
+3. Criminal Law.
+4. Consumer Dispute.
+5. Service Matter.
+6. Cyber Crime.
+7. Property Law.
+8. Corporate Law.
+9. Labour Law.
+10. Arbitration.
+
+The client may select one category or skip the selection.
+
+If skipped, the system should automatically assign General Consultation as the category.
+
+The selected category must be used by Admin to identify advocates whose practice areas match the client’s requirements.
+
+Status: SUGGESTED.
+
+Q11. What information should be collected from the client?
+
+Suggested Answer:
+
+The consultation request form should collect:
+
+* Full Name.
+* Mobile Number.
+* Email Address.
+* Legal Matter Category.
+* Preferred Consultation Date and Time.
+* Brief Description of Legal Concern.
+* Supporting Documents (optional).
+
+The description must have a maximum limit of 1,000 characters.
+
+Mobile number and preferred consultation time should be mandatory.
+
+The client’s existing profile information should be pre-filled wherever available.
+
+Status: SUGGESTED.
+
+Q12. How should the client select a preferred consultation date and time?
+
+Suggested Answer:
+
+The client should be able to select a preferred slot from Legalitt’s platform working hours.
+
+The platform’s default working hours may be configured as:
+
+* Monday to Saturday.
+* 10:00 AM to 7:00 PM.
+* Slots at 30-minute intervals.
+* Minimum booking gap of three hours from the current time.
+
+Admin must be able to modify working days, hours, slot intervals and advance booking requirements.
+
+The selected time will be a requested slot, not a confirmed appointment. The assigned advocates must accept the requested slot or propose another available time.
+
+Status: SUGGESTED.
+
+Q13. What should be the document-upload policy?
+
+Suggested Answer:
+
+Allow clients to upload supporting documents in PDF, image and other supported document formats.
+
+Follow the existing Legalitt document-upload pricing structure:
+
+* First 25 pages: Free.
+* Above 25 pages: ₹25 per additional page.
+
+Each uploaded document should have:
+
+* Document name.
+* Page count.
+* File size.
+* Preview/View option.
+* Delete option before final submission.
+
+The system must calculate additional page charges automatically and display them in the payment summary.
+
+Status: APPROVED.
+
+Q14. Should clients be allowed to review their information before payment?
+
+Suggested Answer:
+
+Yes. Provide a Review screen containing:
+
+* Consultation format.
+* Selected advocate and experience category.
+* Applicable consultation price.
+* Legal matter category.
+* Description of the legal concern.
+* Preferred date and time.
+* Uploaded documents and page count.
+* Client information.
+
+Every information section should have an Edit option that redirects the client to the relevant form.
+
+Status: SUGGESTED.
+
+Q15. How should the payment breakdown be displayed?
+
+Suggested Answer:
+
+Display the following components:
+
+1. Advocate Consultation Fee, determined by the selected advocate’s experience.
+2. Platform Fee – 25%.
+3. GST – 18% on the advocate fee plus platform fee.
+4. Additional Document Charges, if applicable.
+5. Total Payable Amount.
+
+The payment screen must use the same approved Legalitt payment gateway and payment-success workflow used by other services.
+
+No delivery or courier charges should be added to Legal Advice.
+
+Status: APPROVED.
+
+Q16. What should happen after successful payment?
+
+Suggested Answer:
+
+After successful payment, generate a unique Consultation Request ID.
+
+Display:
+
+* Consultation Request ID.
+* Consultation Format.
+* Selected Advocate.
+* Advocate Experience Category.
+* Consultation Price.
+* Requested Date and Time.
+* Payment Status.
+* Request Status.
+
+The consultation request should be assigned to the selected advocate or advocates as determined by Admin.
+
+The status should initially read Slot Requested or Pending Advocate Acceptance.
+
+After an advocate accepts the consultation, the status should change to Consultation Confirmed.
+
+Status: SUGGESTED.
+
+Q17. What information should appear on the Track Consultation screen?
+
+Suggested Answer:
+
+The tracking screen should contain:
+
+* Consultation Request ID.
+* Current status.
+* Date of request.
+* Consultation format.
+* Selected advocate.
+* Advocate experience category.
+* Legal matter category.
+* Confirmed date and time.
+* Consultation duration.
+* Status timeline.
+
+The status options should include:
+
+* Slot Requested.
+* Pending Advocate Acceptance.
+* Confirmed.
+* New Time Proposed.
+* In Progress.
+* Completed.
+* Missed.
+* Cancelled.
+
+The client should also have access to Join Consultation, Reschedule and Contact Support options, depending on the applicable conditions.
+
+Status: SUGGESTED.
+
+Q18. When should the Join Consultation button become active?
+
+Suggested Answer:
+
+The Join Consultation button should become active 10 minutes before the confirmed consultation time.
+
+Before activation, display a countdown such as “Opens at 3:50 PM”.
+
+For Audio and Video, redirect the client to the calling interface. For Chat, redirect to the consultation chat room.
+
+Status: SUGGESTED.
+
+Q19. What should be the rescheduling policy?
+
+Suggested Answer:
+
+The client may request rescheduling:
+
+* Up to two hours before the confirmed consultation.
+* Maximum two rescheduling requests.
+
+Every rescheduled appointment must be accepted by the assigned advocate.
+
+The new slot will remain unconfirmed until the advocate accepts it.
+
+After two rescheduling requests, the client must contact Legalitt Support.
+
+Status: APPROVED – Subject to the existing approved rescheduling rules.
+
+Q20. What should happen if an advocate proposes a different consultation time?
+
+Suggested Answer:
+
+Display a notification and a proposal card containing:
+
+* Advocate’s name.
+* Proposed date and time.
+* Reason for the change.
+* Accept New Time.
+* Pick Another Time.
+* Cancel Consultation.
+
+If the client accepts, the appointment becomes confirmed.
+
+If the client selects another time, the advocate must accept the revised request.
+
+If the client cancels because the advocate changed the original slot, the applicable refund should be processed according to the approved refund policy.
+
+Status: SUGGESTED.
+
+Q21. What should be the Audio and Video consultation duration?
+
+Suggested Answer:
+
+The standard consultation duration should be 30 minutes.
+
+Display a countdown timer showing the remaining consultation time.
+
+At five minutes remaining, display a notification.
+
+At zero minutes, the session should automatically terminate for both parties.
+
+The advocate must not have an option or button to independently end or terminate the call.
+
+The advocate should only have the option to Pause Consultation and subsequently Resume Consultation.
+
+The client may terminate the consultation from the client-side interface.
+
+If the advocate pauses the consultation, the remaining consultation time should be preserved, and the timer should remain stopped until the advocate resumes the session.
+
+No automatic extension should be provided. The client may book a follow-up consultation.
+
+Status: APPROVED – Advocate can pause and resume but cannot independently terminate the call.
+
+Q22. What should be the Chat Consultation validity period?
+
+Suggested Answer:
+
+Chat consultation should remain active for seven days from the consultation’s confirmed start date and time.
+
+Display a countdown in days and hours.
+
+During this period, both parties may exchange messages and permitted attachments.
+
+After seven days, the chat should become read-only.
+
+Display:
+
+“This consultation has ended.”
+
+Provide a Book Follow-up option.
+
+There should be no arbitrary one-hour chat restriction.
+
+Status: SUGGESTED.
+
+Q23. What should happen if the client does not join the consultation?
+
+Suggested Answer:
+
+The advocate should wait for 10 minutes after the scheduled starting time.
+
+If the client does not join, the advocate may select Client Didn’t Join.
+
+The system should:
+
+* Record the no-show.
+* Notify the client.
+* Update the consultation status.
+* Notify Admin.
+
+The consultation fee will not be refunded in case of client no-show, subject to the approved refund policy.
+
+Status: APPROVED.
+
+Q24. What should happen if the advocate does not join?
+
+Suggested Answer:
+
+If the advocate fails to join within 10 minutes after the scheduled time, the client should receive a notification with the following options:
+
+* Wait.
+* Reschedule.
+* Cancel and Request Full Refund.
+
+Admin should receive an immediate notification.
+
+The client should be entitled to a full refund or a free rescheduled consultation, according to the client’s choice and the approved policy.
+
+Status: APPROVED.
+
+Q25. What should appear after consultation completion?
+
+Suggested Answer:
+
+The completed consultation screen should display:
+
+* Advocate Details.
+* AI-generated Case Summary.
+* AI-generated Action Plan.
+* Consultation Summary submitted by the advocate.
+* Key Points Discussed.
+* Recommended Next Steps.
+* Attached Documents, if any.
+* Written Legal Advice option.
+* Book Follow-up Consultation.
+* Rate and Review.
+
+The AI-generated Case Summary and Action Plan should be generated automatically from the client’s submitted description and uploaded documents and displayed in the consultation record.
+
+The advocate must be able to review and supplement the AI-generated content.
+
+The final client-facing consultation summary and key points must be reviewed and submitted by the advocate.
+
+Until the advocate submits the mandatory summary, display an appropriate status such as:
+
+“Your consultation has been completed. Your advocate is preparing the final consultation summary.”
+
+Status: APPROVED – Automatic AI-generated case summary and action plan, subject to advocate review of final legal advice.
+
+Q26. Should Written Legal Advice be available as an additional service?
+
+Suggested Answer:
+
+Yes. After consultation completion, provide an option to purchase Written Legal Advice and an Action Plan.
+
+The approved base amount is ₹100 payable to the advocate.
+
+The applicable 25% platform fee and GST must be charged additionally to the client.
+
+After successful payment, generate a Written Opinion task in the advocate dashboard.
+
+The advocate should prepare the opinion in the Legalitt editor, with an option to generate a PDF on the advocate’s letterhead.
+
+The delivery deadline should be three days from the task assignment.
+
+Once delivered, the PDF must be available in:
+
+* Consultation Completed screen.
+* Client’s My Documents section.
+
+Status: APPROVED – ₹100 advocate base fee and additional platform fee/GST.
+
+Q27. How should follow-up consultations work?
+
+Suggested Answer:
+
+A client should be able to book a follow-up consultation with the same advocate.
+
+The follow-up should:
+
+* Remain linked to the original consultation.
+* Show the previous matter category.
+* Allow the client to enter an optional follow-up reason.
+* Offer Chat, Audio and Video.
+* Display the applicable price based on the selected advocate’s experience category.
+* Be assigned to the same advocate by default.
+
+The advocate must still accept the follow-up request or propose another time.
+
+Status: SUGGESTED.
+
+Q28. How should the Rate and Review feature work?
+
+Suggested Answer:
+
+After completion, the client may provide:
+
+* Rating from 1 to 5 stars.
+* Optional written review of up to 500 characters.
+
+Only one review should be permitted per completed consultation.
+
+Ratings should be calculated from actual submitted client reviews and displayed on the advocate’s profile.
+
+Status: SUGGESTED.
+
+⸻
+
+SECTION C – ADVOCATE-SIDE REQUIREMENTS
+
+Q29. What should appear on the advocate’s assigned cases dashboard?
+
+Suggested Answer:
+
+The advocate dashboard should display Legal Advice requests with:
+
+* Client Name.
+* Consultation Request ID.
+* Legal Matter Category.
+* Consultation Format.
+* Requested Date and Time.
+* Applicable Consultation Fee.
+* Assigned Status.
+* Client’s Description.
+* Uploaded Documents.
+
+Provide filters for:
+
+* Pending Acceptance.
+* Upcoming.
+* In Progress.
+* Summary Due.
+* Completed.
+
+Only advocates approved by Admin and having the relevant practice area should be assignable.
+
+Status: APPROVED – Admin-controlled advocate approval and assignment.
+
+Q30. How should a pending consultation request appear to an advocate?
+
+Suggested Answer:
+
+Display:
+
+* Pending Acceptance status.
+* Acceptance countdown.
+* Client profile details available under the approved privacy rules.
+* Legal matter category.
+* Consultation format.
+* Requested date and time.
+* Applicable advocate fee.
+* Client’s original description.
+* Uploaded documents with a View option.
+
+Display the advocate’s actual earnings as:
+
+“You Receive ₹[Base Fee]”.
+
+Do not show fictional concepts such as Advisory Retainer, Priority Review, Court/Board Deadline, escrow or advance payment.
+
+Status: SUGGESTED.
+
+Q31. How should Admin assign consultation requests, and how should advocates accept them?
+
+Suggested Answer:
+
+Admin must have the facility to assign a single consultation request to multiple eligible advocates simultaneously.
+
+The system should allow Admin to select multiple advocates based on:
+
+* Admin-approved status.
+* Relevant legal practice area.
+* Advocate experience category.
+* Applicable consultation price.
+* Availability for the requested consultation slot.
+
+Once assigned, the consultation request should appear in the Pending Acceptance section of every selected advocate’s dashboard.
+
+All assigned advocates should receive an acceptance notification.
+
+The consultation shall be allotted to the advocate who accepts the request first.
+
+As soon as any one of the assigned advocates accepts the consultation:
+
+1. The system must immediately confirm the acceptance.
+2. The consultation should be allotted exclusively to that advocate.
+3. The acceptance notification should be sent to all other assigned advocates.
+4. The request should automatically disappear from the Pending Acceptance list of all other advocates or be marked as Already Accepted.
+5. Other advocates must no longer be able to accept that consultation.
+6. Admin and the client should receive the acceptance notification.
+
+The backend must use an atomic acceptance mechanism to ensure that only one advocate can successfully accept a particular consultation request, even if multiple advocates attempt to accept it simultaneously.
+
+If none of the assigned advocates accepts within the prescribed acceptance period, the request should return to Admin for reassignment.
+
+Status: APPROVED – Multiple advocate assignment with first-acceptance allocation.
+
+Q32. Should advocates be allowed to propose another consultation time?
+
+Suggested Answer:
+
+Yes.
+
+An assigned advocate should be able to:
+
+* Accept the original time.
+* Select another available slot.
+* Enter a custom date and time.
+* Provide an optional reason for proposing a different time.
+
+The client must accept the proposed time before it becomes confirmed.
+
+Where multiple advocates have been assigned, the first advocate to accept the request becomes the assigned advocate and handles subsequent scheduling communication.
+
+Status: SUGGESTED.
+
+Q33. What should happen after an advocate accepts a consultation?
+
+Suggested Answer:
+
+The consultation should move to Confirmed status.
+
+The advocate dashboard should show:
+
+* Client Details.
+* Consultation Format.
+* Confirmed Date and Time.
+* Duration.
+* Legal Matter Category.
+* Client’s Description.
+* Uploaded Documents.
+* AI-generated Case Summary.
+* AI-generated Action Plan.
+* Private Notes.
+
+The advocate should be able to review the AI-generated summary, documents and other case details before the consultation.
+
+Private notes must not be visible to the client.
+
+Status: SUGGESTED.
+
+Q34. Should advocates be able to request additional information from clients?
+
+Suggested Answer:
+
+Yes.
+
+Provide an Information Needed option.
+
+The advocate can write a message specifying the missing information or documents.
+
+The message should be sent to the client through the consultation communication system.
+
+The client should receive an in-app notification and be able to respond or upload the requested documents.
+
+Admin should be able to monitor the request.
+
+Status: SUGGESTED.
+
+Q35. What should be available inside the Advocate Consultation Room?
+
+Suggested Answer:
+
+The consultation room should display:
+
+* Client Name.
+* Consultation Format.
+* Scheduled Time.
+* Countdown to joining window.
+* Client’s Legal Matter Description.
+* AI-generated Case Summary.
+* AI-generated Action Plan.
+* Uploaded Documents.
+* Advocate’s Private Notes.
+* Start Call or Open Chat.
+
+During an active Audio or Video consultation, the advocate should have only the controls necessary to manage the session, including Pause Consultation and Resume Consultation.
+
+There must be no End Call or Terminate Consultation button on the advocate’s interface.
+
+The advocate should be able to enter the consultation room 10 minutes before the scheduled time.
+
+Status: APPROVED – Advocate cannot independently terminate the call.
+
+Q36. Should advocates be able to pause and resume consultations?
+
+Suggested Answer:
+
+Yes.
+
+During an Audio or Video consultation, the advocate should have the facility to pause the session temporarily and subsequently resume it.
+
+When paused:
+
+* The consultation timer must stop.
+* The client must receive a notification.
+* The remaining consultation time must be preserved.
+* The advocate should have a Resume Consultation option.
+
+The advocate must not have the facility to terminate the consultation independently.
+
+The maximum pause duration may be configured by Admin. The proposed initial limit is 10 minutes.
+
+If the consultation is not resumed within the permitted pause period, the system should mark it Interrupted and notify Admin.
+
+Status: APPROVED – Pause and resume only; maximum pause duration requires approval.
+
+Q37. What should happen when the client terminates a consultation?
+
+Suggested Answer:
+
+The advocate should not have an End Consultation or Terminate Call option.
+
+The client shall have the option to terminate the consultation from the client-side interface.
+
+The session should also terminate automatically when the permitted consultation time expires.
+
+When the client terminates the consultation:
+
+* The call should end for both parties.
+* The session duration and time used should be recorded.
+* The consultation status should be marked as Successfully Completed.
+* The advocate should be redirected to the consultation summary submission screen.
+* The mandatory client-facing summary task should be generated.
+
+The advocate’s payment must remain pending until the mandatory client-facing consultation summary is submitted.
+
+Status: APPROVED – Client-side termination and mandatory summary before advocate payment release.
+
+Q38. What information should an advocate submit after consultation?
+
+Suggested Answer:
+
+The advocate should be required to review and submit:
+
+1. Private Advocate Notes.
+2. Key Points Discussed.
+3. Consultation Summary for Client.
+4. Recommended Next Steps.
+5. Optional Supporting Attachment.
+
+The advocate should be able to review, edit and supplement the AI-generated case summary and action plan before submitting the final client-facing summary.
+
+The client-facing summary and key points should become available to the client after submission.
+
+Private advocate notes must remain confidential.
+
+The advocate must submit the mandatory consultation summary within 24 hours after the session.
+
+Admin should receive an alert if the deadline is missed.
+
+Status: APPROVED – Mandatory client-facing summary and 24-hour submission deadline.
+
+Q39. Should advocates have a Legal Advice AI Copilot during consultation?
+
+Suggested Answer:
+
+Yes, as an AI-assisted functionality.
+
+The AI Copilot may assist advocates with:
+
+* Understanding uploaded documents.
+* Identifying relevant legal provisions.
+* Preparing consultation notes.
+* Generating case summaries.
+* Suggesting possible next steps.
+* Assisting in consultation preparation.
+
+AI-generated content should be clearly identifiable and must remain subject to advocate review and approval before being treated as final legal advice.
+
+Status: SUGGESTED – AI Copilot functionality.
+
+Q40. Should advocates be able to prepare Written Legal Advice through Legalitt?
+
+Suggested Answer:
+
+Yes.
+
+When a client purchases Written Legal Advice, a task should appear in the advocate’s assigned cases.
+
+The advocate should be able to:
+
+* Open the written advice task.
+* Review consultation details and documents.
+* Prepare an opinion using a rich-text editor.
+* Use an advocate letterhead.
+* Attach supporting documents.
+* Generate a PDF.
+* Submit the final opinion to the client.
+
+The task should have a three-day delivery deadline.
+
+Status: SUGGESTED.
+
+Q41. How should advocate earnings and wallet credits be displayed?
+
+Suggested Answer:
+
+The advocate’s base consultation fee shall be calculated according to the selected experience category and applicable pricing.
+
+After the consultation has been marked successfully completed, the advocate’s payment must remain pending until the mandatory client-facing consultation summary is submitted.
+
+Upon submission of the required summary, the advocate’s applicable base fee should be credited to the Legalitt wallet in accordance with the approved payment and settlement system.
+
+If the client purchases Written Legal Advice, the applicable advocate share should also be credited after completion of that task.
+
+Do not display fictional escrow releases, automatic bank transfers or unsupported payment-processing claims.
+
+Status: APPROVED – Advocate payment conditional upon mandatory summary submission.
+
+⸻
+
+SECTION D – ADMIN DASHBOARD REQUIREMENTS
+
+Q42. How should Admin receive and assign new consultation requests?
+
+Suggested Answer:
+
+All successfully paid Legal Advice requests should appear in the Admin Dashboard.
+
+Display:
+
+* Request ID.
+* Client Details.
+* Consultation Format.
+* Legal Matter Category.
+* Requested Date and Time.
+* Client Description.
+* Uploaded Documents.
+* Payment Status.
+* Assignment Status.
+* Starting and final consultation price.
+
+Admin should be able to assign one or multiple eligible advocates simultaneously.
+
+The system should filter advocates based on:
+
+* Admin-approved status.
+* Relevant practice area.
+* Advocate experience category.
+* Applicable consultation pricing.
+* Availability for the requested slot.
+
+Status: APPROVED – Admin-controlled assignment with multiple advocate allocation.
+
+Q43. Should Admin be able to reassign declined or expired requests?
+
+Suggested Answer:
+
+Yes.
+
+If assigned advocates decline or fail to accept within the permitted period, the request should return to the Admin Dashboard.
+
+Admin should be able to assign the request to another advocate or group of eligible advocates.
+
+The client should receive a notification if reassignment changes the proposed consultation time.
+
+Status: SUGGESTED.
+
+Q44. How should Admin monitor proposed consultation times?
+
+Suggested Answer:
+
+Create a separate Admin section for pending time proposals.
+
+Display:
+
+* Client Name.
+* Assigned Advocate Name.
+* Original Requested Time.
+* Proposed New Time.
+* Proposal Date.
+* Time Awaiting Client Response.
+
+If the client does not respond within 12 hours, Admin should receive an alert and may contact the client or process cancellation and refund as applicable.
+
+Status: SUGGESTED.
+
+Q45. What should Admin be able to manage regarding consultation scheduling?
+
+Suggested Answer:
+
+Admin should have complete control over:
+
+* Working Days.
+* Working Hours.
+* Slot Intervals.
+* Advance Booking Gap.
+* Available Consultation Formats.
+* Consultation Duration Options.
+* Platform Booking Availability.
+
+Changes should reflect automatically on the client booking interface.
+
+Status: SUGGESTED.
+
+Q46. How should Admin monitor no-shows and interrupted consultations?
+
+Suggested Answer:
+
+Provide a separate section showing:
+
+* Client No-Show.
+* Advocate No-Show.
+* Interrupted Consultation.
+* Disputed Consultation.
+* Refund Pending.
+* Reschedule Pending.
+
+Admin should be able to review the event history and take action according to the approved refund and rescheduling policies.
+
+Status: SUGGESTED.
+
+Q47. How should Admin monitor pending consultation summaries and written opinions?
+
+Suggested Answer:
+
+Create two separate monitoring sections:
+
+1. Consultation Summary Pending – more than 24 hours after completion.
+2. Written Legal Advice Pending – more than three days after task assignment.
+
+Admin should receive alerts for overdue tasks and be able to contact the concerned advocate.
+
+The system must also prevent release of the advocate’s consultation payment until the mandatory client-facing summary has been submitted.
+
+Status: APPROVED – Summary-dependent payment release.
+
+Q48. Should Admin be able to manage consultation prices and advocate fees?
+
+Suggested Answer:
+
+Yes.
+
+Admin should be able to modify:
+
+* Starting Chat Consultation Price.
+* Starting Audio Consultation Price.
+* Starting Video Consultation Price.
+* Advocate Experience Categories.
+* Consultation Prices against each experience category and consultation mode.
+* Written Legal Advice Price.
+* Follow-up Consultation Price.
+* Applicable Platform Fee.
+* Applicable GST.
+* Additional Document Charges.
+
+Every consultation must retain a snapshot of the pricing applicable at the time of payment.
+
+Future pricing changes must not modify existing paid bookings.
+
+Status: APPROVED – Admin-controlled experience-based pricing.
+
+⸻
+
+SECTION E – AI FEATURES AND DOCUMENT MANAGEMENT
+
+Q49. Should AI Document Summary be displayed in the Advocate Dashboard?
+
+Suggested Answer:
+
+The AI Document Summary card must be displayed in the Advocate Dashboard, even if the functionality is initially non-functional.
+
+The card should maintain its designated position and visual appearance in the interface.
+
+However, it must not falsely indicate that an analysis has been completed when the backend functionality is unavailable.
+
+The actual functionality should be activated once the AI module has been developed and tested.
+
+Status: APPROVED – Display AI Document Summary card even if initially non-functional.
+
+Q50. Should AI-generated case summaries and action plans be shown automatically?
+
+Suggested Answer:
+
+Yes. The system should automatically generate and display an AI-generated Case Summary and Action Plan after the client submits the consultation request and supporting documents.
+
+The AI system should analyse:
+
+* The client’s description of the legal concern.
+* Uploaded documents.
+* Relevant information available in the consultation request.
+
+The generated output should include:
+
+1. Concise Case Summary.
+2. Important Facts and Background.
+3. Key Issues Identified.
+4. Relevant Documents and Their Significance.
+5. Potential Legal Issues.
+6. Suggested Legal Provisions, wherever identifiable.
+7. Preliminary Action Plan.
+8. Information or Documents That May Be Required Further.
+
+The AI-generated summary and action plan should automatically appear in the relevant advocate dashboard and consultation details.
+
+The advocate should be able to review, edit and supplement the AI-generated content.
+
+The AI output should be clearly identified as AI-generated and should not automatically be treated as the advocate’s final legal opinion.
+
+Status: APPROVED – Automatic AI-generated Case Summary and Action Plan.
+
+Q51. Should advocates have a separate Legalitt AI Assistant?
+
+Suggested Answer:
+
+Yes.
+
+The AI Assistant should provide advocates with:
+
+* Legal document analysis.
+* Case-law research assistance.
+* Relevant statutory provisions.
+* Legal drafting assistance.
+* Case summaries.
+* Consultation preparation assistance.
+
+It should be integrated with the existing Legalitt AI infrastructure and available to advocates according to the approved access and subscription arrangements.
+
+Status: SUGGESTED.
+
+⸻
+
+SECTION F – TECHNICAL AND BACKEND REQUIREMENTS
+
+Q52. What data should be maintained for every Legal Advice request?
+
+Suggested Answer:
+
+The backend should maintain the following records:
+
+* Unique Consultation Request ID.
+* Client ID.
+* Assigned Advocate IDs.
+* Accepted Advocate ID.
+* Consultation Format.
+* Legal Matter Category.
+* Description.
+* Uploaded Documents.
+* AI-generated Case Summary.
+* AI-generated Action Plan.
+* Requested Date and Time.
+* Confirmed Date and Time.
+* Duration.
+* Advocate Experience Category.
+* Pricing Snapshot.
+* Payment Details.
+* Request Status.
+* Rescheduling Count.
+* Advocate Time Proposals.
+* Advocate Acceptance Timestamps.
+* Session Start and End Time.
+* Pause Intervals.
+* Termination Initiated By.
+* No-Show Records.
+* Consultation Summary.
+* Private Advocate Notes.
+* Written Legal Advice.
+* Payment Release Status.
+* Client Rating and Review.
+* Notifications and Event History.
+
+All consultation records should remain linked to the relevant client and advocate accounts.
+
+Status: SUGGESTED – Backend implementation.
+
+Q53. How should consultation chat records be maintained?
+
+Suggested Answer:
+
+All consultation messages and attachments should be associated with the relevant Consultation Request ID.
+
+The system should maintain:
+
+* Sender ID.
+* Receiver ID.
+* Message Content.
+* Attachment Details.
+* Message Timestamp.
+* Read Status.
+
+For Chat Consultation, access should remain available for the seven-day consultation period, followed by read-only access.
+
+Status: SUGGESTED.
+
+Q54. Should the system maintain a complete consultation event history?
+
+Suggested Answer:
+
+Yes.
+
+Maintain a chronological record of:
+
+* Request Submission.
+* Payment Success.
+* Advocate Assignment.
+* Notifications to Assigned Advocates.
+* Advocate Acceptance or Decline.
+* First Acceptance Timestamp.
+* Other Advocates Notified of Acceptance.
+* Proposed Time.
+* Client Acceptance.
+* Consultation Start.
+* Consultation Pause and Resume.
+* Client-side Termination.
+* Automatic Session Termination.
+* Consultation Completion.
+* Summary Submission.
+* Advocate Payment Release.
+* Written Advice Submission.
+* Refund and Cancellation Events.
+
+Admin should be able to access this history for dispute resolution and operational monitoring.
+
+Status: SUGGESTED.
+
+Q55. How should the system handle notifications?
+
+Suggested Answer:
+
+Use the existing approved Legalitt notification infrastructure.
+
+Notifications should be generated for:
+
+* Successful payment.
+* Consultation assignment to advocates.
+* Pending advocate acceptance.
+* Advocate acceptance.
+* First acceptance confirmation.
+* Acceptance notification to all other assigned advocates.
+* Advocate time proposal.
+* Client response requirement.
+* Consultation reminders.
+* Consultation start.
+* Advocate or client no-show.
+* Consultation pause and resume.
+* Consultation completion.
+* AI Summary generation.
+* Summary submission.
+* Advocate payment release.
+* Written advice delivery.
+* Rescheduling and cancellation.
+* Refund status.
+
+Notifications should be delivered through the supported in-app and push notification systems.
+
+Status: SUGGESTED.
+
+⸻
+
+SECTION G – FINAL IMPLEMENTATION CLARIFICATIONS
+
+Q56. Should the consultation automatically extend if the advocate and client agree?
+
+Suggested Answer:
+
+No. The standard 30-minute consultation should end automatically when the timer reaches zero.
+
+The advocate must not have an option to independently terminate the call.
+
+The client may terminate the consultation earlier through the client-side interface.
+
+If the session reaches the permitted duration, the system should automatically terminate the call for both parties.
+
+The client may book a new follow-up consultation.
+
+No paid overtime feature should be introduced in the first version.
+
+Status: APPROVED – No independent advocate termination or automatic extension.
+
+Q57. Should cancellation before advocate acceptance result in a refund?
+
+Suggested Answer:
+
+Apply the already-approved Legalitt refund policy.
+
+Before advocate acceptance, cancellation should qualify for a full refund.
+
+After acceptance, the applicable refund must be determined according to the approved policy and the work already performed.
+
+No refund should be provided merely because a client changes their mind after the consultation has commenced, subject to the approved exceptions for advocate fault.
+
+Status: APPROVED – Common refund framework.
+
+Q58. When should a consultation be marked completed, and when should the advocate receive payment?
+
+Suggested Answer:
+
+Once the client terminates the consultation from the client-side interface, the consultation should immediately be marked as Successfully Completed.
+
+The system should record:
+
+* Consultation completion status.
+* Actual session duration.
+* Time used.
+* Termination timestamp.
+* Termination initiated by the client.
+
+However, marking the consultation as Successfully Completed must not automatically release the advocate’s payment.
+
+The advocate must submit the mandatory client-facing consultation summary, including the required key points and recommended next steps.
+
+Until the advocate submits the mandatory summary:
+
+* The consultation status should remain Successfully Completed.
+* The summary status should remain Pending.
+* The advocate’s payment should remain On Hold / Pending Summary.
+* The advocate must be able to access the summary submission screen.
+* Admin should be able to monitor the pending submission.
+
+Only after the mandatory client-facing summary has been successfully submitted should the advocate’s consultation fee become eligible for credit to the Legalitt wallet.
+
+The advocate should be required to submit the summary within 24 hours of consultation completion.
+
+Status: APPROVED – Successful completion on client-side termination, with advocate payment conditional upon mandatory summary submission.
+
+Q59. Should a client be able to access consultation documents after completion?
+
+Suggested Answer:
+
+Yes.
+
+The client should be able to access:
+
+* Uploaded Documents.
+* AI-generated Case Summary.
+* AI-generated Action Plan.
+* Consultation Summary submitted by the advocate.
+* Key Points Discussed.
+* Advocate’s Recommended Next Steps.
+* Written Legal Advice PDF, if purchased.
+* Other attachments shared by the advocate.
+
+These documents should also be accessible through My Documents.
+
+The AI-generated summary and action plan may be displayed automatically, while the final advocate-submitted consultation summary should appear after submission.
+
+Status: APPROVED – AI-generated and advocate-submitted documents to be available to the client.
+
+Q60. Should Legal Advice have a separate Admin Dashboard?
+
+Suggested Answer:
+
+No separate independent Admin system is necessary.
+
+Legal Advice should be integrated into the existing Legalitt Admin Dashboard as a dedicated service module.
+
+Admin should be able to manage all Legal Advice requests, multiple advocate assignments, advocate acceptance, experience-based pricing, payment status, consultations, AI summaries, advocate summaries, written opinions, reviews, disputes and refunds from the existing administrative system.
+
+Status: SUGGESTED.
+
+⸻
+
+FINAL NOTES FOR THE DEVELOPMENT TEAM
+
+1. The starting prices for Chat, Audio and Video consultations shall be ₹499, ₹699 and ₹999 respectively. These are starting prices, not fixed final prices.
+2. The client must select the consultation mode first and then select an advocate according to the advocate’s experience and corresponding consultation price.
+3. Experience categories and their respective prices must be configurable by Admin.
+4. The applicable 25% platform fee and 18% GST must be calculated additionally in accordance with the approved payment structure.
+5. Admin must be able to assign one consultation request to multiple eligible advocates simultaneously.
+6. The first advocate to accept the consultation shall receive the assignment. All other assigned advocates must be notified immediately, and their acceptance option must be disabled.
+7. The advocate must not have an End Call or Terminate Consultation button. The advocate can only pause and resume the consultation.
+8. The client may terminate the consultation, and the session must also terminate automatically when the permitted duration expires.
+9. Once terminated by the client, the consultation shall be marked Successfully Completed.
+10. The advocate’s payment must remain pending until the mandatory client-facing consultation summary has been submitted.
+11. AI-generated Case Summary and Action Plan must be generated automatically and displayed to the advocate and client, subject to the applicable access and review requirements.
+12. The advocate must be able to review and supplement AI-generated content before submitting the final client-facing consultation summary.
+13. All consultation records, assignments, notifications, session events and payment statuses must remain synchronised between the Client App, Advocate App and Admin Dashboard.
+14. The existing approved Legalitt master requirements shall prevail wherever any conflicting provision appears in the Figma designs or older development documents.
+15. No previously approved Legalitt requirement should be changed without express approval.
+
+END OF LEGAL ADVICE DEVELOPMENT QUESTIONS AND SUGGESTED ANSWERS

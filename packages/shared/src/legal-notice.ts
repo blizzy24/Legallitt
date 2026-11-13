@@ -68,7 +68,7 @@ export const NoticeRelationSchema = z.enum(NOTICE_RELATIONS);
 export type NoticeSalutation = z.infer<typeof NoticeSalutationSchema>;
 export type NoticeRelation = z.infer<typeof NoticeRelationSchema>;
 export const NoticeSenderFieldsSchema = z.strictObject({
-  age: z.number().int().positive().nullable().optional(),
+  father_name: text.max(300).optional(), mother_name: text.max(300).optional(), husband_name: text.max(300).optional(),
   salutation: NoticeSalutationSchema.nullable().optional(),
   relation: NoticeRelationSchema.nullable().optional(),
   /** The father's or husband's name, printed after the relation as "Shri …". */

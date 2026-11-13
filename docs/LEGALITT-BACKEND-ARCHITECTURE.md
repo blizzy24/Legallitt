@@ -1424,6 +1424,87 @@ CREATE TABLE fir_settings ( -- dormant single row; was: who takes the approved d
 );
 ```
 
+### 4.3c Round 2 built-service additions — 13 November 2026
+
+Additive migrations 202611130100 and 202611130101. Existing filings, captured
+prices, assignment histories and original document objects are retained. Support
+edits append a policy version; an optimistic base-version token rejects stale edits.
+Signature images belong to the advocate profile; each signing records the exact
+approved draft, generated PDF, profile-image version, method and timestamp. An
+admin return requires a fresh version and signature before resubmission.
+
+```sql
+-- Additive only. Do not activate new tariffs or workflow-policy units while the
+-- old API still serves. seed-round2 runs after API/frontend rollout.
+CREATE TABLE support_policies (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  version INTEGER NOT NULL UNIQUE,
+  config JSONB NOT NULL,
+  source_note TEXT NOT NULL,
+  created_by UUID,
+  effective_from TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+-- Additive: the previous API continues to use existing notice lifecycle fields.
+CREATE TABLE advocate_signatures (
+ id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+ advocate_id UUID NOT NULL REFERENCES users(id),
+ document_id UUID NOT NULL REFERENCES documents(id),
+ created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX advocate_signatures_owner_time ON advocate_signatures(advocate_id,created_at);
+CREATE TABLE notice_signatures (
+ id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+ case_id UUID NOT NULL REFERENCES cases(id),
+ draft_id UUID NOT NULL REFERENCES drafts(id),
+ advocate_id UUID NOT NULL REFERENCES users(id),
+ document_id UUID NOT NULL REFERENCES documents(id),
+ profile_signature_id UUID REFERENCES advocate_signatures(id),
+ mode TEXT NOT NULL CHECK(mode IN ('uploaded','test')),
+ signed_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX notice_signatures_case_version ON notice_signatures(case_id,draft_id,signed_at);
+```
+
+Activate the confirmed tariffs with `seed-round2 <IMAGE_TAG>` only after the
+compatible API and frontends serve. PS bases are ₹499 ordinary / ₹999 urgent,
+independent of search duration. DF bases are ₹1,499 / ₹2,999. Platform fee is 25%
+of base and GST is 18% of base plus platform fee; totals before extra pages are
+₹736.03 / ₹1,473.53 and ₹2,211.03 / ₹4,423.53. All are confirmed versioned rows;
+later admin edits append rows and seed reruns preserve those overrides.
+
+PS windows: ordinary 4–6 working days, urgent 2–3 working days. DF: ordinary
+5–7 working days, urgent 3–4 calendar days. The calendar interpretation follows
+the literal “days” in the answer and awaits confirmation; it is an editable policy
+unit. No public-holiday calendar is invented. New cases pin the current policy;
+historical cases retain their existing terms.
+
+PS submissions now need exact-version admin approval. “Records not available”
+can release an office note alone or with a report after approval; the client gets
+the note, a chat message and a notification, without an automatic refund.
+DF original-document tasks carry reason/instructions and acknowledged/sent/received
+history; the deadline remains paused until receipt is recorded. Destination is
+supplied by the advocate; no postage provider or new fee is implied. Optional
+external specialist attribution does not transfer the advocate’s responsibility.
+
+Legal Notice approval now precedes advocate signing and explicit submission to
+admin. Chat closes at submission and stays read-only on internal returns. Saved
+uploaded signatures are fixed after the closing lines; the alternative remains a
+labelled test step. Admin retains dispatch ownership. Client review reminders at
+24/72 hours, a 7-day admin queue, unlimited revision rounds with alert at round 3,
+and payment-based 5/10-day deadlines do not auto-approve or auto-refund.
+Overdue admin partial refunds retain the case as open, record the reason and
+notify the client; this continuity interpretation awaits client confirmation.
+The existing refund simulator is used. Full refunds follow cancellation review.
+Cancellation is blocked after dispatch, including a pending request reviewed
+after dispatch. Wallet credit remains at delivery/completion pending I.5; the
+₹179 courier retry charge is platform revenue, while electronic retries are free.
+
+Phone privacy is permanent between client and advocate, including authored text
+and notification outputs; admin/support keep their existing visibility. Legal
+Notice age is retained historically but removed from current validation and views.
+Separate optional father/mother/husband fields are client facts. See the round-2
+acceptance record for verification coverage and any unresolved legacy-file limits.
+
 ### 4.4 Why pricing and commission are versioned tables
 
 Several figures are still unconfirmed: District Court prices, the Legal Advice
@@ -2382,6 +2463,15 @@ is re-litigated mid-build.
 
 ### 9.1 Register of simulated capabilities
 
+**Round 2 — 13 November 2026:** uploaded advocate signatures are stored images,
+not digital-certificate signatures. Test Aadhaar e-sign remains labelled and
+collects no Aadhaar number. Overdue partial refunds use the existing test refund
+adapter and explicitly transfer no money. Wallet credit timing is unchanged.
+The AI Document Summary card is a labelled unavailable placeholder, with no
+invented summary. Email uses SES; WhatsApp is recorded manually until a provider
+is chosen. Neither original-document transit nor an external examination is
+claimed to be performed by the platform.
+
 **PS/DF rebuild — 13 November 2026:** shared checkout is labelled test-only when
 the adapter is simulated. Wallet credit is an application entitlement, not a bank
 transfer. Local acceptance uses isolated PostgreSQL, real handlers/renderers and
@@ -2468,6 +2558,17 @@ client without an advocate in between. If one does, it needs either an advocate
 gate or explicit framing that it is not legal advice.
 
 ### 9.2 Register of design substitutions
+
+**Round 2 — 13 November 2026:** new admin tariff/support settings, PS quality
+review and office-note upload, pending-client-response queue, deadline remedies,
+partial-refund form and notice reply upload use the existing admin visual language;
+no dedicated admin designs were supplied. Mobile adds profile signature management,
+sign/submit steps, PS Quality Review and no-records presentation, DF original-document
+request cards and specialist attribution. These are owner-directed substitutions.
+Optional separate parent/spouse fields replace LN age. Permanent phone privacy
+supersedes the earlier post-acceptance contact display described below. Five-state
+handling and one primary action remain required; the acceptance report records
+the changed-screen comparisons.
 
 **PS/DF visual polish — 13 November 2026:** request headers carry the shared
 workflow label; due dates use date-only IST and audit events retain minute-level

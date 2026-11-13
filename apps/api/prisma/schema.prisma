@@ -237,6 +237,38 @@ model Case {
   @@map("cases")
 }
 
+model SupportPolicy {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  version Int @unique
+  config Json @db.JsonB
+  source_note String
+  created_by String? @db.Uuid
+  effective_from DateTime @default(now()) @db.Timestamptz(6)
+  @@map("support_policies")
+}
+
+// Immutable signature uploads and exact-draft signing records; no certificate claims.
+model AdvocateSignature {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  advocate_id String @db.Uuid
+  document_id String @db.Uuid
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  @@index([advocate_id,created_at])
+  @@map("advocate_signatures")
+}
+model NoticeSignature {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  case_id String @db.Uuid
+  draft_id String @db.Uuid
+  advocate_id String @db.Uuid
+  document_id String @db.Uuid
+  profile_signature_id String? @db.Uuid
+  mode String
+  signed_at DateTime @default(now()) @db.Timestamptz(6)
+  @@index([case_id,draft_id,signed_at])
+  @@map("notice_signatures")
+}
+
 model ReportWorkflowPolicy {
   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   service_code String

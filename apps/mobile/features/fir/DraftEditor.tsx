@@ -121,7 +121,7 @@ export function DraftEditor({context,value,onChange,documents,viewDocument,attac
         {filedEdit('occupation','Occupation / Job')}
         {filedEdit('address','Home & Present Address',{multiline:true})}
         {showResidence&&filedEdit('residence','Registered Residence',{multiline:true})}
-        {filedEdit('phone_email','Phone & Email')}
+        {filedEdit('phone_email','Email · phone private')}
       </View>
     </Section>
 

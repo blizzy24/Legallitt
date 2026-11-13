@@ -19,7 +19,7 @@ test("migration includes every authoritative table and SQL-only constraints", ()
   const sql = readdirSync('prisma/migrations', {withFileTypes: true}).filter(e => e.isDirectory()).map(e => readFileSync(`prisma/migrations/${e.name}/migration.sql`, 'utf8')).join('\n');
   const names = (text) =>
     [...text.matchAll(/CREATE TABLE "?(\w+)"? \(/g)].map((m) => m[1]).sort();
-  assert.equal(names(sql).length, 52);
+  assert.equal(names(sql).length, 55);
   assert.deepEqual(names(sql), names(doc));
   assert.match(sql, /CREATE EXTENSION IF NOT EXISTS citext/);
   assert.match(sql, /CHECK \("amount_paise" > 0\)/);

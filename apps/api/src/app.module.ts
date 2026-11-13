@@ -5,6 +5,7 @@ import {AdvocateVerificationService} from './advocate-verification/advocate-veri
 import {WalletController} from './wallet/wallet.controller';
 import {WalletService} from './wallet/wallet.service';
 import {SupportController} from './support/support.controller';
+import {SupportSettings,SupportSettingsController} from './support/support-settings';
 import {SupportService} from './support/support.service';
 import {AccountDataController} from './account/account-data.controller';
 import {AccountDataService} from './account/account-data.service';
@@ -19,6 +20,7 @@ import {CancellationsService} from './cancellations/cancellations.service';
 import {ServiceReportsController} from './service-reports/service-reports.controller';
 import {ServiceReportsService} from './service-reports/service-reports.service';
 import {ReportWorkflowService} from './service-reports/report-workflow.service';
+import {ReportTariffs,ReportTariffsController} from './service-reports/report-tariffs';
 import {FirController} from './cases/fir.controller';
 import {FirService} from './cases/fir.service';
 import { NotificationsController, NotificationRepository } from './notifications/notifications.controller';
@@ -72,14 +74,18 @@ export class HealthController {
   }
 }
 
+import {APP_INTERCEPTOR} from '@nestjs/core';
+import {ContactPrivacyInterceptor} from './cases/contact-privacy';
+import {AdvocateSignatures,AdvocateSignatureController} from './account/advocate-signature';
+import {NoticeSigning,NoticeSigningController} from './cases/notice-signing';
 import {AccountController} from './account/account.controller';
 import {AccountService} from './account/account.service';
 import {ACCOUNT_COGNITO, CognitoAccountAdapter} from './account/account-cognito';
 
 @Module({
   imports: [AiModule, CourierModule, AdminUiModule, DemoModule, DatabaseModule, PhoneAuthModule, PaymentsModule, NotificationsModule],
-  controllers: [WalletController, AdvocateVerificationController, AdvocateCompletionController, AccountDeletionsAdminController, AccountController, AccountDataController, SupportController, ConsultationController, FirController, NotificationsController, NoticeIntakeAiController, AdminAdvocatesController, AdminCasesController, NoticeMessagesController,
-    PaymentsController, ServiceReportsController, CancellationsController,
+  controllers: [AdvocateSignatureController,NoticeSigningController,WalletController, AdvocateVerificationController, AdvocateCompletionController, AccountDeletionsAdminController, AccountController, AccountDataController, SupportController, ConsultationController, FirController, NotificationsController, NoticeIntakeAiController, AdminAdvocatesController, AdminCasesController, NoticeMessagesController,
+    PaymentsController, ServiceReportsController, CancellationsController, SupportSettingsController, ReportTariffsController,
     HealthController,
     AuthController,
     MeController,
@@ -90,13 +96,13 @@ import {ACCOUNT_COGNITO, CognitoAccountAdapter} from './account/account-cognito'
     ServicesController,
     DocumentController,
   ],
-  providers: [WalletService, AdvocateVerificationService, AdvocateCompletionService, AccountDeletionsAdminService, AccountService, AccountDataService, {provide: ACCOUNT_COGNITO, useClass: CognitoAccountAdapter}, SupportService, ConsultationService, ConsultationPayments, ConsultationReports, FirAdminService, FirFlowService, FirService, NotificationRepository, AdminCaseDetailRepository, AdminAdvocatesRepository, AdminCasesRepository, NoticeMessages,
+  providers: [{provide:APP_INTERCEPTOR,useClass:ContactPrivacyInterceptor},AdvocateSignatures,NoticeSigning,WalletService, AdvocateVerificationService, AdvocateCompletionService, AccountDeletionsAdminService, AccountService, AccountDataService, {provide: ACCOUNT_COGNITO, useClass: CognitoAccountAdapter}, SupportService, ConsultationService, ConsultationPayments, ConsultationReports, FirAdminService, FirFlowService, FirService, NotificationRepository, AdminCaseDetailRepository, AdminAdvocatesRepository, AdminCasesRepository, NoticeMessages,
     ShipmentService,
     NoticePdfService,
     NoticeFlowService,
     NoticeReminders,
     {provide: NOTICE_EMAIL, useClass: SesNoticeEmail},
-    PaymentsService, ServiceReportsService, ReportWorkflowService, CancellationsService,
+    PaymentsService, ServiceReportsService, ReportWorkflowService, CancellationsService, SupportSettings, ReportTariffs,
     AuthService,
     AuthGuard,
     CaseRepository,

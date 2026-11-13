@@ -9,6 +9,7 @@ import {parse} from '../auth/auth.service';
 import {lockedCase,writeFirIntake,writeFirDraftSaved,writeFirSubmitted} from './case-state-machine';
 import type {CaseActor} from './case-access';
 import {DocumentService} from '../documents/document.service';
+import {counterpartPhones} from './contact-privacy';
 import {renderFirPdf} from '../documents/fir-pdf';
 import {firIdentityPolicy} from '../documents/fir-identity';
 import {NOTIFICATIONS, type NotificationsPort} from '../notifications/notifications.port';
@@ -122,13 +123,14 @@ export class FirService {
       const ids=content.attachments.map(d=>d.document_id);
       const evidence=await tx.document.findMany({where:{id:{in:ids},case_id:id,status:'uploaded',kind:{not:'fir_draft'}}});
       if(evidence.length!==ids.length||content.attachments.some(a=>!evidence.some(d=>d.id===a.document_id&&d.filename===a.filename&&d.mime_type===a.mime_type)))throw new ConflictException('An attached document changed or is unavailable. Review attachments and save a new version.');
-      return {record,draft,content};
+      const phones=[...await counterpartPhones(tx,{id:record.client_id,role:'client'},id),...await counterpartPhones(tx,actor,id)];
+      return {record,draft,content,phones};
     });
   }
   async preview(actor:CaseActor,id:string,draftId:string){
     const input=await this.renderable(actor,id,draftId);
     let bytes:Uint8Array;
-    try{bytes=await renderFirPdf(input.record.reference,input.content);}
+    try{bytes=await renderFirPdf(input.record.reference,input.content,input.phones);}
     catch(e){throw new BadRequestException(e instanceof Error?e.message:'Unable to render FIR PDF');}
     await this.renderable(actor,id,draftId);
     return {filename:`FIR_Draft_${input.record.reference}_v${input.draft.version}.pdf`,pdf_base64:Buffer.from(bytes).toString('base64')};
@@ -138,7 +140,7 @@ export class FirService {
     const db = await this.prisma.getClient();
     const input = await this.renderable(actor,id,draftId);
     let bytes: Uint8Array;
-    try {bytes = await renderFirPdf(input.record.reference,input.content);}
+    try {bytes = await renderFirPdf(input.record.reference,input.content,input.phones);}
     catch(e) {throw new BadRequestException(e instanceof Error ? e.message : 'Unable to render FIR PDF');}
     const ticket = await this.documents.presign(actor,{case_id:id,kind:'fir_draft',filename:`FIR_Draft_${input.record.reference}_v${input.draft.version}.pdf`,mime:'application/pdf'});
     try {

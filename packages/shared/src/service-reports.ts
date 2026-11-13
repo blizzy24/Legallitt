@@ -38,11 +38,11 @@ export type ReportServiceConfig = {
 };
 export const REPORT_SERVICE_CONFIG: Record<ReportServiceCode, ReportServiceConfig> = {
   property_search: {code: 'property_search', clientPath: '/property-search', reportNoun: 'Property Search Report',
-    production: 'upload', requiresAdminApproval: false, tiers: ['ordinary', 'urgent'],
-    estimate: {ordinary: '3 - 5 Working Days', urgent: '1 - 2 Working Days'}},
+    production: 'upload', requiresAdminApproval: true, tiers: ['ordinary', 'urgent'],
+    estimate: {ordinary: '4–6 working days', urgent: '2–3 working days'}},
   document_forensic: {code: 'document_forensic', clientPath: '/document-forensic', reportNoun: 'Document Forensic Report',
     production: 'forensic', requiresAdminApproval: true, tiers: ['ordinary', 'urgent'],
-    estimate: {ordinary: '24 - 48 Hours', urgent: '12 - 24 Hours'}},
+    estimate: {ordinary: '5–7 working days', urgent: '3–4 days'}},
   court_marriage: {code: 'court_marriage', clientPath: '/court-marriage', reportNoun: 'Court Marriage Application',
     production: 'upload', requiresAdminApproval: true, tiers: [],
     estimate: {default: '5 - 7 Working Days (application); the Special Marriage Act notice period then applies'}},
@@ -137,7 +137,7 @@ export const REPORT_CLIENT_DOCUMENT_KINDS: Record<ReportServiceCode, readonly st
 };
 /** Kinds the assigned advocate may upload. Platform-rendered PDFs use their own kinds. */
 export const REPORT_ADVOCATE_DOCUMENT_KINDS: Record<ReportServiceCode, readonly string[]> = {
-  property_search: ['service_report'], document_forensic: [], court_marriage: ['service_report'],
+  property_search: ['service_report', 'office_note'], document_forensic: [], court_marriage: ['service_report'],
 };
 export const REPORT_GENERATED_KINDS = ['forensic_report', 'forensic_affidavit'] as const;
 
@@ -217,7 +217,9 @@ export const PropertyReportSchema = z.strictObject({
   personally_checked:z.boolean().optional(),
 });
 export type PropertyReport = z.infer<typeof PropertyReportSchema>;
-export const PropertyReportSaveSchema=z.strictObject({production:z.literal('property'),base_draft_id:z.uuid().nullable(),report:PropertyReportSchema,note:ReportNoteSchema.default('')});
+export const PropertyOutcomeSchema=z.enum(['report','records_unavailable']);
+const propertyOutcome={outcome:PropertyOutcomeSchema.optional(),office_note_document_ids:z.array(z.uuid()).max(10).optional()};
+export const PropertyReportSaveSchema=z.strictObject({production:z.literal('property'),base_draft_id:z.uuid().nullable(),report:PropertyReportSchema,...propertyOutcome,note:ReportNoteSchema.default('')});
 export const emptyPropertyReport=():PropertyReport=>({owner_details:'',documents_checked:[],search_date:'',search_period:'',records_inspected:'',registry_office:'',search_notes:'',ownership_history:'',findings:'',conclusion:''});
 export function propertyReportProblems(r:PropertyReport):ReportProblem[]{
  const required:([keyof PropertyReport,string])[]=[['owner_details','Owner details'],['search_date','Search date'],['search_period','Search period'],['records_inspected','Records inspected'],['registry_office','Registry office'],['ownership_history','Ownership history'],['findings','Search findings'],['conclusion','Search conclusion']];
@@ -229,11 +231,13 @@ export function propertyReportProblems(r:PropertyReport):ReportProblem[]{
 export const UploadReportSaveSchema = z.strictObject({
   base_draft_id: z.uuid().nullable(),
   report_document_id: z.uuid(),
+  ...propertyOutcome,
   note: ReportNoteSchema.default(''),
 });
 const section = z.string().trim().max(4000);
 export const ForensicReportSchema = z.strictObject({
   what_checked: section, how_checked: section, findings: section, final_result: section,
+  external_specialist:z.boolean().optional(),specialist_name:opt(160),specialist_organisation:opt(200),
   overall_status:z.enum(['likely_genuine','likely_not_genuine','inconclusive']).optional(),
   risk_level:z.enum(['low','medium','high']).optional(),authenticity:opt(600),
 });
@@ -258,8 +262,8 @@ export const ForensicReportSaveSchema = z.strictObject({
 export type ForensicReport = z.infer<typeof ForensicReportSchema>;
 export type Affidavit = z.infer<typeof AffidavitSchema>;
 export type ReportDraftContent =
-  | {production: 'upload'; report_document_id: string; note: string}
-  | {production: 'property'; report:PropertyReport; note:string}
+  | {production: 'upload'; report_document_id: string; note: string;outcome?:'report'|'records_unavailable';office_note_document_ids?:string[]}
+  | {production: 'property'; report:PropertyReport; note:string;outcome?:'report'|'records_unavailable';office_note_document_ids?:string[]}
   | {production: 'forensic'; report: ForensicReport; affidavit: Affidavit; signature?:ReportSignature; typed_signature?:string; signed_at: string | null; note: string};
 
 export const FORENSIC_SECTIONS: {key: 'what_checked'|'how_checked'|'findings'|'final_result'; title: string; tag: string}[] = [
@@ -304,7 +308,7 @@ export type ReportState = {
   latest_draft: {id: string; version: number; content: ReportDraftContent; created_at: string} | null;
   submission: {draft_id: string; version: number; document_ids: string[]; submitted_at: string} | null;
   changes: {items: ChangeItem[]; requested_at: string} | null;
-  released: {document_ids: string[]; note: string; released_at: string} | null;
+  released: {document_ids: string[]; note: string; released_at: string;outcome?:'report'|'records_unavailable'} | null;
   summary?:{overall_status?:ForensicReport['overall_status'];risk_level?:ForensicReport['risk_level'];authenticity?:string;reviewed_at:string}|null;
 };
 

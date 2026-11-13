@@ -141,6 +141,7 @@
     "advocate/settings/permissions",
     "advocate/settings/privacy",
     "advocate/settings/security",
+    "advocate/settings/signature",
     "advocate/verify/bar-council",
     "advocate/verify/complete",
     "advocate/verify/documents",

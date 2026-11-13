@@ -37,3 +37,5 @@ export * from './advocate-verification';
 export * from './wallet';
 export * from './notice-flow';
 export * from './notice-presentation';
+export * from './support-policy';
+export * from './contact-privacy';

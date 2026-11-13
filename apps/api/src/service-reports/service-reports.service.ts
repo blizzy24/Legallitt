@@ -19,6 +19,7 @@ import {NOTIFICATIONS, type NotificationsPort} from '../notifications/notificati
 import {activeAt, newest} from '../payments/price-quotes';
 import {calculateQuote} from '../payments/quote-math';
 import {DRAFT_KIND, writeReportChangesRequested, writeReportIntake, writeReportReleased, writeReportSaved, writeReportSubmitted} from './report-lifecycle';
+import {counterpartPhones} from '../cases/contact-privacy';
 import {renderForensicPdfs,renderPropertyPdf} from './report-pdf';
 import {ensureReportWorkflow,reportCorrectionAllowed} from './report-workflow';
 import {validateReportJurisdiction} from './report-validation';
@@ -103,14 +104,14 @@ export class ServiceReportsService {
       if (code==='property_search' && (body as {production?:string})?.production==='property') {
         const input=parse(PropertyReportSaveSchema,body);
         if((last?.id??null)!==input.base_draft_id)throw new ConflictException('A newer report version was saved in another session. Reload before continuing.');
-        content={production:'property',report:input.report,note:input.note};
+        content={production:'property',report:input.report,note:input.note,outcome:input.outcome,office_note_document_ids:input.office_note_document_ids};
       } else if (config.production === 'upload') {
         const input = parse(UploadReportSaveSchema, body);
         if ((last?.id ?? null) !== input.base_draft_id) throw new ConflictException('A newer report version was saved in another session. Reload before continuing.');
-        const doc = await tx.document.findFirst({where: {id: input.report_document_id, case_id: id, status: 'uploaded', kind: 'service_report', owner_id: actor.id}});
+        const doc = await tx.document.findFirst({where: {id: input.report_document_id, case_id: id, status: 'uploaded', kind: {in:code==='property_search'&&input.outcome==='records_unavailable'?['service_report','office_note']:['service_report']}}});
         if (!doc) throw new BadRequestException('Upload the final report PDF for this case first.');
         if (doc.mime_type !== 'application/pdf') throw new BadRequestException('The final report must be a PDF.');
-        content = {production: 'upload', report_document_id: doc.id, note: input.note};
+        content = {production: 'upload', report_document_id: doc.id, note: input.note,outcome:input.outcome,office_note_document_ids:[...new Set([...(input.office_note_document_ids??[]),...doc.kind==='office_note'?[doc.id]:[]])]};
       } else {
         const input = parse(ForensicReportSaveSchema, body);
         if ((last?.id ?? null) !== input.base_draft_id) throw new ConflictException('A newer report version was saved in another session. Reload before continuing.');
@@ -120,6 +121,12 @@ export class ServiceReportsService {
         // Any change to the sworn content requires signing again.
         content = {production: 'forensic', report: input.report, affidavit: input.affidavit, signature:input.signature, typed_signature:input.typed_signature, note: input.note,
           signed_at: input.signed ? (keepSignature ? (previous as {signed_at: string}).signed_at : new Date().toISOString()) : null};
+      }
+      if(content.production!=='forensic'){
+        if(code!=='property_search'&&(content.outcome||content.office_note_document_ids?.length))throw new BadRequestException('Office notes are only used for Property Search.');
+        const officeIds=content.office_note_document_ids??[];
+        if(content.outcome==='records_unavailable'&&!officeIds.length)throw new BadRequestException('Upload the office note confirming that records are unavailable.');
+        if(officeIds.length&&await tx.document.count({where:{id:{in:officeIds},case_id:id,kind:'office_note',status:'uploaded'}})!==new Set(officeIds).size)throw new BadRequestException('Choose office notes uploaded to this case.');
       }
       const draft = await tx.draft.create({data: {case_id: id, kind: DRAFT_KIND, version: (last?.version ?? 0) + 1,
         content: content as unknown as Prisma.InputJsonObject, created_by: actor.id, generated_by: 'manual'}});
@@ -157,19 +164,20 @@ export class ServiceReportsService {
         throw new ConflictException('The uploaded report is no longer available. Upload it again and save.');
       const questioned = await tx.document.findFirst({where: {case_id: id, kind: 'questioned_document', status: 'uploaded'}});
       const client = await tx.user.findUniqueOrThrow({where: {id: record.client_id}, select: {full_name: true}});
-      return {record, code, draft, content, questioned, client};
+      const phones=[...await counterpartPhones(tx,{id:record.client_id,role:'client'},id),...record.advocate_id?await counterpartPhones(tx,{id:record.advocate_id,role:'advocate'},id):[]];
+      return {record, code, draft, content, questioned, client,phones};
     });
   }
 
   private async render(input: Awaited<ReturnType<ServiceReportsService['submittable']>>,reportOnly=false) {
     if(input.content.production==='property'){
-      try{return [{filename:'Property_Search_Report.pdf',kind:'service_report',bytes:await renderPropertyPdf({reference:input.record.reference,intake:input.record.details,report:input.content.report,generatedAt:input.draft.created_at})}];}
+      try{return [{filename:'Property_Search_Report.pdf',kind:'service_report',bytes:await renderPropertyPdf({reference:input.record.reference,intake:input.record.details,privatePhones:input.phones,report:input.content.report,generatedAt:input.draft.created_at})}];}
       catch(e){throw new BadRequestException(e instanceof Error?e.message:'Unable to render the report');}
     }
     if (input.content.production !== 'forensic') throw new BadRequestException('Open the uploaded report to preview it.');
     const details = input.record.details as {document_type?: string};
     try {
-      return await renderForensicPdfs({reference: input.record.reference, client: input.client.full_name,
+      return await renderForensicPdfs({privatePhones:input.phones,reference: input.record.reference, client: input.client.full_name,
         documentName: 'Document submitted for examination', documentType: labelOf(FORENSIC_DOCUMENT_TYPES, details.document_type),
         report: input.content.report, affidavit: input.content.affidavit, signature:input.content.signature, typedSignature:input.content.typed_signature, signedAt: input.content.signed_at, generatedAt: input.draft.created_at},reportOnly);
     } catch (e) { throw new BadRequestException(e instanceof Error ? e.message : 'Unable to render the report'); }
@@ -203,6 +211,7 @@ export class ServiceReportsService {
           documentIds.push(ticket.document.id);
         }
       } else documentIds = [input.content.report_document_id];
+      if(input.content.production!=='forensic')documentIds=[...new Set([...documentIds,...(input.content.office_note_document_ids??[])])];
       const db = await this.prisma.getClient();
       return await db.$transaction(async tx => {
         const record = await lockedCase(tx, actor, id, input.code);
@@ -254,10 +263,16 @@ export class ServiceReportsService {
         if(workflow.data.review_checklist?.draft_id!==draftId)throw new ConflictException('Complete the four review checks for this submitted version before approval.');
       }
       const now = new Date();
+      const content=draft.content as unknown as ReportDraftContent;
+      const unavailable=code==='property_search'&&content.production!=='forensic'&&content.outcome==='records_unavailable';
       await tx.draftReview.create({data: {draft_id: draftId, reviewer_id: actor.id, decision: 'approved', created_at: now}});
       const updated = await writeReportReleased(tx, actor, id, code, {...payload, note: (draft.content as {note?: string}).note ?? ''}, now, true);
       await tx.adminAction.create({data: {admin_id: actor.id, action: 'approve_service_report', subject_type: 'case', subject_id: id, payload}});
-      await this.notifications.send(tx, {user_id: record.client_id, case_id: id, kind: 'report_ready', title: `Your ${config.reportNoun} is ready`, body: record.reference});
+      await this.notifications.send(tx, {user_id: record.client_id, case_id: id, kind: 'report_ready', title: unavailable?'Property records are unavailable':`Your ${config.reportNoun} is ready`, body: unavailable?'The office confirmed that records are unavailable. View its note in your request.':record.reference});
+      if(unavailable){
+        const thread=await tx.messageThread.findFirst({where:{case_id:id,kind:'client_advocate'}})??await tx.messageThread.create({data:{case_id:id,kind:'client_advocate'}});
+        await tx.message.create({data:{thread_id:thread.id,sender_id:actor.id,body:'The office confirmed that the requested property records are unavailable. Legalitt reviewed the office note; you can view and download it from this request.'}});
+      }
       if (record.advocate_id) await this.notifications.send(tx, {user_id: record.advocate_id, case_id: id, kind: 'report_approved', title: 'Admin approved your report', body: record.reference});
       return updated;
     });

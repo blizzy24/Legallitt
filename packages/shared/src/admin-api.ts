@@ -1,6 +1,6 @@
 import type { AdminCaseBucket, CaseStatus } from './lifecycle';
 import type { ServiceCode } from './services';
-export type AdminCaseQuery = {service?: ServiceCode; bucket?: AdminCaseBucket; search?: string; cursor?: string; limit?: number; queue?: 'approval'};
+export type AdminCaseQuery = {service?: ServiceCode; bucket?: AdminCaseBucket; search?: string; cursor?: string; limit?: number; queue?: 'approval'|'pending_client_response'};
 export type AdminCaseRow = {
   report_progress?:{label:string;deadline_at:string|null;overdue:boolean;paused:boolean;followup_due:boolean}|null;
   notice_deadline?:{at:string|null;warning:boolean;overdue:boolean;awaiting_client_since:string|null;change_rounds:number;idle_alert?:boolean;change_alert?:boolean;warning_hours?:number}|null;

@@ -3,6 +3,7 @@ import { PrismaClient } from '../src/generated/prisma/client';
 import { seedId } from './seed-records';
 import manifest from './confirmed-pricing.json';
 import provisional from './provisional-pricing.json';
+import {seedRound2BuiltServices} from './seed-round2';
 
 export async function seedConfirmedPricing(db: PrismaClient) {
   const identity = (table: string, row: unknown) => seedId(table, {version: manifest.version, row});
@@ -63,6 +64,6 @@ export async function seedProvisionalPricing(db: PrismaClient) {
 
 if (require.main === module) void (async () => {
   const db = await createDatabaseClient();
-  try { await seedConfirmedPricing(db); await seedProvisionalPricing(db); console.log('Activated versioned confirmed pricing and provisional report-service tariffs (confirmed=false); historical rows unchanged; no standalone courier commission.'); }
+  try { await seedConfirmedPricing(db); await seedProvisionalPricing(db); await seedRound2BuiltServices(db); console.log('Activated versioned confirmed pricing including round 2 PS/DF tariffs; historical rows unchanged; no standalone courier commission.'); }
   finally { await db.$disconnect(); }
 })().catch(() => { console.error('Pricing seed failed; check database access and migrations.'); process.exitCode = 1; });

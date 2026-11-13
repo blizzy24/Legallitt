@@ -20,7 +20,9 @@ export function useAdvocateDashboard() {
   const work=records.filter(r=>['assigned','advocate_accepted','in_progress','changes_requested','approved','dispatching'].includes(r.status))
     .sort((a,b)=>Date.parse(b.updated_at)-Date.parse(a.updated_at)).map(r=>({id:r.id,reference:r.reference,
       client:isNoticeCase(r)?r.details.client?.fullName??'':'',matter:isNoticeCase(r)?r.matter_type&&r.matter_type!=='other'?noticeMatter(r.matter_type).label:'':SERVICE_NAMES[r.service_code],
-      status:matters.find(m=>m.id===r.id)!.status,action:matters.find(m=>m.id===r.id)!.action??'',onOpen:()=>model.open(r.id,true)}));
+      deadline:r.notice_card?.deadline_at&&!r.notice_card.submitted_at?new Date(r.notice_card.deadline_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric',timeZone:'Asia/Kolkata'}):undefined,
+      overdue:!!r.notice_card?.deadline_at&&!r.notice_card.submitted_at&&Date.parse(r.notice_card.deadline_at)<Date.now(),
+      status:r.notice_card?.submitted_at?(r.status==='changes_requested'?'Admin requested corrections':r.status==='approved'?'Ready to resubmit':'Submitted'):matters.find(m=>m.id===r.id)!.status,action:matters.find(m=>m.id===r.id)!.action??'',onOpen:()=>model.open(r.id,true)}));
   return {self:{firstName:name.split(/\s+/)[0]??'',initials:name.split(/\s+/).map(v=>v[0]??'').join('').slice(0,2),standing:''},
     stats:model.controller.loading||model.error?[]:stats,events:[],
     dateLine:new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}),

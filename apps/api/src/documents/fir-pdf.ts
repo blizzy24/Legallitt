@@ -1,14 +1,14 @@
 import {PDFDocument,rgb,type PDFPage} from 'pdf-lib';
-import {FirDraftContentSchema,firDraftProblems,firDraftStation,firPdfSections,type FirDraftContent} from '@legalitt/shared';
+import {redactPrivatePhones,FirDraftContentSchema,firDraftProblems,firDraftStation,firPdfSections,type FirDraftContent} from '@legalitt/shared';
 import {PdfText,embedTextFonts,needsPage,unsupportedCharacters} from './pdf-text';
 
 // Design447's eight numbered sections, with neutral jurisdiction branding.
 // Only the three typed station-use fields are left for handwriting. No identity
 // document is printed or listed (Q114).
-export async function renderFirPdf(reference:string,input:FirDraftContent){
+export async function renderFirPdf(reference:string,input:FirDraftContent,privatePhones:unknown[]=[]){
  const content=FirDraftContentSchema.parse(input),problems=firDraftProblems(content);
  if(problems.length)throw new Error(problems.map(p=>p.message).join('\n'));
- const sections=firPdfSections(content);
+ const sections=redactPrivatePhones(firPdfSections(content),[content.complainant.filed.value?.phone,...privatePhones]).map(s=>({...s,lines:s.lines.filter(l=>!(l.label==='Phone'&&l.value.includes('[phone private')))}));
  for(const section of sections)for(const line of section.lines){
   const unsupported=unsupportedCharacters(line.value);
   if(unsupported.length)throw new Error(`${section.title}${line.label?` — ${line.label}`:''}: unsupported characters (${unsupported.join(' ')}). Use supported Latin or Devanagari text before generating the PDF.`);

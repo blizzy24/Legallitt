@@ -99,7 +99,7 @@ test('Report services: provisional pricing, paid intake, assignment, advocate re
       await upload(client,minor.id,'id_proof');await upload(client,minor.id,'id_proof');
       await assert.rejects(asIfOffered('court_marriage',()=>state.submitForPayment(client,minor.id)),e=>e.status===400&&/at least 18/.test(e.message));
     });
-    await t.test('Property Search: advocate uploads the PDF and sends it straight to the client (design 211)',async()=>{
+    await t.test('Property Search: advocate upload requires exact-version admin approval (round 2)',async()=>{
       const c=await paid('property_search');
       const view=await repo.read(advocate,c.id);assert.equal(view.report.stage,'not_started');assert.equal(view.client_name,'TEST REPORT client');assert.equal(view.advocate_payout.net_paise,'249900');
       await assert.rejects(upload(client,c.id,'property_document'),{status:409},'client documents freeze after payment');
@@ -116,8 +116,17 @@ test('Report services: provisional pricing, paid intake, assignment, advocate re
       for(const text of ['TEST owner research','TEST checked record','TEST record reference','TEST inspected records','TEST registry office','TEST search notes','TEST ownership history','TEST search findings','TEST final opinion','Plot 42, Scheme 78, Indore'])assert.ok(extracted.text.includes(text),text+' reaches PDF');
       const draft=await reports.save(advocate,c.id,{base_draft_id:working.id,report_document_id:report.id,note:'Title clear for 30 years.'});
       assert.equal((await repo.read(advocate,c.id)).report.property_draft.id,working.id,'research survives final-upload versions');
-      await assert.rejects(reports.approve(admin,c.id,draft.id),{status:409},'no admin gate for property search');
-      const done=await reports.submit(advocate,c.id,draft.id);assert.equal(done.status,'completed');
+      await assert.rejects(reports.approve(admin,c.id,draft.id),{status:409},'approval requires a submitted version');
+      const waiting=await reports.submit(advocate,c.id,draft.id);assert.equal(waiting.sub_status,'awaiting_admin_approval');
+      await assert.rejects(docs.url(client,report.id),{status:404});
+      await assert.rejects(reports.approve(advocate,c.id,draft.id),{status:403});
+      await assert.rejects(reports.submit(otherAdvocate,c.id,draft.id),{status:404});
+      assert.ok((await queue.list(admin,{service:'property_search',queue:'approval'})).items.some(v=>v.id===c.id));
+      await reports.requestChanges(admin,c.id,draft.id,{items:[{title:'Clarify the search limitations'}]});
+      const corrected=await reports.save(advocate,c.id,{base_draft_id:draft.id,report_document_id:report.id,note:'Title clear for 30 years.'});
+      await reports.submit(advocate,c.id,corrected.id);
+      await assert.rejects(reports.approve(admin,c.id,draft.id),{status:409});
+      const done=await reports.approve(admin,c.id,corrected.id);assert.equal(done.status,'completed');
       const seen=await repo.read(client,c.id);assert.equal(seen.report.stage,'released');assert.equal(seen.report.released.note,'Title clear for 30 years.');
       assert.ok(seen.documents.some(d=>d.id===report.id));assert.ok((await docs.url(client,report.id)).url);
       assert.equal(seen.report.latest_draft,null,'clients never get drafts');
@@ -128,13 +137,14 @@ test('Report services: provisional pricing, paid intake, assignment, advocate re
       const c=await paid('document_forensic');
       const affidavit={deponent_name:'TEST Advocate',enrolment_number:'MP/1429/2014',age:38,office_address:'High Court Precinct, Indore',
         paragraphs:defaultAffidavitParagraphs({reference:c.reference,client:'TEST REPORT client',document:'Questioned.pdf'})};
-      const report={what_checked:'Signature on page 3.',how_checked:'Visual comparison of supplied scans.',findings:'Hesitation marks.',final_result:'Does not match.',overall_status:'likely_not_genuine',risk_level:'high',authenticity:'Visible differences in the supplied signature copies.'};
+      const report={external_specialist:true,specialist_name:'TEST Specialist',specialist_organisation:'TEST Examination Office',what_checked:'Signature on page 3.',how_checked:'Visual comparison of supplied scans.',findings:'Hesitation marks.',final_result:'Does not match.',overall_status:'likely_not_genuine',risk_level:'high',authenticity:'Visible differences in the supplied signature copies.'};
       const unsigned=await reports.save(advocate,c.id,{base_draft_id:null,report,affidavit,signed:false});
       assert.equal((await db.case.findUnique({where:{id:c.id}})).status,'in_progress');
       await assert.rejects(reports.preview(advocate,c.id,unsigned.id),e=>e.status===400&&/Sign/.test(e.message));
       const reportPreview=await reports.preview(advocate,c.id,unsigned.id,true);assert.equal(reportPreview.files.length,1,'report can be previewed before signing the affidavit');
       const v2=await reports.save(advocate,c.id,{base_draft_id:unsigned.id,report,affidavit,signature,signed:true});
       const preview=await reports.preview(advocate,c.id,v2.id);assert.equal(preview.files.length,2);
+      const text=(await require('./helpers/pdf-text.cjs').readPdfText(Buffer.from(preview.files[0].pdf_base64,'base64'))).text;for(const phrase of ['TEST Specialist','TEST Examination Office','assigned advocate reviewed'])assert.ok(text.includes(phrase),phrase+' reaches the PDF');
       for(const f of preview.files){const bytes=Buffer.from(f.pdf_base64,'base64');assert.ok(bytes.subarray(0,4).equals(Buffer.from('%PDF')));assert.equal(f.size_bytes,String(bytes.length));assert.equal(f.page_count,(await PDFDocument.load(bytes)).getPageCount());}
       assert.equal(await db.document.count({where:{case_id:c.id,kind:{in:['forensic_report','forensic_affidavit']}}}),0,'preview stores nothing');
       const race=await Promise.allSettled([reports.submit(advocate,c.id,v2.id),reports.submit(advocate,c.id,v2.id)]);
@@ -163,6 +173,34 @@ test('Report services: provisional pricing, paid intake, assignment, advocate re
       const events=(await db.caseEvent.findMany({where:{case_id:c.id},orderBy:{id:'asc'}})).map(e=>e.type);
       for(const type of ['service_report_submitted','service_report_changes_requested','service_report_approved','service_report_released'])assert.ok(events.includes(type),type);
       assert.ok(await db.adminAction.findFirst({where:{subject_id:c.id,action:'approve_service_report'}}));
+    });
+    await t.test('Original request: required instructions, role/isolation, stale actions, pause through sent and resume only on receipt',async()=>{
+      const c=await paid('document_forensic');const before=await workflows.view(advocate,c.id);
+      await assert.rejects(workflowAction(advocate,c.id,'request-information',{kind:'original',prompt:'Need ink inspection'}),{status:400});
+      await workflowAction(advocate,c.id,'request-information',{kind:'original',prompt:'Need ink inspection',instructions:'Contact support to arrange delivery to the office.'});
+      const requested=await workflows.view(client,c.id),task=requested.tasks.at(-1);assert.ok(requested.paused_at);
+      for(const outsider of [other,otherAdvocate])for(const action of ['acknowledge-original','send-original','receive-original'])await assert.rejects(workflows.action(outsider,c.id,action,{revision:requested.revision,task_id:task.id}),{status:404});
+      await assert.rejects(workflowAction(advocate,c.id,'acknowledge-original',{task_id:task.id}),{status:403});
+      await assert.rejects(workflowAction(client,c.id,'receive-original',{task_id:task.id}),{status:403});
+      await assert.rejects(workflowAction(client,c.id,'send-original',{task_id:task.id}),{status:409});
+      await workflowAction(client,c.id,'acknowledge-original',{task_id:task.id});
+      await assert.rejects(workflows.action(client,c.id,'send-original',{revision:requested.revision,task_id:task.id}),{status:409});
+      await workflowAction(client,c.id,'send-original',{task_id:task.id,note:'Sent by registered post'});
+      assert.ok((await workflows.view(client,c.id)).paused_at,'sent is not received');
+      await workflowAction(advocate,c.id,'receive-original',{task_id:task.id});
+      const done=await workflows.view(client,c.id);assert.equal(done.paused_at,null);assert.equal(done.tasks.at(-1).status,'resolved');assert.ok(Date.parse(done.deadline_at)>=Date.parse(before.deadline_at));
+      await assert.rejects(workflowAction(admin,c.id,'receive-original',{task_id:task.id}),{status:409});
+    });
+    await t.test('No property records: office note remains private until admin approval; chat plus notification; no refund',async()=>{
+      const c=await paid('property_search');
+      const office=await upload(admin,c.id,'office_note','Office.pdf');
+      await assert.rejects(docs.url(client,office.id),{status:404});await assert.rejects(docs.url(otherAdvocate,office.id),{status:404});
+      const v=await reports.save(advocate,c.id,{base_draft_id:null,report_document_id:office.id,outcome:'records_unavailable',office_note_document_ids:[office.id],note:'The office has no available records.'});
+      await reports.submit(advocate,c.id,v.id);await assert.rejects(docs.url(client,office.id),{status:404});await reports.approve(admin,c.id,v.id);
+      const result=await repo.read(client,c.id);assert.equal(result.report.released.outcome,'records_unavailable');assert.ok((await docs.url(client,office.id)).url);
+      const threads=await db.messageThread.findMany({where:{case_id:c.id}});assert.ok(await db.message.findFirst({where:{thread_id:{in:threads.map(t=>t.id)},sender_id:admin.id,body:{contains:'records are unavailable'}}}));
+      assert.ok(await db.notification.findFirst({where:{case_id:c.id,user_id:client.id,title:'Property records are unavailable'}}));
+      assert.equal((await db.payment.findMany({where:{case_id:c.id}})).filter(p=>p.status==='refunded').length,0);
     });
     await t.test('Court Marriage: uploaded application goes through admin approval',async()=>{
       const c=await paid('court_marriage');
@@ -202,7 +240,7 @@ test('Report services: provisional pricing, paid intake, assignment, advocate re
       const d=await reports.save(advocate,c.id,{production:'property',base_draft_id:null,report:research,note:'Research complete'});
       const preview=await reports.preview(advocate,c.id,d.id),text=(await require('./helpers/pdf-text.cjs').readPdfText(Buffer.from(preview.files[0].pdf_base64,'base64'))).text;
       for(const phrase of ['Client details entered and verified','Property description edited by advocate','120 square metres','Registry office A','Not independently searched','Receipt supplied'])assert.ok(text.includes(phrase),phrase+' reaches PDF');
-      await reports.submit(advocate,c.id,d.id);const released=(await repo.read(client,c.id)).report.released;assert.equal(released.document_ids.length,1);assert.ok((await docs.url(client,released.document_ids[0])).url);
+      await reports.submit(advocate,c.id,d.id);await reports.approve(admin,c.id,d.id);const released=(await repo.read(client,c.id)).report.released;assert.equal(released.document_ids.length,1);assert.ok((await docs.url(client,released.document_ids[0])).url);
       await assert.rejects(reports.submit(advocate,c.id,d.id),{status:409},'no double release');
       const {NoticeMessages}=require('../dist/src/cases/notice-messages');const messages=new NoticeMessages(prisma),thread=await messages.thread(client,c.id);
       await messages.send(client,thread.id,{body:'Thank you'});
@@ -214,7 +252,7 @@ test('Report services: provisional pricing, paid intake, assignment, advocate re
       await workflowAction(advocate,c.id,'open-correction');
       await assert.rejects(reports.submit(advocate,c.id,d.id),{status:409},'correction must be a new version');
       const corrected=await reports.save(advocate,c.id,{production:'property',base_draft_id:d.id,report:{...research,conclusion:'Corrected opinion, still limited to inspected records'},note:'Corrected version'});
-      await reports.submit(advocate,c.id,corrected.id);
+      await reports.submit(advocate,c.id,corrected.id);assert.ok((await repo.read(client,c.id)).documents.some(doc=>doc.id===released.document_ids[0]),'previously released version remains accessible while correction is reviewed');await reports.approve(admin,c.id,corrected.id);
       const earnedAfter=await wallet.wallet(advocate,{period:'all'});assert.equal(earnedAfter.earned_paise,earnedBefore.earned_paise);assert.equal(earnedAfter.entries.filter(e=>e.case_id===c.id).length,1);assert.equal((await db.case.findUnique({where:{id:c.id}})).completed_at.toISOString(),completedBefore.toISOString());
       for(const outsider of [other,otherAdvocate])await assert.rejects(workflows.wording(outsider,c.id,{base_draft_id:null,section:'findings',text:'Original'}),{status:404});
     });

@@ -1,6 +1,6 @@
 import {ensureFirLifecycle,firCorrectionState} from './fir-lifecycle';
 import {ensureNoticeLifecycle} from './notice-lifecycle';
-import {NoticeFilingSchema, NoticeFilingSubmissionSchema, NoticeClientChangesSchema, type NoticeFiling} from '@legalitt/shared';
+import {currentNoticeFiling,NoticeFilingSchema, NoticeFilingSubmissionSchema, NoticeClientChangesSchema, type NoticeFiling} from '@legalitt/shared';
 import {isConsultationService,isServiceOffered,serviceNotOfferedMessage} from '@legalitt/shared';
 import { NOTIFICATIONS, type NotificationsPort } from '../notifications/notifications.port';
 import { notifyCaseTransition } from '../notifications/case-notifications';
@@ -248,7 +248,7 @@ export class CaseStateMachine {
       if (input.sender || input.details?.client) {
         const sender = await tx.caseParty.findFirst({where: {case_id: id, kind: 'sender'}});
         const values = {name: details.client?.fullName ?? '', details: details.client ?? {},
-          ...(input.sender?.age !== undefined ? {age: input.sender.age} : {}),
+          ...(input.sender?{details:{fatherName:input.sender.father_name,motherName:input.sender.mother_name,husbandName:input.sender.husband_name}}:{}),
           ...(input.sender?.salutation !== undefined ? {salutation: input.sender.salutation} : {}),
           ...(input.sender?.relation !== undefined ? {relation: input.sender.relation} : {}),
           ...(input.sender?.relative_name !== undefined ? {relative_name: input.sender.relative_name || null} : {})};
@@ -351,7 +351,7 @@ export class CaseStateMachine {
     if (to === CaseStatus.submitted && record.service_code === 'legal_notice') {
       const modern = (record.details as {intake_version?: number}).intake_version === 2;
       if (modern) {
-        const filing = parse(NoticeFilingSubmissionSchema, record.details);
+        const filing = parse(NoticeFilingSubmissionSchema, currentNoticeFiling(record.details));
         const documents = await tx.document.findMany({where: {case_id: record.id, status: 'uploaded'}});
         if (!documents.some(d => d.kind === 'id_proof')) throw new BadRequestException('Upload the requested masked identity document. This is not KYC verification.');
         if(filing.identity_kind==='masked_aadhaar'&&documents.filter(d=>d.kind==='id_proof').length<2)throw new BadRequestException('Upload both the front and back of your masked Aadhaar.');
@@ -613,7 +613,7 @@ export class CaseStateMachine {
         const life = await ensureNoticeLifecycle(tx, record);
         if (!draft.document_id) throw new ConflictException('Generate the corrected PDF before sending.');
         await tx.noticeLifecycle.update({where: {case_id: id}, data: {approved_draft_id: draftId, approved_document_id: draft.document_id, notice_checked_at: null, test_esigned_at: null, revision: {increment: 1}}});
-        return writeNoticeFlowState(tx, actor, id, {status: 'approved', sub_status: 'notice_admin_notice_check'}, 'notice_returned_to_admin', {draft_id: draftId, version: draft.version});
+        return writeNoticeFlowState(tx, actor, id, {status: 'approved', sub_status: 'notice_advocate_signature'}, 'notice_correction_ready_to_sign', {draft_id: draftId, version: draft.version});
       }
       const updated=await this.advance(tx, actor, record, CaseStatus.client_review, {
         draft_id: draftId,
@@ -657,8 +657,8 @@ export class CaseStateMachine {
       );
       if (approval) {
         await ensureNoticeLifecycle(tx, record);
-        await tx.noticeLifecycle.update({where: {case_id: id}, data: {approved_draft_id: draftId, approved_document_id: approval.noticeDocumentId, handed_to_admin_at: approval.approvedAt, revision: {increment: 1}}});
-        updated = await tx.case.update({ where: { id }, data: { notice_document_id: approval.noticeDocumentId, sub_status: 'notice_admin_address_check' } });
+        await tx.noticeLifecycle.update({where: {case_id: id}, data: {approved_draft_id: draftId, approved_document_id: approval.noticeDocumentId, test_esigned_at:null,revision: {increment: 1}}});
+        updated = await tx.case.update({ where: { id }, data: { notice_document_id: approval.noticeDocumentId, sub_status: 'notice_advocate_signature' } });
       }
       await tx.draftReview.create({
         data: { draft_id: draftId, reviewer_id: actor.id, reviewer_role: 'client', decision, comment, sections: changes?.sections ?? [], attachment_document_id: changes?.attachment_document_id ?? null, ...(approval ? { created_at: approval.approvedAt } : {}) },
@@ -764,7 +764,7 @@ export async function writeNoticeFlowState(tx: Prisma.TransactionClient, actor: 
     (same && ['approved', 'dispatching', 'dispatched'].includes(before.status)) ||
     (['approved', 'dispatching'].includes(before.status) && ['changes_requested', 'dispatched'].includes(change.status)) ||
     (before.status === 'dispatched' && change.status === 'completed')) ||
-    actor.role === 'advocate' && ((before.status === 'in_progress' && before.sub_status === 'notice_admin_advocate_correction' && change.status === 'approved') ||
+    actor.role === 'advocate' && ((same&&before.status==='approved'&&((['notice_advocate_signature','notice_advocate_ready_to_submit'].includes(before.sub_status??'')&&change.sub_status==='notice_advocate_ready_to_submit')||(before.sub_status==='notice_advocate_ready_to_submit'&&['notice_admin_address_check','notice_admin_notice_check'].includes(change.sub_status??'')))) || (before.status === 'in_progress' && before.sub_status === 'notice_admin_advocate_correction' && change.status === 'approved') ||
       (same && ['approved', 'dispatching'].includes(before.status) && before.sub_status === 'notice_admin_awaiting_test_esign' && change.sub_status === 'notice_admin_ready_for_dispatch'));
   if (!allowed) throw new ConflictException('This notice has moved on. Refresh before continuing.');
   const updated = await tx.case.update({where: {id}, data: {...change, updated_at: new Date(), ...(change.status === 'completed' ? {completed_at: new Date()} : {})}});
@@ -779,10 +779,10 @@ export async function writeNoticeFiling(tx: Prisma.TransactionClient, actor: Cas
   const filing = parse(NoticeFilingSchema, value);
   await tx.noticeLifecycle.updateMany({where:{case_id:id,handed_to_admin_at:null},data:{contacts:filing.noticee,revision:{increment:1}}});
   const party = await tx.caseParty.findFirst({where: {case_id: id, kind: 'sender'}});
-  const values = {name: filing.client.fullName ?? '', age: filing.client.age ?? null, relative_name: filing.client.relativeName ?? null, details: filing.client};
+  const values = {name: filing.client.fullName ?? '', details: filing.client};
   if (party) await tx.caseParty.update({where: {id: party.id}, data: values});
   else await tx.caseParty.create({data: {case_id: id, kind: 'sender', ...values}});
-  return tx.case.update({where: {id}, data: {details: filing, subject_matter: filing.narrative ?? null, matter_type: noticeMatterType(filing.issueType), updated_at: new Date()}});
+  return tx.case.update({where: {id}, data: {details: {...filing,client:{...((before.details as {client?:object}).client??{}),...filing.client}}, subject_matter: filing.narrative ?? null, matter_type: noticeMatterType(filing.issueType), updated_at: new Date()}});
 }
 
 /** Consultation orchestration validates action, role and revision under this same
@@ -974,7 +974,7 @@ export async function repairDevelopmentSeed(db: PrismaClient, input: {seedKey: s
   });
 }
 
-const developmentSeedSender = (sender: NoticeSenderFields) => ({age: sender.age ?? null,
+const developmentSeedSender = (sender: NoticeSenderFields) => ({
   salutation: sender.salutation ?? null, relation: sender.relation ?? null, relative_name: sender.relative_name ?? null});
 
 /** Brings a seeded case's sender introduction (age, salutation, relation, relative)
@@ -1053,9 +1053,9 @@ export async function writeReportSubmitted(tx: Prisma.TransactionClient, actor: 
   payload: ReportSubmission) {
   const record = await lockedCase(tx, actor, id, service);
   if (actor.role !== 'advocate') throw new ForbiddenException('Assigned advocate required');
-  if (record.status !== 'in_progress' || record.sub_status === REPORT_AWAITING_APPROVAL)
+  if (record.status !== 'in_progress' && !await reportCorrectionAllowed(tx,record) || record.sub_status === REPORT_AWAITING_APPROVAL)
     throw new ConflictException('Only one report version may await admin review.');
-  const updated = await tx.case.update({where: {id}, data: {sub_status: REPORT_AWAITING_APPROVAL, updated_at: new Date()}});
+  const updated = await tx.case.update({where: {id}, data: {status:'in_progress',sub_status: REPORT_AWAITING_APPROVAL, updated_at: new Date()}});
   await appendCaseEvent(tx, {case_id: id, type: 'service_report_submitted', actor_id: actor.id, actor_role: actor.role,
     from_status: 'in_progress', to_status: 'in_progress', payload});
   return updated;
@@ -1089,7 +1089,7 @@ export async function writeReportReleased(tx: Prisma.TransactionClient, actor: C
     if (actor.role !== 'advocate') throw new ForbiddenException('Assigned advocate required');
     if (record.status !== 'in_progress' && !await reportCorrectionAllowed(tx,record) || record.sub_status) throw new ConflictException('This report cannot be sent in the current state');
   }
-  const correction=record.status==='completed';
+  const correction=!!record.completed_at;
   const updated = await tx.case.update({where: {id}, data: {status: 'completed', sub_status: null, completed_at: correction?record.completed_at:now, updated_at: now}});
   if(correction){const w=await ensureReportWorkflow(tx,record);await tx.reportWorkflow.update({where:{case_id:id},data:{revision:{increment:1},data:{...w.data,correction_open:false} as Prisma.InputJsonObject}});}
   await appendCaseEvent(tx, {case_id: id, type: 'service_report_released', actor_id: actor.id, actor_role: actor.role,

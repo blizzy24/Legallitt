@@ -98,7 +98,7 @@ export function useNoticeController(stage: NoticeStage, backend: NoticeRepositor
       setTier(value.tier ?? "urgent");
       const sender = value.parties?.find(p => p.kind === 'sender');
       setIntakeFields({subject_matter: value.subject_matter, legal_demand: value.legal_demand,
-        sender: {age: sender?.age ?? null, salutation: sender?.salutation ?? null,
+        sender: {salutation: sender?.salutation ?? null,
           relation: sender?.relation ?? null, relative_name: sender?.relative_name ?? null}});
       setContent(noticeDraftOnOpen(value));
       setComplianceDays(String(value.compliance_period_days ?? value.notice_policy?.default_compliance_period_days ?? DEFAULT_NOTICE_POLICY.default_compliance_period_days));

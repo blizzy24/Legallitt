@@ -1,4 +1,6 @@
 import {reportDay,useReportRefresh} from './report-presentation';
+import {ReportTariffSettings} from './report-tariff-settings';
+import {ReportSettings} from './report-settings';
 import { AssignAdvocate } from './assign-advocate';
 import {WaitingAge,Turnaround} from './fir-approval';
 import { useEffect, useState } from 'react';
@@ -50,10 +52,12 @@ export function Notices({service = 'legal_notice'}: {service?: ServiceCode}) {
     setParams({...nextBucket ? {bucket: nextBucket} : {}, ...nextSearch ? {search: nextSearch} : {}});
   }
   return <main className="notices"><div className="page-title"><div><h1>{heading}</h1><p>{data ? `${data.total} total ${noun}` : loading ? `Loading ${noun}…` : ''}</p></div></div>
+    {(service==='property_search'||service==='document_forensic')&&<><ReportTariffSettings service={service}/><ReportSettings service={service}/></>}
     {service==='legal_notice'&&<section className="fir-stall" aria-label="Legal Notice dispatch queue"><strong>{data?.approval_waiting??'—'} notices in admin preparation or delivery</strong><p>Urgent requests first, then deadline. Verify contacts and the notice, request the test e-sign, and dispatch only the methods selected by the client.</p><button onClick={()=>{setCursors([undefined]);setPage(0);setParams({queue:'approval'});}}>Approval &amp; dispatch queue</button><button onClick={()=>setReload(n=>n+1)}>Refresh queue</button></section>}
     {service==='fir_draft'&&<section className="fir-stall" aria-label="Approval queue"><strong>{data?.approval_waiting??'—'} FIR drafts awaiting admin approval</strong><p>Review drafts, return corrections, and monitor the promised turnaround from payment.</p><button onClick={()=>{setCursors([undefined]);setPage(0);setParams({queue:'approval'});}}>Review waiting drafts · oldest first</button><button onClick={()=>setReload(n=>n+1)}>Refresh queue</button></section>}
+    {service==='legal_notice'&&<section className="fir-stall"><strong>Pending client response</strong><p>Drafts waiting at least seven days remain unapproved. Contact the client; never approve on their behalf.</p><button onClick={()=>{setCursors([undefined]);setPage(0);setParams({queue:'pending_client_response'});}}>View pending client response</button></section>}
     {isConsultationService(service)&&<section className="fir-stall" aria-label="Consultation review queue"><strong>{data?.approval_waiting??'—'} reports awaiting admin approval</strong><p>Confirm booked advocates, watch appointments that have not started, and review submitted reports.</p><button onClick={()=>{setCursors([undefined]);setPage(0);setParams({queue:'approval'});}}>Review waiting reports · oldest first</button><button onClick={()=>setReload(n=>n+1)}>Refresh queue</button></section>}
-    {isReportService(service)&&service!=='property_search'&&<section className="fir-stall" aria-label="Report review queue"><strong>{data?.approval_waiting??'—'} reports awaiting admin approval</strong><p>Review submitted files or return required corrections to the advocate. Clients receive only approved versions.</p><button onClick={()=>{setCursors([undefined]);setPage(0);setParams({queue:'approval'});}}>Review waiting reports · oldest first</button></section>}
+    {isReportService(service)&&<section className="fir-stall" aria-label="Report review queue"><strong>{data?.approval_waiting??'—'} reports awaiting admin approval</strong><p>Review submitted files or return required corrections to the advocate. Clients receive only approved versions.</p><button onClick={()=>{setCursors([undefined]);setPage(0);setParams({queue:'approval'});}}>Review waiting reports · oldest first</button></section>}
     <div className="counters" aria-label="Notice status filters">{ADMIN_CASE_BUCKETS.map(b => <button key={b} className={'counter ' + (bucket === b ? 'selected' : '')} aria-pressed={bucket === b} onClick={() => filter(bucket === b ? undefined : b)}>
       <span className={'counter-dot ' + b}/><span>{ADMIN_CASE_BUCKET_LABELS[b]}</span><strong>{data?.counts[b] ?? '—'}</strong>
     </button>)}</div>

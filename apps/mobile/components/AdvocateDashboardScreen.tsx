@@ -65,7 +65,7 @@ export default function AdvocateDashboardScreen({self, stats, events, dateLine, 
   dateLine:string; availability:boolean; unread:boolean; previews:boolean;
   onStatPress?:(id:string)=>void;
   work?:{loading:boolean;error:string;empty:boolean;onRetry:()=>void;
-    cases:{id:string;reference:string;client:string;matter:string;status:string;action:string;onOpen:()=>void}[]};
+    cases:{id:string;reference:string;client:string;matter:string;status:string;deadline?:string;overdue?:boolean;action:string;onOpen:()=>void}[]};
 }) {
   const insets = useSafeAreaInsets();
   const [online, setOnline] = useState(ADV_AVAILABILITY_DEFAULT.online);
@@ -97,7 +97,7 @@ export default function AdvocateDashboardScreen({self, stats, events, dateLine, 
         <Text style={styles.date}>
           {dateLine}
         </Text>
-        <VerificationBanner/>
+        <VerificationBanner/><Pressable accessibilityRole="button" onPress={()=>router.push('/advocate/settings/signature')}><Text style={{color:'#806646',paddingVertical:12}}>My signature · Legal Notice</Text></Pressable>
 
         {availability && <View style={styles.card}>
           <View style={styles.availHead}>
@@ -230,6 +230,7 @@ export default function AdvocateDashboardScreen({self, stats, events, dateLine, 
             : work.cases.length===0 ? <View style={styles.event}><Text style={styles.eventTitle}>{work.empty?instructedCopy.advocateWork.emptyTitle:instructedCopy.advocateWork.caughtUp}</Text><Text style={styles.body}>{work.empty?instructedCopy.advocateWork.emptyBody:instructedCopy.advocateWork.caughtUpBody}</Text></View>
             : work.cases.map(c=><View key={c.id} style={styles.event}>
               <View style={styles.eventHead}><Text style={styles.typeText}>{c.reference}</Text><View style={styles.state}><Text style={styles.stateText}>{c.status}</Text></View></View>
+              {c.deadline&&<Text style={[styles.eventMetaText,c.overdue&&{color:'#A12E2E'}]}>{c.overdue?'Overdue · ':'Due by '}{c.deadline}</Text>}
               {!!c.client && <Text style={styles.eventTitle}>{c.client}</Text>}
               {!!c.matter && <View style={styles.eventMeta}><FileText size={t.eventMetaIcon} color={colors.textBody}/><Text style={styles.eventMetaText}>{c.matter}</Text></View>}
               <Pressable accessibilityRole="button" onPress={c.onOpen} style={styles.manage}><Text style={styles.viewAllText}>{c.action}</Text><ChevronRight size={t.manageChevron} color={colors.brandDark}/></Pressable>

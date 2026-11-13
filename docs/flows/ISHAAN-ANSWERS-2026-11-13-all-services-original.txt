@@ -1,0 +1,420 @@
+LEGALITT – ALL SERVICES
+
+Questions & Answers
+
+Revised Development Requirement Clarifications
+
+A. COMMON REQUIREMENTS FOR ALL SERVICES
+
+1. Question: What should be the final pricing structure for each service where different prices are displayed on different screens?
+
+Answer:
+
+The following prices shall be treated as the applicable base prices:
+
+* Legal Notice: Urgent – ₹999 (5 days); Ordinary – ₹699 (10 days).
+* Legal Advice: Chat – ₹499; Audio – ₹699; Video – ₹999.
+* Property Search: Ordinary – ₹499; Urgent – ₹999.
+* Document Forensic: Ordinary – ₹1,499; Urgent – ₹2,999.
+* District Court: ₹25,000 / ₹35,000 (indicative prices).
+* High Court: ₹24,999 / ₹34,999.
+* FIR Draft: Existing price configured in the system shall continue.
+
+The above prices shall be consistent across all screens.
+
+2. Question: Should the displayed service prices represent the advocate’s base share, with the platform fee and GST charged additionally to the client?
+
+Answer:
+
+Yes. The displayed service prices shall represent the advocate’s base share. A platform fee of 25% and applicable GST shall be calculated and added separately to the client’s payable amount.
+
+3. Question: What identity verification methods should be provided for clients and advocates, and what should be the procedure for completing their verification?
+
+Answer:
+
+The platform shall provide the following identity verification options:
+
+A. Client Identity Verification
+
+The client shall be provided with the following options:
+
+1. Aadhaar OTP Verification: The client can complete identity verification through Aadhaar-based OTP authentication.
+2. Document Upload with Video KYC: If the client opts to upload an Aadhaar card, Driving Licence or Voter ID instead of completing Aadhaar-based OTP verification, the client shall be required to undergo Video KYC.
+3. Video KYC Timeline: Video KYC shall be completed within 24 hours of submission of the verification request through the Legalitt application.
+4. Appointment Notification: After submitting the Video KYC request, the client shall receive a notification specifying the scheduled date and time slot for video verification.
+5. DigiLocker: The client shall also be provided with an option to fetch the required identity documents directly through DigiLocker.
+
+B. Advocate Identity Verification
+
+The advocate shall be provided with the following identity verification options:
+
+1. Mobile OTP Verification: Verification through OTP sent to the mobile number fetched from the advocate’s details available in the admin panel.
+2. Aadhaar OTP Verification: The advocate may alternatively complete identity verification through Aadhaar-based OTP authentication.
+3. Document Upload with Video KYC: The advocate may upload an Aadhaar card, Driving Licence or Voter ID and complete Video KYC through the same procedure applicable to clients.
+4. Video KYC Timeline and Notification: Video KYC shall be completed within 24 hours, and the advocate shall receive a notification regarding the scheduled verification time slot after submitting the request.
+5. DigiLocker: The advocate shall also be provided with the facility to fetch identity documents directly through DigiLocker.
+
+All these verification options shall be incorporated into the respective client and advocate dashboards.
+
+4. Question: Should audio and video calling facilities be activated for legal consultation services?
+
+Answer:
+
+Yes. Both audio and video calling facilities shall be activated for legal consultation services. The client shall be able to select the available consultation mode, including chat, audio call or video call, as applicable to the selected service.
+
+5. Question: Should the actual mobile numbers of clients and advocates be visible to each other at any stage of their engagement?
+
+Answer:
+
+No. The actual mobile numbers of clients and advocates shall remain confidential and shall never be disclosed to each other at any stage. All communication shall take place through the communication facilities provided within the Legalitt application.
+
+6. Question: What support timings and response commitments should be displayed on the platform?
+
+Answer:
+
+Customer support shall operate from Monday to Saturday, between 10:00 AM and 7:00 PM. The platform may display that the support team will call back within 24 hours.
+
+⸻
+
+B. LEGAL NOTICE SERVICE
+
+7. Question: What options should be provided to advocates for incorporating their signatures on legal notices?
+
+Answer:
+
+The advocate shall be provided with two options for incorporating their signature into the legal notice:
+
+1. Aadhaar-Based E-Signature: The advocate may authenticate and sign the legal notice through Aadhaar-based electronic signature.
+2. Upload Signature: The advocate may upload their signature through the advocate dashboard.
+
+Both options shall be available to the advocate after the legal notice has been approved by the client.
+
+the uploaded signature shall be automatically affixed at a fixed position immediately after the closing lines of the legal notice.
+
+8. Question: Who shall receive the ₹179 courier charges collected from the client for dispatching the legal notice?
+
+Answer:
+
+The courier charges of ₹179 shall belong to Legalitt because the platform will bear the responsibility and expense of arranging the courier service.
+
+9. Question: How should legal notices be dispatched through WhatsApp?
+
+Answer:
+
+For the initial phase, the admin team shall manually send legal notices through the designated Legalitt WhatsApp number. Automated WhatsApp Business integration may be introduced later.
+
+10. Question: If a legal notice is returned undelivered or delivery fails due to an incorrect address, who shall bear the charges for subsequent dispatch?
+
+Answer:
+
+If the client provides a new address and requests another physical courier dispatch, an additional courier charge of ₹179 shall be payable. However, sending the notice again through email or WhatsApp shall be free of charge.
+
+11. Question: Who shall be responsible for ensuring the delivery of legal notices within the prescribed timeline?
+
+Answer:
+
+The responsibility for dispatching and ensuring delivery of the legal notice shall exclusively rest with the Legalitt legal team. The entire delivery and dispatch process shall be managed by the legal team, and any responsibility or liability arising from delay or failure in delivery shall fall outside the advocate’s purview.
+
+12. Question: What personal details should be collected from the client for preparing a legal notice?
+
+Answer:
+
+The client shall be required to provide any one of the following details:
+
+* Father’s name; or
+* Mother’s name; or
+* Husband’s name, wherever applicable.
+
+For this purpose, only one common fill-in-the-blank field shall be provided, allowing the client to enter the applicable name.
+
+The client’s age shall not be required and the corresponding field shall be removed from the application.
+
+13. Question: Should the document-upload requirements change according to the nature and category of the legal notice?
+
+Answer:
+
+Yes. The document-upload section shall dynamically display relevant document requirements depending upon the selected legal notice category.
+
+For example:
+
+* Property disputes: Property papers, agreements and relevant records.
+* Cheque bounce matters: Cheque copy, bank return memo and related documents.
+* Other disputes: Relevant supporting documents depending upon the selected category.
+
+14. Question: Should the chat facility between the client and advocate have a fixed one-hour validity period?
+
+Answer:
+
+No. There shall be no one-hour restriction on the chat facility. The client and advocate shall be able to communicate until the legal notice is delivered and for an additional period of seven days thereafter.
+
+15. Question: Should a separate Legal Notice Response service be introduced, and how should responses received from the noticee be communicated to the client?
+
+Answer:
+
+A separate Legal Notice Response service shall not be introduced at present. However, the existing Legal Notice service shall incorporate a facility for uploading and communicating responses received from the noticee.
+
+Whenever a response is received from the noticee:
+
+1. The Legalitt admin team shall upload the received response to the concerned client’s account.
+2. The client shall receive an automatic notification informing them that a response has been received.
+3. The uploaded response shall be accessible to the client through their dashboard.
+4. The client shall be able to view and download the uploaded response.
+
+16. Question: How should the ‘Get Reply Update’ feature displayed on the landing page be modified?
+
+Answer:
+
+The feature shall be modified to provide a facility for uploading responses received from the noticee. The admin team shall upload the response received, and the client shall be notified accordingly.
+
+The client shall be able to view the uploaded response directly through the Legalitt application.
+
+⸻
+
+C. FIR DRAFT SERVICE
+
+17. Question: What shall be the scope of the FIR Draft service, and who shall be responsible for filing the FIR before the police authorities?
+
+Answer:
+
+The FIR service shall be strictly limited to drafting the FIR application.
+
+The assigned advocate shall prepare the FIR draft and deliver the completed draft to the client through the Legalitt application.
+
+All subsequent steps, including visiting the police station, submitting the application and completing other formalities for registration of the FIR, shall be undertaken by the client themselves.
+
+The advocate shall not be required to personally visit the police station or undertake the filing process.
+
+18. Question: Does the ‘Select Date & Time – ₹999 Consultation’ feature belong to the FIR Draft service?
+
+Answer:
+
+No. This feature shall be applicable only to the Legal Advice service and shall not appear under the FIR Draft service.
+
+⸻
+
+D. LEGAL ADVICE SERVICE
+
+19. Question: Is the proposed charge of ₹100 appropriate for providing written legal advice along with an action plan, and can this charge be modified?
+
+Answer:
+
+The charge for written legal advice shall be configurable through the admin panel. The admin shall have the authority to modify the applicable charge whenever required.
+
+The applicable platform fee and GST shall be calculated and charged additionally to the client.
+
+20. Question: What should be the refund policy if either the client or advocate fails to attend a scheduled consultation?
+
+Answer:
+
+* Client fails to join within 10 minutes: No refund shall be provided.
+* Advocate fails to join: The client shall be entitled to either a full refund or a free rescheduling option.
+
+21. Question: What should be the rules governing rescheduling of a legal consultation?
+
+Answer:
+
+The client shall be permitted to reschedule a consultation up to two hours before the scheduled appointment. A maximum of two rescheduling requests shall be allowed.
+
+22. Question: What should happen when the scheduled 30-minute consultation period expires?
+
+Answer:
+
+The consultation shall automatically end upon completion of the booked duration. If the client requires further consultation, a separate follow-up appointment shall have to be booked.
+
+23. Question: How should the charges for follow-up consultations be determined?
+
+Answer:
+
+The charges for follow-up consultations shall remain the same as the charges applicable to the client’s previous consultation. No separate or additional pricing structure shall apply merely because the consultation is a follow-up.
+
+24. Question: How should the preferred consultation time selected by the client be managed before an advocate is assigned?
+
+Answer:
+
+The client shall be permitted to select any available slot within Legalitt’s working hours. Once an advocate is assigned, the advocate shall have the authority to accept the requested slot or suggest an alternative time.
+
+⸻
+
+E. PROPERTY SEARCH SERVICE
+
+25. Question: Should the charges for a full property search record exceeding 30 years be different from the charges for a 15-year or 30-year search?
+
+Answer:
+
+No. The same pricing shall apply irrespective of whether the client selects a 15-year, 30-year or full-record property search.
+
+26. Question: What should happen if no property records are found for the requested search period at the concerned registration or revenue office?
+
+Answer:
+
+If no records are found for the requested search period, the client shall not be entitled to any refund.
+
+Instead, the concerned office shall provide a note or written confirmation stating that the relevant records are unavailable for the specified period.
+
+The Legalitt admin team shall communicate this information to the client through:
+
+1. An in-app chat message.
+2. A push notification informing the client about the unavailability of the records.
+
+The relevant note or confirmation received from the concerned office shall also be made available to the client through the application.
+
+27. Question: Should the admin verify property search reports before they are delivered to the client?
+
+Answer:
+
+Yes. The admin team shall verify the property search report before its final delivery to the client. The report shall be delivered to the client only after completion of the admin verification process.
+
+28. Question: What should be the delivery timelines for ordinary and urgent property search services?
+
+Answer:
+
+The delivery timelines shall be:
+
+* Urgent: Within 2–3 working days.
+* Ordinary: Within 4–6 working days.
+
+These timelines shall be consistently displayed throughout the application.
+
+⸻
+
+F. DOCUMENT FORENSIC SERVICE
+
+29. Question: Who shall be responsible for examining documents and signing the affidavit in the Document Forensic service?
+
+Answer:
+
+The assigned advocate shall remain responsible for the examination and the final report. The advocate may personally examine the document or arrange its examination through an external forensic specialist. The advocate shall be responsible for reviewing the findings and signing the affidavit.
+
+30. Question: What should be the final turnaround time for ordinary and urgent Document Forensic services?
+
+Answer:
+
+The following timelines shall apply:
+
+* Urgent: Within 3–4 days.
+* Ordinary: Within 5–7 working days.
+
+The same timelines shall be displayed on both client and advocate dashboards.
+
+31. Question: Should clients be required to send original physical documents to the advocate for forensic examination?
+
+Answer:
+
+The initial examination shall be undertaken on the basis of scanned documents uploaded by the client. However, if the advocate or forensic specialist considers the original physical document necessary for proper examination, the client may be asked to provide the original document.
+
+The application shall provide an appropriate mechanism to communicate such a requirement to the client.
+
+32. Question: What type of signature shall be accepted on the affidavit prepared under the Document Forensic service?
+
+Answer:
+
+A drawn or typed signature shall be accepted for the present. Aadhaar-based electronic signature integration is not required at this stage.
+
+⸻
+
+G. DISTRICT COURT AND HIGH COURT SERVICES
+
+33. Question: At what stage should the client be required to make payment for District Court and High Court services?
+
+Answer:
+
+The client shall initially be required to pay ₹2,000 at the time of submitting the request for initiating the process of advocate assignment.
+
+Once an advocate is assigned and the client accepts the assigned advocate, the client shall be required to pay the applicable service fee for the concerned court matter.
+
+The initial payment of ₹2,000 shall be adjusted against the total applicable service charges.
+
+34. Question: How should the advocate’s payment or remuneration be calculated in relation to the dates of hearing in a court case?
+
+Answer:
+
+The advocate’s payment shall be determined on the basis of the dates of hearing and the nature of the hearing. Separate charges shall apply to effective hearings and passive hearings.
+
+A. Effective Hearing
+
+An effective hearing shall mean a hearing in which:
+
+1. The assigned advocate has appeared before the concerned court.
+2. The assigned advocate has not sought an adjournment or requested the matter to be deferred.
+
+A separate applicable charge shall be payable for each effective hearing.
+
+B. Passive Hearing
+
+A passive hearing shall mean a hearing in which:
+
+1. The assigned advocate has not appeared before the court; or
+2. Due to unavoidable circumstances, the court has not convened or the matter could not be taken up; or
+3. The assigned advocate has requested that the matter be deferred or adjourned.
+
+A separate applicable charge shall be payable for each passive hearing.
+
+The admin panel shall provide the facility to record the date of each hearing, classify it as effective or passive, and calculate the corresponding advocate payment accordingly.
+
+35. Question: Is the ₹2,000 change-of-advocate fee refundable, and how many times can a client request a change of advocate?
+
+Answer:
+
+No. The ₹2,000 change-of-advocate fee shall be non-refundable under all circumstances, including where the admin rejects the request.
+
+However, the client shall be provided with the option to request a change of advocate up to two times.
+
+36. Question: What refund policy should apply if the client cancels the court-case service after accepting and paying the advocate?
+
+Answer:
+
+The admin shall have the authority to determine the refund amount on a case-to-case basis, considering the work already performed by the advocate. However, no refund shall be permissible once the case has been filed before the concerned court.
+
+37. Question: How many rounds of document review and corrections should be permitted before filing a court case?
+
+Answer:
+
+A maximum of three rounds of pre-filing document review and corrections shall be permitted. After completion of three rounds, the client shall be directed to contact the support team for further assistance.
+
+38. Question: How should the document pickup facility and its charges be managed?
+
+Answer:
+
+The document pickup facility shall be arranged by the Legalitt admin team through a courier service. A flat charge of ₹249 shall apply for this facility.
+
+39. Question: How many times can a client request a change of advocate before accepting the assigned advocate and making payment?
+
+Answer:
+
+The client shall be permitted to request a change of advocate up to two times without any additional charges. If the client requests another change after two attempts, the admin team shall personally contact the client and resolve the matter.
+
+40. Question: Which High Courts should be covered under the High Court legal services offered through Legalitt?
+
+Answer:
+
+For the initial phase, High Court services shall be made available for the following High Courts:
+
+* Madhya Pradesh High Court.
+* Delhi High Court.
+* Bombay High Court.
+
+The application shall provide the facility to select the concerned High Court while submitting the service request.
+
+⸻
+
+H. PENDING DESIGN AND DEVELOPMENT CLARIFICATIONS
+
+41. Question: Are Figma design files available for the Admin Dashboard, or has any alternative design reference been provided to the development team?
+
+Answer:
+
+Figma design files for the Admin Dashboard are not available. However, screenshots of the Admin Dashboard design have already been provided to the developer as the reference for development.
+
+The developer shall use the provided screenshots as the design reference while developing the Admin Dashboard.
+
+42. Question: Was any specific design or functionality prepared for the ‘Client-Side-Identity-Verification’ folder in the Figma export?
+
+Answer:
+
+No. No separate design has been prepared for the Client-Side-Identity-Verification section. The developer shall implement the identity verification workflow in accordance with the requirements specified under Point No. 3.
+
+43. Question: Should the Court Marriage service be displayed to clients in the present version of Legalitt?
+
+Answer:
+
+No. Court Marriage services shall not be incorporated at present. The service shall remain hidden from the client-facing application and may be considered for a future development phase.

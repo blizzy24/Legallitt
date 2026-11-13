@@ -44,20 +44,37 @@ export class ReportWorkflowService {
    }else if(action==='request-information'){
     role('admin','advocate');active();const b=parse(ReportTaskInputSchema,body);
     if(c.sub_status==='awaiting_admin_approval')throw new ConflictException('Return the report for changes before asking for new evidence.');
+    if(b.kind==='original'&&(c.service_code!=='document_forensic'||!b.instructions))throw new BadRequestException('Original document requests require a forensic case and delivery instructions.');
+    if(b.kind==='original'&&data.tasks?.some(t=>t.kind==='original'&&t.status!=='resolved'))throw new ConflictException('An original document request is already open.');
     if(b.kind==='document'&&!b.document_kind)throw new BadRequestException('Choose the document requested.');
     if(b.document_kind&&(c.service_code==='property_search'?b.document_kind!=='property_document':b.document_kind==='property_document'))throw new BadRequestException('Choose a document type for this service.');
-    const task={id:randomUUID(),kind:b.kind,prompt:b.prompt,document_kind:b.document_kind??null,requested_by:actor.id,requested_role:actor.role,requested_at:at,status:'requested' as const,document_ids:[]};
-    data.tasks=[...(data.tasks??[]),task];data.paused_at??=at;payload={task_id:task.id,prompt:task.prompt,kind:task.kind};notify=[c.client_id];title='We need more details';
+    const task={id:randomUUID(),kind:b.kind,prompt:b.prompt,...b.instructions?{instructions:b.instructions}:{},document_kind:b.document_kind??null,requested_by:actor.id,requested_role:actor.role,requested_at:at,status:'requested' as const,document_ids:[]};
+    data.tasks=[...(data.tasks??[]),task];data.paused_at??=at;payload={task_id:task.id,prompt:task.prompt,kind:task.kind};notify=[c.client_id];title=b.kind==='original'?'Your original document is needed':'We need more details';
     if(actor.role==='advocate'&&reportChat(c,data,w.policy).writable){const thread=await tx.messageThread.findFirst({where:{case_id:id,kind:'client_advocate'}})??await tx.messageThread.create({data:{case_id:id,kind:'client_advocate'}});await tx.message.create({data:{thread_id:thread.id,sender_id:actor.id,body:task.prompt}});}
    }else if(action==='reply'){
     role('client');active();const b=parse(ReportTaskReplySchema,body),task=data.tasks?.find(t=>t.id===b.task_id&&t.status==='requested');
     if(!task)throw new ConflictException('This request for information is no longer open.');
+    if(task.kind==='original')throw new BadRequestException('Acknowledge the original request, then mark the document sent.');
     if(!b.reply&&!b.document_ids.length&&!b.details)throw new BadRequestException('Add your response or the requested document.');
     if(task.kind==='document'&&!b.document_ids.length)throw new BadRequestException('Upload the requested document before replying.');
     if(b.document_ids.length){const count=await tx.document.count({where:{id:{in:b.document_ids},case_id:id,owner_id:actor.id,status:'uploaded',...(task.document_kind?{kind:task.document_kind}:{})}});if(count!==new Set(b.document_ids).size)throw new BadRequestException('Choose uploaded documents belonging to this request.');}
     if(b.details){if(task.kind!=='details')throw new BadRequestException('This request is for a document.');if(!isFlowReportService(c.service_code))throw new BadRequestException('Unsupported service');const details=parse(REPORT_INTAKE_SCHEMAS[c.service_code] as unknown as z.ZodType<Record<string,unknown>>,b.details);validateReportJurisdiction(details);await writeReportCorrection(tx,actor,id,details as Prisma.InputJsonObject,task.id);}
     Object.assign(task,{status:'responded',reply:b.reply,document_ids:b.document_ids,responded_at:at});payload={task_id:task.id};notify=[task.requested_by];title='Client supplied the requested information';
     if(task.requested_role==='advocate'&&reportChat(c,data,w.policy).writable){const thread=await tx.messageThread.findFirst({where:{case_id:id,kind:'client_advocate'}})??await tx.messageThread.create({data:{case_id:id,kind:'client_advocate'}});if(b.reply)await tx.message.create({data:{thread_id:thread.id,sender_id:actor.id,body:b.reply}});for(const document_id of b.document_ids)await tx.message.create({data:{thread_id:thread.id,sender_id:actor.id,document_id}});}
+   }else if(action==='acknowledge-original'||action==='send-original'){
+    role('client');active();const b=parse(z.strictObject({revision:z.number().int().min(0),task_id:z.uuid(),note:z.string().trim().max(2000).optional()}),body);
+    const task=data.tasks?.find(t=>t.id===b.task_id&&t.kind==='original');
+    if(!task||task.status!==(action==='acknowledge-original'?'requested':'acknowledged'))throw new ConflictException('This original document request changed. Reload its current status.');
+    if(action==='acknowledge-original')Object.assign(task,{status:'acknowledged',acknowledged_at:at});
+    else Object.assign(task,{status:'sent',sent_at:at,reply:b.note??''});
+    payload={task_id:task.id};notify=[task.requested_by];title=action==='acknowledge-original'?'Client acknowledged the original request':'Client marked the original document sent';
+   }else if(action==='receive-original'){
+    role('admin','advocate');active();const b=parse(z.strictObject({revision:z.number().int().min(0),task_id:z.uuid()}),body);
+    const task=data.tasks?.find(t=>t.id===b.task_id&&t.kind==='original'&&t.status==='sent');
+    if(!task)throw new ConflictException('The client must mark the original sent before receipt can be confirmed.');
+    Object.assign(task,{status:'resolved',resolved_at:at});
+    if(data.tasks?.every(t=>t.status==='resolved')&&data.paused_at){if(data.deadline_at)data.deadline_at=new Date(Date.parse(data.deadline_at)+now.getTime()-Date.parse(data.paused_at)).toISOString();data.paused_at=null;}
+    payload={task_id:task.id};notify=[c.client_id];title='Receipt of your original document was confirmed';
    }else if(action==='resolve'){
     role('admin','advocate');active();const b=parse(z.strictObject({revision:z.number().int().min(0),task_id:z.uuid()}),body),task=data.tasks?.find(t=>t.id===b.task_id&&t.status==='responded');
     if(!task)throw new ConflictException('Wait for the client response before resolving this request.');

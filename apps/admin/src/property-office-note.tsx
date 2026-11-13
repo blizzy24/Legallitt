@@ -1,0 +1,7 @@
+import {useState} from 'react';
+import {api} from './session';
+export function PropertyOfficeNote({caseId,changed}:{caseId:string;changed:()=>void}){
+ const [busy,setBusy]=useState(false),[error,setError]=useState(''),[saved,setSaved]=useState(false);
+ const upload=async(file:File)=>{setBusy(true);setError('');setSaved(false);try{if(file.type!=='application/pdf'||!file.size||file.size>25_000_000)throw Error('Choose the office note as a PDF up to 25 MB.');const ticket=await api.presign({case_id:caseId,kind:'office_note',filename:'Office-note.pdf',mime:'application/pdf'});await api.upload(ticket,file);setSaved(true);changed();}catch(e){setError(e instanceof Error?e.message:'Office note could not be uploaded. Try again.');}finally{setBusy(false);}};
+ return <details><summary>Upload office note — records unavailable</summary><p>The advocate must include this office note in the version submitted for approval. If a version is already awaiting review, return it with a reason so the advocate can include the note. Approval sends the client a chat message and notification; this outcome does not create a refund.</p><input aria-label="Office note PDF" type="file" accept="application/pdf" disabled={busy} onChange={e=>e.target.files?.[0]&&void upload(e.target.files[0])}/>{busy&&<p role="status">Uploading office note…</p>}{saved&&<p>Office note uploaded. Include it in the submitted version before release.</p>}{error&&<p role="alert" className="error">{error}</p>}</details>;
+}

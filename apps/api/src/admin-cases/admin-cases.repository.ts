@@ -18,7 +18,7 @@ export const adminCaseQuerySchema = z.strictObject({
   search: z.string().trim().max(200).default(''),
   limit: z.coerce.number().int().min(1).max(100).default(20),
   cursor: z.string().max(2048).optional(),
-  queue: z.literal('approval').optional(),
+  queue: z.enum(['approval','pending_client_response']).optional(),
 });
 const cursorSchema = z.strictObject({id: z.uuid(), created_at: z.iso.datetime(), scope: z.string()});
 const eligible = Object.values(CaseStatus).filter(status => adminBucketFor(status) !== null);
@@ -50,13 +50,14 @@ export class AdminCasesRepository {
     const consultation=isConsultationService(input.service);
     const report=isReportService(input.service);
     const notice=input.service==='legal_notice';
-    const waiting: Prisma.CaseWhereInput = notice?{OR:[{status:{in:['approved','dispatching','dispatched']}},{sub_status:'notice_admin_advocate_correction'}]}:consultation||report?{status:'in_progress',sub_status:'awaiting_admin_approval'}:{service_code:'fir_draft',OR:[{status:'in_progress',sub_status:'awaiting_admin_approval'},{status:{in:['assigned','advocate_accepted','in_progress','changes_requested']},sub_status:{in:['identity_review_pending','multiple_corrections_required']}}]};
+    const waiting: Prisma.CaseWhereInput = notice?{OR:[{status:{in:['approved','dispatching','dispatched']},NOT:{sub_status:{in:['notice_advocate_signature','notice_advocate_ready_to_submit']}}},{sub_status:'notice_admin_advocate_correction'}]}:consultation||report?{status:'in_progress',sub_status:'awaiting_admin_approval'}:{service_code:'fir_draft',OR:[{status:'in_progress',sub_status:'awaiting_admin_approval'},{status:{in:['assigned','advocate_accepted','in_progress','changes_requested']},sub_status:{in:['identity_review_pending','multiple_corrections_required']}}]};
     const ordinaryBucket:Prisma.CaseWhereInput={status:{in:eligible.filter(s=>adminBucketFor(s,input.service)===input.bucket)}};
     const bucketWhere: Prisma.CaseWhereInput = (consultation||report)&&input.bucket==='open'?{OR:[ordinaryBucket,waiting]}:(consultation||report)&&input.bucket==='in_progress'?{AND:[ordinaryBucket,{NOT:waiting}]}:ordinaryBucket;
+    const db = await this.prisma.getClient();
+    const idleIds=input.queue==='pending_client_response'&&notice?(await db.noticeLifecycle.findMany({where:{case:{status:'client_review'}},include:{policy:true,case:{select:{case_events_case_id_relations:{where:{to_status:'client_review'},orderBy:{id:'desc'},take:1}}}}})).filter(l=>{const sent=l.case.case_events_case_id_relations[0];return sent&&Date.now()-sent.created_at.getTime()>=NoticeWorkflowPolicySchema.parse(l.policy.config).client_idle_admin_hours*3600000;}).map(l=>l.case_id):[];
     const filtered: Prisma.CaseWhereInput = {AND:[base,
       ...(input.bucket ? [input.service==='fir_draft'?{OR:eligible.flatMap(status=>[null,'awaiting_admin_approval','advocate_revision_required','identity_replacement_required','identity_review_pending','multiple_corrections_required','client_changes_requested','awaiting_police_submission'].filter(sub=>adminBucketFor(status,input.service,sub)===input.bucket).map(sub_status=>({status,sub_status})))}:bucketWhere] : []),
-      ...(input.queue ? [waiting] : [])]};
-    const db = await this.prisma.getClient();
+      ...(input.queue ? [input.queue==='pending_client_response'?{id:{in:idleIds}}:waiting] : [])]};
     return db.$transaction(async tx => {
       const policyRow=input.service==='fir_draft'?await tx.firPolicy.findFirst({orderBy:{version:'desc'},where:{effective_from:{lte:new Date()}}}):null;
       const defaultPolicy=policyRow?FirPolicyConfig.parse(policyRow.config):null;
@@ -118,10 +119,10 @@ export class AdminCasesRepository {
           service_code: input.service,
           ...(isFlowReportService(row.service_code)?{report_progress:{label:reportStage({...row,advocate_id:row.advocate_id_relation?.id},reportData).admin,deadline_at:reportDue,overdue:!!reportDue&&!reportData.paused_at&&!['completed','cancelled','refunded'].includes(row.status)&&Date.parse(reportDue)<Date.now(),paused:!!reportData.paused_at,followup_due:!!reportPolicy&&!!reportData.tasks?.some(t=>t.status==='requested'&&Date.now()-Date.parse(t.requested_at)>reportPolicy.followup_hours*3600000)}}:{}),
           ...(notice?{sub_status:row.sub_status,notice_deadline:{at:row.notice_lifecycle?.deadline_at?.toISOString()??null,
-            warning:!!row.notice_lifecycle?.deadline_at&&!['completed','cancelled','refunded'].includes(row.status)&&row.notice_lifecycle.deadline_at.getTime()-Date.now()<=NoticeWorkflowPolicySchema.parse(row.notice_lifecycle.policy.config).deadline_alert_hours*3600000,
-            overdue:!!row.notice_lifecycle?.deadline_at&&!['completed','cancelled','refunded'].includes(row.status)&&row.notice_lifecycle.deadline_at.getTime()<Date.now(),
+            warning:!!row.notice_lifecycle?.deadline_at&&!row.notice_lifecycle.handed_to_admin_at&&!['completed','cancelled','refunded'].includes(row.status)&&row.notice_lifecycle.deadline_at.getTime()-Date.now()<=NoticeWorkflowPolicySchema.parse(row.notice_lifecycle.policy.config).deadline_alert_hours*3600000,
+            overdue:!!row.notice_lifecycle?.deadline_at&&!row.notice_lifecycle.handed_to_admin_at&&!['completed','cancelled','refunded'].includes(row.status)&&row.notice_lifecycle.deadline_at.getTime()<Date.now(),
             awaiting_client_since:row.status==='client_review'?row.case_events_case_id_relations.filter(e=>e.to_status==='client_review').at(-1)?.created_at.toISOString()??null:null,
-            change_rounds:rounds,warning_hours:noticePolicy?.deadline_alert_hours,idle_alert:!!clientSince&&!!noticePolicy&&Date.now()-clientSince.getTime()>=noticePolicy.client_idle_admin_hours*3600000,change_alert:!!noticePolicy&&rounds>noticePolicy.change_round_alert}}:{}),
+            change_rounds:rounds,warning_hours:noticePolicy?.deadline_alert_hours,idle_alert:!!clientSince&&!!noticePolicy&&Date.now()-clientSince.getTime()>=noticePolicy.client_idle_admin_hours*3600000,change_alert:!!noticePolicy&&rounds>=noticePolicy.change_round_alert}}:{}),
           ...(consultation?{sub_status:row.sub_status,review_submitted_at:pendingReports.find(r=>r.case_id===row.id)?.submitted_at?.toISOString()??null,
             consultation:sessions.find(s=>s.case_id===row.id)?{scheduled_at:sessions.find(s=>s.case_id===row.id)!.scheduled_at.toISOString(),status:sessions.find(s=>s.case_id===row.id)!.status}:null}:{}),
           ...(input.service==='fir_draft'?{turnaround:!['client_review','approved','completed','cancelled','refunded'].includes(row.status)&&policy?{paid_at:(row.fir_lifecycle?.paid_at??row.payments_case_id_relations[0]?.captured_at)?.toISOString()??null,warning_hours:policy.turnaround_warning_hours,overdue_hours:policy.turnaround_overdue_hours}:null}:{}),

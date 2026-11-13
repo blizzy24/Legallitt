@@ -3,7 +3,7 @@ import 'regenerator-runtime/runtime';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { PDFDocument, rgb, type PDFFont, type PDFPage, type PDFImage, type RGB,  } from 'pdf-lib';
-import { DEFAULT_NOTICE_POLICY, noticeClosing, noticePdfProblem, noticeSenderIntroduction, type NoticeSenderPhrase, type NoticePolicy, type NoticeDraftContent } from '@legalitt/shared';
+import { withoutNoticeAge, DEFAULT_NOTICE_POLICY, noticeClosing, noticePdfProblem, noticeSenderIntroduction, type NoticeSenderPhrase, type NoticePolicy, type NoticeDraftContent } from '@legalitt/shared';
 import { noticeLetterhead as t } from './notice-letterhead';
 import {PdfText,embedTextFonts,needsPage,type Run,type Span,type Weight} from './pdf-text';
 export {unsupportedCharacters} from './pdf-text';
@@ -16,6 +16,7 @@ export type NoticePdfInput = {
   subject?: string | null; demands?: string[]; serviceFeePaise?: bigint | string | null;
   compliancePeriodDays?: number | null; closingPolicy?: NoticePolicy;
   content: NoticeDraftContent;
+  signature?:{mode:'uploaded'|'test';at:Date;bytes?:Uint8Array;mime?:string};
 };
 const ASSETS = resolve(__dirname, '../../../assets');
 const color = (hex: string) => rgb(...[1, 3, 5].map(i => parseInt(hex.slice(i,i+2),16)/255) as [number,number,number]);
@@ -30,7 +31,7 @@ class Letter {
   headerBottom=Y(t.headerHeight+t.headerRule);
   private readonly typography:PdfText;
   constructor(private readonly pdf:PDFDocument,fonts:Awaited<ReturnType<typeof embedTextFonts>>,
-    private readonly wordmark:PDFImage,private readonly input:NoticePdfInput) {this.typography=new PdfText(pdf,fonts);}
+    private readonly wordmark:PDFImage,private readonly input:NoticePdfInput,private readonly signatureImage?:PDFImage) {this.typography=new PdfText(pdf,fonts);}
   runs(text:string,weight:Weight='regular'){return this.typography.runs(text,weight);}
   width(runs:Run[],size=BODY){return this.typography.width(runs,size);}
   wrap(spans:Span[],max:number,size=BODY){return this.typography.wrap(spans,max,size);}
@@ -136,6 +137,7 @@ class Letter {
     const closing=noticeClosing(i.closingPolicy??DEFAULT_NOTICE_POLICY,i.compliancePeriodDays??null);
     if(closing.compliance){this.paragraph(closing.compliance);this.gap(7);}
     paragraphs(i.content.closing).forEach(line=>this.paragraph(line));
+    if(i.signature){this.gap(8);this.ensure(Y(110));if(this.signatureImage){const dimensions=this.signatureImage.scaleToFit(X(170),Y(55));this.page.drawImage(this.signatureImage,{x:LEFT,y:t.height-this.top-dimensions.height,width:dimensions.width,height:dimensions.height});this.top+=dimensions.height+Y(8);this.paragraph('Advocate signature · uploaded image');}else this.paragraph('Test Aadhaar e-sign step completed — no digital signature applied.');this.paragraph(`Recorded ${i.signature.at.toLocaleString('en-IN',{timeZone:'Asia/Kolkata',day:'numeric',month:'short',year:'numeric',hour:'numeric',minute:'2-digit'})} IST`);}
     this.gap(7);
     const fee=`₹${(Number(i.serviceFeePaise)/100).toLocaleString('en-IN',{maximumFractionDigits:0})}`;
     this.paragraph(`Further you are hereby called to pay ${fee} as the cost of this legal notice.`);
@@ -145,16 +147,18 @@ class Letter {
     this.text(t.signFirm,X(422),this.top,X(14));this.top+=Y(20);
     this.paragraph(`Place : ${i.place!.trim()}`,0,X(14),Y(26));
     this.paragraph(`Date : ${dateText(i.date)}`,0,X(14),Y(26));
-    this.line(X(460),this.top-Y(8),X(570)); // Blank: signed only by hand.
+    // The signature sits after the closing lines; no movable or blank signature field.
   }
 }
 
 export async function renderNoticePdf(input:NoticePdfInput):Promise<Uint8Array>{
+  input={...input,content:{...input.content,sender:withoutNoticeAge(input.content.sender)}};
   const problem=noticePdfProblem(input);
   if(problem)throw Object.assign(new Error(problem.message),problem);
   const pdf=await PDFDocument.create();
   pdf.setTitle(input.reference);pdf.setCreationDate(input.date);pdf.setModificationDate(input.date);
   const fonts=await embedTextFonts(pdf);
   const wordmark=await pdf.embedPng(readFileSync(resolve(ASSETS,'letterhead/legalitt-wordmark-white.png')));
-  new Letter(pdf,fonts,wordmark,input).render();return pdf.save();
+  const mark=input.signature?.bytes?(input.signature.mime==='image/png'?await pdf.embedPng(input.signature.bytes):await pdf.embedJpg(input.signature.bytes)):undefined;
+  new Letter(pdf,fonts,wordmark,input,mark).render();return pdf.save();
 }

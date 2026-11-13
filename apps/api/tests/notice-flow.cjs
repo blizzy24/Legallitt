@@ -206,7 +206,11 @@ test(
       await assert.rejects(state.dispatch(advocate,c.id,{}),{status:409});
       await assert.rejects(shipmentService.save(advocate,c.id,{carrier:'Retired route'}),{status:409});
       const {NoticeFlowService}=require('../dist/src/cases/notice-flow.service'),flow=new NoticeFlowService(prisma,{}, {},inbox());
+      const {NoticeSigning}=require('../dist/src/cases/notice-signing');
+      const signing=new NoticeSigning(prisma,{}, {signed:async()=>final,discard:async()=>{}},inbox());
       let view=await flow.view(admin,c.id);
+      const signature=await signing.sign(advocate,c.id,{revision:view.revision,draft_id:draft2.id,mode:'test',confirmed:true});view=await flow.view(admin,c.id);
+      await signing.submit(advocate,c.id,{revision:view.revision,draft_id:draft2.id,signature_id:signature.signature_id});view=await flow.view(admin,c.id);
       // Legacy clients need not repay or re-enter the entire filing. A missing
       // postal PIN is corrected through the scoped delivery-contact task.
       await flow.requestTask(admin,c.id,{revision:view.revision,kind:'contact',method:'courier',reason:'Please add the postal PIN'});view=await flow.view(client,c.id);
@@ -214,7 +218,7 @@ test(
       await flow.resolveTask(admin,c.id,{revision:view.revision,task_id:view.tasks[0].id,confirmed:true});view=await flow.view(admin,c.id);
       await flow.check(admin,c.id,'address',{revision:view.revision,confirmed:true});view=await flow.view(admin,c.id);
       await flow.check(admin,c.id,'notice',{revision:view.revision,confirmed:true});view=await flow.view(admin,c.id);
-      await flow.testEsign(advocate,c.id,{revision:view.revision,confirmed:true});view=await flow.view(admin,c.id);
+      assert.equal(view.sub_status,'notice_admin_ready_for_dispatch');
       await flow.dispatch(admin,c.id,{revision:view.revision,method:'courier',carrier:'Test carrier',waybill:'Test waybill',dispatch_date:'2026-11-12'});view=await flow.view(admin,c.id);
       const proof=await db.document.create({data:{case_id:c.id,owner_id:admin.id,kind:'notice_delivery_proof',filename:'test-proof.pdf',s3_key:'test-proof',mime_type:'application/pdf',size_bytes:4n,status:'uploaded',page_count:1}});
       await flow.result(admin,c.id,{revision:view.revision,attempt_id:view.attempts[0].id,result:'delivered',occurred_at:new Date().toISOString(),proof_document_id:proof.id,received_by:'Test recipient'});
@@ -226,6 +230,7 @@ test(
       else process.env.ENVIRONMENT = oldEnv;
       if (oldNode === undefined) delete process.env.NODE_ENV;
       else process.env.NODE_ENV = oldNode;
+      await db.noticeSignature.deleteMany({where:{case_id:{in:ids}}});
       await db.noticeDeliveryEvent.deleteMany({where:{delivery:{case_id:{in:ids}}}});
       await db.noticeDelivery.deleteMany({where:{case_id:{in:ids}}});
       await db.noticeLifecycle.deleteMany({where:{case_id:{in:ids}}});

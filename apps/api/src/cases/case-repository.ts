@@ -1,3 +1,5 @@
+import {redactPrivatePhones} from '@legalitt/shared';
+import {counterpartPhones,noticeAgeProjection} from './contact-privacy';
 import {firContactMasked,maskFirContact} from '@legalitt/shared';
 import {FIR_EVENT_LABELS,FIR_STATUS_LABELS,firTeamEventLabel} from './fir-event-labels';
 import { Injectable, NotFoundException } from "@nestjs/common";
@@ -61,7 +63,8 @@ const firVisibleDocuments = <T extends {kind: string}>(role: string, documents: 
 export class CaseRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async read(actor: CaseActor, id: string, serviceCode?: ServiceCode) {
+  async read(actor:CaseActor,id:string,serviceCode?:ServiceCode){const value=await this.readRecord(actor,id,serviceCode),db=await this.prisma.getClient();return redactPrivatePhones(noticeAgeProjection(value),await counterpartPhones(db,actor,id));}
+  private async readRecord(actor: CaseActor, id: string, serviceCode?: ServiceCode) {
     const db = await this.prisma.getClient();
     const record = await db.case.findFirst({
       where: { AND: [caseScope(actor, serviceCode), { id }] },
@@ -206,7 +209,7 @@ export class CaseRepository {
         ],
       },
       orderBy: [{ created_at: "asc" }, { id: "asc" }],
-      include: { advocate_id_relation: { select: { id: true, full_name: true } },client_id_relation:{select:{full_name:true}},report_workflow:{select:{data:true}} },
+      include: { advocate_id_relation: { select: { id: true, full_name: true } },client_id_relation:{select:{full_name:true}},report_workflow:{select:{data:true}},notice_lifecycle:{select:{deadline_at:true,handed_to_admin_at:true}} },
       take: input.limit + 1,
     });
     // A1 (design 214): the advocate's FIR card shows their share and the latest note.
@@ -223,7 +226,8 @@ export class CaseRepository {
         firCards.set(id, {share_paise: snapshot?.breakdown?.advocate_entitlement_paise ?? null, note: event ? firTeamEventLabel(event, false) : null});
       }
     }
-    const items = rows.slice(0, input.limit).map(({ advocate_id_relation: advocate,client_id_relation:client,report_workflow:workflow, ...record }) => ({ ...record,
+    const items = rows.slice(0, input.limit).map(({ advocate_id_relation: advocate,client_id_relation:client,report_workflow:workflow,notice_lifecycle:notice, ...record }) => ({ ...record,
+      ...(record.service_code==='legal_notice'?{notice_card:{deadline_at:notice?.deadline_at??null,submitted_at:notice?.handed_to_admin_at??null}}:{}),
       ...(isFlowReportService(record.service_code)?{report_card:{stage:reportStage(record,(workflow?.data??{}) as ReportWorkflowData),deadline_at:(workflow?.data as ReportWorkflowData|null)?.deadline_at??null,client_name:client.full_name}}:{}),
       ...(isFlowReportService(record.service_code)&&actor.role==='advocate'&&record.status==='assigned'&&(record.details as {contact?:object}).contact?{details:{...(record.details as object),contact:{...(record.details as {contact:object}).contact,mobile:undefined,email:undefined}}}:{}),
       // A2: the assigned advocate's list masks the client's mobile and email until they accept.

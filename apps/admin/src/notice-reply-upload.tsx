@@ -1,0 +1,9 @@
+import {useState} from 'react';
+import {DOCUMENT_MAX_BYTES,type NoticeFlowView} from '@legalitt/shared';
+import {api} from './session';
+export function NoticeReplyUpload({flow,changed}:{flow:NoticeFlowView;changed:()=>void}){
+ const [document,setDocument]=useState<string|null>(null),[busy,setBusy]=useState(false),[error,setError]=useState('');
+ const upload=async(file:File)=>{setBusy(true);setError('');try{if(!['application/pdf','image/png','image/jpeg'].includes(file.type)||!file.size||file.size>DOCUMENT_MAX_BYTES)throw Error('Use a PDF, PNG or JPEG up to 25 MB.');const ticket=await api.presign({case_id:flow.case_id,kind:'notice_reply',filename:file.name,mime:file.type as 'application/pdf'});await api.upload(ticket,file);setDocument(ticket.document.id);}catch(e){setError(e instanceof Error?e.message:'Reply upload failed. Retry.');}finally{setBusy(false);}};
+ const publish=async()=>{setBusy(true);setError('');try{await api.request(`/notices/${flow.case_id}/reply-received`,{revision:flow.revision,document_id:document});setDocument(null);changed();}catch(e){setError(e instanceof Error?e.message:'Reply could not be recorded. Retry.');}finally{setBusy(false);}};
+ return <details><summary>Reply received</summary><p>Upload a reply supplied by the client or received by Legalitt. The client and assigned advocate can view it. Replies are not collected automatically.</p><label>Reply document<input type="file" accept="application/pdf,image/png,image/jpeg" disabled={busy} onChange={e=>e.target.files?.[0]&&void upload(e.target.files[0])}/></label>{document&&<p>Reply uploaded and ready to record.</p>}{busy&&<p role="status">Saving reply…</p>}{error&&<p role="alert" className="error">{error}</p>}<button disabled={busy||!document} onClick={()=>void publish()}>Record Reply Received and notify</button></details>;
+}

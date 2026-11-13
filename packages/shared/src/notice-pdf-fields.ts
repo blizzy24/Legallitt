@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-/** Required output fields approved by the owner (§9.2). Optional father/age
+/** Required output fields approved by the owner (§9.2). Optional family-name
  * phrases are omitted; the signature is the only intentional handwritten blank. */
 export const NOTICE_PDF_FIELD_LABELS = {
   subject: 'Subject line',
@@ -54,12 +54,12 @@ export function noticePdfProblem(input: NoticePdfRequiredValues) {
 }
 
 export type NoticeSenderPhrase = {name?: string | null; salutation?: string | null; relation?: string | null;
-  relative?: string | null; age?: number | null; address?: string | null};
+  relative?: string | null; age?: number | null; fatherName?:string|null;motherName?:string|null;husbandName?:string|null; address?: string | null};
 /** "Mrs. Sunita Mehra W/o Shri Rajeev Mehra, Age 41": each part only when known.
  * A relation prints only with the relative's name, and the name only with a relation. */
 export function noticeSenderDescription(sender: NoticeSenderPhrase) {
   const salutation = sender.salutation?.trim(), relation = sender.relation?.trim(), relative = sender.relative?.trim();
-  return `${salutation ? salutation + ' ' : ''}${sender.name?.trim() ?? ''}${relation && relative ? ` ${relation} Shri ${relative}` : ''}${sender.age != null ? `, Age ${sender.age}` : ''}`;
+  return `${salutation ? salutation + ' ' : ''}${sender.name?.trim() ?? ''}${relation && relative ? ` ${relation} Shri ${relative}` : ''}${sender.fatherName?.trim()?`, Father’s name: ${sender.fatherName.trim()}`:''}${sender.motherName?.trim()?`, Mother’s name: ${sender.motherName.trim()}`:''}${sender.husbandName?.trim()?`, Husband’s name: ${sender.husbandName.trim()}`:''}`;
 }
 export function noticeSenderIntroduction(sender: NoticeSenderPhrase) {
   return `Under instructions and authority from my client ${noticeSenderDescription(sender)} R/o ${sender.address?.trim() ?? ''}, I hereby serve upon you this Legal Notice as under:`;

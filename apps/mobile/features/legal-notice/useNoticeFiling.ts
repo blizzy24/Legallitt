@@ -16,12 +16,12 @@ export function useNoticeFiling(){
   const reload=useCallback(async()=>{if(!caseId){setLoading(false);return;}setLoading(true);setError('');try{
     const row=await backend.case(caseId);if(currentId.current!==caseId)return;if(row.service_code!=='legal_notice')throw new Error('This is not a Legal Notice request.');setRecord(row);
     if(!ready.current){
-      const parsed=NoticeFilingSchema.safeParse(row.details);let value:NoticeFiling;
+      const stored=row.details as {client?:Record<string,unknown>};const {age:_age,relativeName:_relative,...client}=stored.client??{};const parsed=NoticeFilingSchema.safeParse({...stored,client});let value:NoticeFiling;
       if(parsed.success)value=parsed.data;
       else{
         const old=row.details as {client?:NoticeFiling['client'];noticee?:NoticeFiling['noticee'];issueType?:NoticeFiling['issueType']};
         const party=row.parties?.find(p=>p.kind==='sender');
-        value={...emptyFiling(),client:{fullName:old.client?.fullName,address:old.client?.address,mobile:old.client?.mobile,email:old.client?.email,relativeName:party?.relative_name??undefined,age:party?.age??undefined},noticee:{fullName:old.noticee?.fullName,address:old.noticee?.address,email:old.noticee?.email,methods:old.noticee?.address?['courier']:[]},narrative:row.subject_matter??undefined,issueType:old.issueType};
+        value={...emptyFiling(),client:{fullName:old.client?.fullName,address:old.client?.address,mobile:old.client?.mobile,email:old.client?.email},noticee:{fullName:old.noticee?.fullName,address:old.noticee?.address,email:old.noticee?.email,methods:old.noticee?.address?['courier']:[]},narrative:row.subject_matter??undefined,issueType:old.issueType};
         // Legacy drafts retain their entered facts. Paid cases are never rewritten.
         value=NoticeFilingSchema.parse(value);
       }

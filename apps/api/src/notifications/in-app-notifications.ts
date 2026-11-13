@@ -1,3 +1,5 @@
+import {redactPrivatePhones} from '@legalitt/shared';
+import {counterpartPhones} from '../cases/contact-privacy';
 import { appendCaseEvent } from '../cases/case-state-machine';
 import { notificationCategory } from '@legalitt/shared';
 import type { Prisma } from '../generated/prisma/client';
@@ -7,6 +9,8 @@ import type { NotificationInput, NotificationsPort, NotificationDeliveryPort } f
 export class InAppNotifications implements NotificationsPort {
   constructor(private readonly delivery: NotificationDeliveryPort) {}
   async send(tx: Prisma.TransactionClient, input: NotificationInput) {
+    const recipient=await tx.user.findUnique({where:{id:input.user_id},select:{id:true,role:true}});
+    if(recipient&&input.case_id)input=redactPrivatePhones(input,await counterpartPhones(tx,recipient,input.case_id));
     // D-20/D-70: a quieted category still files the row (nothing is lost) but arrives read, so it raises no badge.
     const prefs = await tx.userPreference.findUnique({where: {user_id: input.user_id}, select: {notifications: true}});
     const service = input.case_id && prefs ? (await tx.case.findUnique({where: {id: input.case_id}, select: {service_code: true}}))?.service_code : null;

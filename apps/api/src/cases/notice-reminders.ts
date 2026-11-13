@@ -32,13 +32,13 @@ export class NoticeReminders implements OnModuleInit,OnModuleDestroy{
             if(hours>=policy.client_idle_admin_hours)await alert(`idle:${sent.id}`,admins.map(a=>a.id),'Client has not responded',`${c.reference} has waited ${Math.floor(hours/24)} days for client review. Contact the client through Support.`);
           }
         }
-        if(life.deadline_at&&!life.handed_to_admin_at&&['assigned','advocate_accepted','in_progress','changes_requested'].includes(c.status)){
+        if(life.deadline_at&&!life.handed_to_admin_at&&['assigned','advocate_accepted','in_progress','changes_requested','approved'].includes(c.status)){
           const left=(life.deadline_at.getTime()-now.getTime())/3600000;
           if(left<=policy.deadline_alert_hours)await alert(`deadline:${life.deadline_at.toISOString()}`,admins.map(a=>a.id).concat(c.advocate_id?[c.advocate_id]:[]),'Legal Notice deadline approaching',`${c.reference}: draft due ${life.deadline_at.toISOString()}.`);
           if(left<=0)await alert(`overdue:${life.deadline_at.toISOString()}`,admins.map(a=>a.id),'Legal Notice overdue',`${c.reference}: extend the deadline with a client update or reassign the case.`);
         }
         const rounds=await tx.draftReview.count({where:{draft_id_relation:{case_id:id},reviewer_role:'client',decision:'changes_requested'}});
-        if(rounds>policy.change_round_alert)await alert(`changes:${rounds}`,admins.map(a=>a.id),'Repeated Legal Notice changes',`${c.reference} has ${rounds} client change rounds. Review the case and contact the parties through Support.`);
+        if(rounds>=policy.change_round_alert)await alert(`changes:${rounds}`,admins.map(a=>a.id),'Repeated Legal Notice changes',`${c.reference} has ${rounds} client change rounds. Review the case and contact the parties through Support.`);
       });
     }finally{this.running=false;}
   }

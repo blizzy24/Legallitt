@@ -24,7 +24,7 @@ const refundView = (r: {id: string; payment_id: string; amount_paise: bigint; re
 });
 
 /** Captured client payments for this case, minus anything already refunded. */
-async function refundable(tx: Tx, caseId: string, clientId: string) {
+export async function refundable(tx: Tx, caseId: string, clientId: string) {
   const payments = await tx.payment.findMany({where: {case_id: caseId, payer_id: clientId, status: 'captured'}, orderBy: [{captured_at: 'asc'}, {id: 'asc'}]});
   const refunds = await tx.refund.findMany({where: {case_id: caseId}});
   const rows = payments.map(p => ({payment: p, remaining: p.total_paise - refunds.filter(r => r.payment_id === p.id).reduce((s, r) => s + r.amount_paise, 0n)}));
@@ -32,7 +32,7 @@ async function refundable(tx: Tx, caseId: string, clientId: string) {
 }
 
 /** Simulated refund rows, allocated oldest payment first (D-13). */
-async function recordRefunds(tx: Tx, caseId: string, clientId: string, amount: bigint, reason: string, requestId: string, decidedBy: string | null) {
+export async function recordRefunds(tx: Tx, caseId: string, clientId: string, amount: bigint, reason: string, requestId: string | null, decidedBy: string | null) {
   const {rows} = await refundable(tx, caseId, clientId);
   let left = amount;
   const out = [];
@@ -165,6 +165,7 @@ export class CancellationsService {
         await this.notifications.send(tx, {user_id: record.client_id, case_id: record.id, kind: 'cancellation_declined', title: 'Cancellation request declined', body: `${record.reference} · ${input.reason}`});
         return this.view(tx, record);
       }
+      if (cancellationMode(record.status as never) === 'closed' || cancellationMode(record.status as never) === 'ended') throw new ConflictException('This work has since been dispatched or closed. Contact Support.');
       if (input.refund_amount_paise === undefined) throw new BadRequestException('Enter the refund amount (0 for no refund).');
       const amount = BigInt(input.refund_amount_paise);
       const money = await refundable(tx, record.id, record.client_id);

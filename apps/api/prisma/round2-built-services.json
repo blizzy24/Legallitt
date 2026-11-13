@@ -1,0 +1,14 @@
+{
+  "version": "round2-built-services-2026-11-13",
+  "source_note": "Client-confirmed Ishaan answers, 13 November 2026, sections A/E/F. Base is advocate share; platform 25% of base; GST 18% on base plus platform. No search-duration surcharge.",
+  "prices": [
+    {"service_code":"property_search","tier":"ordinary","base_amount_paise":"49900"},
+    {"service_code":"property_search","tier":"urgent","base_amount_paise":"99900"},
+    {"service_code":"document_forensic","tier":"ordinary","base_amount_paise":"149900"},
+    {"service_code":"document_forensic","tier":"urgent","base_amount_paise":"299900"}
+  ],
+  "turnaround": {
+    "property_search":{"ordinary":{"min":4,"max":6,"unit":"working_days"},"urgent":{"min":2,"max":3,"unit":"working_days"}},
+    "document_forensic":{"ordinary":{"min":5,"max":7,"unit":"working_days"},"urgent":{"min":3,"max":4,"unit":"calendar_days"}}
+  }
+}

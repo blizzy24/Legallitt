@@ -47,8 +47,8 @@ export class NoticeMessages {
    }
    if(record.service_code==='legal_notice'){
     const life=await tx.noticeLifecycle.findUnique({where:{case_id:record.id}});
-    const handedOver=!!life?.handed_to_admin_at||!!await tx.caseEvent.findFirst({where:{case_id:record.id,to_status:'approved'}});
-    if(!noticeChatWritable(record,handedOver))throw new ConflictException(handedOver?'This notice has gone to Legalitt. Chat is now read-only.':'Chat is available after advocate acceptance and before approval.');
+    const handedOver=!!life?.handed_to_admin_at;
+    if(!noticeChatWritable(record,handedOver))throw new ConflictException(handedOver?'This notice has gone to Legalitt. Chat is now read-only.':'Chat is available after advocate acceptance and before submission to Legalitt.');
    }
    if(value.document_id&&!await tx.document.findFirst({where:{id:value.document_id,case_id:thread.case_id,status:'uploaded'}}))throw new BadRequestException('Attach an uploaded document from this case');
    if(value.document_id){

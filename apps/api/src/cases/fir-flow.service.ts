@@ -92,7 +92,7 @@ export class FirFlowService {
       incident_type:intake.incident?.type||null,police_station:intake.jurisdiction?.policeStation||null,city:intake.place?.city||null,
       district:intake.jurisdiction?.district||null,state:intake.jurisdiction?.state||null,
       // A2: masked for the assigned advocate until they accept.
-      client:isClient?null:{name:intake.contact?.fullName||'Client',mobile:firContactMasked(actor.role,c.status)?maskMobile(intake.contact?.mobile):intake.contact?.mobile||null,email:firContactMasked(actor.role,c.status)?maskEmail(intake.contact?.email):intake.contact?.email||null,city:intake.place?.city||null},
+      client:isClient?null:{name:intake.contact?.fullName||'Client',mobile:actor.role==='admin'?intake.contact?.mobile||null:null,email:firContactMasked(actor.role,c.status)?maskEmail(intake.contact?.email):intake.contact?.email||null,city:intake.place?.city||null},
       advocate,draft,reviews,
       remind:actor.role==='advocate'&&c.status==='client_review'?{allowed:!next||next.getTime()<=Date.now(),next_at:next?.toISOString()??null,last_at:reminded?.toISOString()??null}:null,
       share_paise:isClient?null:breakdown?.advocate_entitlement_paise??null,

@@ -29,6 +29,7 @@ import {consultationDocumentVisible} from '../consultations/consultation-documen
 import {assertReportDocumentDeletable,assertReportDocumentReadable,assertReportUploadAllowed} from '../service-reports/report-access';
 import {isFlowReportService} from '@legalitt/shared';
 import {ensureReportWorkflow} from '../service-reports/report-workflow';
+import {privateDocumentCopy} from './private-document-copy';
 
 const transactionOptions = { timeout: 60_000 };
 @Injectable()
@@ -241,8 +242,10 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
         if (draft && !seen)
           await appendCaseEvent(tx, {case_id:record.id,type:'fir_client_viewed',actor_id:actor.id,actor_role:actor.role,payload:{version:draft.version,draft_id:draft.id}});
       }
+      const downloadKey=await privateDocumentCopy(tx,this.storage,actor,record,doc);
       return {
-        url: await this.storage.download(doc.s3_key, doc.filename,
+        ...(downloadKey!==doc.s3_key?{privacy_copy:true}:{}),
+        url: await this.storage.download(downloadKey, doc.filename,
           preview && ['application/pdf', 'image/png', 'image/jpeg'].includes(doc.mime_type)),
         ...(doc.simulated ? {simulated: true} : {}),
         expires_in: DOCUMENT_URL_SECONDS,

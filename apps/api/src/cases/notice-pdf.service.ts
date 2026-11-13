@@ -1,5 +1,5 @@
 import { BadRequestException, ConflictException, ForbiddenException, Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { NoticeDraftInputSchema, NoticePolicySchema, noticeClosing, noticePdfProblem, type LegalNoticeIntake, type LegalDemand } from '@legalitt/shared';
+import { redactPrivatePhones,withoutNoticeAge,NoticeDraftInputSchema, NoticePolicySchema, noticeClosing, noticePdfProblem, type LegalNoticeIntake, type LegalDemand } from '@legalitt/shared';
 import { parse } from '../auth/auth.service';
 import { PrismaService } from '../prisma.service';
 import { DocumentService } from '../documents/document.service';
@@ -38,6 +38,14 @@ export class NoticePdfService {
     return this.file(actor, caseId, 'Legal_Notice_Final.pdf', bytes);
   }
 
+  async signed(actor:CaseActor,caseId:string,draftId:string,signature:NonNullable<import('../documents/notice-pdf').NoticePdfInput['signature']>){
+    if(actor.role!=='advocate')throw new ForbiddenException('Assigned advocate required');
+    const {record,draft,content}=await this.load(actor,caseId,draftId);
+    if(record.status!=='approved')throw new ConflictException('Wait for client approval before signing.');
+    const bytes=await renderNoticePdf({...this.template(record,content,signature.at,draft),signature});
+    return this.file(actor,caseId,'Legal_Notice_Signed.pdf',bytes);
+  }
+
   /** Undo a filing whose lifecycle step then failed: the document is deleted and no draft points at it. */
   async discard(actor: CaseActor, documentId: string) {
     try {
@@ -51,8 +59,9 @@ export class NoticePdfService {
     const db = await this.prisma.getClient();
     const record = await db.case.findFirst({ where: { AND: [caseScope(actor, 'legal_notice'), { id: caseId }] }, include: {
       case_parties_case_id_relations: true,
+      client_id_relation:{select:{phone:true}},
       pricing_id_relation: {select: {base_amount_paise: true}},
-      advocate_id_relation: {select: {full_name: true, advocate_profiles_user_id_relations: {
+      advocate_id_relation: {select: {full_name: true, phone:true, advocate_profiles_user_id_relations: {
         select: {education: true, bar_council_number: true, city: true},
       }}},
     }});
@@ -82,9 +91,10 @@ export class NoticePdfService {
     const advocate = record.advocate_id_relation;
     const profile = advocate?.advocate_profiles_user_id_relations;
     const demand = record.legal_demand as LegalDemand | null;
-    const template = {reference: record.reference, date, content, compliancePeriodDays, closingPolicy, place: profile?.city,
+    const safeContent=redactPrivatePhones({...content,sender:withoutNoticeAge(content.sender)},[details.client?.mobile,record.client_id_relation.phone,record.advocate_id_relation?.phone]);
+    const template = {reference: record.reference, date, content:safeContent, compliancePeriodDays, closingPolicy, place: profile?.city,
       advocate: {name: advocate?.full_name, qualifications: profile?.education, enrolment: profile?.bar_council_number},
-      sender: {name: details.client?.fullName, salutation: sender?.salutation, relation: sender?.relation, relative: sender?.relative_name, age: sender?.age, address: details.client?.address},
+      sender: {name: details.client?.fullName, salutation: sender?.salutation, relation: sender?.relation, relative: sender?.relative_name, fatherName:(details.client as {fatherName?:string})?.fatherName,motherName:(details.client as {motherName?:string})?.motherName,husbandName:(details.client as {husbandName?:string})?.husbandName, address: details.client?.address},
       recipient: {name: details.noticee?.fullName, address: details.noticee?.address},
       subject: record.subject_line,
       demands: [...(demand?.selected ?? []), ...(demand?.custom?.trim() ? [demand.custom.trim()] : [])],
@@ -93,7 +103,7 @@ export class NoticePdfService {
     };
     const problem = noticePdfProblem(template);
     if (problem) throw new BadRequestException(problem);
-    return template;
+    return redactPrivatePhones(template,[details.client?.mobile,record.client_id_relation.phone,record.advocate_id_relation?.phone]);
   }
   private async file(actor: CaseActor, caseId: string, filename: string, bytes: Uint8Array) {
     const ticket = await this.documents.presign(actor, { case_id: caseId, kind: 'legal_notice', filename, mime: 'application/pdf' });
