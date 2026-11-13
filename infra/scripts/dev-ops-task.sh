@@ -8,6 +8,11 @@
 set -euo pipefail
 STACK=LegalittDev-Compute-DevelopmentOnly
 REGION=ap-south-1
+# Git Bash can resolve python3 to Windows' non-working Store alias even when
+# Python is installed as python. Allow an explicit interpreter on either OS.
+if [ -z "${PYTHON_BIN:-}" ]; then
+  case "${OSTYPE:-}" in msys*|cygwin*) PYTHON_BIN=python ;; *) PYTHON_BIN=python3 ;; esac
+fi
 [[ -z "${CLEANUP_EXPECT:-}" || "$CLEANUP_EXPECT" =~ ^[0-9]+$ ]] || { echo "bad CLEANUP_EXPECT" >&2; exit 2; }
 case "${1:-}" in
   migrate)   CMD='["node","scripts/migrate-deploy.cjs"]' ;;
@@ -27,7 +32,7 @@ if [ -n "${2:-}" ]; then
   [[ "$2" =~ ^[A-Za-z0-9._-]+$ ]] || { echo "bad image tag" >&2; exit 2; }
   # Same definition as the deployed ops task, image tag swapped.
   INPUT=$(aws ecs describe-task-definition --region "$REGION" --task-definition "$TASKDEF" --query taskDefinition --output json |
-    python3 -c 'import json,sys
+    "$PYTHON_BIN" -c 'import json,sys
 d=json.load(sys.stdin); c=d["containerDefinitions"][0]
 c["image"]=c["image"].rsplit(":",1)[0]+":"+sys.argv[1]
 print(json.dumps({k:d[k] for k in ["family","taskRoleArn","executionRoleArn","networkMode","containerDefinitions","volumes","placementConstraints","requiresCompatibilities","cpu","memory","runtimePlatform"] if k in d}))' "$2")
