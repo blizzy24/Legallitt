@@ -1,0 +1,72 @@
+
+> @legalitt/api@0.0.0 db:local:migrate D:\Legalitt\Legallitt\apps\api
+> node --env-file=.env.local scripts/migrate-local.cjs
+
+Loaded Prisma config from prisma.config.ts.
+
+Prisma schema loaded from prisma\schema.prisma.
+Datasource "db": PostgreSQL database "legalitt", schema "public" at "127.0.0.1:15432"
+
+34 migrations found in prisma/migrations
+
+Applying migration `202611130020_notice_admin_dispatch`
+Applying migration `202611130021_notice_deadline_backfill`
+Applying migration `202611130030_report_workflows`
+Applying migration `202611130100_round2_built_services`
+Applying migration `202611130101_notice_signatures`
+Applying migration `202611140001_court_representation`
+Applying migration `202611140002_legal_advice_rebuild`
+
+The following migration(s) have been applied:
+
+migrations/
+  └─ 202611130020_notice_admin_dispatch/
+    └─ migration.sql
+  └─ 202611130021_notice_deadline_backfill/
+    └─ migration.sql
+  └─ 202611130030_report_workflows/
+    └─ migration.sql
+  └─ 202611130100_round2_built_services/
+    └─ migration.sql
+  └─ 202611130101_notice_signatures/
+    └─ migration.sql
+  └─ 202611140001_court_representation/
+    └─ migration.sql
+  └─ 202611140002_legal_advice_rebuild/
+    └─ migration.sql
+
+All migrations have been successfully applied.
+Loaded Prisma config from prisma.config.ts.
+
+Prisma schema loaded from prisma\schema.prisma.
+Datasource "db": PostgreSQL database "legalitt_consultation_test", schema "public" at "127.0.0.1:15432"
+
+34 migrations found in prisma/migrations
+
+Applying migration `202611130020_notice_admin_dispatch`
+Applying migration `202611130021_notice_deadline_backfill`
+Applying migration `202611130030_report_workflows`
+Applying migration `202611130100_round2_built_services`
+Applying migration `202611130101_notice_signatures`
+Applying migration `202611140001_court_representation`
+Applying migration `202611140002_legal_advice_rebuild`
+
+The following migration(s) have been applied:
+
+migrations/
+  └─ 202611130020_notice_admin_dispatch/
+    └─ migration.sql
+  └─ 202611130021_notice_deadline_backfill/
+    └─ migration.sql
+  └─ 202611130030_report_workflows/
+    └─ migration.sql
+  └─ 202611130100_round2_built_services/
+    └─ migration.sql
+  └─ 202611130101_notice_signatures/
+    └─ migration.sql
+  └─ 202611140001_court_representation/
+    └─ migration.sql
+  └─ 202611140002_legal_advice_rebuild/
+    └─ migration.sql
+
+All migrations have been successfully applied.

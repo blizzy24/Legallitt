@@ -1,0 +1,52 @@
+TAP version 13
+# Subtest: Legal Advice routes mount behind auth and enforce roles before reaching persistence
+ok 1 - Legal Advice routes mount behind auth and enforce roles before reaching persistence
+  ---
+  duration_ms: 2133.1597
+  type: 'test'
+  ...
+# Subtest: Legal Advice invitation race has exactly one winner; foreign invitations stay private
+ok 2 - Legal Advice invitation race has exactly one winner; foreign invitations stay private
+  ---
+  duration_ms: 637.8555
+  type: 'test'
+  ...
+# Subtest: test call adapter explicitly transmits no media
+ok 3 - test call adapter explicitly transmits no media
+  ---
+  duration_ms: 0.8961
+  type: 'test'
+  ...
+# Subtest: both parties join; early join cannot consume paid minutes
+ok 4 - both parties join; early join cannot consume paid minutes
+  ---
+  duration_ms: 1.1157
+  type: 'test'
+  ...
+# Subtest: server timer pauses, preserves remaining duration and automatically ends exactly at expiry
+ok 5 - server timer pauses, preserves remaining duration and automatically ends exactly at expiry
+  ---
+  duration_ms: 0.3063
+  type: 'test'
+  ...
+# Subtest: only advocate pauses; only client ends; pause timeout interrupts rather than completing
+ok 6 - only advocate pauses; only client ends; pause timeout interrupts rather than completing
+  ---
+  duration_ms: 0.3077
+  type: 'test'
+  ...
+# Subtest: Legal Advice policy: roles, stale concurrent edits, immutable versions and repeatable seed
+ok 7 - Legal Advice policy: roles, stale concurrent edits, immutable versions and repeatable seed
+  ---
+  duration_ms: 344.9952
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 5355.8268

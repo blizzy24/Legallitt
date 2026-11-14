@@ -811,6 +811,19 @@ export async function writeCaseCancelled(tx:Prisma.TransactionClient,actor:CaseA
   return updated;
 }
 
+/** Invitation acceptance is the only path that grants a new Legal Advice
+ * advocate membership. The orchestration holds the case lock and has already
+ * persisted the unique accepted invitation in this same transaction. */
+export async function acceptLegalAdviceCase(tx:Prisma.TransactionClient,actor:CaseActor,id:string){
+ if(actor.role!=='advocate')throw new ForbiddenException('Advocate action required');
+ const invitation=await tx.legalAdviceInvitation.findFirst({where:{case_id:id,advocate_id:actor.id,state:'accepted'}});
+ const before=await tx.case.findFirst({where:{id,service_code:'legal_advice',status:{in:['paid','assigning','advocate_declined']}}});
+ if(!invitation||!before)throw new ConflictException('No accepted invitation for this consultation.');
+ const updated=await tx.case.update({where:{id},data:{advocate_id:actor.id,status:'advocate_accepted',sub_status:'legal_advice_confirmed',updated_at:new Date()}});
+ await appendCaseEvent(tx,{case_id:id,type:'legal_advice_accepted',actor_id:actor.id,actor_role:actor.role,from_status:before.status,to_status:updated.status,payload:{invitation_id:invitation.id}});
+ return updated;
+}
+
 export async function writeConsultationCase(tx:Prisma.TransactionClient,actor:CaseActor,id:string,
   data:Pick<Prisma.CaseUncheckedUpdateInput,'status'|'sub_status'|'title'|'details'|'matter_type'|'pricing_id'|'completed_at'>,
   type:string,payload:Prisma.InputJsonObject={}) {

@@ -17,7 +17,7 @@ export const LegalAdviceConfigSchema=z.strictObject({
   tiers:z.array(LegalAdviceTierSchema).min(1),tariffs:z.array(LegalAdviceTariffSchema),
   working_days:z.array(z.number().int().min(0).max(6)).min(1),
   opening_minute:z.number().int().min(0).max(1439),closing_minute:z.number().int().min(1).max(1440),
-  slot_minutes:z.number().int().min(5).max(120),minimum_notice_minutes:z.number().int().nonnegative(),
+  slot_minutes:z.number().int().min(5).max(120),minimum_notice_minutes:z.number().int().nonnegative(),booking_horizon_days:z.number().int().min(1).max(90),
   session_minutes:z.number().int().positive(),join_before_minutes:z.number().int().nonnegative(),
   acceptance_minutes:z.number().int().positive(),proposal_reply_minutes:z.number().int().positive(),
   maximum_pause_minutes:z.number().int().positive(),no_show_minutes:z.number().int().positive(),
@@ -43,4 +43,18 @@ export type LegalAdviceConfig=z.infer<typeof LegalAdviceConfigSchema>;
 export function legalAdviceTierFor(years:number|null|undefined,tiers:LegalAdviceTier[]):LegalAdviceTier|null{
   if(years==null||!Number.isFinite(years)||years<0)return null;
   return tiers.find(t=>years>=t.minimum_years&&(t.maximum_years===null||years<t.maximum_years))??null;
+}
+
+/** All slots are requested appointments in IST, not advocate availability or a
+ * promise of confirmation. Epoch arithmetic avoids machine-timezone effects. */
+export function legalAdviceSlotAllowed(at:number,config:LegalAdviceConfig,now:number):boolean{
+ if(!Number.isFinite(at)||at<now+config.minimum_notice_minutes*60000||at>now+config.booking_horizon_days*86400000)return false;
+ const local=new Date(at+330*60000),minute=local.getUTCHours()*60+local.getUTCMinutes();
+ return local.getUTCSeconds()===0&&local.getUTCMilliseconds()===0&&config.working_days.includes(local.getUTCDay())&&minute>=config.opening_minute&&minute+config.session_minutes<=config.closing_minute&&(minute-config.opening_minute)%config.slot_minutes===0;
+}
+export function legalAdviceRequestedSlots(date:string,config:LegalAdviceConfig,now:number):string[]{
+ if(!z.iso.date().safeParse(date).success)return [];
+ const midnight=Date.parse(`${date}T00:00:00+05:30`),slots:string[]=[];
+ for(let minute=config.opening_minute;minute+config.session_minutes<=config.closing_minute;minute+=config.slot_minutes){const at=midnight+minute*60000;if(legalAdviceSlotAllowed(at,config,now))slots.push(new Date(at).toISOString());}
+ return slots;
 }

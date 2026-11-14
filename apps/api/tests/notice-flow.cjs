@@ -53,7 +53,12 @@ test(
     const ids = [];
     const oldEnv = process.env.ENVIRONMENT,
       oldNode = process.env.NODE_ENV;
+    const serviceBefore=await db.service.findUniqueOrThrow({where:{code:'legal_notice'}});
     try {
+      // This journey exercises the current no-Offences workflow. Older local
+      // databases can retain an explicitly configured historical closing policy;
+      // install this test's policy and restore it rather than relying on seed age.
+      await db.service.update({where:{code:'legal_notice'},data:{config:{...serviceBefore.config,notice_policy:{...serviceBefore.config.notice_policy,criminal_clause:'omit'}}}});
       for (const a of actors)
         await db.user.create({
           data: {
@@ -250,6 +255,7 @@ test(
       await db.user.deleteMany({
         where: { id: { in: actors.map((a) => a.id) } },
       });
+      await db.service.update({where:{code:'legal_notice'},data:{config:serviceBefore.config}});
       await db.$disconnect();
     }
   },

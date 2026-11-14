@@ -34,7 +34,30 @@ No four missing images are invented. Visual comparisons remain pending.
 | Checkout | current shared controls reusable | Snapshot mode/tier/base/tax/page policy; no courier | Open |
 | Compatibility | existing consultation/court service code is shared | Additive new-workflow marker; retain legacy cases and court consultations | Open |
 
-## Release gates
+## Backend foundation progress
+
+Additive migration `202611140002_legal_advice_rebuild` adds policy, booking,
+invitation and event tables. No legacy booking or paid snapshot is rewritten.
+Versioned settings read/write and requested-slot endpoints now exist. Settings
+edits require admin role, next version and a reason; stale concurrent edits fail.
+Seed activation has its own `seed-legal-advice` ops command, not the demo seed.
+
+Invitation inbox/assignment/decision endpoints now exist for the new booking
+model. Acceptance serializes on case and user locks and has a partial unique
+accepted-invitation index. Focused tests prove one winner, immutable policies,
+role boundaries and foreign-invitation rejection. Further eligibility filtering,
+payment-triggered first invitation, expiry alerts and screen integration remain
+open; these are not a completed assignment journey.
+
+The test `CallProvider` and pure session engine are implemented and tested.
+They do not transmit media. Database-persisted session orchestration, timers in
+the browser, alerts and worker reconciliation remain open.
+
+All gap rows above remain open until the integrated journey and browser checks
+pass. Reference contact sheets cover all 57 supplied consultation PNGs; they
+are not implemented-screen comparisons.
+
+## Release status
 
 Not deployable yet. New-endpoint role/isolation tests, concurrent acceptance,
 all requested browser journeys, full suites/builds and side-by-side comparisons

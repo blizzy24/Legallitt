@@ -5,11 +5,19 @@ import {parse} from '../auth/auth.service';
 import {ConsultationService} from './consultation.service';
 import {ConsultationPayments} from './consultation-payments';
 import {ConsultationReports} from './consultation-reports';
+import {LegalAdviceSettings} from './legal-advice-settings';
+import {LegalAdviceInvitations} from './legal-advice-invitations';
 const id=(v:string)=>parse(z.uuid(),v);
 const json=async(p:Promise<unknown>)=>JSON.parse(JSON.stringify(await p,(_,v)=>typeof v==='bigint'?v.toString():v));
 @Controller('api/v1/consultations') @UseGuards(AuthGuard)
 export class ConsultationController {
-  constructor(private readonly service:ConsultationService,private readonly payments:ConsultationPayments,private readonly reports:ConsultationReports){}
+  constructor(private readonly service:ConsultationService,private readonly payments:ConsultationPayments,private readonly reports:ConsultationReports,private readonly adviceSettings:LegalAdviceSettings,private readonly adviceInvitations:LegalAdviceInvitations){}
+  @Get('legal-advice/settings') advicePolicy(){return json(this.adviceSettings.read());}
+  @Get('legal-advice/slots') adviceSlots(@Req() r:AuthRequest,@Query('date') date:unknown){return json(this.adviceSettings.slots(r.user!,date));}
+  @Patch('legal-advice/settings') saveAdvicePolicy(@Req() r:AuthRequest,@Body() b:unknown){return json(this.adviceSettings.save(r.user!,b));}
+  @Get('legal-advice/invitations') adviceInbox(@Req() r:AuthRequest){return json(this.adviceInvitations.inbox(r.user!));}
+  @Post('legal-advice/:id/invitations') inviteAdvice(@Req() r:AuthRequest,@Param('id') v:string,@Body() b:unknown){return json(this.adviceInvitations.assign(r.user!,id(v),b));}
+  @Post('legal-advice/invitations/:id/decision') decideAdvice(@Req() r:AuthRequest,@Param('id') v:string,@Body() b:unknown){return json(this.adviceInvitations.decide(r.user!,id(v),b));}
   @Get('availability') availability(@Req() r:AuthRequest){return json(this.service.availability(r.user!));}
   @Post('availability') saveAvailability(@Req() r:AuthRequest,@Body() b:unknown){return json(this.service.availability(r.user!,b));}
   @Get('advocates') advocates(@Req() r:AuthRequest,@Query() q:unknown){return json(this.service.advocates(r.user!,q));}

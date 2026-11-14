@@ -10,207 +10,213 @@ TAP version 13
 # Subtest: all lifecycle states map to the approved admin buckets; unpaid states are excluded
 ok 1 - all lifecycle states map to the approved admin buckets; unpaid states are excluded
   ---
-  duration_ms: 2.639
+  duration_ms: 2.8775
   type: 'test'
   ...
 # Subtest: shared client refreshes once for concurrent expired sessions and attaches refreshed Cognito token
 ok 2 - shared client refreshes once for concurrent expired sessions and attaches refreshed Cognito token
   ---
-  duration_ms: 95.2875
+  duration_ms: 82.2392
   type: 'test'
   ...
 # Subtest: 401 retries once after refresh; expired refresh clears credentials; offline mutations are never retried
 ok 3 - 401 retries once after refresh; expired refresh clears credentials; offline mutations are never retried
   ---
-  duration_ms: 6.8284
+  duration_ms: 4.7267
   type: 'test'
   ...
 # Subtest: timeout and validation errors are visible; signed upload uses S3 directly with file last
 ok 4 - timeout and validation errors are visible; signed upload uses S3 directly with file last
   ---
-  duration_ms: 29.2344
+  duration_ms: 19.1695
   type: 'test'
   ...
 # Subtest: a refresh finishing after sign-out cannot restore the old session
 ok 5 - a refresh finishing after sign-out cannot restore the old session
   ---
-  duration_ms: 3.2436
+  duration_ms: 5.9422
   type: 'test'
   ...
 # Subtest: structured PDF field errors survive the HTTP client for actionable editor feedback
 ok 6 - structured PDF field errors survive the HTTP client for actionable editor feedback
   ---
-  duration_ms: 2.6803
+  duration_ms: 2.0186
   type: 'test'
   ...
 # Subtest: creation keeps notice intake validation and accepts only empty spines for other services
 ok 7 - creation keeps notice intake validation and accepts only empty spines for other services
   ---
-  duration_ms: 7.037
+  duration_ms: 7.6748
   type: 'test'
   ...
 # Subtest: case and inbox destinations keep notice URLs stable and never send other services to notice screens
 ok 8 - case and inbox destinations keep notice URLs stable and never send other services to notice screens
   ---
-  duration_ms: 9.5923
+  duration_ms: 2.5119
   type: 'test'
   ...
 # Subtest: all lifecycle values match the authoritative DDL and have the confirmed bucket
 ok 9 - all lifecycle values match the authoritative DDL and have the confirmed bucket
   ---
-  duration_ms: 3.2555
+  duration_ms: 3.6086
   type: 'test'
   ...
 # Subtest: core schemas preserve every DDL column and nullable flag
 ok 10 - core schemas preserve every DDL column and nullable flag
   ---
-  duration_ms: 6.1739
+  duration_ms: 5.9979
   type: 'test'
   ...
 # Subtest: money retains integer paise and rejects floats and unsafe coercion
 ok 11 - money retains integer paise and rejects floats and unsafe coercion
   ---
-  duration_ms: 0.9359
+  duration_ms: 1.7517
   type: 'test'
   ...
 # Subtest: nine distinct services and lifecycle/bucket separation
 ok 12 - nine distinct services and lifecycle/bucket separation
   ---
-  duration_ms: 0.4174
+  duration_ms: 0.9345
   type: 'test'
   ...
 # Subtest: Legal Advice seed policy is complete, preserves explicit unpriced tariffs and integer paise
 ok 13 - Legal Advice seed policy is complete, preserves explicit unpriced tariffs and integer paise
   ---
-  duration_ms: 16.0723
+  duration_ms: 13.2543
   type: 'test'
   ...
 # Subtest: Experience boundaries have exactly one tier; unknown experience is not priced as Emerging
 ok 14 - Experience boundaries have exactly one tier; unknown experience is not priced as Emerging
   ---
-  duration_ms: 1.3515
+  duration_ms: 1.3125
   type: 'test'
   ...
 # Subtest: Admin config rejects missing, overlapping or duplicate tier prices and invalid hours
 ok 15 - Admin config rejects missing, overlapping or duplicate tier prices and invalid hours
   ---
-  duration_ms: 10.3317
+  duration_ms: 7.834
+  type: 'test'
+  ...
+# Subtest: requested IST slots enforce notice, working days, closing time and editable intervals
+ok 16 - requested IST slots enforce notice, working days, closing time and editable intervals
+  ---
+  duration_ms: 3.3233
   type: 'test'
   ...
 # Subtest: Legal Notice intake permits draft fields but rejects arbitrary JSON and identity uploads
-ok 16 - Legal Notice intake permits draft fields but rejects arbitrary JSON and identity uploads
+ok 17 - Legal Notice intake permits draft fields but rejects arbitrary JSON and identity uploads
   ---
-  duration_ms: 12.6181
+  duration_ms: 8.7428
   type: 'test'
   ...
 # Subtest: a new editor uses its case intake and the approved default closing, without saving a version
-ok 17 - a new editor uses its case intake and the approved default closing, without saving a version
+ok 18 - a new editor uses its case intake and the approved default closing, without saving a version
   ---
-  duration_ms: 7.485
+  duration_ms: 4.5742
   type: 'test'
   ...
 # Subtest: sparse intake stays blank except the shared closing; no invented facts or another case's fixtures
-ok 18 - sparse intake stays blank except the shared closing; no invented facts or another case's fixtures
+ok 19 - sparse intake stays blank except the shared closing; no invented facts or another case's fixtures
   ---
-  duration_ms: 0.4934
+  duration_ms: 0.4145
   type: 'test'
   ...
 # Subtest: all six saved advocate sections win, including deliberate blanks; opening cannot overwrite corrections
-ok 19 - all six saved advocate sections win, including deliberate blanks; opening cannot overwrite corrections
+ok 20 - all six saved advocate sections win, including deliberate blanks; opening cannot overwrite corrections
   ---
-  duration_ms: 0.5912
+  duration_ms: 0.5013
   type: 'test'
   ...
 # Subtest: intake indication follows untouched values, never changed, cleared or advocate-only sections
-ok 20 - intake indication follows untouched values, never changed, cleared or advocate-only sections
+ok 21 - intake indication follows untouched values, never changed, cleared or advocate-only sections
   ---
-  duration_ms: 0.624
+  duration_ms: 0.5458
   type: 'test'
   ...
 # Subtest: the six drawn sections are editable; legacy offences are not reopened
-ok 21 - the six drawn sections are editable; legacy offences are not reopened
+ok 22 - the six drawn sections are editable; legacy offences are not reopened
   ---
-  duration_ms: 0.456
+  duration_ms: 0.3698
   type: 'test'
   ...
 # Subtest: email-only intake needs no invented postal address or WhatsApp; selected courier and WhatsApp validate their own fields
-ok 22 - email-only intake needs no invented postal address or WhatsApp; selected courier and WhatsApp validate their own fields
+ok 23 - email-only intake needs no invented postal address or WhatsApp; selected courier and WhatsApp validate their own fields
   ---
-  duration_ms: 14.7885
+  duration_ms: 11.3586
   type: 'test'
   ...
 # Subtest: cheque bounce cannot be submitted without cheque and return details; partial drafts remain resumable
-ok 23 - cheque bounce cannot be submitted without cheque and return details; partial drafts remain resumable
+ok 24 - cheque bounce cannot be submitted without cheque and return details; partial drafts remain resumable
   ---
-  duration_ms: 3.2656
+  duration_ms: 3.2549
   type: 'test'
   ...
 # Subtest: client sees finalisation through an internal return; all roles derive their stage from one mapping
-ok 24 - client sees finalisation through an internal return; all roles derive their stage from one mapping
+ok 25 - client sees finalisation through an internal return; all roles derive their stage from one mapping
   ---
-  duration_ms: 0.8086
+  duration_ms: 0.6942
   type: 'test'
   ...
 # Subtest: chat cannot reopen during admin correction or after completion; no elapsed-time session limit
-ok 25 - chat cannot reopen during admin correction or after completion; no elapsed-time session limit
+ok 26 - chat cannot reopen during admin correction or after completion; no elapsed-time session limit
   ---
-  duration_ms: 0.4039
+  duration_ms: 0.2982
   type: 'test'
   ...
 # Subtest: whole positive periods only; retired criminal wording cannot return from historical policy snapshots
-ok 26 - whole positive periods only; retired criminal wording cannot return from historical policy snapshots
+ok 27 - whole positive periods only; retired criminal wording cannot return from historical policy snapshots
   ---
-  duration_ms: 3.6355
+  duration_ms: 2.0052
   type: 'test'
   ...
 # Subtest: client decisions can change by settings without code; invalid templates are rejected
-ok 27 - client decisions can change by settings without code; invalid templates are rejected
+ok 28 - client decisions can change by settings without code; invalid templates are rejected
   ---
-  duration_ms: 1.4666
+  duration_ms: 0.7962
   type: 'test'
   ...
 # Subtest: notification destinations follow current lifecycle and retain the case id
-ok 28 - notification destinations follow current lifecycle and retain the case id
+ok 29 - notification destinations follow current lifecycle and retain the case id
   ---
-  duration_ms: 1.7984
+  duration_ms: 2.3164
   type: 'test'
   ...
 # Subtest: poll started before mark-read cannot restore unread state; failures stay inline and logout discards results
-ok 29 - poll started before mark-read cannot restore unread state; failures stay inline and logout discards results
+ok 30 - poll started before mark-read cannot restore unread state; failures stay inline and logout discards results
   ---
-  duration_ms: 8.937
+  duration_ms: 12.6541
   type: 'test'
   ...
 # Subtest: report stages distinguish verification, human file checks and internal correction without exposing reasons
-ok 30 - report stages distinguish verification, human file checks and internal correction without exposing reasons
+ok 31 - report stages distinguish verification, human file checks and internal correction without exposing reasons
   ---
-  duration_ms: 1.6917
+  duration_ms: 1.915
   type: 'test'
   ...
 # Subtest: historical report timelines do not invent missing event timestamps
-ok 31 - historical report timelines do not invent missing event timestamps
+ok 32 - historical report timelines do not invent missing event timestamps
   ---
-  duration_ms: 0.504
+  duration_ms: 0.5143
   type: 'test'
   ...
 # Subtest: report file labels never fall back to internal filenames or UUIDs
-ok 32 - report file labels never fall back to internal filenames or UUIDs
+ok 33 - report file labels never fall back to internal filenames or UUIDs
   ---
-  duration_ms: 0.2686
+  duration_ms: 0.2586
   type: 'test'
   ...
 # Subtest: turnaround policy refuses inverted windows and an empty working calendar
-ok 33 - turnaround policy refuses inverted windows and an empty working calendar
+ok 34 - turnaround policy refuses inverted windows and an empty working calendar
   ---
-  duration_ms: 8.1043
+  duration_ms: 4.3217
   type: 'test'
   ...
-1..33
-# tests 33
+1..34
+# tests 34
 # suites 0
-# pass 33
+# pass 34
 # fail 0
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 831.7385
+# duration_ms 721.4183

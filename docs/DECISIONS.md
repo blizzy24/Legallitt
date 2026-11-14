@@ -33,6 +33,11 @@
   client, 21 advocate, 26 profile, 2 messages), rather than the stated 89. All 85
   were extracted and size-verified before deleting the source ZIP as requested.
   Profile/messages are deferred; do not fabricate four missing screens.
+- **LA-R2-08 — Early room entry.** Both parties may enter during the ten-minute
+  join window, but the paid countdown begins no earlier than the confirmed slot.
+  Rejoining does not reset it. This safe interpretation awaits client confirmation.
+  The server timer engine preserves elapsed active time across pauses and marks
+  an overlong pause Interrupted rather than successfully completed.
 
 11 November 2026. This file records the decisions that fill the gaps between the
 client's designs and a finished product. It was written after reading all 463

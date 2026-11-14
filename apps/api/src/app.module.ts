@@ -15,6 +15,8 @@ import {FirAdminService} from './cases/fir-admin.service';
 import {FirFlowService} from './cases/fir-flow.service';
 import {ConsultationController} from './consultations/consultation.controller';
 import {ConsultationService} from './consultations/consultation.service';
+import {LegalAdviceSettings} from './consultations/legal-advice-settings';
+import {LegalAdviceInvitations} from './consultations/legal-advice-invitations';
 import {ConsultationPayments} from './consultations/consultation-payments';
 import {ConsultationReports} from './consultations/consultation-reports';
 import {CancellationsController} from './cancellations/cancellations.controller';
@@ -99,7 +101,7 @@ import {ACCOUNT_COGNITO, CognitoAccountAdapter} from './account/account-cognito'
     ServicesController,
     DocumentController,
   ],
-  providers: [CourtRepresentationService,{provide:APP_INTERCEPTOR,useClass:ContactPrivacyInterceptor},AdvocateSignatures,NoticeSigning,WalletService, AdvocateVerificationService, AdvocateCompletionService, AccountDeletionsAdminService, AccountService, AccountDataService, {provide: ACCOUNT_COGNITO, useClass: CognitoAccountAdapter}, SupportService, ConsultationService, ConsultationPayments, ConsultationReports, FirAdminService, FirFlowService, FirService, NotificationRepository, AdminCaseDetailRepository, AdminAdvocatesRepository, AdminCasesRepository, NoticeMessages,
+  providers: [LegalAdviceInvitations,LegalAdviceSettings,CourtRepresentationService,{provide:APP_INTERCEPTOR,useClass:ContactPrivacyInterceptor},AdvocateSignatures,NoticeSigning,WalletService, AdvocateVerificationService, AdvocateCompletionService, AccountDeletionsAdminService, AccountService, AccountDataService, {provide: ACCOUNT_COGNITO, useClass: CognitoAccountAdapter}, SupportService, ConsultationService, ConsultationPayments, ConsultationReports, FirAdminService, FirFlowService, FirService, NotificationRepository, AdminCaseDetailRepository, AdminAdvocatesRepository, AdminCasesRepository, NoticeMessages,
     ShipmentService,
     NoticePdfService,
     NoticeFlowService,

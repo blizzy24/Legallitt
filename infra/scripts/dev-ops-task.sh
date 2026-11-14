@@ -19,6 +19,7 @@ case "${1:-}" in
   seed)      CMD='["node","dist/prisma/seed.js"]' ;;
   seed-pricing) CMD='["node","dist/prisma/seed-pricing.js"]' ;;
   seed-courts) CMD='["node","dist/prisma/seed-courts.js"]' ;;
+  seed-legal-advice) CMD='["node","dist/prisma/seed-legal-advice.js"]' ;;
   seed-round2) CMD='["node","dist/prisma/seed-round2.js"]' ;;
   seed-demo) CMD='["node","dist/prisma/seed-demo.js"]' ;;
   seed-client-isolation) CMD='["node","dist/prisma/seed-demo.js","--client-isolation-only"]' ;;

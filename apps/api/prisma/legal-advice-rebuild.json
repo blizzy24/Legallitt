@@ -23,7 +23,7 @@
   ],
   "working_days":[1,2,3,4,5,6],
   "opening_minute":600,"closing_minute":1140,"slot_minutes":30,
-  "minimum_notice_minutes":180,"session_minutes":30,"join_before_minutes":10,
+  "minimum_notice_minutes":180,"booking_horizon_days":14,"session_minutes":30,"join_before_minutes":10,
   "acceptance_minutes":240,"proposal_reply_minutes":720,"maximum_pause_minutes":10,
   "no_show_minutes":10,"reschedule_notice_minutes":120,"maximum_reschedules":2,
   "chat_valid_minutes":10080,"summary_due_minutes":1440,
