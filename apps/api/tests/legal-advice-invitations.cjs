@@ -35,6 +35,7 @@ test('Legal Advice invitation race has exactly one winner; foreign invitations s
   assert.equal((await db.legalAdviceBooking.findUnique({where:{case_id:id}})).accepted_advocate_id,winner.advocate_id);
   assert.ok(sent.some(n=>n.user_id===loser.advocate_id&&n.kind==='legal_advice_invitation_closed'));
   await service.decide(users.find(x=>x.id===winner.advocate_id),winner.id,{decision:'accept'});
+  assert.equal(sent.filter(n=>n.user_id===admin.id&&n.case_id===id&&n.kind==='legal_advice_accepted_admin').length,1,'Admin receives one acceptance notification even after a repeated tap');
   assert.equal(await db.caseEvent.count({where:{case_id:id,type:'legal_advice_accepted'}}),1);
   assert.ok((await service.inbox(a)).items.every(x=>!('phone' in x)&&!('details' in x)));
   await assert.rejects(service.inbox(other),{status:403});

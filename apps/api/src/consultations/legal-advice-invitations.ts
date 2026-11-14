@@ -82,6 +82,9 @@ export class LegalAdviceInvitations {
    if(input.decision==='decline'){
     await tx.legalAdviceInvitation.update({where:{id:invitationId},data:{state:'declined',reason:input.reason,decided_at:now}});
     await tx.legalAdviceEvent.create({data:{case_id:c.id,actor_id:actor.id,kind:'invitation_declined',visibility:'internal',data:{invitation_id:invitationId,reason:input.reason??''}}});
+    const pending=await tx.legalAdviceInvitation.count({where:{case_id:c.id,state:'pending',expires_at:{gt:now}}});
+    await tx.legalAdviceBooking.update({where:{case_id:c.id},data:{...(pending===0?{phase:'awaiting_admin'}:{}),revision:{increment:1},updated_at:now}});
+    if(pending===0)for(const admin of await tx.user.findMany({where:{role:'admin',status:'active'},select:{id:true}}))await this.notifications.send(tx,{user_id:admin.id,case_id:c.id,kind:'legal_advice_assignment_needed',title:'Consultation needs another advocate',body:c.reference});
     return {accepted:false};
    }
    const user=await tx.user.findFirst({where:{id:actor.id,role:'advocate',status:'active'},include:{advocate_profiles_user_id_relations:true}}),p=user?.advocate_profiles_user_id_relations;
@@ -109,6 +112,7 @@ export class LegalAdviceInvitations {
    await tx.consultation.create({data:{case_id:c.id,advocate_id:actor.id,client_id:c.client_id,mode:b.mode,scheduled_at:requested,duration_min:config.session_minutes,status:input.proposed_at?'time_proposed':'scheduled'}});
    await tx.legalAdviceEvent.create({data:{case_id:c.id,actor_id:actor.id,kind:'advocate_accepted',visibility:'public',data:{advocate_id:actor.id}}});
    await this.notifications.send(tx,{user_id:c.client_id,case_id:c.id,kind:input.proposed_at?'legal_advice_time_proposed':'legal_advice_confirmed',title:input.proposed_at?'New consultation time proposed':'Consultation confirmed'});
+   for(const admin of await tx.user.findMany({where:{role:'admin',status:'active'},select:{id:true}}))await this.notifications.send(tx,{user_id:admin.id,case_id:c.id,kind:'legal_advice_accepted_admin',title:'Consultation accepted',body:c.reference});
    for(const loser of losers)await this.notifications.send(tx,{user_id:loser.advocate_id,kind:'legal_advice_invitation_closed',title:'Consultation invitation closed',body:'Another advocate accepted this consultation. No action is needed.'});
    return {accepted:true};
   });

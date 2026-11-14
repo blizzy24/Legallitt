@@ -37,6 +37,9 @@ test('Legal Advice rebuilt workflow: snapshots, proposals, no-shows, session/sum
    await assert.rejects(flow.create(a,{mode:'chat',advocate_id:a.id,scheduled_at:slots[0]}),{status:403});
    await assert.rejects(flow.list({...other,role:'support'}),{status:403});
   });
+  await t.test('the last declined invitation immediately returns the request to admin',async()=>{
+   const id=await create();await submit(id);await pay(id);const i=await db.legalAdviceInvitation.findFirst({where:{case_id:id,state:'pending'}});await invites.decide(a,i.id,{decision:'decline',reason:'TEST unable to take this slot'});assert.equal((await view(id)).booking.phase,'awaiting_admin');assert.equal(sent.filter(n=>n.case_id===id&&n.user_id===admin.id&&n.kind==='legal_advice_assignment_needed').length,1);
+  });
   await t.test('page overage combines all PDFs, excludes GST and rejects a stale document quote',async()=>{
    const id=await create();await submit(id);const docs=[];
    for(const pages of [16,12])docs.push(await db.document.create({data:{case_id:id,owner_id:client.id,kind:'supporting_document',filename:'TEST.pdf',mime_type:'application/pdf',size_bytes:1000n,page_count:pages,status:'uploaded',s3_key:'TEST/'+randomUUID()}}));
