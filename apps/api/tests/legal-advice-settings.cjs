@@ -22,6 +22,6 @@ test('Legal Advice policy: roles, stale concurrent edits, immutable versions and
   await seedLegalAdvice(db);assert.equal((await service.read()).id,current.id);
   await assert.rejects(service.save(admin,{...body,config:{...manifest,tariffs:[]}}),{status:400});
   const slots=await service.slots(client,new Date(Date.now()+86400000).toISOString().slice(0,10));assert.equal(slots.requested_only,true);assert.equal(slots.version,current.version);
-  for(const actor of [admin,advocate])await assert.rejects(service.slots(actor,'2026-11-20'),{status:403});
+  await assert.rejects(service.slots(admin,'2026-11-20'),{status:403});assert.equal((await service.slots(advocate,'2026-11-20')).requested_only,true);
  }finally{await db.legalAdvicePolicy.deleteMany({where:{created_by:admin.id}});await db.user.deleteMany({where:{id:admin.id}});await db.$disconnect();}
 });

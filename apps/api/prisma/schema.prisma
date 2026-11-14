@@ -1163,7 +1163,7 @@ model LegalAdviceBooking {
   chosen_advocate_id String @db.Uuid
   accepted_advocate_id String? @db.Uuid
   accepted_at DateTime? @db.Timestamptz(6)
-  requested_at DateTime @db.Timestamptz(6)
+  requested_at DateTime? @db.Timestamptz(6)
   confirmed_at DateTime? @db.Timestamptz(6)
   phase String @default("draft")
   pricing_snapshot Json?

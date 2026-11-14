@@ -8,7 +8,7 @@ import type {CaseActor} from '../cases/case-access';
 import {writeConsultationCase} from '../cases/case-state-machine';
 import {activeAt,newest} from '../payments/price-quotes';
 import {NOTIFICATIONS,type NotificationsPort} from '../notifications/notifications.port';
-import {booking,bump,consultationCase,inHours,jsonValue,lockPeople,policy,requireSlot,role,workspace} from './consultation-rules';
+import {booking,bump,consultationCase,inHours,jsonValue,lockPeople,policy,requireSlot,role,workspace,requireLegacyCheckoutAllowed} from './consultation-rules';
 import {consultationDocumentVisible} from './consultation-documents';
 
 @Injectable()
@@ -89,7 +89,7 @@ export class ConsultationService {
   async reserve(actor:CaseActor,id:string,body:unknown){
     role(actor,'client');const input=parse(ConsultationBookingSchema,body),db=await this.prisma.getClient();
     return db.$transaction(async tx=>{
-      const record=await consultationCase(tx,actor,id),old=await booking(tx,id),{row,config}=await policy(tx,old?.policy_id);
+      const record=await consultationCase(tx,actor,id);await requireLegacyCheckoutAllowed(tx,record);const old=await booking(tx,id),{row,config}=await policy(tx,old?.policy_id);
       if(!['draft','payment_pending'].includes(record.status))throw new ConflictException('Use reschedule for an already paid consultation.');
       await lockPeople(tx,[actor.id,input.advocate_id]);
       const at=new Date(input.scheduled_at),hours=await requireSlot(tx,input.advocate_id,actor.id,at,config,id);
@@ -104,7 +104,7 @@ export class ConsultationService {
     role(actor,'client');const db=await this.prisma.getClient();
     return db.$transaction(async tx=>{
       const record=await consultationCase(tx,actor,id);
-      if(record.status==='payment_pending')return record;
+      await requireLegacyCheckoutAllowed(tx,record);if(record.status==='payment_pending')return record;
       if(record.status!=='draft')throw new ConflictException('Case is already submitted.');
       const intake=parse(ConsultationIntakeSchema,record.details),issues=consultationIntakeProblems(record.service_code as ConsultationServiceCode,intake);
       if(issues.length)throw new BadRequestException(issues.join('\n'));

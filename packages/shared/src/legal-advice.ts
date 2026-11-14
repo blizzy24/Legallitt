@@ -3,6 +3,13 @@ import {z} from 'zod';
 export const LegalAdviceModeSchema=z.enum(['chat','audio','video']);
 export type LegalAdviceMode=z.infer<typeof LegalAdviceModeSchema>;
 export const LegalAdviceCategorySchema=z.enum(['General Consultation','Family Law','Criminal Law','Consumer Dispute','Service Matter','Cyber Crime','Property Law','Corporate Law','Labour Law','Arbitration']);
+/** Existing admin profiles use both practice names and short labels. Match the
+ * same field of law, not a literal spelling difference such as Consumer Law. */
+export function matchesAdvicePractice(category:string,areas:string[]):boolean{
+ if(category==='General Consultation')return true;
+ const aliases:Record<string,string[]>={'Family Law':['family','familylaw'],'Criminal Law':['criminal','criminallaw'],'Consumer Dispute':['consumer','consumerlaw','consumerdispute'],'Service Matter':['service','servicelaw','servicematter','servicematters'],'Cyber Crime':['cyber','cyberlaw','cybercrime'],'Property Law':['property','propertylaw'],'Corporate Law':['corporate','corporatelaw','companylaw'],'Labour Law':['labour','labor','labourlaw','laborlaw','employmentlaw'],Arbitration:['arbitration']};
+ return areas.some(area=>(aliases[category]??[]).includes(area.toLowerCase().replace(/[^a-z]/g,'')));
+}
 export const LegalAdviceTierSchema=z.strictObject({
   code:z.string().regex(/^[a-z][a-z_]*$/),label:z.string().trim().min(1).max(100),
   minimum_years:z.number().nonnegative(),maximum_years:z.number().positive().nullable(),
@@ -18,7 +25,7 @@ export const LegalAdviceConfigSchema=z.strictObject({
   working_days:z.array(z.number().int().min(0).max(6)).min(1),
   opening_minute:z.number().int().min(0).max(1439),closing_minute:z.number().int().min(1).max(1440),
   slot_minutes:z.number().int().min(5).max(120),minimum_notice_minutes:z.number().int().nonnegative(),booking_horizon_days:z.number().int().min(1).max(90),
-  session_minutes:z.number().int().positive(),join_before_minutes:z.number().int().nonnegative(),
+  session_minutes:z.literal(30),join_before_minutes:z.number().int().nonnegative(),
   acceptance_minutes:z.number().int().positive(),proposal_reply_minutes:z.number().int().positive(),
   maximum_pause_minutes:z.number().int().positive(),no_show_minutes:z.number().int().positive(),
   reschedule_notice_minutes:z.number().int().nonnegative(),maximum_reschedules:z.number().int().nonnegative(),

@@ -188,6 +188,9 @@ export default function AdvocateCasesList({
         {chrome === 'portal' && (
           <SlidersHorizontal size={t.filterBtnIcon} color={colors.textPrimary} style={styles.portalFilter} />
         )}
+        {chrome === 'tab' && state && (
+          <Pressable accessibilityRole="button" accessibilityLabel="Legal Advice requests" onPress={()=>router.push('/advocate/legal-advice' as Href)} style={{padding:8}}><Text style={{color:colors.brandDark,fontSize:12}}>Advice requests</Text></Pressable>
+        )}
         {chrome === 'tab' && (
           <Pressable accessibilityRole="button" accessibilityLabel="Search" hitSlop={10}>
             <Search size={t.searchBtn} color={colors.textPrimary} />

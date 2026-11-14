@@ -48,6 +48,7 @@
     "reflect-metadata": "0.2.2",
     "regenerator-runtime": "0.14.1",
     "rxjs": "7.8.2",
+    "unpdf": "2.2.0",
     "zod": "4.6.0"
   }
 }

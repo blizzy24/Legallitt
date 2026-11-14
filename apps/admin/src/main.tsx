@@ -12,6 +12,7 @@ import { SessionProvider, useSession } from './session';
 import { Notices } from './notices';
 import { Cancellations } from './cancellations';
 import './style.css';
+import {LegalAdviceQueue,LegalAdviceAdminGate} from './legal-advice';
 
 function SignIn() {
   const {user, loading, error: sessionError, login} = useSession();
@@ -62,10 +63,12 @@ function Shell() {
 }
 function ServiceCases() {
   const service = ServiceCodeSchema.safeParse(useParams().service);
+  if(service.success&&service.data==='legal_advice'&&!new URLSearchParams(window.location.search).has('legacy'))return <LegalAdviceQueue/>;
   return service.success ? <Notices key={service.data} service={service.data}/> : <main role="alert">Unknown service</main>;
 }
+function ServiceCaseDetail(){const {service}=useParams();return service==='legal_advice'?<LegalAdviceAdminGate legacy={<CaseDetail/>}/>:<CaseDetail/>;}
 createRoot(document.getElementById('root')!).render(<StrictMode><BrowserRouter><SessionProvider><NotificationsProvider><Routes>
   <Route path="/sign-in" element={<SignIn/>}/>
-  <Route element={<Shell/>}><Route path="/notifications" element={<Notifications/>}/><Route path="/cancellations" element={<Cancellations/>}/><Route path="/legal-notices" element={<Notices/>}/><Route path="/legal-notices/:id" element={<CaseDetail/>}/><Route path="/services/:service/cases" element={<ServiceCases/>}/><Route path="/services/:service/cases/:id" element={<CaseDetail/>}/><Route path="/support" element={<SupportInbox/>}/><Route path="/account-deletions" element={<AccountDeletions/>}/><Route path="/support/:id" element={<SupportTicketDetail/>}/><Route path="/advocate-approvals" element={<AdvocateApprovals/>}/><Route path="/advocate-approvals/:id" element={<AdvocateApprovalDetailPage/>}/><Route path="/payouts" element={<Payouts/>}/></Route>
+  <Route element={<Shell/>}><Route path="/notifications" element={<Notifications/>}/><Route path="/cancellations" element={<Cancellations/>}/><Route path="/legal-notices" element={<Notices/>}/><Route path="/legal-notices/:id" element={<CaseDetail/>}/><Route path="/services/:service/cases" element={<ServiceCases/>}/><Route path="/services/:service/cases/:id" element={<ServiceCaseDetail/>}/><Route path="/support" element={<SupportInbox/>}/><Route path="/account-deletions" element={<AccountDeletions/>}/><Route path="/support/:id" element={<SupportTicketDetail/>}/><Route path="/advocate-approvals" element={<AdvocateApprovals/>}/><Route path="/advocate-approvals/:id" element={<AdvocateApprovalDetailPage/>}/><Route path="/payouts" element={<Payouts/>}/></Route>
   <Route path="*" element={<Navigate to="/legal-notices" replace/>}/>
 </Routes></NotificationsProvider></SessionProvider></BrowserRouter></StrictMode>);

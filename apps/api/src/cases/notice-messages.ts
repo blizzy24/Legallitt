@@ -12,6 +12,8 @@ import {isConsultationService,isFlowReportService} from '@legalitt/shared';
 import {ensureReportWorkflow,reportChat} from '../service-reports/report-workflow';
 import {assertReportDocumentReadable} from '../service-reports/report-access';
 import {noticeDocumentVisible} from './notice-access';
+import {LegalAdviceConfigSchema} from '@legalitt/shared';
+import {adviceData,adviceChatWritable} from '../consultations/legal-advice-rules';
 const input=z.strictObject({body:NoticeCommentSchema.shape.comment.optional(),document_id:z.uuid().optional()}).refine(v=>v.body||v.document_id,'Enter a message or attach a document');
 @Injectable()
 export class NoticeMessages {
@@ -43,6 +45,11 @@ export class NoticeMessages {
   return db.$transaction(async tx=>{
    // Recheck membership under the case lock; assignment may change between calls.
    const record=await lockedCase(tx,actor,thread.case_id!);
+   if(record.service_code==='legal_advice'){
+    const b=await tx.legalAdviceBooking.findUnique({where:{case_id:record.id}});
+    if(b){const data=adviceData(b.session),config=LegalAdviceConfigSchema.parse((await tx.legalAdvicePolicy.findUniqueOrThrow({where:{id:b.policy_id}})).config);
+     if(!adviceChatWritable(b,data,config))throw new ConflictException('This consultation chat is not open. It opens before the confirmed start and becomes read-only after its validity period.');}
+   }
    if(['district_court','high_court'].includes(record.service_code)){const work=await tx.courtWorkspace.findUnique({where:{case_id:record.id}});if(work){const policy=await tx.courtPolicy.findUniqueOrThrow({where:{id:work.policy_id}}),chat=courtChat(work.data as unknown as CourtData,CourtPolicySchema.parse(policy.config),record.completed_at?.toISOString());if(!chat.writable)throw new ConflictException(chat.reason);}}
    if(isFlowReportService(record.service_code)){
     const workflow=await ensureReportWorkflow(tx,record),chat=reportChat(record,workflow.data,workflow.policy);

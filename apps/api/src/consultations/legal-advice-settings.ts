@@ -9,7 +9,7 @@ import {PrismaService} from '../prisma.service';
 export class LegalAdviceSettings {
  constructor(private readonly prisma:PrismaService){}
  async slots(actor:CaseActor,date:unknown){
-  if(actor.role!=='client')throw new ForbiddenException('Client action required');
+  if(actor.role!=='client'&&actor.role!=='advocate')throw new ForbiddenException('Client or advocate action required');
   const day=parse(z.iso.date(),date),{config,version}=await this.read();
   return {items:legalAdviceRequestedSlots(day,config,Date.now()).map(scheduled_at=>({scheduled_at})),timezone:config.timezone,version,requested_only:true};
  }

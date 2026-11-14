@@ -5,7 +5,7 @@ test('Legal Advice routes mount behind auth and enforce roles before reaching pe
  const {LegalAdviceSettings}=require('../dist/src/consultations/legal-advice-settings');
  const app=await NestFactory.create(AppModule,{logger:false});let actor={id:randomUUID(),role:'client'};
  app.get(AuthService).identity=async()=>actor;
- app.get(LegalAdviceSettings).read=async()=>({version:1,config:{}});
+ app.get(LegalAdviceSettings).read=async()=>({version:1,config:require('../prisma/legal-advice-rebuild.json')});
  try{
   await app.listen(0,'127.0.0.1');const base=(await app.getUrl())+'/api/v1/consultations/legal-advice';
   const request=(path,method='GET',body,auth=true)=>fetch(base+path,{method,headers:{...(auth?{Authorization:'Bearer TEST'}:{}),...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})});
@@ -17,7 +17,7 @@ test('Legal Advice routes mount behind auth and enforce roles before reaching pe
   assert.equal((await request('/invitations/'+randomUUID()+'/decision','POST',{})).status,403);
   assert.equal((await request('/slots?date=invalid')).status,400);
   actor={...actor,role:'advocate'};
-  assert.equal((await request('/slots?date=2026-11-20')).status,403);
+  assert.equal((await request('/slots?date=2026-11-20')).status,200);
   assert.equal((await request('/settings','PATCH',{})).status,403);
   actor={...actor,role:'admin'};
   assert.equal((await request('/settings','PATCH',{})).status,400);

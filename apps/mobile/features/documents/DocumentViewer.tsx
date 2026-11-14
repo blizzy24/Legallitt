@@ -10,7 +10,7 @@ import PdfSurface from './PdfSurface';
 
 type FileView={url:string;document:{id:string;kind?:string;slot_label?:string|null;filename:string;mime_type:string;page_count:number|null;size_bytes:string};case:{id:string;reference:string;service_code:string;client_name:string}|null};
 export default function DocumentViewer(){
-  const {documentId,reportCaseId,draftId,reportOnly,fileIndex}=useLocalSearchParams<{documentId?:string;reportCaseId?:string;draftId?:string;reportOnly?:string;fileIndex?:string}>(),insets=useSafeAreaInsets(),size=useWindowDimensions();
+  const {documentId,invitationId,reportCaseId,draftId,reportOnly,fileIndex}=useLocalSearchParams<{documentId?:string;invitationId?:string;reportCaseId?:string;draftId?:string;reportOnly?:string;fileIndex?:string}>(),insets=useSafeAreaInsets(),size=useWindowDimensions();
   const [file,setFile]=useState<FileView|null>(null),[bytes,setBytes]=useState<Uint8Array|null>(null),[loading,setLoading]=useState(false),[error,setError]=useState('');
   const [page,setPage]=useState(1),[pages,setPages]=useState(0),[scale,setScale]=useState(1),[retry,setRetry]=useState(0),[more,setMore]=useState(false),[report,setReport]=useState(false),[problem,setProblem]=useState(''),[message,setMessage]=useState(''),[sending,setSending]=useState(false);
   const back=()=>router.canGoBack()?router.back():router.replace('/documents');
@@ -24,17 +24,18 @@ export default function DocumentViewer(){
         const data=Uint8Array.from(atob(preview.pdf_base64),v=>v.charCodeAt(0));
         if(alive){setBytes(data);setFile({url:'',document:{id:'',filename:preview.filename.includes('Affidavit')?'Affidavit preview':'Report preview',mime_type:'application/pdf',page_count:null,size_bytes:String(data.length)},case:null});}return;
       }
-      let info=await backend.request<FileView>(`/documents/${documentId}/view`);
+      const endpoint=invitationId?`/consultations/legal-advice/invitations/${invitationId}/documents/${documentId}`:`/documents/${documentId}/view`;
+      let info=await backend.request<FileView>(endpoint);
       if(alive)setFile(info);
       let response=await fetch(info.url);
-      if(response.status===401||response.status===403){info=await backend.request<FileView>(`/documents/${documentId}/view`);response=await fetch(info.url);}
+      if(response.status===401||response.status===403){info=await backend.request<FileView>(endpoint);response=await fetch(info.url);}
       if(!response.ok)throw new Error('Unable to load document. Retry or download it instead.');
       const data=new Uint8Array(await response.arrayBuffer());
       if(alive){setFile(info);setBytes(data);if(info.document.mime_type!=='application/pdf')setPages(1);}
     })().catch(e=>{if(alive)setError(e instanceof Error?e.message:'Unable to load document. Please retry.');}).finally(()=>{if(alive)setLoading(false);});
     return()=>{alive=false;};
-  },[documentId,reportCaseId,draftId,reportOnly,fileIndex,retry]);
-  const download=async()=>{setMessage('');try{if(!documentId&&bytes&&file&&Platform.OS==='web'){const url=URL.createObjectURL(new Blob([bytes.slice().buffer],{type:'application/pdf'})),a=document.createElement('a');a.href=url;a.download=file.document.filename+'.pdf';a.click();setTimeout(()=>URL.revokeObjectURL(url),60000);return;}if(!documentId)return;await Linking.openURL((await backend.documentUrl(documentId)).url);}catch(e){setMessage(e instanceof Error?e.message:'Download failed. Please retry.');}};
+  },[documentId,invitationId,reportCaseId,draftId,reportOnly,fileIndex,retry]);
+  const download=async()=>{setMessage('');try{if(!documentId&&bytes&&file&&Platform.OS==='web'){const url=URL.createObjectURL(new Blob([bytes.slice().buffer],{type:'application/pdf'})),a=document.createElement('a');a.href=url;a.download=file.document.filename+'.pdf';a.click();setTimeout(()=>URL.revokeObjectURL(url),60000);return;}if(!documentId)return;if(invitationId){await Linking.openURL((await backend.request<FileView>(`/consultations/legal-advice/invitations/${invitationId}/documents/${documentId}`)).url);return;}await Linking.openURL((await backend.documentUrl(documentId)).url);}catch(e){setMessage(e instanceof Error?e.message:'Download failed. Please retry.');}};
   const share=async()=>{setMessage('');try{
     if(Platform.OS==='web'&&file&&bytes){const upload=new File([bytes.slice().buffer],(file.case?.service_code==='legal_notice'?noticeDocumentLabel(file.document):isFlowReportService(file.case?.service_code??'')?reportFileLabel(file.document):file.document.filename),{type:file.document.mime_type});if(navigator.canShare?.({files:[upload]})){await navigator.share({files:[upload],title:(file.case?.service_code==='legal_notice'?noticeDocumentLabel(file.document):isFlowReportService(file.case?.service_code??'')?reportFileLabel(file.document):file.document.filename)});return;}}
     setMessage('File sharing is unavailable here. Download the file, then share it from your device.');

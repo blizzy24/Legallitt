@@ -10,7 +10,7 @@ import {privateGeneratedPdf} from './pdf-contact-privacy';
  * object is private in the same encrypted bucket; its URL has the same expiry as
  * the original. It never replaces a stored document or changes a case version. */
 export async function privateDocumentCopy(tx:Prisma.TransactionClient,storage:DocumentStorage,actor:CaseActor,record:Case,doc:Document){
- if(doc.mime_type!=='application/pdf'||!['legal_notice','fir_draft','forensic_report','forensic_affidavit','service_report'].includes(doc.kind))return doc.s3_key;
+ if(doc.mime_type!=='application/pdf'||!['legal_notice','fir_draft','forensic_report','forensic_affidavit','service_report','consultation_report'].includes(doc.kind))return doc.s3_key;
  const draft=await tx.draft.findFirst({where:{case_id:record.id,document_id:doc.id}}),content=draft?.content as {production?:string;sender?:string}|undefined;
  // Uploaded reports and client evidence are original evidence, not generated
  // copies. No OCR/content extraction is added to the identity pipeline.

@@ -7,7 +7,7 @@ test('Legal Advice invitation race has exactly one winner; foreign invitations s
  const db=new PrismaClient({adapter:new PrismaPg({connectionString:url.href})});
  const users=['client','client','advocate','advocate','advocate','admin'].map(role=>({id:randomUUID(),role,cognito_sub:randomUUID(),full_name:'TEST Advice '+role}));
  const [client,other,a,b,wrongTier,admin]=users,id=randomUUID(),sent=[];
- const service=new LegalAdviceInvitations({getClient:async()=>db},{send:async(tx,n)=>{sent.push(n);return {id:randomUUID(),simulated:true};}});
+ const service=new LegalAdviceInvitations({getClient:async()=>db},{send:async(tx,n)=>{sent.push(n);return {id:randomUUID(),simulated:true};}},{download:async()=> 'https://test.invalid/authorized-document'});
  let policy;
  try{
   await db.user.createMany({data:users});
@@ -22,12 +22,16 @@ test('Legal Advice invitation race has exactly one winner; foreign invitations s
   await service.assign(admin,id,{expected_revision:0,advocate_ids:[a.id,b.id],reason:'TEST'});
   assert.equal((await service.inbox(wrongTier)).items.length,0);
   const invites=await db.legalAdviceInvitation.findMany({where:{case_id:id}}),ia=invites.find(x=>x.advocate_id===a.id),ib=invites.find(x=>x.advocate_id===b.id);
+  const doc=await db.document.create({data:{case_id:id,owner_id:client.id,kind:'supporting_document',filename:'TEST.pdf',mime_type:'application/pdf',size_bytes:100n,page_count:1,status:'uploaded',s3_key:'TEST/advice.pdf'}});
+  assert.match((await service.document(a,ia.id,doc.id)).url,/authorized-document/);
+  await assert.rejects(service.document(client,ia.id,doc.id),{status:403});await assert.rejects(service.document(wrongTier,ia.id,doc.id),{status:404});await assert.rejects(service.document(a,ia.id,randomUUID()),{status:404});
   await assert.rejects(service.decide(client,ia.id,{decision:'accept'}),{status:403});
   await assert.rejects(service.decide(wrongTier,ia.id,{decision:'accept'}),{status:404});
   const result=await Promise.allSettled([service.decide(a,ia.id,{decision:'accept'}),service.decide(b,ib.id,{decision:'accept'})]);
   assert.equal(result.filter(x=>x.status==='fulfilled').length,1);assert.equal(result.find(x=>x.status==='rejected').reason.status,409);
   const winner=await db.legalAdviceInvitation.findFirst({where:{case_id:id,state:'accepted'}}),loser=await db.legalAdviceInvitation.findFirst({where:{case_id:id,state:'superseded'}});
   assert.ok(winner&&loser);assert.equal((await db.case.findUnique({where:{id}})).advocate_id,winner.advocate_id);
+  await assert.rejects(service.document(users.find(u=>u.id===loser.advocate_id),loser.id,doc.id),{status:404});
   assert.equal((await db.legalAdviceBooking.findUnique({where:{case_id:id}})).accepted_advocate_id,winner.advocate_id);
   assert.ok(sent.some(n=>n.user_id===loser.advocate_id&&n.kind==='legal_advice_invitation_closed'));
   await service.decide(users.find(x=>x.id===winner.advocate_id),winner.id,{decision:'accept'});
@@ -35,7 +39,7 @@ test('Legal Advice invitation race has exactly one winner; foreign invitations s
   assert.ok((await service.inbox(a)).items.every(x=>!('phone' in x)&&!('details' in x)));
   await assert.rejects(service.inbox(other),{status:403});
  }finally{
-  await db.caseEvent.deleteMany({where:{case_id:id}});await db.legalAdviceEvent.deleteMany({where:{case_id:id}});await db.legalAdviceInvitation.deleteMany({where:{case_id:id}});await db.legalAdviceBooking.deleteMany({where:{case_id:id}});await db.case.deleteMany({where:{id}});
+  await db.consultation.deleteMany({where:{case_id:id}});await db.document.deleteMany({where:{case_id:id}});await db.caseEvent.deleteMany({where:{case_id:id}});await db.legalAdviceEvent.deleteMany({where:{case_id:id}});await db.legalAdviceInvitation.deleteMany({where:{case_id:id}});await db.legalAdviceBooking.deleteMany({where:{case_id:id}});await db.case.deleteMany({where:{id}});
   if(policy)await db.legalAdvicePolicy.delete({where:{id:policy.id}});
   await db.advocateProfile.deleteMany({where:{user_id:{in:users.map(x=>x.id)}}});await db.user.deleteMany({where:{id:{in:users.map(x=>x.id)}}});await db.$disconnect();
  }

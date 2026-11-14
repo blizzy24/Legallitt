@@ -3390,8 +3390,8 @@ Invitation acceptance locks the case, checks current eligibility and serializes
 overlapping advocate bookings. The partial unique index provides an additional
 database guarantee of one winner. Pending invitations expose no client contacts
 or unrelated case contents. Session state must be reconciled against server time
-under the booking lock before it is exposed or acted upon; the pure timer engine
-is implemented, but its persistent lifecycle integration remains pending.
+under the booking lock before it is exposed or acted upon; the persisted timer, polling clients and minute reconciliation worker share the
+same engine. Page reloads and reconnects never reset paid time.
 
 ```sql
 -- Add-only: existing consultation rows, tariffs and case membership are untouched.
@@ -3405,7 +3405,7 @@ CREATE TABLE legal_advice_bookings (
  revision integer NOT NULL DEFAULT 0, mode text NOT NULL CHECK(mode IN ('chat','audio','video')),
  tier_code text NOT NULL, chosen_advocate_id uuid NOT NULL REFERENCES users(id),
  accepted_advocate_id uuid REFERENCES users(id), accepted_at timestamptz,
- requested_at timestamptz NOT NULL, confirmed_at timestamptz,
+ requested_at timestamptz, confirmed_at timestamptz,
  phase text NOT NULL DEFAULT 'draft', pricing_snapshot jsonb,
  session jsonb NOT NULL DEFAULT '{}', private_notes jsonb NOT NULL DEFAULT '{}',
  follow_up_of uuid REFERENCES legal_advice_bookings(case_id), reschedule_count integer NOT NULL DEFAULT 0 CHECK(reschedule_count>=0),
@@ -3429,3 +3429,36 @@ CREATE TABLE legal_advice_events (
 );
 CREATE INDEX legal_advice_events_case ON legal_advice_events(case_id,created_at);
 ```
+
+
+### Legal Advice integrated lifecycle — 14 November 2026
+
+New bookings use `/api/v1/legal-advice` and pin policy, tier, mode and payment
+snapshots. Migration `202611140003_advice_draft_slot` widens requested_at to
+nullable for unfinished intakes; submission and capture require a valid slot.
+Legacy paid cases and court consultations keep their original engine. Activation
+is a service setting applied by seed-legal-advice after the API/frontend release.
+
+Sessions persist joins, active/paused time, termination and no-shows. The client
+may end; the advocate may pause/resume. Completion does not release consultation
+credit until the mandatory summary is published. Written advice is a separate
+₹100 base purchase with the same fees, a three-day due date and separate credit
+on actual PDF delivery. Both credits are derived once from captured snapshots.
+
+§9.1 register additions: CALL_PROVIDER is the explicit TEST adapter, without
+audio/video transmission, recording or provider subscriptions. Microphone/camera
+controls are labelled test controls. Existing simulated payment and AI adapters
+remain labelled; the AI summary is preliminary, while document examination is
+shown unavailable. Existing support is in-app; no real callback or call claim.
+
+§9.2 screen register additions: the integrated Legal Advice admin queue,
+versioned tier/mode settings, invitation assignment, proposals, no-shows,
+summary/written overdue monitoring, cancellations, disputes and chat-reopen
+controls use the existing admin visual language because no admin designs were
+supplied. The advocate tier selection and fault rescheduling adapt November
+consultation designs to the overriding 60-point answers. Profile and Messages
+redesigns are deliberately deferred to their own runs. No repeat KYC is added.
+
+Implementation assumptions are recorded as LA-R2-01 through LA-R2-13 in
+`DECISIONS.md`. Test evidence and final release state are in
+`../reports/legal-advice-20261114/README.md`.

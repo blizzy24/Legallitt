@@ -92,6 +92,7 @@
     "advocate/forensic/requests",
     "advocate/forensic/submit",
     "advocate/forensic/waiting",
+    "advocate/legal-advice",
     "advocate/notice/[id]/chat",
     "advocate/notice/[id]/confirm",
     "advocate/notice/[id]/delivery",

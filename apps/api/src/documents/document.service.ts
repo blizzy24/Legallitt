@@ -30,6 +30,8 @@ import {assertReportDocumentDeletable,assertReportDocumentReadable,assertReportU
 import {isFlowReportService} from '@legalitt/shared';
 import {ensureReportWorkflow} from '../service-reports/report-workflow';
 import {privateDocumentCopy} from './private-document-copy';
+import {adviceData} from '../consultations/legal-advice-rules';
+import {LegalAdviceConfigSchema} from '@legalitt/shared';
 
 const transactionOptions = { timeout: 60_000 };
 @Injectable()
@@ -87,7 +89,12 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
       const record = await lockedCase(tx, actor, input.case_id);
       if(input.kind==='consultation_report'&&(!internal?.consultationReport||actor.role!=='advocate'||!isConsultationService(record.service_code)))
         throw new BadRequestException('Consultation briefs must be generated from the report editor.');
-      if(isConsultationService(record.service_code)&&['completed','cancelled','refunded'].includes(record.status))throw new ConflictException('This case is closed; documents cannot be added.');
+      if(isConsultationService(record.service_code)&&['completed','cancelled','refunded'].includes(record.status)){
+        const b=record.service_code==='legal_advice'&&record.status==='completed'?await tx.legalAdviceBooking.findUnique({where:{case_id:record.id}}):null;
+        const d=b?adviceData(b.session):null,p=b?LegalAdviceConfigSchema.parse((await tx.legalAdvicePolicy.findUniqueOrThrow({where:{id:b.policy_id}})).config):null;
+        const chat=!!b?.confirmed_at&&!!p&&(Date.now()<b.confirmed_at.getTime()+p.chat_valid_minutes*60000||!!d?.chat_reopened_until&&Date.parse(d.chat_reopened_until)>Date.now());
+        if(!(b&&actor.role==='advocate'&&internal?.consultationReport&&d?.written?.status==='pending'||b&&chat&&input.kind==='chat_attachment'||b&&actor.role==='advocate'&&b.phase==='completed'&&input.kind==='supporting_document'))throw new ConflictException('This case is closed; documents cannot be added.');
+      }
       // Q114: FIR collects no identity document at any stage. Files stored on older
       // cases stay stored, but no new one is accepted.
       if (record.service_code === 'fir_draft' && input.kind === 'id_proof')
@@ -274,6 +281,9 @@ export class DocumentService implements OnModuleInit, OnModuleDestroy {
       }
       if(['district_court','high_court'].includes(parent.service_code)){const work=await tx.courtWorkspace.findUnique({where:{case_id:parent.id}});if(work&&parent.status!=='draft')throw new ConflictException('Submitted court documents are retained. Upload a replacement; previous versions remain in the case history.');}
       if(isConsultationService(parent.service_code)){
+        const advice=await tx.legalAdviceBooking.findUnique({where:{case_id:parent.id}}),data=advice?adviceData(advice.session):null;
+        if(advice&&!['draft','payment_pending'].includes(advice.phase))throw new ConflictException('Filed consultation documents and conversation attachments are retained with the case.');
+        if(data?.written?.document_id===id||data?.summary?.attachment_ids.includes(id))throw new ConflictException('Published consultation documents are retained.');
         const reports=await tx.consultationReport.findMany({where:{case_id:parent.id,status:{in:['submitted','approved']}}});
         if(reports.some(r=>r.document_id===id||((r.content as {attachment_ids?:string[]}).attachment_ids??[]).includes(id))||await tx.courtProgress.findFirst({where:{case_id:parent.id,document_ids:{has:id}}}))
           throw new ConflictException('Published or submitted case documents are retained with their report.');

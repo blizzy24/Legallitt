@@ -185,6 +185,7 @@ export class CaseStateMachine {
     return db.$transaction(async (tx) => {
       if (!await tx.service.findFirst({where: {code: input.service_code, active: true}}))
         throw new BadRequestException('Service is not available');
+      if(input.service_code==='legal_advice'&&((await tx.service.findUniqueOrThrow({where:{code:'legal_advice'}})).config as {legal_advice_v2_enabled?:boolean}).legal_advice_v2_enabled)throw new ConflictException('Start Legal Advice from the current mode and advocate selection screen. Earlier paid cases remain in My Cases.');
       if (['district_court','high_court'].includes(input.service_code) &&
           await tx.courtPolicy.findFirst({where:{service_code:input.service_code,effective_from:{lte:new Date()}}}))
         throw new ConflictException('Start court representation from the current court service screen. Existing consultation cases remain available in My Cases.');
@@ -329,6 +330,7 @@ export class CaseStateMachine {
     source: 'real' | 'simulated' = 'real',
   ) {
     const from = record.status as CaseStatus;
+    if(record.service_code==='legal_advice'&&await tx.legalAdviceBooking.findUnique({where:{case_id:record.id}}))throw new ConflictException('Use the current Legal Advice workflow actions for this consultation.');
     if (['district_court', 'high_court'].includes(record.service_code) &&
         await tx.courtWorkspace.findUnique({where: {case_id: record.id}}))
       throw new ConflictException('Use the court representation actions for this case.');
@@ -824,13 +826,20 @@ export async function acceptLegalAdviceCase(tx:Prisma.TransactionClient,actor:Ca
  return updated;
 }
 
+export async function createLegalAdviceCase(tx:Prisma.TransactionClient,actor:CaseActor,pricingId:string){
+ if(actor.role!=='client')throw new ForbiddenException('Client action required');
+ const service=await tx.service.findFirst({where:{code:'legal_advice',active:true}});if(!service)throw new ConflictException('Legal Advice is unavailable.');
+ const c=await tx.case.create({data:{client_id:actor.id,service_code:'legal_advice',pricing_id:pricingId,reference:await caseReference(tx,'legal_advice'),sub_status:'legal_advice_draft'}});
+ await appendCaseEvent(tx,{case_id:c.id,type:'legal_advice_created',actor_id:actor.id,actor_role:actor.role,to_status:'draft',payload:{workflow_version:2}});return c;
+}
+
 export async function writeConsultationCase(tx:Prisma.TransactionClient,actor:CaseActor,id:string,
   data:Pick<Prisma.CaseUncheckedUpdateInput,'status'|'sub_status'|'title'|'details'|'matter_type'|'pricing_id'|'completed_at'>,
   type:string,payload:Prisma.InputJsonObject={}) {
   const before=await lockedCase(tx,actor,id);
   if(!isConsultationService(before.service_code))throw new NotFoundException('Case not found');
   const updated=await tx.case.update({where:{id},data:{...data,updated_at:new Date()}});
-  await appendCaseEvent(tx,{case_id:id,type,actor_id:actor.id,actor_role:actor.role,from_status:before.status,to_status:updated.status,payload});
+  await appendCaseEvent(tx,{case_id:id,type,...actor.trigger==='system'?{}:{actor_id:actor.id,actor_role:actor.role},from_status:before.status,to_status:updated.status,payload});
   return updated;
 }
 

@@ -16,6 +16,7 @@ export class ConsultationController {
   @Get('legal-advice/slots') adviceSlots(@Req() r:AuthRequest,@Query('date') date:unknown){return json(this.adviceSettings.slots(r.user!,date));}
   @Patch('legal-advice/settings') saveAdvicePolicy(@Req() r:AuthRequest,@Body() b:unknown){return json(this.adviceSettings.save(r.user!,b));}
   @Get('legal-advice/invitations') adviceInbox(@Req() r:AuthRequest){return json(this.adviceInvitations.inbox(r.user!));}
+  @Get('legal-advice/invitations/:id/documents/:documentId') adviceInvitationDocument(@Req() r:AuthRequest,@Param('id') v:string,@Param('documentId') d:string){return json(this.adviceInvitations.document(r.user!,id(v),id(d)));}
   @Post('legal-advice/:id/invitations') inviteAdvice(@Req() r:AuthRequest,@Param('id') v:string,@Body() b:unknown){return json(this.adviceInvitations.assign(r.user!,id(v),b));}
   @Post('legal-advice/invitations/:id/decision') decideAdvice(@Req() r:AuthRequest,@Param('id') v:string,@Body() b:unknown){return json(this.adviceInvitations.decide(r.user!,id(v),b));}
   @Get('availability') availability(@Req() r:AuthRequest){return json(this.service.availability(r.user!));}

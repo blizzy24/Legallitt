@@ -17,6 +17,12 @@ import {ConsultationController} from './consultations/consultation.controller';
 import {ConsultationService} from './consultations/consultation.service';
 import {LegalAdviceSettings} from './consultations/legal-advice-settings';
 import {LegalAdviceInvitations} from './consultations/legal-advice-invitations';
+import {LegalAdviceWorkflow} from './consultations/legal-advice.service';
+import {LegalAdvicePayments} from './consultations/legal-advice-payments';
+import {LegalAdviceWritten} from './consultations/legal-advice-written';
+import {LegalAdviceJobs} from './consultations/legal-advice-jobs';
+import {LegalAdviceController} from './consultations/legal-advice.controller';
+import {CALL_PROVIDER,TestCallProvider} from './consultations/call-provider';
 import {ConsultationPayments} from './consultations/consultation-payments';
 import {ConsultationReports} from './consultations/consultation-reports';
 import {CancellationsController} from './cancellations/cancellations.controller';
@@ -89,7 +95,7 @@ import {ACCOUNT_COGNITO, CognitoAccountAdapter} from './account/account-cognito'
 
 @Module({
   imports: [AiModule, CourierModule, AdminUiModule, DemoModule, DatabaseModule, PhoneAuthModule, PaymentsModule, NotificationsModule],
-  controllers: [CourtRepresentationController,AdvocateSignatureController,NoticeSigningController,WalletController, AdvocateVerificationController, AdvocateCompletionController, AccountDeletionsAdminController, AccountController, AccountDataController, SupportController, ConsultationController, FirController, NotificationsController, NoticeIntakeAiController, AdminAdvocatesController, AdminCasesController, NoticeMessagesController,
+  controllers: [LegalAdviceController,CourtRepresentationController,AdvocateSignatureController,NoticeSigningController,WalletController, AdvocateVerificationController, AdvocateCompletionController, AccountDeletionsAdminController, AccountController, AccountDataController, SupportController, ConsultationController, FirController, NotificationsController, NoticeIntakeAiController, AdminAdvocatesController, AdminCasesController, NoticeMessagesController,
     PaymentsController, ServiceReportsController, CancellationsController, SupportSettingsController, ReportTariffsController,
     HealthController,
     AuthController,
@@ -101,7 +107,7 @@ import {ACCOUNT_COGNITO, CognitoAccountAdapter} from './account/account-cognito'
     ServicesController,
     DocumentController,
   ],
-  providers: [LegalAdviceInvitations,LegalAdviceSettings,CourtRepresentationService,{provide:APP_INTERCEPTOR,useClass:ContactPrivacyInterceptor},AdvocateSignatures,NoticeSigning,WalletService, AdvocateVerificationService, AdvocateCompletionService, AccountDeletionsAdminService, AccountService, AccountDataService, {provide: ACCOUNT_COGNITO, useClass: CognitoAccountAdapter}, SupportService, ConsultationService, ConsultationPayments, ConsultationReports, FirAdminService, FirFlowService, FirService, NotificationRepository, AdminCaseDetailRepository, AdminAdvocatesRepository, AdminCasesRepository, NoticeMessages,
+  providers: [{provide:CALL_PROVIDER,useClass:TestCallProvider},LegalAdviceWorkflow,LegalAdvicePayments,LegalAdviceWritten,LegalAdviceJobs,LegalAdviceInvitations,LegalAdviceSettings,CourtRepresentationService,{provide:APP_INTERCEPTOR,useClass:ContactPrivacyInterceptor},AdvocateSignatures,NoticeSigning,WalletService, AdvocateVerificationService, AdvocateCompletionService, AccountDeletionsAdminService, AccountService, AccountDataService, {provide: ACCOUNT_COGNITO, useClass: CognitoAccountAdapter}, SupportService, ConsultationService, ConsultationPayments, ConsultationReports, FirAdminService, FirFlowService, FirService, NotificationRepository, AdminCaseDetailRepository, AdminAdvocatesRepository, AdminCasesRepository, NoticeMessages,
     ShipmentService,
     NoticePdfService,
     NoticeFlowService,

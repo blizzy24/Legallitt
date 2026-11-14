@@ -39,16 +39,22 @@ export async function walletEntries(tx: Tx, advocateId: string): Promise<WalletE
   const courtCases=new Set((await tx.courtWorkspace.findMany({where:{case_id:{in:cases.map(c=>c.id)}},select:{case_id:true}})).map(w=>w.case_id));
   for (const c of cases) {
     if(courtCases.has(c.id))continue;
+    const advice=await tx.legalAdviceBooking.findUnique({where:{case_id:c.id}});
     let share = 0n, paid = 0n, platform = 0n, gst = 0n, known = false;
     for (const p of c.payments_case_id_relations) {
+      if(advice&&advice.phase!=='summary_submitted')continue;
       const b = (p.quote?.snapshot as {breakdown?: QuoteBreakdown} | undefined)?.breakdown;
       // §2.5a: historical payments without a recorded entitlement stay unknown, not zero.
       if (!b?.advocate_entitlement_paise) continue;
       known = true; share += BigInt(b.advocate_entitlement_paise); paid += p.total_paise;
       platform += BigInt(b.platform_fee_paise); gst += BigInt(b.gst_paise) + BigInt(b.page_overage_gst_paise ?? '0');
     }
-    if (known) out.push({case_id: c.id, reference: c.reference, service_code: c.service_code, completed_at: c.completed_at?.toISOString() ?? null,
+    if (known) out.push({case_id: c.id, reference: c.reference, service_code: c.service_code, completed_at: advice?(advice.session as {summary?:{submitted_at?:string}}).summary?.submitted_at??null:c.completed_at?.toISOString() ?? null,
       client_paid_paise: paid.toString(), platform_fee_paise: platform.toString(), gst_paise: gst.toString(), share_paise: share.toString(), source: 'completed'});
+    if(advice&&(advice.session as {written?:{status?:string}}).written?.status==='delivered'){
+      const payment=await tx.payment.findFirst({where:{case_id:c.id,purpose:'written_advice',status:'captured'},include:{quote:true}}),b=(payment?.quote?.snapshot as {breakdown?:QuoteBreakdown})?.breakdown;
+      if(payment&&b?.advocate_entitlement_paise)out.push({case_id:c.id,reference:c.reference+' · Written advice',service_code:c.service_code,completed_at:(advice.session as {written?:{delivered_at?:string}}).written?.delivered_at??null,client_paid_paise:payment.total_paise.toString(),platform_fee_paise:b.platform_fee_paise,gst_paise:b.gst_paise,share_paise:b.advocate_entitlement_paise,source:'completed'});
+    }
   }
   // D-14/D-55: a cancelled case carries an entitlement only when the admin set one.
   const decisions = await tx.cancellationRequest.findMany({where: {advocate_entitlement_paise: {gt: 0n}, status: {in: ['approved', 'completed']}}});

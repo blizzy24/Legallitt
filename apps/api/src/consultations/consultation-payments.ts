@@ -9,7 +9,7 @@ import {PAYMENTS,type PaymentsPort} from '../payments/payments.port';
 import {NOTIFICATIONS,type NotificationsPort} from '../notifications/notifications.port';
 import {activeAt,newest,quoteDocuments,blockedQuote,type QuoteSnapshot} from '../payments/price-quotes';
 import {calculateQuote} from '../payments/quote-math';
-import {booking,bump,consultationCase,jsonValue,lockPeople,policy,requireSlot,role,workspace} from './consultation-rules';
+import {booking,bump,consultationCase,jsonValue,lockPeople,policy,requireSlot,role,workspace,requireLegacyCheckoutAllowed} from './consultation-rules';
 import type {Case,Prisma} from '../generated/prisma/client';
 import {consultationDocumentVisible} from './consultation-documents';
 
@@ -43,6 +43,7 @@ export class ConsultationPayments {
     return db.$transaction(async tx=>this.buildQuote(tx,await consultationCase(tx,actor,id),input.purpose,input.court_quote_id));
   }
   private async buildQuote(tx:Prisma.TransactionClient,record:Case,purpose:'service_fee'|'representation',courtQuoteId?:string):Promise<PaymentQuote>{
+    if(purpose==='service_fee')await requireLegacyCheckoutAllowed(tx,record);
     const work=await workspace(tx,record.id),court=purpose==='representation'&&courtQuoteId?await tx.courtQuote.findFirst({where:{id:courtQuoteId,case_id:record.id}}):null;
     const session=purpose==='service_fee'?await booking(tx,record.id):null;
     if(purpose==='service_fee'&&(!session||session.status!=='held'||!session.reserved_until||session.reserved_until<=new Date()))
@@ -88,7 +89,7 @@ export class ConsultationPayments {
       if(!quote)throw new NotFoundException('Payment quote not found');
       const docs=await quoteDocuments(tx,id,true);
       if(docs.unresolved.length||docs.fingerprint!==quote.document_fingerprint)throw new ConflictException('Documents changed. Review the updated fee breakdown before paying.');
-      if(input.purpose==='service_fee'){
+      if(input.purpose==='service_fee'){await requireLegacyCheckoutAllowed(tx,record);
         const session=await booking(tx,id);
         if(record.status!=='payment_pending'||!session?.advocate_id||session.status!=='held'||!session.reserved_until||session.reserved_until<=new Date()||quote.pricing_id!==record.pricing_id||(quote.snapshot as {rules?:{booking_revision?:number}}).rules?.booking_revision!==session.revision)
           throw new ConflictException('Your slot hold has expired or booking changed. Choose an available slot and review payment again.');

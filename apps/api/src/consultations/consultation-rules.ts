@@ -9,9 +9,15 @@ export const jsonValue=(v:unknown):Prisma.InputJsonValue=>JSON.parse(JSON.string
 export function role(actor:CaseActor,required:CaseActor['role']){if(actor.role!==required)throw new ForbiddenException(`${required} action required`);}
 export async function consultationCase(tx:Prisma.TransactionClient,actor:CaseActor,id:string){
   const record=await lockedCase(tx,actor,id);
+  if(record.service_code==='legal_advice'&&await tx.legalAdviceBooking.findUnique({where:{case_id:id}}))throw new ConflictException('Use the current Legal Advice workflow for this consultation.');
   if(await tx.courtWorkspace.findUnique({where:{case_id:id}}))throw new ConflictException('Use the court representation workflow for this case.');
   if(!isConsultationService(record.service_code))throw new NotFoundException('Case not found');
   return record;
+}
+export async function requireLegacyCheckoutAllowed(tx:Prisma.TransactionClient,record:{service_code:string}){
+ if(record.service_code!=='legal_advice')return;
+ const service=await tx.service.findUniqueOrThrow({where:{code:'legal_advice'}});
+ if((service.config as {legal_advice_v2_enabled?:boolean}).legal_advice_v2_enabled)throw new ConflictException('This saved unpaid request uses the earlier booking flow. Start a new Legal Advice request to choose a mode and advocate. Your earlier filing is retained.');
 }
 export async function workspace(tx:Prisma.TransactionClient,id:string,revision?:number){
   const row=await tx.consultationWorkspace.upsert({where:{case_id:id},create:{case_id:id},update:{}});

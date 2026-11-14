@@ -1,5 +1,5 @@
 import { appendCaseEvent, lockedCase } from '../cases/case-state-machine';
-import { ConflictException, ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Inject, Injectable, NotFoundException,Optional } from '@nestjs/common';
 import { z } from 'zod';
 import { PrismaService } from '../prisma.service';
 import { CaseStateMachine } from '../cases/case-state-machine';
@@ -10,13 +10,14 @@ import { NOTIFICATIONS, type NotificationsPort } from '../notifications/notifica
 import { isReportService } from '@legalitt/shared';
 import { createPriceQuote, quoteDocuments, type QuoteSnapshot } from './price-quotes';
 import {ensureNoticeLifecycle,NoticeWorkflowPolicySchema,requireNoticeRevision} from '../cases/notice-lifecycle';
+import {LegalAdvicePayments} from '../consultations/legal-advice-payments';
 const checkoutId=z.string().regex(/^[1-9]\d{0,18}$/).transform(v=>BigInt(v));
 const request = z.strictObject({case_id: z.uuid(), purpose: z.enum(['service_fee','courier']), quote_id: z.uuid().optional(), checkout_id: checkoutId.optional()});
 @Injectable()
 export class PaymentsService {
   constructor(private readonly prisma: PrismaService, private readonly state: CaseStateMachine,
     @Inject(PAYMENTS) private readonly gateway: PaymentsPort,
-    @Inject(NOTIFICATIONS) private readonly notifications: NotificationsPort) {}
+    @Inject(NOTIFICATIONS) private readonly notifications: NotificationsPort,@Optional() private readonly advicePayments?:LegalAdvicePayments) {}
   async quote(actor: CaseActor, body: unknown) {
     const {case_id} = parse(z.strictObject({case_id: z.uuid()}), body);
     const db = await this.prisma.getClient();
@@ -108,9 +109,10 @@ export class PaymentsService {
     return db.$transaction(async tx=>{
       const record=await lockedCase(tx,actor,input.case_id);
       if(actor.role!=='client')throw new ForbiddenException('Only the client can open checkout.');
-      if(record.status!=='payment_pending')throw new ConflictException('This case is not awaiting payment.');
       const quote=await tx.casePriceQuote.findFirst({where:{id:input.quote_id,case_id:record.id}});
       if(!quote)throw new NotFoundException('Price quote not found');
+      const advice=record.service_code==='legal_advice'?await tx.legalAdviceBooking.findUnique({where:{case_id:record.id}}):null;
+      if(record.status!=='payment_pending'&&!(advice&&quote.purpose==='written_advice'&&['completed','summary_submitted'].includes(advice.phase)))throw new ConflictException('This case is not awaiting payment.');
       const previous=await tx.caseEvent.findFirst({where:{case_id:record.id,actor_id:actor.id,type:'payment_checkout_created'},orderBy:{created_at:'desc'}});
       const data=previous?.payload as {quote_id?:string;expires_at?:string}|undefined;
       if(previous&&data?.quote_id===quote.id&&data.expires_at&&new Date(data.expires_at)>new Date())return this.checkoutView(previous,quote.snapshot);
@@ -118,16 +120,16 @@ export class PaymentsService {
       return this.checkoutView(event,quote.snapshot);
     });
   }
-  private checkoutView(event:{id:bigint;payload:unknown},snapshot:unknown,payment?:{status:string;id:string;simulated:boolean}|null){
+  private checkoutView(event:{id:bigint;payload:unknown},snapshot:unknown,payment?:{status:string;id:string;simulated:boolean;total_paise?:bigint}|null){
     const data=event.payload as {quote_id:string;expires_at:string};
-    return {id:event.id,...data,server_time:new Date().toISOString(),total_paise:(snapshot as QuoteSnapshot).breakdown.total_paise,status:payment?.status??(new Date(data.expires_at)<=new Date()?'expired':'waiting'),payment_id:payment?.id??null,simulated:payment?.simulated??(process.env.PAYMENTS_MODE??'simulated')==='simulated',test_actions:process.env.ENVIRONMENT==='dev'||process.env.NODE_ENV==='test'};
+    return {id:event.id,...data,server_time:new Date().toISOString(),total_paise:payment?.total_paise?.toString()??(snapshot as QuoteSnapshot).breakdown.total_paise,status:payment?.status??(new Date(data.expires_at)<=new Date()?'expired':'waiting'),payment_id:payment?.id??null,simulated:payment?.simulated??(process.env.PAYMENTS_MODE??'simulated')==='simulated',test_actions:process.env.ENVIRONMENT==='dev'||process.env.NODE_ENV==='test'};
   }
   async checkoutStatus(actor:CaseActor,id:string){
     const db=await this.prisma.getClient();return db.$transaction(async tx=>{
       const event=await tx.caseEvent.findFirst({where:{id:parse(checkoutId,id),type:'payment_checkout_created',actor_id:actor.id}});
       if(!event)throw new NotFoundException('Payment session not found');await lockedCase(tx,actor,event.case_id);
       const data=event.payload as {quote_id:string},quote=await tx.casePriceQuote.findUniqueOrThrow({where:{id:data.quote_id}});
-      const payment=await tx.payment.findFirst({where:{case_id:event.case_id,payer_id:actor.id,purpose:'service_fee',status:'captured'}});
+      const payment=await tx.payment.findFirst({where:{case_id:event.case_id,payer_id:actor.id,purpose:quote.purpose,status:'captured'}});
       return this.checkoutView(event,quote.snapshot,payment);
     });
   }
@@ -136,7 +138,9 @@ export class PaymentsService {
     if((process.env.PAYMENTS_MODE??'simulated')!=='simulated')throw new ForbiddenException('The test action requires a simulated payment adapter.');
     const db=await this.prisma.getClient(),event=await db.caseEvent.findFirst({where:{id:parse(checkoutId,id),type:'payment_checkout_created',actor_id:actor.id}});
     if(!event)throw new NotFoundException('Payment session not found');
-    const data=event.payload as {quote_id:string};
+    const data=event.payload as {quote_id:string;expires_at?:string};
+    const advice=await db.legalAdviceBooking.findUnique({where:{case_id:event.case_id}});
+    if(advice){if(!this.advicePayments)throw new ConflictException('Legal Advice checkout is unavailable. Contact support.');const captured=await db.payment.findFirst({where:{case_id:event.case_id,quote_id:data.quote_id,payer_id:actor.id,status:'captured'}});if(!captured&&(!data.expires_at||Date.parse(data.expires_at)<=Date.now()))throw new ConflictException('The checkout expired. Generate a new payment session.');return this.advicePayments.pay(actor,event.case_id,{quote_id:data.quote_id,idempotency_key:`checkout:${event.id}`,confirmed_test:true});}
     return this.intent(actor,{case_id:event.case_id,purpose:'service_fee',quote_id:data.quote_id,checkout_id:event.id.toString()},`checkout:${event.id}`);
   }
   async noticeCourierRetry(actor:CaseActor,body:unknown){

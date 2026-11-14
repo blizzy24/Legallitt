@@ -2,6 +2,27 @@
 
 ## Legal Advice rebuild decisions — 14 November 2026
 
+- **LA-R2-09 — Fault rescheduling assumption, awaiting confirmation.** An
+  interrupted test call or advocate no-show may be rescheduled at no extra charge
+  without consuming either ordinary client reschedule. The advocate must confirm
+  the new slot. Cancellation after an interruption stays an admin decision.
+- **LA-R2-10 — Draft slots.** A saved intake may exist before the client chooses
+  a slot. Submission and payment require a valid platform slot, rechecked at
+  capture; an expired request never silently charges or books another time.
+- **LA-R2-11 — Private records.** Advocate notes and unfinished summary drafts
+  remain private to their author. Client disputes are client/admin-only. Pending
+  invitees receive a scoped request and short-lived document-view endpoint, not
+  general access to the case. Published summaries and written PDFs are visible
+  only to the owner, current advocate and admin through the existing pipeline.
+- **LA-R2-12 — Reference fixtures.** Only existing fictional Demo Advocate Asha,
+  Kabir and Meera may receive a missing three-year experience value through the
+  repeatable dev fixture seed. It preserves non-null facts, verification,
+  credentials and cases. Unknown real experience stays unclassified.
+- **LA-R2-13 — AI input limits.** Use the existing AI adapter and region. Text
+  extraction is bounded to supporting PDFs in an isolated worker; identity files
+  are excluded. Images are not OCR'd. Unavailable/test output is labelled and
+  never presented as a completed examination or professional legal conclusion.
+
 - **LA-R2-01 — Authority and compatibility.** The supplied 60-point Legal Advice
   answers supersede the older fixed-price, chat-only and advocate-end assumptions
   for the new workflow. Existing paid consultation snapshots and court

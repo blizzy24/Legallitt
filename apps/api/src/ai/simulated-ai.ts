@@ -6,6 +6,10 @@ import { decodeResponse, validateRequest } from './ai-response';
 export class SimulatedAi implements AiPort {
   async generate<T extends AiTask>(request:AiRequest<T>):Promise<AiResults[T]> {
     validateRequest(request);
+    if(request.response_format==='consultation_summary'){
+      const input=JSON.parse(request.prompt.split('\n').at(-1)??'{}');
+      return decodeResponse(request.task,`TEST AI OUTPUT — no legal analysis performed.\nClient description: ${String(input.description??'')}\nPreliminary action plan: the advocate must review the filing and supporting documents and prepare the final advice.`,true);
+    }
     if(request.response_format==='property_wording'){
       const source=JSON.parse(request.prompt.split('\n').at(-1)??'{}');
       return decodeResponse(request.task,String(source.text??''),true);

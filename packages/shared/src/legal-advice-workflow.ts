@@ -1,0 +1,30 @@
+import {z} from 'zod';
+import {LegalAdviceCategorySchema,LegalAdviceModeSchema} from './legal-advice';
+import type {LegalAdviceConfig} from './legal-advice';
+export const AdviceIntakeSchema=z.strictObject({full_name:z.string().trim().max(200).default(''),phone:z.string().trim().max(30).default(''),email:z.string().trim().max(254).default(''),category:LegalAdviceCategorySchema.default('General Consultation'),description:z.string().trim().max(1000).default(''),consent:z.boolean().default(false)});
+export type AdviceIntake=z.infer<typeof AdviceIntakeSchema>;
+export const AdviceCreateSchema=z.strictObject({mode:LegalAdviceModeSchema,advocate_id:z.uuid(),scheduled_at:z.iso.datetime().optional(),follow_up_of:z.uuid().optional()});
+export const AdviceSummarySchema=z.strictObject({summary:z.string().trim().min(10).max(20000),key_points:z.string().trim().min(3).max(20000),next_steps:z.string().trim().min(3).max(20000),attachment_ids:z.array(z.uuid()).max(20).default([])});
+export type AdviceSummary=z.infer<typeof AdviceSummarySchema>;
+export type AdviceRoomState={state:'waiting'|'active'|'paused'|'completed'|'interrupted';elapsed_ms:number;paused_total_ms?:number;client_joined_at?:string;advocate_joined_at?:string;started_at?:string;resumed_at?:string;paused_at?:string;ended_at?:string;ended_by?:'client'|'timeout'|'pause_timeout'};
+export type AdviceData={
+ intake:AdviceIntake;room:AdviceRoomState;alerts:string[];
+ proposal?:{at:string;reason:string;created_at:string;by:'client'|'advocate'};
+ summary?:AdviceSummary&{submitted_at:string};
+ ai?:{status:'pending'|'ready'|'unavailable';text?:string;simulated?:boolean;label:string;request_id?:string;requested_at?:string};
+ written?:{status:'pending_payment'|'pending'|'delivered';due_at?:string;content?:string;document_id?:string;delivered_at?:string};
+ rating?:{rating:number;review:string};chat_reopened_until?:string;cancel_reason?:string;cancel_from?:string;no_show?:'client'|'advocate';follow_up_reason?:string;
+};
+export const ADVICE_PHASE_LABELS:Record<string,string>={draft:'Draft request',payment_pending:'Payment pending',pending_acceptance:'Pending advocate acceptance',confirmed:'Consultation confirmed',time_proposed:'New time proposed',reschedule_pending:'Reschedule pending',in_progress:'In progress',paused:'Consultation paused',completed:'Successfully completed',summary_submitted:'Successfully completed',interrupted:'Interrupted',client_no_show:'Client did not join',advocate_no_show:'Advocate did not join',cancel_requested:'Cancellation under review',cancelled:'Cancelled',refunded:'Refunded',awaiting_admin:'Awaiting Legalitt assignment'};
+export type AdviceView={
+ case:{id:string;reference:string;status:string;created_at:string;completed_at:string|null;client_name:string};
+ booking:{case_id:string;policy_id:string;revision:number;phase:string;mode:'chat'|'audio'|'video';tier_code:string;chosen_advocate_id:string;accepted_advocate_id:string|null;requested_at:string|null;confirmed_at:string|null;accepted_at:string|null;reschedule_count:number;follow_up_of:string|null};
+ data:AdviceData;config:LegalAdviceConfig;
+ price:{base_paise:string};
+ dispute?:{reason:string;opened_at:string;status:'open'|'resolved';resolution?:string;resolved_at?:string};
+ advocate:{id:string;name:string;profile:{years_experience:number|null;city:string|null;bio:string|null;verification:string;practice_areas:string[]}|null}|null;
+ uploads:{id:string;kind:string;filename:string;mime_type:string;page_count:number|null;size_bytes:string;status:string}[];
+ payments:{id:string;purpose:string;total_paise:string;simulated:boolean;captured_at:string|null}[];
+ events:{id:string;kind:string;created_at:string;visibility:string;data:Record<string,unknown>}[];
+ chat:{writable:boolean;expires_at:string|null};room:{id:string;simulated:boolean;media_available:boolean;label:string};private_notes?:{text?:string;summary_draft?:AdviceSummary};
+};
