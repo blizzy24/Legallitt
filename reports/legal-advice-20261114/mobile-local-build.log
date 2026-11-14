@@ -1,9 +1,9 @@
 Expo Autolinking module resolution enabled
 Starting Metro Bundler
 
-| (node:35636) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (node:27492) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
 | (Use `node --trace-warnings ...` to show where the warning was created)
-Web Bundled 3992ms node_modules\.pnpm\expo-router@57.0.21_d4d3468dbc9b324b440405f4eadac231\node_modules\expo-router\entry.js (3696 modules)
+Web Bundled 4847ms node_modules\.pnpm\expo-router@57.0.21_d4d3468dbc9b324b440405f4eadac231\node_modules\expo-router\entry.js (3696 modules)
 
 › Assets (72):
 ..\..\node_modules\.pnpm\@expo-google-fonts+inter@0.4.2\node_modules\@expo-google-fonts\inter\100Thin_Italic\Inter_100Thin_Italic.1b97f7df9b976cfe530c18c09598e6f6.ttf (347KB)
@@ -74,7 +74,7 @@ assets\onboarding-05.68f1fd535d9b13d298383f60b97fcbf2.png (672KB)
 assets\property-design-source.251dce4376391f4e1a472655a7718a4d.png (661KB)
 
 › web bundles (4):
-_expo/static/js/web/entry-707fac157cc6bf4461188146f034b88c.js (8.7MB)
+_expo/static/js/web/entry-e75e86be3f9883d60a6698de0c8987a1.js (8.7MB)
 _expo/static/js/web/index-88ce9f30ff6260c4801a55167e90eb16.js (3.2KB)
 _expo/static/js/web/index-c654593523515243cea7d7f9b8e4cff0.js (24KB)
 _expo/static/js/web/pdf-8f11e1ce45484137cccb8722f595ef01.js (573KB)

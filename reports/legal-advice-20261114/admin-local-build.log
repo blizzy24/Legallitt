@@ -12,4 +12,4 @@ dist/advice-verification/assets/index-CteTQlbE.js   1,044.88 kB │ gzip: 255.20
 - Using dynamic import() to code-split the application
 - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
-✓ built in 329ms
+✓ built in 452ms

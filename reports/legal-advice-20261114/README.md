@@ -1,11 +1,11 @@
 # Legal Advice rebuild — local acceptance complete
 
 Continues bfeda1f on legal-advice-rebuild-20261114. Implementation checkpoint
-c0a0031 is pushed; final release commit/deployment identifiers follow below.
+c0a0031 is pushed; API release source is 6715935; final deployment identifiers follow below.
 
 ## Verified locally
 
-- API: **252 passed, 0 failed**, full suite (full-api-final.log), including Legal
+- API: **255 passed, 0 failed**, full suite (full-api-final.log), including Legal
   Notice, FIR, Property Search, Document Forensic and both court workflows.
 - Shared: **34 passed, 0 failed**. Auth-route tests: 2 passed. Browser route
   sweep: **350 routes, no failures**. Mobile/admin typechecks and production
@@ -24,6 +24,8 @@ c0a0031 is pushed; final release commit/deployment identifiers follow below.
 - Same-price linked follow-up selection; rating; 12-hour proposal alert;
   seven-day chat expiry and admin reopening; foreign-client 404; NOT SET prices;
   loading, empty, partial and network-error states.
+- Admin acceptance notifications, immediate return after the last decline, fair
+  worker pagination and abandoned-AI-claim recovery are covered by final tests.
 - [59 visual comparisons](../../docs/flows/la-screens/README.md) and the
   [gap audit](../../docs/flows/LEGAL-ADVICE-GAPS.md).
 
