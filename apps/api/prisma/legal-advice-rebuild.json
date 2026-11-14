@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "timezone": "Asia/Kolkata",
+  "tiers": [
+    {"code":"emerging","label":"Emerging","minimum_years":0,"maximum_years":5},
+    {"code":"experienced","label":"Experienced","minimum_years":5,"maximum_years":10},
+    {"code":"highly_experienced","label":"Highly Experienced","minimum_years":10,"maximum_years":15},
+    {"code":"veteran","label":"Veteran","minimum_years":15,"maximum_years":null}
+  ],
+  "tariffs": [
+    {"tier_code":"emerging","mode":"chat","base_paise":"49900"},
+    {"tier_code":"emerging","mode":"audio","base_paise":"69900"},
+    {"tier_code":"emerging","mode":"video","base_paise":"99900"},
+    {"tier_code":"experienced","mode":"chat","base_paise":null},
+    {"tier_code":"experienced","mode":"audio","base_paise":null},
+    {"tier_code":"experienced","mode":"video","base_paise":null},
+    {"tier_code":"highly_experienced","mode":"chat","base_paise":null},
+    {"tier_code":"highly_experienced","mode":"audio","base_paise":null},
+    {"tier_code":"highly_experienced","mode":"video","base_paise":null},
+    {"tier_code":"veteran","mode":"chat","base_paise":null},
+    {"tier_code":"veteran","mode":"audio","base_paise":null},
+    {"tier_code":"veteran","mode":"video","base_paise":null}
+  ],
+  "working_days":[1,2,3,4,5,6],
+  "opening_minute":600,"closing_minute":1140,"slot_minutes":30,
+  "minimum_notice_minutes":180,"session_minutes":30,"join_before_minutes":10,
+  "acceptance_minutes":240,"proposal_reply_minutes":720,"maximum_pause_minutes":10,
+  "no_show_minutes":10,"reschedule_notice_minutes":120,"maximum_reschedules":2,
+  "chat_valid_minutes":10080,"summary_due_minutes":1440,
+  "written_advice_due_minutes":4320,"written_advice_base_paise":"10000"
+}

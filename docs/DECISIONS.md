@@ -1,5 +1,39 @@
 # Legalitt — Product decisions
 
+## Legal Advice rebuild decisions — 14 November 2026
+
+- **LA-R2-01 — Authority and compatibility.** The supplied 60-point Legal Advice
+  answers supersede the older fixed-price, chat-only and advocate-end assumptions
+  for the new workflow. Existing paid consultation snapshots and court
+  consultations retain their original workflow. New models must be additive;
+  do not reinterpret an existing booking using the latest tariff.
+- **LA-R2-02 — Experience boundaries.** Use configurable half-open ranges:
+  Emerging [0,5), Experienced [5,10), Highly Experienced [10,15), Veteran [15,∞).
+  This resolves the overlapping drawn endpoints in favour of the more experienced
+  tier. Missing experience is unclassified, never implicitly Emerging. Record
+  this boundary interpretation as awaiting client confirmation.
+- **LA-R2-03 — Initial tariffs.** Seed only Emerging chat/audio/video bases
+  ₹499/₹699/₹999. Every other tier/mode explicitly has NOT SET, not zero or a
+  fallback price. The manifest is seed input; runtime handlers must read versioned
+  rows. Written advice base ₹100 is separate. Existing fee/commission/page policy
+  snapshots remain the money authority; no courier charge belongs here.
+- **LA-R2-04 — Invitations.** The client's choice receives the first invitation.
+  Admin may add same-tier eligible advocates; acceptance must serialize on the
+  booking row with one accepted winner and notifications to losing invitees.
+  Invitation visibility must not grant unrelated historical case access.
+- **LA-R2-05 — Follow-up.** As explicitly instructed, default to the same advocate
+  and preserve the prior consultation base price; never silently substitute a
+  current higher tier price. A mode-change price requires an explicit quote,
+  retaining linkage and disclosure before payment.
+- **LA-R2-06 — Test calls.** No calling provider is configured. An adapter-backed
+  test room may coordinate two participants and the server timer, with labelled
+  test microphone/camera controls. It must not claim audio/video media connection,
+  encryption or recording. No provider subscription/cost is authorised.
+- **LA-R2-07 — Supplied designs.** The archive contains 85 PNGs (36 consultation
+  client, 21 advocate, 26 profile, 2 messages), rather than the stated 89. All 85
+  were extracted and size-verified before deleting the source ZIP as requested.
+  Profile/messages are deferred; do not fabricate four missing screens.
+
 11 November 2026. This file records the decisions that fill the gaps between the
 client's designs and a finished product. It was written after reading all 463
 designs in `design/`, the client profile and messages screens supplied today

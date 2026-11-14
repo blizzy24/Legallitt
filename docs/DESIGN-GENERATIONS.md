@@ -1,5 +1,16 @@
 # Legalitt — which design is the current one
 
+## Legal Advice override — 14 November 2026
+
+The November `Legal-Advice-Client-Side` (36 PNGs) and
+`Legal-Advice-Advocate-Side` (21 PNGs) supersede older numbered Legal Advice
+designs. Read the 60-point `ISHAAN-ANSWERS-2026-11-13-legal-advice-original.txt`
+before the flow: its experience tiers, mode-first pricing, multi-assignment and
+client-ended sessions override older flat-price/chat-only rules. The supplied
+archive contained 85 PNGs total rather than the stated 89; all extracted files
+were size-verified before removing it. The 26 profile and two messages PNGs are
+reserved for a later run and are not Legal Advice rebuild scope.
+
 ## Court override — 14 November 2026
 
 For District Court and High Court, the 172 PNGs extracted from the November

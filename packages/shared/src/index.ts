@@ -25,6 +25,7 @@ export * from './fir-lifecycle';
 export * from './fir-flow';
 export * from './fir-police-stations';
 export * from './consultation';
+export * from './legal-advice';
 export * from './consultation-api';
 export * from './service-reports';
 export * from './report-workflow';
