@@ -1,0 +1,3 @@
+image tag 6715935 (one-off legalitt-dev-ops:58)
+task arn:aws:ecs:ap-south-1:026379630400:task/legalitt-dev-cluster/123c874e85ce44a89fa245fa6874d0c1
+exit 0 (Essential container in task exited)

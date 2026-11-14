@@ -1,0 +1,30 @@
+{
+  "cases": {
+    "chat": {
+      "id": "33724751-5a88-4fa7-8972-a743302f0890",
+      "reference": "LEGAL_ADVICE-2026-0009"
+    },
+    "audio": {
+      "id": "17a03ce6-ffff-4c7f-88ec-15f94cb0ea2b",
+      "reference": "LEGAL_ADVICE-2026-0010"
+    },
+    "video": {
+      "id": "2880bc1a-825c-408a-8b18-d62d4a460075",
+      "reference": "LEGAL_ADVICE-2026-0011"
+    },
+    "decline_cancel": {
+      "id": "3d3aa3df-7e89-4e42-af73-ed011558b457",
+      "reference": "LEGAL_ADVICE-2026-0012"
+    }
+  },
+  "checks": [
+    "chat checkout/assignment/tracking/admin/isolation",
+    "audio checkout/assignment/tracking/admin/isolation",
+    "video checkout/assignment/tracking/admin/isolation",
+    "decline returns admin, cancellation before acceptance test refund"
+  ],
+  "checked_at": "2026-11-14T13:06:23.713Z",
+  "policy_version": 1,
+  "page_errors": [],
+  "scope": "Three new synthetic bookings through shared test capture and confirmation; live clocks not accelerated and no real media/money. Full session/PDF/exception journeys passed locally."
+}

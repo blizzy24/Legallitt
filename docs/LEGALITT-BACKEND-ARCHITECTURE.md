@@ -130,13 +130,18 @@ Legal Advice, FIR and court representation. Base is the advocate's share. The
 platform receives 20% of base plus platform fee: grossing up the base therefore
 adds 25%. GST is 18% on base plus platform fee, rounded once half-up to paise.
 Delivery is outside both GST and commission and is reimbursed to the advocate.
-No experience tiers. Legal Notice retains its ordinary/urgent urgency choices.
+The 9 November baseline had no experience tiers. For new Legal Advice bookings,
+the 14 November 60-point answers supersede that baseline: mode × experience-tier
+prices are versioned and admin-controlled. Existing paid snapshots stay unchanged.
+Legal Notice retains its ordinary/urgent urgency choices.
 
 | Service | Base | Duration / pricing mode |
 |---|---:|---|
 | Legal Notice urgent | ₹999 | Fixed |
 | Legal Notice ordinary | ₹699 | Fixed |
-| Legal Advice | ₹600 | 30-minute consultation |
+| Legal Advice, new bookings | Emerging: Chat ₹499 / Audio ₹699 / Video ₹999 | Tier × mode; other prices NOT SET; calls 30 minutes, chat valid 7 days |
+| Legal Advice, written opinion | ₹100 | Separate purchase; three-calendar-day delivery |
+| Legal Advice, legacy | Captured snapshot (previously ₹600) | Original workflow retained |
 | FIR Draft | ₹999 | Fixed |
 | District Court | ₹600 | Own 30-minute consultation tariff, then advocate quote |
 | High Court | ₹600 | Own 30-minute consultation tariff, then advocate quote |
@@ -699,7 +704,7 @@ is why they wait for their own chunk; all of them move the user on a timer:
 | High Court fee Scan & Pay | `components/CourtPaymentFlow.tsx` (scan step) | `ScanPayScreen` without `hold` → success after `autoAdvanceMs` (5 s) |
 | District Court fee Scan & Pay | same component | same |
 | FIR Draft Scan & Pay | `app/fir/payment.tsx` (`hold`) | demo wait (`DEMO_WAIT_MS`, 5 s) while `DEMO_AUTO_ADVANCE` is on |
-| Legal Advice Scan & Pay | `app/legal-advice/payment.tsx` (`hold`) | same |
+| Legal Advice Scan & Pay | `features/advice/Client.tsx` → shared `payments/ServiceCheckout.tsx` | Existing simulated gateway; clearly labelled test payment; no real money |
 | Court courier fees (High Court / District Court) | `app/courier/scan-pay.tsx` (`hold`) | same |
 
 Fixed 4 Nov 2026: the Legal Notice service-fee and courier Scan & Pay screens
@@ -3383,7 +3388,7 @@ events remain historical facts. Duplicate completion is rejected under the case 
 ADMIN_UI_MODE and DEMO_PROGRESSION remain unchanged by this chunk.
 
 
-### Legal Advice rebuild storage — 14 November 2026 (local, not deployed)
+### Legal Advice rebuild storage — 14 November 2026 (deployed dev)
 
 New-workflow bookings pin a policy version. Legacy consultations are untouched.
 Invitation acceptance locks the case, checks current eligibility and serializes
@@ -3462,3 +3467,12 @@ redesigns are deliberately deferred to their own runs. No repeat KYC is added.
 Implementation assumptions are recorded as LA-R2-01 through LA-R2-13 in
 `DECISIONS.md`. Test evidence and final release state are in
 `../reports/legal-advice-20261114/README.md`.
+
+
+Legal Advice release verified on deployed dev, 14 November 2026: API image
+6715935, task definition 30; client/admin code release 15df9e7, policy version 1.
+The additive migrations ran before the stack update; configuration was activated
+after both Vercel builds succeeded. Live synthetic checkout, assignment, proposal,
+admin, decline/cancellation and isolation checks passed. Full live session clocks
+were not accelerated; those journeys and PDF delivery passed locally. Detailed
+identifiers and test results: `../reports/legal-advice-20261114/release.json`.

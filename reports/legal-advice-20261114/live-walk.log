@@ -1,0 +1,46 @@
+SHOT client-landing.png
+SHOT client-advocates.png
+SHOT client-chat-checkout.png
+SHOT client-chat-success.png
+SHOT advocate-request.png
+SHOT advocate-confirmed.png
+SHOT client-chat-tracking.png
+SHOT admin-chat.png
+SHOT client-audio-checkout.png
+SHOT client-audio-success.png
+SHOT client-audio-tracking.png
+SHOT admin-audio.png
+SHOT client-video-checkout.png
+SHOT client-video-success.png
+SHOT client-video-proposal.png
+SHOT client-video-tracking.png
+SHOT admin-video.png
+SHOT admin-declined-request.png
+SHOT client-cancelled-test-refund.png
+--- client /legal-advice/track?caseId=3d3aa3df-7e89-4e42-af73-ed011558b457&purpose=cancel
+BUTTONS: Back ¦ More options ¦ Request cancellation ¦ Show request details
+FIELDS: Reason for cancellation|||textarea=TEST LIVE cancellation before
+TEXT: Legal Advice LEGAL_ADVICE-2026-0012 Refunded Track Consultation Request ID LEGAL_ADVICE-2026-0012 Consultation format Chat Advocate Demo Advocate Asha Requested time 16 Nov 2026, 3:30 PM Your selected advocate has received the request. Your slot is not confirmed until acceptance. Cancel Consultation Reason for cancellation Cancellation before advocate acceptance receives a full test refund. Request cancellation Status timeline ✓ Payment received 14 Nov 2026, 6:34 PM ✓ Cancellation requested 14 Nov 2026, 6:34 PM Show request details
+---
+SHOT failure-client.png
+--- a /advocate/legal-advice
+BUTTONS: Back ¦ More options ¦ Open consultation
+FIELDS:
+TEXT: Legal Advice Requests Consultation invitation Declined Received 14 Nov 2026, 6:34 PM Respond by 14 Nov 2026, 10:34 PM Consultation invitation Accepted Received 14 Nov 2026, 6:33 PM Respond by 14 Nov 2026, 10:33 PM Open consultation Consultation invitation Another advocate accepted Received 14 Nov 2026, 6:33 PM Respond by 14 Nov 2026, 10:33 PM Consultation invitation Accepted Received 14 Nov 2026, 6:33 PM Respond by 14 Nov 2026, 10:33 PM Open consultation
+---
+SHOT failure-a.png
+--- admin /services/legal_advice/cases/3d3aa3df-7e89-4e42-af73-ed011558b457
+BUTTONS: ▤ Legal Notices ¦ ▤ FIR Drafts ¦ ▤ Legal Advice ¦ ▤ District Court Representation ¦ ▤ High Court Representation ¦ ▤ Property Search Report ¦ ▤ Document Forensic ¦ ▤ Cancellations & refunds ¦ ▤ Support inbox ¦ ▤ Account deletions ¦ ▤ Advocate approvals ¦ ▤ Payouts ¦ Sign out ¦ Notifications, 110 unread ¦ Invite selected advocates ¦ Reopen chat
+FIELDS: |||checkbox=on ¦ |||checkbox=on ¦ |||textarea= ¦ |||datetime-local=
+TEXT: LEGALITT ADMIN ▤ Legal Notices ▤ FIR Drafts ▤ Legal Advice ▤ District Court Representation ▤ High Court Representation ▤ Property Search Report ▤ Document Forensic ▤ Cancellations & refunds ▤ Support inbox ▤ Account deletions ▤ Advocate approvals ▤ Payouts Demo admin ADMIN Sign out Legal Advice 99+ ADMIN LEGAL_ADVICE-2026-0012 Awaiting Legalitt assignment Client filing Client TEST Legal Advice Live Client Category General Consultation Concern TEST LEGAL ADVICE LIVE decline and cancellation — synthetic only. Requested time 16 Nov 2026, 3:30 PM Selected advocate Demo Advocate Asha Base tier Emerging Payment ₹736.03 · Test payment Invite same-tier advocates The client’s chosen advocate is invited first. Other eligible advocates may be invited together; first acceptance wins. Demo Advocate Asha · 3 years · MumbaiDemo Advocate Kabir · 3 years · JaipurAssignment reasonInvite selected advocates Session record Waiting for participants Recorded active time: 0 min 0 sec Summary and written advice Summary pending. No consultation wallet credit until submission. Chat access Read-only Reopen untilReopen chat Documents No uploaded documents. Case history payment captured · 14 Nov 2026, 6:34 PM invitation declined · 14 Nov 2026, 6:34 PM
+---
+SHOT failure-admin.png
+--- other /legal-advice/track?caseId=33724751-5a88-4fa7-8972-a743302f0890
+BUTTONS: Back ¦ Retry ¦ My Cases
+FIELDS:
+TEXT: Legal Advice Case not found Retry My Cases
+---
+SHOT failure-other.png
+Error: Text "could not" never appeared on https://legalitt-5.vercel.app/legal-advice/track?caseId=33724751-5a88-4fa7-8972-a743302f0890
+    at D:\Legalitt\Legallitt\scripts\helpers\fir-walk-kit.cjs:37:134
+    at async D:\Legalitt\Legallitt\scripts\verify-legal-advice-live.cjs:25:99

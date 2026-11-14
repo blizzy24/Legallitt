@@ -1,0 +1,15 @@
+[
+    "Loaded Prisma config from prisma.config.ts.",
+    "Prisma schema loaded from prisma/schema.prisma.",
+    "Datasource \"db\": PostgreSQL database \"legalitt\", schema \"public\" at \"legalitt-dev-database.c1mu80ok42w3.ap-south-1.rds.amazonaws.com:5432\"",
+    "35 migrations found in prisma/migrations",
+    "Applying migration `202611140002_legal_advice_rebuild`",
+    "Applying migration `202611140003_advice_draft_slot`",
+    "The following migration(s) have been applied:",
+    "migrations/",
+    "  └─ 202611140002_legal_advice_rebuild/",
+    "    └─ migration.sql",
+    "  └─ 202611140003_advice_draft_slot/",
+    "    └─ migration.sql",
+    "All migrations have been successfully applied."
+]

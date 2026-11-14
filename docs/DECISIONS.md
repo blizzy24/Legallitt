@@ -2,6 +2,11 @@
 
 ## Legal Advice rebuild decisions — 14 November 2026
 
+- **LA-R2-14 — Deadline interpretation, awaiting confirmation.** The configured
+  12-hour proposal, 24-hour summary and three-day written-advice windows use
+  elapsed time (three calendar days), displayed in IST. No unprovided holiday
+  calendar or business-day extension is asserted.
+
 - **LA-R2-09 — Fault rescheduling assumption, awaiting confirmation.** An
   interrupted test call or advocate no-show may be rescheduled at no extra charge
   without consuming either ordinary client reschedule. The advocate must confirm

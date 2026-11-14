@@ -1,0 +1,21 @@
+{
+  "only_parameter_changed": "ApiImageTag=6715935",
+  "changes": [
+    {
+      "id": "ApiService",
+      "type": "AWS::ECS::Service",
+      "replacement": "False"
+    },
+    {
+      "id": "OpsTask",
+      "type": "AWS::ECS::TaskDefinition",
+      "replacement": "True"
+    },
+    {
+      "id": "Task",
+      "type": "AWS::ECS::TaskDefinition",
+      "replacement": "True"
+    }
+  ],
+  "status": "CREATE_COMPLETE"
+}

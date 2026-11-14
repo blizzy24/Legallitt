@@ -1,0 +1,54 @@
+{
+  "released_at": "2026-11-14T13:06:23.713Z",
+  "code_commit": "15df9e7307ad685db1315c097c91f98582a12c05",
+  "api_source": "6715935",
+  "api_image": "026379630400.dkr.ecr.ap-south-1.amazonaws.com/legalitt-dev-api:6715935",
+  "api_digest": "sha256:80d2345ffdcde3cb3590b15fab888bde02a771abf75f214577d49139ffdd71e1",
+  "task_definition": "arn:aws:ecs:ap-south-1:026379630400:task-definition/legalitt-dev-api:30",
+  "task_arn": "arn:aws:ecs:ap-south-1:026379630400:task/legalitt-dev-cluster/44c62c7d2f76472081090b28732ad005",
+  "health": "HEALTHY",
+  "stack": "LegalittDev-Compute-DevelopmentOnly",
+  "stack_status": "UPDATE_COMPLETE",
+  "migrations": [
+    "202611140002_legal_advice_rebuild",
+    "202611140003_advice_draft_slot"
+  ],
+  "migration_task": "4eb2538ff9f74d20a245eb236a08c6d3",
+  "configuration_version": 1,
+  "configuration_task": "123c874e85ce44a89fa245fa6874d0c1",
+  "fictional_profiles_task": "0d2d231ebbd64c4cb6687a78b265ab49",
+  "fictional_profiles_updated": 2,
+  "frontends": [
+    {
+      "context": "Vercel – legalitt",
+      "state": "success",
+      "description": "Deployment has completed",
+      "url": "https://vercel.com/blizzard7/legalitt/BLNjxG9AYiCZyb64RKfS62WHvfnH"
+    },
+    {
+      "context": "Vercel – legalitt-admin-panel",
+      "state": "success",
+      "description": "Deployment has completed",
+      "url": "https://vercel.com/blizzard7/legalitt-admin-panel/H2GmRq2AiHp3gTLfxGGyWoYKhoQs"
+    }
+  ],
+  "tests": {
+    "api": 255,
+    "shared": 34,
+    "routes": 350,
+    "auth_guards": 2,
+    "failures": 0
+  },
+  "live_checks": [
+    "chat checkout/assignment/tracking/admin/isolation",
+    "audio checkout/assignment/tracking/admin/isolation",
+    "video checkout/assignment/tracking/admin/isolation",
+    "decline returns admin, cancellation before acceptance test refund"
+  ],
+  "isolation": {
+    "api": 404,
+    "browser": "Case not found",
+    "details_visible": false
+  },
+  "scope": "Three new synthetic bookings through shared test capture and confirmation; live clocks not accelerated and no real media/money. Full session/PDF/exception journeys passed locally."
+}
