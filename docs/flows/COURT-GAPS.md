@@ -52,3 +52,163 @@ and neutral PS records-unavailable presentation. Ten focused browser checks pass
 ## Explicit limitations
 
 Payments/refunds remain test-only. Courier booking and court filing are manual. Hearing rates ship NOT SET; local acceptance-test rates are not seeded into dev. Calling, court-registry integration and real payment QR collection are not claimed. Terms/Privacy legal copy is still client-supplied work; their pages say it is being finalised. Pending-case verification uses the same saved case/advance queue (decision log §16). Feedback is case-scoped, not automatically published as a public aggregate.
+
+## Visual gaps — 14 November 2026 polish pass
+
+Reviewed the 151 existing comparison captures. Several source pairings were wrong (request review versus pre-filing review, and DC advocate numbering); those must be corrected along with the captures. The following is the per-screen audit, not a claim that fresh validation is complete. Confirmed workflow overrides remain: no calls or phone sharing, manual verification only, ten stages, advance/balance payments, hearing-only earnings and admin completion confirmation.
+
+| Screen | Observed structural gap / required treatment |
+|---|---|
+| `dc-admin-chat-reopen` | No court Figma supplied; retain existing admin panel style and verify one primary action per active form. |
+| `dc-admin-classify-0` | No court Figma supplied; retain existing admin panel style and verify one primary action per active form. |
+| `dc-admin-classify-1` | No court Figma supplied; retain existing admin panel style and verify one primary action per active form. |
+| `dc-admin-completion` | No court Figma supplied; retain existing admin panel style and verify one primary action per active form. |
+| `dc-admin-courier-booking` | No court Figma supplied; retain existing admin panel style and verify one primary action per active form. |
+| `dc-admin-hearing-settings` | No court Figma supplied; retain existing admin panel style and verify one primary action per active form. |
+| `dc-admin-partial-refund` | No court Figma supplied; retain existing admin panel style and verify one primary action per active form. |
+| `dc-admin-queue` | No court Figma supplied; retain existing admin panel style and verify one primary action per active form. |
+| `dc-admin-rate-not-set` | No court Figma supplied; retain existing admin panel style and verify one primary action per active form. |
+| `dc-admin-review-unlock` | No court Figma supplied; retain existing admin panel style and verify one primary action per active form. |
+| `dc-admin-third-change-task` | No court Figma supplied; retain existing admin panel style and verify one primary action per active form. |
+| `dc-admin-verification` | No court Figma supplied; retain existing admin panel style and verify one primary action per active form. |
+| `dc-advocate-add-hearing-0` | Add matter context and readiness/preview guidance; preserve real stored dates and manual readiness. |
+| `dc-advocate-add-hearing-1` | Add matter context and readiness/preview guidance; preserve real stored dates and manual readiness. |
+| `dc-advocate-checklist` | Add matter context and next-step guidance; retain manual required/optional document selection. |
+| `dc-advocate-completion` | Add matter context above final-order action; retain admin confirmation and hearing-only earnings policy. |
+| `dc-advocate-confirm-documents` | Preserve file type cards; human document labels and side-by-side outline actions. |
+| `dc-advocate-court-fee` | Use shared checkout for client; add case context above advocate fee form. |
+| `dc-advocate-decline` | Use current-stage context and dated timeline; keep historical details collapsed. |
+| `dc-advocate-documents` | Preserve file type cards; human document labels and side-by-side outline actions. |
+| `dc-advocate-fee-receipt` | Prioritize current receipt, with historical cards behind details and dated progress. |
+| `dc-advocate-filing` | Add case context before filing fields; keep offline-filing explanation and manual confirmation. |
+| `dc-advocate-hearing-draft-0` | Add matter context and readiness/preview guidance; preserve real stored dates and manual readiness. |
+| `dc-advocate-hearing-draft-1` | Add matter context and readiness/preview guidance; preserve real stored dates and manual readiness. |
+| `dc-advocate-hearing-preview-0` | Correct reference pairing: request review differs from pre-filing review. Add request summary/context and review guidance. |
+| `dc-advocate-hearing-preview-1` | Correct reference pairing: request review differs from pre-filing review. Add request summary/context and review guidance. |
+| `dc-advocate-hearing-ready-0` | Add matter context and readiness/preview guidance; preserve real stored dates and manual readiness. |
+| `dc-advocate-hearing-ready-1` | Add matter context and readiness/preview guidance; preserve real stored dates and manual readiness. |
+| `dc-advocate-missing` | Shared or undesigned screen; preserve existing component and honest unavailable/empty states. Remove unrelated court reference pairing. |
+| `dc-advocate-prefiling-revised` | Add case context before filing fields; keep offline-filing explanation and manual confirmation. |
+| `dc-advocate-prefiling-send` | Add case context before filing fields; keep offline-filing explanation and manual confirmation. |
+| `dc-advocate-preparation` | Add matter context and dated progress while keeping task controls and private notes separate. |
+| `dc-advocate-private-note` | Shared or undesigned screen; preserve existing component and honest unavailable/empty states. Remove unrelated court reference pairing. |
+| `dc-advocate-process-fee` | Use shared checkout for client; add case context above advocate fee form. |
+| `dc-advocate-process-receipt` | Prioritize current receipt, with historical cards behind details and dated progress. |
+| `dc-advocate-request` | Split client/matter/narrative context into readable cards; retain honest hearing-payments description. |
+| `dc-advocate-summary` | Shared or undesigned screen; preserve existing component and honest unavailable/empty states. Remove unrelated court reference pairing. |
+| `dc-advocate-waiting` | Add case context and dated progress; remove inappropriate call-design reference. |
+| `dc-advocate-wallet` | Shared or undesigned screen; preserve existing component and honest unavailable/empty states. Remove unrelated court reference pairing. |
+| `dc-client-accepted` | Use real advocate profile; keep current next-step card prominent and old events in details. |
+| `dc-client-assistance` | Restore benefit tiles and support structure; retain chat/callback outline actions. |
+| `dc-client-balance` | Use shared payment methods, summary with advance deduction and test-payment note. |
+| `dc-client-cancel-filed-blocked` | Add case/current advocate context and Keep My Request action; preserve cancellation rules. |
+| `dc-client-cancel-paid` | Add case/current advocate context and Keep My Request action; preserve cancellation rules. |
+| `dc-client-cancel-unpaid` | Add case/current advocate context and Keep My Request action; preserve cancellation rules. |
+| `dc-client-case-type` | Keep two-column illustrated case-type cards; replace old captures that still show plain radio rows. |
+| `dc-client-chat-closed` | Shared or undesigned screen; preserve existing component and honest unavailable/empty states. Remove unrelated court reference pairing. |
+| `dc-client-chat-reopened` | Shared or undesigned screen; preserve existing component and honest unavailable/empty states. Remove unrelated court reference pairing. |
+| `dc-client-checklist` | Add matter context and next-step guidance; retain manual required/optional document selection. |
+| `dc-client-completed` | Remove expanded historical fee/shipment cards from the primary view; retain final order and timeline. |
+| `dc-client-court-fee` | Use shared checkout for client; add case context above advocate fee form. |
+| `dc-client-decision` | Move acceptance below real advocate profile, conversation and case cards; add remaining free changes and before-choose note. |
+| `dc-client-deposit` | Use shared payment methods and test-payment note, with advance separately identified. |
+| `dc-client-details` | Preserve confirmed intake fields; retain section cards, visible labels and date picker. |
+| `dc-client-documents` | Preserve file type cards; human document labels and side-by-side outline actions. |
+| `dc-client-filed` | Use current-stage context and dated timeline; keep historical details collapsed. |
+| `dc-client-final-viewer` | Shared or undesigned screen; preserve existing component and honest unavailable/empty states. Remove unrelated court reference pairing. |
+| `dc-client-free-change` | Add current advocate and case cards before change reasons, confirmation and explanation. |
+| `dc-client-hearing-0` | Add matter context and readiness/preview guidance; preserve real stored dates and manual readiness. |
+| `dc-client-hearing-1` | Add matter context and readiness/preview guidance; preserve real stored dates and manual readiness. |
+| `dc-client-information` | Make information its own structured page rather than appending prose to the landing page. |
+| `dc-client-landing` | Restore benefit tiles, information/support cards and side-by-side service speed choices. |
+| `dc-client-path` | Use two explanatory case-path cards and a support note. |
+| `dc-client-pending-case-type` | Keep two-column illustrated case-type cards; replace old captures that still show plain radio rows. |
+| `dc-client-pending-details` | Preserve confirmed intake fields; retain section cards, visible labels and date picker. |
+| `dc-client-pending-documents` | Preserve file type cards; human document labels and side-by-side outline actions. |
+| `dc-client-pending-path` | Use two explanatory case-path cards and a support note. |
+| `dc-client-pending-pricing` | Service cards: large base price, three benefits, turnaround; move fee breakdown into request summary; add difference, before-submit and support cards. |
+| `dc-client-pending-review` | Correct reference pairing: request review differs from pre-filing review. Add request summary/context and review guidance. |
+| `dc-client-pickup-details` | Preserve confirmed intake fields; retain section cards, visible labels and date picker. |
+| `dc-client-pickup-payment` | Use shared payment methods, purpose-specific summary and test-payment note. |
+| `dc-client-pickup-tracking` | Separate current shipment from historical tracking cards; add case context to delivery form. |
+| `dc-client-prefiling-approval` | Add case context before filing fields; keep offline-filing explanation and manual confirmation. |
+| `dc-client-prefiling-correction` | Add case context before filing fields; keep offline-filing explanation and manual confirmation. |
+| `dc-client-pricing` | Service cards: large base price, three benefits, turnaround; move fee breakdown into request summary; add difference, before-submit and support cards. |
+| `dc-client-process-fee` | Use shared checkout for client; add case context above advocate fee form. |
+| `dc-client-process-receipt` | Prioritize current receipt, with historical cards behind details and dated progress. |
+| `dc-client-rating` | Shared or undesigned screen; preserve existing component and honest unavailable/empty states. Remove unrelated court reference pairing. |
+| `dc-client-review-limit-support` | Correct reference pairing: request review differs from pre-filing review. Add request summary/context and review guidance. |
+| `dc-client-review` | Correct reference pairing: request review differs from pre-filing review. Add request summary/context and review guidance. |
+| `dc-client-success` | Add case summary and next-step information below payment confirmation. |
+| `dc-client-terms-unavailable` | Shared or undesigned screen; preserve existing component and honest unavailable/empty states. Remove unrelated court reference pairing. |
+| `dc-client-third-free-change` | Add current advocate and case cards before change reasons, confirmation and explanation. |
+| `dc-client-type-examples` | Shared examples overlay; current case-type design remains visible underneath. |
+| `dc-client-under-review` | Correct reference pairing: request review differs from pre-filing review. Add request summary/context and review guidance. |
+| `hc-admin-change-approved` | No court Figma supplied; retain existing admin panel style and verify one primary action per active form. |
+| `hc-admin-change-rejected` | No court Figma supplied; retain existing admin panel style and verify one primary action per active form. |
+| `hc-admin-chat-reopen` | No court Figma supplied; retain existing admin panel style and verify one primary action per active form. |
+| `hc-admin-classify-0` | No court Figma supplied; retain existing admin panel style and verify one primary action per active form. |
+| `hc-admin-completion` | No court Figma supplied; retain existing admin panel style and verify one primary action per active form. |
+| `hc-admin-hearing-settings` | No court Figma supplied; retain existing admin panel style and verify one primary action per active form. |
+| `hc-admin-pending-verification` | No court Figma supplied; retain existing admin panel style and verify one primary action per active form. |
+| `hc-admin-queue` | No court Figma supplied; retain existing admin panel style and verify one primary action per active form. |
+| `hc-admin-rate-not-set` | No court Figma supplied; retain existing admin panel style and verify one primary action per active form. |
+| `hc-admin-verification` | No court Figma supplied; retain existing admin panel style and verify one primary action per active form. |
+| `hc-advocate-add-hearing-0` | Add matter context and readiness/preview guidance; preserve real stored dates and manual readiness. |
+| `hc-advocate-checklist` | Add matter context and next-step guidance; retain manual required/optional document selection. |
+| `hc-advocate-completion` | Add matter context above final-order action; retain admin confirmation and hearing-only earnings policy. |
+| `hc-advocate-confirm-documents` | Preserve file type cards; human document labels and side-by-side outline actions. |
+| `hc-advocate-court-fee` | Use shared checkout for client; add case context above advocate fee form. |
+| `hc-advocate-fee-receipt` | Prioritize current receipt, with historical cards behind details and dated progress. |
+| `hc-advocate-filing` | Add case context before filing fields; keep offline-filing explanation and manual confirmation. |
+| `hc-advocate-handover` | Add matter context; retain NOC requirement and historical hearing earnings. |
+| `hc-advocate-hearing-draft-0` | Add matter context and readiness/preview guidance; preserve real stored dates and manual readiness. |
+| `hc-advocate-hearing-preview-0` | Correct reference pairing: request review differs from pre-filing review. Add request summary/context and review guidance. |
+| `hc-advocate-hearing-ready-0` | Add matter context and readiness/preview guidance; preserve real stored dates and manual readiness. |
+| `hc-advocate-prefiling-send` | Add case context before filing fields; keep offline-filing explanation and manual confirmation. |
+| `hc-advocate-preparation` | Add matter context and dated progress while keeping task controls and private notes separate. |
+| `hc-advocate-request` | Split client/matter/narrative context into readable cards; retain honest hearing-payments description. |
+| `hc-advocate-waiting` | Add case context and dated progress; remove inappropriate call-design reference. |
+| `hc-advocate-wallet` | Shared or undesigned screen; preserve existing component and honest unavailable/empty states. Remove unrelated court reference pairing. |
+| `hc-client-accepted` | Use real advocate profile; keep current next-step card prominent and old events in details. |
+| `hc-client-assistance` | Restore benefit tiles and support structure; retain chat/callback outline actions. |
+| `hc-client-balance` | Use shared payment methods, summary with advance deduction and test-payment note. |
+| `hc-client-cancel-filed-blocked` | Add case/current advocate context and Keep My Request action; preserve cancellation rules. |
+| `hc-client-case-type` | Keep two-column illustrated case-type cards; replace old captures that still show plain radio rows. |
+| `hc-client-change-payment-approved` | Use shared payment methods, purpose-specific summary and test-payment note. |
+| `hc-client-change-payment-rejected` | Use shared payment methods, purpose-specific summary and test-payment note. |
+| `hc-client-chat-closed` | Shared or undesigned screen; preserve existing component and honest unavailable/empty states. Remove unrelated court reference pairing. |
+| `hc-client-chat-reopened` | Shared or undesigned screen; preserve existing component and honest unavailable/empty states. Remove unrelated court reference pairing. |
+| `hc-client-checklist` | Add matter context and next-step guidance; retain manual required/optional document selection. |
+| `hc-client-completed` | Remove expanded historical fee/shipment cards from the primary view; retain final order and timeline. |
+| `hc-client-court-fee` | Use shared checkout for client; add case context above advocate fee form. |
+| `hc-client-decision` | Move acceptance below real advocate profile, conversation and case cards; add remaining free changes and before-choose note. |
+| `hc-client-deposit` | Use shared payment methods and test-payment note, with advance separately identified. |
+| `hc-client-details` | Preserve confirmed intake fields; retain section cards, visible labels and date picker. |
+| `hc-client-documents` | Preserve file type cards; human document labels and side-by-side outline actions. |
+| `hc-client-filed` | Use current-stage context and dated timeline; keep historical details collapsed. |
+| `hc-client-final-viewer` | Shared or undesigned screen; preserve existing component and honest unavailable/empty states. Remove unrelated court reference pairing. |
+| `hc-client-hearing-0` | Add matter context and readiness/preview guidance; preserve real stored dates and manual readiness. |
+| `hc-client-information-reply` | Keep undesigned clarification form in existing style, with inline error and case reference. |
+| `hc-client-information` | Make information its own structured page rather than appending prose to the landing page. |
+| `hc-client-landing` | Restore benefit tiles, information/support cards and side-by-side service speed choices. |
+| `hc-client-paid-change-approved` | Add current advocate and case cards before change reasons, confirmation and explanation. |
+| `hc-client-paid-change-rejected` | Add current advocate and case cards before change reasons, confirmation and explanation. |
+| `hc-client-path` | Use two explanatory case-path cards and a support note. |
+| `hc-client-pending-case-type` | Keep two-column illustrated case-type cards; replace old captures that still show plain radio rows. |
+| `hc-client-pending-details` | Preserve confirmed intake fields; retain section cards, visible labels and date picker. |
+| `hc-client-pending-documents` | Preserve file type cards; human document labels and side-by-side outline actions. |
+| `hc-client-pending-path` | Use two explanatory case-path cards and a support note. |
+| `hc-client-pending-pricing` | Service cards: large base price, three benefits, turnaround; move fee breakdown into request summary; add difference, before-submit and support cards. |
+| `hc-client-pending-review` | Correct reference pairing: request review differs from pre-filing review. Add request summary/context and review guidance. |
+| `hc-client-prefiling-approval` | Add case context before filing fields; keep offline-filing explanation and manual confirmation. |
+| `hc-client-pricing` | Service cards: large base price, three benefits, turnaround; move fee breakdown into request summary; add difference, before-submit and support cards. |
+| `hc-client-rating` | Shared or undesigned screen; preserve existing component and honest unavailable/empty states. Remove unrelated court reference pairing. |
+| `hc-client-reassigned-no-second-balance` | Use shared payment methods, summary with advance deduction and test-payment note. |
+| `hc-client-review` | Correct reference pairing: request review differs from pre-filing review. Add request summary/context and review guidance. |
+| `hc-client-success` | Add case summary and next-step information below payment confirmation. |
+| `hc-client-terms-unavailable` | Shared or undesigned screen; preserve existing component and honest unavailable/empty states. Remove unrelated court reference pairing. |
+| `hc-client-type-examples` | Shared examples overlay; current case-type design remains visible underneath. |
+| `hc-client-under-review` | Correct reference pairing: request review differs from pre-filing review. Add request summary/context and review guidance. |
+
+Validation status: frontend changes in progress; no deployment from this polish pass yet.

@@ -22,7 +22,8 @@ function routesIn(dir, base = '') {
   });
 }
 const routes = [...new Set(routesIn(app))].sort().map(route => route.replace(/\[[^\]]+\]/g, '1'));
-assert.equal(routes.length, 348, 'Every route is enumerated, including the shared Document Viewer and the five FIR client screens added by docs/flows/FIR-DRAFT-FLOW.md, report services, messages/support, cancellation, account settings and Payment Details');
+assert.equal(routes.length, 349, 'Every route is enumerated, including Document Viewer, FIR, report services, support, account settings, Payment Details and the court Terms page');
+assert.ok(routes.includes('/terms'), 'Court intake links to the Terms page');
 const fixtureMode = process.env.SMOKE_DATA_SOURCE === 'fixtures';
 const sessions = fixtureMode ? {} : Object.fromEntries(['client', 'advocate'].map(role => {
   if (process.env.SMOKE_SESSIONS_JSON) {

@@ -1,0 +1,21 @@
+import {Pressable,Text,View} from 'react-native';
+import {CheckCircle2,Clock} from 'lucide-react-native';
+import {formatPaise,type CourtService} from '@legalitt/shared';
+import {Button,Card,Chip,Row,Steps,SummaryRow,s} from './ui';
+import type {CourtModel,CourtSettings} from './model';
+
+export function CourtServiceChoice({model:m,service,settings,onContinue}:{model:CourtModel;service:CourtService;settings?:CourtSettings;onContinue():void}){
+ const selected=settings?.prices.find(p=>p.tier===m.tier),v=m.form;
+ return <><Card><Row><Chip>Step 4 of 4</Chip><Text style={s.muted}>Final step</Text></Row><Steps step={3}/><Row>{v.case_type&&<Chip>{v.case_type}</Chip>}<Chip>{service==='district_court'?'District Court':'High Court'}</Chip></Row></Card>
+ <Text style={s.title}>Choose your service</Text><Text style={s.body}>Choose the service speed that fits your need.</Text>
+ {(['ordinary','urgent'] as const).map(tier=>{const price=settings?.prices.find(p=>p.tier===tier),days=tier==='urgent'?settings?.config.urgent_days:settings?.config.ordinary_days,chosen=m.tier===tier;return <Pressable key={tier} accessibilityRole="radio" accessibilityLabel={tier==='urgent'?'Urgent':'Ordinary'} accessibilityState={{checked:chosen}} onPress={()=>m.update({},tier)} style={[s.card,chosen&&{backgroundColor:'#FCF1E5',borderColor:'#B6A082'}]}>
+ <Row><Text style={[s.heading,{flex:1}]}>{tier==='urgent'?'Urgent':'Ordinary'}</Text><Chip>{tier==='urgent'?'Priority':'Standard'}</Chip><View style={[s.radio,chosen&&{borderWidth:6,borderColor:'#6F5E44'}]}/></Row><Text style={s.body}>{tier==='urgent'?'Priority service':'Normal service'}</Text>
+ <Text style={[s.title,{fontSize:36,lineHeight:44}]}>{price?formatPaise(price.base_amount_paise).replace(/\.00$/,''):'Loading price…'}</Text>
+ {(tier==='urgent'?['Priority case handling','Faster processing','Case updates in Legalitt']:['Standard case support','Normal processing','Case updates in Legalitt']).map(line=><View key={line} style={{flexDirection:'row',gap:10,alignItems:'center'}}><CheckCircle2 size={20} color="#00825A"/><Text style={s.body}>{line}</Text></View>)}
+ <View style={{flexDirection:'row',gap:8,alignItems:'center'}}><Clock size={18} color="#6F5E44"/><Text style={[s.muted,{flex:1}]}>{days?`${days[0]}–${days[1]} working days for first action`:'Loading turnaround settings…'}</Text></View></Pressable>;})}
+ <Card title="What is the difference?"><Row><View style={{flex:1}}><Text style={s.label}>Ordinary</Text><Text style={s.body}>Standard service · Normal processing</Text></View><View style={{flex:1}}><Text style={s.label}>Urgent</Text><Text style={s.body}>Priority service · Faster processing</Text></View></Row><Text style={s.muted}>Court outcomes and hearing dates are not guaranteed.</Text></Card>
+ <Card title="Your request"><SummaryRow label="Service" value={service==='district_court'?'District Court Representation':'High Court Representation'}/><SummaryRow label="Case type" value={v.case_type}/><SummaryRow label="Case" value={v.title}/><SummaryRow label="Court" value={service==='district_court'?[v.district,v.state].filter(Boolean).join(', '):[v.high_court,v.bench].filter(Boolean).join(' · ')}/><SummaryRow label="Selected speed" value={m.tier==='urgent'?'Urgent':'Ordinary'}/>{selected?<><SummaryRow label="Platform fee" value={formatPaise(selected.breakdown.platform_fee_paise)}/><SummaryRow label="GST" value={formatPaise(selected.breakdown.gst_paise)}/><View style={s.notice}><SummaryRow label="Total including platform fee and GST" value={formatPaise(selected.breakdown.total_paise)}/></View></>:<Text style={s.muted}>Waiting for service pricing. Please retry if it does not load.</Text>}<Text style={s.muted}>Additional pages are calculated before payment. Court and process fees are separate.</Text></Card>
+ <Card title="Before you submit"><Text style={s.body}>Review your case details, documents and selected service before sending your request to Legalitt.</Text></Card>
+ <Card title="Legalitt Service Support"><Text style={s.body}>If your confirmed advocate does not attend a hearing or handle the agreed work, contact Legalitt. Any refund depends on the work completed, case stage and admin review.</Text></Card>
+ <Button disabled={!selected||m.busy} onPress={onContinue}>Review Request</Button></>;
+}

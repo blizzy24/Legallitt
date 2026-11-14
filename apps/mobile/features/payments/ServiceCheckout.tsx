@@ -4,6 +4,7 @@ import {Pressable,ScrollView,StyleSheet,Text,View} from 'react-native';
 import {Check,ChevronRight,Clock,FileText} from 'lucide-react-native';
 import {backend} from '../../lib/auth';
 import PaymentMethods,{DEFAULT_PAYMENT_SELECTION,type PaymentSelection} from '../../components/PaymentMethods';
+import {CheckoutControls} from './CheckoutControls';
 import PayHeader from '../../components/PayHeader';
 import WizardShell from '../../components/WizardShell';
 import QrGlyph from '../../components/QrGlyph';
@@ -38,9 +39,7 @@ export function ServicePayment({config:c,caseId:providedId}:{config:Config;caseI
     {f.loading?<Text style={s.body}>Loading payment details…</Text>:!record?<View style={s.card}><Text style={s.error}>{f.error||'Choose a request to pay.'}</Text><Action label="Retry" onPress={f.reload}/></View>:record.service_code!==c.code?<Text style={s.error}>This link is for a different service. Open the request from My Requests.</Text>:record.status!=='payment_pending'?<View style={s.card}><Text style={s.body}>{record.status==='draft'?'Submit your request from Review before paying.':'This case is not awaiting a payment. Check its current status before proceeding.'}</Text><Action label={record.status==='draft'?'Go to Review':'View request'} onPress={()=>router.replace(path(record.status==='draft'?c.review:c.tracking,caseId))}/></View>:<>
       <View style={s.card}><FileText size={22} color="#9A8263"/><Text style={s.large}>{c.name}</Text><Text style={s.muted}>Ref ID: {record.reference}</Text><View style={s.rule}/>
         {q.loading?<Text style={s.body}>Calculating your fee…</Text>:q.error?<><Text style={s.error}>{q.error}</Text><Action label="Recalculate" onPress={q.reload}/></>:q.quote?.status==='blocked'?<><Text accessibilityRole="alert" style={s.error}>{q.quote.message}</Text>{q.quote.documents.map(d=><View key={d.id}><Text style={s.body}>{c.code==='legal_notice'?noticeDocumentLabel(d):['property_search','document_forensic'].includes(c.code)?reportFileLabel(record.documents?.find(file=>file.id===d.id)??{}):d.filename}</Text><Text style={s.error}>{d.reason}</Text></View>)}<Text style={s.body}>Replace or finish these uploads before paying. No payment has been taken.</Text><Action label="Open Documents" onPress={()=>router.push(path(c.documents,caseId))}/><Action label="Recalculate" onPress={q.reload}/></>:ready?<Rows breakdown={ready.breakdown}/>:<Text style={s.body}>No price is available yet. Recalculate to retry.</Text>}
-      </View><Text style={[s.muted,{marginVertical:18}]}>SELECT PAYMENT METHOD</Text><PaymentMethods value={selection} onChange={setSelection} disabled={busy}/>
-      {ready&&<View style={s.card}><View style={s.row}><Text style={s.body}>Amount to pay</Text><Text style={s.title}>{money(ready.breakdown.total_paise)}</Text></View><Action primary label={busy?'Opening payment…':'Pay →'} disabled={busy} onPress={()=>void next()}/></View>}
-      {ready?.simulated&&<TestPaymentLabel text="Test payment only. No money will be charged."/>}
+      </View>{ready?<View style={s.card}><CheckoutControls amount={money(ready.breakdown.total_paise)} value={selection} onChange={setSelection} busy={busy} simulated={ready.simulated} onPay={()=>void next()}/></View>:null}
       {!!error&&<Text accessibilityRole="alert" style={s.error}>{error}</Text>}
     </>}
   </WizardShell>;

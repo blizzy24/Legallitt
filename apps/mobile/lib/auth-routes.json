@@ -346,6 +346,7 @@
     "services/high-court/review-filing",
     "services/high-court/send-documents",
     "support-chat",
-    "support"
+    "support",
+    "terms"
   ]
 }
