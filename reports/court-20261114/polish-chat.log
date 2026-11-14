@@ -1,0 +1,9 @@
+SHOT dc-client-chat-closed.png
+SHOT dc-admin-chat-reopen.png
+SHOT dc-client-chat-reopened.png
+PASS dc completion plus seven days closes chat; admin can reopen
+SHOT hc-client-chat-closed.png
+SHOT hc-admin-chat-reopen.png
+SHOT hc-client-chat-reopened.png
+PASS hc completion plus seven days closes chat; admin can reopen
+PASS chat browser checks

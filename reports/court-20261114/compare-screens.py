@@ -6,6 +6,20 @@ def source(name):
  high=name.startswith('hc-'); role='Advocate' if '-advocate-' in name else 'Client'
  folder=root/(('High-Court-Representation-' if high else ('District-Court-Representation-' if role=='Advocate' else 'District-Court-Representaion-'))+role+'-Side')
  if '-admin-' in name:return None
+ if any(k in name for k in ['wallet','final-viewer','terms-unavailable','private-note','rating','missing','information-reply']):return None
+ dc_client=root/'District-Court-Representaion-Client-Side'
+ hc_client=root/'High-Court-Representation-Client-Side'
+ exact_client={'review':6,'pending-review':6,'under-review':7,'success':7,'free-change':12,'third-free-change':13,'cancel-paid':14,'cancel-unpaid':14}
+ suffix=name.split('-client-',1)[-1]
+ if role=='Client' and suffix in exact_client:return dc_client/f'Html → Body ({exact_client[suffix]}).png'
+ if role=='Client' and suffix in ['path','pending-path']:return hc_client/'Html → Body (2).png'
+ if role=='Advocate':
+  suffix=name.split('-advocate-',1)[-1]
+  fixed={'waiting':5 if not high else 4,'checklist':9 if not high else 8,'confirm-documents':10 if not high else 9,'preparation':12 if not high else 11,'process-fee':20 if not high else 19,'process-receipt':21 if not high else 20,'documents':1}
+  if suffix in fixed:return folder/f'Html → Body ({fixed[suffix]}).png'
+  if suffix in ['decline','summary']:return None
+ if role=='Client' and suffix=='pickup-details':return folder/f'Html → Body ({15 if high else 18}).png'
+ if role=='Client' and suffix in ['cancel-filed-blocked','reassigned-no-second-balance']:return None
  n=None
  pairs=([('request',0),('waiting',4),('checklist',8),('confirm-documents',9),('preparation',12),('court-fee',14 if high else 15),('fee-receipt',15 if high else 16),('prefiling',16 if high else 17),('filing',13 if high else 14),('add-hearing',22),('hearing-ready',24 if high else 23),('hearing-draft',25 if high else 24),('hearing-preview',26 if high else 25),('handover',28 if high else 29),('completion',31),('wallet',31),('decline',7)] if role=='Advocate' else [('landing',0),('assistance',0),('information',1),('path',2),('type-examples',3 if high else 2),('case-type',3 if high else 2),('details',4 if high else 3),('documents',5 if high else 4),('pricing',6 if high else 5),('review',21 if high else 25),('decision',10),('accepted',11),('under-review',7),('free-change',12),('third-free-change',12),('paid-change',28 if high else 31),('checklist',12 if high else 15),('pickup-details',15 if high else 18),('pickup-tracking',17 if high else 21),('prefiling',21 if high else 25),('court-fee',20 if high else 24),('filed',22 if high else 26),('hearing',26 if high else 29),('completed',31 if high else 34),('chat',9),('cancel',14),('success',7)])
  for key,value in pairs:

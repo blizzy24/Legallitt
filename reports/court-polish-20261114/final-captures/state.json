@@ -1,0 +1,36 @@
+{
+  "cases": [
+    {
+      "id": "a3afaca2-779c-4c57-a593-2665ef1201ac",
+      "service": "district_court",
+      "advocate": "advocate-2",
+      "deposit": true,
+      "accepted": true,
+      "prepared": true
+    },
+    {
+      "id": "a810eb34-dc06-4af3-a9f9-565722e698eb",
+      "service": "high_court",
+      "advocate": "advocate-2",
+      "deposit": true,
+      "accepted": true,
+      "change_rejected": true,
+      "change_approved": true,
+      "prepared": true
+    }
+  ],
+  "passed": [
+    "dc intake, persisted case and submission payment",
+    "hc intake, persisted case and submission payment",
+    "intakes browser checks",
+    "dc assignment, client acceptance and exact balance",
+    "hc assignment, client acceptance and exact balance",
+    "assignment browser checks",
+    "HC non-refundable paid change rejected",
+    "HC non-refundable paid change approved",
+    "paid-changes browser checks",
+    "dc document checklist, uploads and advocate receipt",
+    "hc document checklist, uploads and advocate receipt",
+    "documents browser checks"
+  ]
+}

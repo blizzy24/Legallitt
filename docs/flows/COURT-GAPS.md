@@ -211,4 +211,4 @@ Reviewed the 151 existing comparison captures. Several source pairings were wron
 | `hc-client-type-examples` | Shared examples overlay; current case-type design remains visible underneath. |
 | `hc-client-under-review` | Correct reference pairing: request review differs from pre-filing review. Add request summary/context and review guidance. |
 
-Validation status: frontend changes in progress; no deployment from this polish pass yet.
+Validation status: layout changes and local browser journeys complete; 151 comparisons regenerated. Full API 235/235, shared 30/30, infrastructure 12/12 and routes 349/349 pass. App builds/typechecks pass. Release results are recorded in [the polish report](../../reports/court-polish-20261114/README.md).

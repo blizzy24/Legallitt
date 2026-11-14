@@ -1,0 +1,107 @@
+{
+  "cases": [
+    {
+      "id": "8f2c6c2a-00e8-4255-9d29-bf35be26ccc9",
+      "service": "district_court",
+      "advocate": "advocate-2",
+      "deposit": true,
+      "accepted": true,
+      "prepared": true,
+      "reviewed": true,
+      "filed": true,
+      "hearings": true,
+      "completed": true
+    },
+    {
+      "id": "6c374b5f-e3ed-489b-8b0e-848cb0e6fdf4",
+      "service": "high_court",
+      "advocate": "advocate-2",
+      "deposit": true,
+      "accepted": true,
+      "change_rejected": true,
+      "change_approved": true,
+      "prepared": true,
+      "reviewed": true,
+      "filed": true,
+      "hearings": true,
+      "completed": true
+    }
+  ],
+  "passed": [
+    "dc intake, persisted case and submission payment",
+    "hc intake, persisted case and submission payment",
+    "intakes browser checks",
+    "dc assignment, client acceptance and exact balance",
+    "hc assignment, client acceptance and exact balance",
+    "assignment browser checks",
+    "HC non-refundable paid change rejected",
+    "HC non-refundable paid change approved",
+    "paid-changes browser checks",
+    "dc document checklist, uploads and advocate receipt",
+    "hc document checklist, uploads and advocate receipt",
+    "documents browser checks",
+    "dc pre-filing review with corrections and revised version",
+    "hc pre-filing review",
+    "review browser checks",
+    "dc pass-through payment, receipt and offline filing",
+    "hc pass-through payment, receipt and offline filing",
+    "fees-filing browser checks",
+    "dc hearing updates, private drafts and admin hearing credits",
+    "hc hearing updates, private drafts and admin hearing credits",
+    "hearings browser checks",
+    "dc final order, admin completion, client viewer/download and rating",
+    "hc final order, admin completion, client viewer/download and rating",
+    "completion browser checks",
+    "free cancellation before payment",
+    "paid cancellation with admin partial test refund",
+    "third free change creates visible admin contact task",
+    "fourth review blocked until admin unlock",
+    "advocate decline releases access and admin reassigns",
+    "filed cases show support instead of cancellation",
+    "edges browser checks",
+    "dc pending intake, assistance, information and admin queue screenshots",
+    "hc pending intake, assistance, information and admin queue screenshots",
+    "capture browser checks",
+    "process fee pass-through payment and real document receipt pipeline",
+    "process-fee browser checks",
+    "pending-case deposit, NOC-later intake and admin information/verification",
+    "capture-extra browser checks"
+  ],
+  "edges": {
+    "cancel-unpaid": {
+      "id": "dee26dd1-b40d-450f-981c-18cb7092b39a",
+      "service": "district_court",
+      "advocate": "advocate"
+    },
+    "cancel-paid": {
+      "id": "912568f6-748f-4dd5-a91c-137e1161d18e",
+      "service": "district_court",
+      "advocate": "advocate"
+    },
+    "free-limit": {
+      "id": "4ad8b17d-6308-4042-82ad-1b6f01ad39fb",
+      "service": "district_court",
+      "advocate": "advocate"
+    },
+    "review-limit": {
+      "id": "a553dbbb-8185-4021-8106-7b4d194fb852",
+      "service": "district_court",
+      "advocate": "advocate"
+    },
+    "decline": {
+      "id": "a46517cc-4ed5-479e-a4ad-a953dafb0f50",
+      "service": "district_court",
+      "advocate": "advocate"
+    }
+  },
+  "capture": {
+    "district_court": {
+      "id": "635e1185-439d-4639-b44b-97b810e38dca",
+      "service": "district_court"
+    },
+    "high_court": {
+      "id": "0d6b53be-848e-4338-a772-0c3a83a078e9",
+      "service": "high_court"
+    }
+  }
+}
