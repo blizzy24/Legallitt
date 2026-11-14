@@ -54,6 +54,37 @@ load (5,035 ms). No API timeout was changed. The final isolated run passed all 2
 
 ## Release
 
-Not deployed yet. API build and focused court verification passed; release is next.
-Live checks will create only new labelled synthetic DC/HC cases through the
-test advance payment and verify both admin views and NOT SET hearing rates.
+Implementation `5691149`; comparison/test evidence `3942464`. Both are on main.
+The existing API image `a10fde9` was reused because API/shared runtime code is
+unchanged. Migration task `dd7405dbddc049c2be2acc307d5dd351` exited 0 before
+the stack update. Change set `court-a10fde9` updated only the API service and
+API/ops task definitions. API task definition `legalitt-dev-api:29` is healthy
+on the expected image digest.
+
+Both production Vercel deployments succeeded:
+
+- Client: [9zuesFQgJzkhnudRw6YdUzybiyjb](https://vercel.com/blizzard7/legalitt/9zuesFQgJzkhnudRw6YdUzybiyjb).
+- Admin: [HfXfTFBunoARFU472jCSMi3iDkHy](https://vercel.com/blizzard7/legalitt-admin-panel/HfXfTFBunoARFU472jCSMi3iDkHy).
+
+After both frontends were ready, `seed-courts a10fde9` completed with exit 0
+(task `3b1efba13bec4c9bb0f24170b5e8542c`). The live check read both services'
+hearing rates and confirmed effective/passive rates are still **NOT SET**.
+
+Live production-alias browser checks passed for newly created synthetic requests:
+
+- District Court Ordinary: `DC-2026-00001`, case
+  `967ac2d0-ca00-47aa-9eac-754295084ae3`.
+- High Court Urgent: `HC-2026-00001`, case
+  `555ba606-d32f-4739-aac9-7ae87f53f325`.
+
+Both passed intake, synthetic document upload, service pricing, shared checkout,
+the ₹2,000 simulated advance, payment confirmation, tracking and admin case view.
+The checks asserted simulated payment before paying; no real money moved.
+Both cases remain under review for identification as release-check data. Existing
+cases and credentials were untouched. [Live screenshots and results](live/)
+and [execution log](../court-20261114/polish-live.log) record the checks.
+
+The full lifecycle checks listed above ran locally; live checks deliberately
+stopped after payment/admin verification as requested. No required work remains.
+
+Both required Docker prune commands completed successfully (0 B reclaimable).

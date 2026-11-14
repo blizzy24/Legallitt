@@ -1,0 +1,16 @@
+[
+  {
+    "service": "district_court",
+    "id": "967ac2d0-ca00-47aa-9eac-754295084ae3",
+    "stage": "paid-and-under-review",
+    "advance_paise": "200000",
+    "simulated": true
+  },
+  {
+    "service": "high_court",
+    "id": "555ba606-d32f-4739-aac9-7ae87f53f325",
+    "stage": "paid-and-under-review",
+    "advance_paise": "200000",
+    "simulated": true
+  }
+]

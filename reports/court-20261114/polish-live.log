@@ -1,0 +1,11 @@
+SHOT dc-pricing.png
+SHOT dc-payment.png
+SHOT dc-tracking.png
+PASS live district_court intake and test advance
+SHOT hc-pricing.png
+SHOT hc-payment.png
+SHOT hc-tracking.png
+PASS live high_court intake and test advance
+SHOT district_court-admin.png
+SHOT high_court-admin.png
+PASS both live sites; only new synthetic requests changed

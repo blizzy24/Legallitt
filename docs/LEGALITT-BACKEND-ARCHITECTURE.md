@@ -2519,7 +2519,7 @@ is re-litigated mid-build.
 
 ### 9.1 Register of simulated capabilities
 
-**Court representation local implementation — 14 November 2026 (not yet deployed):**
+**Court representation — deployed to dev 14 November 2026 (API `a10fde9`):**
 submission advance, remaining balance, pickup, advocate-change and court/process
 fee checkouts use the existing simulated payment adapter and explicitly move no
 money. Partial refunds are test ledger records. Hearing credits are wallet
@@ -2626,7 +2626,7 @@ gate or explicit framing that it is not legal advice.
 
 ### 9.2 Register of design substitutions
 
-**Court representation — 14 November 2026 (local, not yet deployed):** court
+**Court representation — 14 November 2026 (deployed to dev):** court
 verification/assignment, paid-change decisions, courier booking/tracking, hearing
 classification/rates, review unlock, completion confirmation, partial-refund and
 stalled-case queue screens have no supplied admin designs. They use the existing
