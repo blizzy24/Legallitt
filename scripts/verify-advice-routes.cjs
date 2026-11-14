@@ -1,0 +1,4 @@
+process.loadEnvFile('apps/api/.env.local');
+const {spawn}=require('node:child_process');
+process.env.CHROME_PATH='C:/Program Files/Google/Chrome/Application/chrome.exe';
+(async()=>{const password=await require('../apps/api/dist/src/auth/demo').demoPassword(),sessions={};for(const [role,email]of Object.entries({client:'demo-client@legalitt.invalid',advocate:'demo-advocate-2@legalitt.invalid'})){const r=await fetch('http://127.0.0.1:3005/api/v1/auth/login',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({email,password})});if(!r.ok)throw Error('Route-test sign-in failed');sessions[role]=await r.json();}const p=spawn(process.execPath,['scripts/mobile-smoke.mjs'],{stdio:'inherit',env:{...process.env,SMOKE_BASE_URL:'http://localhost:8085',SMOKE_SESSIONS_JSON:JSON.stringify(sessions)},windowsHide:true});process.exitCode=await new Promise(resolve=>p.on('exit',resolve));})().catch(e=>{console.error(e.message);process.exitCode=1;});

@@ -1,0 +1,9 @@
+SHOT state-empty.png
+SHOT state-unpriced-tiers.png
+SHOT client-real-profile.png
+SHOT admin-proposal-overdue.png
+SHOT client-chat-expired.png
+SHOT client-chat-reopened.png
+REQUEST FAILED http://127.0.0.1:3005 net::ERR_FAILED
+REQUEST FAILED http://127.0.0.1:3005 net::ERR_FAILED
+SHOT state-error.png

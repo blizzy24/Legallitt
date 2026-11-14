@@ -4,10 +4,12 @@ import {ConsultationAdvocateScreen} from './AdvocateScreen';
 import {ConsultationAvailability} from './Availability';
 import {ConsultationChat} from './Chat';
 import {AdviceGate} from '../advice/Gate';
+import {AdviceInvitations} from '../advice/Advocate';
 /** API-backed service routes replace their archived fixture implementations at
  * the existing navigator boundary; no fixture child is mounted. */
 export function consultationRoute(name:string,params?:Readonly<Record<string,unknown>>){
  const route=name.replace(/\/index$/,'');
+ if(route==='advocate/legal-advice')return <AdviceInvitations/>;
  const caseId=typeof params?.caseId==='string'?params.caseId:typeof params?.id==='string'?params.id:undefined;
  if(route==='advocate/availability'||route==='advocate/calendar/availability')return <ConsultationAvailability/>;
  if(route.startsWith('advocate/consultation/'))return <AdviceGate id={caseId} advocate query={params} step={typeof params?.step==='string'?params.step:route.split('/').at(-1)} legacy={route.endsWith('/chat')?<ConsultationChat caseId={caseId}/>:<ConsultationAdvocateScreen caseId={caseId}/>}/>;

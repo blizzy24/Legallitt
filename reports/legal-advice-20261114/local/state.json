@@ -1,0 +1,61 @@
+{
+  "cases": {
+    "chat": {
+      "id": "756fe11b-8016-4ecf-bb56-d5f72dfd93fd",
+      "mode": "chat"
+    },
+    "video": {
+      "id": "37cdd181-09cf-4585-88b5-590997b76fe6",
+      "mode": "video",
+      "paid": true
+    },
+    "video-verified": {
+      "id": "8de4f142-ab34-4c60-988e-4b02cc863caf",
+      "mode": "video",
+      "paid": true
+    },
+    "advocate-refund": {
+      "id": "259665c4-d271-45ff-b567-c0cd7a4b6118",
+      "mode": "audio"
+    },
+    "advocate-free-reschedule": {
+      "id": "800e1837-87d0-4f2a-9cc6-486a5894d29b",
+      "mode": "audio"
+    },
+    "client-missed": {
+      "id": "14f14635-4166-41de-882f-a34eae33883d",
+      "mode": "audio"
+    },
+    "cancel-before-acceptance": {
+      "id": "f263b96c-a032-4a91-baca-d74b2e034c7d",
+      "mode": "chat"
+    },
+    "audio-multi": {
+      "id": "b2fa4348-b80b-4e97-816a-6df1cf13f941",
+      "mode": "audio"
+    },
+    "proposal-overdue": {
+      "id": "a284d9b1-8d66-4b75-a109-50006cb762c7",
+      "mode": "video"
+    },
+    "chat-expiry": {
+      "id": "877d2dc2-8d5f-4b49-b1f8-af0155d9e829",
+      "mode": "chat"
+    },
+    "two-reschedules": {
+      "id": "8a2b7ba9-5f99-49db-8b7e-2b9c3ebef875",
+      "mode": "chat"
+    }
+  },
+  "passed": [
+    "chat",
+    "video",
+    "written-pdf-rating-followup",
+    "both-no-shows-free-reschedule-cancellation-admin",
+    "audio-multi-invite-warning-auto-end-summary-overdue",
+    "proposal-overdue-chat-expiry-reopen-isolation-five-states",
+    "video-late-summary-credit-two-reschedules-limit",
+    "final-visual-states"
+  ],
+  "slot": 19
+}

@@ -1,62 +1,56 @@
-# Legal Advice rebuild — work in progress
+# Legal Advice rebuild — local acceptance complete
 
-Branch: `legal-advice-rebuild-20261114`, based on deployed main `93b0743`.
+Continues bfeda1f on legal-advice-rebuild-20261114. Implementation checkpoint
+c0a0031 is pushed; final release commit/deployment identifiers follow below.
 
-## Completed
+## Verified locally
 
-- Read the request, source answers, flow and current consultation implementation.
-- Extracted and verified the supplied archive: **85 PNGs**, not the stated 89.
-  Legal Advice has 57 screens; Profile/Messages remain deferred.
-- Added the [gap audit](../../docs/flows/LEGAL-ADVICE-GAPS.md), current design
-  override and decisions LA-R2-01 through LA-R2-07.
-- Added a separate typed Legal Advice policy contract and seed-input manifest.
-  It requires complete tier/mode rows, explicit NOT SET prices, valid experience
-  ranges and scheduling bounds. No runtime handler is switched to this contract.
-- Shared package build/tests: **34 passed**, zero failures, including new policy
-  completeness, boundary and invalid-admin-configuration checks.
+- API: **252 passed, 0 failed**, full suite (full-api-final.log), including Legal
+  Notice, FIR, Property Search, Document Forensic and both court workflows.
+- Shared: **34 passed, 0 failed**. Auth-route tests: 2 passed. Browser route
+  sweep: **350 routes, no failures**. Mobile/admin typechecks and production
+  web builds passed. API build includes Prisma generation.
+- Chat: Emerging intake → requested slot → shared test checkout → acceptance →
+  both participants/message → client end → summary → exact ₹499 wallet credit.
+- Video: alternate proposal accepted → both join → pause/resume → client ends;
+  24-hour summary lateness → admin alert → summary submitted → ₹999 credit.
+- Audio: admin multi-invite, one winner/closed loser; both join, pause/resume,
+  five-minute warning, server auto-end for both and overdue-summary queue.
+- Both no-shows, free advocate-fault reschedule, full test refund, cancellation
+  before acceptance, two accepted ordinary reschedules and blocked third.
+- Written advice: ₹147.50 total (₹100 advocate base), shared test purchase,
+  editor save, real letterhead PDF, client viewer, additional ₹100 entitlement.
+  API text extraction proves every edited section reaches the PDF.
+- Same-price linked follow-up selection; rating; 12-hour proposal alert;
+  seven-day chat expiry and admin reopening; foreign-client 404; NOT SET prices;
+  loading, empty, partial and network-error states.
+- [59 visual comparisons](../../docs/flows/la-screens/README.md) and the
+  [gap audit](../../docs/flows/LEGAL-ADVICE-GAPS.md).
 
-## Backend foundation added on continuation
+All local walkthrough cases are new labelled synthetic cases in the separate
+legalitt_report_local database. Clock fixtures are limited to those case IDs and
+their owner/TEST description. Test-suite cleanup runs only in the isolated test
+database. No existing real case, credential or real money was changed.
 
-- Additive migration introduces versioned policies, new-workflow bookings,
-  invitation history and public/internal events. It was applied only to the
-  local application/test databases. No deployed migration or seed was run.
-- Settings GET/PATCH and requested-slot GET endpoints are mounted behind auth.
-  Writes require admin role, a reason and the next policy version. Requested IST
-  slots use editable hours/days/intervals/notice/horizon and are not confirmations.
-- Invitation inbox, admin assignment and advocate decision endpoints are mounted.
-  The case and user locks, plus a unique accepted-invitation index, enforce one
-  winner and prevent overlapping accepted appointments. Declines/history remain.
-  Losing invitees receive a neutral notification without an inaccessible case link.
-- The test CallProvider explicitly transmits no media. The pure session engine
-  implements two-party joining, preserved elapsed time, client-only end,
-  advocate-only pause/resume, exact auto-end and interrupted pause expiry.
-  It is not yet integrated with persisted session actions or the browser.
-- `seed-legal-advice` is available in the ops script. It inserts initial config
-  only if no policy exists and preserves operator configuration. Tariff insertion
-  into `service_pricing` and runtime quote integration remain pending.
-- Focused Legal Advice tests: **7 passed**, including a real concurrent database
-  acceptance race, foreign-invitation protection, role checks, HTTP auth/routes,
-  stale settings edits and timer boundaries. Full API: **242/242 passed** in
-  `api-suite-final.log`; API build and shared tests passed.
+## Assumptions and simulation boundaries
 
-The first regression run failed four checks: schema inventory needed the four
-new tables, two new tests ran against stale build output, and the Legal Notice
-fixture inherited the local database's old explicit closing policy. The final
-run followed a complete rebuild; the inventory now matches the architecture,
-and the notice fixture installs/restores its own current policy. No Legal Notice
-runtime behaviour was changed.
+LA-R2-01..13 in [DECISIONS](../../docs/DECISIONS.md): new engine only for new
+bookings; experience bands [0,5), [5,10), [10,15), [15,∞), unknown unclassified;
+only Emerging seeded; client choice first, same-tier extra invitations; prior
+follow-up base retained; no paid clock before confirmed time; free fault
+reschedules don't consume ordinary allowance; unfinished slot nullable; private
+notes/disputes remain separated; fictional demo-profile setup is repeatable;
+supporting-PDF AI extraction is bounded and identity files excluded. Boundary and
+fault-remedy interpretations await client confirmation as recorded there.
 
-## Not completed / not deployed
+Calls are TEST rooms without transmitted media. Test payment moves no money.
+Local AI uses the explicitly labelled simulated adapter; deployed AI retains the
+existing configured adapter/India-only policy and may show unavailable output.
+No AI document examination, recording, provider callback or bank payout is
+claimed. Non-Emerging prices intentionally remain NOT SET. New Profile/Messages
+designs and repeat KYC were excluded as instructed. See architecture §9.1/§9.2.
 
-The integrated runtime rebuild remains open: actual tier tariff activation and
-pricing snapshots, booking/payment-triggered invitations, complete invitation
-eligibility and expiry alerts, scheduling/time proposals,
-session adapter/timers, no-shows/reschedules, summary/wallet release, AI,
-written advice PDF, follow-ups, client/advocate/admin screens and endpoint tests.
-Only local tests inserted policy fixtures; no deployed policy was activated.
+## Deployment
 
-All-app builds, browser journeys, visual comparisons and complete release gates
-have not run for this rebuild. Design inventory contact sheets
-are **reference thumbnails**, not screenshots or evidence of implemented screens.
-No image build, deployed migration/seed, main merge or deployment was performed. Existing
-real cases, credentials and payments were untouched. The previous version is live.
+Release gates passed. Deployment is in progress; this section will be replaced
+with actual image/stack/Vercel/config/live-check identifiers after verification.

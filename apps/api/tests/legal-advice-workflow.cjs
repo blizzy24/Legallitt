@@ -37,6 +37,14 @@ test('Legal Advice rebuilt workflow: snapshots, proposals, no-shows, session/sum
    await assert.rejects(flow.create(a,{mode:'chat',advocate_id:a.id,scheduled_at:slots[0]}),{status:403});
    await assert.rejects(flow.list({...other,role:'support'}),{status:403});
   });
+  await t.test('page overage combines all PDFs, excludes GST and rejects a stale document quote',async()=>{
+   const id=await create();await submit(id);const docs=[];
+   for(const pages of [16,12])docs.push(await db.document.create({data:{case_id:id,owner_id:client.id,kind:'supporting_document',filename:'TEST.pdf',mime_type:'application/pdf',size_bytes:1000n,page_count:pages,status:'uploaded',s3_key:'TEST/'+randomUUID()}}));
+   const q=await payments.quote(client,id,{purpose:'service_fee'});assert.equal(q.status,'ready');priceIds.add((await db.casePriceQuote.findUnique({where:{id:q.id}})).pricing_id);assert.equal(q.breakdown.page_overage_paise,'7500');assert.equal(q.breakdown.page_overage_gst_paise,'0');assert.equal(q.breakdown.total_paise,'81103');
+   await db.document.update({where:{id:docs[1].id},data:{page_count:13}});
+   await assert.rejects(payments.pay(client,id,{quote_id:q.id,idempotency_key:randomUUID(),confirmed_test:true}),{status:409});
+   await db.document.update({where:{id:docs[0].id},data:{page_count:null}});assert.equal((await payments.quote(client,id,{purpose:'service_fee'})).status,'blocked');
+  });
   await t.test('Chat completion holds wallet until mandatory summary; rating and follow-up retain price',async()=>{
    const id=await ready();await near(id);await act(id,client,'join');await act(id,a,'join');await act(id,client,'end');
    assert.equal((await view(id)).booking.phase,'completed');assert.equal((await walletEntries(db,a.id)).filter(e=>e.case_id===id).length,0);
@@ -75,10 +83,14 @@ test('Legal Advice rebuilt workflow: snapshots, proposals, no-shows, session/sum
    await flow.generateAi(a,id);assert.equal((await view(id)).data.ai.simulated,true);await assert.rejects(flow.generateAi(other,id),{status:404});
   });
   await t.test('both no-shows; free advocate-fault reschedule and full refund; ordinary reschedule limit',async()=>{
-   let id=await ready('audio');await near(id,11);await act(id,client,'no-show',{remedy:'reschedule',scheduled_at:slots[slotIndex++]});assert.equal((await view(id)).booking.reschedule_count,0);await act(id,a,'time-response',{decision:'accept'});
+   let id=await ready('audio');await near(id,11);await view(id);await view(id);assert.equal(sent.filter(n=>n.case_id===id&&n.user_id===client.id&&n.kind==='legal_advice_advocate_missing').length,1,'The waiting client is notified exactly once');await act(id,client,'no-show',{remedy:'reschedule',scheduled_at:slots[slotIndex++]});assert.equal((await view(id)).booking.reschedule_count,0);await act(id,a,'time-response',{decision:'accept'});
    id=await ready('audio');await near(id,11);await act(id,client,'no-show',{remedy:'cancel'});assert.equal((await view(id)).booking.phase,'refunded');assert.equal((await db.refund.findMany({where:{case_id:id}})).reduce((n,r)=>n+r.amount_paise,0n),103103n);
    id=await ready();await near(id,11);await act(id,a,'no-show');assert.equal((await view(id)).booking.phase,'client_no_show');assert.equal(await db.refund.count({where:{case_id:id}}),0);
    id=await ready();for(let n=0;n<2;n++){await act(id,client,'reschedule',{scheduled_at:slots[slotIndex++],reason:'TEST change'});await act(id,a,'time-response',{decision:'accept'});}await assert.rejects(act(id,client,'reschedule',{scheduled_at:slots[slotIndex++]}),{status:409});
+  });
+  await t.test('a proposed replacement time cannot overlap a legacy appointment',async()=>{
+   const legacy=await create(),when=slots[slotIndex++];await db.consultation.create({data:{case_id:legacy,client_id:client.id,advocate_id:a.id,scheduled_at:new Date(when),mode:'chat',duration_min:30,status:'scheduled'}});
+   const id=await ready();await act(id,client,'reschedule',{scheduled_at:when});await assert.rejects(act(id,a,'time-response',{decision:'accept'}),{status:409});assert.equal((await view(id)).booking.phase,'reschedule_pending');
   });
   await t.test('cancellation before acceptance refunds; after acceptance admin decides; admin lists stay private',async()=>{
    let id=await create();await submit(id);await pay(id);await act(id,client,'cancel',{reason:'TEST cancellation'});assert.equal((await view(id)).booking.phase,'refunded');
